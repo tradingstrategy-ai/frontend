@@ -2,6 +2,7 @@
 	import type { Chain } from '$lib/helpers/chain';
 	import type { TopVaults } from './schemas';
 	import type { VaultProtocolMetadata } from '$lib/vault-protocol/schemas';
+	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
 	import Alert from '$lib/components/Alert.svelte';
 	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
@@ -10,6 +11,7 @@
 	import TopVaultsTable from './TopVaultsTable.svelte';
 	import VaultListingsSelector from './VaultListingsSelector.svelte';
 	import ProtocolDescription from '$lib/vault-protocol/ProtocolDescription.svelte';
+	import StablecoinDescription from '$lib/stablecoin-metadata/StablecoinDescription.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	interface Props {
@@ -24,6 +26,7 @@
 		filterTvl?: boolean;
 		includeBlacklisted?: boolean;
 		protocolMetadata?: VaultProtocolMetadata;
+		stablecoinMetadata?: StablecoinMetadata;
 		/** Show interactive filter dropdowns (Min TVL, Min age, Max risk) */
 		showFilters?: boolean;
 		/** Default TVL filter key (used to initialise the dropdown when showFilters is true) */
@@ -45,6 +48,7 @@
 		filterTvl,
 		includeBlacklisted,
 		protocolMetadata,
+		stablecoinMetadata,
 		showFilters,
 		defaultTvlKey,
 		defaultAgeIndex,
@@ -64,6 +68,9 @@
 					{#if protocolMetadata?.logos.light}
 						<img src={protocolMetadata.logos.light} alt={protocolMetadata.name} />
 					{/if}
+					{#if stablecoinMetadata?.logos.light}
+						<img src={stablecoinMetadata.logos.light} alt={stablecoinMetadata.name} />
+					{/if}
 					<span>{pageTitle}</span>
 					<DataBadge class="badge" status="beta">Beta</DataBadge>
 				</span>
@@ -75,6 +82,10 @@
 		<div class="top-vaults-content">
 			{#if protocolMetadata}
 				<ProtocolDescription metadata={protocolMetadata} />
+			{/if}
+
+			{#if stablecoinMetadata}
+				<StablecoinDescription metadata={stablecoinMetadata} />
 			{/if}
 
 			{#if loading}

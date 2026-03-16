@@ -255,6 +255,16 @@ export const vaultProtocolMetadataUrl = config((url: string) => {
 }, 'VAULT_PROTOCOL_METADATA_URL');
 
 /**
+ * Stablecoin metadata base URL
+ */
+export const stablecoinMetadataUrl = config((url: string) => {
+	if (!url) {
+		console.warn(`${prefix}STABLECOIN_METADATA_URL not configured`);
+	}
+	return url;
+}, 'STABLECOIN_METADATA_URL');
+
+/**
  * Vault sparklines base URL
  */
 export const vaultSparklinesUrl = config((url: string) => {

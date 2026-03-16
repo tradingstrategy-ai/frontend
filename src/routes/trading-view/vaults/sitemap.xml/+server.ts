@@ -6,6 +6,7 @@ import { SitemapStream } from 'sitemap';
 import { fetchTopVaults } from '$lib/top-vaults/client';
 import { isBlacklisted, meetsMinTvl, resolveVaultDetails } from '$lib/top-vaults/helpers';
 import { getChain } from '$lib/helpers/chain';
+import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
 
 const basePath = 'trading-view/vaults';
 const priority = 0.8;
@@ -22,7 +23,7 @@ const staticSubPages = [
 ];
 
 export async function GET({ fetch, setHeaders, url }) {
-	const { vaults } = await fetchTopVaults(fetch);
+	const [{ vaults }, stablecoinIndex] = await Promise.all([fetchTopVaults(fetch), fetchStablecoinMetadataIndex(fetch)]);
 
 	const stream = new SitemapStream({ hostname: url.origin });
 
@@ -49,6 +50,10 @@ export async function GET({ fetch, setHeaders, url }) {
 
 	// Stablecoin index + individual stablecoin pages
 	const denominationSlugs = new Set(eligibleVaults.filter((v) => v.stablecoinish).map((v) => v.denomination_slug));
+	// Include zero-vault stablecoins from metadata index
+	for (const meta of stablecoinIndex) {
+		denominationSlugs.add(meta.slug);
+	}
 	stream.write({ url: `${basePath}/stablecoins`, priority });
 	for (const slug of denominationSlugs) {
 		stream.write({ url: `${basePath}/stablecoins/${slug}`, priority });

@@ -6,7 +6,7 @@
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 
 	let { data } = $props();
-	let { denominationSlug, denominationName } = $derived(data);
+	let { denominationSlug, denominationName, stablecoinMetadata } = $derived(data);
 
 	let topVaults = $state<TopVaults>();
 	let loading = $state(!hasVaultCache());
@@ -24,16 +24,32 @@
 	});
 
 	let title = $derived(`${denominationName} top vaults | Trading Strategy`);
-	let description = $derived(`Top ${denominationName} DeFi vaults ranked by performance.`);
+	let description = $derived(
+		stablecoinMetadata?.description ?? `Top ${denominationName} DeFi vaults ranked by performance.`
+	);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
+	let logoUrl = $derived(stablecoinMetadata?.logos.light);
 </script>
 
 <MetaTags
 	{title}
 	{description}
 	canonical={pageUrl}
-	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
-	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
+	openGraph={{
+		siteName: 'Trading Strategy',
+		url: pageUrl,
+		title,
+		description,
+		images: logoUrl ? [{ url: logoUrl }] : [],
+		type: 'website'
+	}}
+	twitter={{
+		site: '@TradingProtocol',
+		cardType: logoUrl ? 'summary_large_image' : 'summary',
+		title,
+		description,
+		image: logoUrl ?? undefined
+	}}
 />
 
 <JsonLd
@@ -44,6 +60,7 @@
 		description,
 		url: pageUrl,
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
+		image: logoUrl ?? undefined,
 		mainEntity: {
 			'@type': 'ItemList',
 			numberOfItems: topVaults?.vaults.length ?? 0
@@ -54,6 +71,7 @@
 <TopVaultsPage
 	{topVaults}
 	{loading}
+	{stablecoinMetadata}
 	title="Top {denominationName} vaults"
 	subtitle="The best performing {denominationName} DeFi vaults"
 	showFilters

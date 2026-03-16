@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add rich descriptions, social meta tags, logos and zero-vault entries to stablecoin pages (2026-03-16)
 - Add vault protocols, stablecoins, chains and static sub-pages to sitemap (2026-03-16)
 - Add cache freshness diagnostics in page source while investigating front page vs vault page chart mismatches (2026-03-16)
 - Add configurable tile chart direction mode to fix green/red colour mismatch between front page and vault page (2026-03-16)

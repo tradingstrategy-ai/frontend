@@ -119,8 +119,9 @@ test.describe('charts dropdown in vault listings navigation', () => {
 			const menu = page.locator('[role="menu"]');
 			await expect(menu).toBeVisible();
 
-			// Click well below the dropdown (bottom of viewport) to avoid overlay
-			await page.mouse.click(187, 600);
+			// Click a named element outside the dropdown; force bypasses actionability
+			// checks in case the menu positioner layer overlaps it on mobile
+			await page.locator('h1').click({ force: true });
 			await expect(menu).not.toBeVisible();
 		});
 	});
