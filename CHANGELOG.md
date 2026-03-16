@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add configurable tile chart direction mode to fix green/red colour mismatch between front page and vault page (2026-03-16)
 - Add rich social meta tags and structured data to vault pages (2026-03-15)
 - Widen newsletter subscription box on vault pages (2026-03-15)
 - Move Top vaults to the leftmost position in the navigation bar (2026-03-14)

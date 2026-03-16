@@ -29,6 +29,7 @@ export function toListingStrategy(
 		microsite: false,
 		depositExternal: false,
 		useSharePrice: true,
+		tileChartDirection: config.tile_chart_direction,
 
 		// StrategySummary fields
 		icon_url: config.icon_url ?? null,

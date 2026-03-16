@@ -42,7 +42,11 @@ export const yamlStrategySchema = z.object({
 	// When true, the backtest report endpoint injects a postMessage height script and CSS reset
 	// into the served HTML so the iframe auto-resizes. Set to false for HTML files that already
 	// include their own height-reporting snippet.
-	inject_backtest_iframe_resizer: z.boolean().default(true)
+	inject_backtest_iframe_resizer: z.boolean().default(true),
+	// How the front-page tile chart picks its colour (green/red):
+	// - "absolute" (default): based on final value of the 90-day return series
+	// - "relative": based on the change from first to last value, matching the vault detail page chart
+	tile_chart_direction: z.enum(['absolute', 'relative']).default('absolute')
 });
 
 export type YamlStrategyConfig = z.infer<typeof yamlStrategySchema>;
