@@ -3,9 +3,13 @@ import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { calculateTvlWeightedApy, isBlacklisted, meetsMinTvl } from '$lib/top-vaults/helpers.js';
 import { sortOptions } from '$lib/top-vaults/VaultGroupTable.svelte';
 import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
+import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
 
 export async function load({ fetch, url: { searchParams } }) {
-	const { vaults } = await getCachedTopVaults(fetch);
+	const [{ vaults }, metadataIndex] = await Promise.all([
+		getCachedTopVaults(fetch),
+		fetchStablecoinMetadataIndex(fetch)
+	]);
 
 	const eligibleVaults = vaults.filter((v) => !isBlacklisted(v) && v.stablecoinish && meetsMinTvl(v));
 
@@ -24,6 +28,19 @@ export async function load({ fetch, url: { searchParams } }) {
 
 		return acc;
 	}, {});
+
+	// Include stablecoins from metadata index that have no vaults
+	for (const meta of metadataIndex) {
+		if (!stablecoins[meta.slug]) {
+			stablecoins[meta.slug] = {
+				slug: meta.slug,
+				name: meta.name,
+				vault_count: 0,
+				tvl: 0,
+				avg_apy: null
+			};
+		}
+	}
 
 	// Calculate TVL-weighted average APY for each stablecoin denomination
 	const stablecoinGroups: VaultGroup[] = Object.values(stablecoins).map((group) => ({

@@ -7,6 +7,7 @@
 	import Section from '$lib/components/Section.svelte';
 	import VaultGroupTable from '$lib/top-vaults/VaultGroupTable.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
+	import { getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers.js';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 
 	let { data } = $props();
@@ -58,7 +59,13 @@
 	</Section>
 
 	<Section padding="sm">
-		<VaultGroupTable groupLabel="Stablecoin" rows={stablecoins} {...options} {onChange} />
+		<VaultGroupTable
+			groupLabel="Stablecoin"
+			getLogoHref={getStablecoinLogoUrl}
+			rows={stablecoins}
+			{...options}
+			{onChange}
+		/>
 	</Section>
 </main>
 
