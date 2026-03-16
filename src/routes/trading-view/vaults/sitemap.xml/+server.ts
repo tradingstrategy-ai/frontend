@@ -1,39 +1,73 @@
 /**
- * Generate sitemap with entries for each vault
+ * Generate sitemap with entries for all vault pages, including individual vaults,
+ * protocol/stablecoin/chain category pages, and static vault sub-pages.
  */
 import { SitemapStream } from 'sitemap';
-import type { SitemapItemLoose } from 'sitemap';
-import { Readable } from 'stream';
 import { fetchTopVaults } from '$lib/top-vaults/client';
-import { isBlacklisted, resolveVaultDetails } from '$lib/top-vaults/helpers';
+import { isBlacklisted, meetsMinTvl, resolveVaultDetails } from '$lib/top-vaults/helpers';
+import { getChain } from '$lib/helpers/chain';
 
-async function getVaultEntries(fetch: Fetch, url: URL) {
-	// Fetching all vaults (currently < 1000); may need to paginate in the future
-	const { vaults } = await fetchTopVaults(fetch);
+const basePath = 'trading-view/vaults';
+const priority = 0.8;
 
-	return vaults.reduce((acc, vault) => {
-		// skip if blacklisted or chain is not recognized
-		if (!isBlacklisted(vault)) {
-			acc.push({
-				url: resolveVaultDetails(vault),
-				priority: 0.8
-			});
-		}
-
-		return acc;
-	}, [] as SitemapItemLoose[]);
-}
+const staticSubPages = [
+	'all',
+	'high-tvl',
+	'new-vaults',
+	'current-peak-tvl',
+	'cumulative-tvl-apy',
+	'yield-chain',
+	'yield-protocol',
+	'yield-risk'
+];
 
 export async function GET({ fetch, setHeaders, url }) {
-	const entries = await getVaultEntries(fetch, url);
+	const { vaults } = await fetchTopVaults(fetch);
+
 	const stream = new SitemapStream({ hostname: url.origin });
-	Readable.from(entries).pipe(stream);
+
+	// Static vault sub-pages
+	for (const page of staticSubPages) {
+		stream.write({ url: `${basePath}/${page}`, priority });
+	}
+
+	// Individual vault detail pages
+	for (const vault of vaults) {
+		if (!isBlacklisted(vault)) {
+			stream.write({ url: resolveVaultDetails(vault), priority });
+		}
+	}
+
+	const eligibleVaults = vaults.filter((v) => !isBlacklisted(v) && meetsMinTvl(v));
+
+	// Protocol index + individual protocol pages
+	const protocolSlugs = new Set(eligibleVaults.map((v) => v.protocol_slug));
+	stream.write({ url: `${basePath}/protocols`, priority });
+	for (const slug of protocolSlugs) {
+		stream.write({ url: `${basePath}/protocols/${slug}`, priority });
+	}
+
+	// Stablecoin index + individual stablecoin pages
+	const denominationSlugs = new Set(eligibleVaults.filter((v) => v.stablecoinish).map((v) => v.denomination_slug));
+	stream.write({ url: `${basePath}/stablecoins`, priority });
+	for (const slug of denominationSlugs) {
+		stream.write({ url: `${basePath}/stablecoins/${slug}`, priority });
+	}
+
+	// Chain index + individual chain pages
+	const chainSlugs = new Set(eligibleVaults.map((v) => getChain(v.chain_id)?.slug).filter(Boolean) as string[]);
+	stream.write({ url: `${basePath}/chains`, priority });
+	for (const slug of chainSlugs) {
+		stream.write({ url: `${basePath}/chains/${slug}`, priority });
+	}
+
+	stream.end();
 
 	setHeaders({
 		'content-type': 'application/xml',
 		'cache-control': 'public, max-age=600'
 	});
 
-	// coerce smStream to ReadableStream to make TypeScript happy
+	// coerce stream to ReadableStream to make TypeScript happy
 	return new Response(stream as unknown as ReadableStream<Uint8Array>);
 }
