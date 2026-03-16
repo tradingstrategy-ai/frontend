@@ -10,6 +10,7 @@ export async function load({ fetch, setHeaders, data }) {
 	});
 
 	return {
+		debugFreshness: data.debugFreshness,
 		strategies: data.strategies,
 		savingsRate: data.savingsRate,
 		treasuryRate: data.treasuryRate,

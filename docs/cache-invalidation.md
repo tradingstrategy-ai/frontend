@@ -116,3 +116,5 @@ The `Cache-Control: public, max-age=N` header tells Cloudflare how long to cache
 - **Vault data**: The backend API updates vault metrics roughly hourly. The landing page caches for 30 minutes, so vault data is at most ~1.5 hours stale in the worst case.
 - **Blog posts**: Ghost CMS webhook could trigger a purge (not currently implemented). Posts appear within 5 minutes of the blog cache TTL.
 - **Strategies**: Fetched server-side on each origin request. Cached at the edge for the page TTL.
+
+For page-source diagnostics that expose cache ages and upstream refresh timestamps, see [docs/cache-freshness-diagnostics.md](/Users/moo/code/frontend/docs/cache-freshness-diagnostics.md).

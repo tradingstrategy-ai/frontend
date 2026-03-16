@@ -3,6 +3,7 @@
 -->
 <script lang="ts">
 	import { page } from '$app/state';
+	import DebugFreshnessData from '$lib/components/DebugFreshnessData.svelte';
 	import HomeHeroBanner from './_components/HomeHeroBanner.svelte';
 	import FeaturedStrategies from './_components/FeaturedStrategies.svelte';
 	import TopVaults from './_components/TopVaults.svelte';
@@ -38,6 +39,8 @@
 </svelte:head>
 
 <main class="home-page">
+	<DebugFreshnessData label="home-page" data={data.debugFreshness} />
+
 	<HomeHeroBanner />
 
 	<FeaturedStrategies {strategies} />

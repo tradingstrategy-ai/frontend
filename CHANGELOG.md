@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add cache freshness diagnostics in page source while investigating front page vs vault page chart mismatches (2026-03-16)
 - Add configurable tile chart direction mode to fix green/red colour mismatch between front page and vault page (2026-03-16)
 - Add rich social meta tags and structured data to vault pages (2026-03-15)
 - Widen newsletter subscription box on vault pages (2026-03-15)

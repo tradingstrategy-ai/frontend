@@ -28,6 +28,15 @@ test.describe('YAML-configured strategy', () => {
 		await expect(page.getByRole('heading', { name: 'ICHI v3 Liquidity Strategy' })).toBeVisible();
 	});
 
+	test('should expose hidden freshness debug data on the strategy page', async ({ page }) => {
+		await page.goto(BASE);
+
+		const debugData = page.locator('[data-debug-freshness="yaml-strategy:trading-strategy-ichiv3-ls-2"]');
+		await expect(debugData).toHaveCount(1);
+		await expect(debugData).toContainText('topVaultsFeed');
+		await expect(debugData).toContainText('vaultChart');
+	});
+
 	test('should display vault metrics on the overview page', async ({ page }) => {
 		await page.goto(BASE);
 

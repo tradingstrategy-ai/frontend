@@ -24,4 +24,13 @@ test.describe('YAML strategy on frontpage', () => {
 		await expect(tile).toContainText('Age');
 		await expect(tile).toContainText('Sharpe');
 	});
+
+	test('should expose hidden freshness debug data on the home page', async ({ page }) => {
+		await page.goto('/');
+
+		const debugData = page.locator('[data-debug-freshness="home-page"]');
+		await expect(debugData).toHaveCount(1);
+		await expect(debugData).toContainText('topVaultsFeed');
+		await expect(debugData).toContainText('yamlTileSharePriceCache');
+	});
 });
