@@ -92,7 +92,7 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 <style>
 	.cumulative-tvl-apy-page {
 		:global(.badge) {
-			font-size: 0.5em;
+			font-size: 0.44em;
 			margin-inline: 0.25em;
 			transform: translate(0, -0.375em);
 		}

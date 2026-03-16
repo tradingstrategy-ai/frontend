@@ -127,7 +127,7 @@
 		}
 
 		:global(.badge) {
-			font-size: clamp(11px, 0.45em, 16px);
+			font-size: clamp(10px, 0.4em, 14px);
 			margin-inline: 0.25em;
 			transform: translate(0, -0.375em);
 		}
