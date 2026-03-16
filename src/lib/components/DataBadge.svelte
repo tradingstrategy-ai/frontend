@@ -49,11 +49,7 @@ The color and background color may be overridden with CSS props.
 		color: var(--data-badge-color);
 		border: 1px solid color-mix(in srgb, var(--c-text-light), var(--data-badge-tint) 12%);
 		background:
-			radial-gradient(
-				circle at 18% 14%,
-				color-mix(in srgb, var(--c-text-light), transparent 40%) 0%,
-				transparent 24%
-			),
+			radial-gradient(circle at 18% 14%, color-mix(in srgb, var(--c-text-light), transparent 40%) 0%, transparent 24%),
 			linear-gradient(
 				180deg,
 				color-mix(in srgb, var(--c-text-light), transparent 94%),
