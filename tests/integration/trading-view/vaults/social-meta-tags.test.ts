@@ -80,7 +80,7 @@ test.describe('vault social meta tags', () => {
 		});
 
 		test('has open graph meta tags with metadata description', async ({ page }) => {
-			await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /USDC|USD Coin/i);
+			await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /USDC/i);
 			await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
 				'content',
 				/fully-reserved|stablecoin/i

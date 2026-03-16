@@ -6,7 +6,7 @@
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 
 	let { data } = $props();
-	let { denominationSlug, denominationName, stablecoinMetadata } = $derived(data);
+	let { denominationSlug, denominationSymbol, denominationName, stablecoinMetadata } = $derived(data);
 
 	let topVaults = $state<TopVaults>();
 	let loading = $state(!hasVaultCache());
@@ -23,7 +23,7 @@
 			.finally(() => (loading = false));
 	});
 
-	let title = $derived(`${denominationName} top vaults | Trading Strategy`);
+	let title = $derived(`${denominationSymbol} top vaults | Trading Strategy`);
 	let description = $derived(
 		stablecoinMetadata?.description ?? `Top ${denominationName} DeFi vaults ranked by performance.`
 	);
@@ -72,8 +72,7 @@
 	{topVaults}
 	{loading}
 	{stablecoinMetadata}
-	title="Top {denominationName} vaults"
-	subtitle="The best performing {denominationName} DeFi vaults"
+	title="Top {denominationSymbol} vaults"
 	showFilters
 	defaultTvlKey="10k"
 />

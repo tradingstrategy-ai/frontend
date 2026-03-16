@@ -17,6 +17,7 @@ export async function load({ params, fetch }) {
 
 	return {
 		denominationSlug: denomination,
+		denominationSymbol: stablecoinMetadata?.symbol ?? match?.denomination ?? denomination.toUpperCase(),
 		denominationName: stablecoinMetadata?.name ?? match?.normalised_denomination ?? denomination,
 		stablecoinMetadata
 	};

@@ -19,7 +19,7 @@
 		/** Vault dataset to display; may be undefined while loading */
 		topVaults?: TopVaults;
 		title: string;
-		subtitle: string;
+		subtitle?: string;
 		tvlThreshold?: number;
 		tvlTriggerLabel?: string;
 		tvlTooltip?: string;
