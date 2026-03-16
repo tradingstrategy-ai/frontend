@@ -69,6 +69,7 @@
 
 		:global(.badge) {
 			font: var(--f-ui-lg-bold);
+			font-size: 0.72em;
 			letter-spacing: var(--ls-ui-lg, normal);
 		}
 	}

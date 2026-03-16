@@ -128,7 +128,7 @@
 		}
 
 		:global(.badge) {
-			font-size: 0.5em;
+			font-size: 0.44em;
 		}
 
 		.top-vaults-content {
