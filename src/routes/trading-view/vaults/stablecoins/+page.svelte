@@ -19,8 +19,8 @@
 		scrollToTop();
 	};
 
-	const title = 'DeFi vault stablecoins | Trading Strategy';
-	const description = 'Top DeFi vault stablecoins across all blockchains';
+	const title = 'Stablecoin yield | Trading Strategy';
+	const description = 'APY and TVL of stablecoin vaults';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
