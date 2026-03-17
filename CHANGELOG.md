@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add name column to stablecoin listing table, visible on desktop only (2026-03-17)
 - Improve stablecoin pages: update meta tags, whitelist env var in docker-compose, fix chart area fill (2026-03-17)
 - Add expandable long descriptions and TVL/APY chart to stablecoin detail pages (2026-03-17)
 - Add rich descriptions, social meta tags, logos and zero-vault entries to stablecoin pages (2026-03-16)

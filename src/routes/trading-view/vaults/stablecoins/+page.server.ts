@@ -13,12 +13,15 @@ export async function load({ fetch, url: { searchParams } }) {
 
 	const eligibleVaults = vaults.filter((v) => !isBlacklisted(v) && v.stablecoinish && meetsMinTvl(v));
 
+	const metadataBySlug = new Map(metadataIndex.map((m) => [m.slug, m]));
+
 	const stablecoins = eligibleVaults.reduce<Record<string, VaultGroup>>((acc, vault) => {
 		const slug = vault.denomination_slug;
 
 		acc[slug] ??= {
 			slug,
 			name: vault.normalised_denomination,
+			fullName: metadataBySlug.get(slug)?.name,
 			vault_count: 0,
 			tvl: 0,
 			avg_apy: null
@@ -34,7 +37,8 @@ export async function load({ fetch, url: { searchParams } }) {
 		if (!stablecoins[meta.slug]) {
 			stablecoins[meta.slug] = {
 				slug: meta.slug,
-				name: meta.name,
+				name: meta.symbol,
+				fullName: meta.name,
 				vault_count: 0,
 				tvl: 0,
 				avg_apy: null
