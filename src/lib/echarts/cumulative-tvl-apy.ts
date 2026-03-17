@@ -135,6 +135,20 @@ export function buildCumulativeTvlPoints(sourcePoints: VaultPointSource[]): Vaul
 		point.tvlLess = totalTvl - point.cumulativeTvl;
 	}
 
+	// Add a trailing point at the chart's minimum x-value so the area fill
+	// extends all the way to the right edge even when no vault sits at 0%.
+	const lastPoint = points.at(-1);
+	if (lastPoint && lastPoint.value[0] > MIN_APY_CHART_VALUE) {
+		points.push({
+			...lastPoint,
+			value: [MIN_APY_CHART_VALUE, lastPoint.cumulativeTvl],
+			realApy: MIN_APY_CHART_VALUE,
+			individualTvl: 0,
+			tvlBetter: totalTvl,
+			tvlLess: 0
+		});
+	}
+
 	return points;
 }
 
