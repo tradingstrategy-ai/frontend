@@ -3,6 +3,7 @@ import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
 import {
 	buildStablecoinMetadataLookup,
+	formatStablecoinDisplayName,
 	findStablecoinMetadata,
 	resolveStablecoinSlug
 } from '$lib/stablecoin-metadata/helpers';
@@ -33,10 +34,17 @@ export async function load({ params, fetch }) {
 	// 404 only if neither vault data nor metadata exists
 	if (!match && !stablecoinMetadata) error(404, 'Vault stablecoin not found');
 
+	const denominationSymbol = stablecoinMetadata?.symbol ?? match?.denomination ?? denomination.toUpperCase();
+	const denominationName =
+		formatStablecoinDisplayName(
+			stablecoinMetadata?.name ?? match?.normalised_denomination ?? denomination,
+			denominationSymbol
+		) ?? denomination;
+
 	return {
 		denominationSlug: denomination,
-		denominationSymbol: stablecoinMetadata?.symbol ?? match?.denomination ?? denomination.toUpperCase(),
-		denominationName: stablecoinMetadata?.name ?? match?.normalised_denomination ?? denomination,
+		denominationSymbol,
+		denominationName,
 		stablecoinMetadata
 	};
 }

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { TopVaults } from '$lib/top-vaults/schemas';
+	import { formatStablecoinDisplayName } from '$lib/stablecoin-metadata/helpers';
 	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
@@ -23,12 +24,13 @@
 			.finally(() => (loading = false));
 	});
 
-	let title = $derived(`${denominationSymbol} top vaults | Trading Strategy`);
+	let title = $derived(`Top ${denominationName} vaults | Trading Strategy`);
 	let description = $derived(
 		stablecoinMetadata?.short_description ?? `Top ${denominationName} DeFi vaults ranked by performance.`
 	);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived(stablecoinMetadata?.logos.light);
+	let aboutName = $derived(formatStablecoinDisplayName(stablecoinMetadata?.name, stablecoinMetadata?.symbol));
 </script>
 
 <MetaTags
@@ -64,7 +66,7 @@
 		about: stablecoinMetadata
 			? {
 					'@type': 'FinancialProduct',
-					name: `${stablecoinMetadata.name} (${stablecoinMetadata.symbol})`,
+					name: aboutName ?? stablecoinMetadata.name,
 					description: stablecoinMetadata.short_description,
 					image: stablecoinMetadata.logos.light ?? undefined,
 					url: stablecoinMetadata.links.homepage ?? undefined,
@@ -83,7 +85,7 @@
 	{topVaults}
 	{loading}
 	{stablecoinMetadata}
-	title="Top {denominationSymbol} vaults"
+	title="Top {denominationName} vaults"
 	showFilters
 	defaultTvlKey="10k"
 />
