@@ -7,6 +7,8 @@
 	import { formatAmount, notFilledMarker } from '$lib/helpers/formatters';
 	import { parseDate } from '$lib/helpers/date';
 	import { getFeeModeLabel, getFeeModeDescription } from '$lib/top-vaults/helpers';
+	import { getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers';
+	import { getLogoUrl } from '$lib/helpers/assets';
 
 	const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
@@ -117,9 +119,18 @@
 									</button>
 								</span>
 							{:else if row.type === 'chain'}
-								<a href="/trading-view/vaults/chains/{row.value.slug}">{row.value.name} ({row.value.id})</a>
+								<a class="chain-link" href="/trading-view/vaults/chains/{row.value.slug}">
+									<img class="chain-logo" src={getLogoUrl('blockchain', row.value.slug)} alt="" />
+									{row.value.name} ({row.value.id})
+								</a>
 							{:else if row.type === 'denomination'}
-								<a href="/trading-view/vaults/stablecoins/{row.value.slug}">{row.value.name}</a>
+								{@const denomLogoUrl = getStablecoinLogoUrl(row.value.slug)}
+								<a class="denomination-link" href="/trading-view/vaults/stablecoins/{row.value.slug}">
+									{#if denomLogoUrl}
+										<img class="denomination-logo" src={denomLogoUrl} alt="" />
+									{/if}
+									{row.value.name}
+								</a>
 								{#if row.value.address}
 									(<a href={getExplorerUrl(chain, row.value.address)} target="_blank" rel="noreferrer">
 										<HashAddress address={row.value.address} endChars={4} />
@@ -275,5 +286,20 @@
 
 	.open-status {
 		color: var(--c-success);
+	}
+
+	.denomination-link,
+	.chain-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4em;
+	}
+
+	.denomination-logo,
+	.chain-logo {
+		width: 1.2em;
+		height: 1.2em;
+		border-radius: 999px;
+		object-fit: contain;
 	}
 </style>
