@@ -19,7 +19,7 @@
 	import { hasSupportedProtocol, isBlacklisted } from '$lib/top-vaults/helpers';
 
 	let { data } = $props();
-	let { vault, chain, protocolMetadata } = $derived(data);
+	let { vault, chain, protocolMetadata, stablecoinMetadata } = $derived(data);
 </script>
 
 <SocialMediaTags {vault} {chain} {protocolMetadata} />
@@ -73,7 +73,7 @@
 
 		<VaultPeriodicMetrics {vault} {chain} />
 
-		<VaultTechnicalDetailsTable {vault} {chain} />
+		<VaultTechnicalDetailsTable {vault} {chain} {stablecoinMetadata} />
 	</Section>
 
 	<Section>

@@ -59,8 +59,8 @@
 				color: '#f8fbff',
 				fontFamily: chartFontFamily,
 				fontWeight: 700,
-				fontSize: isMobile ? 10 : 11,
-				lineHeight: isMobile ? 14 : 15,
+				fontSize: isMobile ? 11 : 11,
+				lineHeight: isMobile ? 15 : 15,
 				align: 'center',
 				verticalAlign: 'middle'
 			},
@@ -68,8 +68,8 @@
 				color: '#dbeafe',
 				fontFamily: chartFontFamily,
 				fontWeight: 600,
-				fontSize: isMobile ? 10 : 10.5,
-				lineHeight: isMobile ? 13 : 14,
+				fontSize: isMobile ? 10.5 : 10.5,
+				lineHeight: isMobile ? 14 : 14,
 				align: 'center',
 				verticalAlign: 'middle'
 			}
@@ -172,7 +172,7 @@
 				{
 					name: `${groupLabel} TVL`,
 					type: 'pie',
-					radius: isMobile ? ['31%', '62%'] : ['35%', '70%'],
+					radius: isMobile ? ['24%', '49%'] : ['35%', '70%'],
 					center: ['50%', '53%'],
 					avoidLabelOverlap: true,
 					minAngle: 2,
@@ -186,9 +186,9 @@
 						show: true,
 						color: '#f8fbff',
 						fontFamily: chartFontFamily,
-						fontSize: isMobile ? 11 : 12,
-						lineHeight: isMobile ? 16 : 18,
-						padding: isMobile ? [5, 9, 5, 9] : [6, 11, 6, 11],
+						fontSize: isMobile ? 12 : 12,
+						lineHeight: isMobile ? 18 : 18,
+						padding: isMobile ? [5, 8, 5, 8] : [6, 11, 6, 11],
 						borderRadius: 999,
 						backgroundColor: 'rgba(255, 255, 255, 0.14)',
 						shadowBlur: 10,
@@ -202,8 +202,8 @@
 					},
 					labelLine: {
 						show: true,
-						length: isMobile ? 10 : 14,
-						length2: isMobile ? 10 : 16,
+						length: isMobile ? 8 : 14,
+						length2: isMobile ? 8 : 16,
 						lineStyle: {
 							color: 'rgba(191, 219, 254, 0.55)',
 							width: 1.2
@@ -423,11 +423,11 @@
 
 	@media (--viewport-sm-down) {
 		.chart-stage {
-			min-height: 21rem;
+			min-height: 26.25rem;
 		}
 
 		.chart {
-			height: 21rem;
+			height: 26.25rem;
 		}
 	}
 </style>
