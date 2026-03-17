@@ -27,6 +27,7 @@
 		rows?: VaultGroup[];
 		groupLabel: string;
 		includeRisk?: boolean;
+		includeFullName?: boolean;
 		getLogoHref?: (slug: string) => string | undefined;
 		page?: number;
 		sort?: SortOptions['keys'][number];
@@ -38,6 +39,7 @@
 		rows,
 		groupLabel,
 		includeRisk = false,
+		includeFullName = false,
 		getLogoHref,
 		page: pageIndex = 0,
 		sort = sortOptions.keys[0],
@@ -56,9 +58,11 @@
 		tableRowsStore.set(tableRows);
 	});
 
+	const hiddenColumns = [...(includeRisk ? [] : ['risk']), ...(includeFullName ? [] : ['full_name'])];
+
 	// svelte-ignore state_referenced_locally
 	const table = createTable(tableRowsStore, {
-		hide: addHiddenColumns({ initialHiddenColumnIds: includeRisk ? [''] : ['risk'] }),
+		hide: addHiddenColumns({ initialHiddenColumnIds: hiddenColumns.length ? hiddenColumns : [''] }),
 		sort: addSortBy({
 			initialSortKeys: [{ id: sort, order: direction }],
 			toggleOrder: ['desc', 'asc']
@@ -80,6 +84,13 @@
 					? createRender(EntitySymbol, { label: value.name, logoUrl: getLogoHref(value.slug) })
 					: value.name,
 			plugins: { sort: { getSortValue: (v) => v.name, invert: true } }
+		}),
+		table.column({
+			id: 'full_name',
+			header: 'Name',
+			accessor: 'fullName',
+			cell: ({ value }) => value ?? '',
+			plugins: { sort: { disable: true } }
 		}),
 		table.column({
 			id: 'risk',
@@ -131,6 +142,13 @@
 			rotate: 180deg;
 		}
 
+		/* hide full_name column on mobile */
+		:global(:is(th.full_name, td.full_name)) {
+			@media (--viewport-sm-down) {
+				display: none;
+			}
+		}
+
 		@media (--viewport-md-up) {
 			:global(table) {
 				table-layout: fixed;
@@ -139,9 +157,13 @@
 			:global(:is(th, td)) {
 				width: 20%;
 
-				&:not(:is(.name, .risk)) {
+				&:not(:is(.name, .risk, .full_name)) {
 					text-align: right;
 				}
+			}
+
+			:global(.full_name) {
+				width: 20%;
 			}
 
 			:global(.cta) {

@@ -61,6 +61,7 @@
 	<Section padding="sm">
 		<VaultGroupTable
 			groupLabel="Stablecoin"
+			includeFullName
 			getLogoHref={getStablecoinLogoUrl}
 			rows={stablecoins}
 			{...options}

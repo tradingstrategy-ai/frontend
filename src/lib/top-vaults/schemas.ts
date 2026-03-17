@@ -345,6 +345,8 @@ export interface VaultGroup {
 	slug: string;
 	/** Display name for the group (e.g. "Aave V3", "Ethereum", "USDC") */
 	name: string;
+	/** Full human-readable name — only present on stablecoin groups (e.g. "USD Coin") */
+	fullName?: string;
 	/** Number of eligible vaults in this group */
 	vault_count: number;
 	/** Total TVL across all vaults in the group (sum of current_nav) */
