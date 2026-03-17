@@ -11,7 +11,7 @@
 	import TopVaultsTable from './TopVaultsTable.svelte';
 	import VaultListingsSelector from './VaultListingsSelector.svelte';
 	import ProtocolDescription from '$lib/vault-protocol/ProtocolDescription.svelte';
-	import StablecoinDescription from '$lib/stablecoin-metadata/StablecoinDescription.svelte';
+	import StablecoinDetailHeader from '$lib/stablecoin-metadata/StablecoinDetailHeader.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	interface Props {
@@ -85,13 +85,17 @@
 			{/if}
 
 			{#if stablecoinMetadata}
-				<StablecoinDescription metadata={stablecoinMetadata} />
+				<StablecoinDetailHeader metadata={stablecoinMetadata} vaults={topVaults?.vaults ?? []} />
 			{/if}
 
 			{#if loading}
 				<TopVaultsTable {chain} loading {showFilters} />
 			{:else if !topVaults?.vaults.length}
-				<Alert title="Error">No vault data available.</Alert>
+				{#if stablecoinMetadata}
+					<Alert status="info">We have not indexed any vaults using this stablecoin as a denomination token yet.</Alert>
+				{:else}
+					<Alert title="Error">No vault data available.</Alert>
+				{/if}
 			{:else}
 				<TopVaultsTable
 					{topVaults}

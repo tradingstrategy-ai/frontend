@@ -16,6 +16,8 @@ export const stablecoinMetadataSchema = z.object({
 	symbol: z.string(),
 	slug: z.string(),
 	name: z.string(),
+	short_description: z.string(),
+	long_description: z.string().optional(),
 	description: z.string(),
 	category: z.string(),
 	links: stablecoinLinksSchema,
