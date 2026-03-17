@@ -4,7 +4,11 @@ import { calculateTvlWeightedApy, isBlacklisted, meetsMinTvl } from '$lib/top-va
 import { sortOptions } from '$lib/top-vaults/VaultGroupTable.svelte';
 import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
-import { getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers.js';
+import {
+	buildStablecoinMetadataLookup,
+	getStablecoinLogoUrl,
+	resolveStablecoinSlug
+} from '$lib/stablecoin-metadata/helpers.js';
 import type { MarketShareChartItem } from '../market-share-pie';
 
 export async function load({ fetch, url: { searchParams } }) {
@@ -15,10 +19,19 @@ export async function load({ fetch, url: { searchParams } }) {
 
 	const eligibleVaults = vaults.filter((v) => !isBlacklisted(v) && v.stablecoinish && meetsMinTvl(v));
 
+	const metadataLookup = buildStablecoinMetadataLookup(metadataIndex);
 	const metadataBySlug = new Map(metadataIndex.map((m) => [m.slug, m]));
 
 	const stablecoins = eligibleVaults.reduce<Record<string, VaultGroup>>((acc, vault) => {
-		const slug = vault.denomination_slug;
+		const slug =
+			resolveStablecoinSlug(
+				{
+					slug: vault.denomination_slug,
+					symbol: vault.denomination,
+					name: vault.normalised_denomination
+				},
+				metadataLookup
+			) ?? vault.denomination_slug;
 
 		acc[slug] ??= {
 			slug,
@@ -56,7 +69,7 @@ export async function load({ fetch, url: { searchParams } }) {
 
 	const chartStablecoins: MarketShareChartItem[] = stablecoinGroups.map((group) => ({
 		slug: group.slug,
-		label: metadataBySlug.get(group.slug)?.symbol ?? group.name,
+		label: metadataBySlug.get(group.slug)?.name ?? group.fullName ?? group.name,
 		name: group.fullName ?? group.name,
 		tvl: group.tvl,
 		avgApy: group.avg_apy ?? null,

@@ -1,6 +1,11 @@
 import { error } from '@sveltejs/kit';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
+import {
+	buildStablecoinMetadataLookup,
+	findStablecoinMetadata,
+	resolveStablecoinSlug
+} from '$lib/stablecoin-metadata/helpers';
 
 export async function load({ params, fetch }) {
 	const { denomination } = params;
@@ -10,9 +15,20 @@ export async function load({ params, fetch }) {
 		fetchStablecoinMetadataIndex(fetch)
 	]);
 
-	const stablecoinMetadata = metadataIndex.find((m) => m.slug === denomination);
+	const metadataLookup = buildStablecoinMetadataLookup(metadataIndex);
+	const stablecoinMetadata = findStablecoinMetadata(metadataLookup, denomination);
 
-	const match = vaults.find((v) => v.denomination_slug === denomination);
+	const match = vaults.find((v) => {
+		const slug = resolveStablecoinSlug(
+			{
+				slug: v.denomination_slug,
+				symbol: v.denomination,
+				name: v.normalised_denomination
+			},
+			metadataLookup
+		);
+		return slug === denomination;
+	});
 
 	// 404 only if neither vault data nor metadata exists
 	if (!match && !stablecoinMetadata) error(404, 'Vault stablecoin not found');
