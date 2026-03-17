@@ -79,7 +79,7 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 		</HeroBanner>
 	</Section>
 
-	<Section padding="sm">
+	<Section padding="sm" class="chart-section">
 		<CumulativeTvlApyChart {vaults} {savingsRate} {treasuryRate} dataLoading={vaultsLoading} />
 		<ScatterPlotSelector />
 	</Section>
@@ -108,6 +108,13 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 		@media (max-width: 768px) {
 			display: block;
 			padding: 1rem var(--container-padding, 1rem);
+		}
+	}
+
+	:global(.chart-section .standalone-cumulative-tvl-apy-shell .chart-surface) {
+		@media (--viewport-sm-down) {
+			margin-inline: calc(-1 * var(--space-md));
+			width: calc(100% + (2 * var(--space-md)));
 		}
 	}
 </style>

@@ -226,7 +226,7 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 				axisLabelFontSize={13}
 				tooltipFontSize={14}
 				gridDesktop={{ top: 84, right: 88, bottom: 84, left: 88 }}
-				gridMobile={{ top: 52, right: 54, bottom: 56, left: 54 }}
+				gridMobile={{ top: 40, right: 24, bottom: 52, left: 18 }}
 				variant="plain"
 				className="standalone-cumulative-tvl-apy-chart"
 			/>
