@@ -8,6 +8,7 @@
 	import { getFormattedLockup, isGoodVaultStatus } from '$lib/top-vaults/helpers';
 	import { formatNumber, formatPercent, formatPercentProfit } from '$lib/helpers/formatters';
 	import { getChain } from '$lib/helpers/chain';
+	import { getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers';
 
 	interface Props {
 		vault: VaultInfo;
@@ -121,7 +122,11 @@
 			</Metric>
 
 			<Metric label="Denomination">
+				{@const denomLogoUrl = vault.denomination_slug ? getStablecoinLogoUrl(vault.denomination_slug) : undefined}
 				<a class="denomination-link" href="/trading-view/vaults/stablecoins/{vault.denomination_slug}">
+					{#if denomLogoUrl}
+						<img class="denomination-logo" src={denomLogoUrl} alt="" />
+					{/if}
 					{vault.denomination}
 				</a>
 			</Metric>
@@ -338,6 +343,19 @@
 		.glossary-link {
 			text-decoration: underline;
 			text-decoration-style: dashed;
+		}
+
+		.denomination-link {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.4em;
+		}
+
+		.denomination-logo {
+			width: 1.2em;
+			height: 1.2em;
+			border-radius: 999px;
+			object-fit: contain;
 		}
 	}
 </style>
