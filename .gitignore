@@ -29,3 +29,6 @@ static/fonts/NeueHaasGroteskText
 
 #  Production URL configs
 prod-env
+
+# Proably created by Playwright
+tmp
