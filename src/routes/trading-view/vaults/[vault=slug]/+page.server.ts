@@ -1,4 +1,6 @@
 import { getChain } from '$lib/helpers/chain';
+import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
+import { buildStablecoinMetadataLookup, findStablecoinMetadata } from '$lib/stablecoin-metadata/helpers';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { resolveVaultDetails } from '$lib/top-vaults/helpers.js';
 import { fetchVaultProtocolMetadata } from '$lib/vault-protocol/client';
@@ -21,7 +23,17 @@ export async function load({ params, fetch }) {
 	const chain = getChain(vault.chain_id);
 	if (!chain) error(404, 'Chain not found');
 
-	const protocolMetadata = await fetchVaultProtocolMetadata(fetch, vault.protocol_slug);
+	const [protocolMetadata, stablecoinMetadataIndex] = await Promise.all([
+		fetchVaultProtocolMetadata(fetch, vault.protocol_slug),
+		fetchStablecoinMetadataIndex(fetch)
+	]);
+	const stablecoinMetadataLookup = buildStablecoinMetadataLookup(stablecoinMetadataIndex);
+	const stablecoinMetadata = findStablecoinMetadata(
+		stablecoinMetadataLookup,
+		vault.denomination_slug,
+		vault.denomination,
+		vault.normalised_denomination
+	);
 
-	return { vault, chain, protocolMetadata };
+	return { vault, chain, protocolMetadata, stablecoinMetadata };
 }

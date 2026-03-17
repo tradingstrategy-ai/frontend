@@ -8,6 +8,7 @@
 	import { parseDate } from '$lib/helpers/date';
 	import { getFeeModeLabel, getFeeModeDescription } from '$lib/top-vaults/helpers';
 	import { getStablecoinLogoUrl, resolveStablecoinSlug } from '$lib/stablecoin-metadata/helpers';
+	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
@@ -15,9 +16,10 @@
 	interface Props {
 		vault: VaultInfo;
 		chain: Chain;
+		stablecoinMetadata?: StablecoinMetadata | null;
 	}
 
-	let { vault, chain }: Props = $props();
+	let { vault, chain, stablecoinMetadata = null }: Props = $props();
 
 	let copyWidget = $state<CopyWidget>();
 	let denominationSlug = $derived(
@@ -27,6 +29,14 @@
 			name: vault.normalised_denomination
 		})
 	);
+	let denominationLinkLabel = $derived.by(() => {
+		const symbol = stablecoinMetadata?.symbol ?? vault.denomination;
+		const fullName = stablecoinMetadata?.name ?? vault.normalised_denomination ?? symbol;
+
+		if (!fullName || fullName === symbol) return symbol;
+
+		return `${fullName} (${symbol})`;
+	});
 
 	let lastUpdatedStale = $derived.by(() => {
 		const lastUpdated = parseDate(vault.last_updated_at);
@@ -41,7 +51,7 @@
 		{
 			label: 'Denomination',
 			value: {
-				name: vault.denomination,
+				name: denominationLinkLabel,
 				slug: denominationSlug ?? vault.denomination_slug,
 				address: vault.denomination_token_address
 			},
