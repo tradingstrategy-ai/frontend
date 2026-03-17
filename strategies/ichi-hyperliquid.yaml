@@ -58,13 +58,13 @@ long_description: |
 
   ## Backtesting results
 
-  Backtesting results (Hyperliquid, Sep 2024 – Feb 2026, ~17 months):
+  Backtesting results (Hyperliquid, Sep 2024 – Mar 2026, ~18 months):
 
-  - Total return: 725% | CAGR: 328%
-  - Sharpe: 2.54 | Sortino: 4.95 | Calmar: 30.76
-  - Maximum drawdown: 10.7%
-  - 898 total trades (215 long / 683 short), 33.3% win rate
-  - Profit factor: 1.60 | SQN: 3.39
+  - Total return: 768% | CAGR: 169%
+  - Sharpe: 2.65 | Sortino: 7.51 | Calmar: 12.09
+  - Maximum drawdown: 14.0%
+  - 939 total trades (268 long / 671 short), 41.7% win rate
+  - Profit factor: 1.61 | SQN: 3.99
 
   *Metrics are based on a specific historical simulation setup and period,
   and should not be interpreted as a guarantee of future outcomes.
