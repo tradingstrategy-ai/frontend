@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-labelledby="title">
+  <title id="title">GMX logo</title>
+  <defs>
+    <linearGradient id="gmx-gradient" x1="0.536" y1="0.026" x2="0.011" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#03d1cf" stop-opacity="0.988" />
+      <stop offset="1" stop-color="#4e09f8" />
+    </linearGradient>
+  </defs>
+  <circle cx="540" cy="540" r="540" fill="#192631" />
+  <path
+    d="M1027.896 861.552L601.777 221.384L174.344 861.552H769.842L601.777 617.218L518.408 744.158H429.747L601.777 488.914L850.57 861.552Z"
+    fill="url(#gmx-gradient)"
+  />
+</svg>

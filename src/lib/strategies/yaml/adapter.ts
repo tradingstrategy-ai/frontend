@@ -25,6 +25,7 @@ export function toListingStrategy(
 		name: config.name,
 		url: '', // no backend URL
 		hiddenPositions: [],
+		hiddenElements: {},
 		frontpage: config.frontpage,
 		microsite: false,
 		depositExternal: false,

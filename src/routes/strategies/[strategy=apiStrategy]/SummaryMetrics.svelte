@@ -10,9 +10,10 @@
 	type Props = {
 		keyMetrics: SummaryKeyMetrics;
 		backtestLink: string;
+		hideTimeframes?: boolean;
 	};
 
-	let { keyMetrics, backtestLink }: Props = $props();
+	let { keyMetrics, backtestLink, hideTimeframes = false }: Props = $props();
 </script>
 
 <div class="summary-metrics">
@@ -47,35 +48,37 @@
 		</MetricsBox>
 	</div>
 
-	<MetricsBox title="Timeframes">
-		<div class="metric-group secondary">
-			<KeyMetric
-				name="Age"
-				metric={keyMetrics.started_at}
-				formatter={formatDaysAgo}
-				tooltipExtraDescription={metricDescriptions.age}
-				{backtestLink}
-			/>
+	{#if !hideTimeframes}
+		<MetricsBox title="Timeframes">
+			<div class="metric-group secondary">
+				<KeyMetric
+					name="Age"
+					metric={keyMetrics.started_at}
+					formatter={formatDaysAgo}
+					tooltipExtraDescription={metricDescriptions.age}
+					{backtestLink}
+				/>
 
-			<KeyMetric
-				name="Decision cycle"
-				tooltipName="Decision cycle"
-				metric={keyMetrics.decision_cycle_duration}
-				formatter={formatCycleDuration}
-				tooltipExtraDescription={metricDescriptions.decisionCycle}
-				{backtestLink}
-			/>
+				<KeyMetric
+					name="Decision cycle"
+					tooltipName="Decision cycle"
+					metric={keyMetrics.decision_cycle_duration}
+					formatter={formatCycleDuration}
+					tooltipExtraDescription={metricDescriptions.decisionCycle}
+					{backtestLink}
+				/>
 
-			<KeyMetric
-				name="Trade frequency"
-				tooltipName="Trade frequency"
-				metric={keyMetrics.trades_per_month}
-				formatter={formatTradesPerMonth}
-				tooltipExtraDescription={metricDescriptions.tradeFrequency}
-				{backtestLink}
-			/>
-		</div>
-	</MetricsBox>
+				<KeyMetric
+					name="Trade frequency"
+					tooltipName="Trade frequency"
+					metric={keyMetrics.trades_per_month}
+					formatter={formatTradesPerMonth}
+					tooltipExtraDescription={metricDescriptions.tradeFrequency}
+					{backtestLink}
+				/>
+			</div>
+		</MetricsBox>
+	{/if}
 
 	<MetricsBox title="Risk metrics">
 		<div class="metric-group secondary">

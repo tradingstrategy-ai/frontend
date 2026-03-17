@@ -2,12 +2,19 @@ import { strategyConfig } from '$lib/config';
 import { z } from 'zod';
 import { primaryKey } from './utility-types';
 
+export const strategyHiddenElementsSchema = z
+	.object({
+		timeframes: z.boolean().default(false)
+	})
+	.default({});
+
 export const strategyConfigurationSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	url: z.url(),
 	newVersionId: z.string().optional(),
 	hiddenPositions: primaryKey.array().default([]),
+	hiddenElements: strategyHiddenElementsSchema,
 	frontpage: z.boolean().default(false),
 	microsite: z.boolean().default(false),
 	depositExternal: z.boolean().default(false),

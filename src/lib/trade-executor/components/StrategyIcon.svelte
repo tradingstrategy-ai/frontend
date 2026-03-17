@@ -3,9 +3,9 @@
 
 	export let strategy: StrategyInfo;
 
-	const localIconUrl = `/avatars/${strategy.id}.webp`;
+	const localWebpIconUrl = `/avatars/${strategy.id}.webp`;
+	const localSvgIconUrl = `/avatars/${strategy.id}.svg`;
 	const strategyIconUrl = strategy.icon_url?.replace(/^http:/, 'https:');
-	const dataUrl = strategy.connected ? localIconUrl : strategyIconUrl;
 	const outdated = Boolean(strategy.newVersionId);
 </script>
 
@@ -14,10 +14,14 @@
 		<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
 			<text x="50" y="50">outdated</text>
 		</svg>
-	{:else}
-		<object type="image/webp" data={dataUrl} aria-label="Strategy icon">
-			<img src={strategyIconUrl} alt="Strategy icon" />
+	{:else if strategy.connected}
+		<object type="image/webp" data={localWebpIconUrl} aria-label="Strategy icon">
+			<object type="image/svg+xml" data={localSvgIconUrl} aria-label="Strategy icon">
+				<img src={strategyIconUrl} alt="Strategy icon" />
+			</object>
 		</object>
+	{:else}
+		<img src={strategyIconUrl} alt="Strategy icon" />
 	{/if}
 </div>
 

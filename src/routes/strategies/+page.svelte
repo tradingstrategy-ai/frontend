@@ -6,6 +6,7 @@
 	import { slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { cubicOut } from 'svelte/easing';
+	import { MetaTags } from 'svelte-meta-tags';
 	import PageHeading from '$lib/components/PageHeading.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
@@ -19,6 +20,10 @@
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import { getStrategyChartDateRange } from 'trade-executor/helpers/chart';
 	import { getChain } from '$lib/helpers/chain';
+
+	const title = 'Trading Strategy vaults';
+	const description = 'Active trading DeFi vaults with high returns.';
+	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 
 	let { data } = $props();
 	let { admin, strategies, tvlData } = $derived(data);
@@ -74,10 +79,24 @@
 	};
 </script>
 
-<svelte:head>
-	<title>Automated DeFi Strategies | Trading Strategy</title>
-	<meta name="description" content="Browse currently available automated DeFi trading strategies" />
-</svelte:head>
+<MetaTags
+	title="{title} | Trading Strategy"
+	{description}
+	canonical={pageUrl}
+	openGraph={{
+		siteName: 'Trading Strategy',
+		url: pageUrl,
+		title,
+		description,
+		type: 'website'
+	}}
+	twitter={{
+		site: '@TradingProtocol',
+		cardType: 'summary',
+		title,
+		description
+	}}
+/>
 
 <main class="strategies-index-page ds-3">
 	<Section>

@@ -7,9 +7,15 @@
 	import OtherMetrics from './OtherMetrics.svelte';
 
 	export let data;
-	const { position, chain } = data;
+	const { position, chain, strategy } = data;
 
 	const assetUrl = position.pricingPair.info_url;
+	const isGmxExchangeAccountPosition =
+		position.pair.kind === 'exchange_account' && position.pair.other_data?.exchange_protocol === 'gmx';
+	const safeAddress =
+		strategy.on_chain_data.asset_management_mode === 'lagoon' ? strategy.on_chain_data.smart_contracts.safe : undefined;
+	const gmxPositionUrl =
+		isGmxExchangeAccountPosition && safeAddress ? `https://app.gmx.io/#/accounts/${safeAddress}` : undefined;
 </script>
 
 <main class="position-page ds-3">
@@ -22,11 +28,13 @@
 				</span>
 			</div>
 			<svelte:fragment slot="cta">
-				{#if assetUrl}
-					<Button size="sm" target="_blank" href={assetUrl}>
-						{position.isCreditPosition ? 'View lending reserve' : 'View trading pair'}
-					</Button>
-				{/if}
+				<div class="cta-buttons">
+					{#if assetUrl}
+						<Button size="sm" target="_blank" rel="noreferrer" href={assetUrl}>
+							{position.isCreditPosition ? 'View lending reserve' : 'View trading pair'}
+						</Button>
+					{/if}
+				</div>
 			</svelte:fragment>
 		</PageHeading>
 	</Section>
@@ -62,19 +70,23 @@
 
 	<Section>
 		<div class="position-info">
-			<PositionProfitability {position} />
+			<PositionProfitability {position} {gmxPositionUrl} />
 			<PositionSummary {position} />
-			<OtherMetrics {position} />
+			{#if !isGmxExchangeAccountPosition}
+				<OtherMetrics {position} />
+			{/if}
 		</div>
 	</Section>
 
-	<Section padding="sm">
-		<TradeTable
-			trades={position.trades}
-			isCreditPosition={position.isCreditPosition}
-			interestRateAtOpen={position.interestRateAtOpen}
-		/>
-	</Section>
+	{#if !isGmxExchangeAccountPosition}
+		<Section padding="sm">
+			<TradeTable
+				trades={position.trades}
+				isCreditPosition={position.isCreditPosition}
+				interestRateAtOpen={position.interestRateAtOpen}
+			/>
+		</Section>
+	{/if}
 </main>
 
 <style>
@@ -113,6 +125,13 @@
 
 		.position-kind {
 			color: var(--c-text-ultra-light);
+		}
+
+		.cta-buttons {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.75rem;
+			justify-content: flex-end;
 		}
 	}
 </style>
