@@ -2,6 +2,7 @@ import { describe, test, expect } from 'vitest';
 import {
 	isBlacklisted,
 	hasSupportedProtocol,
+	getProtocolDisplayName,
 	meetsMinTvl,
 	getFormattedLockup,
 	getFormattedFeeMode,
@@ -39,6 +40,16 @@ describe('hasSupportedProtocol', () => {
 	test('returns false for unsupported protocols starting with <', () => {
 		const vault = createTestVault('Test vault', { protocol: '<protocol not yet identified>' });
 		expect(hasSupportedProtocol(vault)).toBe(false);
+	});
+});
+
+describe('getProtocolDisplayName', () => {
+	test('aliases unidentified protocol placeholder to Unknown', () => {
+		expect(getProtocolDisplayName('<protocol not yet identified>')).toBe('Unknown');
+	});
+
+	test('returns the protocol name when it is supported', () => {
+		expect(getProtocolDisplayName('Yearn')).toBe('Yearn');
 	});
 });
 

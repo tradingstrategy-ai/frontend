@@ -97,6 +97,11 @@ export function hasSupportedProtocol(vault: Pick<VaultInfo, 'protocol'>) {
 	return !vault.protocol.startsWith('<');
 }
 
+export function getProtocolDisplayName(protocol: string | null | undefined): string {
+	if (protocol == null || protocol.startsWith('<')) return 'Unknown';
+	return protocol;
+}
+
 /**
  * Check if vault has good operational status (deposits and redemptions are both open)
  */

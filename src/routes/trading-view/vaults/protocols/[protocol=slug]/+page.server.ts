@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { fetchVaultProtocolMetadata } from '$lib/vault-protocol/client';
+import { getProtocolDisplayName } from '$lib/top-vaults/helpers.js';
 
 export async function load({ params, fetch }) {
 	const { protocol } = params;
@@ -13,7 +14,7 @@ export async function load({ params, fetch }) {
 
 	return {
 		protocolSlug: protocol,
-		protocolName: protocolVault.protocol,
+		protocolName: getProtocolDisplayName(protocolVault.protocol),
 		protocolMetadata
 	};
 }

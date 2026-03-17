@@ -8,7 +8,7 @@
 	import { getFormattedLockup, isGoodVaultStatus } from '$lib/top-vaults/helpers';
 	import { formatNumber, formatPercent, formatPercentProfit } from '$lib/helpers/formatters';
 	import { getChain } from '$lib/helpers/chain';
-	import { getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers';
+	import { getStablecoinLogoUrl, resolveStablecoinSlug } from '$lib/stablecoin-metadata/helpers';
 
 	interface Props {
 		vault: VaultInfo;
@@ -21,6 +21,13 @@
 	let chain = $derived(getChain(vault.chain_id));
 	let hasLimitedHistory = $derived(LIMITED_HISTORY_CHAINS.includes(vault.chain_id));
 	let showTransactionStatus = $derived(!isGoodVaultStatus(vault));
+	let denominationSlug = $derived(
+		resolveStablecoinSlug({
+			slug: vault.denomination_slug,
+			symbol: vault.denomination,
+			name: vault.normalised_denomination
+		})
+	);
 
 	function getDaysUntil(dateString: string | null): number | null {
 		if (!dateString) return null;
@@ -122,8 +129,11 @@
 			</Metric>
 
 			<Metric label="Denomination">
-				{@const denomLogoUrl = vault.denomination_slug ? getStablecoinLogoUrl(vault.denomination_slug) : undefined}
-				<a class="denomination-link" href="/trading-view/vaults/stablecoins/{vault.denomination_slug}">
+				{@const denomLogoUrl = denominationSlug ? getStablecoinLogoUrl(denominationSlug) : undefined}
+				<a
+					class="denomination-link"
+					href="/trading-view/vaults/stablecoins/{denominationSlug ?? vault.denomination_slug}"
+				>
 					{#if denomLogoUrl}
 						<img class="denomination-logo" src={denomLogoUrl} alt="" />
 					{/if}

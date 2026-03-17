@@ -1,8 +1,15 @@
 import type { VaultGroup } from '$lib/top-vaults/schemas.js';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
-import { calculateTvlWeightedApy, isBlacklisted, meetsMinTvl } from '$lib/top-vaults/helpers.js';
+import {
+	calculateTvlWeightedApy,
+	getProtocolDisplayName,
+	isBlacklisted,
+	meetsMinTvl
+} from '$lib/top-vaults/helpers.js';
 import { sortOptions } from '$lib/top-vaults/VaultGroupTable.svelte';
 import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
+import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
+import type { MarketShareChartItem } from '../market-share-pie';
 
 export async function load({ fetch, url: { searchParams } }) {
 	const { vaults } = await getCachedTopVaults(fetch);
@@ -14,7 +21,7 @@ export async function load({ fetch, url: { searchParams } }) {
 
 		acc[slug] ??= {
 			slug,
-			name: vault.protocol,
+			name: getProtocolDisplayName(vault.protocol),
 			vault_count: 0,
 			tvl: 0,
 			avg_apy: null,
@@ -33,6 +40,16 @@ export async function load({ fetch, url: { searchParams } }) {
 		avg_apy: calculateTvlWeightedApy(eligibleVaults.filter((v) => v.protocol_slug === group.slug))
 	}));
 
+	const chartProtocols: MarketShareChartItem[] = protocolGroups.map((group) => ({
+		slug: group.slug,
+		label: group.name,
+		name: group.name,
+		tvl: group.tvl,
+		avgApy: group.avg_apy ?? null,
+		logoUrl: getVaultProtocolLogoUrl(group.slug),
+		href: `/trading-view/vaults/protocols/${group.slug}`
+	}));
+
 	const options = {
 		page: getNumberParam(searchParams, 'page', 0),
 		sort: getStringParam(searchParams, 'sort', sortOptions.keys),
@@ -41,6 +58,7 @@ export async function load({ fetch, url: { searchParams } }) {
 
 	return {
 		protocols: protocolGroups,
+		chartProtocols,
 		options
 	};
 }
