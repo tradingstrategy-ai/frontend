@@ -174,6 +174,22 @@ loading/error states, and a Plotly chart container.
 			);
 			opacity: 0.92;
 		}
+
+		@media (--viewport-sm-down) {
+			.scatter-plot-wrapper.standalone-cumulative-tvl-apy-shell & {
+				padding: 0;
+				border: 0;
+				border-radius: 0;
+				background: none;
+				backdrop-filter: none;
+				box-shadow: none;
+
+				&::before,
+				&::after {
+					content: none;
+				}
+			}
+		}
 	}
 
 	.loading {
@@ -202,6 +218,13 @@ loading/error states, and a Plotly chart container.
 			color-mix(in srgb, var(--c-box-1), transparent 2%),
 			color-mix(in srgb, var(--c-box-1), transparent 16%)
 		);
+
+		@media (--viewport-sm-down) {
+			.scatter-plot-wrapper.standalone-cumulative-tvl-apy-shell & {
+				padding: 0;
+				background: color-mix(in srgb, var(--c-box-1), transparent 6%);
+			}
+		}
 	}
 
 	.chart-container {
