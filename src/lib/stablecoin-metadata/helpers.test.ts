@@ -1,5 +1,10 @@
 import { describe, expect, test } from 'vitest';
-import { buildStablecoinMetadataLookup, findStablecoinMetadata, resolveStablecoinSlug } from './helpers';
+import {
+	buildStablecoinMetadataLookup,
+	findStablecoinMetadata,
+	formatStablecoinDisplayName,
+	resolveStablecoinSlug
+} from './helpers';
 import type { StablecoinMetadata } from './schemas';
 
 const metadataIndex: StablecoinMetadata[] = [
@@ -52,5 +57,13 @@ describe('stablecoin metadata helpers', () => {
 		});
 
 		expect(slug).toBe('usd-plus');
+	});
+
+	test('appends symbol to display name when missing', () => {
+		expect(formatStablecoinDisplayName('USD Coin (Circle)', 'USDC')).toBe('USD Coin (Circle) USDC');
+	});
+
+	test('does not append symbol when already present in display name', () => {
+		expect(formatStablecoinDisplayName('USD Coin (USDC)', 'USDC')).toBe('USD Coin (USDC)');
 	});
 });

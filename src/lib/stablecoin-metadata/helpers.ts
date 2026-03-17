@@ -8,6 +8,22 @@ interface StablecoinLookupInput {
 	name?: string | null;
 }
 
+export function formatStablecoinDisplayName(
+	name: string | null | undefined,
+	symbol: string | null | undefined
+): string | undefined {
+	const trimmedName = name?.trim();
+	const trimmedSymbol = symbol?.trim();
+
+	if (trimmedName && trimmedSymbol) {
+		return trimmedName.toLowerCase().includes(trimmedSymbol.toLowerCase())
+			? trimmedName
+			: `${trimmedName} ${trimmedSymbol}`;
+	}
+
+	return trimmedName || trimmedSymbol || undefined;
+}
+
 function normalizeStablecoinText(value: string): string {
 	return value.replaceAll('+', ' plus ').replaceAll('&', ' and ');
 }

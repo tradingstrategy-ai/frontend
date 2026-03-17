@@ -80,7 +80,10 @@ test.describe('vault social meta tags', () => {
 		});
 
 		test('has open graph meta tags with metadata description', async ({ page }) => {
-			await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /USDC/i);
+			await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+				'content',
+				'Top USD Coin (Circle) USDC vaults | Trading Strategy'
+			);
 			await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
 				'content',
 				/fully-reserved|stablecoin/i
@@ -113,6 +116,8 @@ test.describe('vault social meta tags', () => {
 		});
 
 		test('renders stablecoin description box', async ({ page }) => {
+			await expect(page).toHaveTitle('Top USD Coin (Circle) USDC vaults | Trading Strategy');
+			await expect(page.locator('h1')).toContainText('Top USD Coin (Circle) USDC vaults');
 			await expect(page.locator('text=About USD Coin')).toBeVisible();
 			await expect(page.locator('text=fully-reserved')).toBeVisible();
 		});
