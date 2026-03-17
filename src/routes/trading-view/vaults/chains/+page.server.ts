@@ -4,6 +4,8 @@ import { calculateTvlWeightedApy, isBlacklisted, meetsMinTvl } from '$lib/top-va
 import { sortOptions } from '$lib/top-vaults/VaultGroupTable.svelte';
 import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
 import { getChain } from '$lib/helpers/chain';
+import { getLogoUrl } from '$lib/helpers/assets';
+import type { MarketShareChartItem } from '../market-share-pie';
 
 export async function load({ fetch, url: { searchParams } }) {
 	const { vaults } = await getCachedTopVaults(fetch);
@@ -37,6 +39,16 @@ export async function load({ fetch, url: { searchParams } }) {
 		avg_apy: calculateTvlWeightedApy(eligibleVaults.filter((v) => chain_ids.has(v.chain_id)))
 	}));
 
+	const chartChains: MarketShareChartItem[] = chainGroups.map((group) => ({
+		slug: group.slug,
+		label: group.name,
+		name: group.name,
+		tvl: group.tvl,
+		avgApy: group.avg_apy ?? null,
+		logoUrl: getLogoUrl('blockchain', group.slug),
+		href: `/trading-view/vaults/chains/${group.slug}`
+	}));
+
 	const options = {
 		page: getNumberParam(searchParams, 'page', 0),
 		sort: getStringParam(searchParams, 'sort', sortOptions.keys),
@@ -45,6 +57,7 @@ export async function load({ fetch, url: { searchParams } }) {
 
 	return {
 		chains: chainGroups,
+		chartChains,
 		options
 	};
 }

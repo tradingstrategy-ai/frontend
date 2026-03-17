@@ -4,6 +4,8 @@ import { calculateTvlWeightedApy, isBlacklisted, meetsMinTvl } from '$lib/top-va
 import { sortOptions } from '$lib/top-vaults/VaultGroupTable.svelte';
 import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
+import { getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers.js';
+import type { MarketShareChartItem } from '../market-share-pie';
 
 export async function load({ fetch, url: { searchParams } }) {
 	const [{ vaults }, metadataIndex] = await Promise.all([
@@ -52,6 +54,16 @@ export async function load({ fetch, url: { searchParams } }) {
 		avg_apy: calculateTvlWeightedApy(eligibleVaults.filter((v) => v.denomination_slug === group.slug))
 	}));
 
+	const chartStablecoins: MarketShareChartItem[] = stablecoinGroups.map((group) => ({
+		slug: group.slug,
+		label: metadataBySlug.get(group.slug)?.symbol ?? group.name,
+		name: group.fullName ?? group.name,
+		tvl: group.tvl,
+		avgApy: group.avg_apy ?? null,
+		logoUrl: getStablecoinLogoUrl(group.slug),
+		href: `/trading-view/vaults/stablecoins/${group.slug}`
+	}));
+
 	const options = {
 		page: getNumberParam(searchParams, 'page', 0),
 		sort: getStringParam(searchParams, 'sort', sortOptions.keys),
@@ -60,6 +72,7 @@ export async function load({ fetch, url: { searchParams } }) {
 
 	return {
 		stablecoins: stablecoinGroups,
+		chartStablecoins,
 		options
 	};
 }
