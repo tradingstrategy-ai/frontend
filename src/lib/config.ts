@@ -255,7 +255,8 @@ export const vaultProtocolMetadataUrl = config((url: string) => {
 }, 'VAULT_PROTOCOL_METADATA_URL');
 
 /**
- * Stablecoin metadata base URL
+ * Stablecoin metadata base URL (same R2 bucket as vault protocol metadata,
+ * referred to as R2_VAULT_METADATA_PUBLIC_URL elsewhere)
  */
 export const stablecoinMetadataUrl = config((url: string) => {
 	if (!url) {

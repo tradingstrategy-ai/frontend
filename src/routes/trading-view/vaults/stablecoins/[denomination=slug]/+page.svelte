@@ -25,7 +25,7 @@
 
 	let title = $derived(`${denominationSymbol} top vaults | Trading Strategy`);
 	let description = $derived(
-		stablecoinMetadata?.description ?? `Top ${denominationName} DeFi vaults ranked by performance.`
+		stablecoinMetadata?.short_description ?? `Top ${denominationName} DeFi vaults ranked by performance.`
 	);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived(stablecoinMetadata?.logos.light);
@@ -65,7 +65,7 @@
 			? {
 					'@type': 'FinancialProduct',
 					name: `${stablecoinMetadata.name} (${stablecoinMetadata.symbol})`,
-					description: stablecoinMetadata.description,
+					description: stablecoinMetadata.short_description,
 					image: stablecoinMetadata.logos.light ?? undefined,
 					url: stablecoinMetadata.links.homepage ?? undefined,
 					category: stablecoinMetadata.category,
