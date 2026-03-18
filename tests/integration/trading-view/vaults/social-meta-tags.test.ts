@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+const stablecoinLogoUrlPattern = /(metadata-logo\/stablecoin\/usdc|api\/stablecoin-metadata\/usdc\/light\.png)/;
+
 test.describe('vault social meta tags', () => {
 	test.describe('vault index page', () => {
 		test.beforeEach(async ({ page }) => {
@@ -92,13 +94,13 @@ test.describe('vault social meta tags', () => {
 		});
 
 		test('has open graph image from stablecoin logo', async ({ page }) => {
-			await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /stablecoin-metadata\/usdc/);
+			await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', stablecoinLogoUrlPattern);
 		});
 
 		test('has twitter card with large image when logo available', async ({ page }) => {
 			await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
 			await expect(page.locator('meta[name="twitter:site"]')).toHaveAttribute('content', '@TradingProtocol');
-			await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', /stablecoin-metadata\/usdc/);
+			await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', stablecoinLogoUrlPattern);
 		});
 
 		test('has JSON-LD structured data with FinancialProduct about block', async ({ page }) => {
@@ -107,7 +109,7 @@ test.describe('vault social meta tags', () => {
 			expect(content).toBeTruthy();
 			const data = JSON.parse(content!);
 			expect(data['@type']).toBe('CollectionPage');
-			expect(data.image).toContain('stablecoin-metadata/usdc');
+			expect(data.image).toMatch(stablecoinLogoUrlPattern);
 			expect(data.about).toBeTruthy();
 			expect(data.about['@type']).toBe('FinancialProduct');
 			expect(data.about.name).toContain('USDC');
