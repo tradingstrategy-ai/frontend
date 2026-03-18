@@ -17,9 +17,10 @@
 		vault: VaultInfo;
 		chain: Chain;
 		stablecoinMetadata?: StablecoinMetadata | null;
+		generated_at?: string | Date | null;
 	}
 
-	let { vault, chain, stablecoinMetadata = null }: Props = $props();
+	let { vault, chain, stablecoinMetadata = null, generated_at = null }: Props = $props();
 
 	let copyWidget = $state<CopyWidget>();
 	let denominationSlug = $derived(
@@ -89,6 +90,7 @@
 		},
 		{ label: 'Last updated', value: vault.last_updated_at, type: 'relativeDate' as const },
 		{ label: 'Last updated block', value: vault.last_updated_block, type: 'number' as const },
+		{ label: 'Data refreshed at', value: generated_at, type: 'relativeDate' as const },
 
 		{ label: 'Data starts', value: vault.start_date, type: 'date' as const },
 		{
