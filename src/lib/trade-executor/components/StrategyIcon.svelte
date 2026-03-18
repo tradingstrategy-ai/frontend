@@ -15,19 +15,19 @@
 			<text x="50" y="50">outdated</text>
 		</svg>
 	{:else if strategy.connected}
-		<object type="image/webp" data={localWebpIconUrl} aria-label="Strategy icon">
-			<object type="image/svg+xml" data={localSvgIconUrl} aria-label="Strategy icon">
-				<img src={strategyIconUrl} alt="Strategy icon" />
-			</object>
-		</object>
+		<picture>
+			<source srcset={localWebpIconUrl} type="image/webp" />
+			<source srcset={localSvgIconUrl} type="image/svg+xml" />
+			<img src={strategyIconUrl} alt="Strategy icon" loading="lazy" decoding="async" />
+		</picture>
 	{:else}
-		<img src={strategyIconUrl} alt="Strategy icon" />
+		<img src={strategyIconUrl} alt="Strategy icon" loading="lazy" decoding="async" />
 	{/if}
 </div>
 
 <style>
 	.strategy-icon {
-		:is(&, img, object) {
+		:is(&, img, picture) {
 			display: grid;
 			place-items: center;
 			height: inherit;
