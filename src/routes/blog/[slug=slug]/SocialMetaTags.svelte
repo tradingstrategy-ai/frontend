@@ -6,9 +6,9 @@
   - https://cards-dev.twitter.com/validator
  -->
 <script lang="ts">
+	import { getBlogImageUrl } from '$lib/blog/images';
 	import type { BlogPostDetails } from '$lib/blog/schemas';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
-	import { ghostConfig } from '$lib/config';
 
 	interface Props {
 		post: BlogPostDetails;
@@ -18,7 +18,7 @@
 	let { post, url }: Props = $props();
 
 	let pageUrl = $derived(new URL(url.pathname, url.origin).href);
-	let imageUrl = $derived(post.feature_image.replace(ghostConfig.apiUrl, new URL('/blog/image', url).href));
+	let imageUrl = $derived(new URL(getBlogImageUrl(post.feature_image, { version: post.updated_at }), url).href);
 </script>
 
 <MetaTags

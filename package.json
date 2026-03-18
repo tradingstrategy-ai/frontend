@@ -87,6 +87,7 @@
     "micromark": "^4.0.2",
     "micromark-extension-gfm-table": "^2.1.1",
     "node-html-parser": "^7.0.2",
+    "sharp": "^0.34.5",
     "sitemap": "^8.0.2",
     "svelte-fsm": "^1.2.0",
     "svelte-headless-table": "^0.18.3",
