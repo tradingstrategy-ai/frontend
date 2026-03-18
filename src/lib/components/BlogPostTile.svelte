@@ -10,6 +10,7 @@ Display a blog post tile - e.g., on main blog roll or home page preview
  -->
 <script lang="ts">
 	import type { BlogPostIndexItem } from '$lib/blog/schemas';
+	import { getBlogImageUrl } from '$lib/blog/images';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 
 	type Props = {
@@ -17,11 +18,49 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 	};
 
 	let { post }: Props = $props();
+
+	let thumbnailSrc = $derived(
+		getBlogImageUrl(post.feature_image, {
+			width: 380,
+			height: 230,
+			quality: 42,
+			format: 'webp',
+			version: post.updated_at
+		})
+	);
+
+	let thumbnailSrcSet = $derived(
+		[
+			`${getBlogImageUrl(post.feature_image, {
+				width: 380,
+				height: 230,
+				quality: 42,
+				format: 'webp',
+				version: post.updated_at
+			})} 380w`,
+			`${getBlogImageUrl(post.feature_image, {
+				width: 760,
+				height: 460,
+				quality: 42,
+				format: 'webp',
+				version: post.updated_at
+			})} 760w`
+		].join(', ')
+	);
 </script>
 
 <article class="blog-post-tile tile a">
 	<a class="image-link" href="/blog/{post.slug}" aria-label={`Read blog post: ${post.title}`}>
-		<img src={post.feature_image} alt={post.feature_image_alt ?? 'Blog post image'} loading="lazy" decoding="async" />
+		<img
+			src={thumbnailSrc}
+			srcset={thumbnailSrcSet}
+			sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 896px) calc(100vw - 3rem), 380px"
+			alt={post.feature_image_alt ?? 'Blog post image'}
+			width="760"
+			height="460"
+			loading="lazy"
+			decoding="async"
+		/>
 	</a>
 
 	<div class="content">
