@@ -18,7 +18,7 @@
 		<picture>
 			<source srcset={localWebpIconUrl} type="image/webp" />
 			<source srcset={localSvgIconUrl} type="image/svg+xml" />
-			<img src={strategyIconUrl ?? localSvgIconUrl} alt="Strategy icon" loading="lazy" decoding="async" />
+			<img src={localSvgIconUrl} alt="Strategy icon" loading="lazy" decoding="async" />
 		</picture>
 	{:else}
 		<img src={strategyIconUrl} alt="Strategy icon" loading="lazy" decoding="async" />
