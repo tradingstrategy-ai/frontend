@@ -7,7 +7,7 @@ import { fetchVaultProtocolMetadata } from '$lib/vault-protocol/client';
 import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ params, fetch }) {
-	const { vaults } = await getCachedTopVaults(fetch);
+	const { vaults, generated_at } = await getCachedTopVaults(fetch);
 
 	const vault = vaults.find((v) => {
 		// redirect to canonical vault path if someone tries old vault id URL
@@ -35,5 +35,5 @@ export async function load({ params, fetch }) {
 		vault.normalised_denomination
 	);
 
-	return { vault, chain, protocolMetadata, stablecoinMetadata };
+	return { vault, chain, protocolMetadata, stablecoinMetadata, generated_at };
 }
