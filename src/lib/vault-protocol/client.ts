@@ -1,5 +1,6 @@
 // Client functions for fetching vault protocol metadata
 import { vaultProtocolMetadataUrl } from '$lib/config';
+import { hasSupportedProtocol, isUnsupportedProtocolSlug } from '$lib/top-vaults/helpers';
 import { type VaultProtocolMetadata, vaultProtocolMetadataSchema } from './schemas';
 
 const CLIENT_TIMEOUT = 5000;
@@ -13,10 +14,18 @@ const CLIENT_TIMEOUT = 5000;
  */
 export async function fetchVaultProtocolMetadata(
 	fetch: Fetch,
-	protocolSlug: string
+	protocolSlug: string,
+	protocolName?: string | null
 ): Promise<VaultProtocolMetadata | undefined> {
 	if (!vaultProtocolMetadataUrl) {
 		console.error('Vault protocol metadata service not configured');
+		return undefined;
+	}
+
+	if (
+		isUnsupportedProtocolSlug(protocolSlug) ||
+		(protocolName != null && !hasSupportedProtocol({ protocol: protocolName, protocol_slug: protocolSlug }))
+	) {
 		return undefined;
 	}
 

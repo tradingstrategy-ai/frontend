@@ -10,7 +10,7 @@ export async function load({ params, fetch }) {
 	const protocolVault = vaults.find((v) => v.protocol_slug === protocol);
 	if (!protocolVault) error(404, 'Vault protocol not found');
 
-	const protocolMetadata = await fetchVaultProtocolMetadata(fetch, protocol);
+	const protocolMetadata = await fetchVaultProtocolMetadata(fetch, protocol, protocolVault.protocol);
 
 	return {
 		protocolSlug: protocol,

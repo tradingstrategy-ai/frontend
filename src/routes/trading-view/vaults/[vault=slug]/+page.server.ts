@@ -24,7 +24,7 @@ export async function load({ params, fetch }) {
 	if (!chain) error(404, 'Chain not found');
 
 	const [protocolMetadata, stablecoinMetadataIndex] = await Promise.all([
-		fetchVaultProtocolMetadata(fetch, vault.protocol_slug),
+		fetchVaultProtocolMetadata(fetch, vault.protocol_slug, vault.protocol),
 		fetchStablecoinMetadataIndex(fetch)
 	]);
 	const stablecoinMetadataLookup = buildStablecoinMetadataLookup(stablecoinMetadataIndex);

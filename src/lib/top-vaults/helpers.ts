@@ -3,6 +3,7 @@ import { slimVaultKeys } from './schemas';
 import { resolve } from '$app/paths';
 import { vaultSparklinesUrl } from '$lib/config';
 import { capitalize, isNumber } from '$lib/helpers/formatters';
+import { slugify } from '$lib/helpers/slugify';
 
 /**
  * Strip a full vault object to only the fields needed for listing/summary views.
@@ -93,12 +94,23 @@ export function isBlacklisted(vault: Pick<VaultInfo, 'risk_numeric'>) {
 	return vault.risk_numeric === 999;
 }
 
-export function hasSupportedProtocol(vault: Pick<VaultInfo, 'protocol'>) {
-	return !vault.protocol.startsWith('<');
+const unsupportedProtocolNames = ['<protocol not yet identified>', '<unknown erc-7450>'] as const;
+const unsupportedProtocolSlugs = new Set(unsupportedProtocolNames.map((protocol) => slugify(protocol)));
+
+export function isUnsupportedProtocolName(protocol: string | null | undefined) {
+	return protocol == null || protocol.trim().startsWith('<');
+}
+
+export function isUnsupportedProtocolSlug(protocolSlug: string | null | undefined) {
+	return protocolSlug != null && unsupportedProtocolSlugs.has(protocolSlug);
+}
+
+export function hasSupportedProtocol(vault: Pick<VaultInfo, 'protocol'> & Partial<Pick<VaultInfo, 'protocol_slug'>>) {
+	return !isUnsupportedProtocolName(vault.protocol) && !isUnsupportedProtocolSlug(vault.protocol_slug);
 }
 
 export function getProtocolDisplayName(protocol: string | null | undefined): string {
-	if (protocol == null || protocol.startsWith('<')) return 'Unknown';
+	if (protocol == null || isUnsupportedProtocolName(protocol)) return 'Unknown';
 	return protocol;
 }
 
