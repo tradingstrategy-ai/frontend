@@ -2,13 +2,14 @@
 	import { resolve } from '$app/paths';
 	import Button from '$lib/components/Button.svelte';
 	import heroBackground from '$lib/assets/misc/hero-new.webp';
+	import heroBackgroundMobile from '$lib/assets/misc/hero-new-mobile.webp';
 	import StrategyDifferentiator from './StrategyDifferentiator.svelte';
 </script>
 
 <section
 	class="home-hero-banner"
 	data-testid="home-hero-banner"
-	style={`--hero-background-image: url(${heroBackground}); --hero-background-image-mobile: url(${heroBackground})`}
+	style={`--hero-background-image: url(${heroBackground}); --hero-background-image-mobile: url(${heroBackgroundMobile})`}
 >
 	<div class="inner ds-container">
 		<header>
