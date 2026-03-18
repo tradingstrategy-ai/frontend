@@ -21,7 +21,7 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 
 <article class="blog-post-tile tile a">
 	<a class="image-link" href="/blog/{post.slug}" aria-label={`Read blog post: ${post.title}`}>
-		<img src={post.feature_image} alt={post.feature_image_alt ?? 'Blog post image'} />
+		<img src={post.feature_image} alt={post.feature_image_alt ?? 'Blog post image'} loading="lazy" decoding="async" />
 	</a>
 
 	<div class="content">
