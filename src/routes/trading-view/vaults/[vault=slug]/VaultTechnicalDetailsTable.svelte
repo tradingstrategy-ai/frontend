@@ -146,23 +146,54 @@
 								</a>
 							{:else if row.type === 'denomination'}
 								{@const denomLogoUrl = getStablecoinLogoUrl(row.value.slug)}
-								<a class="denomination-link" href="/trading-view/vaults/stablecoins/{row.value.slug}">
-									{#if denomLogoUrl}
-										<img class="denomination-logo" src={denomLogoUrl} alt="" />
-									{/if}
-									{row.value.name}
-								</a>
 								{#if row.value.address}
-									(<a href={getExplorerUrl(chain, row.value.address)} target="_blank" rel="noreferrer">
-										<HashAddress address={row.value.address} endChars={4} />
-									</a>)
+									<Tooltip>
+										<a
+											slot="trigger"
+											class="denomination-link tooltip-hint"
+											href="/trading-view/vaults/stablecoins/{row.value.slug}"
+										>
+											{#if denomLogoUrl}
+												<img class="denomination-logo" src={denomLogoUrl} alt="" />
+											{/if}
+											{row.value.name}
+										</a>
+										<svelte:fragment slot="popup">
+											<a
+												class="tooltip-link"
+												href={getExplorerUrl(chain, row.value.address)}
+												target="_blank"
+												rel="noreferrer"
+											>
+												View on blockchain explorer: <HashAddress address={row.value.address} endChars={7} />
+											</a>
+										</svelte:fragment>
+									</Tooltip>
+								{:else}
+									<a class="denomination-link" href="/trading-view/vaults/stablecoins/{row.value.slug}">
+										{#if denomLogoUrl}
+											<img class="denomination-logo" src={denomLogoUrl} alt="" />
+										{/if}
+										{row.value.name}
+									</a>
 								{/if}
 							{:else if row.type === 'token'}
-								{row.value.name}
 								{#if row.value.address}
-									(<a href={getExplorerUrl(chain, row.value.address)} target="_blank" rel="noreferrer">
-										<HashAddress address={row.value.address} endChars={4} />
-									</a>)
+									<Tooltip>
+										<span slot="trigger" class="tooltip-hint">{row.value.name}</span>
+										<svelte:fragment slot="popup">
+											<a
+												class="tooltip-link"
+												href={getExplorerUrl(chain, row.value.address)}
+												target="_blank"
+												rel="noreferrer"
+											>
+												View on blockchain explorer: <HashAddress address={row.value.address} endChars={7} />
+											</a>
+										</svelte:fragment>
+									</Tooltip>
+								{:else}
+									{row.value.name}
 								{/if}
 							{:else if row.type === 'protocol'}
 								<a href="/trading-view/vaults/protocols/{row.value.slug}">{row.value.name}</a>
@@ -194,7 +225,7 @@
 												</Timestamp>
 											</span>
 											<svelte:fragment slot="popup">
-												Currently the vault is experiencing some issues causing the failed data reads.
+												Currently we do not have latest data on this vault, likely due to infrastructure issues.
 											</svelte:fragment>
 										</Tooltip>
 									{:else}
@@ -294,6 +325,13 @@
 		text-decoration: underline;
 		text-decoration-style: dashed;
 		cursor: help;
+	}
+
+	.tooltip-link {
+		display: block;
+		text-decoration: underline !important;
+		text-decoration-style: solid !important;
+		text-decoration-skip-ink: none;
 	}
 
 	.stale-date {
