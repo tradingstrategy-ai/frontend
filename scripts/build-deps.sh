@@ -5,8 +5,7 @@
 
 set -e
 
-# Copy fonts if the optional font submodule exists
-if [ -d deps/fonts/NeueHaasGroteskDisplay ]; then
-  cp -r deps/fonts/NeueHaasGroteskDisplay/ static/fonts/NeueHaasGroteskDisplay
-  cp -r deps/fonts/NeueHaasGroteskText/ static/fonts/NeueHaasGroteskText
+# Sync fonts if the optional font checkout exists
+if [ -d deps/fonts ]; then
+  bash scripts/setup-fonts.sh deps/fonts
 fi

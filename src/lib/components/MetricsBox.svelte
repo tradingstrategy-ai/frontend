@@ -28,7 +28,7 @@
 
 		h2 {
 			margin-bottom: 1rem;
-			font: var(--f-heading-xs-medium);
+			font: var(--f-ui-sm-bold);
 			font-size: 1rem;
 			letter-spacing: 0.06em;
 			text-transform: uppercase;

@@ -36,22 +36,22 @@
 		align-content: start;
 
 		--label-font: var(--f-ui-md-medium);
-		--value-font: var(--f-heading-lg-roman);
+		--value-font: 500 30px/40px var(--ff-ui);
 		&.lg {
-			--value-font: var(--f-heading-xl-roman);
+			--value-font: 500 38px/44px var(--ff-ui);
 		}
 		&.xl {
-			--value-font: var(--f-heading-xxl-roman);
+			--value-font: 500 44px/56px var(--ff-ui);
 		}
 
 		@media (--viewport-sm-down) {
 			--label-font: var(--f-ui-sm-medium);
-			--value-font: var(--f-heading-md-roman);
+			--value-font: 500 26px/36px var(--ff-ui);
 			&.lg {
-				--value-font: var(--f-heading-lg-roman);
+				--value-font: 500 30px/40px var(--ff-ui);
 			}
 			&.xl {
-				--value-font: var(--f-heading-xl-roman);
+				--value-font: 500 38px/44px var(--ff-ui);
 			}
 		}
 

@@ -75,7 +75,7 @@
 			}
 
 			.sm {
-				font: var(--f-heading-xs-roman);
+				font: var(--f-ui-lg-medium);
 				color: var(--c-text-extra-light);
 			}
 		}

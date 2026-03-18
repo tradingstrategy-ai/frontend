@@ -140,8 +140,8 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 
 		h3 {
 			margin: 0;
-			font: var(--f-heading-md-medium);
-			letter-spacing: var(--f-heading-md-spacing, normal);
+			font: var(--f-ui-xxl-medium);
+			letter-spacing: var(--f-ui-xxl-spacing, -0.01em);
 		}
 
 		.title-link {

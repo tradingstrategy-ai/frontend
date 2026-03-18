@@ -37,6 +37,8 @@ For more information see:
 
 <style>
 	.tooltip {
+		font-style: normal;
+
 		.trigger {
 			font-style: normal;
 			cursor: pointer;
