@@ -7,6 +7,7 @@
 	import type { VaultProtocolMetadata } from '$lib/vault-protocol/schemas';
 	import Button from '$lib/components/Button.svelte';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
+	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 	import { resolve } from '$app/paths';
 
 	interface Props {
@@ -22,7 +23,10 @@
 <MetricsBox>
 	<div class="protocol-info">
 		{#if protocolMetadata.logos.light}
-			<img src={protocolMetadata.logos.light} alt={protocolMetadata.name} class="protocol-logo" />
+			{@const protocolLogoUrl = getVaultProtocolLogoUrl(protocolMetadata.slug)}
+			{#if protocolLogoUrl}
+				<img src={protocolLogoUrl} alt={protocolMetadata.name} class="protocol-logo" />
+			{/if}
 		{/if}
 		<div class="content">
 			<h2>About {protocolMetadata.name}</h2>

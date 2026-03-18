@@ -1,4 +1,5 @@
 import { stablecoinMetadataUrl } from '$lib/config';
+import { buildMetadataLogoProxyPath, type MetadataLogoOptions } from '$lib/metadata-logo/proxy';
 import { slugify } from '$lib/helpers/slugify';
 import type { StablecoinMetadata } from './schemas';
 
@@ -114,7 +115,10 @@ export function resolveStablecoinSlug(
  *
  * Returns undefined if the stablecoin metadata URL is not configured.
  */
-export function getStablecoinLogoUrl(slug: string): string | undefined {
+export function getStablecoinLogoUrl(slug: string, options: MetadataLogoOptions = {}): string | undefined {
 	if (!stablecoinMetadataUrl) return undefined;
-	return `${stablecoinMetadataUrl}/${encodeURIComponent(slug)}/light.png`;
+	return buildMetadataLogoProxyPath('stablecoin', slug, {
+		format: 'webp',
+		...options
+	});
 }

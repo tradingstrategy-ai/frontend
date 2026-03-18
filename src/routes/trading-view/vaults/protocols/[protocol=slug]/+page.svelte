@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { TopVaults } from '$lib/top-vaults/schemas';
 	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
+	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
@@ -26,7 +27,10 @@
 	let title = $derived(`${protocolName} vault comparison`);
 	let description = $derived(protocolMetadata?.short_description ?? `Top stablecoin vaults on ${protocolName}`);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
-	let logoUrl = $derived(protocolMetadata?.logos.light);
+	let logoUrl = $derived.by(() => {
+		const logoPath = protocolMetadata?.logos.light ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined;
+		return logoPath ? new URL(logoPath, page.url.origin).href : undefined;
+	});
 </script>
 
 <MetaTags

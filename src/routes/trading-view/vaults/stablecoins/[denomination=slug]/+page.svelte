@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { TopVaults } from '$lib/top-vaults/schemas';
-	import { formatStablecoinDisplayName } from '$lib/stablecoin-metadata/helpers';
+	import { formatStablecoinDisplayName, getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers';
 	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
@@ -29,7 +29,10 @@
 		stablecoinMetadata?.short_description ?? `Top ${denominationName} DeFi vaults ranked by performance.`
 	);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
-	let logoUrl = $derived(stablecoinMetadata?.logos.light);
+	let logoUrl = $derived.by(() => {
+		const logoPath = stablecoinMetadata?.logos.light ? getStablecoinLogoUrl(stablecoinMetadata.slug) : undefined;
+		return logoPath ? new URL(logoPath, page.url.origin).href : undefined;
+	});
 	let aboutName = $derived(formatStablecoinDisplayName(stablecoinMetadata?.name, stablecoinMetadata?.symbol));
 </script>
 
@@ -68,7 +71,7 @@
 					'@type': 'FinancialProduct',
 					name: aboutName ?? stablecoinMetadata.name,
 					description: stablecoinMetadata.short_description,
-					image: stablecoinMetadata.logos.light ?? undefined,
+					image: logoUrl ?? undefined,
 					url: stablecoinMetadata.links.homepage ?? undefined,
 					category: stablecoinMetadata.category,
 					sameAs: [stablecoinMetadata.links.coingecko, stablecoinMetadata.links.defillama].filter(Boolean)

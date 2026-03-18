@@ -5,6 +5,7 @@
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import { resolve } from '$app/paths';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 
 	interface Props {
 		vault: VaultInfo;
@@ -37,7 +38,10 @@
 		<li>
 			<span class="rank">#{period1m.ranking_protocol}</span>
 			on
-			<EntitySymbol size="0.875em" logoUrl={protocolMetadata?.logos.light}>
+			<EntitySymbol
+				size="0.875em"
+				logoUrl={protocolMetadata ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined}
+			>
 				<a href={resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`)}>
 					{vault.protocol}
 				</a>
