@@ -92,25 +92,39 @@ const handleAnnouncement: Handle = async ({ event, resolve }) => {
  * on subsequent requests, allowing the browser to start fetching fonts before
  * the full response arrives from the origin.
  *
+ * The page-specific lists below come from a live mobile audit of the home page
+ * and a vault detail page. After trimming secondary Display usage, the visible
+ * above-the-fold typography on both routes is dominated by:
+ * - Neue Haas Grotesk Display 600 for the main page title
+ * - Neue Haas Grotesk Text 400 for body copy
+ * - Neue Haas Grotesk Text 500 for buttons, links, and large supporting values
+ *
+ * We intentionally do not preload Source Serif Pro, Source Code Pro, Display
+ * 400/500/700, or Text 700, because those faces are either lower priority or
+ * below the fold on these routes and can be fetched on demand instead.
+ *
  * @see https://developers.cloudflare.com/cache/advanced-configuration/early-hints/
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Link
  */
-const fontPreloadLinks = [
-	'</fonts/fonts5.css>; rel=preload; as=style',
-	'</fonts/NeueHaasGroteskDisplay/45.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
-	'</fonts/NeueHaasGroteskDisplay/55.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
-	'</fonts/NeueHaasGroteskDisplay/75.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
+const baseFontPreloadLinks = ['</fonts/fonts5.css>; rel=preload; as=style'];
+
+const prominentPageFontPreloadLinks = [
+	'</fonts/NeueHaasGroteskDisplay/65.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
 	'</fonts/NeueHaasGroteskText/55.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
-	'</fonts/NeueHaasGroteskText/65.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
-	'</fonts/NeueHaasGroteskText/75.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
-	'</fonts/SourceSerifPro/latin-400-normal.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
-	'</fonts/SourceSerifPro/latin-600-normal.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
-	'</fonts/SourceSerifPro/latin-700-normal.woff2>; rel=preload; as=font; type=font/woff2; crossorigin'
-].join(', ');
+	'</fonts/NeueHaasGroteskText/65.woff2>; rel=preload; as=font; type=font/woff2; crossorigin'
+];
+
+function getFontPreloadLinks(pathname: string): string {
+	if (pathname === '/' || /^\/trading-view\/vaults\/[^/]+$/.test(pathname)) {
+		return [...baseFontPreloadLinks, ...prominentPageFontPreloadLinks].join(', ');
+	}
+
+	return baseFontPreloadLinks.join(', ');
+}
 
 const handleFontPreload: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
-	response.headers.append('Link', fontPreloadLinks);
+	response.headers.append('Link', getFontPreloadLinks(event.url.pathname));
 	return response;
 };
 

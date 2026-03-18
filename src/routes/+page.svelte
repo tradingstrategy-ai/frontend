@@ -70,6 +70,17 @@
 		text-align: center;
 	}
 
+	.home-page :global(section > h2),
+	.home-page :global(section > header > h2) {
+		font: var(--f-ui-xxxl-medium);
+		letter-spacing: var(--f-ui-xxxl-spacing, -0.01em);
+
+		@media (--viewport-sm-down) {
+			font: var(--f-ui-xxl-medium);
+			letter-spacing: var(--f-ui-xxl-spacing, -0.01em);
+		}
+	}
+
 	/* limit to 3 posts on larger viewports (single row) */
 	@media (width >= 1140px) {
 		.home-page :global(.blog-roll > :nth-child(4)) {

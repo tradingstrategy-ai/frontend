@@ -37,13 +37,13 @@
 		h2 {
 			margin: 0;
 			flex: 1;
-			font: var(--f-heading-lg-medium);
+			font: var(--f-ui-xxxl-medium);
 			letter-spacing: 0.06em;
 			text-transform: uppercase;
 			white-space: nowrap;
 
 			@media (--viewport-sm-down) {
-				font: var(--f-heading-md-medium);
+				font: var(--f-ui-xxl-medium);
 			}
 		}
 	}
