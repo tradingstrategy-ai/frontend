@@ -1,4 +1,5 @@
 import { vaultProtocolMetadataUrl } from '$lib/config';
+import { isUnsupportedProtocolSlug } from '$lib/top-vaults/helpers';
 
 /**
  * Return the "light" version of the vault protocol logo URL for a given
@@ -12,5 +13,6 @@ import { vaultProtocolMetadataUrl } from '$lib/config';
  */
 export function getVaultProtocolLogoUrl(slug: string): string | undefined {
 	if (!vaultProtocolMetadataUrl) return undefined;
+	if (isUnsupportedProtocolSlug(slug)) return undefined;
 	return `${vaultProtocolMetadataUrl}/${slug}/light.png`;
 }

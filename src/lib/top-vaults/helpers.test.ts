@@ -3,6 +3,7 @@ import {
 	isBlacklisted,
 	hasSupportedProtocol,
 	getProtocolDisplayName,
+	isUnsupportedProtocolSlug,
 	meetsMinTvl,
 	getFormattedLockup,
 	getFormattedFeeMode,
@@ -41,6 +42,14 @@ describe('hasSupportedProtocol', () => {
 		const vault = createTestVault('Test vault', { protocol: '<protocol not yet identified>' });
 		expect(hasSupportedProtocol(vault)).toBe(false);
 	});
+
+	test('returns false for unsupported protocol slugs generated from placeholders', () => {
+		const vault = {
+			protocol: 'Yearn',
+			protocol_slug: 'unknown-erc-7450'
+		};
+		expect(hasSupportedProtocol(vault)).toBe(false);
+	});
 });
 
 describe('getProtocolDisplayName', () => {
@@ -50,6 +59,20 @@ describe('getProtocolDisplayName', () => {
 
 	test('returns the protocol name when it is supported', () => {
 		expect(getProtocolDisplayName('Yearn')).toBe('Yearn');
+	});
+});
+
+describe('isUnsupportedProtocolSlug', () => {
+	test('matches the protocol not yet identified placeholder slug', () => {
+		expect(isUnsupportedProtocolSlug('protocol-not-yet-identified')).toBe(true);
+	});
+
+	test('matches the unknown ERC-7450 placeholder slug', () => {
+		expect(isUnsupportedProtocolSlug('unknown-erc-7450')).toBe(true);
+	});
+
+	test('ignores supported protocol slugs', () => {
+		expect(isUnsupportedProtocolSlug('yearn')).toBe(false);
 	});
 });
 
