@@ -38,6 +38,10 @@ const config = {
 
 		env: {
 			publicPrefix: 'TS_PUBLIC_'
+		},
+
+		router: {
+			resolution: 'server'
 		}
 	},
 

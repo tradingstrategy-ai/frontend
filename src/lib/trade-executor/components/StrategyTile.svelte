@@ -10,7 +10,7 @@
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import StrategyIcon from 'trade-executor/components/StrategyIcon.svelte';
 	import StrategyError, { shouldDisplayError, adminOnlyError } from 'trade-executor/components/StrategyError.svelte';
-	import ChartThumbnail from './ChartThumbnail.svelte';
+	import LazyChartThumbnail from './LazyChartThumbnail.svelte';
 	import StrategyDataSummary from './StrategyDataSummary.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
@@ -99,7 +99,7 @@
 		</div>
 
 		<a class="chart targetable-above" {href}>
-			<ChartThumbnail data={chartData} dateRange={chartDateRange} directionMode={strategy.tileChartDirection} />
+			<LazyChartThumbnail data={chartData} dateRange={chartDateRange} directionMode={strategy.tileChartDirection} />
 		</a>
 	</div>
 
