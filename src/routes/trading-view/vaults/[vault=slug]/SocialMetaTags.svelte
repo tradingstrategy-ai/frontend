@@ -4,6 +4,7 @@
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { getVaultSparklineUrl } from '$lib/top-vaults/helpers';
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
+	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 	import type { VaultProtocolMetadata } from '$lib/vault-protocol/schemas';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 
@@ -33,6 +34,10 @@
 
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let imageUrl = $derived(getVaultSparklineUrl(vault, 'png') ?? '');
+	let protocolLogoUrl = $derived.by(() => {
+		const logoPath = protocolMetadata?.logos.light ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined;
+		return logoPath ? new URL(logoPath, page.url.origin).href : undefined;
+	});
 
 	let additionalProperty = $derived.by(() => {
 		const props: Array<Record<string, unknown>> = [];
@@ -100,8 +105,8 @@
 		if (protocolMetadata?.links.homepage) {
 			org.url = protocolMetadata.links.homepage;
 		}
-		if (protocolMetadata?.logos.light) {
-			org.logo = protocolMetadata.logos.light;
+		if (protocolLogoUrl) {
+			org.logo = protocolLogoUrl;
 		}
 		return org;
 	});

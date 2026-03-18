@@ -13,6 +13,8 @@
 	import ProtocolDescription from '$lib/vault-protocol/ProtocolDescription.svelte';
 	import StablecoinDetailHeader from '$lib/stablecoin-metadata/StablecoinDetailHeader.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import { getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers.js';
+	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 
 	interface Props {
 		chain?: Chain;
@@ -66,10 +68,16 @@
 						<img src={getLogoUrl('blockchain', chain.slug)} alt={chain.name} />
 					{/if}
 					{#if protocolMetadata?.logos.light}
-						<img src={protocolMetadata.logos.light} alt={protocolMetadata.name} />
+						{@const protocolLogoUrl = getVaultProtocolLogoUrl(protocolMetadata.slug)}
+						{#if protocolLogoUrl}
+							<img src={protocolLogoUrl} alt={protocolMetadata.name} />
+						{/if}
 					{/if}
 					{#if stablecoinMetadata?.logos.light}
-						<img src={stablecoinMetadata.logos.light} alt={stablecoinMetadata.name} />
+						{@const stablecoinLogoUrl = getStablecoinLogoUrl(stablecoinMetadata.slug)}
+						{#if stablecoinLogoUrl}
+							<img src={stablecoinLogoUrl} alt={stablecoinMetadata.name} />
+						{/if}
 					{/if}
 					<span>{pageTitle}</span>
 					<DataBadge class="badge" status="beta">Beta</DataBadge>

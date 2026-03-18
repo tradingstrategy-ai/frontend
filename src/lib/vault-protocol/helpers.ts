@@ -1,4 +1,5 @@
 import { vaultProtocolMetadataUrl } from '$lib/config';
+import { buildMetadataLogoProxyPath, type MetadataLogoOptions } from '$lib/metadata-logo/proxy';
 import { isUnsupportedProtocolSlug } from '$lib/top-vaults/helpers';
 
 /**
@@ -11,8 +12,11 @@ import { isUnsupportedProtocolSlug } from '$lib/top-vaults/helpers';
  *
  * Returns undefined if the vault protocol metadata URL is not configured.
  */
-export function getVaultProtocolLogoUrl(slug: string): string | undefined {
+export function getVaultProtocolLogoUrl(slug: string, options: MetadataLogoOptions = {}): string | undefined {
 	if (!vaultProtocolMetadataUrl) return undefined;
 	if (isUnsupportedProtocolSlug(slug)) return undefined;
-	return `${vaultProtocolMetadataUrl}/${slug}/light.png`;
+	return buildMetadataLogoProxyPath('protocol', slug, {
+		format: 'webp',
+		...options
+	});
 }
