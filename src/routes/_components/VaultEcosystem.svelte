@@ -41,7 +41,7 @@ chart component only when needed.
 	}
 </script>
 
-<Section padding="md" --section-background="var(--c-background-accent-1)">
+<Section padding="md" --section-background="var(--c-background-accent-1)" class="vault-ecosystem-section">
 	<h2>See where capital earns most</h2>
 	<div class="description ds-3">
 		<span>Compare yields, TVL and momentum across DeFi ecosystem</span>
@@ -107,5 +107,25 @@ chart component only when needed.
 
 	.cta {
 		margin-top: 1rem;
+	}
+
+	/* Reclaim horizontal space for the chart on mobile */
+	@media (--viewport-sm-down) {
+		:global(.vault-ecosystem-section.section) {
+			padding-inline: 5px;
+		}
+
+		:global(.section.vault-ecosystem-section .echarts-ecosystem-chart.glass-frame) {
+			padding: 0;
+			border-radius: 0;
+			background: none;
+			backdrop-filter: none;
+			box-shadow: none;
+
+			&::before,
+			&::after {
+				display: none;
+			}
+		}
 	}
 </style>
