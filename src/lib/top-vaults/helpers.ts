@@ -80,6 +80,33 @@ export const riskFilterOptions = [
 	{ label: 'Negligible', optionLabel: 'Negligible only', minValue: 0, maxValue: 1 }
 ];
 
+export interface DdFilterOption {
+	key: string;
+	label: string;
+	optionLabel: string;
+	/** Maximum allowed |max_drawdown| as a decimal (e.g., 0.01 = 1%). Infinity = no filter */
+	value: number;
+}
+
+export const ddFilterOptions: DdFilterOption[] = [
+	{ key: '0.1', label: '0.1%', optionLabel: '0.1% or less', value: 0.001 },
+	{ key: '1', label: '1%', optionLabel: '1% or less', value: 0.01 },
+	{ key: '3', label: '3%', optionLabel: '3% or less', value: 0.03 },
+	{ key: '5', label: '5%', optionLabel: '5% or less', value: 0.05 },
+	{ key: '10', label: '10%', optionLabel: '10% or less', value: 0.1 },
+	{ key: '20', label: '20%', optionLabel: '20% or less', value: 0.2 },
+	{ key: 'any', label: 'Any', optionLabel: 'Any', value: Infinity }
+];
+
+/**
+ * Extract lifetime max drawdown from a vault's period_results.
+ *
+ * @returns a non-positive number (e.g. -0.05 for -5%) or null if unavailable
+ */
+export function getLifetimeMaxDrawdown(vault: Pick<VaultInfo, 'period_results'>): number | null {
+	return vault.period_results?.find((p) => p.period.toLowerCase() === 'lifetime')?.max_drawdown ?? null;
+}
+
 /**
  * Resolve path to vault details page for a given vault
  */

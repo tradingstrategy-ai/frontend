@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add max drawdown filter and column, combine lifetime return columns into single two-row display on vault listings (2026-03-20)
 - Remove extra padding and glass-frame decoration from front page chart on mobile to maximise chart readability (2026-03-20)
 - Add name column to stablecoin listing table, visible on desktop only (2026-03-17)
 - Improve stablecoin pages: update meta tags, whitelist env var in docker-compose, fix chart area fill (2026-03-17)
