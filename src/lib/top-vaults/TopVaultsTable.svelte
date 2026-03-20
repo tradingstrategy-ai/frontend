@@ -39,7 +39,9 @@
 		ageFilterOptions,
 		calculateTotalTvl,
 		calculateTvlWeightedApy,
+		ddFilterOptions,
 		getFormattedLockup,
+		getLifetimeMaxDrawdown,
 		isBlacklisted,
 		isGoodVaultStatus,
 		rankVaultsBy,
@@ -112,13 +114,17 @@
 			defaultDirection: 'desc',
 			compareFn: rankVaultsBy(['three_months_cagr', 'three_months_cagr_net'])
 		},
-		lifetime_return_ann: { defaultDirection: 'desc', compareFn: rankVaultsBy(['cagr', 'cagr_net']) },
-		lifetime_return_abs: {
-			defaultDirection: 'desc',
-			compareFn: rankVaultsBy(['lifetime_return', 'lifetime_return_net'])
-		},
+		lifetime_return: { defaultDirection: 'desc', compareFn: rankVaultsBy(['cagr', 'cagr_net']) },
 		three_months_sharpe: { defaultDirection: 'desc', compareFn: rankVaultsBy(['three_months_sharpe']) },
 		three_months_volatility: { defaultDirection: 'asc', compareFn: rankVaultsBy(['three_months_volatility']) },
+		max_dd: {
+			defaultDirection: 'desc',
+			compareFn: (a: VaultInfo, b: VaultInfo) => {
+				const aVal = getLifetimeMaxDrawdown(a) ?? -Infinity;
+				const bVal = getLifetimeMaxDrawdown(b) ?? -Infinity;
+				return aVal - bVal;
+			}
+		},
 		denomination: { defaultDirection: 'asc', compareFn: stringCompare((v) => v.denomination) },
 		tvl: { defaultDirection: 'desc', compareFn: rankVaultsBy(['current_nav', 'peak_nav']) },
 		age: { defaultDirection: 'desc', compareFn: rankVaultsBy(['years']) },
@@ -136,7 +142,8 @@
 		sort: { type: 'string', defaultValue: 'one_month_return_ann', options: Object.keys(sortColumnMap) },
 		direction: { type: 'string', defaultValue: 'desc', options: ['asc', 'desc'] },
 		q: { type: 'string', defaultValue: '' },
-		closed: { type: 'number', defaultValue: 0 }
+		closed: { type: 'number', defaultValue: 0 },
+		dd: { type: 'string', defaultValue: 'any', options: ddFilterOptions.map((o) => o.key) }
 	} as const satisfies ParamSchema;
 
 	let urlState = $derived(deserialiseSearchParams(page.url.searchParams, searchParamsSchema));
@@ -161,6 +168,10 @@
 	let selectedRiskIndex = $derived(urlState.risk);
 	let selectedRisk = $derived(riskFilterOptions[selectedRiskIndex]);
 	let riskDropdownOpen = $state(false);
+
+	let selectedDdKey = $derived(urlState.dd);
+	let selectedDdOption = $derived(ddFilterOptions.find((o) => o.key === selectedDdKey)!);
+	let ddDropdownOpen = $state(false);
 
 	let hideClosed = $derived(urlState.closed === 1);
 
@@ -271,6 +282,12 @@
 					// Hide unknown-risk vaults unless filter is Dangerous or Blacklisted
 					if (!(selectedRisk.minValue === 0 && selectedRisk.maxValue >= 50)) return false;
 				}
+			}
+
+			// Max drawdown filter (dropdown-driven)
+			if (showFilters && selectedDdOption.value < Infinity) {
+				const dd = getLifetimeMaxDrawdown(v);
+				if (dd == null || Math.abs(dd) > selectedDdOption.value) return false;
 			}
 
 			// Hide closed filter (checkbox-driven)
@@ -531,6 +548,39 @@
 
 				<div class="filter-group">
 					<Tooltip>
+						<span class="filter-label filter-label-hint" slot="trigger">Max drawdown</span>
+						<svelte:fragment slot="popup">
+							Filter vaults by lifetime maximum drawdown.
+							<a href={resolve('/glossary/maximum-drawdown')} target="_blank">Learn more about maximum drawdown.</a>
+						</svelte:fragment>
+					</Tooltip>
+					<div class="tvl-dropdown" use:clickOutside={() => (ddDropdownOpen = false)}>
+						<button class="tvl-trigger" onclick={() => (ddDropdownOpen = !ddDropdownOpen)}>
+							{selectedDdOption.label}
+							<IconChevronDown />
+						</button>
+						{#if ddDropdownOpen}
+							<ul class="tvl-options">
+								{#each ddFilterOptions as option (option.key)}
+									<li>
+										<button
+											class:active={selectedDdKey === option.key}
+											onclick={() => {
+												updateSearchParams({ dd: option.key });
+												ddDropdownOpen = false;
+											}}
+										>
+											{option.optionLabel}
+										</button>
+									</li>
+								{/each}
+							</ul>
+						{/if}
+					</div>
+				</div>
+
+				<div class="filter-group">
+					<Tooltip>
 						<label class="checkbox-filter" slot="trigger">
 							<span class="filter-label filter-label-hint">Hide closed</span>
 							<input
@@ -599,16 +649,10 @@
 						rankVaultsBy(['three_months_cagr', 'three_months_cagr_net'])
 					)}
 					{@render sortColHeader(
-						'Lifetime return ann.',
-						'lifetime_return_ann',
+						'Lifetime return<br/>(ann./abs.)',
+						'lifetime_return',
 						'desc',
 						rankVaultsBy(['cagr', 'cagr_net'])
-					)}
-					{@render sortColHeader(
-						'Lifetime return abs.',
-						'lifetime_return_abs',
-						'desc',
-						rankVaultsBy(['lifetime_return', 'lifetime_return_net'])
 					)}
 					{@render sortColHeader('3m Sharpe', 'three_months_sharpe', 'desc', rankVaultsBy(['three_months_sharpe']))}
 					{@render sortColHeader(
@@ -617,6 +661,7 @@
 						'asc',
 						rankVaultsBy(['three_months_volatility'])
 					)}
+					{@render sortColHeader('Max DD', 'max_dd', 'desc', sortColumnMap['max_dd'].compareFn)}
 					{@render sortColHeader(
 						'Denom&shy;ination',
 						'denomination',
@@ -650,10 +695,10 @@
 							<td class="vault"></td>
 							<td class="one_month_return_ann right"></td>
 							<td class="three_months_return_ann right"></td>
-							<td class="lifetime_return_ann right"></td>
-							<td class="lifetime_return_abs right"></td>
+							<td class="lifetime_return right"></td>
 							<td class="three_months_sharpe right"></td>
 							<td class="three_months_volatility right"></td>
+							<td class="max_dd right"></td>
 							<td class="denomination center"></td>
 							<td class="tvl right"></td>
 							<td class="age right"></td>
@@ -693,17 +738,49 @@
 						<td class="three_months_return_ann right net-gross">
 							{@render netGrossCell(vault.three_months_cagr_net, vault.three_months_cagr, formatReturn)}
 						</td>
-						<td class="lifetime_return_ann right net-gross">
-							{@render netGrossCell(vault.cagr_net, vault.cagr, formatReturn)}
-						</td>
-						<td class="lifetime_return_abs right net-gross">
-							{@render netGrossCell(vault.lifetime_return_net, vault.lifetime_return, formatReturn)}
+						<td class="lifetime_return right">
+							{#if (vault.cagr_net ?? vault.cagr) != null || (vault.lifetime_return_net ?? vault.lifetime_return) != null}
+								{@const annVal = vault.cagr_net ?? vault.cagr}
+								{@const absVal = vault.lifetime_return_net ?? vault.lifetime_return}
+								{@const missingFees = vault.cagr_net == null && vault.cagr != null}
+								<Tooltip>
+									<div class="multiline multival" slot="trigger">
+										<span class="primary">{annVal != null ? formatReturn(annVal) : '---'}{missingFees ? '*' : ''}</span>
+										<span class="secondary"
+											>{absVal != null ? formatReturn(absVal) : '---'}{missingFees ? '*' : ''}</span
+										>
+									</div>
+									<svelte:fragment slot="popup">
+										<p><strong>{vault.name}</strong></p>
+										<p>Lifetime annualised returns: {annVal != null ? formatReturn(annVal) : '---'}</p>
+										<p>Lifetime absolute returns: {absVal != null ? formatReturn(absVal) : '---'}</p>
+										<p>Age: {vault.years != null ? formatNumber(vault.years, 1) : '---'} years</p>
+										{#if vault.lifetime_start}
+											<p>Data starts at: {new Date(vault.lifetime_start).toISOString().slice(0, 10)}</p>
+										{/if}
+										{#if vault.lifetime_end}
+											<p>Data ends at: {new Date(vault.lifetime_end).toISOString().slice(0, 10)}</p>
+										{/if}
+										{#if missingFees}
+											<p>We may lack fee information for this vault.</p>
+										{/if}
+									</svelte:fragment>
+								</Tooltip>
+							{:else}
+								<div class="multiline multival">
+									<span class="primary">---</span>
+									<span class="secondary">---</span>
+								</div>
+							{/if}
 						</td>
 						<td class="three_months_sharpe right">
 							{formatNumber(vault.three_months_sharpe, 1)}
 						</td>
 						<td class="three_months_volatility right">
 							{formatVolatility(vault.three_months_volatility)}
+						</td>
+						<td class="max_dd right">
+							{getLifetimeMaxDrawdown(vault) != null ? formatPercent(getLifetimeMaxDrawdown(vault)) : notFilledMarker}
 						</td>
 						<td class="denomination center">
 							{formatValue(vault.denomination)}
@@ -1036,7 +1113,7 @@
 				text-decoration: line-through;
 			}
 
-			td:global(:has(.tooltip)) {
+			:is(td, th):global(:has(.tooltip)) {
 				position: relative;
 			}
 
@@ -1107,11 +1184,23 @@
 				--icon-left: 8ch;
 			}
 
-			:is(.one_month_return_ann, .three_months_return_ann, .lifetime_return_ann, .lifetime_return_abs) {
+			:is(.one_month_return_ann, .three_months_return_ann) {
 				width: 6.5%;
 			}
 
+			.lifetime_return {
+				width: 7%;
+
+				:global(.popup) {
+					width: max-content;
+				}
+			}
+
 			:is(.three_months_sharpe, .three_months_volatility) {
+				width: 4.5%;
+			}
+
+			.max_dd {
 				width: 4.5%;
 			}
 
