@@ -127,11 +127,11 @@ For detailed information on specific topics, see:
 
 ## Pull requests
 
-- Never push directly to a master, and open a pull request when asked.
-- Do not include test plan in a pull request description
+- Pull request description must have sections Why (the rational of change), Lessons learnt (memory for future agents) and Summary (what was changed). No test plan or verification section.
+- Only push changes to remote when asked, never update pull requess automatically.
+- Never push directly to a master if not told explicitly
 - If the user ask to open a pull request as feature then start the PR title with "feat:" prefix and also add one line about the feature into `CHANGELOG.md`
 - Each changelog entry should follow the date of the PR in YYYY-MM-DD format. Example: Something was updated (2026-01-01).
 - Before opening or updating a pull request, format the code
 - When merging pull request, squash and merge commits and use the PR description as the commit message
-- After merging checkout the master
-- If the CI jobs are not triggered after a push that if there is a merge conflict or if the PR is already closed
+- If continuous integration (CI) tests fail on your PR, and they are marked flaky, run tests locally to repeat the issue if it is real flakiness or regression
