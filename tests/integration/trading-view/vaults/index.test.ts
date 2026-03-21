@@ -12,8 +12,8 @@ test.describe('vault index page', () => {
 
 	test('displays vault count in table meta', async ({ page }) => {
 		const meta = page.getByTestId('top-vaults-meta');
-		// Should show 250 vaults (those above TVL threshold)
-		await expect(meta).toContainText('250 vaults');
+		// Should show 253 vaults (those above TVL threshold)
+		await expect(meta).toContainText('253 vaults');
 	});
 
 	test('renders initial batch of 150 rows', async ({ page }) => {
@@ -50,9 +50,13 @@ test.describe('vault index page', () => {
 		await sentinel.scrollIntoViewIfNeeded();
 		await expect(rows).toHaveCount(200);
 
-		// scroll again - loads final 50
+		// scroll again - loads another 50
 		await sentinel.scrollIntoViewIfNeeded();
 		await expect(rows).toHaveCount(250);
+
+		// scroll a third time - loads the final 3
+		await sentinel.scrollIntoViewIfNeeded();
+		await expect(rows).toHaveCount(253);
 
 		// all rows loaded - no more sentinel
 		await expect(sentinel).not.toBeVisible();

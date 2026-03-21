@@ -7,6 +7,7 @@
     "build": "vite build",
     "build:test": "vite build --mode test",
     "preview": "vite preview",
+    "benchmark:historical-tvl-chain": "node scripts/benchmark-historical-tvl-chain.mjs",
     "prepare": "svelte-kit sync || echo ''",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
