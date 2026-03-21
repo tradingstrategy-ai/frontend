@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add historical vault TVL charts by stablecoin and protocol, and refactor shared historical chart UI/layout (2026-03-21)
 - Add max drawdown filter and column, combine lifetime return columns into single two-row display on vault listings (2026-03-20)
 - Remove extra padding and glass-frame decoration from front page chart on mobile to maximise chart readability (2026-03-20)
 - Add name column to stablecoin listing table, visible on desktop only (2026-03-17)

@@ -2,18 +2,16 @@ import { promisify } from 'node:util';
 import { brotliCompress, constants } from 'node:zlib';
 import {
 	HISTORICAL_TVL_CACHE_TTL_SECONDS,
-	buildHistoricalTvlByChainPayload,
-	type HistoricalTvlByChainPayload
+	buildHistoricalTvlByStablecoinPayload,
+	type HistoricalTvlByStablecoinPayload
 } from '$lib/echarts/historical-tvl';
 import { getHistoricalWeeklyVaultRows, getMockWeeklyVaultRows } from '$lib/echarts/historical-tvl-server';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 
-// Keep this endpoint aligned with `scripts/benchmark-historical-tvl-chain.mjs`
-// so page behaviour and local performance measurements stay comparable.
 const compress = promisify(brotliCompress);
 
 const CACHE_TTL_MS = HISTORICAL_TVL_CACHE_TTL_SECONDS * 1000;
-const CACHE_VERSION = 'historical-tvl-chain-daily-average-v1';
+const CACHE_VERSION = 'historical-tvl-stablecoin-daily-average-v1';
 
 let cache: { json: string; br: Uint8Array; expires: number; version: string } | null = null;
 
@@ -26,7 +24,7 @@ async function getCachedChartData(fetch: Fetch) {
 	const weeklyRows =
 		import.meta.env.MODE === 'test' ? getMockWeeklyVaultRows(topVaults.vaults) : await getHistoricalWeeklyVaultRows();
 
-	const payload: HistoricalTvlByChainPayload = buildHistoricalTvlByChainPayload(
+	const payload: HistoricalTvlByStablecoinPayload = buildHistoricalTvlByStablecoinPayload(
 		weeklyRows,
 		topVaults.vaults,
 		performance.now() - startedAt

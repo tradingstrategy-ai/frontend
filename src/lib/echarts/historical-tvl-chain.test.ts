@@ -1,10 +1,12 @@
 import { describe, expect, test } from 'vitest';
+import { HISTORICAL_TVL_CHAIN_OUTLIER_THRESHOLD } from './historical-tvl-chain';
 import {
-	HISTORICAL_TVL_CHAIN_OUTLIER_THRESHOLD,
+	buildHistoricalTvlByProtocolPayload,
+	buildHistoricalTvlByStablecoinPayload,
 	buildHistoricalTvlByChainPayload,
 	collapseVaultSnapshotsToWeeklyRows,
 	forwardFillWeeklyRows
-} from './historical-tvl-chain';
+} from './historical-tvl';
 
 describe('collapseVaultSnapshotsToWeeklyRows', () => {
 	test('keeps the latest snapshot for each vault-week bucket', () => {
@@ -141,6 +143,135 @@ describe('buildHistoricalTvlByChainPayload', () => {
 			excludedBlacklistedVaults: 1,
 			excludedOutlierPoints: 1
 		});
+	});
+});
+
+describe('buildHistoricalTvlByStablecoinPayload', () => {
+	test('groups vault TVL by stablecoin slug and label', () => {
+		const payload = buildHistoricalTvlByStablecoinPayload(
+			[
+				{ id: 'usdc-a', chainId: 1, week: '2026-03-16', tvl: 100 },
+				{ id: 'usdc-b', chainId: 8453, week: '2026-03-16', tvl: 80 },
+				{ id: 'dai-a', chainId: 1, week: '2026-03-16', tvl: 50 }
+			],
+			[
+				{
+					id: 'usdc-a',
+					risk_numeric: 20,
+					chain_id: 1,
+					chain: 'Ethereum',
+					denomination: 'USDC',
+					normalised_denomination: 'USD Coin',
+					denomination_slug: 'usdc',
+					protocol: 'Aave',
+					protocol_slug: 'aave'
+				},
+				{
+					id: 'usdc-b',
+					risk_numeric: 20,
+					chain_id: 8453,
+					chain: 'Base',
+					denomination: 'USDC.e',
+					normalised_denomination: 'USD Coin',
+					denomination_slug: 'usdc',
+					protocol: 'Morpho',
+					protocol_slug: 'morpho'
+				},
+				{
+					id: 'dai-a',
+					risk_numeric: 20,
+					chain_id: 1,
+					chain: 'Ethereum',
+					denomination: 'DAI',
+					normalised_denomination: 'Dai',
+					denomination_slug: 'dai',
+					protocol: 'Maker',
+					protocol_slug: 'maker'
+				}
+			],
+			175.6,
+			new Date('2026-03-21T12:00:00Z')
+		);
+
+		expect(payload.generatedAt).toBe('2026-03-21T12:00:00.000Z');
+		expect(payload.durationMs).toBe(176);
+		expect(payload.series).toEqual([
+			{
+				key: 'usdc',
+				label: 'USD Coin',
+				stablecoinSlug: 'usdc',
+				values: [180]
+			},
+			{
+				key: 'dai',
+				label: 'Dai',
+				stablecoinSlug: 'dai',
+				values: [50]
+			}
+		]);
+	});
+});
+
+describe('buildHistoricalTvlByProtocolPayload', () => {
+	test('groups vault TVL by protocol slug with protocol display names', () => {
+		const payload = buildHistoricalTvlByProtocolPayload(
+			[
+				{ id: 'aave-a', chainId: 1, week: '2026-03-16', tvl: 100 },
+				{ id: 'aave-b', chainId: 8453, week: '2026-03-16', tvl: 90 },
+				{ id: 'yearn-a', chainId: 1, week: '2026-03-16', tvl: 70 }
+			],
+			[
+				{
+					id: 'aave-a',
+					risk_numeric: 20,
+					chain_id: 1,
+					chain: 'Ethereum',
+					denomination: 'USDC',
+					normalised_denomination: 'USD Coin',
+					denomination_slug: 'usdc',
+					protocol: 'Aave',
+					protocol_slug: 'aave'
+				},
+				{
+					id: 'aave-b',
+					risk_numeric: 20,
+					chain_id: 8453,
+					chain: 'Base',
+					denomination: 'USDC',
+					normalised_denomination: 'USD Coin',
+					denomination_slug: 'usdc',
+					protocol: 'Aave',
+					protocol_slug: 'aave'
+				},
+				{
+					id: 'yearn-a',
+					risk_numeric: 20,
+					chain_id: 1,
+					chain: 'Ethereum',
+					denomination: 'DAI',
+					normalised_denomination: 'Dai',
+					denomination_slug: 'dai',
+					protocol: 'Yearn',
+					protocol_slug: 'yearn'
+				}
+			],
+			88
+		);
+
+		expect(payload.series).toEqual([
+			{
+				key: 'aave',
+				label: 'Aave',
+				protocolSlug: 'aave',
+				values: [190]
+			},
+			{
+				key: 'yearn',
+				label: 'Yearn',
+				protocolSlug: 'yearn',
+				values: [70]
+			}
+		]);
 	});
 });
 
