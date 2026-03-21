@@ -15,10 +15,10 @@ test.describe('vault yield / chain scatter plot page', () => {
 		const trigger = nav.locator('button', { hasText: 'Charts' });
 		await expect(trigger).toHaveClass(/active/);
 
-		// Scatter plot selector links (risk, protocol, chain, current/peak TVL)
+		// Scatter plot selector links
 		const selector = page.locator('.scatter-plot-selector');
 		await expect(selector).toBeVisible();
-		await expect(selector.locator('a')).toHaveCount(5);
+		await expect(selector.locator('a')).toHaveCount(6);
 
 		// Chart renders with Plotly
 		const plotWrapper = page.getByTestId('vault-scatter-plot');

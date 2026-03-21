@@ -8,6 +8,7 @@ import {
 	type HistoricalWeeklyVaultRow
 } from '$lib/echarts/historical-tvl-chain';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
+import type { VaultInfo } from '$lib/top-vaults/schemas';
 
 // Keep this endpoint aligned with `scripts/benchmark-historical-tvl-chain.mjs`
 // so page behaviour and local performance measurements stay comparable.
@@ -18,6 +19,23 @@ const parquetFile = 'data/cleaned-vault-prices-1h.parquet';
 const CACHE_VERSION = 'historical-tvl-chain-daily-average-v1';
 
 let cache: { json: string; br: Uint8Array; expires: number; version: string } | null = null;
+
+function getMockWeeklyVaultRows(vaults: VaultInfo[]): HistoricalWeeklyVaultRow[] {
+	const weeks = ['2025-12-08', '2025-12-15', '2025-12-22', '2025-12-29', '2026-01-05'];
+
+	return vaults.flatMap((vault, index) => {
+		const current = Math.max(vault.current_nav ?? 0, 25_000 + index * 1_000);
+		const peak = Math.max(vault.peak_nav ?? 0, current * 1.18, current);
+		const values = [peak * 0.62, peak * 0.74, peak * 0.88, peak, current];
+
+		return weeks.map((week, weekIndex) => ({
+			id: vault.id,
+			chainId: vault.chain_id,
+			week,
+			tvl: values[weekIndex]
+		}));
+	});
+}
 
 async function getWeeklyVaultRows(): Promise<HistoricalWeeklyVaultRow[]> {
 	const connection = await DuckDBConnection.create();
@@ -72,7 +90,9 @@ async function getCachedChartData(fetch: Fetch) {
 	if (cache && cache.version === CACHE_VERSION && now < cache.expires) return cache;
 
 	const startedAt = performance.now();
-	const [topVaults, weeklyRows] = await Promise.all([getCachedTopVaults(fetch), getWeeklyVaultRows()]);
+	const topVaults = await getCachedTopVaults(fetch);
+	const weeklyRows =
+		import.meta.env.MODE === 'test' ? getMockWeeklyVaultRows(topVaults.vaults) : await getWeeklyVaultRows();
 
 	const payload: HistoricalTvlByChainPayload = buildHistoricalTvlByChainPayload(
 		weeklyRows,
