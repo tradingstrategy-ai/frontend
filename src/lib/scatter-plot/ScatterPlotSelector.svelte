@@ -17,7 +17,9 @@ Selector linking between vault scatter plot chart pages.
 		{ href: '/trading-view/vaults/yield-protocol', label: 'Yield / Protocol' },
 		{ href: '/trading-view/vaults/yield-chain', label: 'Yield / Chain' },
 		{ href: '/trading-view/vaults/current-peak-tvl', label: 'Current / Peak TVL' },
-		{ href: '/trading-view/vaults/historical-tvl-chain', label: 'Historical TVL by chain' }
+		{ href: '/trading-view/vaults/historical-tvl-chain', label: 'Historical TVL by chain' },
+		{ href: '/trading-view/vaults/historical-tvl-stablecoin', label: 'Historical TVL by stablecoin' },
+		{ href: '/trading-view/vaults/historical-tvl-protocol', label: 'Historical TVL by vault protocol' }
 	] as const;
 
 	function isActive(href: string): boolean {
@@ -35,9 +37,12 @@ Selector linking between vault scatter plot chart pages.
 <style>
 	.scatter-plot-selector {
 		display: flex;
+		flex-wrap: wrap;
 		justify-content: center;
-		gap: 0.5em;
-		padding-top: 1rem;
+		align-items: center;
+		column-gap: 0.75rem;
+		row-gap: 0.35rem;
+		padding-top: 1.75rem;
 		font: var(--f-ui-md-medium);
 		color: var(--c-text-extra-light);
 
@@ -56,16 +61,6 @@ Selector linking between vault scatter plot chart pages.
 		color: var(--c-text-extra-light);
 		text-decoration: none;
 		transition: color var(--time-sm);
-
-		&:not(:first-of-type)::before {
-			content: '|';
-			color: var(--c-text-ultra-light);
-			padding-right: 0.5rem;
-
-			@media (--viewport-sm-down) {
-				content: none;
-			}
-		}
 
 		&:hover {
 			color: var(--c-text);
