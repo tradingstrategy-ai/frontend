@@ -127,10 +127,53 @@ const yamlStrategyVault = createTestVault('Trading Strategy ICHIv3 LS 2', {
 	]
 });
 
+// Real Parquet-backed vault IDs used by the historical TVL by chain endpoint tests.
+// These IDs need to match the local Parquet dataset so blacklist filtering can be
+// exercised against real server-side aggregation.
+const parquetMatchedVaults = [
+	createTestVault('Savings infiniFi USD', {
+		address: '0x36585e7ae4b8a422135618a2c113b8b516067e7a',
+		chain: 'arbitrum',
+		protocol: 'Trading Strategy',
+		current_nav: 3_200_000,
+		peak_nav: 3_800_000,
+		one_month_cagr: 0.16,
+		three_months_cagr: 0.18
+	}),
+	createTestVault('Savings USDS', {
+		address: '0xa3931d71877c0e7a3148cb7eb4463524fec27fbd',
+		chain: 'ethereum',
+		protocol: 'Trading Strategy',
+		current_nav: 2_400_000,
+		peak_nav: 2_700_000,
+		one_month_cagr: 0.09,
+		three_months_cagr: 0.11
+	}),
+	createTestVault('Peapods Interest Bearing USDC - 42', {
+		address: '0x4b5c90dc6bc08a10a24487726e614e9d148362e1',
+		chain: 'base',
+		protocol: 'Trading Strategy',
+		current_nav: 1_900_000,
+		peak_nav: 2_100_000,
+		one_month_cagr: 0.13,
+		three_months_cagr: 0.15
+	}),
+	createTestVault('atvPTmax', {
+		address: '0xd24e4a98b5fd90ff21a9cc5e2c1254de8084cd81',
+		chain: 'ethereum',
+		protocol: 'Trading Strategy',
+		current_nav: 8_000_000,
+		peak_nav: 9_500_000,
+		one_month_cagr: 0.2,
+		three_months_cagr: 0.22,
+		risk: 'Blacklisted'
+	})
+];
+
 export default defineMock({
 	url: '/api/top-vaults/vaults.json',
 	body: {
 		generated_at: new Date().toISOString(),
-		vaults: [yamlStrategyVault, ...belowTvl, ...aboveTvl]
+		vaults: [yamlStrategyVault, ...parquetMatchedVaults, ...belowTvl, ...aboveTvl]
 	}
 });
