@@ -12,6 +12,7 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 	import { formatRate, formatUsd } from '$lib/echarts/cumulative-tvl-apy';
 	import { type EChartsStatic, loadECharts } from '$lib/echarts/runtime';
 	import type { StablecoinChainHeatmapPayload } from '$lib/echarts/stablecoin-chain-heatmap';
+	import { buildChartWatermarkGraphic } from '$lib/echarts/watermark';
 	import ScatterPlotShell from '$lib/scatter-plot/ScatterPlotShell.svelte';
 	import { chartFontFamily } from '$lib/scatter-plot/helpers';
 	import { onMount, tick } from 'svelte';
@@ -112,7 +113,7 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 	}
 
 	function buildHeatmapData() {
-		if (!data) return [];
+		if (!data) return { points: [] as HeatmapPoint[] };
 
 		const points: HeatmapPoint[] = [];
 		const chainIndex = new Map(data.chains.map((chain, index) => [chain.key, index]));
@@ -184,6 +185,11 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 				borderWidth: 1,
 				containLabel: false
 			},
+			graphic: buildChartWatermarkGraphic({
+				corner: 'top-right',
+				grid: { top: 8, right: 8, left: 8 },
+				isMobile
+			}),
 			tooltip: {
 				trigger: 'item',
 				appendToBody: true,
@@ -376,7 +382,9 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 					{/each}
 				</div>
 
-				<div bind:this={chartContainer} class="chart-canvas" style={`height: ${chartHeight}px;`}></div>
+				<div class="chart-frame" style={`height: ${chartHeight}px;`}>
+					<div bind:this={chartContainer} class="chart-canvas" style={`height: ${chartHeight}px;`}></div>
+				</div>
 
 				<div class="chain-axis-spacer"></div>
 				<div class="chain-axis" aria-label="Chains">
@@ -432,8 +440,16 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 <style>
 	.chart-canvas {
 		width: 100%;
+		height: 100%;
 		position: relative;
-		z-index: 0;
+		z-index: 1;
+	}
+
+	.chart-frame {
+		position: relative;
+		width: 100%;
+		height: var(--chart-height);
+		isolation: isolate;
 	}
 
 	.heatmap-layout {

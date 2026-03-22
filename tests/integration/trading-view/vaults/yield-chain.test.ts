@@ -23,6 +23,7 @@ test.describe('vault yield / chain scatter plot page', () => {
 		// Chart renders with Plotly
 		const plotWrapper = page.getByTestId('vault-scatter-plot');
 		await expect(plotWrapper).toBeVisible();
+		await expect(plotWrapper.getByTestId('chart-watermark')).toBeVisible();
 		const plotlyChart = plotWrapper.locator('.js-plotly-plot');
 		await expect(plotlyChart).toBeVisible({ timeout: 15000 });
 

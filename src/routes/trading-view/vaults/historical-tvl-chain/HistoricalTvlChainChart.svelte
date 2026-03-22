@@ -10,7 +10,7 @@ Wrapper for the reusable historical TVL chart configured for chain groupings.
 -->
 <script lang="ts">
 	import HistoricalTvlGroupChart from '$lib/echarts/HistoricalTvlGroupChart.svelte';
-	import type { HistoricalTvlByChainPayload, HistoricalTvlSeriesBase } from '$lib/echarts/historical-tvl';
+	import type { HistoricalTvlByChainPayload, HistoricalTvlByChainSeries } from '$lib/echarts/historical-tvl';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { getChain } from '$lib/helpers/chain';
 
@@ -22,8 +22,7 @@ Wrapper for the reusable historical TVL chart configured for chain groupings.
 
 	let { data, dataLoading = false, error = null }: Props = $props();
 
-	function getSeriesLogoUrl(series: HistoricalTvlSeriesBase) {
-		if (!('chainIds' in series)) return undefined;
+	function getSeriesLogoUrl(series: HistoricalTvlByChainSeries) {
 		const chainSlug = series.chainIds.map((chainId) => getChain(chainId)?.slug).find(Boolean);
 		return getLogoUrl('blockchain', chainSlug);
 	}
@@ -37,6 +36,7 @@ Wrapper for the reusable historical TVL chart configured for chain groupings.
 		searchParamKey="chains"
 		selectorLabel="Chain"
 		selectorLabelPlural="chains"
+		watermarkCorner="top-left"
 		{getSeriesLogoUrl}
 	/>
 	{#if data && !dataLoading && !error}

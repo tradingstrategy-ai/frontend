@@ -10,7 +10,7 @@ Wrapper for the reusable historical TVL chart configured for stablecoin grouping
 -->
 <script lang="ts">
 	import HistoricalTvlGroupChart from '$lib/echarts/HistoricalTvlGroupChart.svelte';
-	import type { HistoricalTvlByStablecoinPayload, HistoricalTvlSeriesBase } from '$lib/echarts/historical-tvl';
+	import type { HistoricalTvlByStablecoinPayload, HistoricalTvlByStablecoinSeries } from '$lib/echarts/historical-tvl';
 	import { getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers';
 
 	interface Props {
@@ -21,8 +21,8 @@ Wrapper for the reusable historical TVL chart configured for stablecoin grouping
 
 	let { data, dataLoading = false, error = null }: Props = $props();
 
-	function getSeriesLogoUrl(series: HistoricalTvlSeriesBase) {
-		return 'stablecoinSlug' in series ? getStablecoinLogoUrl(series.stablecoinSlug) : undefined;
+	function getSeriesLogoUrl(series: HistoricalTvlByStablecoinSeries) {
+		return getStablecoinLogoUrl(series.stablecoinSlug);
 	}
 </script>
 
@@ -34,6 +34,7 @@ Wrapper for the reusable historical TVL chart configured for stablecoin grouping
 		searchParamKey="stablecoins"
 		selectorLabel="Stablecoin"
 		selectorLabelPlural="stablecoins"
+		watermarkCorner="top-left"
 		{getSeriesLogoUrl}
 	/>
 </div>

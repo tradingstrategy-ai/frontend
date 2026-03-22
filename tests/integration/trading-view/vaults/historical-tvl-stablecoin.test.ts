@@ -1,4 +1,18 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+
+async function expectNativeHistoricalWatermark(page: Page) {
+	await expect
+		.poll(async () =>
+			page.evaluate(() => {
+				const echartsApi = window.echarts;
+				const container = document.querySelector('.chart-canvas');
+				const graphic = container ? echartsApi?.getInstanceByDom(container)?.getOption?.().graphic : undefined;
+				const elements = Array.isArray(graphic) ? (graphic[0]?.elements ?? []) : [];
+				return elements.some((element) => element.id === 'chart-watermark');
+			})
+		)
+		.toBe(true);
+}
 
 test.describe('historical vault TVL by stablecoin chart data endpoint', () => {
 	test('returns cached JSON payload with aligned series data', async ({ request }) => {
@@ -33,6 +47,7 @@ test.describe('historical vault TVL by stablecoin page', () => {
 		const plotWrapper = page.getByTestId('vault-scatter-plot');
 		await expect(plotWrapper).toBeVisible();
 		await expect(plotWrapper.locator('.chart-canvas canvas')).toBeVisible({ timeout: 15000 });
+		await expectNativeHistoricalWatermark(page);
 	});
 
 	test('has vault listings navigation with active Charts dropdown', async ({ page }) => {

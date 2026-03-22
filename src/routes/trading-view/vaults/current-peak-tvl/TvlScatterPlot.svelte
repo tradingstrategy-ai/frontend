@@ -349,7 +349,7 @@ Plotly.js is loaded dynamically from CDN.
 	});
 </script>
 
-<ScatterPlotShell bind:chartContainer {loading} {error} bind:minTvl>
+<ScatterPlotShell bind:chartContainer {loading} {error} bind:minTvl watermarkCorner="top-left">
 	{#snippet extraControls()}
 		<label>
 			Group by:

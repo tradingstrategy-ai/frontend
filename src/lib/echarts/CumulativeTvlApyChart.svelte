@@ -8,6 +8,7 @@ reuse the same rendering core.
 	import { goto } from '$app/navigation';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { chartFontFamily } from '$lib/scatter-plot/helpers';
+	import { buildChartWatermarkGraphic } from './watermark';
 	import {
 		BENCHMARK_HIT_SYMBOL_SIZE,
 		BENCHMARK_LINE_OPACITY,
@@ -67,6 +68,9 @@ reuse the same rendering core.
 		variant?: 'glass' | 'plain';
 		maxWidth?: string;
 		className?: string;
+		watermarkCorner?: 'top-left' | 'top-right' | null;
+		watermarkInset?: 'default' | 'relaxed';
+		watermarkOpacity?: number;
 	}
 
 	let {
@@ -98,7 +102,10 @@ reuse the same rendering core.
 		enhanceGlassLines = false,
 		variant = 'glass',
 		maxWidth = '960px',
-		className = ''
+		className = '',
+		watermarkCorner = null,
+		watermarkInset = 'default',
+		watermarkOpacity = 0.07
 	}: Props = $props();
 
 	const axisFontStack = chartFontFamily;
@@ -110,6 +117,11 @@ reuse the same rendering core.
 	let loading = $state(true);
 	let error = $state<string | null>(null);
 	let runtimeReady = $state(false);
+	let lastViewportMode = $state<'mobile' | 'desktop' | null>(null);
+
+	function getViewportMode() {
+		return window.innerWidth <= 768 ? 'mobile' : 'desktop';
+	}
 
 	function buildVaultTooltipMeta(point: VaultChartPoint): string {
 		const chainLogo = showTooltipLogos ? renderTooltipLogo(point.chainLogoUrl, `${point.chain} logo`) : '';
@@ -234,7 +246,9 @@ reuse the same rendering core.
 		existingInstance?.dispose();
 		destroyChart();
 
-		const isMobile = window.innerWidth <= 768;
+		const viewportMode = getViewportMode();
+		const isMobile = viewportMode === 'mobile';
+		lastViewportMode = viewportMode;
 		const isSinglePoint = points.length === 1;
 		const grid = isMobile ? gridMobile : gridDesktop;
 		const axisNameVisible = !isMobile || showAxisNamesOnMobile;
@@ -383,6 +397,13 @@ reuse the same rendering core.
 				borderWidth: 1,
 				containLabel: true
 			},
+			graphic: buildChartWatermarkGraphic({
+				corner: watermarkCorner,
+				grid,
+				isMobile,
+				inset: watermarkInset,
+				opacity: watermarkOpacity
+			}),
 			tooltip: {
 				trigger: 'item',
 				appendToBody: true,
@@ -473,7 +494,12 @@ reuse the same rendering core.
 	onMount(() => {
 		let disposed = false;
 
-		const handleWindowResize = () => chartInstance?.resize();
+		const handleWindowResize = () => {
+			chartInstance?.resize();
+			if (getViewportMode() !== lastViewportMode) {
+				void renderChart();
+			}
+		};
 		window.addEventListener('resize', handleWindowResize);
 
 		(async () => {
@@ -509,6 +535,9 @@ reuse the same rendering core.
 		treasuryRate;
 		returnsAxisLabel;
 		returnsTooltipLabel;
+		watermarkCorner;
+		watermarkInset;
+		watermarkOpacity;
 		if (!runtimeReady || !echartsApi || !chartContainer) return;
 
 		let cancelled = false;

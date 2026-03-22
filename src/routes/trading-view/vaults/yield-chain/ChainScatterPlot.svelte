@@ -207,7 +207,7 @@ coloured by blockchain. Plotly.js is loaded dynamically from CDN.
 	});
 </script>
 
-<ScatterPlotShell bind:chartContainer {loading} {error} bind:minTvl>
+<ScatterPlotShell bind:chartContainer {loading} {error} bind:minTvl watermarkCorner="top-right">
 	{#snippet extraControls()}
 		<label class="checkbox-label">
 			<input type="checkbox" checked={logAxes} onchange={() => (logAxes = !logAxes)} />

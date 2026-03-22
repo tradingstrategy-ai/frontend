@@ -8,6 +8,7 @@ test.describe('vault yield / protocol scatter plot page', () => {
 	test('renders the scatter plot chart', async ({ page }) => {
 		const plotWrapper = page.getByTestId('vault-scatter-plot');
 		await expect(plotWrapper).toBeVisible();
+		await expect(plotWrapper.getByTestId('chart-watermark')).toBeVisible();
 
 		const plotlyChart = plotWrapper.locator('.js-plotly-plot');
 		await expect(plotlyChart).toBeVisible({ timeout: 15000 });
