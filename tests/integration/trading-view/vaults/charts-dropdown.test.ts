@@ -35,11 +35,11 @@ test.describe('charts dropdown in vault listings navigation', () => {
 			await expect(trigger).toBeVisible();
 		});
 
-		test('clicking Charts opens dropdown with 8 chart links', async ({ page }) => {
+		test('clicking Charts opens dropdown with 9 chart links', async ({ page }) => {
 			const { menu } = await openChartsMenu(page);
 
 			const items = menu.locator('[role="menuitem"]');
-			await expect(items).toHaveCount(8);
+			await expect(items).toHaveCount(9);
 
 			await expect(menu).toContainText('Yield / Risk');
 			await expect(menu).toContainText('Yield / Protocol');
@@ -49,6 +49,22 @@ test.describe('charts dropdown in vault listings navigation', () => {
 			await expect(menu).toContainText('Historical TVL by chain');
 			await expect(menu).toContainText('Historical TVL by stablecoin');
 			await expect(menu).toContainText('Historical TVL by vault protocol');
+			await expect(menu).toContainText('Stablecoin / Chain heatmap');
+		});
+
+		test('open Charts menu stays above the vault table content', async ({ page }) => {
+			const { menu } = await openChartsMenu(page);
+			const lastItem = menu.locator('[role="menuitem"]').last();
+
+			const menuOwnsSamplePoint = await lastItem.evaluate((node) => {
+				const rect = node.getBoundingClientRect();
+				const sampleX = rect.left + rect.width / 2;
+				const sampleY = rect.top + rect.height / 2;
+				const topElement = document.elementFromPoint(sampleX, sampleY);
+				return !!topElement && node.contains(topElement);
+			});
+
+			expect(menuOwnsSamplePoint).toBe(true);
 		});
 
 		test('clicking a chart link navigates to the chart page', async ({ page }) => {

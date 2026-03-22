@@ -18,7 +18,7 @@ test.describe('vault current/peak TVL scatter plot page', () => {
 		// Scatter plot selector links
 		const selector = page.locator('.scatter-plot-selector');
 		await expect(selector).toBeVisible();
-		await expect(selector.locator('a')).toHaveCount(8);
+		await expect(selector.locator('a')).toHaveCount(9);
 
 		// Chart renders with Plotly
 		const plotWrapper = page.getByTestId('vault-scatter-plot');

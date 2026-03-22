@@ -1,6 +1,6 @@
 <!--
 @component
-Shared shell for vault scatter plots providing TVL filter controls,
+Shared shell for vault scatter plots providing optional TVL filter controls,
 loading/error states, and a Plotly chart container.
 
 - Exposes `chartContainer` as a bindable prop for Plotly rendering
@@ -24,8 +24,9 @@ loading/error states, and a Plotly chart container.
 		chartContainer?: HTMLDivElement;
 		loading: boolean;
 		error: string | null;
-		minTvl: number;
+		minTvl?: number;
 		onMinTvlChange?: (value: number) => void;
+		showMinTvlControl?: boolean;
 		className?: string;
 		extraControls?: Snippet;
 		chartContent?: Snippet;
@@ -38,6 +39,7 @@ loading/error states, and a Plotly chart container.
 		error,
 		minTvl = $bindable(),
 		onMinTvlChange,
+		showMinTvlControl = true,
 		className = '',
 		extraControls,
 		chartContent,
@@ -55,17 +57,21 @@ loading/error states, and a Plotly chart container.
 </script>
 
 <div class={`scatter-plot-wrapper ${className}`} data-testid="vault-scatter-plot">
-	<div class="controls">
-		<label>
-			Min TVL:
-			<select value={minTvl} onchange={handleMinTvlChange}>
-				{#each tvlOptions as { value, label } (value)}
-					<option {value} selected={value === minTvl}>{label}</option>
-				{/each}
-			</select>
-		</label>
-		{@render extraControls?.()}
-	</div>
+	{#if showMinTvlControl || extraControls}
+		<div class="controls">
+			{#if showMinTvlControl}
+				<label>
+					Min TVL:
+					<select value={minTvl} onchange={handleMinTvlChange}>
+						{#each tvlOptions as { value, label } (value)}
+							<option {value} selected={value === minTvl}>{label}</option>
+						{/each}
+					</select>
+				</label>
+			{/if}
+			{@render extraControls?.()}
+		</div>
+	{/if}
 
 	<div class="chart-surface">
 		{#if loading}

@@ -19,7 +19,8 @@ Selector linking between vault scatter plot chart pages.
 		{ href: '/trading-view/vaults/current-peak-tvl', label: 'Current / Peak TVL' },
 		{ href: '/trading-view/vaults/historical-tvl-chain', label: 'Historical TVL by chain' },
 		{ href: '/trading-view/vaults/historical-tvl-stablecoin', label: 'Historical TVL by stablecoin' },
-		{ href: '/trading-view/vaults/historical-tvl-protocol', label: 'Historical TVL by vault protocol' }
+		{ href: '/trading-view/vaults/historical-tvl-protocol', label: 'Historical TVL by vault protocol' },
+		{ href: '/trading-view/vaults/stablecoin-chain-heatmap', label: 'Stablecoin / Chain heatmap' }
 	] as const;
 
 	function isActive(href: string): boolean {

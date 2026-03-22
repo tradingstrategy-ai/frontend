@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add stablecoin / chain heatmap chart with weighted return colouring and dropdown layering fixes (2026-03-22)
 - Add historical vault TVL charts by stablecoin and protocol, and refactor shared historical chart UI/layout (2026-03-21)
 - Add max drawdown filter and column, combine lifetime return columns into single two-row display on vault listings (2026-03-20)
 - Remove extra padding and glass-frame decoration from front page chart on mobile to maximise chart readability (2026-03-20)
