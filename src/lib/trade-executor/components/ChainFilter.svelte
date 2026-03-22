@@ -1,13 +1,13 @@
 <script module lang="ts">
 	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
-	import { type Chain, chains, getChain } from '$lib/helpers/chain';
+	import { type Chain, chains, getChain, getChainsBySlug } from '$lib/helpers/chain';
 
 	export type ChainOption = Chain['slug'] | 'all';
 
 	export function getChainOptions(strategies: StrategyInfo[]): ChainOption[] {
-		const chainSlugs = chains
-			.filter((c) => strategies.some((s) => matchesChainOption(s, c.slug))) // comment to break lines
-			.map((c) => c.slug);
+		const chainSlugs = [
+			...new Set(chains.filter((c) => strategies.some((s) => matchesChainOption(s, c.slug))).map((c) => c.slug))
+		];
 
 		return ['all', ...chainSlugs];
 	}
@@ -23,8 +23,8 @@
 
 	export function matchesChainOption(strategy: StrategyInfo, chainOption?: ChainOption) {
 		if (chainOption === 'all') return true;
-		const chain = getChain(chainOption);
-		return strategy.on_chain_data?.chain_id === chain?.id;
+		const matchingChains = getChainsBySlug(chainOption ?? '');
+		return matchingChains.some((c) => strategy.on_chain_data?.chain_id === c.id);
 	}
 </script>
 
