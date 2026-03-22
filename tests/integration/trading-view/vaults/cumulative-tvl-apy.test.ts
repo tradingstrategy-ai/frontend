@@ -35,7 +35,7 @@ test.describe('cumulative TVL/APY chart page', () => {
 	test('displays scatter plot selector with all chart links', async ({ page }) => {
 		const selector = page.locator('.scatter-plot-selector');
 		await expect(selector).toBeVisible();
-		await expect(selector.locator('a')).toHaveCount(8);
+		await expect(selector.locator('a')).toHaveCount(9);
 	});
 
 	test('page has no JavaScript errors', async ({ page }) => {

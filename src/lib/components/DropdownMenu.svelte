@@ -20,7 +20,7 @@ A click-triggered dropdown menu for grouping navigation links.
 ```
 -->
 <script lang="ts">
-	import { normalizeProps, useMachine } from '@zag-js/svelte';
+	import { normalizeProps, portal, useMachine } from '@zag-js/svelte';
 	import * as menu from '@zag-js/menu';
 	import IconChevronDown from '~icons/local/chevron-down';
 
@@ -47,6 +47,25 @@ A click-triggered dropdown menu for grouping navigation links.
 	const id = $props.id();
 	const service = useMachine(menu.machine, () => ({ id }));
 	const api = $derived(menu.connect(service, normalizeProps));
+	const positionerZIndex = '2400';
+
+	function setPositionerLayer(node: HTMLElement) {
+		const applyLayer = () => node.style.setProperty('--z-index', positionerZIndex);
+		applyLayer();
+		const frameId = requestAnimationFrame(applyLayer);
+		const observer = new MutationObserver(applyLayer);
+		observer.observe(node, { attributes: true, attributeFilter: ['style'] });
+
+		return {
+			update() {
+				applyLayer();
+			},
+			destroy() {
+				cancelAnimationFrame(frameId);
+				observer.disconnect();
+			}
+		};
+	}
 
 	let anyActive = $derived(items.some((item) => isActive?.(item.href)));
 </script>
@@ -57,23 +76,30 @@ A click-triggered dropdown menu for grouping navigation links.
 		<IconChevronDown />
 	</button>
 
-	<div {...api.getPositionerProps()}>
-		<div {...api.getContentProps()} class="panel">
-			{#each items as item (item.href)}
-				{@const href = resolveHref ? resolveHref(item.href) : item.href}
-				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-				<a {...api.getItemProps({ value: item.href })} {href} class:active={isActive?.(item.href)}>
-					{item.label}
-				</a>
-			{/each}
+	{#if api.open}
+		<div use:portal use:setPositionerLayer {...api.getPositionerProps()}>
+			<div {...api.getContentProps()} class="panel">
+				{#each items as item (item.href)}
+					{@const href = resolveHref ? resolveHref(item.href) : item.href}
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+					<a {...api.getItemProps({ value: item.href })} {href} class:active={isActive?.(item.href)}>
+						{item.label}
+					</a>
+				{/each}
+			</div>
 		</div>
-	</div>
+	{/if}
 </div>
 
 <style>
 	.dropdown-menu {
 		position: relative;
 		display: inline-flex;
+		z-index: var(--dropdown-menu-z-index, auto);
+	}
+
+	.dropdown-menu:has(.trigger[aria-expanded='true']) {
+		z-index: var(--dropdown-menu-open-z-index, 200);
 	}
 
 	.trigger {
@@ -107,7 +133,7 @@ A click-triggered dropdown menu for grouping navigation links.
 	}
 
 	[data-part='positioner'] {
-		z-index: 100;
+		--z-index: var(--dropdown-menu-panel-z-index, 2000);
 	}
 
 	.panel {
