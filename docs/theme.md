@@ -344,6 +344,57 @@ Use these defaults when there is no stronger local pattern:
 - Standard body copy: `var(--f-ui-md-roman)`
 - Small labels: `var(--f-ui-sm-medium)`
 
+## Strategy logos
+
+Strategy-specific avatar assets live in `static/avatars/`.
+
+The current runtime lookup is in `src/lib/trade-executor/components/StrategyIcon.svelte`:
+
+- `/avatars/{strategy.id}.webp`
+- `/avatars/{strategy.id}.svg`
+
+The component renders them through a `<picture>` element and prefers the `.webp` source first, with the `.svg` as the fallback. For custom strategy artwork, add both files using the same strategy ID.
+
+### Visual pattern
+
+The current custom strategy SVGs are:
+
+- `static/avatars/ichi-hyperliquid.svg`
+- `static/avatars/gmx-ai.svg`
+- `static/avatars/hyper-ai.svg`
+
+These follow a shared pattern:
+
+- square `1080x1080` SVG canvas
+- circular avatar composition inside the canvas
+- dark warm-neutral background, usually close to the app's dark surfaces
+- large brand or chain mark in the background
+- smaller symbolic badge in the lower-right area for the strategy concept
+- subtle shadow, soft highlight ring, and simple vector geometry that stays legible at small sizes
+
+When choosing colours, use the Trading Strategy brand colours directly for logo artwork instead of semantic CSS variables:
+
+- brand green: `#22B554`
+- brand red: `#F62F2F`
+
+### Generation workflow
+
+Author the source artwork as SVG first, then rasterise it to WebP for the primary `<picture>` source.
+
+Commands used in this repo:
+
+```bash
+rsvg-convert -w 1080 -h 1080 static/avatars/my-strategy.svg -o /tmp/my-strategy.png
+cwebp -q 92 /tmp/my-strategy.png -o static/avatars/my-strategy.webp
+```
+
+Practical guidance:
+
+- keep the SVG as the source of truth
+- regenerate the `.webp` whenever the SVG changes
+- verify the result at small avatar sizes, not just full resolution
+- include `<title>` and `<desc>` in custom SVGs for accessibility and future editing context
+
 ## Notes
 
 - `typography.css` contains deprecated aliases but still provides actively used tokens.
