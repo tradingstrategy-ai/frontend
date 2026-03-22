@@ -53,9 +53,28 @@ test.describe('stablecoin / chain heatmap page', () => {
 		const firstChain = plotWrapper.locator('.chain-axis a').first();
 		await expect(firstStablecoin).toBeVisible();
 		await expect(firstChain).toBeVisible();
-		await expect(firstStablecoin).toHaveAttribute('title', /Current vault TVL:/);
-		await expect(firstChain).toHaveAttribute('title', /Current vault TVL:/);
 		await expect(plotWrapper.getByText('Min TVL:')).toHaveCount(0);
+	});
+
+	test('axis labels link to stablecoin and chain vault pages', async ({ page }) => {
+		const stablecoinLabel = page.locator('.stablecoin-axis a').first();
+		const chainLabel = page.locator('.chain-axis a').first();
+
+		await expect(stablecoinLabel).toHaveAttribute('href', /\/trading-view\/vaults\/stablecoins\//);
+		await expect(chainLabel).toHaveAttribute('href', /\/trading-view\/vaults\/chains\//);
+
+		const stablecoinHref = await stablecoinLabel.getAttribute('href');
+		expect(stablecoinHref).toBeTruthy();
+		await stablecoinLabel.click();
+		await expect(page).toHaveURL(new RegExp(`${stablecoinHref?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`));
+
+		await page.goto('/trading-view/vaults/stablecoin-chain-heatmap');
+
+		const reloadedChainLabel = page.locator('.chain-axis a').first();
+		const chainHref = await reloadedChainLabel.getAttribute('href');
+		expect(chainHref).toBeTruthy();
+		await reloadedChainLabel.click();
+		await expect(page).toHaveURL(new RegExp(`${chainHref?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`));
 	});
 
 	test('has vault listings navigation with active Charts dropdown', async ({ page }) => {

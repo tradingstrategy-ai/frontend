@@ -21,7 +21,7 @@ ECharts heatmap page showing current vault TVL by stablecoin and chain.
 
 	const title = 'Stablecoin / Chain TVL heatmap';
 	const description =
-		'Compare the top 10 stablecoins and blockchains by current vault TVL. Cell colours show TVL-weighted annualised 1M return.';
+		'Compare the top 10 stablecoins and blockchains by current vault TVL, showing TVL-weighted average one month returns.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 
 	$effect(() => {

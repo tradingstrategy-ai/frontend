@@ -33,6 +33,7 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 	let runtimeReady = $state(false);
 	let chartError = $state<string | null>(null);
 	let viewportWidth = $state<number>(1440);
+	let activeAxisTooltipId = $state<string | null>(null);
 
 	const axisFontStack = chartFontFamily;
 	const tooltipFontSize = 14;
@@ -62,9 +63,31 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 		return monthlyReturn == null ? 'n/a' : formatRate(monthlyReturn * 100, 1);
 	}
 
-	function buildAxisTooltip(kind: 'chain' | 'stablecoin', label: string, totalTvl: number) {
-		const target = kind === 'chain' ? 'chain' : 'stablecoin';
-		return `${label}. Current vault TVL: ${formatUsd(totalTvl)}. Open ${target} page.`;
+	function buildAxisTooltipValue(totalTvl: number) {
+		return formatUsd(totalTvl);
+	}
+
+	function getAxisTooltipId(kind: 'chain' | 'stablecoin', key: string) {
+		return `${kind}-tooltip-${key}`;
+	}
+
+	function showAxisTooltip(id: string) {
+		activeAxisTooltipId = id;
+	}
+
+	function hideAxisTooltip(id: string) {
+		if (activeAxisTooltipId === id) {
+			activeAxisTooltipId = null;
+		}
+	}
+
+	function getAxisTooltipStyle(kind: 'chain' | 'stablecoin', tooltipId: string) {
+		const active = activeAxisTooltipId === tooltipId;
+		if (kind === 'stablecoin') {
+			return `opacity: ${active ? 1 : 0}; transform: translate(0, 50%);`;
+		}
+
+		return `opacity: ${active ? 1 : 0}; transform: translate(-50%, calc(-100% - ${active ? '0.55rem' : '0.2rem'}));`;
 	}
 
 	function clampColourReturn(value: number | null) {
@@ -223,7 +246,7 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 						formatter: (params: { data?: HeatmapPoint }) => formatAnnualisedMonthlyReturn(params.data?.[5] ?? null),
 						color: '#f8fafc',
 						fontFamily: axisFontStack,
-						fontSize: isMobile ? 10.35 : 12.65,
+						fontSize: isMobile ? 10.35 : 15.8,
 						fontWeight: 700,
 						textBorderColor: 'rgba(15, 23, 42, 0.92)',
 						textBorderWidth: 2
@@ -322,15 +345,33 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 			>
 				<div class="stablecoin-axis" aria-label="Stablecoins">
 					{#each data?.stablecoins ?? [] as stablecoin (stablecoin.key)}
+						{@const tooltipId = getAxisTooltipId('stablecoin', stablecoin.key)}
 						<a
 							class="axis-label stablecoin-label"
 							href={stablecoin.href}
-							title={buildAxisTooltip('stablecoin', stablecoin.label, stablecoin.totalTvl)}
+							aria-describedby={tooltipId}
+							data-tooltip-active={activeAxisTooltipId === tooltipId ? 'true' : 'false'}
+							onmouseenter={() => showAxisTooltip(tooltipId)}
+							onmouseleave={() => hideAxisTooltip(tooltipId)}
+							onfocus={() => showAxisTooltip(tooltipId)}
+							onblur={() => hideAxisTooltip(tooltipId)}
 						>
 							{#if stablecoin.logoUrl}
 								<img class="axis-logo" src={stablecoin.logoUrl} alt="" loading="lazy" />
 							{/if}
 							<span>{stablecoin.label}</span>
+							<span
+								id={tooltipId}
+								class="axis-tooltip"
+								role="tooltip"
+								style={getAxisTooltipStyle('stablecoin', tooltipId)}
+							>
+								<span class="axis-tooltip-title">{stablecoin.tooltipLabel}</span>
+								<span class="axis-tooltip-metric-line">
+									TVL:&nbsp;<span class="axis-tooltip-metric-value">{buildAxisTooltipValue(stablecoin.totalTvl)}</span>
+								</span>
+								<span class="axis-tooltip-cta">Click here to view more.</span>
+							</span>
 						</a>
 					{/each}
 				</div>
@@ -340,15 +381,28 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 				<div class="chain-axis-spacer"></div>
 				<div class="chain-axis" aria-label="Chains">
 					{#each data?.chains ?? [] as chain (chain.key)}
+						{@const tooltipId = getAxisTooltipId('chain', chain.key)}
 						<a
 							class="axis-label chain-label"
 							href={chain.href}
-							title={buildAxisTooltip('chain', chain.label, chain.totalTvl)}
+							aria-describedby={tooltipId}
+							data-tooltip-active={activeAxisTooltipId === tooltipId ? 'true' : 'false'}
+							onmouseenter={() => showAxisTooltip(tooltipId)}
+							onmouseleave={() => hideAxisTooltip(tooltipId)}
+							onfocus={() => showAxisTooltip(tooltipId)}
+							onblur={() => hideAxisTooltip(tooltipId)}
 						>
 							{#if chain.logoUrl}
 								<img class="axis-logo" src={chain.logoUrl} alt="" loading="lazy" />
 							{/if}
 							<span>{chain.label}</span>
+							<span id={tooltipId} class="axis-tooltip" role="tooltip" style={getAxisTooltipStyle('chain', tooltipId)}>
+								<span class="axis-tooltip-title">{chain.label}</span>
+								<span class="axis-tooltip-metric-line">
+									TVL:&nbsp;<span class="axis-tooltip-metric-value">{buildAxisTooltipValue(chain.totalTvl)}</span>
+								</span>
+								<span class="axis-tooltip-cta">Click here to view more.</span>
+							</span>
 						</a>
 					{/each}
 				</div>
@@ -357,19 +411,21 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 	{/snippet}
 
 	{#snippet belowChart()}
-		{#if showLegend}
-			<div class="colour-legend" aria-hidden="true">
-				<span>-10% ann. 1M return</span>
-				<span class="colour-legend-bar"></span>
-				<span>10% ann. 1M return</span>
-			</div>
-		{/if}
+		<div class="heatmap-footer">
+			{#if showLegend}
+				<div class="colour-legend" aria-hidden="true">
+					<span>-10% ann. 1M return</span>
+					<span class="colour-legend-bar"></span>
+					<span>10% ann. 1M return</span>
+				</div>
+			{/if}
 
-		{#if data && !dataLoading && !effectiveError && hasCells}
-			<p class="chart-summary">
-				Current visible heatmap covers {formatUsd(totalTvl)} across {totalVaultCount} non-blacklisted vaults.
-			</p>
-		{/if}
+			{#if data && !dataLoading && !effectiveError && hasCells}
+				<p class="chart-summary">
+					The heatmap covers {formatUsd(totalTvl)} TVL across {totalVaultCount} stablecoin vaults.
+				</p>
+			{/if}
+		</div>
 	{/snippet}
 </ScatterPlotShell>
 
@@ -383,13 +439,15 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 	.heatmap-layout {
 		display: grid;
 		grid-template-columns: clamp(6rem, 9vw, 8rem) minmax(0, 1fr);
-		grid-template-rows: minmax(0, var(--chart-height)) auto;
+		grid-template-rows: minmax(0, var(--chart-height)) minmax(6rem, auto);
 		column-gap: 0.9rem;
-		row-gap: 0.7rem;
+		row-gap: 1rem;
 		align-items: stretch;
 	}
 
 	.stablecoin-axis {
+		position: relative;
+		z-index: 2;
 		display: grid;
 		grid-template-rows: repeat(var(--stablecoin-count), minmax(0, 1fr));
 		align-items: stretch;
@@ -397,11 +455,15 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 	}
 
 	.chain-axis {
+		position: relative;
+		z-index: 2;
 		display: grid;
 		grid-template-columns: repeat(var(--chain-count), minmax(0, 1fr));
 		align-items: start;
 		gap: 0.35rem;
-		padding-top: 0.15rem;
+		min-height: 6rem;
+		padding-top: 0.2rem;
+		padding-bottom: 0.35rem;
 	}
 
 	.chain-axis-spacer {
@@ -409,6 +471,7 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 	}
 
 	.axis-label {
+		position: relative;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -433,6 +496,85 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 		border-radius: 0.5rem;
 	}
 
+	.axis-tooltip {
+		position: absolute;
+		left: 50%;
+		bottom: 100%;
+		z-index: 30;
+		display: grid;
+		gap: 0.28rem;
+		width: max-content;
+		max-width: min(17rem, 46vw);
+		padding: 0.7rem 0.85rem;
+		border: 1px solid color-mix(in srgb, var(--c-box-4), var(--c-text-light) 16%);
+		border-radius: 0.65rem;
+		background: rgba(15, 23, 42, 0.96);
+		box-shadow:
+			0 0.75rem 1.6rem rgba(2, 8, 23, 0.38),
+			inset 0 1px 0 rgba(255, 255, 255, 0.05);
+		color: #f8fafc;
+		font: var(--f-ui-sm-medium);
+		font-size: 0.9rem;
+		letter-spacing: var(--f-ui-sm-spacing, normal);
+		line-height: 1.42;
+		text-align: left;
+		white-space: normal;
+		pointer-events: none;
+		opacity: 0;
+		transform: translate(-50%, calc(-100% - 0.2rem));
+		transition:
+			opacity 140ms ease,
+			transform 140ms ease;
+	}
+
+	.axis-tooltip-title {
+		display: block;
+		color: #ffffff;
+		font: var(--f-ui-sm-bold);
+		font-size: 0.98rem;
+		letter-spacing: var(--f-ui-sm-spacing, normal);
+	}
+
+	.axis-tooltip-copy {
+		display: block;
+		color: #d5deea;
+	}
+
+	.axis-tooltip-metric-line {
+		display: block;
+		color: #cbd5e1;
+		font: var(--f-ui-sm-medium);
+		font-size: 0.9rem;
+		letter-spacing: var(--f-ui-sm-spacing, normal);
+		white-space: nowrap;
+	}
+
+	.axis-tooltip-metric-value {
+		color: #f8fafc;
+		font: var(--f-ui-sm-bold);
+		letter-spacing: var(--f-ui-sm-spacing, normal);
+	}
+
+	.axis-tooltip-cta {
+		display: block;
+		color: #f8fafc;
+		text-decoration: underline;
+		text-underline-offset: 0.12em;
+	}
+
+	.axis-tooltip::after {
+		content: '';
+		position: absolute;
+		left: 50%;
+		top: 100%;
+		width: 0.6rem;
+		height: 0.6rem;
+		border-right: 1px solid color-mix(in srgb, var(--c-box-4), var(--c-text-light) 16%);
+		border-bottom: 1px solid color-mix(in srgb, var(--c-box-4), var(--c-text-light) 16%);
+		background: rgba(15, 23, 42, 0.96);
+		transform: translate(-50%, -50%) rotate(45deg);
+	}
+
 	.axis-logo {
 		width: 1.1rem;
 		height: 1.1rem;
@@ -444,6 +586,24 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 	.stablecoin-label {
 		justify-content: flex-end;
 		padding-right: 0.25rem;
+	}
+
+	.stablecoin-label .axis-tooltip {
+		left: calc(100% + 0.55rem);
+		right: auto;
+		bottom: 50%;
+		transform: translate(0, 50%);
+	}
+
+	.stablecoin-label:hover .axis-tooltip,
+	.stablecoin-label:focus-visible .axis-tooltip {
+		transform: translate(0, 50%);
+	}
+
+	.stablecoin-label .axis-tooltip::after {
+		left: 0;
+		top: 50%;
+		transform: translate(-50%, -50%) rotate(45deg);
 	}
 
 	.chain-label {
@@ -476,6 +636,12 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 		text-align: center;
 	}
 
+	.heatmap-footer {
+		display: grid;
+		gap: 1rem;
+		padding-bottom: 1.25rem;
+	}
+
 	.colour-legend {
 		display: flex;
 		align-items: center;
@@ -498,7 +664,8 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 		.heatmap-layout {
 			grid-template-columns: clamp(4.25rem, 18vw, 5.1rem) minmax(0, 1fr);
 			column-gap: 0.55rem;
-			row-gap: 0.5rem;
+			grid-template-rows: minmax(0, var(--chart-height)) minmax(4.9rem, auto);
+			row-gap: 0.65rem;
 		}
 
 		.axis-logo {
@@ -516,6 +683,16 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 			gap: 0.14rem;
 		}
 
+		.axis-tooltip {
+			max-width: min(13rem, 58vw);
+			font-size: 0.7rem;
+		}
+
+		.chain-axis {
+			min-height: 4.9rem;
+			padding-bottom: 0.25rem;
+		}
+
 		.colour-legend {
 			gap: 0.6rem;
 			font-size: 0.82rem;
@@ -524,6 +701,10 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 		.colour-legend-bar {
 			width: min(9rem, 38vw);
 			height: 0.65rem;
+		}
+
+		.heatmap-footer {
+			padding-bottom: 1.6rem;
 		}
 	}
 </style>

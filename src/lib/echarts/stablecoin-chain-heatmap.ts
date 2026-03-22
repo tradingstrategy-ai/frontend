@@ -28,6 +28,7 @@ export interface StablecoinChainHeatmapChainEntry extends StablecoinChainHeatmap
 
 export interface StablecoinChainHeatmapStablecoinEntry extends StablecoinChainHeatmapAxisEntry {
 	stablecoinSlug: string;
+	tooltipLabel: string;
 }
 
 export interface StablecoinChainHeatmapCell {
@@ -65,9 +66,34 @@ interface ResolvedChainGroup {
 interface ResolvedStablecoinGroup {
 	key: string;
 	label: string;
+	tooltipLabel: string;
 	stablecoinSlug: string;
 	href: string;
 	logoUrl?: string;
+}
+
+function escapeRegExp(text: string): string {
+	return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function buildStablecoinTooltipLabel(
+	metadata: StablecoinMetadata | undefined,
+	fallbackName: string | null | undefined,
+	fallbackLabel: string
+): string {
+	const rawLabel = metadata?.name?.trim() || fallbackName?.trim() || fallbackLabel;
+	if (!rawLabel) return fallbackLabel;
+
+	const symbol = metadata?.symbol?.trim();
+	if (!symbol) return rawLabel;
+
+	const stripped = rawLabel
+		.replace(new RegExp(`\\b${escapeRegExp(symbol)}\\b`, 'ig'), '')
+		.replace(/\(\s*\)/g, '')
+		.replace(/\s{2,}/g, ' ')
+		.trim();
+
+	return stripped || rawLabel;
 }
 
 function resolveDisplayChain(chainId: number, fallbackName?: string): ResolvedChainGroup {
@@ -113,10 +139,16 @@ function resolveStablecoinGroup(
 		formatStablecoinDisplayName(vault.normalised_denomination, vault.denomination) ||
 		vault.normalised_denomination ||
 		stablecoinSlug.toUpperCase();
+	const tooltipLabel = buildStablecoinTooltipLabel(
+		metadata,
+		formatStablecoinDisplayName(vault.normalised_denomination, vault.denomination) || vault.normalised_denomination,
+		label
+	);
 
 	return {
 		key: stablecoinSlug,
 		label,
+		tooltipLabel,
 		stablecoinSlug,
 		href: `/trading-view/vaults/stablecoins/${stablecoinSlug}`,
 		logoUrl: getStablecoinLogoUrl(stablecoinSlug)
@@ -140,7 +172,15 @@ export function buildStablecoinChainHeatmapPayload(
 	>();
 	const stablecoinTotals = new Map<
 		string,
-		{ key: string; label: string; totalTvl: number; stablecoinSlug: string; href: string; logoUrl?: string }
+		{
+			key: string;
+			label: string;
+			tooltipLabel: string;
+			totalTvl: number;
+			stablecoinSlug: string;
+			href: string;
+			logoUrl?: string;
+		}
 	>();
 	const cells = new Map<
 		string,
@@ -191,6 +231,7 @@ export function buildStablecoinChainHeatmapPayload(
 		const stablecoinGroup = stablecoinTotals.get(stablecoin.key) ?? {
 			key: stablecoin.key,
 			label: stablecoin.label,
+			tooltipLabel: stablecoin.tooltipLabel,
 			totalTvl: 0,
 			stablecoinSlug: stablecoin.stablecoinSlug,
 			href: stablecoin.href,
