@@ -16,6 +16,9 @@ test.describe('stablecoins index page', () => {
 
 		const chart = page.locator('[data-testid="stablecoin-tvl-pie-chart"] canvas');
 		await expect(chart).toBeVisible({ timeout: 15000 });
+		await expect(page.locator('[data-testid="stablecoin-tvl-pie-chart"] [data-testid="chart-watermark"]')).toHaveCount(
+			0
+		);
 
 		await expect(page.locator('h1')).toHaveText(/Vaults by stablecoin/);
 		await expect(page.locator('table')).toBeVisible();

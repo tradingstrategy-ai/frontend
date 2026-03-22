@@ -17,6 +17,15 @@ export interface EChartsInstance {
 export interface EChartsStatic {
 	init(element: HTMLDivElement): EChartsInstance;
 	getInstanceByDom(element: HTMLDivElement): EChartsInstance | undefined;
+	graphic: {
+		LinearGradient: new (
+			x: number,
+			y: number,
+			x2: number,
+			y2: number,
+			colorStops: Array<{ offset: number; color: string }>
+		) => unknown;
+	};
 }
 
 let echartsPromise: Promise<EChartsStatic> | null = null;

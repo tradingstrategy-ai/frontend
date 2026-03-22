@@ -229,6 +229,9 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 				gridMobile={{ top: 40, right: 24, bottom: 52, left: 18 }}
 				variant="plain"
 				className="standalone-cumulative-tvl-apy-chart"
+				watermarkCorner="top-left"
+				watermarkInset="relaxed"
+				watermarkOpacity={0.05}
 			/>
 		{/if}
 	{/snippet}

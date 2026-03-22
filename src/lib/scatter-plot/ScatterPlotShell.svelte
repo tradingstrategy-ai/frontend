@@ -17,6 +17,7 @@ loading/error states, and a Plotly chart container.
 -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import ChartWatermark from '$lib/components/ChartWatermark.svelte';
 	import { tvlOptions } from './helpers';
 	import Spinner from '$lib/components/Spinner.svelte';
 
@@ -27,6 +28,9 @@ loading/error states, and a Plotly chart container.
 		minTvl?: number;
 		onMinTvlChange?: (value: number) => void;
 		showMinTvlControl?: boolean;
+		watermarkCorner?: 'top-left' | 'top-right' | null;
+		watermarkInset?: 'default' | 'relaxed';
+		watermarkOpacity?: number;
 		className?: string;
 		extraControls?: Snippet;
 		chartContent?: Snippet;
@@ -40,6 +44,9 @@ loading/error states, and a Plotly chart container.
 		minTvl = $bindable(),
 		onMinTvlChange,
 		showMinTvlControl = true,
+		watermarkCorner = null,
+		watermarkInset = 'default',
+		watermarkOpacity = 0.07,
 		className = '',
 		extraControls,
 		chartContent,
@@ -74,6 +81,10 @@ loading/error states, and a Plotly chart container.
 	{/if}
 
 	<div class="chart-surface">
+		{#if watermarkCorner}
+			<ChartWatermark corner={watermarkCorner} inset={watermarkInset} opacity={watermarkOpacity} />
+		{/if}
+
 		{#if loading}
 			<div class="loading surface-overlay">
 				<Spinner size="60" />
@@ -217,7 +228,7 @@ loading/error states, and a Plotly chart container.
 	.surface-overlay {
 		position: absolute;
 		inset: 0;
-		z-index: 1;
+		z-index: 2;
 		padding: inherit;
 		background: linear-gradient(
 			180deg,
@@ -237,7 +248,7 @@ loading/error states, and a Plotly chart container.
 		width: 100%;
 		min-height: 500px;
 		position: relative;
-		z-index: 0;
+		z-index: 1;
 
 		:global(.js-plotly-plot),
 		:global(.plot-container),
@@ -259,7 +270,7 @@ loading/error states, and a Plotly chart container.
 
 	.chart-content {
 		position: relative;
-		z-index: 0;
+		z-index: 1;
 
 		&.obscured {
 			visibility: hidden;

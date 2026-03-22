@@ -17,6 +17,7 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { removeOnError } from '$lib/actions/image';
+	import logoSvg from '$lib/assets/logo-horizontal.svg?raw';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { formatUsd } from '$lib/echarts/cumulative-tvl-apy';
 	import { type HistoricalTvlPayload, type HistoricalTvlSeriesBase } from '$lib/echarts/historical-tvl';
@@ -32,6 +33,9 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		searchParamKey: string;
 		selectorLabel: string;
 		selectorLabelPlural: string;
+		watermarkCorner?: 'top-left' | 'top-right' | null;
+		watermarkInset?: 'default' | 'relaxed';
+		watermarkOpacity?: number;
 		getSeriesLogoUrl?: ((series: HistoricalTvlSeriesBase) => string | undefined) | undefined;
 	}
 
@@ -42,6 +46,9 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		searchParamKey,
 		selectorLabel,
 		selectorLabelPlural,
+		watermarkCorner = null,
+		watermarkInset = 'default',
+		watermarkOpacity = 0.07,
 		getSeriesLogoUrl
 	}: Props = $props();
 
@@ -59,6 +66,13 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 	const tooltipFontSize = 14;
 	const gridDesktop = { top: 36, right: 88, bottom: 84, left: 52 };
 	const gridMobile = { top: 28, right: 24, bottom: 72, left: 18 };
+	const watermarkDesktopWidth = 224;
+	const watermarkMobileWidth = 176;
+	const watermarkAspectRatio = 314 / 60;
+	const historicalWatermarkUrl = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
+		logoSvg.replace('fill="#0B0B14"', 'fill="#d5deea"')
+	)}`;
+	let lastViewportMode = $state<'mobile' | 'desktop' | null>(null);
 
 	function getSearchParamsSchema() {
 		return {
@@ -101,6 +115,61 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 
 	function getSeriesColour(index: number) {
 		return protocolPalette[index % protocolPalette.length];
+	}
+
+	function getViewportMode() {
+		return window.innerWidth <= 768 ? 'mobile' : 'desktop';
+	}
+
+	function getWatermarkInset(isMobile: boolean, inset: 'default' | 'relaxed') {
+		if (inset === 'relaxed') {
+			return isMobile ? 16 : 20;
+		}
+
+		return isMobile ? 10 : 12;
+	}
+
+	function buildWatermarkGraphic(
+		grid: typeof gridDesktop,
+		isMobile: boolean
+	):
+		| {
+				elements: Array<{
+					type: 'image';
+					id: string;
+					silent: true;
+					z: number;
+					left?: number;
+					right?: number;
+					top: number;
+					style: { image: string; width: number; height: number; opacity: number };
+				}>;
+		  }
+		| undefined {
+		if (!watermarkCorner) return undefined;
+
+		const inset = getWatermarkInset(isMobile, watermarkInset);
+		const width = isMobile ? watermarkMobileWidth : watermarkDesktopWidth;
+		const height = width / watermarkAspectRatio;
+
+		return {
+			elements: [
+				{
+					type: 'image',
+					id: 'chart-watermark',
+					silent: true,
+					z: -10,
+					top: grid.top + inset,
+					...(watermarkCorner === 'top-left' ? { left: grid.left + inset } : { right: grid.right + inset }),
+					style: {
+						image: historicalWatermarkUrl,
+						width,
+						height,
+						opacity: watermarkOpacity
+					}
+				}
+			]
+		};
 	}
 
 	function updateUrl(overrides: Record<string, string>) {
@@ -196,8 +265,10 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		existingInstance?.dispose();
 		destroyChart();
 
-		const isMobile = window.innerWidth <= 768;
+		const viewportMode = getViewportMode();
+		const isMobile = viewportMode === 'mobile';
 		const grid = isMobile ? gridMobile : gridDesktop;
+		lastViewportMode = viewportMode;
 		const series = visibleSeries.map((item, index) => {
 			const colour = getSeriesColour(index);
 			return {
@@ -303,6 +374,7 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 					lineStyle: { color: 'rgba(148, 163, 184, 0.18)' }
 				}
 			},
+			graphic: buildWatermarkGraphic(grid, isMobile),
 			series
 		});
 
@@ -313,7 +385,12 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 	onMount(() => {
 		let disposed = false;
 
-		const handleWindowResize = () => chartInstance?.resize();
+		const handleWindowResize = () => {
+			chartInstance?.resize();
+			if (getViewportMode() !== lastViewportMode) {
+				void renderChart();
+			}
+		};
 		window.addEventListener('resize', handleWindowResize);
 
 		(async () => {
@@ -374,7 +451,9 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 				<p>No historical vault TVL data available.</p>
 			</div>
 		{:else}
-			<div bind:this={chartContainer} class="chart-canvas"></div>
+			<div class="chart-frame">
+				<div bind:this={chartContainer} class="chart-canvas"></div>
+			</div>
 		{/if}
 	</div>
 
@@ -529,7 +608,14 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		height: var(--chart-height-desktop);
 		width: 100%;
 		position: relative;
-		z-index: 0;
+		z-index: 1;
+	}
+
+	.chart-frame {
+		position: relative;
+		height: var(--chart-height-desktop);
+		width: 100%;
+		isolation: isolate;
 	}
 
 	.chart-state {
@@ -540,6 +626,8 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		gap: 0.75rem;
 		color: var(--c-text-extra-light);
 		font: var(--f-body-md-regular);
+		position: relative;
+		z-index: 1;
 	}
 
 	.chart-summary {
@@ -565,6 +653,7 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		}
 
 		.chart-canvas,
+		.chart-frame,
 		.chart-state {
 			height: var(--chart-height-mobile);
 		}

@@ -10,7 +10,7 @@ Wrapper for the reusable historical TVL chart configured for vault protocol grou
 -->
 <script lang="ts">
 	import HistoricalTvlGroupChart from '$lib/echarts/HistoricalTvlGroupChart.svelte';
-	import type { HistoricalTvlByProtocolPayload, HistoricalTvlSeriesBase } from '$lib/echarts/historical-tvl';
+	import type { HistoricalTvlByProtocolPayload, HistoricalTvlByProtocolSeries } from '$lib/echarts/historical-tvl';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers';
 
 	interface Props {
@@ -21,8 +21,8 @@ Wrapper for the reusable historical TVL chart configured for vault protocol grou
 
 	let { data, dataLoading = false, error = null }: Props = $props();
 
-	function getSeriesLogoUrl(series: HistoricalTvlSeriesBase) {
-		return 'protocolSlug' in series ? getVaultProtocolLogoUrl(series.protocolSlug) : undefined;
+	function getSeriesLogoUrl(series: HistoricalTvlByProtocolSeries) {
+		return getVaultProtocolLogoUrl(series.protocolSlug);
 	}
 </script>
 
@@ -34,6 +34,7 @@ Wrapper for the reusable historical TVL chart configured for vault protocol grou
 		searchParamKey="protocols"
 		selectorLabel="Protocol"
 		selectorLabelPlural="protocols"
+		watermarkCorner="top-left"
 		{getSeriesLogoUrl}
 	/>
 </div>

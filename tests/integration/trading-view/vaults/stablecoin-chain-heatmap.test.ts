@@ -1,4 +1,18 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+
+async function expectNativeChartWatermark(page: Page, containerSelector: string) {
+	await expect
+		.poll(async () =>
+			page.evaluate((selector) => {
+				const echartsApi = window.echarts;
+				const container = document.querySelector(selector);
+				const graphic = container ? echartsApi?.getInstanceByDom(container)?.getOption?.().graphic : undefined;
+				const elements = Array.isArray(graphic) ? (graphic[0]?.elements ?? []) : [];
+				return elements.some((element) => element.id === 'chart-watermark');
+			}, containerSelector)
+		)
+		.toBe(true);
+}
 
 test.describe('stablecoin / chain heatmap chart data endpoint', () => {
 	test('returns cached JSON payload with aligned heatmap data', async ({ request }) => {
@@ -49,6 +63,7 @@ test.describe('stablecoin / chain heatmap page', () => {
 		const plotWrapper = page.getByTestId('vault-scatter-plot');
 		await expect(plotWrapper).toBeVisible();
 		await expect(plotWrapper.locator('.chart-canvas canvas')).toBeVisible({ timeout: 15000 });
+		await expectNativeChartWatermark(page, '.chart-canvas');
 		const firstStablecoin = plotWrapper.locator('.stablecoin-axis a').first();
 		const firstChain = plotWrapper.locator('.chain-axis a').first();
 		await expect(firstStablecoin).toBeVisible();

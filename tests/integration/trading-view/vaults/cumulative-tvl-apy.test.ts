@@ -1,4 +1,18 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+
+async function expectNativeChartWatermark(page: Page, containerSelector: string) {
+	await expect
+		.poll(async () =>
+			page.evaluate((selector) => {
+				const echartsApi = window.echarts;
+				const container = document.querySelector(selector);
+				const graphic = container ? echartsApi?.getInstanceByDom(container)?.getOption?.().graphic : undefined;
+				const elements = Array.isArray(graphic) ? (graphic[0]?.elements ?? []) : [];
+				return elements.some((element) => element.id === 'chart-watermark');
+			}, containerSelector)
+		)
+		.toBe(true);
+}
 
 test.describe('cumulative TVL/APY chart page', () => {
 	test.beforeEach(async ({ page }) => {
@@ -11,6 +25,7 @@ test.describe('cumulative TVL/APY chart page', () => {
 
 		const chart = plotWrapper.locator('.standalone-cumulative-tvl-apy-chart canvas');
 		await expect(chart).toBeVisible({ timeout: 15000 });
+		await expectNativeChartWatermark(page, '.standalone-cumulative-tvl-apy-chart .chart');
 	});
 
 	test('renders APY vs cumulative TVL line chart', async ({ page }) => {
