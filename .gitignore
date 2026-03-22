@@ -32,3 +32,5 @@ prod-env
 
 # Proably created by Playwright
 tmp
+
+.claude/worktrees
