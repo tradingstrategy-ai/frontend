@@ -12,7 +12,7 @@ import {
 import swrCache from '$lib/swrCache';
 
 /** Executor IDs that should retain their original archived status */
-const activeExecutors = new Set(['vega', 'master-vault', 'gmx-ai']);
+const activeExecutors = new Set(['vega', 'master-vault', 'gmx-ai', 'hyper-ai']);
 
 /** Force-add 'archived' tag to all API executors except those in activeExecutors */
 function overrideArchivedStatus(strategy: StrategyInfo): StrategyInfo {
