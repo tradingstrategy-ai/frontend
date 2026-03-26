@@ -69,6 +69,20 @@
 			<Button slot="cta" label="Download datasets" />
 		</ContentCard>
 
+		<ContentCard title="Vault datasets" href="/trading-view/vaults/datasets">
+			<IconWallet slot="icon" />
+			<p>
+				Download vault metadata and hourly vault price history for offline research, notebooks, and vault analytics
+				workflows.
+			</p>
+			{#if topVaults?.vaults.length}
+				<p>
+					Currently covering <strong>{formatAmount(topVaults.vaults.length)}</strong> vaults.
+				</p>
+			{/if}
+			<Button slot="cta" label="Download vault data" />
+		</ContentCard>
+
 		<ContentCard title="Realtime API" href="https://tradingstrategy.ai/api/explorer/" rel="external">
 			<Icon24h slot="icon" />
 			<p>Connect your trading algorithms for real-time market feeds for live trading.</p>
