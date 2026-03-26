@@ -4,7 +4,7 @@ Vault datasets download page
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { PageData } from './$types';
-	import { backendUrl } from '$lib/config';
+	import { backendUrl, discordUrl } from '$lib/config';
 	import { formatByteUnits } from '$lib/helpers/formatters';
 	import { Alert, Button, HeroBanner, Section, Spinner, TextInput, Timestamp } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
@@ -33,13 +33,20 @@ Vault datasets download page
 		return value.replaceAll('\\', '\\\\').replaceAll('"', '\\"').replaceAll('$', '\\$').replaceAll('`', '\\`');
 	}
 
-	function getCurlCommand(dataset: PageData['datasets'][number]) {
+	function getCombinedCurlCommand(datasets: PageData['datasets']) {
 		const apiKey = escapeShellDoubleQuoted(validApiKey || apiKeyPlaceholder);
 
 		return [
 			`export TRADING_STRATEGY_API_KEY="${apiKey}"`,
-			`curl -L "${getCurlUrl(dataset.downloadUrl)}" --output ${dataset.filename}`
-		].join('\n');
+			'',
+			...datasets.flatMap((dataset) => [
+				`# ${dataset.name}`,
+				`curl -L "${getCurlUrl(dataset.downloadUrl)}" --output ${dataset.filename}`,
+				''
+			])
+		]
+			.slice(0, -1)
+			.join('\n');
 	}
 
 	async function handleSubmit(event: SubmitEvent) {
@@ -91,11 +98,16 @@ Vault datasets download page
 		<HeroBanner title="Vault datasets">
 			{#snippet subtitle()}
 				<p>
-					<a class="body-link" href={resolve('/pricing')}>Sign up for the professional API key</a> to download the vault data.
+					<a class="body-link" href={resolve('/pricing')}>Sign up for the professional API key</a> to download the vault
+					data. Read
+					<a class="body-link" href={documentationUrl} rel="external"> data format documention </a>.
 				</p>
 				<p>
-					Read
-					<a class="body-link" href={documentationUrl} rel="external"> data format documention </a>.
+					For any question, contact us via
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+					<a class="body-link" href="mailto:info@tradingstrategy.ai">email</a> or
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+					<a class="body-link" href={discordUrl} target="_blank" rel="noreferrer">Discord</a>.
 				</p>
 			{/snippet}
 		</HeroBanner>
@@ -190,14 +202,8 @@ Vault datasets download page
 
 		<p>Programmatically access the data. Requires a valid API key you can enter above.</p>
 
-		<div class="curl-grid">
-			{#each data.datasets as row (row.id)}
-				<article class="curl-card">
-					<h3>{row.name}</h3>
-					<p>{row.instructions}</p>
-					<pre><code>{getCurlCommand(row)}</code></pre>
-				</article>
-			{/each}
+		<div class="curl-example">
+			<pre><code>{getCombinedCurlCommand(data.datasets)}</code></pre>
 		</div>
 	</Section>
 </main>
@@ -293,20 +299,11 @@ Vault datasets download page
 			}
 		}
 
-		.curl-grid {
-			display: grid;
-			gap: var(--space-md);
-
-			@media (--viewport-md-up) {
-				grid-template-columns: repeat(2, minmax(0, 1fr));
-			}
-		}
-
-		.curl-card {
-			padding: var(--space-md);
+		.curl-example {
 			border: 1px solid var(--c-border);
 			border-radius: var(--radius-md);
 			background: var(--c-box-1);
+			overflow: hidden;
 		}
 
 		pre {

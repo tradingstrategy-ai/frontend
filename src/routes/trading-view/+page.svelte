@@ -55,20 +55,6 @@
 	</ContentCardsSection>
 
 	<ContentCardsSection title="Programmatic access">
-		<ContentCard title="Backtesting" href="/trading-view/backtesting">
-			<IconBacktesting slot="icon" />
-			<p>
-				Download historical OHLCV data for backtesting your trading algorithms. Liquidity information is available for
-				calculating past slippage. Datasets are served in Parquet file format.
-			</p>
-			{#if impressiveNumbers}
-				<p>
-					Currently providing <strong>{formatByteUnits(impressiveNumbers.database_size)}</strong> of data.
-				</p>
-			{/if}
-			<Button slot="cta" label="Download datasets" />
-		</ContentCard>
-
 		<ContentCard title="Vault datasets" href="/trading-view/vaults/datasets">
 			<IconWallet slot="icon" />
 			<p>
@@ -81,6 +67,20 @@
 				</p>
 			{/if}
 			<Button slot="cta" label="Download vault data" />
+		</ContentCard>
+
+		<ContentCard title="Backtesting" href="/trading-view/backtesting">
+			<IconBacktesting slot="icon" />
+			<p>
+				Download historical OHLCV data for backtesting your trading algorithms. Liquidity information is available for
+				calculating past slippage. Datasets are served in Parquet file format.
+			</p>
+			{#if impressiveNumbers}
+				<p>
+					Currently providing <strong>{formatByteUnits(impressiveNumbers.database_size)}</strong> of data.
+				</p>
+			{/if}
+			<Button slot="cta" label="Download datasets" />
 		</ContentCard>
 
 		<ContentCard title="Realtime API" href="https://tradingstrategy.ai/api/explorer/" rel="external">
