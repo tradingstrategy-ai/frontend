@@ -1,3 +1,6 @@
+<!--
+Performance metrics table for a vault across multiple lookback periods.
+-->
 <script lang="ts">
 	import type { VaultInfo, PeriodMetrics } from '$lib/top-vaults/schemas';
 	import type { Chain } from '$lib/helpers/chain';
@@ -134,17 +137,16 @@
 			field: 'share_price_end',
 			formatter: (v) => formatNumber(v as number | null, 4, 6)
 		},
+		{
+			label: 'Period data availability',
+			field: 'daily_samples',
+			formatter: formatDays
+		},
 		{ label: 'Period start', field: 'period_start_at', formatter: formatDate },
 		{ label: 'Period end', field: 'period_end_at', formatter: formatDate },
 		{
 			label: 'Raw samples',
 			field: 'raw_samples',
-			formatter: (v) => (v != null ? String(v) : notFilledMarker),
-			hidden: true
-		},
-		{
-			label: 'Daily samples',
-			field: 'daily_samples',
 			formatter: (v) => (v != null ? String(v) : notFilledMarker),
 			hidden: true
 		},
@@ -160,6 +162,13 @@
 		const dateStr = String(value);
 		// Extract YYYY-MM-DD from ISO datetime
 		return dateStr.split('T')[0] ?? notFilledMarker;
+	}
+
+	function formatDays(value: unknown): string {
+		if (value == null) return notFilledMarker;
+		const days = Number(value);
+		if (!Number.isFinite(days)) return notFilledMarker;
+		return `${days} ${days === 1 ? 'day' : 'days'}`;
 	}
 
 	function getValue(period: string, field: keyof PeriodMetrics): unknown {

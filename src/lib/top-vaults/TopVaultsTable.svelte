@@ -54,6 +54,8 @@
 		LEGACY_RETURN_SORT_ALIASES,
 		canonicaliseReturnSortKey,
 		compareVaultsByReturn,
+		getReturnDataCoverage,
+		getReturnLifetimeData,
 		getReturnColumnValues,
 		isReturnSortKey,
 		returnColumnDefinitionMap,
@@ -454,45 +456,74 @@
 	</th>
 {/snippet}
 
-{#snippet netGrossCell<T = MaybeNumber>(net: T, gross: T, formatter: Formatter<T>, showAnnualisedTooltip = true)}
+{#snippet netGrossCell<T = MaybeNumber>(
+	net: T,
+	gross: T,
+	formatter: Formatter<T>,
+	showAnnualisedTooltip = true,
+	limitedData: { startDate: string; endDate: string; totalDays: number } | null = null,
+	lifetimeData: { startDate: string; endDate: string; totalDays: number } | null = null
+)}
 	{@const value = net ?? gross}
 	{@const capped = showAnnualisedTooltip && typeof value === 'number' && Math.abs(value) > RETURN_TOOLTIP_THRESHOLD}
+	{@const missingFees = net === null && gross !== null}
 	{#if value === null}
 		---
-	{:else if capped}
-		<Tooltip>
-			<span class="capped-hint" slot="trigger">{formatter(value)}</span>
-			<svelte:fragment slot="popup">
-				<p>
-					Trading vaults, like those on Hyperliquid and GRVT, are highly volatile, and their annualised short-term
-					returns may not reflect the long-term performance. For these vaults, use the longer time window to compare the
-					results.
-				</p>
-				<p>
-					Another cause for abnormal short term returns is low settlement frequency, as some vaults do not report
-					returns daily, one sees monthly spikes.
-				</p>
-			</svelte:fragment>
-		</Tooltip>
-	{:else if net !== null}
-		{formatter(net)}
-	{:else}
+	{:else if limitedData || lifetimeData || capped || missingFees}
 		<Tooltip>
 			<svelte:fragment slot="trigger">
-				{formatter(gross)}*
+				<span class:capped-hint={capped}>{formatter(value)}{missingFees ? '*' : ''}</span>
 			</svelte:fragment>
 			<svelte:fragment slot="popup">
-				Fee information for this protocol is not yet available. The calculation is based on gross profit and fees may
-				apply.
+				{#if limitedData}
+					<p>Limited data availability.</p>
+					<p>Period {limitedData.startDate} - {limitedData.endDate}.</p>
+					<p>Total {limitedData.totalDays} days.</p>
+				{/if}
+				{#if lifetimeData}
+					<p>Data starts: {lifetimeData.startDate}</p>
+					<p>Data ends: {lifetimeData.endDate}</p>
+					<p>Days of data: {lifetimeData.totalDays}</p>
+				{/if}
+				{#if capped}
+					<p>
+						Trading vaults, like those on Hyperliquid and GRVT, are highly volatile, and their annualised short-term
+						returns may not reflect the long-term performance. For these vaults, use the longer time window to compare
+						the results.
+					</p>
+					<p>
+						Another cause for abnormal short term returns is low settlement frequency, as some vaults do not report
+						returns daily, one sees monthly spikes.
+					</p>
+				{/if}
+				{#if missingFees}
+					<p>
+						Fee information for this protocol is not yet available. The calculation is based on gross profit and fees
+						may apply.
+					</p>
+				{/if}
 			</svelte:fragment>
 		</Tooltip>
+	{:else if !missingFees}
+		{formatter(net)}
+	{:else}
+		{formatter(gross)}*
 	{/if}
 {/snippet}
 
 {#snippet returnColumnCell(vault: VaultInfo, column: ReturnColumnDefinition)}
 	{@const values = getReturnColumnValues(vault, column.id)}
+	{@const limitedData = getReturnDataCoverage(vault, column.id)}
+	{@const lifetimeData = getReturnLifetimeData(vault, column.id)}
 	<td class={`${getReturnCellClass(column)} right net-gross`}>
-		{@render netGrossCell(values.net, values.gross, formatReturn, column.showAnnualisedTooltip)}
+		{@render netGrossCell(
+			values.net,
+			values.gross,
+			formatReturn,
+			column.showAnnualisedTooltip,
+			limitedData,
+			lifetimeData
+		)}
 	</td>
 {/snippet}
 
