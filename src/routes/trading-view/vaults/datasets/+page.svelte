@@ -259,6 +259,7 @@ Vault datasets download page
 			&:is(span) {
 				opacity: 0.5;
 				cursor: not-allowed;
+				text-decoration: line-through;
 			}
 		}
 
