@@ -31,18 +31,18 @@ function createPeriodResult(
 	cagrNet: number,
 	cagrGross: number
 ) {
-	const startAt = period === '6m' ? '2025-07-01T00:00:00' : '2025-01-01T00:00:00';
+	const startAt = period === '6m' ? '2025-07-01T00:00:00+00:00' : '2025-01-01T00:00:00+00:00';
 
 	return {
 		period,
 		error_reason: null,
 		period_start_at: startAt,
-		period_end_at: '2026-01-01T00:00:00',
+		period_end_at: '2026-01-01T00:00:00+00:00',
 		share_price_start: 1.0,
 		share_price_end: 1 + returnsNet,
 		raw_samples: period === '6m' ? 4320 : 8760,
 		samples_start_at: startAt,
-		samples_end_at: '2026-01-01T00:00:00',
+		samples_end_at: '2026-01-01T00:00:00+00:00',
 		daily_samples: period === '6m' ? 180 : 365,
 		returns_gross: returnsGross,
 		returns_net: returnsNet,
@@ -136,6 +136,102 @@ const returnLeaders = [
 		period_results: [createPeriodResult('6m', 0.08, 0.1, 0.22, 0.25), createPeriodResult('1y', 0.14, 0.16, 0.14, 0.16)]
 	})
 ];
+
+const limitedCoverageVault = createTestVault('Limited coverage vault', {
+	chain: 'ethereum',
+	protocol: 'Yearn',
+	current_nav: 720_000,
+	peak_nav: 760_000,
+	one_month_returns: 0.02,
+	one_month_cagr: 0.18,
+	three_months_returns: 0.05,
+	three_months_cagr: 0.2,
+	three_months_start: '2025-11-15T00:00:00+00:00',
+	three_months_end: '2026-01-01T00:00:00+00:00',
+	three_months_samples: 45,
+	cagr: 0.17,
+	lifetime_return: 0.24,
+	period_results: [
+		{
+			period: '3m',
+			error_reason: null,
+			period_start_at: '2025-11-15T00:00:00+00:00',
+			period_end_at: '2026-01-01T00:00:00+00:00',
+			share_price_start: 0.98,
+			share_price_end: 1.03,
+			raw_samples: 1080,
+			samples_start_at: '2025-11-15T00:00:00+00:00',
+			samples_end_at: '2026-01-01T00:00:00+00:00',
+			daily_samples: 45,
+			returns_gross: 0.06,
+			returns_net: 0.05,
+			cagr_gross: 0.23,
+			cagr_net: 0.2,
+			volatility: 0.12,
+			sharpe: 1.2,
+			max_drawdown: -0.04,
+			tvl_start: 680_000,
+			tvl_end: 720_000,
+			tvl_low: 660_000,
+			tvl_high: 760_000,
+			ranking_overall: 12,
+			ranking_chain: 4,
+			ranking_protocol: 2
+		},
+		{
+			period: '6m',
+			error_reason: null,
+			period_start_at: '2025-09-01T00:00:00+00:00',
+			period_end_at: '2026-01-01T00:00:00+00:00',
+			share_price_start: 0.93,
+			share_price_end: 1.08,
+			raw_samples: 2880,
+			samples_start_at: '2025-09-01T00:00:00+00:00',
+			samples_end_at: '2026-01-01T00:00:00+00:00',
+			daily_samples: 120,
+			returns_gross: 0.17,
+			returns_net: 0.15,
+			cagr_gross: 0.34,
+			cagr_net: 0.3,
+			volatility: 0.14,
+			sharpe: 1.4,
+			max_drawdown: -0.05,
+			tvl_start: 610_000,
+			tvl_end: 720_000,
+			tvl_low: 590_000,
+			tvl_high: 760_000,
+			ranking_overall: 9,
+			ranking_chain: 3,
+			ranking_protocol: 2
+		},
+		{
+			period: '1y',
+			error_reason: null,
+			period_start_at: '2025-05-01T00:00:00+00:00',
+			period_end_at: '2026-01-01T00:00:00+00:00',
+			share_price_start: 0.89,
+			share_price_end: 1.08,
+			raw_samples: 5760,
+			samples_start_at: '2025-05-01T00:00:00+00:00',
+			samples_end_at: '2026-01-01T00:00:00+00:00',
+			daily_samples: 240,
+			returns_gross: 0.21,
+			returns_net: 0.19,
+			cagr_gross: 0.21,
+			cagr_net: 0.19,
+			volatility: 0.15,
+			sharpe: 1.3,
+			max_drawdown: -0.07,
+			tvl_start: 540_000,
+			tvl_end: 720_000,
+			tvl_low: 500_000,
+			tvl_high: 760_000,
+			ranking_overall: 11,
+			ranking_chain: 4,
+			ranking_protocol: 2
+		}
+	]
+});
 
 // Named vault for YAML strategy integration tests
 const yamlStrategyVault = createTestVault('Trading Strategy ICHIv3 LS 2', {
@@ -253,6 +349,13 @@ export default defineMock({
 	url: '/api/top-vaults/vaults.json',
 	body: {
 		generated_at: new Date().toISOString(),
-		vaults: [yamlStrategyVault, ...parquetMatchedVaults, ...returnLeaders, ...belowTvl, ...aboveTvl]
+		vaults: [
+			yamlStrategyVault,
+			limitedCoverageVault,
+			...parquetMatchedVaults,
+			...returnLeaders,
+			...belowTvl,
+			...aboveTvl
+		]
 	}
 });

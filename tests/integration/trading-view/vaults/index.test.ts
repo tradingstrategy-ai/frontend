@@ -27,6 +27,35 @@ function returnColumnsTrigger(page: import('@playwright/test').Page) {
 	return page.locator('.advanced-filters-content').getByTestId('return-columns-trigger');
 }
 
+async function expectLimitedDataTooltip(
+	page: import('@playwright/test').Page,
+	cell: import('@playwright/test').Locator,
+	startDate: string,
+	endDate: string,
+	totalDays: number
+) {
+	await cell.hover();
+	const popup = cell.locator('.popup');
+	await expect(popup).toBeVisible();
+	await expect(popup).toContainText('Limited data availability.');
+	await expect(popup).toContainText(`Period ${startDate} - ${endDate}.`);
+	await expect(popup).toContainText(`Total ${totalDays} days.`);
+}
+
+async function expectLifetimeDataTooltip(
+	cell: import('@playwright/test').Locator,
+	startDate: string,
+	endDate: string,
+	totalDays: number
+) {
+	await cell.hover();
+	const popup = cell.locator('.popup');
+	await expect(popup).toBeVisible();
+	await expect(popup).toContainText(`Data starts: ${startDate}`);
+	await expect(popup).toContainText(`Data ends: ${endDate}`);
+	await expect(popup).toContainText(`Days of data: ${totalDays}`);
+}
+
 test.describe('vault index page', () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/trading-view/vaults');
@@ -37,6 +66,22 @@ test.describe('vault index page', () => {
 		await expect(header).toContainText(/1M\s*return ann\./);
 		await expect(header).toContainText(/3M\s*return ann\./);
 		await expect(header).toContainText(/Lifetime\s*return abs\./);
+	});
+
+	test('shows lifetime data tooltip on the lifetime return cell', async ({ page }) => {
+		const vaultSearch = page.getByTestId('vault-search');
+		await vaultSearch.click();
+		await vaultSearch.pressSequentially('Trading Strategy ICHIv3 LS 2');
+
+		const row = page.locator('tbody tr.targetable').filter({ hasText: 'Trading Strategy ICHIv3 LS 2' });
+		await expect(row).toHaveCount(1);
+
+		await expectLifetimeDataTooltip(
+			row.locator('td.return-column-lifetime-abs .tooltip'),
+			'2025-01-01',
+			'2026-01-01',
+			365
+		);
 	});
 
 	test('shows only primary filters by default and toggles advanced settings', async ({ page }) => {
@@ -78,8 +123,8 @@ test.describe('vault index page', () => {
 
 	test('displays vault count in table meta', async ({ page }) => {
 		const meta = page.getByTestId('top-vaults-meta');
-		// Should show 253 vaults (those above TVL threshold)
-		await expect(meta).toContainText('253 vaults');
+		// Should show 254 vaults (those above TVL threshold)
+		await expect(meta).toContainText('254 vaults');
 	});
 
 	test('renders initial batch of 150 rows', async ({ page }) => {
@@ -120,9 +165,9 @@ test.describe('vault index page', () => {
 		await sentinel.scrollIntoViewIfNeeded();
 		await expect(rows).toHaveCount(250);
 
-		// scroll a third time - loads the final 3
+		// scroll a third time - loads the final 4
 		await sentinel.scrollIntoViewIfNeeded();
-		await expect(rows).toHaveCount(253);
+		await expect(rows).toHaveCount(254);
 
 		// all rows loaded - no more sentinel
 		await expect(sentinel).not.toBeVisible();
@@ -183,6 +228,49 @@ test.describe('vault index page', () => {
 		await toggleReturnOption(page, 'Six months annualised');
 
 		await expect(page).toHaveURL(/returns=1m-ann%2C3m-ann%2C6m-ann/);
+	});
+
+	test('shows limited data tooltips for partial 3M and 1Y returns', async ({ page }) => {
+		await page.goto('/trading-view/vaults?returns=1m-ann,3m-ann,1y-ann');
+		const vaultSearch = page.getByTestId('vault-search');
+		await vaultSearch.click();
+		await vaultSearch.pressSequentially('Limited coverage vault');
+
+		const row = page.locator('tbody tr.targetable').filter({ hasText: 'Limited coverage vault' });
+		await expect(row).toHaveCount(1);
+
+		await expectLimitedDataTooltip(
+			page,
+			row.locator('td.return-column-3m-ann .tooltip'),
+			'2025-11-15',
+			'2026-01-01',
+			45
+		);
+		await expectLimitedDataTooltip(
+			page,
+			row.locator('td.return-column-1y-ann .tooltip'),
+			'2025-05-01',
+			'2026-01-01',
+			240
+		);
+	});
+
+	test('shows limited data tooltip for partial 6M returns', async ({ page }) => {
+		await page.goto('/trading-view/vaults?returns=1m-ann,3m-ann,6m-ann');
+		const vaultSearch = page.getByTestId('vault-search');
+		await vaultSearch.click();
+		await vaultSearch.pressSequentially('Limited coverage vault');
+
+		const row = page.locator('tbody tr.targetable').filter({ hasText: 'Limited coverage vault' });
+		await expect(row).toHaveCount(1);
+
+		await expectLimitedDataTooltip(
+			page,
+			row.locator('td.return-column-6m-ann .tooltip'),
+			'2025-09-01',
+			'2026-01-01',
+			120
+		);
 	});
 
 	test('displays sparkline images', async ({ page }) => {

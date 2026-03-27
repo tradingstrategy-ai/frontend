@@ -4,6 +4,8 @@ import {
 	canonicaliseReturnSortKey,
 	compareVaultsByReturn,
 	getEffectiveReturnValue,
+	getReturnDataCoverage,
+	getReturnLifetimeData,
 	getReturnColumnValues,
 	sanitiseReturnColumnSelection,
 	serialiseReturnColumnSelection,
@@ -151,6 +153,133 @@ describe('return metric extraction', () => {
 		expect(getEffectiveReturnValue(grossOnlyVault, '1m-ann')).toBe(0.25);
 		expect(getEffectiveReturnValue(grossOnlyVault, '6m-ann')).toBe(0.29);
 		expect(getEffectiveReturnValue(grossOnlyVault, '1y-abs')).toBe(0.24);
+	});
+
+	test('returns limited data coverage for partial 3m, 6m and 1y periods', () => {
+		const partialCoverageVault = createTestVault('Partial coverage vault', {
+			three_months_start: '2025-11-15T00:00:00',
+			three_months_end: '2026-01-01T00:00:00',
+			three_months_samples: 45,
+			period_results: [
+				{
+					...periodResults[0],
+					period: '3m',
+					period_start_at: '2025-11-15T00:00:00',
+					period_end_at: '2026-01-01T00:00:00',
+					samples_start_at: '2025-11-15T00:00:00',
+					samples_end_at: '2026-01-01T00:00:00',
+					daily_samples: 45
+				},
+				{
+					...periodResults[0],
+					daily_samples: 120,
+					period_start_at: '2025-09-01T00:00:00',
+					period_end_at: '2026-01-01T00:00:00',
+					samples_start_at: '2025-09-01T00:00:00',
+					samples_end_at: '2026-01-01T00:00:00'
+				},
+				{
+					...periodResults[1],
+					daily_samples: 240,
+					period_start_at: '2025-05-01T00:00:00',
+					period_end_at: '2026-01-01T00:00:00',
+					samples_start_at: '2025-05-01T00:00:00',
+					samples_end_at: '2026-01-01T00:00:00'
+				}
+			]
+		});
+
+		expect(getReturnDataCoverage(partialCoverageVault, '3m-ann')).toEqual({
+			startDate: '2025-11-15',
+			endDate: '2026-01-01',
+			totalDays: 45,
+			expectedDays: 90
+		});
+		expect(getReturnDataCoverage(partialCoverageVault, '6m-abs')).toEqual({
+			startDate: '2025-09-01',
+			endDate: '2026-01-01',
+			totalDays: 120,
+			expectedDays: 180
+		});
+		expect(getReturnDataCoverage(partialCoverageVault, '1y-ann')).toEqual({
+			startDate: '2025-05-01',
+			endDate: '2026-01-01',
+			totalDays: 240,
+			expectedDays: 365
+		});
+	});
+
+	test('prefers 3m period_results coverage over stale top-level sample counts', () => {
+		const vault = createTestVault('Three month precedence vault', {
+			three_months_start: '2025-10-01T00:00:00',
+			three_months_end: '2026-01-01T00:00:00',
+			three_months_samples: 72,
+			period_results: [
+				{
+					...periodResults[0],
+					period: '3m',
+					period_start_at: '2025-10-01T00:00:00',
+					period_end_at: '2026-01-01T00:00:00',
+					samples_start_at: '2025-10-01T00:00:00',
+					samples_end_at: '2026-01-01T00:00:00',
+					daily_samples: 90
+				}
+			]
+		});
+
+		expect(getReturnDataCoverage(vault, '3m-ann')).toBeNull();
+	});
+
+	test('treats 90 percent coverage as sufficient for limited-data checks', () => {
+		const toleranceVault = createTestVault('Tolerance vault', {
+			three_months_start: '2025-10-01T00:00:00',
+			three_months_end: '2026-01-01T00:00:00',
+			three_months_samples: 81,
+			period_results: [
+				{
+					...periodResults[0],
+					period: '3m',
+					daily_samples: 81,
+					period_start_at: '2025-10-01T00:00:00',
+					period_end_at: '2026-01-01T00:00:00',
+					samples_start_at: '2025-10-01T00:00:00',
+					samples_end_at: '2026-01-01T00:00:00'
+				},
+				{
+					...periodResults[0],
+					daily_samples: 162,
+					period_start_at: '2025-07-01T00:00:00',
+					period_end_at: '2026-01-01T00:00:00',
+					samples_start_at: '2025-07-01T00:00:00',
+					samples_end_at: '2026-01-01T00:00:00'
+				},
+				{
+					...periodResults[1],
+					daily_samples: 329,
+					period_start_at: '2025-01-01T00:00:00',
+					period_end_at: '2026-01-01T00:00:00',
+					samples_start_at: '2025-01-01T00:00:00',
+					samples_end_at: '2026-01-01T00:00:00'
+				}
+			]
+		});
+
+		expect(getReturnDataCoverage(toleranceVault, '3m-ann')).toBeNull();
+		expect(getReturnDataCoverage(toleranceVault, '6m-ann')).toBeNull();
+		expect(getReturnDataCoverage(toleranceVault, '1y-ann')).toBeNull();
+	});
+
+	test('returns lifetime data range from vault start and end dates', () => {
+		const lifetimeVault = createTestVault('Lifetime range vault', {
+			start_date: '2025-01-01T00:00:00',
+			end_date: '2026-01-01T00:00:00'
+		});
+
+		expect(getReturnLifetimeData(lifetimeVault, 'lifetime-abs')).toEqual({
+			startDate: '2025-01-01',
+			endDate: '2026-01-01',
+			totalDays: 365
+		});
 	});
 });
 

@@ -27,6 +27,21 @@ export interface ReturnMetricValues {
 	gross: number | null;
 }
 
+export interface ReturnDataCoverage {
+	startDate: string;
+	endDate: string;
+	totalDays: number;
+	expectedDays: number;
+}
+
+export interface ReturnDataRange {
+	startDate: string;
+	endDate: string;
+	totalDays: number;
+}
+
+const MIN_ACCEPTABLE_COVERAGE_RATIO = 0.9;
+
 export interface ReturnColumnDefinition {
 	id: ReturnColumnId;
 	label: string;
@@ -39,6 +54,98 @@ export interface ReturnColumnDefinition {
 
 function getPeriodResult(vault: VaultInfo, period: string) {
 	return vault.period_results.find((item) => item.period.toLowerCase() === period);
+}
+
+function formatDate(date: string): string {
+	return date.slice(0, 10);
+}
+
+function hasAcceptableCoverage(totalDays: number | null, expectedDays: number): boolean {
+	if (totalDays == null) {
+		return false;
+	}
+
+	return totalDays >= Math.ceil(expectedDays * MIN_ACCEPTABLE_COVERAGE_RATIO);
+}
+
+function calculateTotalDays(startAt: string, endAt: string): number | null {
+	const startDate = formatDate(startAt);
+	const endDate = formatDate(endAt);
+	const start = Date.parse(`${startDate}T00:00:00Z`);
+	const end = Date.parse(`${endDate}T00:00:00Z`);
+
+	if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) {
+		return null;
+	}
+
+	return Math.round((end - start) / (24 * 60 * 60 * 1000));
+}
+
+function getTopLevelCoverage(
+	startAt: string | null,
+	endAt: string | null,
+	totalDays: number | null,
+	expectedDays: number
+): ReturnDataCoverage | null {
+	if (!startAt || !endAt) {
+		return null;
+	}
+
+	const resolvedTotalDays = totalDays ?? null;
+	if (hasAcceptableCoverage(resolvedTotalDays, expectedDays)) {
+		return null;
+	}
+
+	return {
+		startDate: formatDate(startAt),
+		endDate: formatDate(endAt),
+		totalDays: resolvedTotalDays,
+		expectedDays
+	};
+}
+
+function getPeriodCoverage(
+	vault: VaultInfo,
+	period: '3m' | '6m' | '1y',
+	expectedDays: number
+): ReturnDataCoverage | null {
+	const result = getPeriodResult(vault, period);
+	if (!result) {
+		return null;
+	}
+
+	if (hasAcceptableCoverage(result.daily_samples, expectedDays)) {
+		return null;
+	}
+
+	return {
+		startDate: formatDate(result.period_start_at),
+		endDate: formatDate(result.period_end_at),
+		totalDays: result.daily_samples,
+		expectedDays
+	};
+}
+
+function getLifetimeRange(vault: VaultInfo): ReturnDataRange | null {
+	const result = getPeriodResult(vault, 'lifetime');
+	if (result) {
+		return {
+			startDate: formatDate(result.period_start_at),
+			endDate: formatDate(result.period_end_at),
+			totalDays: result.daily_samples
+		};
+	}
+
+	const totalDays = calculateTotalDays(vault.start_date, vault.end_date);
+	if (totalDays == null) {
+		return null;
+	}
+
+	return {
+		startDate: formatDate(vault.start_date),
+		endDate: formatDate(vault.end_date),
+		totalDays
+	};
 }
 
 function getTopLevelValues(vault: VaultInfo, netKey: keyof VaultInfo, grossKey: keyof VaultInfo): ReturnMetricValues {
@@ -223,9 +330,41 @@ export function getReturnColumnValues(vault: VaultInfo, id: ReturnColumnId): Ret
 	return returnColumnDefinitionMap[id].getValues(vault);
 }
 
+export function getReturnDataCoverage(vault: VaultInfo, id: ReturnColumnId): ReturnDataCoverage | null {
+	switch (id) {
+		case '3m-ann':
+		case '3m-abs': {
+			const periodResult = getPeriodResult(vault, '3m');
+			if (periodResult) {
+				return getPeriodCoverage(vault, '3m', 90);
+			}
+
+			return getTopLevelCoverage(vault.three_months_start, vault.three_months_end, vault.three_months_samples, 90);
+		}
+		case '6m-ann':
+		case '6m-abs':
+			return getPeriodCoverage(vault, '6m', 180);
+		case '1y-ann':
+		case '1y-abs':
+			return getPeriodCoverage(vault, '1y', 365);
+		default:
+			return null;
+	}
+}
+
 export function getEffectiveReturnValue(vault: VaultInfo, id: ReturnColumnId): number | null {
 	const values = getReturnColumnValues(vault, id);
 	return values.net ?? values.gross;
+}
+
+export function getReturnLifetimeData(vault: VaultInfo, id: ReturnColumnId): ReturnDataRange | null {
+	switch (id) {
+		case 'lifetime-ann':
+		case 'lifetime-abs':
+			return getLifetimeRange(vault);
+		default:
+			return null;
+	}
 }
 
 export function compareVaultsByReturn(id: ReturnColumnId) {
