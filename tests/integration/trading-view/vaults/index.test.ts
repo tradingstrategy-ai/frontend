@@ -6,9 +6,17 @@ function urlParamsMatch(expected: Record<string, string>) {
 }
 
 async function openAdvancedSettings(page: import('@playwright/test').Page) {
+	await expect(page.locator('tbody tr.targetable').first()).toBeVisible();
+	const advancedFilters = page.getByTestId('advanced-filters');
 	await page.getByTestId('advanced-filters-summary').click();
-	await expect(page.getByTestId('advanced-filters')).toHaveAttribute('open', '');
+	await expect(advancedFilters).toHaveJSProperty('open', true);
 	await expect(page.locator('.advanced-filters-content')).toBeVisible();
+}
+
+async function closeAdvancedSettings(page: import('@playwright/test').Page) {
+	const advancedFilters = page.getByTestId('advanced-filters');
+	await page.getByTestId('advanced-filters-summary').click();
+	await expect(advancedFilters).toHaveJSProperty('open', false);
 }
 
 async function toggleReturnOption(page: import('@playwright/test').Page, label: string) {
@@ -57,7 +65,7 @@ test.describe('vault index page', () => {
 			page.getByTestId('advanced-filters-note').getByRole('link', { name: 'All vaults page' })
 		).toHaveAttribute('href', '/trading-view/vaults/all');
 
-		await page.getByTestId('advanced-filters-summary').click();
+		await closeAdvancedSettings(page);
 		await expect(advanced).not.toHaveAttribute('open', '');
 		await expect(returnColumnsTrigger(page)).not.toBeVisible();
 	});
