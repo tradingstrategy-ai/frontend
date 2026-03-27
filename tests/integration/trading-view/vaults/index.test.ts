@@ -8,10 +8,15 @@ function urlParamsMatch(expected: Record<string, string>) {
 async function openAdvancedSettings(page: import('@playwright/test').Page) {
 	await page.getByTestId('advanced-filters-summary').click();
 	await expect(page.getByTestId('advanced-filters')).toHaveAttribute('open', '');
+	await expect(page.locator('.advanced-filters-content')).toBeVisible();
 }
 
 async function toggleReturnOption(page: import('@playwright/test').Page, label: string) {
 	await page.getByTestId('return-columns-menu').getByText(label, { exact: true }).click();
+}
+
+function returnColumnsTrigger(page: import('@playwright/test').Page) {
+	return page.locator('.advanced-filters-content').getByTestId('return-columns-trigger');
 }
 
 test.describe('vault index page', () => {
@@ -43,7 +48,7 @@ test.describe('vault index page', () => {
 		await expect(page.locator('.advanced-filters-content').getByText('Min TVL')).toBeVisible();
 		await expect(page.locator('.advanced-filters-content').getByText('Age', { exact: true })).toBeVisible();
 		await expect(page.locator('.advanced-filters-content').getByText('Max drawdown')).toBeVisible();
-		await expect(page.getByTestId('return-columns-trigger')).toBeVisible();
+		await expect(returnColumnsTrigger(page)).toBeVisible();
 		await expect(page.getByTestId('advanced-filters-note')).toBeVisible();
 		await expect(page.getByTestId('advanced-filters-note')).toContainText(
 			'The filtering is for the current vault category list. For everything, you can filter on All vaults page.'
@@ -54,7 +59,7 @@ test.describe('vault index page', () => {
 
 		await page.getByTestId('advanced-filters-summary').click();
 		await expect(advanced).not.toHaveAttribute('open', '');
-		await expect(page.getByTestId('return-columns-trigger')).not.toBeVisible();
+		await expect(returnColumnsTrigger(page)).not.toBeVisible();
 	});
 
 	test('hides the all-vaults note on the all vaults page', async ({ page }) => {
@@ -133,7 +138,7 @@ test.describe('vault index page', () => {
 
 	test('selecting a fourth return column evicts the current third selection', async ({ page }) => {
 		await openAdvancedSettings(page);
-		await page.getByTestId('return-columns-trigger').click();
+		await returnColumnsTrigger(page).click();
 		await toggleReturnOption(page, 'Six months annualised');
 
 		await expect(page).toHaveURL(/returns=1m-ann%2C3m-ann%2C6m-ann/);
@@ -146,7 +151,7 @@ test.describe('vault index page', () => {
 		await expect(page).toHaveURL(/sort=6m-ann/);
 
 		await openAdvancedSettings(page);
-		await page.getByTestId('return-columns-trigger').click();
+		await returnColumnsTrigger(page).click();
 		await toggleReturnOption(page, 'Six months annualised');
 
 		await expect(page).toHaveURL(/returns=1m-ann%2Clifetime-abs/);
@@ -166,7 +171,7 @@ test.describe('vault index page', () => {
 
 	test('advanced settings controls still update URL state', async ({ page }) => {
 		await openAdvancedSettings(page);
-		await page.getByTestId('return-columns-trigger').click();
+		await returnColumnsTrigger(page).click();
 		await toggleReturnOption(page, 'Six months annualised');
 
 		await expect(page).toHaveURL(/returns=1m-ann%2C3m-ann%2C6m-ann/);
