@@ -24,6 +24,43 @@ function generateMockVaults(prefix: string, count: number, props: TestVaultProps
 	return vaults;
 }
 
+function createPeriodResult(
+	period: '6m' | '1y',
+	returnsNet: number,
+	returnsGross: number,
+	cagrNet: number,
+	cagrGross: number
+) {
+	const startAt = period === '6m' ? '2025-07-01T00:00:00' : '2025-01-01T00:00:00';
+
+	return {
+		period,
+		error_reason: null,
+		period_start_at: startAt,
+		period_end_at: '2026-01-01T00:00:00',
+		share_price_start: 1.0,
+		share_price_end: 1 + returnsNet,
+		raw_samples: period === '6m' ? 4320 : 8760,
+		samples_start_at: startAt,
+		samples_end_at: '2026-01-01T00:00:00',
+		daily_samples: period === '6m' ? 180 : 365,
+		returns_gross: returnsGross,
+		returns_net: returnsNet,
+		cagr_gross: cagrGross,
+		cagr_net: cagrNet,
+		volatility: 0.12,
+		sharpe: 1.3,
+		max_drawdown: -0.04,
+		tvl_start: 450_000,
+		tvl_end: 600_000,
+		tvl_low: 400_000,
+		tvl_high: 650_000,
+		ranking_overall: 1,
+		ranking_chain: 1,
+		ranking_protocol: 1
+	};
+}
+
 const belowTvl = generateMockVaults('Below TVL', 50, {
 	get current_nav() {
 		return Math.random() * 50_000;
@@ -39,7 +76,7 @@ const belowTvl = generateMockVaults('Below TVL', 50, {
 	}
 });
 
-const aboveTvl = generateMockVaults('Above TVL', 249, {
+const aboveTvl = generateMockVaults('Above TVL', 246, {
 	get current_nav() {
 		return Math.random() * 1_000_000 + 50_000;
 	},
@@ -57,6 +94,48 @@ const aboveTvl = generateMockVaults('Above TVL', 249, {
 		return (Math.random() - 0.1) * 0.8;
 	}
 });
+
+const returnLeaders = [
+	createTestVault('Return leader alpha', {
+		chain: 'ethereum',
+		protocol: 'Yearn',
+		current_nav: 800_000,
+		peak_nav: 900_000,
+		one_month_returns: 0.04,
+		one_month_cagr: 0.32,
+		three_months_returns: 0.1,
+		three_months_cagr: 0.24,
+		cagr: 0.22,
+		lifetime_return: 0.35,
+		period_results: [createPeriodResult('6m', 0.16, 0.18, 0.42, 0.45), createPeriodResult('1y', 0.28, 0.3, 0.28, 0.3)]
+	}),
+	createTestVault('Return leader beta', {
+		chain: 'arbitrum',
+		protocol: 'Morpho',
+		current_nav: 780_000,
+		peak_nav: 850_000,
+		one_month_returns: 0.035,
+		one_month_cagr: 0.26,
+		three_months_returns: 0.085,
+		three_months_cagr: 0.21,
+		cagr: 0.19,
+		lifetime_return: 0.31,
+		period_results: [createPeriodResult('6m', 0.12, 0.14, 0.31, 0.34), createPeriodResult('1y', 0.2, 0.22, 0.2, 0.22)]
+	}),
+	createTestVault('Return leader gamma', {
+		chain: 'base',
+		protocol: 'Compound',
+		current_nav: 760_000,
+		peak_nav: 830_000,
+		one_month_returns: 0.03,
+		one_month_cagr: 0.22,
+		three_months_returns: 0.07,
+		three_months_cagr: 0.18,
+		cagr: 0.16,
+		lifetime_return: 0.27,
+		period_results: [createPeriodResult('6m', 0.08, 0.1, 0.22, 0.25), createPeriodResult('1y', 0.14, 0.16, 0.14, 0.16)]
+	})
+];
 
 // Named vault for YAML strategy integration tests
 const yamlStrategyVault = createTestVault('Trading Strategy ICHIv3 LS 2', {
@@ -174,6 +253,6 @@ export default defineMock({
 	url: '/api/top-vaults/vaults.json',
 	body: {
 		generated_at: new Date().toISOString(),
-		vaults: [yamlStrategyVault, ...parquetMatchedVaults, ...belowTvl, ...aboveTvl]
+		vaults: [yamlStrategyVault, ...parquetMatchedVaults, ...returnLeaders, ...belowTvl, ...aboveTvl]
 	}
 });
