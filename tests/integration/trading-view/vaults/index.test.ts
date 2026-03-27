@@ -73,8 +73,8 @@ test.describe('vault index page', () => {
 		await vaultSearch.click();
 		await vaultSearch.pressSequentially('Trading Strategy ICHIv3 LS 2');
 
-		const row = page.locator('tbody tr.targetable').first();
-		await expect(row).toContainText('Trading Strategy ICHIv3 LS 2');
+		const row = page.locator('tbody tr.targetable').filter({ hasText: 'Trading Strategy ICHIv3 LS 2' });
+		await expect(row).toHaveCount(1);
 
 		await expectLifetimeDataTooltip(
 			row.locator('td.return-column-lifetime-abs .tooltip'),
@@ -236,8 +236,8 @@ test.describe('vault index page', () => {
 		await vaultSearch.click();
 		await vaultSearch.pressSequentially('Limited coverage vault');
 
-		const row = page.locator('tbody tr.targetable').first();
-		await expect(row).toContainText('Limited coverage vault');
+		const row = page.locator('tbody tr.targetable').filter({ hasText: 'Limited coverage vault' });
+		await expect(row).toHaveCount(1);
 
 		await expectLimitedDataTooltip(
 			page,
@@ -261,8 +261,8 @@ test.describe('vault index page', () => {
 		await vaultSearch.click();
 		await vaultSearch.pressSequentially('Limited coverage vault');
 
-		const row = page.locator('tbody tr.targetable').first();
-		await expect(row).toContainText('Limited coverage vault');
+		const row = page.locator('tbody tr.targetable').filter({ hasText: 'Limited coverage vault' });
+		await expect(row).toHaveCount(1);
 
 		await expectLimitedDataTooltip(
 			page,
