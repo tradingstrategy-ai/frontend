@@ -49,9 +49,25 @@
 		riskFilterOptions,
 		tvlFilterOptions
 	} from './helpers';
+	import {
+		DEFAULT_RETURN_COLUMN_IDS,
+		LEGACY_RETURN_SORT_ALIASES,
+		canonicaliseReturnSortKey,
+		compareVaultsByReturn,
+		getReturnColumnValues,
+		isReturnSortKey,
+		returnColumnDefinitionMap,
+		returnColumnDefinitions,
+		sanitiseReturnColumnSelection,
+		serialiseReturnColumnSelection,
+		toggleReturnColumnSelection,
+		type ReturnColumnDefinition,
+		type ReturnColumnId
+	} from './return-columns';
 
 	const INITIAL_ROW_COUNT = 150;
 	const ROW_BATCH_SIZE = 50;
+	const allVaultsPath = resolve('/trading-view/vaults/all');
 
 	interface SortOptions {
 		key: string;
@@ -100,21 +116,23 @@
 		return (a: VaultInfo, b: VaultInfo) => fn(a).localeCompare(fn(b));
 	}
 
+	const returnSortColumnMap = Object.fromEntries(
+		returnColumnDefinitions.map((definition) => [
+			definition.id,
+			{
+				defaultDirection: definition.sortDirection,
+				compareFn: compareVaultsByReturn(definition.id)
+			}
+		])
+	) as Record<ReturnColumnId, { defaultDirection: 'desc'; compareFn: SortOptions['compareFn'] }>;
+
 	const sortColumnMap: Record<string, { defaultDirection: 'asc' | 'desc'; compareFn: SortOptions['compareFn'] }> = {
+		...returnSortColumnMap,
 		chain: {
 			defaultDirection: 'asc',
 			compareFn: stringCompare((v) => getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`)
 		},
 		vault: { defaultDirection: 'asc', compareFn: stringCompare((v) => `${v.name.trim()} ${v.protocol}`) },
-		one_month_return_ann: {
-			defaultDirection: 'desc',
-			compareFn: rankVaultsBy(['one_month_cagr', 'one_month_cagr_net'])
-		},
-		three_months_return_ann: {
-			defaultDirection: 'desc',
-			compareFn: rankVaultsBy(['three_months_cagr', 'three_months_cagr_net'])
-		},
-		lifetime_return: { defaultDirection: 'desc', compareFn: rankVaultsBy(['cagr', 'cagr_net']) },
 		three_months_sharpe: { defaultDirection: 'desc', compareFn: rankVaultsBy(['three_months_sharpe']) },
 		three_months_volatility: { defaultDirection: 'asc', compareFn: rankVaultsBy(['three_months_volatility']) },
 		max_dd: {
@@ -139,11 +157,16 @@
 		tvl: { type: 'string', defaultValue: defaultTvlKey, options: tvlFilterOptions.map((o) => o.key) },
 		age: { type: 'number', defaultValue: defaultAgeIndex },
 		risk: { type: 'number', defaultValue: 1 },
-		sort: { type: 'string', defaultValue: 'one_month_return_ann', options: Object.keys(sortColumnMap) },
+		sort: {
+			type: 'string',
+			defaultValue: DEFAULT_RETURN_COLUMN_IDS[0],
+			options: [...Object.keys(sortColumnMap), ...Object.keys(LEGACY_RETURN_SORT_ALIASES)]
+		},
 		direction: { type: 'string', defaultValue: 'desc', options: ['asc', 'desc'] },
 		q: { type: 'string', defaultValue: '' },
 		closed: { type: 'number', defaultValue: 0 },
-		dd: { type: 'string', defaultValue: 'any', options: ddFilterOptions.map((o) => o.key) }
+		dd: { type: 'string', defaultValue: 'any', options: ddFilterOptions.map((o) => o.key) },
+		returns: { type: 'string', defaultValue: DEFAULT_RETURN_COLUMN_IDS.join(',') }
 	} as const satisfies ParamSchema;
 
 	let urlState = $derived(deserialiseSearchParams(page.url.searchParams, searchParamsSchema));
@@ -174,6 +197,17 @@
 	let ddDropdownOpen = $state(false);
 
 	let hideClosed = $derived(urlState.closed === 1);
+	let returnsDropdownOpen = $state(false);
+	let selectedReturnColumnIds = $derived(sanitiseReturnColumnSelection(urlState.returns));
+	let selectedReturnColumns = $derived(
+		selectedReturnColumnIds.map(
+			(id) => returnColumnDefinitionMap[id] ?? returnColumnDefinitionMap[DEFAULT_RETURN_COLUMN_IDS[0]]
+		)
+	);
+	let selectedReturnsLabel = $derived(
+		selectedReturnColumns.length > 0 ? selectedReturnColumns.map((item) => item.shortLabel).join(', ') : 'None'
+	);
+	let showAllVaultsFilterNote = $derived(page.url.pathname !== allVaultsPath);
 
 	// Text search: local state for responsive typing, synced to/from URL
 	let filterValue = $state('');
@@ -200,16 +234,36 @@
 
 	// --- Sort state (derived from URL) ---
 
+	$effect(() => {
+		const normalisedReturns = serialiseReturnColumnSelection(selectedReturnColumnIds);
+		const canonicalSort = canonicaliseReturnSortKey(urlState.sort);
+
+		if (urlState.returns !== normalisedReturns) {
+			updateSearchParams({ returns: normalisedReturns });
+			return;
+		}
+
+		if (canonicalSort && urlState.sort !== canonicalSort) {
+			updateSearchParams({ sort: canonicalSort });
+			return;
+		}
+
+		if (canonicalSort && !selectedReturnColumnIds.includes(canonicalSort) && selectedReturnColumnIds.length > 0) {
+			updateSearchParams({ sort: selectedReturnColumnIds[0], direction: 'desc' });
+		}
+	});
+
 	let sortOptions: SortOptions = $derived.by(() => {
-		const column = sortColumnMap[urlState.sort];
+		const sortKey = canonicaliseReturnSortKey(urlState.sort) ?? urlState.sort;
+		const column = sortColumnMap[sortKey];
 		if (!column) {
 			return {
-				key: 'one_month_return_ann',
+				key: DEFAULT_RETURN_COLUMN_IDS[0],
 				direction: 'desc' as const,
-				compareFn: sortColumnMap['one_month_return_ann'].compareFn
+				compareFn: sortColumnMap[DEFAULT_RETURN_COLUMN_IDS[0]].compareFn
 			};
 		}
-		return { key: urlState.sort, direction: urlState.direction as 'asc' | 'desc', compareFn: column.compareFn };
+		return { key: sortKey, direction: urlState.direction as 'asc' | 'desc', compareFn: column.compareFn };
 	});
 
 	let showChainCol = $derived(!chain);
@@ -343,6 +397,26 @@
 		updateSearchParams({ sort: key, direction });
 	}
 
+	function updateReturnColumns(nextSelection: ReturnColumnId[]) {
+		const nextReturns = serialiseReturnColumnSelection(nextSelection);
+		const canonicalSort = canonicaliseReturnSortKey(urlState.sort);
+
+		if (canonicalSort && !nextSelection.includes(canonicalSort) && nextSelection.length > 0) {
+			updateSearchParams({ returns: nextReturns, sort: nextSelection[0], direction: 'desc' });
+			return;
+		}
+
+		updateSearchParams({ returns: nextReturns });
+	}
+
+	function onReturnColumnToggle(id: ReturnColumnId) {
+		updateReturnColumns(toggleReturnColumnSelection(selectedReturnColumnIds, id));
+	}
+
+	function getReturnCellClass(definition: ReturnColumnDefinition) {
+		return `return-column return-column-${definition.id}`;
+	}
+
 	/** Svelte action to close dropdown on outside clicks */
 	function clickOutside(node: HTMLElement, callback: () => void) {
 		function handleClick(event: MouseEvent) {
@@ -365,7 +439,7 @@
 	direction: SortOptions['direction'],
 	compareFn: SortOptions['compareFn']
 )}
-	<th class={key}>
+	<th class={isReturnSortKey(key) ? `return-column return-column-${canonicaliseReturnSortKey(key)}` : key}>
 		<button onclick={() => sortBy(key, direction, compareFn)}>
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			{@html label}
@@ -380,9 +454,9 @@
 	</th>
 {/snippet}
 
-{#snippet netGrossCell<T = MaybeNumber>(net: T, gross: T, formatter: Formatter<T>)}
+{#snippet netGrossCell<T = MaybeNumber>(net: T, gross: T, formatter: Formatter<T>, showAnnualisedTooltip = true)}
 	{@const value = net ?? gross}
-	{@const capped = typeof value === 'number' && Math.abs(value) > RETURN_TOOLTIP_THRESHOLD}
+	{@const capped = showAnnualisedTooltip && typeof value === 'number' && Math.abs(value) > RETURN_TOOLTIP_THRESHOLD}
 	{#if value === null}
 		---
 	{:else if capped}
@@ -413,6 +487,13 @@
 			</svelte:fragment>
 		</Tooltip>
 	{/if}
+{/snippet}
+
+{#snippet returnColumnCell(vault: VaultInfo, column: ReturnColumnDefinition)}
+	{@const values = getReturnColumnValues(vault, column.id)}
+	<td class={`${getReturnCellClass(column)} right net-gross`}>
+		{@render netGrossCell(values.net, values.gross, formatReturn, column.showAnnualisedTooltip)}
+	</td>
 {/snippet}
 
 <div class="top-vaults-table">
@@ -472,137 +553,187 @@
 
 		{#if showFilters}
 			<div class="table-filters">
-				<div class="filter-group">
-					<span class="filter-label">Min TVL</span>
-					<div class="tvl-dropdown" use:clickOutside={() => (tvlDropdownOpen = false)}>
-						<button class="tvl-trigger" onclick={() => (tvlDropdownOpen = !tvlDropdownOpen)}>
-							{selectedTvlOption.label}
-							<IconChevronDown />
-						</button>
-						{#if tvlDropdownOpen}
-							<ul class="tvl-options">
-								{#each tvlFilterOptions as option (option.key)}
-									<li>
-										<button
-											class:active={selectedTvlKey === option.key}
-											onclick={() => {
-												updateSearchParams({ tvl: option.key });
-												tvlDropdownOpen = false;
-											}}
-										>
-											{option.optionLabel}
-										</button>
-									</li>
-								{/each}
-							</ul>
-						{/if}
+				<div class="primary-filters">
+					<div class="filter-group">
+						<Tooltip>
+							<span class="filter-label filter-label-hint" slot="trigger">Technical risk</span>
+							<svelte:fragment slot="popup">
+								The technical risk accounts for the software development best practices followed by the underlying vault
+								protocol, and is a proxy e.g. for cyber security incidents. The vault technical risk framework is still
+								in beta and we are expecting changes.
+								<a href={resolve('/blog/announcing-vault-technical-risk-framework-beta')} target="_blank"
+									>Read this blog post for more information.</a
+								>
+							</svelte:fragment>
+						</Tooltip>
+						<div class="tvl-dropdown" use:clickOutside={() => (riskDropdownOpen = false)}>
+							<button class="tvl-trigger" onclick={() => (riskDropdownOpen = !riskDropdownOpen)}>
+								{selectedRisk.label}
+								<IconChevronDown />
+							</button>
+							{#if riskDropdownOpen}
+								<ul class="tvl-options">
+									{#each riskFilterOptions as option, i (option.label)}
+										<li>
+											<button
+												class:active={selectedRiskIndex === i}
+												onclick={() => {
+													updateSearchParams({ risk: i });
+													riskDropdownOpen = false;
+												}}
+											>
+												{option.optionLabel}
+											</button>
+										</li>
+									{/each}
+								</ul>
+							{/if}
+						</div>
+					</div>
+
+					<div class="filter-group">
+						<Tooltip>
+							<label class="checkbox-filter" slot="trigger">
+								<span class="filter-label filter-label-hint">Hide undepositable</span>
+								<input
+									type="checkbox"
+									checked={hideClosed}
+									onchange={() => updateSearchParams({ closed: hideClosed ? 0 : 1 })}
+								/>
+							</label>
+							<svelte:fragment slot="popup">
+								Don't show vaults that are not accepting new deposits currently
+							</svelte:fragment>
+						</Tooltip>
+					</div>
+
+					<div class="filter">
+						<TextInput
+							bind:value={filterValue}
+							type="search"
+							placeholder="Search by name, protocol, chain, denomination, risk or address"
+							data-testid="vault-search"
+						/>
 					</div>
 				</div>
 
-				<div class="filter-group">
-					<span class="filter-label">Age</span>
-					<Select
-						value={selectedAgeIndex}
-						onchange={(e: Event) => updateSearchParams({ age: Number((e.target as HTMLSelectElement).value) })}
-					>
-						{#each ageFilterOptions as option, i (option.label)}
-							<option value={i}>{option.label}</option>
-						{/each}
-					</Select>
-				</div>
+				<details class="advanced-filters" data-testid="advanced-filters">
+					<summary class="advanced-filters-summary" data-testid="advanced-filters-summary">
+						<IconChevronDown />
+						<span>Advanced filters</span>
+					</summary>
 
-				<div class="filter-group">
-					<Tooltip>
-						<span class="filter-label filter-label-hint" slot="trigger">Technical risk</span>
-						<svelte:fragment slot="popup">
-							The vault technical risk framework is still in beta and we are expecting changes.
-							<a href={resolve('/blog/announcing-vault-technical-risk-framework-beta')} target="_blank"
-								>Read this blog post for more information.</a
+					<div class="advanced-filters-content">
+						<div class="filter-group">
+							<span class="filter-label">Min TVL</span>
+							<div class="tvl-dropdown" use:clickOutside={() => (tvlDropdownOpen = false)}>
+								<button class="tvl-trigger" onclick={() => (tvlDropdownOpen = !tvlDropdownOpen)}>
+									{selectedTvlOption.label}
+									<IconChevronDown />
+								</button>
+								{#if tvlDropdownOpen}
+									<ul class="tvl-options">
+										{#each tvlFilterOptions as option (option.key)}
+											<li>
+												<button
+													class:active={selectedTvlKey === option.key}
+													onclick={() => {
+														updateSearchParams({ tvl: option.key });
+														tvlDropdownOpen = false;
+													}}
+												>
+													{option.optionLabel}
+												</button>
+											</li>
+										{/each}
+									</ul>
+								{/if}
+							</div>
+						</div>
+
+						<div class="filter-group">
+							<span class="filter-label">Age</span>
+							<Select
+								value={selectedAgeIndex}
+								onchange={(e: Event) => updateSearchParams({ age: Number((e.target as HTMLSelectElement).value) })}
 							>
-						</svelte:fragment>
-					</Tooltip>
-					<div class="tvl-dropdown" use:clickOutside={() => (riskDropdownOpen = false)}>
-						<button class="tvl-trigger" onclick={() => (riskDropdownOpen = !riskDropdownOpen)}>
-							{selectedRisk.label}
-							<IconChevronDown />
-						</button>
-						{#if riskDropdownOpen}
-							<ul class="tvl-options">
-								{#each riskFilterOptions as option, i (option.label)}
-									<li>
-										<button
-											class:active={selectedRiskIndex === i}
-											onclick={() => {
-												updateSearchParams({ risk: i });
-												riskDropdownOpen = false;
-											}}
-										>
-											{option.optionLabel}
-										</button>
-									</li>
+								{#each ageFilterOptions as option, i (option.label)}
+									<option value={i}>{option.label}</option>
 								{/each}
-							</ul>
+							</Select>
+						</div>
+
+						<div class="filter-group">
+							<Tooltip>
+								<span class="filter-label filter-label-hint" slot="trigger">Max drawdown</span>
+								<svelte:fragment slot="popup">
+									Filter vaults by lifetime maximum drawdown.
+									<a href={resolve('/glossary/maximum-drawdown')} target="_blank">Learn more about maximum drawdown.</a>
+								</svelte:fragment>
+							</Tooltip>
+							<div class="tvl-dropdown" use:clickOutside={() => (ddDropdownOpen = false)}>
+								<button class="tvl-trigger" onclick={() => (ddDropdownOpen = !ddDropdownOpen)}>
+									{selectedDdOption.label}
+									<IconChevronDown />
+								</button>
+								{#if ddDropdownOpen}
+									<ul class="tvl-options">
+										{#each ddFilterOptions as option (option.key)}
+											<li>
+												<button
+													class:active={selectedDdKey === option.key}
+													onclick={() => {
+														updateSearchParams({ dd: option.key });
+														ddDropdownOpen = false;
+													}}
+												>
+													{option.optionLabel}
+												</button>
+											</li>
+										{/each}
+									</ul>
+								{/if}
+							</div>
+						</div>
+
+						<div class="filter-group">
+							<span class="filter-label">Returns columns displayed</span>
+							<div class="tvl-dropdown" use:clickOutside={() => (returnsDropdownOpen = false)}>
+								<button
+									class="tvl-trigger"
+									data-testid="return-columns-trigger"
+									onclick={() => (returnsDropdownOpen = !returnsDropdownOpen)}
+								>
+									{selectedReturnsLabel}
+									<IconChevronDown />
+								</button>
+								{#if returnsDropdownOpen}
+									<ul class="tvl-options returns-options" data-testid="return-columns-menu">
+										{#each returnColumnDefinitions as definition (definition.id)}
+											<li>
+												<label class:selected={selectedReturnColumnIds.includes(definition.id)}>
+													<input
+														type="checkbox"
+														checked={selectedReturnColumnIds.includes(definition.id)}
+														onchange={() => onReturnColumnToggle(definition.id)}
+													/>
+													<span>{definition.label}</span>
+												</label>
+											</li>
+										{/each}
+									</ul>
+								{/if}
+							</div>
+						</div>
+
+						{#if showAllVaultsFilterNote}
+							<p class="advanced-filters-note" data-testid="advanced-filters-note">
+								The filtering is for the current vault category list. For everything, you can filter on
+								<a href={allVaultsPath}>All vaults page</a>.
+							</p>
 						{/if}
 					</div>
-				</div>
-
-				<div class="filter-group">
-					<Tooltip>
-						<span class="filter-label filter-label-hint" slot="trigger">Max drawdown</span>
-						<svelte:fragment slot="popup">
-							Filter vaults by lifetime maximum drawdown.
-							<a href={resolve('/glossary/maximum-drawdown')} target="_blank">Learn more about maximum drawdown.</a>
-						</svelte:fragment>
-					</Tooltip>
-					<div class="tvl-dropdown" use:clickOutside={() => (ddDropdownOpen = false)}>
-						<button class="tvl-trigger" onclick={() => (ddDropdownOpen = !ddDropdownOpen)}>
-							{selectedDdOption.label}
-							<IconChevronDown />
-						</button>
-						{#if ddDropdownOpen}
-							<ul class="tvl-options">
-								{#each ddFilterOptions as option (option.key)}
-									<li>
-										<button
-											class:active={selectedDdKey === option.key}
-											onclick={() => {
-												updateSearchParams({ dd: option.key });
-												ddDropdownOpen = false;
-											}}
-										>
-											{option.optionLabel}
-										</button>
-									</li>
-								{/each}
-							</ul>
-						{/if}
-					</div>
-				</div>
-
-				<div class="filter-group">
-					<Tooltip>
-						<label class="checkbox-filter" slot="trigger">
-							<span class="filter-label filter-label-hint">Hide closed</span>
-							<input
-								type="checkbox"
-								checked={hideClosed}
-								onchange={() => updateSearchParams({ closed: hideClosed ? 0 : 1 })}
-							/>
-						</label>
-						<svelte:fragment slot="popup">
-							Hide vaults that are not currently accepting deposits from the listing
-						</svelte:fragment>
-					</Tooltip>
-				</div>
-
-				<div class="filter">
-					<TextInput
-						bind:value={filterValue}
-						type="search"
-						placeholder="Search by name, protocol, chain, denomination, risk or address"
-						data-testid="vault-search"
-					/>
-				</div>
+				</details>
 			</div>
 		{:else}
 			<div class="filter">
@@ -636,24 +767,14 @@
 						'asc',
 						stringCompare((v) => `${v.name.trim()} ${v.protocol}`)
 					)}
-					{@render sortColHeader(
-						'1M<br/>return ann.',
-						'one_month_return_ann',
-						'desc',
-						rankVaultsBy(['one_month_cagr', 'one_month_cagr_net'])
-					)}
-					{@render sortColHeader(
-						'3M<br/>return ann.',
-						'three_months_return_ann',
-						'desc',
-						rankVaultsBy(['three_months_cagr', 'three_months_cagr_net'])
-					)}
-					{@render sortColHeader(
-						'Lifetime return<br/>(ann./abs.)',
-						'lifetime_return',
-						'desc',
-						rankVaultsBy(['cagr', 'cagr_net'])
-					)}
+					{#each selectedReturnColumns as column (column.id)}
+						{@render sortColHeader(
+							column.headerLabel,
+							column.id,
+							column.sortDirection,
+							sortColumnMap[column.id].compareFn
+						)}
+					{/each}
 					{@render sortColHeader('3m Sharpe', 'three_months_sharpe', 'desc', rankVaultsBy(['three_months_sharpe']))}
 					{@render sortColHeader(
 						'3M Vola&shy;tility',
@@ -693,9 +814,9 @@
 							<td class="index"></td>
 							{#if showChainCol}<td class="chain"></td>{/if}
 							<td class="vault"></td>
-							<td class="one_month_return_ann right"></td>
-							<td class="three_months_return_ann right"></td>
-							<td class="lifetime_return right"></td>
+							{#each selectedReturnColumns as column (column.id)}
+								<td class={`${getReturnCellClass(column)} right`}></td>
+							{/each}
 							<td class="three_months_sharpe right"></td>
 							<td class="three_months_volatility right"></td>
 							<td class="max_dd right"></td>
@@ -732,47 +853,9 @@
 								{/if}
 							</div>
 						</td>
-						<td class="one_month_return_ann right net-gross">
-							{@render netGrossCell(vault.one_month_cagr_net, vault.one_month_cagr, formatReturn)}
-						</td>
-						<td class="three_months_return_ann right net-gross">
-							{@render netGrossCell(vault.three_months_cagr_net, vault.three_months_cagr, formatReturn)}
-						</td>
-						<td class="lifetime_return right">
-							{#if (vault.cagr_net ?? vault.cagr) != null || (vault.lifetime_return_net ?? vault.lifetime_return) != null}
-								{@const annVal = vault.cagr_net ?? vault.cagr}
-								{@const absVal = vault.lifetime_return_net ?? vault.lifetime_return}
-								{@const missingFees = vault.cagr_net == null && vault.cagr != null}
-								<Tooltip>
-									<div class="multiline multival" slot="trigger">
-										<span class="primary">{annVal != null ? formatReturn(annVal) : '---'}{missingFees ? '*' : ''}</span>
-										<span class="secondary"
-											>{absVal != null ? formatReturn(absVal) : '---'}{missingFees ? '*' : ''}</span
-										>
-									</div>
-									<svelte:fragment slot="popup">
-										<p><strong>{vault.name}</strong></p>
-										<p>Lifetime annualised returns: {annVal != null ? formatReturn(annVal) : '---'}</p>
-										<p>Lifetime absolute returns: {absVal != null ? formatReturn(absVal) : '---'}</p>
-										<p>Age: {vault.years != null ? formatNumber(vault.years, 1) : '---'} years</p>
-										{#if vault.lifetime_start}
-											<p>Data starts at: {new Date(vault.lifetime_start).toISOString().slice(0, 10)}</p>
-										{/if}
-										{#if vault.lifetime_end}
-											<p>Data ends at: {new Date(vault.lifetime_end).toISOString().slice(0, 10)}</p>
-										{/if}
-										{#if missingFees}
-											<p>We may lack fee information for this vault.</p>
-										{/if}
-									</svelte:fragment>
-								</Tooltip>
-							{:else}
-								<div class="multiline multival">
-									<span class="primary">---</span>
-									<span class="secondary">---</span>
-								</div>
-							{/if}
-						</td>
+						{#each selectedReturnColumns as column (column.id)}
+							{@render returnColumnCell(vault, column)}
+						{/each}
 						<td class="three_months_sharpe right">
 							{formatNumber(vault.three_months_sharpe, 1)}
 						</td>
@@ -824,7 +907,7 @@
 				{/each}
 				{#if hasMoreRows}
 					<tr class="load-more-sentinel" data-testid="load-more-sentinel">
-						<td colspan="16">
+						<td colspan={12 + selectedReturnColumns.length + (showChainCol ? 1 : 0)}>
 							<div use:inview={{ rootMargin: '300px' }} oninview_enter={() => (maxVisibleRows += ROW_BATCH_SIZE)}>
 								Loading more vaults... ({maxVisibleRows} of {sortedVaults.length})
 							</div>
@@ -873,16 +956,22 @@
 		}
 
 		.table-filters {
+			display: grid;
+			gap: 0.75rem 1.5rem;
+			width: 100%;
+			font: var(--f-ui-sm-medium);
+		}
+
+		.primary-filters,
+		.advanced-filters-content {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 0.75rem 1.5rem;
 			align-items: center;
-			width: 100%;
-			font: var(--f-ui-sm-medium);
+		}
 
-			> .filter {
-				flex: 1 12rem;
-			}
+		.primary-filters > .filter {
+			flex: 1 12rem;
 		}
 
 		.filter-group {
@@ -985,12 +1074,94 @@
 			}
 		}
 
+		.returns-options {
+			padding: 0.25rem 0;
+			min-width: 14rem;
+
+			li label {
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+				width: 100%;
+				padding: 0.5rem 0.75rem;
+				cursor: pointer;
+
+				&:hover {
+					background: var(--c-box-2);
+				}
+
+				&.selected {
+					background: var(--c-box-3);
+					font-weight: 600;
+				}
+			}
+
+			input[type='checkbox'] {
+				width: 1rem;
+				height: 1rem;
+				margin: 0;
+				cursor: pointer;
+			}
+		}
+
 		.filter-group :global(.select) {
 			font: inherit;
 		}
 
 		.filter {
 			flex: 1 24rem;
+		}
+
+		.advanced-filters {
+			width: 100%;
+			border: 1px solid var(--c-input-border);
+			border-radius: var(--radius-sm);
+			background: color-mix(in srgb, var(--c-input-background), transparent 15%);
+		}
+
+		.advanced-filters-summary {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: var(--space-sl) var(--space-md);
+			cursor: pointer;
+			list-style: none;
+			font: inherit;
+			color: var(--c-text-extra-light);
+
+			&::-webkit-details-marker {
+				display: none;
+			}
+
+			:global(.icon) {
+				flex-shrink: 0;
+				--icon-size: 0.875em;
+				transition: transform var(--time-sm) ease-out;
+			}
+		}
+
+		.advanced-filters[open] .advanced-filters-summary {
+			border-bottom: 1px solid var(--c-input-border);
+
+			:global(.icon) {
+				transform: rotate(180deg);
+			}
+		}
+
+		.advanced-filters-content {
+			padding: var(--space-md);
+		}
+
+		.advanced-filters-note {
+			width: 100%;
+			margin: 0;
+			color: var(--c-text-extra-light);
+			line-height: 1.4;
+
+			a {
+				text-decoration: underline;
+				text-underline-offset: 0.15em;
+			}
 		}
 
 		.table-wrapper {
@@ -1184,16 +1355,8 @@
 				--icon-left: 8ch;
 			}
 
-			:is(.one_month_return_ann, .three_months_return_ann) {
+			.return-column {
 				width: 6.5%;
-			}
-
-			.lifetime_return {
-				width: 7%;
-
-				:global(.popup) {
-					width: max-content;
-				}
 			}
 
 			:is(.three_months_sharpe, .three_months_volatility) {

@@ -5,9 +5,75 @@ function urlParamsMatch(expected: Record<string, string>) {
 	return (url: URL) => Object.entries(expected).every(([key, value]) => url.searchParams.get(key) === value);
 }
 
+async function openAdvancedSettings(page: import('@playwright/test').Page) {
+	await expect(page.locator('tbody tr.targetable').first()).toBeVisible();
+	const advancedFilters = page.getByTestId('advanced-filters');
+	await page.getByTestId('advanced-filters-summary').click();
+	await expect(advancedFilters).toHaveJSProperty('open', true);
+	await expect(page.locator('.advanced-filters-content')).toBeVisible();
+}
+
+async function closeAdvancedSettings(page: import('@playwright/test').Page) {
+	const advancedFilters = page.getByTestId('advanced-filters');
+	await page.getByTestId('advanced-filters-summary').click();
+	await expect(advancedFilters).toHaveJSProperty('open', false);
+}
+
+async function toggleReturnOption(page: import('@playwright/test').Page, label: string) {
+	await page.getByTestId('return-columns-menu').getByText(label, { exact: true }).click();
+}
+
+function returnColumnsTrigger(page: import('@playwright/test').Page) {
+	return page.locator('.advanced-filters-content').getByTestId('return-columns-trigger');
+}
+
 test.describe('vault index page', () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/trading-view/vaults');
+	});
+
+	test('shows the default return columns', async ({ page }) => {
+		const header = page.locator('thead');
+		await expect(header).toContainText(/1M\s*return ann\./);
+		await expect(header).toContainText(/3M\s*return ann\./);
+		await expect(header).toContainText(/Lifetime\s*return abs\./);
+	});
+
+	test('shows only primary filters by default and toggles advanced settings', async ({ page }) => {
+		const primaryFilters = page.locator('.primary-filters');
+		await expect(primaryFilters.getByText('Technical risk', { exact: true })).toBeVisible();
+		await expect(primaryFilters.getByText('Hide undepositable', { exact: true })).toBeVisible();
+		await expect(primaryFilters.getByTestId('vault-search')).toBeVisible();
+
+		const advanced = page.getByTestId('advanced-filters');
+		await expect(advanced).not.toHaveAttribute('open', '');
+		await expect(page.getByTestId('advanced-filters-summary')).toBeVisible();
+		await expect(page.getByTestId('return-columns-trigger')).not.toBeVisible();
+		await expect(page.locator('.advanced-filters-content').getByText('Min TVL')).not.toBeVisible();
+
+		await openAdvancedSettings(page);
+
+		await expect(page.locator('.advanced-filters-content').getByText('Min TVL')).toBeVisible();
+		await expect(page.locator('.advanced-filters-content').getByText('Age', { exact: true })).toBeVisible();
+		await expect(page.locator('.advanced-filters-content').getByText('Max drawdown')).toBeVisible();
+		await expect(returnColumnsTrigger(page)).toBeVisible();
+		await expect(page.getByTestId('advanced-filters-note')).toBeVisible();
+		await expect(page.getByTestId('advanced-filters-note')).toContainText(
+			'The filtering is for the current vault category list. For everything, you can filter on All vaults page.'
+		);
+		await expect(
+			page.getByTestId('advanced-filters-note').getByRole('link', { name: 'All vaults page' })
+		).toHaveAttribute('href', '/trading-view/vaults/all');
+
+		await closeAdvancedSettings(page);
+		await expect(advanced).not.toHaveAttribute('open', '');
+		await expect(returnColumnsTrigger(page)).not.toBeVisible();
+	});
+
+	test('hides the all-vaults note on the all vaults page', async ({ page }) => {
+		await page.goto('/trading-view/vaults/all');
+		await openAdvancedSettings(page);
+		await expect(page.getByTestId('advanced-filters-note')).toHaveCount(0);
 	});
 
 	test('displays vault count in table meta', async ({ page }) => {
@@ -78,6 +144,47 @@ test.describe('vault index page', () => {
 		await expect(rows).toHaveCount(1);
 	});
 
+	test('selecting a fourth return column evicts the current third selection', async ({ page }) => {
+		await openAdvancedSettings(page);
+		await returnColumnsTrigger(page).click();
+		await toggleReturnOption(page, 'Six months annualised');
+
+		await expect(page).toHaveURL(/returns=1m-ann%2C3m-ann%2C6m-ann/);
+		await expect(page.locator('thead')).toContainText(/6M\s*return ann\./);
+		await expect(page.locator('thead')).not.toContainText(/Lifetime\s*return abs\./);
+	});
+
+	test('removing the active return sort resets sorting to the first visible return column', async ({ page }) => {
+		await page.goto('/trading-view/vaults?returns=1m-ann,6m-ann,lifetime-abs&sort=6m-ann&direction=asc');
+		await expect(page).toHaveURL(/sort=6m-ann/);
+
+		await openAdvancedSettings(page);
+		await returnColumnsTrigger(page).click();
+		await toggleReturnOption(page, 'Six months annualised');
+
+		await expect(page).toHaveURL(/returns=1m-ann%2Clifetime-abs/);
+		await expect(page).not.toHaveURL(/sort=6m-ann/);
+		await expect(page).not.toHaveURL(/direction=/);
+	});
+
+	test('supports sorting by 6M annualised return', async ({ page }) => {
+		await page.goto('/trading-view/vaults?returns=1m-ann,3m-ann,6m-ann');
+		await openAdvancedSettings(page);
+		await page.getByRole('button', { name: /6M return ann\./ }).click();
+
+		await expect(page).toHaveURL(/sort=6m-ann/);
+		await expect(page).not.toHaveURL(/direction=/);
+		await expect(page.locator('tbody tr.targetable').first()).toContainText('Return leader alpha');
+	});
+
+	test('advanced settings controls still update URL state', async ({ page }) => {
+		await openAdvancedSettings(page);
+		await returnColumnsTrigger(page).click();
+		await toggleReturnOption(page, 'Six months annualised');
+
+		await expect(page).toHaveURL(/returns=1m-ann%2C3m-ann%2C6m-ann/);
+	});
+
 	test('displays sparkline images', async ({ page }) => {
 		// Wait for first sparkline to be visible
 		const firstSparkline = page.locator('td.sparkline img').first();
@@ -85,7 +192,7 @@ test.describe('vault index page', () => {
 	});
 
 	test('retains URL search params when navigating to vault detail and back', async ({ page }) => {
-		const searchParams = { tvl: '1m', sort: 'tvl', direction: 'desc' };
+		const searchParams = { tvl: '1m', sort: 'tvl', direction: 'desc', returns: '1m-ann,6m-ann,lifetime-abs' };
 
 		// Navigate with custom search params
 		await page.goto(`/trading-view/vaults?${new URLSearchParams(searchParams)}`);
