@@ -11,6 +11,10 @@ SvelteKit-based frontend for the Trading Strategy protocol, featuring automated 
 - Use UK/British English: `visualise` not `visualize`, `colour` not `color`
 - For headings, only capitalise the first letter (not title case)
 
+## Design, art and graphics
+
+See `docs/theme.md`.
+
 ## Common commands
 
 ```shell

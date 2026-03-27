@@ -2,10 +2,15 @@
 **/.git/
 **/node_modules/
 **/.svelte-kit/
+**/.DS_Store
 
 # frontend (root)
 build/
 tests/
 docs/
+.svelte-kit-test/
+playwright-report/
+test-results/
+coverage/
 Dockerfile
 docker-compose.yml

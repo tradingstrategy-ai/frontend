@@ -139,8 +139,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          ssh: |
-            default=${{ env.SSH_AUTH_SOCK }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
