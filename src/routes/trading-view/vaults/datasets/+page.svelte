@@ -4,7 +4,7 @@ Vault datasets download page
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { PageData } from './$types';
-	import { backendUrl, discordUrl } from '$lib/config';
+	import { discordUrl, vaultApiUrl } from '$lib/config';
 	import { formatByteUnits } from '$lib/helpers/formatters';
 	import { Alert, Button, HeroBanner, Section, Spinner, TextInput, Timestamp } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
@@ -16,17 +16,18 @@ Vault datasets download page
 	let apiKeyError = $state('');
 
 	const documentationUrl = 'https://tradingstrategy.ai/docs/overview/defi-vault-data.html';
-	const apiKeyPlaceholder = 'secret-token:tradingstrategy-...';
+	const apiKeyPlaceholder = 'XXXXX-XXXXX-XXXXX-XXXXX-XXXXX';
 
 	function getDownloadUrl(originalUrl: string) {
-		const url = new URL(originalUrl);
+		const url = new URL(originalUrl, data.origin);
 		url.searchParams.set('api-key', validApiKey);
 		return url.toString();
 	}
 
 	function getCurlUrl(originalUrl: string) {
-		const separator = originalUrl.includes('?') ? '&' : '?';
-		return `${originalUrl}${separator}api-key=$TRADING_STRATEGY_API_KEY`;
+		const absoluteUrl = new URL(originalUrl, data.origin).toString();
+		const separator = absoluteUrl.includes('?') ? '&' : '?';
+		return `${absoluteUrl}${separator}api-key=$TRADING_STRATEGY_API_KEY`;
 	}
 
 	function escapeShellDoubleQuoted(value: string) {
@@ -60,20 +61,17 @@ Vault datasets download page
 		submitting = true;
 
 		try {
-			const response = await fetch(`${backendUrl}/validate-api-key`, {
-				method: 'POST',
-				body: new URLSearchParams({ key })
+			const response = await fetch(`${vaultApiUrl}/files`, {
+				headers: { Authorization: `Bearer ${key}` }
 			});
 
-			if (response.status !== 200) {
-				apiKeyError = `Server failure: ${response.status} ${response.statusText}`;
+			if (response.status === 401 || response.status === 403) {
+				apiKeyError = 'The API key is not valid';
 				return;
 			}
 
-			const payload = await response.json();
-
-			if (!payload.valid) {
-				apiKeyError = 'The API key is not valid';
+			if (response.status !== 200) {
+				apiKeyError = `Server failure: ${response.status} ${response.statusText}`;
 				return;
 			}
 
@@ -218,12 +216,7 @@ Vault datasets download page
 			margin-bottom: var(--space-lg);
 		}
 
-		h3 {
-			font: var(--f-heading-sm-medium);
-			margin-bottom: var(--space-sm);
-		}
-
-		:is(p, li) {
+		p {
 			margin-bottom: 1em;
 		}
 

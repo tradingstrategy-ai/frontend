@@ -1,5 +1,7 @@
 import { error } from '@sveltejs/kit';
-import { topVaultsUrl, vaultSparklinesUrl } from '$lib/config';
+import { headTopVaults, headVaultPrices } from '$lib/top-vaults/server-config';
+import { isR2Configured } from '$lib/r2/client';
+import { VAULT_PRICES_PARQUET } from '$lib/top-vaults/constants';
 
 const documentationUrl = 'https://tradingstrategy.ai/docs/overview/defi-vault-data.html';
 
@@ -18,7 +20,7 @@ type VaultDatasetDefinition = {
 	format: 'JSON' | 'Parquet';
 	/** Canonical documentation page for the dataset */
 	documentation: string;
-	/** Public dataset URL used for metadata lookups and downloads */
+	/** Public-facing download URL (points to our proxy, not the CDN) */
 	downloadUrl: string;
 };
 
@@ -28,76 +30,14 @@ type VaultDataset = VaultDatasetDefinition & {
 };
 
 /**
- * Ensure a base URL ends with a trailing slash before joining paths.
- *
- * @param url Base URL that may or may not already include a trailing slash
- */
-function ensureTrailingSlash(url: string): string {
-	return url.endsWith('/') ? url : `${url}/`;
-}
-
-/**
- * Convert an HTTP date header value to an ISO timestamp.
- *
- * Returns `null` for missing or invalid header values.
- *
- * @param value Raw HTTP header value, usually `Last-Modified`
- * @returns ISO timestamp string or `null` when parsing fails
- */
-function parseHeaderDate(value: string | null): string | null {
-	if (!value) return null;
-	const timestamp = Date.parse(value);
-	return Number.isNaN(timestamp) ? null : new Date(timestamp).toISOString();
-}
-
-/**
- * Resolve file metadata for a configured vault dataset using an HTTP HEAD request.
- *
- * Falls back to `null` metadata values if the upstream request fails.
- *
- * @param fetch SvelteKit's fetch function
- * @param dataset Static vault dataset definition to enrich
- * @returns Dataset definition with resolved size and update timestamp
- */
-async function resolveDatasetMetadata(fetch: Fetch, dataset: VaultDatasetDefinition): Promise<VaultDataset> {
-	try {
-		const response = await fetch(dataset.downloadUrl, { method: 'HEAD' });
-
-		if (!response.ok) {
-			throw new Error(`HEAD ${dataset.downloadUrl} failed with ${response.status} ${response.statusText}`);
-		}
-
-		const contentLength = response.headers.get('content-length');
-		const size = contentLength ? Number.parseInt(contentLength, 10) : null;
-
-		return {
-			...dataset,
-			size: Number.isFinite(size) ? size : null,
-			lastUpdatedAt: parseHeaderDate(response.headers.get('last-modified'))
-		};
-	} catch (err) {
-		console.error(`Failed to resolve metadata for vault dataset ${dataset.id}:`, err);
-
-		return {
-			...dataset,
-			size: null,
-			lastUpdatedAt: null
-		};
-	}
-}
-
-/**
  * Build the vault datasets page payload.
  *
  * Defines the frontend-owned dataset catalogue and enriches each entry with
- * server-side freshness metadata from the upstream storage bucket.
- *
- * @param fetch SvelteKit's fetch function
- * @param setHeaders SvelteKit header setter for cache-control
+ * server-side freshness metadata from R2.
  */
-export async function load({ fetch, setHeaders }) {
-	if (!topVaultsUrl || !vaultSparklinesUrl) {
-		throw error(503, 'Vault datasets are not configured');
+export async function load({ fetch, setHeaders, url }) {
+	if (!isR2Configured()) {
+		throw error(503, 'Vault datasets are not configured — R2 credentials missing');
 	}
 
 	const datasets: VaultDatasetDefinition[] = [
@@ -108,10 +48,10 @@ export async function load({ fetch, setHeaders }) {
 				'Summary JSON for tracked vaults, including identity, chain, protocol, performance, fees and status fields.',
 			instructions:
 				'Download the summary JSON when you need the latest vault catalogue, rankings, and descriptive fields for offline research or your own pipelines.',
-			filename: 'vault-metadata.json',
+			filename: 'top_vaults_by_chain.json',
 			format: 'JSON',
 			documentation: documentationUrl,
-			downloadUrl: topVaultsUrl
+			downloadUrl: '/trading-view/vaults/datasets/download/vault-metadata'
 		},
 		{
 			id: 'vault-prices',
@@ -120,18 +60,35 @@ export async function load({ fetch, setHeaders }) {
 				'Share price, TVL history in Parquet format, suitable for offline analysis, chart generation, and backtesting-style workflows.',
 			instructions:
 				'Download the hourly Parquet file to analyse historical vault performance locally or to feed your own notebooks and research jobs.',
-			filename: 'vault-history.parquet',
+			filename: VAULT_PRICES_PARQUET,
 			format: 'Parquet',
 			documentation: documentationUrl,
-			downloadUrl: new URL('cleaned-vault-prices-1h.parquet', ensureTrailingSlash(vaultSparklinesUrl)).toString()
+			downloadUrl: '/trading-view/vaults/datasets/download/vault-prices'
 		}
 	];
+
+	const [topVaultsMeta, vaultPricesMeta] = await Promise.all([
+		headTopVaults(fetch).catch(() => ({ size: null, lastModified: null })),
+		headVaultPrices(fetch).catch(() => ({ size: null, lastModified: null }))
+	]);
+
+	const metadataMap: Record<string, { size: number | null; lastModified: Date | null }> = {
+		'vault-metadata': topVaultsMeta,
+		'vault-prices': vaultPricesMeta
+	};
+
+	const enriched: VaultDataset[] = datasets.map((dataset) => {
+		const meta = metadataMap[dataset.id];
+		return {
+			...dataset,
+			size: meta?.size ?? null,
+			lastUpdatedAt: meta?.lastModified?.toISOString() ?? null
+		};
+	});
 
 	setHeaders({
 		'cache-control': 'public, max-age=600'
 	});
 
-	return {
-		datasets: await Promise.all(datasets.map((dataset) => resolveDatasetMetadata(fetch, dataset)))
-	};
+	return { datasets: enriched, origin: url.origin };
 }

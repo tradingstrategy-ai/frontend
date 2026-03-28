@@ -66,7 +66,7 @@ Options:
 function parseArgs(argv) {
 	const options = {
 		parquetFile: DEFAULT_PARQUET_FILE,
-		topVaultsUrl: process.env.TOP_VAULTS_URL || process.env.TS_PUBLIC_TOP_VAULTS_URL || '',
+		topVaultsUrl: process.env.TOP_VAULTS_URL || process.env.TS_PRIVATE_TOP_VAULTS_URL || '',
 		envFile: DEFAULT_ENV_FILE,
 		runs: 1,
 		output: ''
@@ -462,12 +462,12 @@ async function main() {
 	}
 
 	if (!options.topVaultsUrl) {
-		options.topVaultsUrl = (await readEnvValue(options.envFile, 'TS_PUBLIC_TOP_VAULTS_URL')) || '';
+		options.topVaultsUrl = (await readEnvValue(options.envFile, 'TS_PRIVATE_TOP_VAULTS_URL')) || '';
 	}
 
 	if (!options.topVaultsUrl) {
 		throw new Error(
-			'Could not determine top vault metadata URL. Pass --top-vaults-url or set TOP_VAULTS_URL / TS_PUBLIC_TOP_VAULTS_URL.'
+			'Could not determine top vault metadata URL. Pass --top-vaults-url or set TOP_VAULTS_URL / TS_PRIVATE_TOP_VAULTS_URL.'
 		);
 	}
 
