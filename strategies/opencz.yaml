@@ -1,0 +1,46 @@
+# Internal id
+id: opencz
+# Strategy page slug
+slug: opencz
+# Strategy page title
+name: OpenCZ
+# One paragraph description of the strategy
+short_description: Systematic multi-strategy vault combining trend, mean reversion, liquidation alpha, and macro regime signals with dynamic capital allocation on Hyperliquid perpetual futures.
+# Primary key to match it to Hyperliquid vault,
+# Make sure it is string-escaped not to be hexadecimal number in JavaScript.
+vault_address: '0xc68a3f85f57764ab9beaf163e074475688ac3af7'
+# Link to the deposit page
+external_url: 'https://app.hyperliquid.xyz/vaults/0xc68a3f85f57764ab9beaf163e074475688ac3af7'
+# 9999 is our internal synthetic chain ID for Hypercore, since it doesn't have a real chain ID
+chain_id: 9999
+# See https://github.com/tradingstrategy-ai/trade-executor/blob/c27b0895eabf9b9cd190afec21c5f53f626a1a3c/tradeexecutor/strategy/tag.py#L6
+tags:
+  - live
+# How far up in the listing page we displays this
+sort_priority: 0
+# Show on front page
+frontpage: true
+# Mangle HTML file input to iframe-compatible format
+inject_backtest_iframe_resizer: true
+# Use relative direction for the tile chart (matches vault detail page)
+tile_chart_direction: relative
+# Markdown description of the strategy
+long_description: |
+  OpenCZ is a systematic multi-strategy vault for Hyperliquid perpetual futures,
+  combining trend-following, mean reversion, liquidation alpha, and macro regime
+  signals with fully automated dynamic capital allocation.
+
+  ## How it works
+
+  The strategy blends multiple systematic sub-strategies, each targeting a
+  distinct market regime or microstructure pattern. A dynamic allocation engine
+  redistributes capital across sub-strategies based on prevailing conditions,
+  aiming to maintain balanced exposure across different market environments.
+
+  All execution is fully automated with no manual intervention.
+
+  ## Risk framework
+
+  - 1x leverage
+  - Dynamic capital allocation across sub-strategies
+  - Systematic position sizing and risk management
