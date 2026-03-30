@@ -77,6 +77,17 @@ Used in DataTable context (vs. standard svelte component context).
 				--data-badge-background: var(--c-box-4);
 			}
 
+			:global(.data-badge) {
+				background: var(--data-badge-background);
+				box-shadow: none;
+				backdrop-filter: none;
+
+				&::before,
+				&::after {
+					display: none;
+				}
+			}
+
 			font: var(--f-ui-xs-medium);
 			letter-spacing: var(--ls-ui-xs);
 

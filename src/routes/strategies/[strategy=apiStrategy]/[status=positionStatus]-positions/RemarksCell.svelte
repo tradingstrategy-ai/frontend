@@ -20,6 +20,12 @@
 </script>
 
 <div class="flags">
+	{#if position.isTest}
+		<PositionFlag label="Test" title="Test position">
+			<p>This trade was made to test the underlying blockchain infrastructure.</p>
+		</PositionFlag>
+	{/if}
+
 	{#if position.stopLossTriggered}
 		<PositionFlag label="SL" title="Stop loss triggered">
 			<p>This position was closed with a stop loss</p>
