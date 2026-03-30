@@ -34,7 +34,11 @@
 				<div class="cta-buttons">
 					{#if assetUrl}
 						<Button size="sm" target="_blank" rel="noreferrer" href={assetUrl}>
-							{isVaultPosition ? 'View vault' : position.isCreditPosition ? 'View lending reserve' : 'View trading pair'}
+							{isVaultPosition
+								? 'View vault'
+								: position.isCreditPosition
+									? 'View lending reserve'
+									: 'View trading pair'}
 						</Button>
 					{/if}
 				</div>
