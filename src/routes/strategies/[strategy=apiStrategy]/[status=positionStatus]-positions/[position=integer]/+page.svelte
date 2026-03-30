@@ -9,7 +9,10 @@
 	export let data;
 	const { position, chain, strategy } = data;
 
-	const assetUrl = position.pricingPair.info_url;
+	const isVaultPosition = position.pair.isVault;
+	const assetUrl = isVaultPosition
+		? `https://tradingstrategy.ai/trading-view/vaults/address/${position.pair.pool_address}`
+		: position.pricingPair.info_url;
 	const isGmxExchangeAccountPosition =
 		position.pair.kind === 'exchange_account' && position.pair.other_data?.exchange_protocol === 'gmx';
 	const safeAddress =
@@ -31,7 +34,7 @@
 				<div class="cta-buttons">
 					{#if assetUrl}
 						<Button size="sm" target="_blank" rel="noreferrer" href={assetUrl}>
-							{position.isCreditPosition ? 'View lending reserve' : 'View trading pair'}
+							{isVaultPosition ? 'View vault' : position.isCreditPosition ? 'View lending reserve' : 'View trading pair'}
 						</Button>
 					{/if}
 				</div>
