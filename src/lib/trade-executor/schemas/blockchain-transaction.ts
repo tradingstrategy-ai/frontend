@@ -31,7 +31,10 @@ export const blockchainTransactionSchema = z.object({
 	broadcasted_at: unixTimestamp.nullish(),
 	included_at: unixTimestamp.nullish(),
 	block_number: blockNumber.nullish(),
-	block_hash: hexString.nullish(),
+	block_hash: z
+		.string()
+		.regex(/^(0x)?[0-9a-fA-F]+$/)
+		.nullish(),
 	status: z.boolean().nullish(),
 	realised_gas_units_consumed: z.int().nonnegative().nullish(),
 	realised_gas_price: z.int().nonnegative().nullish(),

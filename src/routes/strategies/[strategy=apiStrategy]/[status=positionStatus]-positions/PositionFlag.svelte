@@ -29,7 +29,18 @@
 			--data-badge-background: var(--c-box-4);
 		}
 
-		:global(*) {
+		:global(.data-badge) {
+			background: var(--data-badge-background);
+			box-shadow: none;
+			backdrop-filter: none;
+
+			&::before,
+			&::after {
+				display: none;
+			}
+		}
+
+		:global(*:not(.data-badge)) {
 			text-decoration: dotted underline;
 		}
 	}
