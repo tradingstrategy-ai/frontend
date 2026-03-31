@@ -1,6 +1,7 @@
 engineStrict: true
 
-minimumReleaseAge: 1440
+# A days delay
+minimumReleaseAge: 5760
 
 minimumReleaseAgeExclude:
   - '@sveltejs/adapter-node'
