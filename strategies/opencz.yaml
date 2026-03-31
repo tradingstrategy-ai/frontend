@@ -48,3 +48,15 @@ long_description: |
   - Dynamic capital allocation across uncorrelated strategies
   - Adaptive stop losses
   - Continuous liquidity and momentum screening
+
+  ## Backtesting results
+
+  Backtesting results (Binance futures, Mar 2020 – Mar 2026, ~6 years):
+
+  - Total return: 1,164% | CAGR: 39.2%
+  - Sharpe: 2.28 | Sortino: 3.58 | Calmar: 1.92
+  - Maximum drawdown: 20.4%
+  - 9,021 total trades, 46.2% win rate
+
+  *Metrics are based on a specific historical simulation setup and period,
+  and should not be interpreted as a guarantee of future outcomes.
