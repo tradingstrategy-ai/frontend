@@ -4,7 +4,8 @@
 	import { Button, DataBadge, Profitability, Tooltip } from '$lib/components';
 
 	export let position: TradingPositionInfo;
-	export let gmxPositionUrl: string | undefined = undefined;
+	export let exchangeUrl: string | undefined = undefined;
+	export let exchangeName: string | undefined = undefined;
 </script>
 
 <div class="position-profitability tile a">
@@ -29,9 +30,9 @@
 			</span>
 		</Tooltip>
 
-		{#if gmxPositionUrl}
-			<div class="gmx-button-row">
-				<Button size="lg" target="_blank" rel="noreferrer" href={gmxPositionUrl}>View on GMX</Button>
+		{#if exchangeUrl}
+			<div class="exchange-button-row">
+				<Button size="lg" target="_blank" rel="noreferrer" href={exchangeUrl}>View on {exchangeName}</Button>
 			</div>
 		{/if}
 	</div>
@@ -76,12 +77,12 @@
 			}
 		}
 
-		.gmx-button-row {
+		.exchange-button-row {
 			display: flex;
 			justify-content: flex-start;
 		}
 
-		:global(.gmx-button-row .button) {
+		:global(.exchange-button-row .button) {
 			--button-width: 100%;
 		}
 	}
