@@ -53,7 +53,9 @@
 				{strategy.name}
 
 				{#each tags as tag}
-					<DataBadge class="badge" status={isBetaTag(tag) ? 'beta' : 'warning'}>{tag}</DataBadge>
+					{#if isBetaTag(tag)}
+						<DataBadge class="badge" status="beta">{tag}</DataBadge>
+					{/if}
 				{/each}
 			</div>
 			<div class="wallet-widget" slot="cta">
