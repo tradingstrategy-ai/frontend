@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Show only beta badge in strategy title, removing other warning badges (2026-04-03)
 - Fix HyperAI strategy positions page and improve position table badges (2026-03-30)
 - Add OpenCZ multi-strategy vault to Hyperliquid strategy listings (2026-03-29)
 - Add HyperAI strategy avatar assets and document SVG/WebP strategy logo workflow (2026-03-22)
