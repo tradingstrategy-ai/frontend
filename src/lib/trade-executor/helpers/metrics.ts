@@ -11,9 +11,39 @@ import { parseDate } from '$lib/helpers/date';
  * CAGR metric is fixed.
  */
 export function getMetricsWithAltCAGR(strategy: StrategyInfo) {
-	const metrics = { ...strategy.summary_statistics?.key_metrics };
-	const altCagr = calculateAltCagr(strategy.summary_statistics?.compounding_unrealised_trading_profitability);
+	const summaryStats = strategy.summary_statistics;
+	const metrics = { ...summaryStats?.key_metrics };
+
+	const altCagr = calculateAltCagr(summaryStats?.compounding_unrealised_trading_profitability);
 	if (altCagr && !strategy.useSharePrice) metrics.cagr = altCagr;
+
+	// For share-price strategies (e.g. Lagoon vaults), use return_annualised as CAGR fallback
+	// when the API-provided CAGR is missing (e.g. strategy is new and lacks sufficient history)
+	if (strategy.useSharePrice && !metrics.cagr?.value && summaryStats?.return_annualised != null) {
+		metrics.cagr = {
+			kind: 'cagr',
+			source: 'live_trading',
+			value: summaryStats.return_annualised,
+			calculation_window_start_at: summaryStats.first_trade_at ?? null,
+			calculation_window_end_at: summaryStats.calculated_at ?? null,
+			calculation_method: 'historical_data',
+			help_link: 'https://tradingstrategy.ai/glossary/compound-annual-growth-rate-cagr'
+		};
+	}
+
+	// Use current_value as TVL fallback when total_equity key metric is missing
+	if (!metrics.total_equity?.value && summaryStats?.current_value != null) {
+		metrics.total_equity = {
+			kind: 'total_equity',
+			source: 'live_trading',
+			value: summaryStats.current_value,
+			calculation_window_start_at: null,
+			calculation_window_end_at: null,
+			calculation_method: 'latest_value',
+			help_link: 'https://tradingstrategy.ai/glossary/total-equity'
+		};
+	}
+
 	return metrics;
 }
 
