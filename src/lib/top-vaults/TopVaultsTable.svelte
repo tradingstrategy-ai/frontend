@@ -856,7 +856,7 @@
 						'asc',
 						rankVaultsBy(['mgmt_fee', 'perf_fee'], Infinity)
 					)}
-					{@render sortColHeader('Deposit and lockup', 'lockup', 'asc', rankVaultsBy(['lockup'], Infinity))}
+					{@render sortColHeader('Deposit and delays', 'lockup', 'asc', rankVaultsBy(['lockup'], Infinity))}
 					{@render sortColHeader('Protocol Technical Risk', 'risk', 'asc', rankVaultsBy(['risk_numeric'], Infinity))}
 					<th class="sparkline">3M price</th>
 				</tr>
