@@ -176,16 +176,33 @@ export function getFormattedLockup({ lockup: seconds }: VaultInfo): string {
 
 	const parts: string[] = [];
 
-	function addUnit(unit: string, duration: number) {
-		parts.push(`${duration} ${unit}${duration === 1 ? '' : 's'}`);
-	}
+	if (days > 0) parts.push(`${days}d`);
+	if (remainderHours > 0) parts.push(`${remainderHours}h`);
+	if (parts.length === 0 && minutes > 0) parts.push(`${minutes}m`);
+	if (parts.length === 0) return 'No lockup';
 
-	if (days > 0) addUnit('day', days);
-	if (remainderHours > 0) addUnit('hour', remainderHours);
-	if (parts.length === 0 && minutes > 0) addUnit('minute', minutes);
-	if (parts.length === 0) parts.push('No lockup');
+	return parts.join(' ');
+}
 
-	return parts.join(', ');
+/**
+ * Return a tooltip string describing the vault's deposit acceptance and lockup period.
+ */
+export function getLockupTooltip({ lockup }: Pick<VaultInfo, 'lockup'>): string {
+	if (lockup == null) return 'This vault is unlikely to have any standard lockup mechanism.';
+	if (lockup <= 0)
+		return 'This vault currently accepts deposits. This vault should allow instant redemptions under normal conditions.';
+
+	const hours = lockup / 3600;
+	const days = Math.floor(hours / 24);
+	const remainderHours = Math.floor(hours % 24);
+	const minutes = Math.floor(lockup / 60);
+
+	const parts: string[] = [];
+	if (days > 0) parts.push(`${days} ${days === 1 ? 'day' : 'days'}`);
+	if (remainderHours > 0) parts.push(`${remainderHours} ${remainderHours === 1 ? 'hour' : 'hours'}`);
+	if (parts.length === 0 && minutes > 0) parts.push(`${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`);
+
+	return `This vault currently accepts deposits. Deposits have ${parts.join(', ')} lockup.`;
 }
 
 /**

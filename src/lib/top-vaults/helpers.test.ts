@@ -118,27 +118,27 @@ describe('getFormattedLockup', () => {
 
 	test('formats minutes correctly', () => {
 		const vault = createTestVault('Test vault', { lockup: 300 }); // 5 minutes
-		expect(getFormattedLockup(vault)).toBe('5 minutes');
+		expect(getFormattedLockup(vault)).toBe('5m');
 	});
 
 	test('formats hours correctly', () => {
 		const vault = createTestVault('Test vault', { lockup: 7200 }); // 2 hours
-		expect(getFormattedLockup(vault)).toBe('2 hours');
+		expect(getFormattedLockup(vault)).toBe('2h');
 	});
 
 	test('formats days correctly', () => {
 		const vault = createTestVault('Test vault', { lockup: 86400 }); // 1 day
-		expect(getFormattedLockup(vault)).toBe('1 day');
+		expect(getFormattedLockup(vault)).toBe('1d');
 	});
 
 	test('formats days and hours correctly', () => {
 		const vault = createTestVault('Test vault', { lockup: 90000 }); // 1 day, 1 hour
-		expect(getFormattedLockup(vault)).toBe('1 day, 1 hour');
+		expect(getFormattedLockup(vault)).toBe('1d 1h');
 	});
 
-	test('uses singular form for 1 unit', () => {
+	test('uses abbreviated unit for 1 unit', () => {
 		const vault = createTestVault('Test vault', { lockup: 60 }); // 1 minute
-		expect(getFormattedLockup(vault)).toBe('1 minute');
+		expect(getFormattedLockup(vault)).toBe('1m');
 	});
 });
 

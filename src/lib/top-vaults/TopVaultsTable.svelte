@@ -23,7 +23,7 @@
 	import VaultSparkline from './VaultSparkline.svelte';
 	import IconChevronUp from '~icons/local/chevron-up';
 	import IconChevronDown from '~icons/local/chevron-down';
-	import IconClock from '~icons/local/clock';
+	import IconLock from '~icons/local/lock';
 	import { getChain } from '$lib/helpers/chain';
 	import {
 		formatDollar,
@@ -41,7 +41,9 @@
 		calculateTvlWeightedApy,
 		ddFilterOptions,
 		getFormattedLockup,
+		getLockupTooltip,
 		getLifetimeMaxDrawdown,
+		hasSupportedProtocol,
 		isBlacklisted,
 		isGoodVaultStatus,
 		rankVaultsBy,
@@ -167,6 +169,7 @@
 		direction: { type: 'string', defaultValue: 'desc', options: ['asc', 'desc'] },
 		q: { type: 'string', defaultValue: '' },
 		closed: { type: 'number', defaultValue: 0 },
+		unknown: { type: 'number', defaultValue: 1 },
 		dd: { type: 'string', defaultValue: 'any', options: ddFilterOptions.map((o) => o.key) },
 		returns: { type: 'string', defaultValue: DEFAULT_RETURN_COLUMN_IDS.join(',') }
 	} as const satisfies ParamSchema;
@@ -199,6 +202,7 @@
 	let ddDropdownOpen = $state(false);
 
 	let hideClosed = $derived(urlState.closed === 1);
+	let hideUnknown = $derived(urlState.unknown === 1);
 	let returnsDropdownOpen = $state(false);
 	let selectedReturnColumnIds = $derived(sanitiseReturnColumnSelection(urlState.returns));
 	let selectedReturnColumns = $derived(
@@ -348,6 +352,9 @@
 
 			// Hide closed filter (checkbox-driven)
 			if (hideClosed && v.deposit_closed_reason != null) return false;
+
+			// Hide unknown protocol filter (checkbox-driven)
+			if (hideUnknown && !hasSupportedProtocol(v)) return false;
 
 			const vaultCompareStr = [
 				v.chain_id,
@@ -638,6 +645,22 @@
 						</Tooltip>
 					</div>
 
+					<div class="filter-group">
+						<Tooltip>
+							<label class="checkbox-filter" slot="trigger">
+								<span class="filter-label filter-label-hint">Hide unknown</span>
+								<input
+									type="checkbox"
+									checked={hideUnknown}
+									onchange={() => updateSearchParams({ unknown: hideUnknown ? 0 : 1 })}
+								/>
+							</label>
+							<svelte:fragment slot="popup">
+								Don't show vaults whose protocol has not been identified yet
+							</svelte:fragment>
+						</Tooltip>
+					</div>
+
 					<div class="filter">
 						<TextInput
 							bind:value={filterValue}
@@ -833,7 +856,7 @@
 						'asc',
 						rankVaultsBy(['mgmt_fee', 'perf_fee'], Infinity)
 					)}
-					{@render sortColHeader('Lockup', 'lockup', 'asc', rankVaultsBy(['lockup'], Infinity))}
+					{@render sortColHeader('Deposit and lockup', 'lockup', 'asc', rankVaultsBy(['lockup'], Infinity))}
 					{@render sortColHeader('Protocol Technical Risk', 'risk', 'asc', rankVaultsBy(['risk_numeric'], Infinity))}
 					<th class="sparkline">3M price</th>
 				</tr>
@@ -916,7 +939,7 @@
 								<Tooltip>
 									<svelte:fragment slot="trigger">
 										<span class="status-wrapper">
-											<IconClock />{getFormattedLockup(vault)}
+											{#if vault.deposit_closed_reason != null}<IconLock />{/if}{getFormattedLockup(vault)}
 										</span>
 									</svelte:fragment>
 									<svelte:fragment slot="popup"
@@ -924,7 +947,14 @@
 									>
 								</Tooltip>
 							{:else}
-								{getFormattedLockup(vault)}
+								<Tooltip>
+									<svelte:fragment slot="trigger">
+										<span class="status-wrapper">
+											{#if vault.deposit_closed_reason != null}<IconLock />{/if}{getFormattedLockup(vault)}
+										</span>
+									</svelte:fragment>
+									<svelte:fragment slot="popup">{getLockupTooltip(vault)}</svelte:fragment>
+								</Tooltip>
 							{/if}
 						</td>
 						<td class="risk">
@@ -1416,6 +1446,11 @@
 
 			.lockup {
 				width: 7.5%;
+
+				:global(.popup) {
+					right: 0;
+					width: 360px;
+				}
 
 				&.unknown {
 					color: var(--c-text-light);

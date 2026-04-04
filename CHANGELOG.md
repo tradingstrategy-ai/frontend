@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add hide unknown filter, deposit and lockup column improvements, and lockup tooltips to vault listings (2026-04-03)
 - Show only beta badge in strategy title, removing other warning badges (2026-04-03)
 - Fix HyperAI strategy positions page and improve position table badges (2026-03-30)
 - Add OpenCZ multi-strategy vault to Hyperliquid strategy listings (2026-03-29)
