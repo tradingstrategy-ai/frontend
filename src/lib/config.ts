@@ -235,16 +235,6 @@ export const announcement = config((jsonStr: string = '') => {
 }, 'ANNOUNCEMENT') as Announcement | undefined;
 
 /**
- * Top vaults data URL
- */
-export const topVaultsUrl = config((url: string) => {
-	if (!url) {
-		console.warn(`${prefix}TOP_VAULTS_URL not configured`);
-	}
-	return url;
-}, 'TOP_VAULTS_URL');
-
-/**
  * Vault protocol metadata base URL
  */
 export const vaultProtocolMetadataUrl = config((url: string) => {
@@ -274,3 +264,20 @@ export const vaultSparklinesUrl = config((url: string) => {
 	}
 	return url;
 }, 'VAULT_SPARKLINES_URL');
+
+/**
+ * Vault API base URL (Cloudflare Worker)
+ *
+ * Handles API key validation and dataset downloads.
+ */
+export const vaultApiUrl = config((url: string) => {
+	if (!url) {
+		console.warn(`${prefix}VAULT_API_URL not configured`);
+	}
+	return url;
+}, 'VAULT_API_URL');
+
+/**
+ * Creem.io checkout URL for Pro subscription
+ */
+export const creemCheckoutUrl = config((url: string) => url, 'CREEM_CHECKOUT_URL');

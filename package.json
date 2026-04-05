@@ -64,6 +64,7 @@
   },
   "dependencies": {
     "@aave/math-utils": "^1.37.1",
+    "@aws-sdk/client-s3": "^3.1019.0",
     "@duckdb/node-api": "1.4.2-r.1",
     "@reown/appkit": "^1.8.18",
     "@reown/appkit-adapter-wagmi": "^1.8.18",

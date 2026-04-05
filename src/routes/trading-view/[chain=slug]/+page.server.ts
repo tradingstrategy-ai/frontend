@@ -8,9 +8,12 @@ import { fetchPairs } from '$lib/explorer/pair-client';
 import { fetchLendingReserves } from '$lib/explorer/lending-reserve-client';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { getFormattedReserveUSD } from '$lib/helpers/lending-reserve';
+import { getChain } from '$lib/helpers/chain';
+import { error } from '@sveltejs/kit';
 
-export async function load({ parent, fetch }) {
-	const { chain } = await parent();
+export async function load({ fetch, params }) {
+	const chain = getChain(params.chain);
+	if (!chain) error(404, `Chain not found: ${params.chain}`);
 
 	return {
 		chainDetails: await fetchChainDetails(fetch, chain),

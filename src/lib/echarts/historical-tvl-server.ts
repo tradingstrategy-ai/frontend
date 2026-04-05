@@ -1,8 +1,9 @@
 import { DuckDBConnection } from '@duckdb/node-api';
 import type { VaultInfo } from '$lib/top-vaults/schemas';
 import type { HistoricalWeeklyVaultRow } from './historical-tvl';
+import { VAULT_PRICES_PARQUET_PATH } from '$lib/top-vaults/constants';
 
-export const HISTORICAL_TVL_PARQUET_FILE = 'data/cleaned-vault-prices-1h.parquet';
+export const HISTORICAL_TVL_PARQUET_FILE = VAULT_PRICES_PARQUET_PATH;
 
 export function getMockWeeklyVaultRows(vaults: VaultInfo[]): HistoricalWeeklyVaultRow[] {
 	const weeks = ['2025-12-08', '2025-12-15', '2025-12-22', '2025-12-29', '2026-01-05'];
