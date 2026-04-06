@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add position entry and exit charts to API strategy open and closed position pages (2026-04-06)
 - Add hide unknown filter, deposit and lockup column improvements, and lockup tooltips to vault listings (2026-04-03)
 - Show only beta badge in strategy title, removing other warning badges (2026-04-03)
 - Fix HyperAI strategy positions page and improve position table badges (2026-03-30)

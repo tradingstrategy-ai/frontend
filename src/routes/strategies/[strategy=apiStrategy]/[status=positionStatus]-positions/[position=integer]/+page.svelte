@@ -5,9 +5,10 @@
 	import PositionProfitability from './PositionProfitability.svelte';
 	import PositionSummary from './PositionSummary.svelte';
 	import OtherMetrics from './OtherMetrics.svelte';
+	import PositionCharts from './PositionCharts.svelte';
 
 	export let data;
-	const { position, chain, strategy } = data;
+	const { position, chain, strategy, status } = data;
 
 	const isVaultPosition = position.pair.isVault;
 	const assetUrl = isVaultPosition
@@ -19,6 +20,7 @@
 		strategy.on_chain_data.asset_management_mode === 'lagoon' ? strategy.on_chain_data.smart_contracts.safe : undefined;
 	const gmxPositionUrl =
 		isGmxExchangeAccountPosition && safeAddress ? `https://app.gmx.io/#/accounts/${safeAddress}` : undefined;
+	const tradePathBase = `./${position.position_id}`;
 </script>
 
 <main class="position-page ds-3">
@@ -74,6 +76,12 @@
 			</Alert>
 		{/if}
 	</Section>
+
+	{#if status !== 'frozen'}
+		<Section padding="sm">
+			<PositionCharts executorUrl={strategy.url} positionId={position.position_id} {tradePathBase} />
+		</Section>
+	{/if}
 
 	<Section>
 		<div class="position-info">
