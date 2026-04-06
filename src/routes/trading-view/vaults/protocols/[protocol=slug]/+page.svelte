@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { TopVaults } from '$lib/top-vaults/schemas';
 	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
+	import { isUnsupportedProtocolSlug } from '$lib/top-vaults/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
@@ -78,4 +79,5 @@
 	subtitle="Top stablecoin vaults on {protocolName}"
 	showFilters
 	defaultTvlKey="10k"
+	defaultHideUnknown={isUnsupportedProtocolSlug(protocolSlug) ? 0 : 1}
 />

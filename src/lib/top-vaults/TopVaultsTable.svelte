@@ -93,6 +93,8 @@
 		defaultTvlKey?: string;
 		/** Default age filter index (used to initialise the dropdown when showFilters is true) */
 		defaultAgeIndex?: number;
+		/** Default value for the "Hide unknown" filter (1 = hide, 0 = show) */
+		defaultHideUnknown?: number;
 		/** Show skeleton loading state while vault data is being fetched */
 		loading?: boolean;
 	}
@@ -111,6 +113,7 @@
 		showFilters = false,
 		defaultTvlKey = DEFAULT_TVL_KEY,
 		defaultAgeIndex = 0,
+		defaultHideUnknown = 1,
 		loading = false
 	}: Props = $props();
 
@@ -169,7 +172,7 @@
 		direction: { type: 'string', defaultValue: 'desc', options: ['asc', 'desc'] },
 		q: { type: 'string', defaultValue: '' },
 		closed: { type: 'number', defaultValue: 0 },
-		unknown: { type: 'number', defaultValue: 1 },
+		unknown: { type: 'number', defaultValue: defaultHideUnknown },
 		dd: { type: 'string', defaultValue: 'any', options: ddFilterOptions.map((o) => o.key) },
 		returns: { type: 'string', defaultValue: DEFAULT_RETURN_COLUMN_IDS.join(',') }
 	} as const satisfies ParamSchema;
