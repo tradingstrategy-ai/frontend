@@ -98,6 +98,11 @@ jobs:
       - name: Build SvelteKit vite app (production mode)
         run: pnpm run build
       - name: Run e2e tests
+        env:
+          TS_PRIVATE_R2_ACCOUNT_ID: ${{ secrets.TS_PRIVATE_R2_ACCOUNT_ID }}
+          TS_PRIVATE_R2_ACCESS_KEY_ID: ${{ secrets.TS_PRIVATE_R2_ACCESS_KEY_ID }}
+          TS_PRIVATE_R2_SECRET_ACCESS_KEY: ${{ secrets.TS_PRIVATE_R2_SECRET_ACCESS_KEY }}
+          TS_PRIVATE_R2_BUCKET_NAME: ${{ secrets.TS_PRIVATE_R2_BUCKET_NAME }}
         run: pnpm run test:e2e
       - name: Upload Test Results
         if: failure()

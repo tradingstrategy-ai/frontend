@@ -943,7 +943,9 @@
 										</span>
 									</svelte:fragment>
 									<svelte:fragment slot="popup"
-										>The vault deposit or redemption may be currently closed: {statusReason}. {getLockupTooltip(vault)}</svelte:fragment
+										>The vault deposit or redemption may be currently closed: {statusReason}. {getLockupTooltip(
+											vault
+										)}</svelte:fragment
 									>
 								</Tooltip>
 							{:else}
