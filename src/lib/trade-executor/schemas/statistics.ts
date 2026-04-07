@@ -6,7 +6,7 @@
  *
  */
 import { z } from 'zod';
-import { count, percent, primaryKeyString, unixTimestampToDate, usDollarAmount } from './utility-types';
+import { count, percent, primaryKeyString, unixTimestampToDate, usDollarAmount, usDollarPrice } from './utility-types';
 import { tradeSummarySchema } from './trade';
 import { longShortTableSchema } from './statistics-table';
 
@@ -16,7 +16,12 @@ export const positionStatisticsSchema = z.object({
 	profitability: percent,
 	profit_usd: usDollarAmount,
 	quantity: z.number(),
-	value: usDollarAmount
+	value: usDollarAmount,
+	internal_share_price: usDollarPrice.nullish(),
+	internal_total_supply: z.number().nullish(),
+	internal_profit_pct: percent.nullish(),
+	internal_profit_usd: usDollarAmount.nullish(),
+	underlying_price: usDollarPrice.nullish()
 });
 export type PositionStatistics = z.infer<typeof positionStatisticsSchema>;
 
