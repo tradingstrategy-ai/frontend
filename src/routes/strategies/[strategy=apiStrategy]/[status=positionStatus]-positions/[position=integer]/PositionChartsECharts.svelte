@@ -273,21 +273,21 @@ Client-side ECharts renderer for position entry and exit charts.
 	async function renderCharts() {
 		await tick();
 
-		underlyingChart = renderChart(
-			underlyingContainer,
-			underlyingChart,
-			'Underlying price',
-			underlyingLineColour,
-			'Underlying price',
-			model.underlyingPrice
-		);
 		internalChart = renderChart(
 			internalContainer,
 			internalChart,
-			'Internal share price',
+			'Position internal share price',
 			internalLineColour,
-			'Internal share price',
+			'Position internal share price',
 			model.internalSharePrice
+		);
+		underlyingChart = renderChart(
+			underlyingContainer,
+			underlyingChart,
+			'Asset price',
+			underlyingLineColour,
+			'Asset price',
+			model.underlyingPrice
 		);
 	}
 
@@ -326,21 +326,7 @@ Client-side ECharts renderer for position entry and exit charts.
 
 <div class="position-charts-grid">
 	<SummaryBox
-		title="Underlying price"
-		subtitle="Underlying asset price with increase and decrease markers."
-		class="position-chart-card"
-	>
-		{#if chartError}
-			<p class="chart-unavailable">{chartError}</p>
-		{:else if model.underlyingPrice.points.length > 0}
-			<div class="chart-canvas" bind:this={underlyingContainer} data-testid="underlying-position-chart"></div>
-		{:else}
-			<p class="chart-unavailable">{model.underlyingPrice.unavailableMessage}</p>
-		{/if}
-	</SummaryBox>
-
-	<SummaryBox
-		title="Internal share price"
+		title="Position internal share price"
 		subtitle="Internal share price with increase and decrease markers."
 		class="position-chart-card"
 	>
@@ -350,6 +336,20 @@ Client-side ECharts renderer for position entry and exit charts.
 			<div class="chart-canvas" bind:this={internalContainer} data-testid="internal-position-chart"></div>
 		{:else}
 			<p class="chart-unavailable">{model.internalSharePrice.unavailableMessage}</p>
+		{/if}
+	</SummaryBox>
+
+	<SummaryBox
+		title="Asset price"
+		subtitle="Underlying asset price with increase and decrease markers."
+		class="position-chart-card"
+	>
+		{#if chartError}
+			<p class="chart-unavailable">{chartError}</p>
+		{:else if model.underlyingPrice.points.length > 0}
+			<div class="chart-canvas" bind:this={underlyingContainer} data-testid="underlying-position-chart"></div>
+		{:else}
+			<p class="chart-unavailable">{model.underlyingPrice.unavailableMessage}</p>
 		{/if}
 	</SummaryBox>
 </div>
