@@ -14,6 +14,10 @@
 	const assetUrl = isVaultPosition
 		? `https://tradingstrategy.ai/trading-view/vaults/address/${position.pair.pool_address}`
 		: position.pricingPair.info_url;
+	const hyperliquidVaultUrl =
+		isVaultPosition && strategy.on_chain_data.chain_id === 9999
+			? `https://app.hyperliquid.xyz/vaults/${position.pair.pool_address}`
+			: undefined;
 	const isGmxExchangeAccountPosition =
 		position.pair.kind === 'exchange_account' && position.pair.other_data?.exchange_protocol === 'gmx';
 	const safeAddress =
@@ -37,10 +41,15 @@
 					{#if assetUrl}
 						<Button size="sm" target="_blank" rel="noreferrer" href={assetUrl}>
 							{isVaultPosition
-								? 'View vault'
+								? 'View vault on Trading Strategy'
 								: position.isCreditPosition
 									? 'View lending reserve'
 									: 'View trading pair'}
+						</Button>
+					{/if}
+					{#if hyperliquidVaultUrl}
+						<Button size="sm" target="_blank" rel="noreferrer" href={hyperliquidVaultUrl}>
+							View vault on Hyperliquid
 						</Button>
 					{/if}
 				</div>
