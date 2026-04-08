@@ -51,7 +51,7 @@ export function toListingStrategy(
 			strategy_developer_fee: vault?.perf_fee ?? 0
 		},
 		on_chain_data: {
-			asset_management_mode: 'hot_wallet' as const,
+			asset_management_mode: 'hyperliquid' as const,
 			chain_id: config.chain_id,
 			smart_contracts: {}
 		},

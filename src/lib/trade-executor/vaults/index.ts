@@ -8,6 +8,7 @@ import { EnzymeVault } from './enzyme';
 import { VelvetVault } from './velvet';
 import { LagoonVault } from './lagoon';
 import { HotWallet } from './hot_wallet';
+import { HyperliquidVault } from './hyperliquid';
 import { getChain } from '$lib/helpers/chain';
 
 // Overload signatures (helps TS know that vault input -> vault output)
@@ -37,6 +38,8 @@ export function createVaultAdapter(
 			return new LagoonVault(chain, contracts, feeData);
 		case 'hot_wallet':
 			return new HotWallet(chain);
+		case 'hyperliquid':
+			return new HyperliquidVault(chain);
 		default:
 			throw new Error(`Unsupported asset management mode: ${mode}`);
 	}
