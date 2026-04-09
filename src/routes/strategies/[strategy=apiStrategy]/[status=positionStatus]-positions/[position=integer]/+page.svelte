@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { Alert, Button, HashAddress, PageHeading, Section } from '$lib/components';
+	import { getExchangeAccountUrl, getExchangeDisplayName } from 'trade-executor/helpers/exchange-account';
 	import TradeTable from './TradeTable.svelte';
 	import PositionProfitability from './PositionProfitability.svelte';
 	import PositionSummary from './PositionSummary.svelte';
@@ -18,12 +19,15 @@
 		isVaultPosition && strategy.on_chain_data.chain_id === 9999
 			? `https://app.hyperliquid.xyz/vaults/${position.pair.pool_address}`
 			: undefined;
-	const isGmxExchangeAccountPosition =
-		position.pair.kind === 'exchange_account' && position.pair.other_data?.exchange_protocol === 'gmx';
+	const isExchangeAccountPosition = position.pair.kind === 'exchange_account';
+	const exchangeProtocol = position.pair.other_data?.exchange_protocol;
 	const safeAddress =
 		strategy.on_chain_data.asset_management_mode === 'lagoon' ? strategy.on_chain_data.smart_contracts.safe : undefined;
-	const gmxPositionUrl =
-		isGmxExchangeAccountPosition && safeAddress ? `https://app.gmx.io/#/accounts/${safeAddress}` : undefined;
+	const exchangeUrl =
+		isExchangeAccountPosition && exchangeProtocol && safeAddress
+			? getExchangeAccountUrl(exchangeProtocol, safeAddress)
+			: undefined;
+	const exchangeName = exchangeProtocol ? getExchangeDisplayName(exchangeProtocol) : undefined;
 	const tradePathBase = `./${position.position_id}`;
 </script>
 
@@ -94,15 +98,15 @@
 
 	<Section>
 		<div class="position-info">
-			<PositionProfitability {position} {gmxPositionUrl} />
+			<PositionProfitability {position} {exchangeUrl} {exchangeName} />
 			<PositionSummary {position} />
-			{#if !isGmxExchangeAccountPosition}
+			{#if !isExchangeAccountPosition}
 				<OtherMetrics {position} />
 			{/if}
 		</div>
 	</Section>
 
-	{#if !isGmxExchangeAccountPosition}
+	{#if !isExchangeAccountPosition}
 		<Section padding="sm">
 			<TradeTable
 				trades={position.trades}
