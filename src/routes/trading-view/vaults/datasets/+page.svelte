@@ -19,6 +19,9 @@ Vault datasets download page
 	const apiKeyPlaceholder = 'XXXXX-XXXXX-XXXXX-XXXXX-XXXXX';
 
 	function getDownloadUrl(originalUrl: string) {
+		// Intentionally keep the user-facing API key in the URL so direct downloads work
+		// from a normal link and the same endpoint is easy to reuse with curl.
+		// This is an accepted usability trade-off for this page.
 		const url = new URL(originalUrl, data.origin);
 		url.searchParams.set('api-key', validApiKey);
 		return url.toString();

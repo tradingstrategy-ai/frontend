@@ -16,6 +16,10 @@ const TOP_VAULTS_KEY = 'top_vaults_by_chain.json';
 /** Fallback private URL for top vaults JSON (when R2 is not configured). */
 const topVaultsPrivateUrl: string | undefined = env.TS_PRIVATE_TOP_VAULTS_URL;
 
+function logTopVaultsAccessIssue(message: string) {
+	console.warn(message);
+}
+
 /**
  * Fetch the top vaults JSON content.
  *
@@ -33,8 +37,8 @@ export async function fetchTopVaultsRaw(fetch: Fetch): Promise<unknown> {
 				const text = await result.body.transformToString();
 				return JSON.parse(text);
 			}
-		} catch (e) {
-			console.warn('R2 fetch failed, falling back to URL:', e);
+		} catch {
+			logTopVaultsAccessIssue('R2 fetch failed for top vaults, falling back to the configured private source');
 		}
 	}
 
@@ -43,7 +47,9 @@ export async function fetchTopVaultsRaw(fetch: Fetch): Promise<unknown> {
 	}
 
 	const resp = await fetch(topVaultsPrivateUrl);
-	if (!resp.ok) throw new Error(`Fetch ${topVaultsPrivateUrl} failed: ${resp.status}`);
+	if (!resp.ok) {
+		throw new Error(`Fetching top vaults from the configured private source failed with status ${resp.status}`);
+	}
 	return resp.json();
 }
 
