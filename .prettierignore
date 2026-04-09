@@ -13,3 +13,6 @@ package.json
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+
+# Generated backtest reports
+strategies/backtests/*.html

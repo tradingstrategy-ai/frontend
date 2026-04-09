@@ -55,6 +55,20 @@
 	</ContentCardsSection>
 
 	<ContentCardsSection title="Programmatic access">
+		<ContentCard title="Vault datasets" href="/trading-view/vaults/datasets">
+			<IconWallet slot="icon" />
+			<p>
+				Download vault metadata and hourly vault price history for offline research, notebooks, and vault analytics
+				workflows.
+			</p>
+			{#if topVaults?.vaults.length}
+				<p>
+					Currently covering <strong>{formatAmount(topVaults.vaults.length)}</strong> vaults.
+				</p>
+			{/if}
+			<Button slot="cta" label="Download vault data" />
+		</ContentCard>
+
 		<ContentCard title="Backtesting" href="/trading-view/backtesting">
 			<IconBacktesting slot="icon" />
 			<p>

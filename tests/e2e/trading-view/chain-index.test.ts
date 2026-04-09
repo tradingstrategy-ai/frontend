@@ -8,7 +8,9 @@ test.describe('chain index page', () => {
 
 	test('chain tile should link to chain details', async ({ page }) => {
 		const chain = page.getByRole('link', { name: /Ethereum/ });
-		await chain.click();
+		const href = await chain.getAttribute('href');
+		expect(href).toMatch(/ethereum/);
+		await page.goto(href!);
 		await expect(page).toHaveURL(/ethereum/);
 	});
 
