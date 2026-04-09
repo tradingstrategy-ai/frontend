@@ -80,11 +80,17 @@ const lagoonSchema = baseOnChainDataSchema.extend({
 	smart_contracts: lagoonSmartContractSchema
 });
 
+const hyperliquidSchema = baseOnChainDataSchema.extend({
+	asset_management_mode: z.literal('hyperliquid'),
+	smart_contracts: z.object({})
+});
+
 export const onChainDataSchema = z.discriminatedUnion('asset_management_mode', [
 	hotWalletSchema,
 	enzymeSchema,
 	velvetSchema,
-	lagoonSchema
+	lagoonSchema,
+	hyperliquidSchema
 ]);
 export type OnChainData = z.infer<typeof onChainDataSchema>;
 

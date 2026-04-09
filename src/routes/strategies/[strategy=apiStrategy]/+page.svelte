@@ -4,16 +4,29 @@
 	import SummaryMetrics from './SummaryMetrics.svelte';
 	import StrategyPerformanceChart from './StrategyPerformanceChart.svelte';
 	import { getMetricsWithAltCAGR } from 'trade-executor/helpers/metrics';
+	import {
+		getExchangeAccountUrl,
+		getExchangeDisplayName,
+		getExchangeProtocolFromTags
+	} from 'trade-executor/helpers/exchange-account';
 
 	let { data } = $props();
 	let { chain, strategy, vault, admin, ipCountry } = $derived(data);
 
 	let backtestLink = $derived(`/strategies/${strategy.id}/backtest`);
-	let gmxAccountUrl = $derived(
-		strategy.id === 'gmx-ai' && strategy.on_chain_data.asset_management_mode === 'lagoon'
-			? `https://app.gmx.io/#/accounts/${strategy.on_chain_data.smart_contracts.safe}`
-			: undefined
-	);
+
+	let exchangeAccount = $derived.by(() => {
+		const protocol = getExchangeProtocolFromTags(strategy.tags ?? []);
+		if (!protocol) return undefined;
+		const safeAddress =
+			strategy.on_chain_data.asset_management_mode === 'lagoon'
+				? strategy.on_chain_data.smart_contracts.safe
+				: undefined;
+		if (!safeAddress) return undefined;
+		const url = getExchangeAccountUrl(protocol, safeAddress);
+		if (!url) return undefined;
+		return { url, name: getExchangeDisplayName(protocol), protocol };
+	});
 
 	// Temporary hack to address inaccurate CAGR metric (remove once this is fixed)
 	let keyMetrics = $derived(getMetricsWithAltCAGR(strategy));
@@ -28,14 +41,16 @@
 	<div class="sidebar-stack">
 		<MyDeposits {strategy} {chain} {vault} {ipCountry} {admin} />
 
-		{#if gmxAccountUrl}
-			<section class="gmx-account-box tile a">
+		{#if exchangeAccount}
+			<section class="exchange-account-box tile a">
 				<h2>
-					<img src="/avatars/gmx.svg" alt="GMX logo" />
-					<span>GMX account</span>
+					<img src="/avatars/{exchangeAccount.protocol}.svg" alt="{exchangeAccount.name} logo" />
+					<span>{exchangeAccount.name} account</span>
 				</h2>
-				<p>This vault trades on GMX</p>
-				<Button size="lg" href={gmxAccountUrl} target="_blank" rel="noreferrer">View strategy on GMX</Button>
+				<p>This vault trades on {exchangeAccount.name}</p>
+				<Button size="lg" href={exchangeAccount.url} target="_blank" rel="noreferrer">
+					View strategy on {exchangeAccount.name}
+				</Button>
 			</section>
 		{/if}
 	</div>
@@ -54,7 +69,7 @@
 			gap: 1rem;
 		}
 
-		.gmx-account-box {
+		.exchange-account-box {
 			display: grid;
 			gap: 1rem;
 			padding: 1.25rem;

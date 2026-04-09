@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-labelledby="title">
+  <title id="title">Derive logo</title>
+  <circle cx="540" cy="540" r="540" fill="#0b0e11" />
+  <path
+    d="M380 300h160c132.548 0 240 107.452 240 240s-107.452 240-240 240H380V300zm100 90v300h60c82.843 0 150-67.157 150-150s-67.157-150-150-150h-60z"
+    fill="#72f5a3"
+  />
+</svg>

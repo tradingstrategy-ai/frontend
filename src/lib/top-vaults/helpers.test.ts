@@ -108,7 +108,7 @@ describe('meetsMinTvl', () => {
 describe('getFormattedLockup', () => {
 	test('returns "No lockup" for 0 seconds', () => {
 		const vault = createTestVault('Test vault', { lockup: 0 });
-		expect(getFormattedLockup(vault)).toBe('No lockup');
+		expect(getFormattedLockup(vault)).toBe('Instant');
 	});
 
 	test('returns "Unknown" for null lockup', () => {

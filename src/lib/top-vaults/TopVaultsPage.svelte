@@ -35,6 +35,8 @@
 		defaultTvlKey?: string;
 		/** Default age filter index (used to initialise the dropdown when showFilters is true) */
 		defaultAgeIndex?: number;
+		/** Default value for the "Hide unknown" filter (1 = hide, 0 = show) */
+		defaultHideUnknown?: number;
 		/** Show skeleton loading state while vault data is being fetched */
 		loading?: boolean;
 	}
@@ -54,6 +56,7 @@
 		showFilters,
 		defaultTvlKey,
 		defaultAgeIndex,
+		defaultHideUnknown,
 		loading = false
 	}: Props = $props();
 </script>
@@ -97,7 +100,7 @@
 			{/if}
 
 			{#if loading}
-				<TopVaultsTable {chain} loading {showFilters} />
+				<TopVaultsTable {chain} loading {showFilters} {defaultHideUnknown} />
 			{:else if !topVaults?.vaults.length}
 				{#if stablecoinMetadata}
 					<Alert status="info">We have not indexed any vaults using this stablecoin as a denomination token yet.</Alert>
@@ -116,6 +119,7 @@
 					{showFilters}
 					{defaultTvlKey}
 					{defaultAgeIndex}
+					{defaultHideUnknown}
 				/>
 			{/if}
 		</div>

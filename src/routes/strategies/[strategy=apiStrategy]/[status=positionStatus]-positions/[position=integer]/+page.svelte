@@ -1,24 +1,34 @@
 <script lang="ts">
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { Alert, Button, HashAddress, PageHeading, Section } from '$lib/components';
+	import { getExchangeAccountUrl, getExchangeDisplayName } from 'trade-executor/helpers/exchange-account';
 	import TradeTable from './TradeTable.svelte';
 	import PositionProfitability from './PositionProfitability.svelte';
 	import PositionSummary from './PositionSummary.svelte';
 	import OtherMetrics from './OtherMetrics.svelte';
+	import PositionCharts from './PositionCharts.svelte';
 
 	export let data;
-	const { position, chain, strategy } = data;
+	const { position, chain, strategy, status } = data;
 
 	const isVaultPosition = position.pair.isVault;
 	const assetUrl = isVaultPosition
 		? `https://tradingstrategy.ai/trading-view/vaults/address/${position.pair.pool_address}`
 		: position.pricingPair.info_url;
-	const isGmxExchangeAccountPosition =
-		position.pair.kind === 'exchange_account' && position.pair.other_data?.exchange_protocol === 'gmx';
+	const hyperliquidVaultUrl =
+		isVaultPosition && strategy.on_chain_data.chain_id === 9999
+			? `https://app.hyperliquid.xyz/vaults/${position.pair.pool_address}`
+			: undefined;
+	const isExchangeAccountPosition = position.pair.kind === 'exchange_account';
+	const exchangeProtocol = position.pair.other_data?.exchange_protocol;
 	const safeAddress =
 		strategy.on_chain_data.asset_management_mode === 'lagoon' ? strategy.on_chain_data.smart_contracts.safe : undefined;
-	const gmxPositionUrl =
-		isGmxExchangeAccountPosition && safeAddress ? `https://app.gmx.io/#/accounts/${safeAddress}` : undefined;
+	const exchangeUrl =
+		isExchangeAccountPosition && exchangeProtocol && safeAddress
+			? getExchangeAccountUrl(exchangeProtocol, safeAddress)
+			: undefined;
+	const exchangeName = exchangeProtocol ? getExchangeDisplayName(exchangeProtocol) : undefined;
+	const tradePathBase = `./${position.position_id}`;
 </script>
 
 <main class="position-page ds-3">
@@ -35,10 +45,15 @@
 					{#if assetUrl}
 						<Button size="sm" target="_blank" rel="noreferrer" href={assetUrl}>
 							{isVaultPosition
-								? 'View vault'
+								? 'View vault on Trading Strategy'
 								: position.isCreditPosition
 									? 'View lending reserve'
 									: 'View trading pair'}
+						</Button>
+					{/if}
+					{#if hyperliquidVaultUrl}
+						<Button size="sm" target="_blank" rel="noreferrer" href={hyperliquidVaultUrl}>
+							View vault on Hyperliquid
 						</Button>
 					{/if}
 				</div>
@@ -75,17 +90,23 @@
 		{/if}
 	</Section>
 
+	{#if status !== 'frozen'}
+		<Section padding="sm">
+			<PositionCharts executorUrl={strategy.url} positionId={position.position_id} {tradePathBase} />
+		</Section>
+	{/if}
+
 	<Section>
 		<div class="position-info">
-			<PositionProfitability {position} {gmxPositionUrl} />
+			<PositionProfitability {position} {exchangeUrl} {exchangeName} />
 			<PositionSummary {position} />
-			{#if !isGmxExchangeAccountPosition}
+			{#if !isExchangeAccountPosition}
 				<OtherMetrics {position} />
 			{/if}
 		</div>
 	</Section>
 
-	{#if !isGmxExchangeAccountPosition}
+	{#if !isExchangeAccountPosition}
 		<Section padding="sm">
 			<TradeTable
 				trades={position.trades}
