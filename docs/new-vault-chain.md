@@ -60,7 +60,7 @@ If the new chain's vaults need a different default TVL threshold, add an entry t
 
 ## 6. Parquet data
 
-Vault share price chart data is served from `data/cleaned-vault-prices-1h.parquet`. The metrics endpoint (`src/routes/trading-view/vaults/[vault=vaultId]/metrics/+server.ts`) queries this file by vault ID.
+Vault share price chart data is served from a locally cached `data/cleaned-vault-prices-1h.parquet` file. The server refreshes this cache from the configured Cloudflare source when the file has not been checked for over one hour. The metrics endpoint (`src/routes/trading-view/vaults/[vault=vaultId]/metrics/+server.ts`) queries this file by vault ID.
 
 Ensure the parquet file is updated to include rows for the new chain's vaults. Without this, the chart will render empty (no error shown to the user).
 

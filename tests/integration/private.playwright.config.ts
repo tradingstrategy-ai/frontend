@@ -1,8 +1,8 @@
 import { defineConfig } from '@playwright/test';
-import { webServerConfig } from '../helpers';
+import { privateR2WebServerConfig } from '../helpers';
 
 export default defineConfig({
-	testIgnore: /private-r2\.test\.ts/,
-	webServer: webServerConfig('test'),
+	testMatch: /private-r2\.test\.ts/,
+	webServer: privateR2WebServerConfig('test'),
 	reporter: process.env.GITHUB_ACTIONS ? [['dot'], ['github']] : 'list'
 });

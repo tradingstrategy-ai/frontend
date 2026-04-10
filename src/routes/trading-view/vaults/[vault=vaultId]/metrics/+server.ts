@@ -1,12 +1,11 @@
 import type { UTCTimestamp } from 'lightweight-charts';
 import { error, json } from '@sveltejs/kit';
 import { DuckDBConnection } from '@duckdb/node-api';
-import { VAULT_PRICES_PARQUET_PATH } from '$lib/top-vaults/constants';
-
-const parquetFile = VAULT_PRICES_PARQUET_PATH;
+import { ensureVaultPricesParquet } from '$lib/top-vaults/vault-prices-parquet';
 
 async function getPriceAndTvlData(vaultId: string) {
 	const connection = await DuckDBConnection.create();
+	const parquetFile = await ensureVaultPricesParquet();
 
 	try {
 		const reader = await connection.runAndReadAll(

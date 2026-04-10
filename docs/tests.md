@@ -63,6 +63,25 @@ pnpm run test:integration
 - runs tests in `tests/integration` folder (headlessly) and reports results
 - automatically runs `pnpm preview --mode=test` to start a node preview server
 - uses mock API data found in `tests/mocks`
+- loads `.env.test` for deterministic test configuration
+
+#### Local secrets and `.env.local`
+
+For normal development, keep checked-in defaults in `.env` and place local-only secrets in
+`.env.local`. Vite/SvelteKit loads `.env.local` automatically and it overrides `.env`.
+
+The regular integration suite intentionally stays deterministic and uses `.env.test` plus mock
+APIs. This means secret-backed features should not be added to the default `pnpm run test:integration`
+flow unless they can be mocked reliably.
+
+For checks that should use your local private secrets, use the dedicated private Playwright config:
+
+```shell
+pnpm exec playwright test --config tests/integration/private.playwright.config.ts
+```
+
+This private harness overlays the relevant private values from `.env.local` on top of the normal
+test-mode configuration. Tests in this harness should skip when the required secrets are absent.
 
 See [Integration and e2e test frameworks](#integration-and-e2e-test-frameworks) below for additional info.
 
