@@ -49,8 +49,14 @@ bash scripts/build-deps.sh
 
 ## Running in local dev
 
-Environment variables required by the app are maintained in a `.env` file. Read about about
-[magic VITE envs](https://stackoverflow.com/questions/68479217/how-to-load-environment-variables-in-svelte).
+Environment variables required by the app are maintained in a checked-in `.env` file for defaults.
+Put local-only secrets and overrides in `.env.local`, which is gitignored and loaded automatically
+by Vite/SvelteKit. Variables in `.env.local` override `.env`.
+
+Use the existing prefixes when adding variables:
+
+- `TS_PUBLIC_` for values that may be exposed client-side
+- `TS_PRIVATE_` for server-only secrets and private configuration
 
 Start the SvelteKit development server:
 
@@ -67,9 +73,12 @@ pnpm run test:unit --run
 # Integration tests (requires test build)
 pnpm run build --mode=test
 pnpm run test:integration
+
+# Secret-backed private R2 integration check
+pnpm exec playwright test --config tests/integration/private.playwright.config.ts
 ```
 
-Test builds use separate output directories (`.svelte-kit-test/`, `node_modules/.vite-test/`) so they don't interfere with the dev server. See [docs/tests.md](./docs/tests.md) for details.
+Test builds use separate output directories (`.svelte-kit-test/`, `node_modules/.vite-test/`) so they don't interfere with the dev server. The regular integration suite uses deterministic `.env.test` values and mock APIs. Secret-backed checks that depend on your local `.env.local` use the dedicated private Playwright config above. See [docs/tests.md](./docs/tests.md) for details.
 
 ## Documentation
 

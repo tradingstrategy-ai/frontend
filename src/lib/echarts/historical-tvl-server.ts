@@ -2,6 +2,7 @@ import { DuckDBConnection } from '@duckdb/node-api';
 import type { VaultInfo } from '$lib/top-vaults/schemas';
 import type { HistoricalWeeklyVaultRow } from './historical-tvl';
 import { VAULT_PRICES_PARQUET_PATH } from '$lib/top-vaults/constants';
+import { ensureVaultPricesParquet } from '$lib/top-vaults/vault-prices-parquet';
 
 export const HISTORICAL_TVL_PARQUET_FILE = VAULT_PRICES_PARQUET_PATH;
 
@@ -25,6 +26,8 @@ export function getMockWeeklyVaultRows(vaults: VaultInfo[]): HistoricalWeeklyVau
 export async function getHistoricalWeeklyVaultRows(
 	parquetFile = HISTORICAL_TVL_PARQUET_FILE
 ): Promise<HistoricalWeeklyVaultRow[]> {
+	const resolvedParquetFile =
+		parquetFile === HISTORICAL_TVL_PARQUET_FILE ? await ensureVaultPricesParquet() : parquetFile;
 	const connection = await DuckDBConnection.create();
 
 	try {
@@ -58,7 +61,7 @@ export async function getHistoricalWeeklyVaultRows(
 				WHERE week < date_trunc('week', current_date)
 				ORDER BY 3, 2, 1
 			`,
-			{ parquetFile }
+			{ parquetFile: resolvedParquetFile }
 		);
 
 		return reader.getRows().map(([id, chainId, week, tvl]) => ({
