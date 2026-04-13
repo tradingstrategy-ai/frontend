@@ -4,29 +4,14 @@
 	import SummaryMetrics from './SummaryMetrics.svelte';
 	import StrategyPerformanceChart from './StrategyPerformanceChart.svelte';
 	import { getMetricsWithAltCAGR } from 'trade-executor/helpers/metrics';
-	import {
-		getExchangeAccountUrl,
-		getExchangeDisplayName,
-		getExchangeProtocolFromTags
-	} from 'trade-executor/helpers/exchange-account';
+	import { getExchangeAccountInfo } from 'trade-executor/helpers/exchange-account';
 
 	let { data } = $props();
 	let { chain, strategy, vault, admin, ipCountry } = $derived(data);
 
 	let backtestLink = $derived(`/strategies/${strategy.id}/backtest`);
 
-	let exchangeAccount = $derived.by(() => {
-		const protocol = getExchangeProtocolFromTags(strategy.tags ?? []);
-		if (!protocol) return undefined;
-		const safeAddress =
-			strategy.on_chain_data.asset_management_mode === 'lagoon'
-				? strategy.on_chain_data.smart_contracts.safe
-				: undefined;
-		if (!safeAddress) return undefined;
-		const url = getExchangeAccountUrl(protocol, safeAddress);
-		if (!url) return undefined;
-		return { url, name: getExchangeDisplayName(protocol), protocol };
-	});
+	let exchangeAccount = $derived(getExchangeAccountInfo(strategy));
 
 	// Temporary hack to address inaccurate CAGR metric (remove once this is fixed)
 	let keyMetrics = $derived(getMetricsWithAltCAGR(strategy));

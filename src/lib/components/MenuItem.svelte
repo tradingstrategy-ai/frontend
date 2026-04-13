@@ -5,11 +5,12 @@
 	export let external = false;
 
 	$: href = active ? undefined : targetUrl;
-	$: rel = external ? 'external' : undefined;
+	$: rel = external ? 'external noreferrer' : undefined;
+	$: target = external ? '_blank' : undefined;
 </script>
 
 <li class="menu-item">
-	<a {href} {rel} on:click>
+	<a {href} {rel} {target} on:click>
 		<slot>{label}</slot>
 	</a>
 </li>
