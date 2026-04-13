@@ -6,17 +6,30 @@ Sidebar on desktop, collapsible dropdown on mobile — same pattern as StrategyN
 but with a static set of menu items (no conditional visibility or badges).
 -->
 <script context="module" lang="ts">
-	const baseMenuOptions = [
+	type MenuOption = {
+		slug: string;
+		label: string;
+		externalUrl?: string;
+	};
+
+	const baseMenuOptions: MenuOption[] = [
 		{ slug: '', label: 'Overview' },
-		{ slug: 'performance', label: 'Performance' },
 		{ slug: 'description', label: 'Description' },
+		{ slug: 'performance', label: 'Performance' },
 		{ slug: 'vault', label: 'Vault info' },
 		{ slug: 'fees', label: 'Fees' }
 	];
 
-	export function getMenuOptions(backtestAvailable: boolean) {
-		if (!backtestAvailable) return baseMenuOptions;
-		return [...baseMenuOptions, { slug: 'backtest', label: 'Backtest results' }];
+	export function getMenuOptions(backtestAvailable: boolean, positionsUrl?: string): MenuOption[] {
+		let options = [...baseMenuOptions];
+		if (positionsUrl) {
+			// Insert after Description (index 1)
+			options.splice(2, 0, { slug: 'open-positions', label: 'Open positions ↗', externalUrl: positionsUrl });
+		}
+		if (backtestAvailable) {
+			options.push({ slug: 'backtest', label: 'Backtest results' });
+		}
+		return options;
 	}
 
 	export { baseMenuOptions as menuOptions };
@@ -25,16 +38,20 @@ but with a static set of menu items (no conditional visibility or badges).
 <script lang="ts">
 	import fsm from 'svelte-fsm';
 	import { Button, Menu, MenuItem } from '$lib/components';
+	import { getExchangeAccountUrl } from 'trade-executor/helpers/exchange-account';
 	import IconChevronDown from '~icons/local/chevron-down';
 
 	export let basePath: string;
 	export let currentPath: string;
 	export let backtestAvailable: boolean = false;
+	export let vaultAddress: string | undefined = undefined;
+
+	$: positionsUrl = vaultAddress ? getExchangeAccountUrl('hyperliquid', vaultAddress) : undefined;
 
 	let menuWrapper: HTMLElement;
 	let menuHeight = 'auto';
 
-	$: visibleOptions = getMenuOptions(backtestAvailable);
+	$: visibleOptions = getMenuOptions(backtestAvailable, positionsUrl);
 	$: currentSlug = currentPath.split('/')[3] ?? '';
 	$: currentOption = visibleOptions.find(({ slug }) => slug === currentSlug);
 
@@ -67,9 +84,9 @@ but with a static set of menu items (no conditional visibility or badges).
 
 	<div class="menu-wrapper" bind:this={menuWrapper}>
 		<Menu on:click={mobileMenu.close}>
-			{#each visibleOptions as { slug, label }}
+			{#each visibleOptions as { slug, label, externalUrl }}
 				{@const active = slug === currentOption?.slug}
-				<MenuItem targetUrl={getTargetUrl(slug)} {active}>
+				<MenuItem targetUrl={externalUrl ?? getTargetUrl(slug)} external={!!externalUrl} {active}>
 					<span class="label">{label}</span>
 				</MenuItem>
 			{/each}

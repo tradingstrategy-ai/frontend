@@ -27,6 +27,7 @@
 		direction: 'asc' | 'desc';
 		hiddenPositions?: number[];
 		reserves: ReservePosition;
+		exchangeAccount?: { url: string; name: string };
 	}
 
 	let {
@@ -38,6 +39,7 @@
 		direction,
 		hiddenPositions = [],
 		reserves,
+		exchangeAccount,
 		...restProps
 	}: Props = $props();
 
@@ -147,8 +149,12 @@
 		table.column({
 			header: '',
 			id: 'cta',
-			accessor: ({ position_id }) => `./${status}-positions/${position_id}`,
-			cell: ({ value }) => createRender(TableRowTarget, { href: value, size: 'xs' }),
+			accessor: ({ position_id }) => (exchangeAccount ? exchangeAccount.url : `./${status}-positions/${position_id}`),
+			cell: ({ value }) =>
+				createRender(TableRowTarget, {
+					href: value,
+					...(exchangeAccount ? { label: `View on ${exchangeAccount.name}`, target: '_blank', rel: 'noreferrer' } : {})
+				}),
 			plugins: { sort: { disable: true } }
 		})
 	]);

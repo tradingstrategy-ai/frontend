@@ -1,7 +1,11 @@
 <script lang="ts">
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { Alert, Button, HashAddress, PageHeading, Section } from '$lib/components';
-	import { getExchangeAccountUrl, getExchangeDisplayName } from 'trade-executor/helpers/exchange-account';
+	import {
+		getExchangeAccountInfo,
+		getExchangeAccountUrl,
+		getExchangeDisplayName
+	} from 'trade-executor/helpers/exchange-account';
 	import TradeTable from './TradeTable.svelte';
 	import PositionProfitability from './PositionProfitability.svelte';
 	import PositionSummary from './PositionSummary.svelte';
@@ -21,13 +25,17 @@
 			: undefined;
 	const isExchangeAccountPosition = position.pair.kind === 'exchange_account';
 	const exchangeProtocol = position.pair.other_data?.exchange_protocol;
-	const safeAddress =
-		strategy.on_chain_data.asset_management_mode === 'lagoon' ? strategy.on_chain_data.smart_contracts.safe : undefined;
-	const exchangeUrl =
-		isExchangeAccountPosition && exchangeProtocol && safeAddress
-			? getExchangeAccountUrl(exchangeProtocol, safeAddress)
-			: undefined;
-	const exchangeName = exchangeProtocol ? getExchangeDisplayName(exchangeProtocol) : undefined;
+	const exchangeAccount = getExchangeAccountInfo(strategy);
+	// Fall back to position-level protocol detection when tags are missing
+	const exchangeUrl = isExchangeAccountPosition
+		? (exchangeAccount?.url ??
+			(exchangeProtocol && strategy.on_chain_data.asset_management_mode === 'lagoon'
+				? getExchangeAccountUrl(exchangeProtocol, strategy.on_chain_data.smart_contracts.safe)
+				: undefined))
+		: undefined;
+	const exchangeName = isExchangeAccountPosition
+		? (exchangeAccount?.name ?? (exchangeProtocol ? getExchangeDisplayName(exchangeProtocol) : undefined))
+		: undefined;
 	const tradePathBase = `./${position.position_id}`;
 </script>
 

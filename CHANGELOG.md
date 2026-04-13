@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Link exchange account positions directly to exchange pages for GMX and Hyperliquid strategies (2026-04-13)
 - Show "Hyperliquid vault" as asset management mode for Hyperliquid strategies on listing tiles (2026-04-08)
 - Add HyperEVM wallet support and Hyperliquid vault buttons on position pages (2026-04-08)
 - Add position entry and exit charts to API strategy open and closed position pages (2026-04-06)

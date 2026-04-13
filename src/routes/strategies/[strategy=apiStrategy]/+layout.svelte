@@ -9,6 +9,7 @@
 		shouldDisplayError,
 		adminOnlyError
 	} from 'trade-executor/components/StrategyError.svelte';
+	import { getExchangeAccountInfo } from 'trade-executor/helpers/exchange-account';
 	import { menuOptions, default as StrategyNav } from './StrategyNav.svelte';
 	import WalletWidget from '$lib/wallet/WalletWidget.svelte';
 
@@ -16,6 +17,7 @@
 	const isBetaTag = (tag: string) => tag.toLowerCase() === 'beta';
 
 	$: ({ admin, strategy, vault, deferred } = data);
+	$: exchangeAccount = getExchangeAccountInfo(strategy);
 
 	$: tags = strategy.tags.filter((tag) => tag !== 'live');
 	$: isPrivate = !strategy.tags.includes('live');
@@ -104,6 +106,8 @@
 					hasVault={vault.depositEnabled()}
 					backtestAvailable={strategy.backtest_available}
 					portfolioPromise={deferred.state.then((s) => s?.portfolio)}
+					{exchangeAccount}
+					onChainData={strategy.on_chain_data}
 				/>
 				<slot />
 			</div>

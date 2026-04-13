@@ -69,7 +69,13 @@
 
 <script lang="ts">
 	import type { Portfolio } from 'trade-executor/schemas/portfolio';
+	import type { OnChainData } from 'trade-executor/schemas/summary';
 	import type { PositionStatus } from 'trade-executor/schemas/position';
+	import type { ExchangeAccountInfo } from 'trade-executor/helpers/exchange-account';
+	import {
+		getExchangeAccountInfoFromPortfolio,
+		exchangeSupportsPositionStatus
+	} from 'trade-executor/helpers/exchange-account';
 	import fsm from 'svelte-fsm';
 	import { Button, Menu, MenuItem } from '$lib/components';
 	import IconChevronDown from '~icons/local/chevron-down';
@@ -79,11 +85,26 @@
 	export let hasVault: boolean;
 	export let backtestAvailable: boolean;
 	export let portfolioPromise: Promise<Portfolio | undefined>;
+	export let exchangeAccount: ExchangeAccountInfo | undefined = undefined;
+	export let onChainData: OnChainData;
 
 	let menuWrapper: HTMLElement;
 	let menuHeight = 'auto';
 
 	let hasFrozenPositions = false;
+	let resolvedExchangeAccount: ExchangeAccountInfo | undefined = exchangeAccount;
+
+	// Resolve exchange account from portfolio positions when tags don't provide it
+	if (!exchangeAccount) {
+		portfolioPromise.then((portfolio) => {
+			if (portfolio) {
+				resolvedExchangeAccount = getExchangeAccountInfoFromPortfolio(
+					{ tags: [], on_chain_data: onChainData },
+					portfolio
+				);
+			}
+		});
+	}
 
 	getPositionCount('frozen').then((count) => {
 		hasFrozenPositions = Boolean(count);
@@ -92,7 +113,10 @@
 	$: currentSlug = currentPath.split('/')[3] ?? '';
 	$: currentOption = menuOptions.find(({ slug }) => slug === currentSlug);
 
-	$: visibleOptions = menuOptions.filter(({ slug }) => {
+	$: visibleOptions = menuOptions.filter(({ slug, positionStatus }) => {
+		if (resolvedExchangeAccount && positionStatus) {
+			return exchangeSupportsPositionStatus(resolvedExchangeAccount.protocol, positionStatus);
+		}
 		// prettier-ignore
 		switch (slug) {
 			case currentOption?.slug : return true;
@@ -141,9 +165,20 @@
 		<Menu on:click={mobileMenu.close}>
 			{#each visibleOptions as { slug, label, positionStatus }}
 				{@const active = slug === currentOption?.slug}
-				<MenuItem targetUrl={getTargetUrl(slug)} {active}>
-					<span class="label">{label}</span>
-					{#if positionStatus}
+				{@const isExchangePosition = !!(resolvedExchangeAccount && positionStatus)}
+				<MenuItem
+					targetUrl={isExchangePosition ? (resolvedExchangeAccount?.url ?? '') : getTargetUrl(slug)}
+					external={isExchangePosition}
+					{active}
+				>
+					<span class="label">
+						{#if isExchangePosition}
+							{label} ↗
+						{:else}
+							{label}
+						{/if}
+					</span>
+					{#if positionStatus && !resolvedExchangeAccount}
 						{#await getPositionCount(positionStatus)}
 							<span class="count skeleton"></span>
 						{:then count}

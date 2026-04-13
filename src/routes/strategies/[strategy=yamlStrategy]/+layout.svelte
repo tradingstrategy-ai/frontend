@@ -50,7 +50,12 @@ Layout for YAML-configured strategies — heading with sidebar navigation.
 	{/if}
 
 	<div class="subpage">
-		<YamlStrategyNav basePath="/strategies/{strategy.slug}" currentPath={page.url.pathname} {backtestAvailable} />
+		<YamlStrategyNav
+			basePath="/strategies/{strategy.slug}"
+			currentPath={page.url.pathname}
+			{backtestAvailable}
+			vaultAddress={strategy.vault_address}
+		/>
 		<slot />
 	</div>
 </main>

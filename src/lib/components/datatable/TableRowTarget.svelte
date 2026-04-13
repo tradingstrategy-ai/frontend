@@ -4,13 +4,15 @@
 	interface Props {
 		label?: string;
 		href: string;
+		target?: string;
+		rel?: string;
 	}
 
-	let { label = 'Details', href }: Props = $props();
+	let { label = 'Details', href, target, rel }: Props = $props();
 </script>
 
-<a class="row-link" {href}>{label}</a>
-<TargetableLink {href} {label} />
+<a class="row-link" {href} {target} {rel}>{label}</a>
+<TargetableLink {href} {label} {target} {rel} />
 
 <style>
 	.row-link {
