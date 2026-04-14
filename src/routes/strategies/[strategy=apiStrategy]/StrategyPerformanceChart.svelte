@@ -5,6 +5,7 @@
 	import Profitability, { type ProfitInfo } from '$lib/components/Profitability.svelte';
 	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import BenchmarkSeries from '$lib/charts/BenchmarkSeries.svelte';
+	import { getLogoUrl } from '$lib/helpers/assets';
 	import { getChartClient } from 'trade-executor/client/chart';
 	import { getBenchmarkTokens } from 'trade-executor/helpers/benchmark.svelte';
 	import { formatPercent } from '$lib/helpers/formatters';
@@ -78,6 +79,7 @@
 				{#each benchmarkTokens as benchmark (benchmark.pairId)}
 					<label style:--color={benchmark.color}>
 						<input type="checkbox" name="benchmarks" bind:checked={benchmark.checked} />
+						<img class="benchmark-logo" src={getLogoUrl('token', benchmark.symbol)} alt="" aria-hidden="true" />
 						{benchmark.symbol}
 						<span class="performance" class:skeleton={benchmark.loading}>
 							{formatPercent(benchmark.periodPerformance, 1, 1, { signDisplay: 'exceptZero' })}
@@ -138,6 +140,12 @@
 				/* NOTE: There's no way to remove alpha-channel with color-mix, so have to use */
 				/* relative color syntax here (not supported by Mobile Safari < 16.4 ) */
 				color: hsl(from var(--color) h s l / 100%);
+			}
+
+			.benchmark-logo {
+				width: 1rem;
+				height: 1rem;
+				flex: 0 0 auto;
 			}
 
 			input[type='checkbox'] {

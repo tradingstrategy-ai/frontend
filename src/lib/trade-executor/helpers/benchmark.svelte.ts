@@ -61,10 +61,17 @@ const benchmarkTokens: BenchmarkTokenInfo[] = [
 	}
 ];
 
+const strategyBenchmarkOverrides: Record<string, string[]> = {
+	'gmx-ai': ['BTC', 'ETH']
+};
+
 // FIXME: using strategy id hack to infer list of tokens based on strategy ID.
 // In the future this should be provided by strategy configuration.
 export function getBenchmarkTokens({ id }: { id: string }): BenchmarkToken[] {
 	const parts = id.split('-');
-	const tokens = benchmarkTokens.filter((token) => parts.includes(token.symbol.toLowerCase()));
+	const explicitSymbols = strategyBenchmarkOverrides[id];
+	const tokens = benchmarkTokens.filter((token) =>
+		explicitSymbols ? explicitSymbols.includes(token.symbol) : parts.includes(token.symbol.toLowerCase())
+	);
 	return tokens.map((t) => new BenchmarkToken(t));
 }
