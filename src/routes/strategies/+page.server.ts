@@ -9,6 +9,7 @@ import type { PerformanceData } from 'trade-executor/schemas/utility-types.js';
 import { getCachedStrategies } from 'trade-executor/client/strategy-info';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 import { yamlStrategies } from '$lib/strategies/yaml/loader';
+import { compareStrategiesForFrontend } from '$lib/strategies/sort';
 import { toListingStrategy } from '$lib/strategies/yaml/adapter';
 import { fetchTopVaults } from '$lib/top-vaults/client';
 import { getCachedSharePriceReturns } from '$lib/strategies/yaml/share-price';
@@ -59,7 +60,7 @@ export async function load({ fetch, locals }) {
 	const tvlData = admin ? fetchTvlData() : undefined;
 
 	const allStrategies = [...(await apiStrategies), ...(await yamlStrategyList)];
-	allStrategies.sort((a, b) => (b.sort_priority ?? 0) - (a.sort_priority ?? 0));
+	allStrategies.sort(compareStrategiesForFrontend);
 
 	return {
 		strategies: allStrategies,
