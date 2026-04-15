@@ -1,5 +1,6 @@
 import { getCachedStrategies } from 'trade-executor/client/strategy-info';
 import { yamlStrategies } from '$lib/strategies/yaml/loader';
+import { compareStrategiesForFrontpage } from '$lib/strategies/sort';
 import { toListingStrategy } from '$lib/strategies/yaml/adapter';
 import { fetchTopVaults } from '$lib/top-vaults/client';
 import { type SlimVaultInfo, type VaultAggregates } from '$lib/top-vaults/schemas';
@@ -35,7 +36,7 @@ export async function load({ fetch }) {
 		Promise.all([fetchLatestFredValue('SNDR'), fetchLatestTreasuryRate()])
 	]);
 
-	const frontpageStrategies = strategies.filter((s) => s.frontpage && s.connected);
+	const frontpageStrategies = strategies.filter((s) => s.frontpage);
 	const yamlTileFreshness: {
 		strategyId: string;
 		vaultId: string | null;
@@ -73,6 +74,8 @@ export async function load({ fetch }) {
 			frontpageStrategies.push(toListingStrategy(config));
 		}
 	}
+
+	frontpageStrategies.sort(compareStrategiesForFrontpage);
 
 	const [savingsRate, treasuryRate] = ratesResult;
 

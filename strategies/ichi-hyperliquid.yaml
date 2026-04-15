@@ -19,7 +19,7 @@ tags:
 # How far up in the listing page we displays this
 sort_priority: 0
 # Show on front page
-frontpage: true
+frontpage: false
 # Mangle HTML file input to iframe-compatible format
 inject_backtest_iframe_resizer: true
 # Use relative direction for the tile chart (matches vault detail page)
