@@ -36,7 +36,7 @@ export const tradeType = z.enum([
 ]);
 export type TradeType = z.infer<typeof tradeType>;
 
-export const tradeFlag = z.enum([
+const tradeFlagValues = [
 	'open',
 	'close',
 	'increase',
@@ -47,8 +47,17 @@ export const tradeFlag = z.enum([
 	'missing_position_repair',
 	'partial_take_profit',
 	'ignore_open'
-]);
+] as const;
+export const tradeFlag = z.enum(tradeFlagValues);
 export type TradeFlag = z.infer<typeof tradeFlag>;
+
+const knownTradeFlags = new Set<string>(tradeFlagValues);
+export const tradeFlagsSchema = z
+	.array(z.unknown())
+	.transform((flags) =>
+		flags.filter((flag): flag is TradeFlag => typeof flag === 'string' && knownTradeFlags.has(flag))
+	)
+	.nullish();
 
 // see: https://github.com/tradingstrategy-ai/trade-executor/blob/master/tradeexecutor/strategy/trade_pricing.py
 export const tradePricingSchema = z.object({
@@ -77,7 +86,7 @@ export const tradeExecutionSchema = z.object({
 	planned_price: usDollarPrice,
 	reserve_currency: assetIdentifierSchema,
 	route: z.string().nullish(),
-	flags: tradeFlag.array().nullish(),
+	flags: tradeFlagsSchema,
 	// triggers: see trigger.py; leaving unparsed for now
 	// activated_trigger: see trigger.py; leaving unparsed for now
 	// expired_triggers: see trigger.py; leaving unparsed for now
