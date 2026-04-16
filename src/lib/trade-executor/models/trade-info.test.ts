@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import type { TradingPairIdentifier } from 'trade-executor/schemas/identifier';
 import { tradeExecutionSchema } from '../schemas/trade';
 import { type TradeInfo, TradeDirections, createTradeInfo } from './trade-info';
@@ -79,6 +80,25 @@ describe('a spot long position trade', () => {
 		test('should have directionLabel "Sell"', () => {
 			expect(tradeInfo.directionLabel).toBe('Sell');
 		});
+	});
+});
+
+describe('trade flags', () => {
+	test('should drop unknown backend flags', () => {
+		const spotPair: TradingPairIdentifier = {
+			base: WETH,
+			quote: USDC,
+			pool_address: '0x234',
+			kind: 'spot_market_hold'
+		};
+
+		const tradeExecution = tradeExecutionSchema.parse({
+			...partialRawTrade,
+			pair: spotPair,
+			flags: ['close', 'hypercore_duplicate_close', 'future_backend_only_flag']
+		});
+
+		expect(tradeExecution.flags).toEqual(['close']);
 	});
 });
 
