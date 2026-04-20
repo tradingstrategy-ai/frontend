@@ -17,6 +17,7 @@
 	import VaultRankings from './VaultRankings.svelte';
 	import IconDiscord from '~icons/local/discord';
 	import { hasSupportedProtocol, isBlacklisted } from '$lib/top-vaults/helpers';
+	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 
 	let { data } = $props();
 	let { vault, chain, protocolMetadata, stablecoinMetadata, generated_at } = $derived(data);
@@ -51,7 +52,10 @@
 
 		<VaultRankings {vault} {chain} {protocolMetadata} />
 
-		<ChartWithFeaturedMetrics {vault} />
+		<ChartWithFeaturedMetrics
+			{vault}
+			protocolLogoUrl={protocolMetadata ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined}
+		/>
 
 		<VaultMetrics {vault} />
 
