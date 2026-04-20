@@ -16,22 +16,24 @@ so the relative performance is comparable on a single axis.
 	import SeriesLabel from '$lib/charts/SeriesLabel.svelte';
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { formatPercent, formatTokenAmount } from '$lib/helpers/formatters';
+	import { formatDollar, formatPercent, formatTokenAmount } from '$lib/helpers/formatters';
 	import { formatDate, resampleTimeSeries } from '$lib/charts/helpers';
 
 	interface Props {
 		vault: VaultInfo;
+		/** Optional protocol logo URL to use instead of Trading Strategy brand mark */
+		protocolLogoUrl?: string;
 	}
 
-	let { vault }: Props = $props();
+	let { vault, protocolLogoUrl }: Props = $props();
 
 	let loading = $state(true);
 	let priceData = $state<[number, number][]>();
 	let tvlData = $state<[number, number][]>();
 
-	function getBenchmarkPercentChange(point: unknown) {
+	function getBenchmarkCustomValues(point: unknown) {
 		if (!point || typeof point !== 'object' || !('customValues' in point)) return undefined;
-		return (point as { customValues?: { percentChange?: number } }).customValues?.percentChange;
+		return (point as { customValues?: { percentChange?: number; usdPrice?: number } }).customValues;
 	}
 
 	async function fetchMetrics(vaultId: string) {
@@ -54,11 +56,19 @@ so the relative performance is comparable on a single axis.
 
 	const formatValue = (v: number) => formatTokenAmount(v, 2);
 
-	const benchmarkLegend = [
-		{ label: 'Vault', color: 'var(--c-bullish)', logoUrl: brandMark },
+	let vaultDirection = $state(0);
+
+	function getVaultColor(direction: number) {
+		if (direction < 0) return 'var(--c-bearish)';
+		if (direction > 0) return 'var(--c-bullish)';
+		return 'var(--c-text-ultra-light)';
+	}
+
+	const benchmarkLegend = $derived([
+		{ label: 'Vault', color: getVaultColor(vaultDirection), logoUrl: protocolLogoUrl ?? brandMark },
 		{ label: 'BTC', color: '#f7931a80', logoUrl: getLogoUrl('token', 'btc') },
 		{ label: 'ETH', color: '#627eea80', logoUrl: getLogoUrl('token', 'eth') }
-	] as const;
+	] as const);
 </script>
 
 <div class="vault-price-chart">
@@ -75,6 +85,7 @@ so the relative performance is comparable on a single axis.
 				{data}
 				options={{ priceLineVisible: false, crosshairMarkerVisible: false }}
 				priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.1 } }}
+				onVisibleDataChange={(_, profitInfo) => (vaultDirection = profitInfo.direction)}
 			/>
 
 			{#if data.length > 1 && range}
@@ -92,34 +103,42 @@ so the relative performance is comparable on a single axis.
 					{range}
 					color="#627eea80"
 				/>
-			{/if}
 
-			<Series
-				type={HistogramSeries}
-				data={resampleTimeSeries(tvlData ?? [], timeSpan.interval)}
-				options={{ priceLineVisible: false, color: 'transparent' }}
-				paneIndex={1}
-				priceScaleOptions={{ scaleMargins: { top: 0.25, bottom: 0 } }}
-				callback={({ series, colors }) => {
-					series.getPane().setHeight(150);
-					series.applyOptions({ color: colors.box3 });
-				}}
-			>
-				<SeriesLabel heading>TVL</SeriesLabel>
-			</Series>
+				<Series
+					type={HistogramSeries}
+					data={resampleTimeSeries(tvlData ?? [], timeSpan.interval)}
+					options={{ priceLineVisible: false, color: 'transparent' }}
+					paneIndex={1}
+					priceScaleOptions={{ scaleMargins: { top: 0.25, bottom: 0 } }}
+					callback={({ series, colors }) => {
+						series.getPane().setHeight(150);
+						series.applyOptions({ color: colors.box3 });
+					}}
+				>
+					<SeriesLabel heading>TVL</SeriesLabel>
+				</Series>
+			{/if}
 		{/snippet}
 
 		{#snippet tooltip({ point, time }, [price, btcBenchmark, ethBenchmark, tvl])}
 			{#if price || btcBenchmark || ethBenchmark || tvl}
+				{@const btc = getBenchmarkCustomValues(btcBenchmark)}
+				{@const eth = getBenchmarkCustomValues(ethBenchmark)}
 				<ChartTooltip {point}>
 					<div class="tooltip-date">{formatDate(time as number, '1d')}</div>
 					<dl class="tooltip-items">
 						<dt>Price:</dt>
 						<dd>{formatValue(price?.value)} {vault.denomination}</dd>
 						<dt>BTC:</dt>
-						<dd>{formatPercent(getBenchmarkPercentChange(btcBenchmark), 1, 1, { signDisplay: 'exceptZero' })}</dd>
+						<dd>
+							{formatPercent(btc?.percentChange, 1, 1, { signDisplay: 'exceptZero' })}
+							{#if btc?.usdPrice}<span class="benchmark-usd">{formatDollar(btc.usdPrice, 1)}</span>{/if}
+						</dd>
 						<dt>ETH:</dt>
-						<dd>{formatPercent(getBenchmarkPercentChange(ethBenchmark), 1, 1, { signDisplay: 'exceptZero' })}</dd>
+						<dd>
+							{formatPercent(eth?.percentChange, 1, 1, { signDisplay: 'exceptZero' })}
+							{#if eth?.usdPrice}<span class="benchmark-usd">{formatDollar(eth.usdPrice, 1)}</span>{/if}
+						</dd>
 						<dt>TVL:</dt>
 						<dd>{formatValue(tvl?.value)}</dd>
 					</dl>
@@ -176,6 +195,13 @@ so the relative performance is comparable on a single axis.
 				font: var(--f-ui-md-medium);
 				letter-spacing: var(--ls-ui-md, normal);
 				color: var(--c-text);
+			}
+
+			.benchmark-usd {
+				margin-left: 0.25rem;
+				font: var(--f-ui-sm-roman);
+				letter-spacing: var(--ls-ui-sm, normal);
+				color: var(--c-text-extra-light);
 			}
 		}
 

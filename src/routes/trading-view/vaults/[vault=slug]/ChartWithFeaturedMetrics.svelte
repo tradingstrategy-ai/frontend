@@ -9,14 +9,15 @@
 
 	interface Props {
 		vault: VaultInfo;
+		protocolLogoUrl?: string;
 	}
 
-	let { vault }: Props = $props();
+	let { vault, protocolLogoUrl }: Props = $props();
 </script>
 
 <MetricsBox>
 	<div class="chart-area">
-		<VaultPriceChart {vault} />
+		<VaultPriceChart {vault} {protocolLogoUrl} />
 
 		<div class="divider"></div>
 

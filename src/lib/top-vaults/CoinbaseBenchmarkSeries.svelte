@@ -69,7 +69,7 @@ visible range so the lines can be compared on a single axis.
 				return {
 					time: item.time,
 					value: initialVaultValue * (1 + percentChange),
-					customValues: { percentChange }
+					customValues: { percentChange, usdPrice: item.value }
 				};
 			});
 		} catch (error) {
