@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add utilisation chart for lending protocol vaults, with threshold colouring and explanatory tooltip (2026-04-21)
 - Improve vault benchmark chart with protocol icons, USD prices in tooltip, and dynamic legend colours (2026-04-20)
 - Link exchange account positions directly to exchange pages for GMX and Hyperliquid strategies (2026-04-13)
 - Show "Hyperliquid vault" as asset management mode for Hyperliquid strategies on listing tiles (2026-04-08)
