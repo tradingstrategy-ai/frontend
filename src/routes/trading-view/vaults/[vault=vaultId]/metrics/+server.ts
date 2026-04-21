@@ -9,13 +9,14 @@ async function getPriceAndTvlData(vaultId: string) {
 
 	try {
 		const reader = await connection.runAndReadAll(
-			`SELECT EXTRACT(EPOCH FROM timestamp) as ts, share_price, total_assets
+			`SELECT EXTRACT(EPOCH FROM timestamp) as ts, share_price, total_assets,
+              CASE WHEN utilisation >= 0 AND utilisation <= 2 THEN utilisation ELSE NULL END as utilisation
        FROM parquet_scan($parquetFile)
        WHERE id = $vaultId
        ORDER BY timestamp`,
 			{ parquetFile, vaultId }
 		);
-		return reader.getRows() as [UTCTimestamp, number, number][];
+		return reader.getRows() as [UTCTimestamp, number, number, number | null][];
 	} catch (e) {
 		console.error(`Error loading data from ${parquetFile} for vault <${vaultId}>`);
 		const { stack } = e as Error;
@@ -33,11 +34,15 @@ export async function GET({ params }) {
 
 	const price: [UTCTimestamp, number][] = [];
 	const tvl: [UTCTimestamp, number][] = [];
+	const utilisation: [UTCTimestamp, number][] = [];
 
-	for (const [ts, p, t] of rows) {
+	for (const [ts, p, t, u] of rows) {
 		price.push([ts, p]);
 		tvl.push([ts, t]);
+		if (u !== null) {
+			utilisation.push([ts, u]);
+		}
 	}
 
-	return json({ price, tvl });
+	return json({ price, tvl, utilisation });
 }
