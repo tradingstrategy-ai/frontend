@@ -22,6 +22,17 @@
 
 	let { data } = $props();
 	let { vault, chain, protocolMetadata, stablecoinMetadata, generated_at } = $derived(data);
+
+	let currentUtilisation = $state<number | undefined>();
+
+	$effect(() => {
+		fetch(`/trading-view/vaults/${vault.id}/metrics`)
+			.then((r) => r.json())
+			.then(({ utilisation }: { utilisation: [number, number][] }) => {
+				if (utilisation.length > 0) currentUtilisation = utilisation.at(-1)![1];
+			})
+			.catch(() => {});
+	});
 </script>
 
 <SocialMediaTags {vault} {chain} {protocolMetadata} />
@@ -52,6 +63,12 @@
 		{/if}
 
 		<VaultRankings {vault} {chain} {protocolMetadata} />
+
+		{#if currentUtilisation !== undefined && currentUtilisation > 0.95}
+			<Alert size="md" status="warning">
+				This vault is currently at maximum lending utilisation and redemptions may not be possible at the moment.
+			</Alert>
+		{/if}
 
 		<ChartWithFeaturedMetrics
 			{vault}

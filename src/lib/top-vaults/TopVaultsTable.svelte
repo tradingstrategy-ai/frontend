@@ -73,6 +73,15 @@
 	const ROW_BATCH_SIZE = 50;
 	const allVaultsPath = resolve('/trading-view/vaults/all');
 
+	let currentUtilisations = $state<Record<string, number>>({});
+
+	$effect(() => {
+		fetch('/top-vaults/current-utilisations')
+			.then((r) => r.json())
+			.then((data) => (currentUtilisations = data))
+			.catch(() => {});
+	});
+
 	interface SortOptions {
 		key: string;
 		direction: 'asc' | 'desc';
@@ -353,8 +362,9 @@
 				if (dd == null || Math.abs(dd) > selectedDdOption.value) return false;
 			}
 
-			// Hide closed filter (checkbox-driven)
+			// Hide closed/illiquid filter (checkbox-driven)
 			if (hideClosed && v.deposit_closed_reason != null) return false;
+			if (hideClosed && (currentUtilisations[v.id] ?? 0) > 0.95) return false;
 
 			// Hide unknown protocol filter (checkbox-driven)
 			if (hideUnknown && !hasSupportedProtocol(v)) return false;
@@ -643,7 +653,7 @@
 								/>
 							</label>
 							<svelte:fragment slot="popup">
-								Don't show vaults that are not accepting new deposits currently
+								Don't show vaults that are not accepting new deposits currently and illiquid.
 							</svelte:fragment>
 						</Tooltip>
 					</div>
@@ -894,6 +904,13 @@
 					{@const statusReason = [vault.deposit_closed_reason, vault.redemption_closed_reason]
 						.filter(Boolean)
 						.join('; ')}
+					{@const utilisation = currentUtilisations[vault.id]}
+					{@const illiquid = utilisation !== undefined && utilisation > 0.95}
+					{@const lockupLabel = illiquid ? 'Illiquid' : getFormattedLockup(vault)}
+					{@const utilisationTooltip =
+						utilisation !== undefined
+							? ` Utilisation is capital borrowed out from a lending vault. High utilisation affects redemptions.${illiquid ? ' Due to high utilisation this vault is likely illiquid currently.' : ''}`
+							: ''}
 					<tr class={['targetable', blacklisted && 'blacklisted']}>
 						<!-- index cell is populated with row index via `rowNumber` CSS counter -->
 						<td class="index"></td>
@@ -937,28 +954,41 @@
 						<td class="fees right">
 							<FeesCell mgmt_fee={vault.mgmt_fee} perf_fee={vault.perf_fee} />
 						</td>
-						<td class={['lockup', vault.lockup === null && 'unknown']}>
+						<td class={['lockup', vault.lockup === null && 'unknown', illiquid && 'illiquid']}>
 							{#if badStatus}
 								<Tooltip>
 									<svelte:fragment slot="trigger">
 										<span class="status-wrapper">
-											{#if vault.deposit_closed_reason != null}<IconLock />{/if}{getFormattedLockup(vault)}
+											<span class="lockup-line">
+												{#if vault.deposit_closed_reason != null}<IconLock />{/if}{lockupLabel}
+											</span>
+											{#if utilisation !== undefined}
+												<span class={['utilisation-badge', !illiquid && utilisation > 0.8 && 'high']}
+													>U: {Math.round(utilisation * 100)}%</span
+												>
+											{/if}
 										</span>
 									</svelte:fragment>
 									<svelte:fragment slot="popup"
-										>The vault deposit or redemption may be currently closed: {statusReason}. {getLockupTooltip(
-											vault
-										)}</svelte:fragment
+										>The vault deposit or redemption may be currently closed: {statusReason}.{utilisationTooltip}</svelte:fragment
 									>
 								</Tooltip>
 							{:else}
 								<Tooltip>
 									<svelte:fragment slot="trigger">
 										<span class="status-wrapper">
-											{#if vault.deposit_closed_reason != null}<IconLock />{/if}{getFormattedLockup(vault)}
+											<span class="lockup-line">
+												{#if vault.deposit_closed_reason != null}<IconLock />{/if}{lockupLabel}
+											</span>
+											{#if utilisation !== undefined}
+												<span class={['utilisation-badge', !illiquid && utilisation > 0.8 && 'high']}
+													>U: {Math.round(utilisation * 100)}%</span
+												>
+											{/if}
 										</span>
 									</svelte:fragment>
-									<svelte:fragment slot="popup">{getLockupTooltip(vault)}</svelte:fragment>
+									<svelte:fragment slot="popup">{getLockupTooltip(vault, illiquid)}{utilisationTooltip}</svelte:fragment
+									>
 								</Tooltip>
 							{/if}
 						</td>
@@ -1461,16 +1491,35 @@
 					color: var(--c-text-light);
 				}
 
-				&:has(:global(.icon)) {
+				&:has(:global(.icon)):not(.illiquid) {
 					color: var(--c-warning);
+				}
+
+				&.illiquid {
+					color: var(--c-error);
 				}
 
 				.status-wrapper {
 					display: inline-flex;
-					align-items: center;
-					gap: 0.25rem;
-					white-space: nowrap;
+					flex-direction: column;
+					align-items: flex-start;
+					gap: 0.15rem;
 					--icon-size: 0.875rem;
+
+					.lockup-line {
+						display: inline-flex;
+						align-items: center;
+						gap: 0.25rem;
+						white-space: nowrap;
+					}
+
+					.utilisation-badge {
+						white-space: nowrap;
+
+						&.high {
+							color: var(--c-error);
+						}
+					}
 				}
 			}
 

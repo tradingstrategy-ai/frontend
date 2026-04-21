@@ -187,10 +187,12 @@ export function getFormattedLockup({ lockup: seconds }: VaultInfo): string {
 /**
  * Return a tooltip string describing the vault's deposit acceptance and lockup period.
  */
-export function getLockupTooltip({ lockup }: Pick<VaultInfo, 'lockup'>): string {
+export function getLockupTooltip({ lockup }: Pick<VaultInfo, 'lockup'>, illiquid = false): string {
 	if (lockup == null) return 'This vault is unlikely to have any standard lockup mechanism.';
 	if (lockup <= 0)
-		return 'This vault currently accepts deposits. This vault should allow instant redemptions under normal conditions.';
+		return illiquid
+			? 'This vault currently accepts deposits.'
+			: 'This vault currently accepts deposits. This vault should allow instant redemptions under normal conditions.';
 
 	const hours = lockup / 3600;
 	const days = Math.floor(hours / 24);
