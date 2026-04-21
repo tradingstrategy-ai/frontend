@@ -9,6 +9,11 @@
 
 set -e
 
+auto_confirm=false
+for arg in "$@"; do
+  [[ "$arg" == "--auto-confirm" ]] && auto_confirm=true
+done
+
 # Get tags locally
 git fetch --all
 
@@ -28,8 +33,14 @@ new_tag="v$new_version"
 
 echo "Latest commit is $latest_commit"
 
-# https://stackoverflow.com/a/3232082/315168
-read -r -p "New tag is $new_tag - make a release? [y/N] " response
+if $auto_confirm; then
+    echo "New tag is $new_tag - auto-confirming release"
+    response="y"
+else
+    # https://stackoverflow.com/a/3232082/315168
+    read -r -p "New tag is $new_tag - make a release? [y/N] " response
+fi
+
 case "$response" in
     [yY][eE][sS]|[yY])
         git tag $new_tag
