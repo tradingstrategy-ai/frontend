@@ -9,6 +9,7 @@ Benchmark lines are rebased to the vault share price for the selected range
 so relative performance is comparable on a single axis.
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { VaultInfo } from './schemas';
 	import brandMark from '$lib/assets/brand-mark.svg';
 	import usTreasuryLogo from '$lib/assets/logos/tokens/us-treasury.svg';
@@ -89,7 +90,13 @@ so relative performance is comparable on a single axis.
 		return 'var(--c-text-ultra-light)';
 	}
 
-	type LegendItem = { label: string; color: string; logoUrl?: string; href?: string; tooltip?: string };
+	type LegendItem = {
+		label: string;
+		color: string;
+		logoUrl?: string;
+		href?: '/glossary/risk-free-rate';
+		tooltip?: string;
+	};
 
 	const benchmarkLegend: LegendItem[] = $derived(
 		showCryptoBenchmarks
@@ -221,10 +228,15 @@ so relative performance is comparable on a single axis.
 
 		{#snippet footer()}
 			<footer class="benchmark-legend" aria-label="Chart legend">
-				{#each benchmarkLegend as benchmark}
+				{#each benchmarkLegend as benchmark (benchmark.label)}
 					{#if benchmark.tooltip}
 						<Tooltip>
-							<a slot="trigger" class="legend-item" style:--legend-color={benchmark.color} href={benchmark.href}>
+							<a
+								slot="trigger"
+								class="legend-item"
+								style:--legend-color={benchmark.color}
+								href={resolve(benchmark.href ?? '/')}
+							>
 								<span class="legend-swatch" aria-hidden="true"></span>
 								{#if benchmark.logoUrl}
 									<img class="legend-logo" src={benchmark.logoUrl} alt="" aria-hidden="true" />
@@ -233,7 +245,9 @@ so relative performance is comparable on a single axis.
 							</a>
 							<svelte:fragment slot="popup">
 								<p>{benchmark.tooltip}</p>
-								<p><a href={benchmark.href}>Click here for more information</a></p>
+								<p>
+									<a href={resolve(benchmark.href ?? '/')}>Click here for more information</a>
+								</p>
 							</svelte:fragment>
 						</Tooltip>
 					{:else}

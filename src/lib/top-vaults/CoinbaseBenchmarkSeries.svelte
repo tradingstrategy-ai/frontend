@@ -7,7 +7,7 @@ visible range so the lines can be compared on a single axis.
 -->
 <script lang="ts">
 	import type { TimeBucket } from '$lib/schemas/utility';
-	import type { LineSeriesPartialOptions } from 'lightweight-charts';
+	import type { LineSeriesPartialOptions, UTCTimestamp } from 'lightweight-charts';
 	import type { SimpleDataItem } from '$lib/charts/types';
 	import { LineSeries } from 'lightweight-charts';
 	import Series from '$lib/charts/Series.svelte';
@@ -41,6 +41,7 @@ visible range so the lines can be compared on a single axis.
 	let options: LineSeriesPartialOptions = $derived({
 		color,
 		lineWidth: 2,
+		priceScaleId: 'crypto-benchmark',
 		priceLineVisible: false,
 		lastValueVisible: false,
 		crosshairMarkerVisible: false
@@ -57,14 +58,19 @@ visible range so the lines can be compared on a single axis.
 		if (!data.length || initialVaultValue <= 0) return;
 
 		try {
-			const closes = await fetchCoinbaseBenchmarkCloses(fetch, productId, timeBucket, effectiveStartDate, range[1]);
+			const closes = await fetchCoinbaseBenchmarkCloses(fetch, productId, range[0], range[1]);
 			if (currentRequest !== requestVersion || closes.length === 0) return;
 
-			const resampledCloses = resampleTimeSeries(closes, timeBucketToInterval(timeBucket), range[1]);
-			const initialBenchmarkValue = resampledCloses[0]?.value ?? 0;
+			const interval = timeBucketToInterval(timeBucket);
+			const benchmarkPoints = resampleTimeSeries(closes, interval, range[1]) as (SimpleDataItem & {
+				time: UTCTimestamp;
+			})[];
+			const initialTs = dateToTs(effectiveStartDate);
+			const initialBenchmarkValue =
+				benchmarkPoints.find((item) => item.time >= initialTs)?.value ?? benchmarkPoints[0]?.value ?? 0;
 			if (initialBenchmarkValue <= 0) return;
 
-			benchmarkData = resampledCloses.map((item) => {
+			benchmarkData = benchmarkPoints.map((item) => {
 				const percentChange = item.value / initialBenchmarkValue - 1;
 				return {
 					time: item.time,
@@ -80,4 +86,9 @@ visible range so the lines can be compared on a single axis.
 	}
 </script>
 
-<Series type={LineSeries} data={benchmarkData} {options} priceScaleCalculator={() => null} />
+<Series
+	type={LineSeries}
+	data={benchmarkData}
+	{options}
+	priceScaleOptions={{ visible: false, scaleMargins: { top: 0.1, bottom: 0.1 } }}
+/>
