@@ -88,8 +88,27 @@ describe('ratesToCumulativeReturn', () => {
 
 		for (const point of result) {
 			expect(point.customValues.annualRate).toBe(3.5);
+			expect(typeof point.customValues.rateDate).toBe('number');
 			expect(typeof point.customValues.percentChange).toBe('number');
 		}
+	});
+
+	test('customValues.rateDate tracks the source rate observation date', () => {
+		const start = new Date('2025-01-03T00:00:00Z'); // Friday
+		const end = new Date('2025-01-06T00:00:00Z'); // Monday
+		const rates: [number, number][] = [
+			[start.getTime() / 1000, 4.0],
+			[end.getTime() / 1000, 4.1]
+		];
+		const result = ratesToCumulativeReturn(rates, 1.0, day, start, end);
+
+		expect(result.map((point) => point.customValues.rateDate)).toEqual([
+			new Date('2025-01-03T00:00:00Z').getTime() / 1000,
+			new Date('2025-01-03T00:00:00Z').getTime() / 1000,
+			new Date('2025-01-03T00:00:00Z').getTime() / 1000,
+			new Date('2025-01-06T00:00:00Z').getTime() / 1000
+		]);
+		expect(result.at(-1)?.customValues.annualRate).toBe(4.1);
 	});
 
 	test('seed days before startDate are excluded from output', () => {
