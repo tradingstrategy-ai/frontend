@@ -1,9 +1,12 @@
 import { env } from '$env/dynamic/private';
 import { createWriteStream } from 'node:fs';
 import { mkdir, readFile, rename, rm, stat, utimes, writeFile } from 'node:fs/promises';
+import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
 import { once } from 'node:events';
 import { dirname } from 'node:path';
 import { VAULT_PRICES_PARQUET, VAULT_PRICES_PARQUET_PATH } from './constants';
+import { getR2Object, headR2Object, isR2Configured } from '$lib/r2/client';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
 const HEAD_TIMEOUT_MS = 20_000;
@@ -83,6 +86,8 @@ async function touchFile(path: string, now: Date): Promise<void> {
 	await utimes(path, now, now);
 }
 
+// --- URL-based remote access ---
+
 async function headRemoteFile(fetchFn: typeof fetch, upstreamUrl: string): Promise<RemoteFileMetadata> {
 	const response = await fetchFn(upstreamUrl, {
 		method: 'HEAD',
@@ -142,10 +147,80 @@ async function downloadRemoteFile(
 	}
 }
 
+// --- R2-based remote access ---
+
+function r2MetadataToRemoteFileMetadata(meta: {
+	contentLength: number | null;
+	lastModified: Date | null;
+}): RemoteFileMetadata {
+	return {
+		etag: null,
+		lastModified: meta.lastModified?.toUTCString() ?? null,
+		contentLength: meta.contentLength
+	};
+}
+
+async function headR2File(): Promise<RemoteFileMetadata> {
+	const meta = await headR2Object(VAULT_PRICES_PARQUET);
+	if (!meta) throw new Error('R2 HEAD returned null');
+	return r2MetadataToRemoteFileMetadata(meta);
+}
+
+async function downloadR2File(localPath: string, now: Date): Promise<RemoteFileMetadata> {
+	const result = await getR2Object(VAULT_PRICES_PARQUET);
+	if (!result?.body) throw new Error('R2 GET returned null or empty body');
+
+	await mkdir(dirname(localPath), { recursive: true });
+
+	const tempPath = `${localPath}.${process.pid}.${Date.now()}.tmp`;
+
+	try {
+		// AWS SDK body is a SdkStream that extends Readable
+		const readable = result.body as unknown as Readable;
+		const writer = createWriteStream(tempPath);
+		await pipeline(readable, writer);
+
+		await rename(tempPath, localPath);
+		await touchFile(localPath, now);
+		return r2MetadataToRemoteFileMetadata(result);
+	} catch (error) {
+		await rm(tempPath, { force: true });
+		throw error;
+	}
+}
+
+// --- Source resolution ---
+
+/** Determine which remote source to use: R2 (preferred) or direct URL (fallback). */
+type RemoteSource = { kind: 'r2' } | { kind: 'url'; url: string; fetchFn: typeof fetch } | null;
+
 function getConfiguredUpstreamUrl(): string | null {
 	const url = env.TS_PRIVATE_VAULT_PRICES_PARQUET_URL?.trim();
 	return url ? url : null;
 }
+
+function resolveRemoteSource(upstreamUrl: string | null, fetchFn: typeof fetch): RemoteSource {
+	// Explicit URL takes precedence (also used by tests to inject a mock URL)
+	if (upstreamUrl) return { kind: 'url', url: upstreamUrl, fetchFn };
+	if (isR2Configured()) return { kind: 'r2' };
+	return null;
+}
+
+async function headRemote(source: RemoteSource & object): Promise<RemoteFileMetadata> {
+	if (source.kind === 'r2') return headR2File();
+	return headRemoteFile(source.fetchFn, source.url);
+}
+
+async function downloadRemote(
+	source: RemoteSource & object,
+	localPath: string,
+	now: Date
+): Promise<RemoteFileMetadata> {
+	if (source.kind === 'r2') return downloadR2File(localPath, now);
+	return downloadRemoteFile(source.fetchFn, source.url, localPath, now);
+}
+
+// --- Main logic ---
 
 async function ensureVaultPricesParquetInner({
 	localPath = VAULT_PRICES_PARQUET_PATH,
@@ -156,29 +231,30 @@ async function ensureVaultPricesParquetInner({
 }: EnsureVaultPricesParquetOptions = {}): Promise<string> {
 	const localStat = await stat(localPath).catch(() => null);
 	const currentTime = now();
+	const source = resolveRemoteSource(upstreamUrl, fetchFn);
 
 	if (!localStat) {
-		if (!upstreamUrl) {
+		if (!source) {
 			throw new Error(
-				`Vault prices parquet is missing at ${localPath} and TS_PRIVATE_VAULT_PRICES_PARQUET_URL is not configured`
+				`Vault prices parquet is missing at ${localPath} and neither R2 nor TS_PRIVATE_VAULT_PRICES_PARQUET_URL is configured`
 			);
 		}
 
-		const metadata = await downloadRemoteFile(fetchFn, upstreamUrl, localPath, currentTime);
+		const metadata = await downloadRemote(source, localPath, currentTime);
 		await writeCachedMetadata(localPath, metadata);
 		return localPath;
 	}
 
-	if (currentTime.getTime() - localStat.mtimeMs < checkIntervalMs || !upstreamUrl) {
+	if (currentTime.getTime() - localStat.mtimeMs < checkIntervalMs || !source) {
 		return localPath;
 	}
 
 	try {
-		const remoteMetadata = await headRemoteFile(fetchFn, upstreamUrl);
+		const remoteMetadata = await headRemote(source);
 		const cachedMetadata = await readCachedMetadata(localPath);
 
 		if (hasRemoteFileChanged(remoteMetadata, cachedMetadata)) {
-			const downloadedMetadata = await downloadRemoteFile(fetchFn, upstreamUrl, localPath, currentTime);
+			const downloadedMetadata = await downloadRemote(source, localPath, currentTime);
 			await writeCachedMetadata(localPath, downloadedMetadata);
 		} else {
 			await touchFile(localPath, currentTime);
@@ -191,8 +267,8 @@ async function ensureVaultPricesParquetInner({
 }
 
 /**
- * Resolve the local vault prices Parquet file, refreshing it from Cloudflare
- * when the cache check interval has expired.
+ * Resolve the local vault prices Parquet file, refreshing it from R2 (preferred)
+ * or a direct URL when the cache check interval has expired.
  */
 export async function ensureVaultPricesParquet(options: EnsureVaultPricesParquetOptions = {}): Promise<string> {
 	const localPath = options.localPath ?? VAULT_PRICES_PARQUET_PATH;

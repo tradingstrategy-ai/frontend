@@ -1,30 +1,31 @@
 <!--
 @component
-Overlay a Coinbase benchmark line on top of the vault share-price chart.
+Overlay a US 3-month Treasury bill benchmark line on the vault share-price chart.
 
-The benchmark is rebased to the vault's starting share price for the current
-visible range so the lines can be compared on a single axis.
+The benchmark compounds daily FRED DTB3 rates into a cumulative return line
+rebased to the vault's starting share price, so relative performance is
+comparable on a single axis. Does not affect Y-axis scaling.
 -->
 <script lang="ts">
 	import type { TimeBucket } from '$lib/schemas/utility';
 	import type { LineSeriesPartialOptions } from 'lightweight-charts';
 	import type { SimpleDataItem } from '$lib/charts/types';
+	import type { TreasuryDataItem } from './treasury-benchmark';
 	import { LineSeries } from 'lightweight-charts';
 	import Series from '$lib/charts/Series.svelte';
-	import { dateToTs, resampleTimeSeries, timeBucketToInterval } from '$lib/charts/helpers';
-	import { fetchCoinbaseBenchmarkCloses } from './coinbase';
+	import { dateToTs, timeBucketToInterval } from '$lib/charts/helpers';
+	import { fetchTreasuryBenchmarkSeries, ratesToCumulativeReturn } from './treasury-benchmark';
 
 	interface Props {
-		productId: 'BTC-USD' | 'ETH-USD';
 		data: SimpleDataItem[];
 		timeBucket: TimeBucket;
 		range: [Date, Date];
 		color: string;
 	}
 
-	let { productId, data, timeBucket, range, color }: Props = $props();
+	let { data, timeBucket, range, color }: Props = $props();
 
-	let benchmarkData = $state<SimpleDataItem[]>([]);
+	let benchmarkData = $state<TreasuryDataItem[]>([]);
 	let requestVersion = 0;
 
 	let effectiveStartDate = $derived.by(() => {
@@ -57,24 +58,14 @@ visible range so the lines can be compared on a single axis.
 		if (!data.length || initialVaultValue <= 0) return;
 
 		try {
-			const closes = await fetchCoinbaseBenchmarkCloses(fetch, productId, timeBucket, effectiveStartDate, range[1]);
-			if (currentRequest !== requestVersion || closes.length === 0) return;
+			const rates = await fetchTreasuryBenchmarkSeries(fetch, effectiveStartDate, range[1]);
+			if (currentRequest !== requestVersion || rates.length === 0) return;
 
-			const resampledCloses = resampleTimeSeries(closes, timeBucketToInterval(timeBucket), range[1]);
-			const initialBenchmarkValue = resampledCloses[0]?.value ?? 0;
-			if (initialBenchmarkValue <= 0) return;
-
-			benchmarkData = resampledCloses.map((item) => {
-				const percentChange = item.value / initialBenchmarkValue - 1;
-				return {
-					time: item.time,
-					value: initialVaultValue * (1 + percentChange),
-					customValues: { percentChange, usdPrice: item.value }
-				};
-			});
+			const interval = timeBucketToInterval(timeBucket);
+			benchmarkData = ratesToCumulativeReturn(rates, initialVaultValue, interval, effectiveStartDate, range[1]);
 		} catch (error) {
 			if (currentRequest === requestVersion) {
-				console.error(`Failed to load Coinbase benchmark ${productId}`, error);
+				console.error('Failed to load Treasury benchmark', error);
 			}
 		}
 	}
