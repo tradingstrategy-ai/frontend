@@ -18,11 +18,11 @@ test.describe('pricing page', () => {
 		await expect(page.getByText('$199/month')).toBeVisible();
 	});
 
-	test('Subscribe button links to Creem checkout', async ({ page }) => {
+	test('Subscribe button links to pricing checkout', async ({ page }) => {
 		const btn = page.getByRole('link', { name: 'Subscribe' });
 		await expect(btn).toBeVisible();
 		const href = await btn.getAttribute('href');
-		expect(href).toContain('creem.io');
+		expect(href).toContain('https://www.marketsoftware.co/');
 	});
 
 	test('Download button navigates to vault datasets page', async ({ page }) => {
