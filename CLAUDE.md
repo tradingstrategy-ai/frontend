@@ -128,6 +128,7 @@ For detailed information on specific topics, see:
 - `docs/dependencies.md` - Frontend libraries, backend integrations, build tools
 - `docs/security.md` - CSP, geographic blocking, authentication, CAPTCHA
 - `docs/tests.md` - Test suites, frameworks, running tests
+- `docs/vault-data-source.md` - Vault data sources, R2 bucket config, known inconsistencies
 
 ## Pull requests
 
