@@ -124,12 +124,12 @@ so relative performance is comparable on a single axis.
 	const benchmarkLegend: LegendItem[] = $derived(
 		showCryptoBenchmarks
 			? [
-					{ label: 'Vault', color: getVaultColor(vaultDirection), logoUrl: protocolLogoUrl ?? brandMark },
+					{ label: vault.name, color: getVaultColor(vaultDirection), logoUrl: protocolLogoUrl ?? brandMark },
 					{ label: 'BTC', color: '#f7931a80', logoUrl: getLogoUrl('token', 'btc') },
 					{ label: 'ETH', color: '#627eea80', logoUrl: getLogoUrl('token', 'eth') }
 				]
 			: [
-					{ label: 'Vault', color: getVaultColor(vaultDirection), logoUrl: protocolLogoUrl ?? brandMark },
+					{ label: vault.name, color: getVaultColor(vaultDirection), logoUrl: protocolLogoUrl ?? brandMark },
 					{
 						label: 'US 3M T-bill',
 						color: '#4a90d9a0',
