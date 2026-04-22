@@ -27,16 +27,14 @@ so relative performance is comparable on a single axis.
 	import { formatDollar, formatInterestRate, formatPercent, formatTokenAmount } from '$lib/helpers/formatters';
 	import { formatDate, resampleTimeSeries } from '$lib/charts/helpers';
 
-	/** Scale the Y-axis to the vault share price with ±20% margin */
+	/** Let lightweight-charts auto-scale to the vault share price only (benchmarks excluded via priceScaleCalculator={() => null}) */
 	const vaultPriceScaleCalculator: PriceScaleCalculator = (data) => {
 		if (!data.length) return null;
 		const values = data.map((d) => (d as { value: number }).value).filter((v) => v != null);
 		if (!values.length) return null;
 		const min = Math.min(...values);
 		const max = Math.max(...values);
-		const mid = (min + max) / 2;
-		const margin = mid * 0.2;
-		return { priceRange: { minValue: min - margin, maxValue: max + margin } };
+		return { priceRange: { minValue: min, maxValue: max } };
 	};
 
 	interface Props {
