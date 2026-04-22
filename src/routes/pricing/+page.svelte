@@ -3,7 +3,7 @@ Pricing page with Basic and Pro tier comparison
 -->
 <script lang="ts">
 	import { Banner, Button, Section, SummaryBox } from '$lib/components';
-	import { creemCheckoutUrl } from '$lib/config';
+	import { pricingCheckoutUrl } from '$lib/config';
 	import IconCheckSquare from '~icons/local/check-square';
 	import IconMail from '~icons/local/mail';
 </script>
@@ -34,8 +34,8 @@ Pricing page with Basic and Pro tier comparison
 				<SummaryBox title="Pro" subtitle="$199/month" ctaPosition="bottom">
 					<p class="tier-description">DeFi data for fund managers and institutions</p>
 					<div class="pro-cta" slot="cta">
-						{#if creemCheckoutUrl}
-							<Button label="Subscribe" href={creemCheckoutUrl} target="_blank" rel="noreferrer" />
+						{#if pricingCheckoutUrl}
+							<Button label="Subscribe" href={pricingCheckoutUrl} target="_blank" rel="noreferrer" />
 						{/if}
 						<Button label="Download" href="/trading-view/vaults/datasets" secondary />
 					</div>

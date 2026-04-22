@@ -278,6 +278,6 @@ export const vaultApiUrl = config((url: string) => {
 }, 'VAULT_API_URL');
 
 /**
- * Creem.io checkout URL for Pro subscription
+ * Checkout URL for Pro subscription
  */
-export const creemCheckoutUrl = config((url: string) => url, 'CREEM_CHECKOUT_URL');
+export const pricingCheckoutUrl = config((url: string) => url, 'PRICING_CHECKOUT_URL');
