@@ -104,18 +104,18 @@ export function ratesToCumulativeReturn(
 			continue;
 		}
 
-		// Forward-fill: advance to the last rate observation at or before this point
-		while (currentRateIndex < sortedRates.length - 1 && sortedRates[currentRateIndex + 1].dateMs <= currentMs) {
-			const nextRate = sortedRates[++currentRateIndex];
-			currentRate = nextRate.rate;
-			currentRateDateMs = nextRate.dateMs;
-		}
-
-		// Compound based on actual elapsed time
+		// Compound based on actual elapsed time, using the rate active since the previous point.
 		const elapsedMs = currentMs - prevDateMs;
 		if (elapsedMs > 0) {
 			const growthFactor = (1 + currentRate / 100) ** (elapsedMs / YEAR_MS);
 			cumulativeValue *= growthFactor;
+		}
+
+		// Forward-fill: advance to the last rate observation at or before this point for display and next interval.
+		while (currentRateIndex < sortedRates.length - 1 && sortedRates[currentRateIndex + 1].dateMs <= currentMs) {
+			const nextRate = sortedRates[++currentRateIndex];
+			currentRate = nextRate.rate;
+			currentRateDateMs = nextRate.dateMs;
 		}
 
 		const percentChange = cumulativeValue / startingValue - 1;

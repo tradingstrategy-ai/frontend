@@ -111,6 +111,20 @@ describe('ratesToCumulativeReturn', () => {
 		expect(result.at(-1)?.customValues.annualRate).toBe(4.1);
 	});
 
+	test('compounds each elapsed interval with the rate active at the previous point', () => {
+		const start = new Date('2025-01-01T00:00:00Z');
+		const end = new Date('2025-01-03T00:00:00Z');
+		const rates: [number, number][] = [
+			[start.getTime() / 1000, 0],
+			[new Date('2025-01-02T00:00:00Z').getTime() / 1000, 100]
+		];
+		const result = ratesToCumulativeReturn(rates, 1.0, day, start, end);
+
+		expect(result.map((point) => point.customValues.annualRate)).toEqual([0, 100, 100]);
+		expect(result[1].customValues.percentChange).toBeCloseTo(0, 6);
+		expect(result[2].customValues.percentChange).toBeGreaterThan(0);
+	});
+
 	test('seed days before startDate are excluded from output', () => {
 		// Simulate seed: rates start 7 days before the visible range
 		const seedStart = new Date('2024-12-25T00:00:00Z');

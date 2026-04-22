@@ -32,7 +32,11 @@ so relative performance is comparable on a single axis.
 		formatTokenAmount,
 		notFilledMarker
 	} from '$lib/helpers/formatters';
+	import { annualizedReturn } from '$lib/helpers/financial';
 	import { formatDate, resampleTimeSeries } from '$lib/charts/helpers';
+
+	const TRAILING_RETURN_DAYS = 30;
+	const TRAILING_RETURN_SECONDS = TRAILING_RETURN_DAYS * 86_400;
 
 	/** Let lightweight-charts auto-scale to the vault share price only (benchmarks excluded via priceScaleCalculator={() => null}) */
 	const vaultPriceScaleCalculator: PriceScaleCalculator = (data) => {
@@ -59,9 +63,32 @@ so relative performance is comparable on a single axis.
 	let tvlData = $state<[number, number][]>();
 
 	type ChartSeriesKind = 'vault-price' | 'tvl';
+	type ChartSeriesPoint = {
+		value: number;
+		customValues?: { annualizedReturn?: number; series?: ChartSeriesKind };
+	};
 
 	function withChartSeriesKind(data: SimpleDataItem[], series: ChartSeriesKind) {
-		return data.map((item) => ({ ...item, customValues: { ...item.customValues, series } }));
+		let lookbackIndex = 0;
+
+		return data.map((item, index) => {
+			const lookbackTime = item.time - TRAILING_RETURN_SECONDS;
+			while (lookbackIndex < index - 1 && data[lookbackIndex + 1].time <= lookbackTime) {
+				lookbackIndex++;
+			}
+
+			const lookbackPoint =
+				series === 'vault-price' && data[lookbackIndex]?.time <= lookbackTime ? data[lookbackIndex] : undefined;
+			const returnRate = lookbackPoint && lookbackPoint.value > 0 ? item.value / lookbackPoint.value - 1 : undefined;
+			const itemDate = item.time * 1000;
+			const lookbackDate = lookbackPoint ? lookbackPoint.time * 1000 : undefined;
+			const annualized =
+				series === 'vault-price' && returnRate != null && lookbackDate != null && itemDate > lookbackDate
+					? annualizedReturn(lookbackDate, itemDate, returnRate)
+					: undefined;
+
+			return { ...item, customValues: { ...item.customValues, annualizedReturn: annualized, series } };
+		});
 	}
 
 	function getBenchmarkCustomValues(point: unknown) {
@@ -82,7 +109,7 @@ so relative performance is comparable on a single axis.
 			if (!point || typeof point !== 'object' || !('value' in point)) return false;
 			const item = point as { value?: unknown; customValues?: { series?: unknown } };
 			return typeof item.value === 'number' && item.customValues?.series === series;
-		}) as { value: number } | undefined;
+		}) as ChartSeriesPoint | undefined;
 	}
 
 	async function fetchMetrics(vaultId: string) {
@@ -154,10 +181,6 @@ so relative performance is comparable on a single axis.
 			{@const vaultSeriesData = withChartSeriesKind(data, 'vault-price')}
 			{@const tvlSeriesData = withChartSeriesKind(resampleTimeSeries(tvlData ?? [], timeSpan.interval), 'tvl')}
 
-			{#if data.length > 1 && range && !showCryptoBenchmarks}
-				<TreasuryBenchmarkSeries {data} timeBucket={timeSpan.timeBucket} {range} color="#4a90d9a0" />
-			{/if}
-
 			<AreaSeries
 				data={vaultSeriesData}
 				options={{ priceLineVisible: false, crosshairMarkerVisible: false }}
@@ -182,6 +205,8 @@ so relative performance is comparable on a single axis.
 						{range}
 						color="#627eea80"
 					/>
+				{:else}
+					<TreasuryBenchmarkSeries {data} timeBucket={timeSpan.timeBucket} {range} color="#4a90d9a0" />
 				{/if}
 
 				<Series
@@ -210,6 +235,8 @@ so relative performance is comparable on a single axis.
 					<ChartTooltip {point}>
 						<div class="tooltip-date">{formatDate(time as number, '1d')}</div>
 						<dl class="tooltip-items">
+							<dt>1M ann return:</dt>
+							<dd>{formatPercent(price?.customValues?.annualizedReturn, 1, 1, { signDisplay: 'exceptZero' })}</dd>
 							<dt>Price:</dt>
 							<dd>{price ? formatValue(price.value) : notFilledMarker} {vault.denomination}</dd>
 							<dt>BTC:</dt>
@@ -235,6 +262,8 @@ so relative performance is comparable on a single axis.
 					<ChartTooltip {point}>
 						<div class="tooltip-date">{formatDate(time as number, '1d')}</div>
 						<dl class="tooltip-items">
+							<dt>1M ann return:</dt>
+							<dd>{formatPercent(price?.customValues?.annualizedReturn, 1, 1, { signDisplay: 'exceptZero' })}</dd>
 							<dt>Price:</dt>
 							<dd>{price ? formatValue(price.value) : notFilledMarker} {vault.denomination}</dd>
 							<dt>TVL:</dt>
@@ -242,17 +271,14 @@ so relative performance is comparable on a single axis.
 						</dl>
 						{#if treasury}
 							<dl class="tooltip-items tooltip-items-secondary">
-								<dt>T-bill:</dt>
-								<dd>
-									{formatPercent(treasury.percentChange, 1, 1, { signDisplay: 'exceptZero' })}
-									{#if treasury.annualRate != null}
-										<span class="benchmark-usd">{formatInterestRate(treasury.annualRate)} p.a.</span>
-									{/if}
-								</dd>
+								<dt>T-bill ann return:</dt>
+								<dd>{formatInterestRate(treasury.annualRate)}</dd>
 								{#if treasury.rateDate != null}
 									<dt>Rate date:</dt>
 									<dd>{formatDate(treasury.rateDate, '1d')}</dd>
 								{/if}
+								<dt>T-bill earned:</dt>
+								<dd>{formatPercent(treasury.percentChange, 1, 1, { signDisplay: 'exceptZero' })}</dd>
 							</dl>
 						{/if}
 					</ChartTooltip>
