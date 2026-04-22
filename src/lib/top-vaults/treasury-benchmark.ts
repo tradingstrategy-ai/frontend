@@ -13,7 +13,7 @@ function formatDateYMD(d: Date): string {
 type RateEntry = [timestamp: number, rate: number];
 
 export type TreasuryDataItem = SimpleDataItem & {
-	customValues: { percentChange: number; annualRate: number };
+	customValues: { percentChange: number; annualRate: number; rateDate: number };
 };
 
 const SEED_DAYS = 7;
@@ -79,13 +79,16 @@ export function ratesToCumulativeReturn(
 	const results: TreasuryDataItem[] = [];
 	let currentRateIndex = 0;
 	let currentRate = sortedRates[0].rate;
+	let currentRateDateMs = sortedRates[0].dateMs;
 	let cumulativeValue = startingValue;
 	let prevDateMs = startDate.getTime();
 	const startMs = startDate.getTime();
 
 	// Advance rate index to the last observation at or before startDate
 	while (currentRateIndex < sortedRates.length - 1 && sortedRates[currentRateIndex + 1].dateMs <= startMs) {
-		currentRate = sortedRates[++currentRateIndex].rate;
+		const nextRate = sortedRates[++currentRateIndex];
+		currentRate = nextRate.rate;
+		currentRateDateMs = nextRate.dateMs;
 	}
 
 	// Generate points at each interval step
@@ -103,7 +106,9 @@ export function ratesToCumulativeReturn(
 
 		// Forward-fill: advance to the last rate observation at or before this point
 		while (currentRateIndex < sortedRates.length - 1 && sortedRates[currentRateIndex + 1].dateMs <= currentMs) {
-			currentRate = sortedRates[++currentRateIndex].rate;
+			const nextRate = sortedRates[++currentRateIndex];
+			currentRate = nextRate.rate;
+			currentRateDateMs = nextRate.dateMs;
 		}
 
 		// Compound based on actual elapsed time
@@ -118,7 +123,7 @@ export function ratesToCumulativeReturn(
 		results.push({
 			time: (currentMs / 1000) as UTCTimestamp,
 			value: cumulativeValue,
-			customValues: { percentChange, annualRate: currentRate }
+			customValues: { percentChange, annualRate: currentRate, rateDate: currentRateDateMs / 1000 }
 		});
 
 		prevDateMs = currentMs;

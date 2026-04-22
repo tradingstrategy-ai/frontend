@@ -24,8 +24,14 @@ so relative performance is comparable on a single axis.
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { isPerpetualFuturesVault } from './isPerpetualFuturesVault';
-	import type { PriceScaleCalculator } from '$lib/charts/types';
-	import { formatDollar, formatInterestRate, formatPercent, formatTokenAmount } from '$lib/helpers/formatters';
+	import type { PriceScaleCalculator, SimpleDataItem } from '$lib/charts/types';
+	import {
+		formatDollar,
+		formatInterestRate,
+		formatPercent,
+		formatTokenAmount,
+		notFilledMarker
+	} from '$lib/helpers/formatters';
 	import { formatDate, resampleTimeSeries } from '$lib/charts/helpers';
 
 	/** Let lightweight-charts auto-scale to the vault share price only (benchmarks excluded via priceScaleCalculator={() => null}) */
@@ -52,6 +58,12 @@ so relative performance is comparable on a single axis.
 	let priceData = $state<[number, number][]>();
 	let tvlData = $state<[number, number][]>();
 
+	type ChartSeriesKind = 'vault-price' | 'tvl';
+
+	function withChartSeriesKind(data: SimpleDataItem[], series: ChartSeriesKind) {
+		return data.map((item) => ({ ...item, customValues: { ...item.customValues, series } }));
+	}
+
 	function getBenchmarkCustomValues(point: unknown) {
 		if (!point || typeof point !== 'object' || !('customValues' in point)) return undefined;
 		return (point as { customValues?: { percentChange?: number; usdPrice?: number } }).customValues;
@@ -59,7 +71,18 @@ so relative performance is comparable on a single axis.
 
 	function getTreasuryCustomValues(point: unknown) {
 		if (!point || typeof point !== 'object' || !('customValues' in point)) return undefined;
-		return (point as { customValues?: { percentChange?: number; annualRate?: number } }).customValues;
+		const customValues = (
+			point as { customValues?: { percentChange?: number; annualRate?: number; rateDate?: number } }
+		).customValues;
+		return customValues?.annualRate != null || customValues?.rateDate != null ? customValues : undefined;
+	}
+
+	function getSeriesValuePoint(points: unknown[], series: ChartSeriesKind) {
+		return points.find((point) => {
+			if (!point || typeof point !== 'object' || !('value' in point)) return false;
+			const item = point as { value?: unknown; customValues?: { series?: unknown } };
+			return typeof item.value === 'number' && item.customValues?.series === series;
+		}) as { value: number } | undefined;
 	}
 
 	async function fetchMetrics(vaultId: string) {
@@ -128,12 +151,15 @@ so relative performance is comparable on a single axis.
 		options={{ handleScroll: false, handleScale: false }}
 	>
 		{#snippet series({ data, timeSpan, range })}
+			{@const vaultSeriesData = withChartSeriesKind(data, 'vault-price')}
+			{@const tvlSeriesData = withChartSeriesKind(resampleTimeSeries(tvlData ?? [], timeSpan.interval), 'tvl')}
+
 			{#if data.length > 1 && range && !showCryptoBenchmarks}
 				<TreasuryBenchmarkSeries {data} timeBucket={timeSpan.timeBucket} {range} color="#4a90d9a0" />
 			{/if}
 
 			<AreaSeries
-				{data}
+				data={vaultSeriesData}
 				options={{ priceLineVisible: false, crosshairMarkerVisible: false }}
 				priceScaleOptions={{ scaleMargins: { top: 0.1, bottom: 0.1 } }}
 				priceScaleCalculator={vaultPriceScaleCalculator}
@@ -160,7 +186,7 @@ so relative performance is comparable on a single axis.
 
 				<Series
 					type={HistogramSeries}
-					data={resampleTimeSeries(tvlData ?? [], timeSpan.interval)}
+					data={tvlSeriesData}
 					options={{ priceLineVisible: false, color: 'transparent' }}
 					paneIndex={1}
 					priceScaleOptions={{ scaleMargins: { top: 0.25, bottom: 0 } }}
@@ -176,16 +202,16 @@ so relative performance is comparable on a single axis.
 
 		{#snippet tooltip({ point, time }, seriesData)}
 			{#if showCryptoBenchmarks}
-				{@const price = seriesData[0]}
+				{@const price = getSeriesValuePoint(seriesData, 'vault-price')}
 				{@const btc = getBenchmarkCustomValues(seriesData[1])}
 				{@const eth = getBenchmarkCustomValues(seriesData[2])}
-				{@const tvl = seriesData[3]}
+				{@const tvl = getSeriesValuePoint(seriesData, 'tvl')}
 				{#if price || btc || eth || tvl}
 					<ChartTooltip {point}>
 						<div class="tooltip-date">{formatDate(time as number, '1d')}</div>
 						<dl class="tooltip-items">
 							<dt>Price:</dt>
-							<dd>{formatValue(price?.value)} {vault.denomination}</dd>
+							<dd>{price ? formatValue(price.value) : notFilledMarker} {vault.denomination}</dd>
 							<dt>BTC:</dt>
 							<dd>
 								{formatPercent(btc?.percentChange, 1, 1, { signDisplay: 'exceptZero' })}
@@ -197,30 +223,38 @@ so relative performance is comparable on a single axis.
 								{#if eth?.usdPrice}<span class="benchmark-usd">{formatDollar(eth.usdPrice, 1)}</span>{/if}
 							</dd>
 							<dt>TVL:</dt>
-							<dd>{formatValue(tvl?.value)}</dd>
+							<dd>{tvl ? formatValue(tvl.value) : notFilledMarker}</dd>
 						</dl>
 					</ChartTooltip>
 				{/if}
 			{:else}
-				{@const treasury = getTreasuryCustomValues(seriesData[0])}
-				{@const price = seriesData[1]}
-				{@const tvl = seriesData[2]}
+				{@const treasury = seriesData.map(getTreasuryCustomValues).find(Boolean)}
+				{@const price = getSeriesValuePoint(seriesData, 'vault-price')}
+				{@const tvl = getSeriesValuePoint(seriesData, 'tvl')}
 				{#if price || treasury || tvl}
 					<ChartTooltip {point}>
 						<div class="tooltip-date">{formatDate(time as number, '1d')}</div>
 						<dl class="tooltip-items">
 							<dt>Price:</dt>
-							<dd>{formatValue(price?.value)} {vault.denomination}</dd>
-							<dt>T-bill:</dt>
-							<dd>
-								{formatPercent(treasury?.percentChange, 1, 1, { signDisplay: 'exceptZero' })}
-								{#if treasury?.annualRate != null}
-									<span class="benchmark-usd">{formatInterestRate(treasury.annualRate)} p.a.</span>
-								{/if}
-							</dd>
+							<dd>{price ? formatValue(price.value) : notFilledMarker} {vault.denomination}</dd>
 							<dt>TVL:</dt>
-							<dd>{formatValue(tvl?.value)}</dd>
+							<dd>{tvl ? formatValue(tvl.value) : notFilledMarker}</dd>
 						</dl>
+						{#if treasury}
+							<dl class="tooltip-items tooltip-items-secondary">
+								<dt>T-bill:</dt>
+								<dd>
+									{formatPercent(treasury.percentChange, 1, 1, { signDisplay: 'exceptZero' })}
+									{#if treasury.annualRate != null}
+										<span class="benchmark-usd">{formatInterestRate(treasury.annualRate)} p.a.</span>
+									{/if}
+								</dd>
+								{#if treasury.rateDate != null}
+									<dt>Rate date:</dt>
+									<dd>{formatDate(treasury.rateDate, '1d')}</dd>
+								{/if}
+							</dl>
+						{/if}
 					</ChartTooltip>
 				{/if}
 			{/if}
@@ -305,6 +339,18 @@ so relative performance is comparable on a single axis.
 				font: var(--f-ui-sm-roman);
 				letter-spacing: var(--ls-ui-sm, normal);
 				color: var(--c-text-extra-light);
+			}
+
+			&.tooltip-items-secondary {
+				margin-top: 0.75rem;
+				padding-top: 0.75rem;
+				border-top: 1px solid var(--c-box-3);
+
+				dt,
+				dd,
+				.benchmark-usd {
+					font-size: 80%;
+				}
 			}
 		}
 
