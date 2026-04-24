@@ -37,6 +37,12 @@
 		defaultAgeIndex?: number;
 		/** Default value for the "Hide unknown" filter (1 = hide, 0 = show) */
 		defaultHideUnknown?: number;
+		/** Default monthly return filter key */
+		defaultMonthlyReturnKey?: string;
+		/** Default sort column key */
+		defaultSort?: string;
+		/** Default sort direction */
+		defaultDirection?: 'asc' | 'desc';
 		/** Show skeleton loading state while vault data is being fetched */
 		loading?: boolean;
 	}
@@ -57,6 +63,9 @@
 		defaultTvlKey,
 		defaultAgeIndex,
 		defaultHideUnknown,
+		defaultMonthlyReturnKey,
+		defaultSort,
+		defaultDirection,
 		loading = false
 	}: Props = $props();
 </script>
@@ -100,7 +109,15 @@
 			{/if}
 
 			{#if loading}
-				<TopVaultsTable {chain} loading {showFilters} {defaultHideUnknown} />
+				<TopVaultsTable
+					{chain}
+					loading
+					{showFilters}
+					{defaultHideUnknown}
+					{defaultMonthlyReturnKey}
+					{defaultSort}
+					{defaultDirection}
+				/>
 			{:else if !topVaults?.vaults.length}
 				{#if stablecoinMetadata}
 					<Alert status="info">We have not indexed any vaults using this stablecoin as a denomination token yet.</Alert>
@@ -120,6 +137,9 @@
 					{defaultTvlKey}
 					{defaultAgeIndex}
 					{defaultHideUnknown}
+					{defaultMonthlyReturnKey}
+					{defaultSort}
+					{defaultDirection}
 				/>
 			{/if}
 		</div>
