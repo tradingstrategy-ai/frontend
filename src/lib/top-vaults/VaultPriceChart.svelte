@@ -12,7 +12,6 @@ so relative performance is comparable on a single axis.
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { VaultInfo } from './schemas';
-	import brandMark from '$lib/assets/brand-mark.svg';
 	import usTreasuryLogo from '$lib/assets/logos/tokens/us-treasury.svg';
 	import { BaselineSeries as BaselineSeriesType, HistogramSeries } from 'lightweight-charts';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
@@ -151,12 +150,12 @@ so relative performance is comparable on a single axis.
 	const benchmarkLegend: LegendItem[] = $derived(
 		showCryptoBenchmarks
 			? [
-					{ label: vault.name, color: getVaultColor(vaultDirection), logoUrl: protocolLogoUrl ?? brandMark },
+					{ label: vault.name, color: getVaultColor(vaultDirection), logoUrl: protocolLogoUrl },
 					{ label: 'BTC', color: '#f7931a80', logoUrl: getLogoUrl('token', 'btc') },
 					{ label: 'ETH', color: '#627eea80', logoUrl: getLogoUrl('token', 'eth') }
 				]
 			: [
-					{ label: vault.name, color: getVaultColor(vaultDirection), logoUrl: protocolLogoUrl ?? brandMark },
+					{ label: vault.name, color: getVaultColor(vaultDirection), logoUrl: protocolLogoUrl },
 					{
 						label: 'US 3M T-bill',
 						color: '#4a90d9a0',
