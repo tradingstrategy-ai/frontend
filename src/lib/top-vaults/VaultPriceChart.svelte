@@ -290,7 +290,7 @@ so relative performance is comparable on a single axis.
 								{formatPercent(eth?.percentChange, 1, 1, { signDisplay: 'exceptZero' })}
 								{#if eth?.usdPrice}<span class="benchmark-usd">{formatDollar(eth.usdPrice, 1)}</span>{/if}
 							</dd>
-							<dt>Max drawdown {drawdown?.customValues?.period ?? ''}:</dt>
+							<dt>Drawdown {drawdown?.customValues?.period ?? ''}:</dt>
 							<dd>{formatPercent(drawdown?.value, 2, 2)}</dd>
 							<dt>TVL:</dt>
 							<dd>{tvl ? formatValue(tvl.value) : notFilledMarker}</dd>
