@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add underwater drawdown chart pane for perpetual DEX vault share price charts (2026-04-28)
 - Add US Treasury bill benchmark for non-perpetual-futures vault charts, with R2 parquet download support and vault data source documentation (2026-04-22)
 - Add utilisation chart for lending protocol vaults, with threshold colouring and explanatory tooltip (2026-04-21)
 - Improve vault benchmark chart with protocol icons, USD prices in tooltip, and dynamic legend colours (2026-04-20)

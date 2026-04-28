@@ -2,7 +2,8 @@
 @component
 Render the vault share-price chart with TVL bars and benchmark overlays.
 
-Perpetual futures vaults (Hyperliquid, GRVT, Lighter) show BTC/ETH benchmarks.
+Perpetual futures vaults (Hyperliquid, GRVT, Lighter) show BTC/ETH benchmarks
+and an underwater drawdown pane (equity curve tearsheet style).
 All other vaults show a US 3M T-bill (risk-free rate) benchmark instead.
 
 Benchmark lines are rebased to the vault share price for the selected range
@@ -13,7 +14,7 @@ so relative performance is comparable on a single axis.
 	import type { VaultInfo } from './schemas';
 	import brandMark from '$lib/assets/brand-mark.svg';
 	import usTreasuryLogo from '$lib/assets/logos/tokens/us-treasury.svg';
-	import { HistogramSeries } from 'lightweight-charts';
+	import { BaselineSeries as BaselineSeriesType, HistogramSeries } from 'lightweight-charts';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
 	import AreaSeries from '$lib/charts/AreaSeries.svelte';
 	import CoinbaseBenchmarkSeries from './CoinbaseBenchmarkSeries.svelte';
@@ -34,6 +35,7 @@ so relative performance is comparable on a single axis.
 	} from '$lib/helpers/formatters';
 	import { annualizedReturn } from '$lib/helpers/financial';
 	import { formatDate, resampleTimeSeries } from '$lib/charts/helpers';
+	import { computeDrawdownSeries } from './drawdown';
 
 	const TRAILING_RETURN_DAYS = 30;
 	const TRAILING_RETURN_SECONDS = TRAILING_RETURN_DAYS * 86_400;
@@ -62,10 +64,10 @@ so relative performance is comparable on a single axis.
 	let priceData = $state<[number, number][]>();
 	let tvlData = $state<[number, number][]>();
 
-	type ChartSeriesKind = 'vault-price' | 'tvl';
+	type ChartSeriesKind = 'vault-price' | 'drawdown' | 'tvl';
 	type ChartSeriesPoint = {
 		value: number;
-		customValues?: { annualizedReturn?: number; series?: ChartSeriesKind };
+		customValues?: { annualizedReturn?: number; series?: ChartSeriesKind; period?: string };
 	};
 
 	function withChartSeriesKind(data: SimpleDataItem[], series: ChartSeriesKind) {
@@ -168,14 +170,20 @@ so relative performance is comparable on a single axis.
 	);
 </script>
 
-<div class="vault-price-chart">
+<div class={['vault-price-chart', showCryptoBenchmarks && 'has-drawdown']}>
 	<ChartContainer
 		title="Share token price"
 		timeSpanOptions={['1M', '3M', 'Max']}
 		{loading}
 		data={priceData}
 		{formatValue}
-		options={{ handleScroll: false, handleScale: false }}
+		options={{
+			handleScroll: false,
+			handleScale: false,
+			...(showCryptoBenchmarks && {
+				localization: { priceFormatter: (v: number) => (v >= -1 && v < 0 ? formatPercent(v, 1) : formatValue(v)) }
+			})
+		}}
 	>
 		{#snippet series({ data, timeSpan, range })}
 			{@const vaultSeriesData = withChartSeriesKind(data, 'vault-price')}
@@ -205,6 +213,38 @@ so relative performance is comparable on a single axis.
 						{range}
 						color="#627eea80"
 					/>
+
+					{@const drawdownRaw = computeDrawdownSeries(priceData ?? [])}
+					{@const ddPeriod = !timeSpan.spanDays ? 'All-time' : timeSpan.spanDays <= 30 ? '1M' : '3M'}
+					{@const drawdownSeriesData = resampleTimeSeries(drawdownRaw, timeSpan.interval).map((item) => ({
+						...item,
+						customValues: { series: 'drawdown' as const, period: ddPeriod }
+					}))}
+					<Series
+						type={BaselineSeriesType}
+						data={drawdownSeriesData}
+						options={{
+							baseValue: { type: 'price', price: 0 },
+							priceLineVisible: false,
+							crosshairMarkerVisible: false,
+							lineWidth: 1
+						}}
+						paneIndex={1}
+						priceScaleOptions={{ scaleMargins: { top: 0, bottom: 0.1 } }}
+						callback={({ series, colors }) => {
+							series.getPane().setHeight(120);
+							series.applyOptions({
+								topLineColor: 'transparent',
+								topFillColor1: 'transparent',
+								topFillColor2: 'transparent',
+								bottomLineColor: '#c0392b',
+								bottomFillColor1: 'rgba(192, 57, 43, 0.25)',
+								bottomFillColor2: 'rgba(192, 57, 43, 0.25)'
+							});
+						}}
+					>
+						<SeriesLabel heading>Drawdown</SeriesLabel>
+					</Series>
 				{:else}
 					<TreasuryBenchmarkSeries {data} timeBucket={timeSpan.timeBucket} {range} color="#4a90d9a0" />
 				{/if}
@@ -213,7 +253,7 @@ so relative performance is comparable on a single axis.
 					type={HistogramSeries}
 					data={tvlSeriesData}
 					options={{ priceLineVisible: false, color: 'transparent' }}
-					paneIndex={1}
+					paneIndex={showCryptoBenchmarks ? 2 : 1}
 					priceScaleOptions={{ scaleMargins: { top: 0.25, bottom: 0 } }}
 					callback={({ series, colors }) => {
 						series.getPane().setHeight(150);
@@ -230,6 +270,7 @@ so relative performance is comparable on a single axis.
 				{@const price = getSeriesValuePoint(seriesData, 'vault-price')}
 				{@const btc = getBenchmarkCustomValues(seriesData[1])}
 				{@const eth = getBenchmarkCustomValues(seriesData[2])}
+				{@const drawdown = getSeriesValuePoint(seriesData, 'drawdown')}
 				{@const tvl = getSeriesValuePoint(seriesData, 'tvl')}
 				{#if price || btc || eth || tvl}
 					<ChartTooltip {point}>
@@ -249,6 +290,8 @@ so relative performance is comparable on a single axis.
 								{formatPercent(eth?.percentChange, 1, 1, { signDisplay: 'exceptZero' })}
 								{#if eth?.usdPrice}<span class="benchmark-usd">{formatDollar(eth.usdPrice, 1)}</span>{/if}
 							</dd>
+							<dt>Max drawdown {drawdown?.customValues?.period ?? ''}:</dt>
+							<dd>{formatPercent(drawdown?.value, 2, 2)}</dd>
 							<dt>TVL:</dt>
 							<dd>{tvl ? formatValue(tvl.value) : notFilledMarker}</dd>
 						</dl>
@@ -332,6 +375,10 @@ so relative performance is comparable on a single axis.
 		:global([data-css-props]) {
 			--chart-aspect-ratio: auto;
 			--chart-height: 26rem;
+		}
+
+		&.has-drawdown :global([data-css-props]) {
+			--chart-height: 34rem;
 		}
 
 		.tooltip-date {
