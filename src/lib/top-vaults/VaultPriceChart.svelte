@@ -213,9 +213,11 @@ so relative performance is comparable on a single axis.
 					/>
 
 					{@const ddPeriod = !timeSpan.spanDays ? 'All-time' : timeSpan.spanDays <= 30 ? '1M' : '3M'}
+					{@const rangeStart = range ? Math.floor(range[0].getTime() / 1000) : 0}
+					{@const windowData = range ? data.filter((d) => d.time >= rangeStart) : data}
 					{@const drawdownSeriesData = (() => {
 						let peak = -Infinity;
-						return data.map((item) => {
+						return windowData.map((item) => {
 							if (item.value > peak) peak = item.value;
 							const dd = peak > 0 ? (item.value - peak) / peak : 0;
 							return { time: item.time, value: dd, customValues: { series: 'drawdown' as const, period: ddPeriod } };
