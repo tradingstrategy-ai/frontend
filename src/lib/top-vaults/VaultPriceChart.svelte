@@ -35,8 +35,6 @@ so relative performance is comparable on a single axis.
 	} from '$lib/helpers/formatters';
 	import { annualizedReturn } from '$lib/helpers/financial';
 	import { formatDate, resampleTimeSeries } from '$lib/charts/helpers';
-	import { computeDrawdownSeries } from './drawdown';
-
 	const TRAILING_RETURN_DAYS = 30;
 	const TRAILING_RETURN_SECONDS = TRAILING_RETURN_DAYS * 86_400;
 
@@ -214,12 +212,15 @@ so relative performance is comparable on a single axis.
 						color="#627eea80"
 					/>
 
-					{@const drawdownRaw = computeDrawdownSeries(priceData ?? [])}
 					{@const ddPeriod = !timeSpan.spanDays ? 'All-time' : timeSpan.spanDays <= 30 ? '1M' : '3M'}
-					{@const drawdownSeriesData = resampleTimeSeries(drawdownRaw, timeSpan.interval).map((item) => ({
-						...item,
-						customValues: { series: 'drawdown' as const, period: ddPeriod }
-					}))}
+					{@const drawdownSeriesData = (() => {
+						let peak = -Infinity;
+						return data.map((item) => {
+							if (item.value > peak) peak = item.value;
+							const dd = peak > 0 ? (item.value - peak) / peak : 0;
+							return { time: item.time, value: dd, customValues: { series: 'drawdown' as const, period: ddPeriod } };
+						});
+					})()}
 					<Series
 						type={BaselineSeriesType}
 						data={drawdownSeriesData}
