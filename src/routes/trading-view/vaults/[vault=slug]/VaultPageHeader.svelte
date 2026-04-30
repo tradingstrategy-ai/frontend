@@ -15,7 +15,7 @@
 	const hiddenFlags = ['perp_dex_trading_vault'];
 	const isBetaFlag = (flag: string) => flag.toLowerCase() === 'beta';
 
-	let visibleFlags = $derived(vault.flags.filter((f) => !hiddenFlags.includes(f)));
+	let visibleFlags = $derived(vault.flags.filter((f) => !hiddenFlags.includes(f) && isBetaFlag(f)));
 
 	let externalSiteName = $derived.by(() => {
 		if (hasSupportedProtocol(vault)) return vault.protocol;

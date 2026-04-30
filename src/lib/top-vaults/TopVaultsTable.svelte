@@ -43,9 +43,11 @@
 		getFormattedLockup,
 		getLockupTooltip,
 		getLifetimeMaxDrawdown,
+		getMonthlyReturn,
 		hasSupportedProtocol,
 		isBlacklisted,
 		isGoodVaultStatus,
+		monthlyReturnFilterOptions,
 		rankVaultsBy,
 		resolveVaultDetails,
 		riskFilterOptions,
@@ -95,6 +97,12 @@
 		defaultAgeIndex?: number;
 		/** Default value for the "Hide unknown" filter (1 = hide, 0 = show) */
 		defaultHideUnknown?: number;
+		/** Default monthly return filter key */
+		defaultMonthlyReturnKey?: string;
+		/** Default sort column key */
+		defaultSort?: string;
+		/** Default sort direction */
+		defaultDirection?: 'asc' | 'desc';
 		/** Show skeleton loading state while vault data is being fetched */
 		loading?: boolean;
 	}
@@ -114,6 +122,9 @@
 		defaultTvlKey = DEFAULT_TVL_KEY,
 		defaultAgeIndex = 0,
 		defaultHideUnknown = 1,
+		defaultMonthlyReturnKey = 'any',
+		defaultSort,
+		defaultDirection,
 		loading = false
 	}: Props = $props();
 
@@ -166,14 +177,19 @@
 		risk: { type: 'number', defaultValue: 1 },
 		sort: {
 			type: 'string',
-			defaultValue: DEFAULT_RETURN_COLUMN_IDS[0],
+			defaultValue: defaultSort ?? DEFAULT_RETURN_COLUMN_IDS[0],
 			options: [...Object.keys(sortColumnMap), ...Object.keys(LEGACY_RETURN_SORT_ALIASES)]
 		},
-		direction: { type: 'string', defaultValue: 'desc', options: ['asc', 'desc'] },
+		direction: { type: 'string', defaultValue: defaultDirection ?? 'desc', options: ['asc', 'desc'] },
 		q: { type: 'string', defaultValue: '' },
 		closed: { type: 'number', defaultValue: 0 },
 		unknown: { type: 'number', defaultValue: defaultHideUnknown },
 		dd: { type: 'string', defaultValue: 'any', options: ddFilterOptions.map((o) => o.key) },
+		mr: {
+			type: 'string',
+			defaultValue: defaultMonthlyReturnKey,
+			options: monthlyReturnFilterOptions.map((o) => o.key)
+		},
 		returns: { type: 'string', defaultValue: DEFAULT_RETURN_COLUMN_IDS.join(',') }
 	} as const satisfies ParamSchema;
 
@@ -203,6 +219,13 @@
 	let selectedDdKey = $derived(urlState.dd);
 	let selectedDdOption = $derived(ddFilterOptions.find((o) => o.key === selectedDdKey)!);
 	let ddDropdownOpen = $state(false);
+
+	let selectedMrKey = $derived(urlState.mr);
+	let selectedMrOption = $derived(monthlyReturnFilterOptions.find((o) => o.key === selectedMrKey)!);
+	let mrDropdownOpen = $state(false);
+
+	/** Treasury note annual rate (percentage, e.g. 4.25) from layout server data */
+	let treasuryRate = $derived((page.data as { treasuryRate?: number | null }).treasuryRate ?? null);
 
 	let hideClosed = $derived(urlState.closed === 1);
 	let hideUnknown = $derived(urlState.unknown === 1);
@@ -351,6 +374,18 @@
 			if (showFilters && selectedDdOption.value < Infinity) {
 				const dd = getLifetimeMaxDrawdown(v);
 				if (dd == null || Math.abs(dd) > selectedDdOption.value) return false;
+			}
+
+			// Monthly returns filter (dropdown-driven)
+			if (showFilters && selectedMrOption.mode !== 'any') {
+				const mr = getMonthlyReturn(v);
+				if (mr == null) return false;
+				if (selectedMrOption.mode === 'lt' && !(mr < selectedMrOption.value)) return false;
+				if (selectedMrOption.mode === 'gt' && !(mr > selectedMrOption.value)) return false;
+				if (selectedMrOption.mode === 'gt-treasury') {
+					if (treasuryRate == null) return false;
+					if (!(mr > treasuryRate / 100)) return false;
+				}
 			}
 
 			// Hide closed filter (checkbox-driven)
@@ -745,6 +780,41 @@
 													}}
 												>
 													{option.optionLabel}
+												</button>
+											</li>
+										{/each}
+									</ul>
+								{/if}
+							</div>
+						</div>
+
+						<div class="filter-group">
+							<Tooltip>
+								<span class="filter-label filter-label-hint" slot="trigger">Monthly returns</span>
+								<svelte:fragment slot="popup">
+									Filter vaults by annualised one-month return (net of fees when available).
+								</svelte:fragment>
+							</Tooltip>
+							<div class="tvl-dropdown" use:clickOutside={() => (mrDropdownOpen = false)}>
+								<button class="tvl-trigger" onclick={() => (mrDropdownOpen = !mrDropdownOpen)}>
+									{selectedMrOption.label}
+									<IconChevronDown />
+								</button>
+								{#if mrDropdownOpen}
+									<ul class="tvl-options">
+										{#each monthlyReturnFilterOptions as option (option.key)}
+											<li>
+												<button
+													class:active={selectedMrKey === option.key}
+													disabled={option.mode === 'gt-treasury' && treasuryRate == null}
+													onclick={() => {
+														updateSearchParams({ mr: option.key });
+														mrDropdownOpen = false;
+													}}
+												>
+													{option.optionLabel}{option.mode === 'gt-treasury' && treasuryRate != null
+														? ` (${formatPercent(treasuryRate / 100, 2)})`
+														: ''}
 												</button>
 											</li>
 										{/each}

@@ -9,55 +9,19 @@
  * 2. File cache (~/.cache/ts-frontend/) so a valid rate survives server
  *    restarts and transient API failures (e.g. FRED rate-limiting)
  */
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import { homedir } from 'node:os';
-import { join } from 'node:path';
 import swrCache from '$lib/swrCache';
+import {
+	FRED_CSV_BASE,
+	FRED_TIMEOUT,
+	ONE_DAY_S,
+	randomUserAgent,
+	readJsonFileCache,
+	writeJsonFileCache
+} from '$lib/fred-helpers';
 
-const TIMEOUT = 20_000;
-const ONE_DAY = 24 * 60 * 60;
-const TWO_DAYS = 2 * ONE_DAY;
-
-// FRED drops connections without a User-Agent header (Node.js fetch sends none by default).
-// Chrome-style UAs are blocked (TLS fingerprint mismatch), so use Firefox/simple UAs.
-const USER_AGENTS = [
-	'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0',
-	'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:133.0) Gecko/20100101 Firefox/133.0',
-	'Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0',
-	'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0',
-	'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:128.0) Gecko/20100101 Firefox/128.0'
-];
-
-function randomUserAgent(): string {
-	return USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
-}
-
-// --- File cache helpers ---
-
-const CACHE_DIR = join(homedir(), '.cache', 'ts-frontend');
-
-async function readFileCache(key: string): Promise<number | null> {
-	try {
-		const data = await readFile(join(CACHE_DIR, `${key}.json`), 'utf-8');
-		const value = JSON.parse(data);
-		return typeof value === 'number' && Number.isFinite(value) ? value : null;
-	} catch {
-		return null;
-	}
-}
-
-async function writeFileCache(key: string, value: number): Promise<void> {
-	try {
-		await mkdir(CACHE_DIR, { recursive: true });
-		await writeFile(join(CACHE_DIR, `${key}.json`), JSON.stringify(value));
-	} catch {
-		// ignore write errors
-	}
-}
+const TWO_DAYS = 2 * ONE_DAY_S;
 
 // --- FRED CSV export ---
-
-const FRED_CSV_BASE = 'https://fred.stlouisfed.org/graph/fredgraph.csv';
 
 /**
  * Fetch the latest value of a FRED series from the CSV export.
@@ -70,21 +34,21 @@ async function fetchFredCsvLatest(seriesId: string): Promise<number | null> {
 	const cacheKey = `fred-${seriesId}`;
 	try {
 		const resp = await fetch(`${FRED_CSV_BASE}?id=${encodeURIComponent(seriesId)}`, {
-			signal: AbortSignal.timeout(TIMEOUT),
+			signal: AbortSignal.timeout(FRED_TIMEOUT),
 			headers: { 'User-Agent': randomUserAgent() }
 		});
-		if (!resp.ok) return readFileCache(cacheKey);
+		if (!resp.ok) return readJsonFileCache<number>(cacheKey);
 		const text = await resp.text();
 		const lines = text.trim().split('\n');
 		const lastLine = lines[lines.length - 1];
 		const value = parseFloat(lastLine.split(',')[1]);
 		if (Number.isFinite(value)) {
-			await writeFileCache(cacheKey, value);
+			await writeJsonFileCache(cacheKey, value);
 			return value;
 		}
-		return readFileCache(cacheKey);
+		return readJsonFileCache<number>(cacheKey);
 	} catch {
-		return readFileCache(cacheKey);
+		return readJsonFileCache<number>(cacheKey);
 	}
 }
 
@@ -105,19 +69,19 @@ async function fetchTreasuryNoteRate(): Promise<number | null> {
 	const cacheKey = 'treasury-note-rate';
 	try {
 		const resp = await fetch(TREASURY_RATES_URL, {
-			signal: AbortSignal.timeout(TIMEOUT),
+			signal: AbortSignal.timeout(FRED_TIMEOUT),
 			headers: { 'User-Agent': randomUserAgent() }
 		});
-		if (!resp.ok) return readFileCache(cacheKey);
+		if (!resp.ok) return readJsonFileCache<number>(cacheKey);
 		const json = await resp.json();
 		const rate = parseFloat(json.data?.[0]?.avg_interest_rate_amt);
 		if (Number.isFinite(rate)) {
-			await writeFileCache(cacheKey, rate);
+			await writeJsonFileCache(cacheKey, rate);
 			return rate;
 		}
-		return readFileCache(cacheKey);
+		return readJsonFileCache<number>(cacheKey);
 	} catch {
-		return readFileCache(cacheKey);
+		return readJsonFileCache<number>(cacheKey);
 	}
 }
 

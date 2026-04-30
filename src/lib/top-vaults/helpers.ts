@@ -88,6 +88,37 @@ export interface DdFilterOption {
 	value: number;
 }
 
+export interface MonthlyReturnFilterOption {
+	key: string;
+	label: string;
+	optionLabel: string;
+	/**
+	 * Filter mode:
+	 * - 'any': no filter
+	 * - 'lt': vault annualised 1M return < threshold
+	 * - 'gt': vault annualised 1M return > threshold
+	 * - 'gt-treasury': vault annualised 1M return > treasury note rate
+	 */
+	mode: 'any' | 'lt' | 'gt' | 'gt-treasury';
+	/** Threshold as a decimal (e.g. 0.05 = 5%). Ignored for 'any' and 'gt-treasury' modes */
+	value: number;
+}
+
+export const monthlyReturnFilterOptions: MonthlyReturnFilterOption[] = [
+	{ key: 'any', label: 'Any', optionLabel: 'Any', mode: 'any', value: 0 },
+	{ key: 'neg', label: '< 0%', optionLabel: '< 0%', mode: 'lt', value: 0 },
+	{ key: 'treasury', label: '> US Treasury', optionLabel: '> US Treasury note', mode: 'gt-treasury', value: 0 },
+	{ key: '5', label: '> 5%', optionLabel: '> 5%', mode: 'gt', value: 0.05 },
+	{ key: '10', label: '> 10%', optionLabel: '> 10%', mode: 'gt', value: 0.1 }
+];
+
+/**
+ * Get the annualised 1-month return for a vault (net if available, otherwise gross).
+ */
+export function getMonthlyReturn(vault: Pick<VaultInfo, 'one_month_cagr_net' | 'one_month_cagr'>): number | null {
+	return vault.one_month_cagr_net ?? vault.one_month_cagr ?? null;
+}
+
 export const ddFilterOptions: DdFilterOption[] = [
 	{ key: '0.1', label: '0.1%', optionLabel: '0.1% or less', value: 0.001 },
 	{ key: '1', label: '1%', optionLabel: '1% or less', value: 0.01 },
