@@ -204,7 +204,7 @@ Pricing page with Basic and Pro tier comparison
 	.pro-cta {
 		display: flex;
 		flex-wrap: wrap;
-		gap: var(--space-sm);
+		gap: var(--space-md);
 	}
 
 	.table-wrapper {
