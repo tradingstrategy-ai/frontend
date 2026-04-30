@@ -180,6 +180,16 @@ export const chains = (() => {
 			nativeCurrency: 'ETH',
 			hasBackendData: false
 		},
+		// Hibachi: Synthetic chain created for Hibachi perpetual DEX vaults
+		{
+			id: 9997,
+			slug: 'hibachi',
+			name: 'Hibachi',
+			homepage: 'https://hibachi.xyz',
+			explorer: 'https://hibachi.xyz',
+			nativeCurrency: 'ETH',
+			hasBackendData: false
+		},
 		// HyperEVM: The EVM varient of Hyperliquid
 		{
 			id: 999,

@@ -14,7 +14,7 @@
 		vault: VaultInfo;
 	}
 
-	const LIMITED_HISTORY_CHAINS = [9999, 9998];
+	const LIMITED_HISTORY_CHAINS = [9999, 9998, 9997];
 
 	let { vault }: Props = $props();
 

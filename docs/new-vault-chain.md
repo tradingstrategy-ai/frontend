@@ -33,16 +33,17 @@ Update the regex in `src/params/vaultId.ts` to accept the new chain's vault ID f
 
 Each chain may use a different ID format in the vault data:
 
-| Chain                      | Format                            | Example                             |
-| -------------------------- | --------------------------------- | ----------------------------------- |
-| EVM (Ethereum, Base, etc.) | `{chainId}-0x{hex}`               | `1-0xabc123...`                     |
-| HyperCore / GRVT           | `{chainId}-vlt:{id}`              | `325-vlt:38t5xhy...`                |
-| Lighter                    | `{chainId}-lighter-pool-{number}` | `9998-lighter-pool-281474976625478` |
+| Chain                      | Format                             | Example                             |
+| -------------------------- | ---------------------------------- | ----------------------------------- |
+| EVM (Ethereum, Base, etc.) | `{chainId}-0x{hex}`                | `1-0xabc123...`                     |
+| HyperCore / GRVT           | `{chainId}-vlt:{id}`               | `325-vlt:38t5xhy...`                |
+| Lighter                    | `{chainId}-lighter-pool-{number}`  | `9998-lighter-pool-281474976625478` |
+| Hibachi                    | `{chainId}-hibachi-vault-{number}` | `9997-hibachi-vault-2`              |
 
 Add a new alternative to the regex group:
 
 ```typescript
-return /^\d+-(0x[0-9a-f]+|vlt:[0-9a-z]+|lighter-pool-\d+)$/i.test(param);
+return /^\d+-(0x[0-9a-f]+|vlt:[0-9a-z]+|lighter-pool-\d+|hibachi-vault-\d+)$/i.test(param);
 ```
 
 **If you skip this step**, the vault detail page will load but the share price chart will return 404 (the metrics endpoint route won't match).

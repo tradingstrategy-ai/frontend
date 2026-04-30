@@ -18,6 +18,7 @@ export type HexString = z.infer<typeof hexString>;
  * Vault address schema supporting multiple address formats:
  * - EVM hex addresses: 0x-prefixed hex strings (e.g., 0x1234...abcd)
  * - GRVT vault identifiers: vlt:-prefixed strings (e.g., vlt:2zqosukicgltfcjdet4kpmecvfg)
+ * - Hibachi vault identifiers: hibachi-vault-{id} (e.g., hibachi-vault-2)
  */
 export const vaultAddress = z.string().min(1);
 export type VaultAddress = z.infer<typeof vaultAddress>;

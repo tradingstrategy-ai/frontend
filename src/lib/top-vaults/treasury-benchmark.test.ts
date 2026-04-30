@@ -178,6 +178,10 @@ describe('isPerpetualFuturesVault', () => {
 		expect(isPerpetualFuturesVault({ flags: [], chain_id: 9998 })).toBe(true);
 	});
 
+	test('detects Hibachi (9997) as perp', () => {
+		expect(isPerpetualFuturesVault({ flags: [], chain_id: 9997 })).toBe(true);
+	});
+
 	test('HyperEVM (999) is NOT perp', () => {
 		expect(isPerpetualFuturesVault({ flags: [], chain_id: 999 })).toBe(false);
 	});
