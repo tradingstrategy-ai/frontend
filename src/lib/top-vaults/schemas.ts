@@ -184,11 +184,11 @@ export const vaultInfoSchema = z.object({
 	start_date: isoDateTime,
 	/** When the vault last had data recorded */
 	end_date: isoDateTime,
-	/** Vault address: EVM hex (0x...) or GRVT vault identifier (vlt:...) */
+	/** Vault address: EVM hex (0x...), GRVT (vlt:...), or Hibachi (hibachi-vault-...) */
 	address: vaultAddress,
-	/** Share token address: EVM hex (0x...) or GRVT vault identifier (vlt:...) */
+	/** Share token address: EVM hex (0x...), GRVT (vlt:...), or Hibachi (hibachi-vault-...) */
 	share_token_address: vaultAddress.nullable(),
-	/** Denomination token address: EVM hex (0x...) or GRVT vault identifier (vlt:...) */
+	/** Denomination token address: EVM hex (0x...), GRVT (vlt:...), or Hibachi (hibachi-vault-...) */
 	denomination_token_address: vaultAddress.nullable(),
 	/** Numeric chain ID (e.g. 1 for Ethereum mainnet) */
 	chain_id: chainId,

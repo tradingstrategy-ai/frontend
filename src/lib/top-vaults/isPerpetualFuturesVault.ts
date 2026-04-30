@@ -4,7 +4,8 @@ import type { VaultInfo } from './schemas';
 const PERP_CHAIN_IDS = new Set([
 	9999, // HyperCore (Hyperliquid native)
 	325, // GRVT
-	9998 // Lighter
+	9998, // Lighter
+	9997 // Hibachi
 ]);
 
 /**

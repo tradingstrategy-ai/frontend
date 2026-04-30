@@ -91,7 +91,7 @@ The US 3-month Treasury bill rate is used as a risk-free benchmark on non-perpet
 
 - Perpetual futures vaults show BTC/ETH benchmarks (via Coinbase API)
 - All other vaults show the US 3M T-bill benchmark
-- Detection: `perp_dex_trading_vault` flag first, then chain_id fallback (9999 HyperCore, 325 GRVT, 9998 Lighter)
+- Detection: `perp_dex_trading_vault` flag first, then chain_id fallback (9999 HyperCore, 325 GRVT, 9998 Lighter, 9997 Hibachi)
 - HyperEVM (chain_id 999) is intentionally excluded — it hosts DeFi/lending vaults
 
 ### Datasets download endpoint

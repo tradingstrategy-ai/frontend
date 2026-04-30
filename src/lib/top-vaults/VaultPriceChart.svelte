@@ -2,7 +2,7 @@
 @component
 Render the vault share-price chart with TVL bars and benchmark overlays.
 
-Perpetual futures vaults (Hyperliquid, GRVT, Lighter) show BTC/ETH benchmarks
+Perpetual futures vaults (Hyperliquid, GRVT, Lighter, Hibachi) show BTC/ETH benchmarks
 and an underwater drawdown pane (equity curve tearsheet style).
 All other vaults show a US 3M T-bill (risk-free rate) benchmark instead.
 
