@@ -260,7 +260,18 @@ export const vaultInfoSchema = z.object({
 	lifetime_samples: z.int().nullable(),
 
 	/** Detailed per-period performance metrics (e.g. 1d, 7d, 30d, 90d, 1y, all-time) */
-	period_results: periodMetricsSchema.array()
+	period_results: periodMetricsSchema.array(),
+
+	/** Protocol-specific metadata (e.g. Morpho flags) */
+	other_data: z
+		.object({
+			/** Morpho vault-level warning flags (e.g. "not_whitelisted", "short_timelock") */
+			morpho_vault_flags: z.string().array(),
+			/** Morpho market-level warning flags */
+			morpho_market_flags: z.string().array()
+		})
+		.nullable()
+		.optional()
 });
 export type VaultInfo = z.infer<typeof vaultInfoSchema>;
 
