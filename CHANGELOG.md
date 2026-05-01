@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Show Morpho warning flags alert on vault detail pages (2026-05-01)
 - Add Hibachi chain support for perpetual DEX vaults (2026-04-30)
 - Add underwater drawdown chart pane for perpetual DEX vault share price charts (2026-04-28)
 - Add US Treasury bill benchmark for non-perpetual-futures vault charts, with R2 parquet download support and vault data source documentation (2026-04-22)

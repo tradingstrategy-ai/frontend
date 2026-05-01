@@ -173,6 +173,15 @@ export function getProtocolDisplayName(protocol: string | null | undefined): str
 }
 
 /**
+ * Get combined Morpho warning flags from vault other_data
+ */
+export function getMorphoFlags(vault: Pick<VaultInfo, 'other_data'>): string[] {
+	const data = vault.other_data;
+	if (!data) return [];
+	return [...new Set([...data.morpho_vault_flags, ...data.morpho_market_flags])];
+}
+
+/**
  * Check if vault has good operational status (deposits and redemptions are both open)
  */
 export function isGoodVaultStatus(vault: VaultInfo): boolean {

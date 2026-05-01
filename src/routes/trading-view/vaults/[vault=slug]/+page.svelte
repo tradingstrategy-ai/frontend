@@ -17,11 +17,12 @@
 	import VaultProtocolInfo from './VaultProtocolInfo.svelte';
 	import VaultRankings from './VaultRankings.svelte';
 	import IconDiscord from '~icons/local/discord';
-	import { hasSupportedProtocol, isBlacklisted } from '$lib/top-vaults/helpers';
+	import { getMorphoFlags, hasSupportedProtocol, isBlacklisted } from '$lib/top-vaults/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 
 	let { data } = $props();
 	let { vault, chain, protocolMetadata, stablecoinMetadata, generated_at } = $derived(data);
+	let morphoFlags = $derived(getMorphoFlags(vault));
 </script>
 
 <SocialMediaTags {vault} {chain} {protocolMetadata} />
@@ -30,6 +31,14 @@
 	<Section tag="header" padding="xs">
 		<VaultListingsSelector />
 	</Section>
+
+	{#if morphoFlags.length > 0}
+		<Section padding="md">
+			<Alert size="md" status="warning" title="Morpho has flagged this vault">
+				{morphoFlags.join(', ')}
+			</Alert>
+		</Section>
+	{/if}
 
 	<VaultPageHeader {vault} />
 
