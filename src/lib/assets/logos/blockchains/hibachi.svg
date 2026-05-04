@@ -1,11 +1,53 @@
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 95 23">
-	<g fill="#fff">
-		<path d="M15.12 4.171v5.783H7.893V4.171H5V18.63h2.892v-5.783h7.228v5.783h2.892V4.17z"/>
-		<path d="M23.903 4.171h-2.891V18.63h2.891z"/>
-		<path d="M39.915 9.954V6.581a2.417 2.417 0 0 0-2.41-2.41H26.905V18.63h10.602a2.417 2.417 0 0 0 2.41-2.41v-3.132c0-.771-.434-1.422-1.085-1.735.627-.145 1.084-.723 1.084-1.398m-10.12-2.891h6.747c.265 0 .482.217.482.482v1.927a.483.483 0 0 1-.482.482h-6.747zm0 8.674v-2.891h6.747c.265 0 .482.217.482.482v1.927a.483.483 0 0 1-.482.482z"/>
-		<path d="M56.169 5.135V4.17c-7.301 0-13.253 5.952-13.253 13.253v1.205h2.892v-1.205c0-.578.048-1.132.144-1.687h7.326v2.892h2.891V5.135m-9.301 7.71a10.4 10.4 0 0 1 6.41-5.373v5.374z"/>
-		<path d="M72.181 7.063V4.17H59.169v6.145c0 4.578 3.735 8.313 8.313 8.313h4.699v-2.892h-4.699a5.43 5.43 0 0 1-5.422-5.421V7.063z"/>
-		<path d="M85.301 4.171v5.783h-7.229V4.171h-2.891V18.63h2.891v-5.783h7.23v5.783h2.89V4.17z"/>
-		<path d="M94.084 4.171h-2.892V18.63h2.892z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
+	<rect width="256" height="256" rx="52" fill="url(#background)" />
+	<g transform="translate(23 33) scale(6.35)">
+		<path
+			fill="url(#top-flame)"
+			d="M20.27 15.88c-.552.43-1.259.644-1.996.644-1.843 0-3.532-1.443-3.378-3.348 0-.583.184-1.136.46-1.597 4.3-6.91.031-11.456.031-11.456s7.34 4.607 5.344 14.22a8.3 8.3 0 0 1-.46 1.536"
+		/>
+		<path
+			fill="url(#right-flame)"
+			d="M13.852 25.431c-4.392-4.73.983-13.115 1.628-14.097-.369.522-.553 1.167-.553 1.842a3.356 3.356 0 0 0 3.348 3.348c.706 0 1.382-.215 1.935-.614 2.856-1.874 3.47-6.972 3.47-6.972l.123.092c2.427 1.966 3.84 4.822 3.84 8.2.03 3.01-1.413 5.959-3.44 7.894 0 0-5.928 5.313-10.351.307"
+		/>
+		<path
+			fill="url(#base-flame)"
+			d="M24.172 25.154c-1.137.952-6.235 4.73-10.32.277-4.054-4.423.369-12.07 1.413-13.76l.061-.061c4.485-6.973.062-11.518.062-11.518s.737 3.686-5.222 8.845c-.245.215-.491.43-.706.645a10.71 10.71 0 0 0 7.463 18.398c2.765 0 5.314-1.075 7.249-2.826"
+		/>
+		<path
+			fill="url(#highlight-flame)"
+			d="M24.172 25.154c-1.137.952-6.235 4.73-10.32.277-4.054-4.423.369-12.07 1.413-13.76l.061-.061c4.485-6.973.062-11.518.062-11.518s.737 3.686-5.222 8.845c-.245.215-.491.43-.706.645a10.71 10.71 0 0 0 7.463 18.398c2.765 0 5.314-1.075 7.249-2.826"
+		/>
 	</g>
+	<defs>
+		<radialGradient
+			id="background"
+			cx="0"
+			cy="0"
+			r="1"
+			gradientTransform="matrix(168 -171 171 168 119 253)"
+			gradientUnits="userSpaceOnUse"
+		>
+			<stop stop-color="#3D0C08" />
+			<stop offset="0.62" stop-color="#090807" />
+			<stop offset="1" stop-color="#050505" />
+		</radialGradient>
+		<linearGradient id="top-flame" x1="22.133" x2="13.601" y1="12.578" y2="6.378" gradientUnits="userSpaceOnUse">
+			<stop stop-color="#FFA205" />
+			<stop offset="0.961" stop-color="#FFE600" />
+		</linearGradient>
+		<linearGradient id="right-flame" x1="20.029" x2="19.642" y1="27.466" y2="4.744" gradientUnits="userSpaceOnUse">
+			<stop stop-color="#FE344A" />
+			<stop offset="1" stop-color="#FEDC3C" />
+		</linearGradient>
+		<linearGradient id="base-flame" x1="17.268" x2="9.525" y1="29.304" y2="2.262" gradientUnits="userSpaceOnUse">
+			<stop offset="0.085" stop-color="#4E08BF" />
+			<stop offset="0.269" stop-color="#B10C92" />
+			<stop offset="0.453" stop-color="#E40E6B" />
+			<stop offset="0.985" stop-color="#FFE171" />
+		</linearGradient>
+		<linearGradient id="highlight-flame" x1="23.318" x2="15.412" y1="4.362" y2="19.42" gradientUnits="userSpaceOnUse">
+			<stop stop-color="#FFDC01" />
+			<stop offset="1" stop-color="#FFE171" stop-opacity="0" />
+		</linearGradient>
+	</defs>
 </svg>
