@@ -232,7 +232,7 @@ so relative performance is comparable on a single axis.
 							lineWidth: 1
 						}}
 						paneIndex={1}
-						priceScaleOptions={{ scaleMargins: { top: 0, bottom: 0.1 } }}
+						priceScaleOptions={{ scaleMargins: { top: 0.12, bottom: 0.16 } }}
 						callback={({ series, colors }) => {
 							series.getPane().setHeight(120);
 							series.applyOptions({
