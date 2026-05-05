@@ -195,6 +195,7 @@
 			align-items: start;
 
 			:global(.hero-banner) {
+				min-height: auto;
 				padding-top: 0;
 			}
 
