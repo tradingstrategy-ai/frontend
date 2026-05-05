@@ -10,6 +10,7 @@ the stablecoin's vaults. The chart is hidden on mobile.
 ```
 -->
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import type { StablecoinMetadata } from './schemas';
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import StablecoinDescription from './StablecoinDescription.svelte';
@@ -27,9 +28,10 @@ the stablecoin's vaults. The chart is hidden on mobile.
 	interface Props {
 		metadata: StablecoinMetadata;
 		vaults: VaultInfo[];
+		detailAside?: Snippet;
 	}
 
-	let { metadata, vaults }: Props = $props();
+	let { metadata, vaults, detailAside }: Props = $props();
 
 	function getCagr(vault: VaultInfo): number | null {
 		return vault.one_month_cagr_net ?? vault.one_month_cagr;
@@ -69,27 +71,31 @@ the stablecoin's vaults. The chart is hidden on mobile.
 	</div>
 
 	<div class="chart-column">
-		<MetricsBox title="Current TVL and profit in {metadata.symbol} vaults">
-			<CumulativeTvlApyChart
-				points={chartPoints}
-				savingsRate={null}
-				treasuryRate={null}
-				{benchmarkUrls}
-				showVaultSymbols={false}
-				invisibleVaultHoverSymbolSize={14}
-				returnsAxisLabel="Returns (1M ann.)"
-				returnsTooltipLabel="Returns annualised"
-				yAxisLabel="{metadata.symbol} vault TVL"
-				chartHeightDesktop={260}
-				chartHeightMobile={260}
-				axisTitleFontSize={11}
-				axisLabelFontSize={10}
-				tooltipFontSize={12}
-				gridDesktop={{ top: 16, right: 48, bottom: 40, left: 48 }}
-				gridMobile={{ top: 16, right: 40, bottom: 36, left: 40 }}
-				variant="plain"
-			/>
-		</MetricsBox>
+		{#if detailAside}
+			{@render detailAside()}
+		{:else}
+			<MetricsBox title="Current TVL and profit in {metadata.symbol} vaults">
+				<CumulativeTvlApyChart
+					points={chartPoints}
+					savingsRate={null}
+					treasuryRate={null}
+					{benchmarkUrls}
+					showVaultSymbols={false}
+					invisibleVaultHoverSymbolSize={14}
+					returnsAxisLabel="Returns (1M ann.)"
+					returnsTooltipLabel="Returns annualised"
+					yAxisLabel="{metadata.symbol} vault TVL"
+					chartHeightDesktop={260}
+					chartHeightMobile={260}
+					axisTitleFontSize={11}
+					axisLabelFontSize={10}
+					tooltipFontSize={12}
+					gridDesktop={{ top: 16, right: 48, bottom: 40, left: 48 }}
+					gridMobile={{ top: 16, right: 40, bottom: 36, left: 40 }}
+					variant="plain"
+				/>
+			</MetricsBox>
+		{/if}
 	</div>
 </div>
 
@@ -115,7 +121,7 @@ the stablecoin's vaults. The chart is hidden on mobile.
 		@media (--viewport-sm-down) {
 			grid-template-columns: 1fr;
 
-			.chart-column {
+			.chart-column:empty {
 				display: none;
 			}
 		}

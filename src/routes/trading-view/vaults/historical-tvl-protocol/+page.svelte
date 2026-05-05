@@ -7,7 +7,6 @@ Historical vault TVL by vault protocol page with a server-side aggregated weekly
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import { onMount } from 'svelte';
 	import Alert from '$lib/components/Alert.svelte';
-	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import type { HistoricalTvlByProtocolPayload } from '$lib/echarts/historical-tvl';
@@ -93,7 +92,6 @@ Historical vault TVL by vault protocol page with a server-side aggregated weekly
 			{/snippet}
 			{#snippet title()}
 				<span>Historical vault TVL by vault protocol</span>
-				<DataBadge class="badge" status="beta">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
 	</Section>
@@ -110,12 +108,6 @@ Historical vault TVL by vault protocol page with a server-side aggregated weekly
 
 <style>
 	.historical-tvl-protocol-page {
-		:global(.badge) {
-			font-size: 0.44em;
-			margin-inline: 0.25em;
-			transform: translate(0, -0.375em);
-		}
-
 		:global(.subtitle a) {
 			text-decoration: underline;
 		}

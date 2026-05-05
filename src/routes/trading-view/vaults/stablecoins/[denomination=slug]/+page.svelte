@@ -5,6 +5,7 @@
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
 
 	let { data } = $props();
 	let { denominationSlug, denominationSymbol, denominationName, stablecoinMetadata } = $derived(data);
@@ -91,4 +92,13 @@
 	title="Top {denominationName} vaults"
 	showFilters
 	defaultTvlKey="10k"
-/>
+>
+	{#snippet detailAside()}
+		<VaultGroupMiniChart
+			title="All {denominationSymbol} vaults"
+			dataUrl="/trading-view/vaults/stablecoins/{denominationSlug}/chart-data"
+			compareLabel="Compare all stablecoins"
+			compareHref="/trading-view/vaults/historical-tvl-stablecoin"
+		/>
+	{/snippet}
+</TopVaultsPage>

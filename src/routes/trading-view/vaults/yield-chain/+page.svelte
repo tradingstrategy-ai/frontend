@@ -3,7 +3,6 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 -->
 <script lang="ts">
 	import { page } from '$app/state';
-	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import Alert from '$lib/components/Alert.svelte';
@@ -67,7 +66,6 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 		>
 			{#snippet title()}
 				<span>Vault yield / chain scatter plot</span>
-				<DataBadge class="badge" status="beta">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
 	</Section>
@@ -83,14 +81,6 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 </main>
 
 <style>
-	.yield-chain-page {
-		:global(.badge) {
-			font-size: 0.44em;
-			margin-inline: 0.25em;
-			transform: translate(0, -0.375em);
-		}
-	}
-
 	.mobile-notice {
 		display: none;
 

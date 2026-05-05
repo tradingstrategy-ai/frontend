@@ -4,7 +4,6 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 -->
 <script lang="ts">
 	import { page } from '$app/state';
-	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import Alert from '$lib/components/Alert.svelte';
@@ -74,7 +73,6 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 			{/snippet}
 			{#snippet title()}
 				<span>Total vault earnings</span>
-				<DataBadge class="badge" status="beta">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
 	</Section>
@@ -91,12 +89,6 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 
 <style>
 	.cumulative-tvl-apy-page {
-		:global(.badge) {
-			font-size: 0.44em;
-			margin-inline: 0.25em;
-			transform: translate(0, -0.375em);
-		}
-
 		:global(.subtitle a) {
 			text-decoration: underline;
 		}

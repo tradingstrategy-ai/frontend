@@ -4,8 +4,9 @@ import { slugify } from '$lib/helpers/slugify';
 import { formatStablecoinDisplayName, resolveStablecoinSlug } from '$lib/stablecoin-metadata/helpers';
 import { getProtocolDisplayName } from '$lib/top-vaults/helpers';
 import type { VaultInfo } from '$lib/top-vaults/schemas';
+import { VAULT_TVL_OUTLIER_THRESHOLD } from './tvl-outliers';
 
-export const HISTORICAL_TVL_OUTLIER_THRESHOLD = 50_000_000_000;
+export const HISTORICAL_TVL_OUTLIER_THRESHOLD = VAULT_TVL_OUTLIER_THRESHOLD;
 export const HISTORICAL_TVL_CACHE_TTL_SECONDS = 24 * 60 * 60;
 
 export interface HistoricalVaultSnapshotRow {

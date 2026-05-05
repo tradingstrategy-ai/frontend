@@ -6,7 +6,6 @@ ECharts heatmap page showing current vault TVL by stablecoin and chain.
 	import { page } from '$app/state';
 	import { JsonLd, MetaTags } from 'svelte-meta-tags';
 	import Alert from '$lib/components/Alert.svelte';
-	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import type { StablecoinChainHeatmapPayload } from '$lib/echarts/stablecoin-chain-heatmap';
@@ -88,7 +87,6 @@ ECharts heatmap page showing current vault TVL by stablecoin and chain.
 			{/snippet}
 			{#snippet title()}
 				<span>Stablecoin / Chain TVL heatmap</span>
-				<DataBadge class="badge" status="beta">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
 	</Section>
@@ -105,12 +103,6 @@ ECharts heatmap page showing current vault TVL by stablecoin and chain.
 
 <style>
 	.stablecoin-chain-heatmap-page {
-		:global(.badge) {
-			font-size: 0.44em;
-			margin-inline: 0.25em;
-			transform: translate(0, -0.375em);
-		}
-
 		:global(.subtitle a) {
 			text-decoration: underline;
 		}
