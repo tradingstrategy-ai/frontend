@@ -13,11 +13,12 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 	/>
 ```
 -->
-<script lang="ts">
+<script lang="ts" generics="TSeries extends HistoricalTvlSeriesBase">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { removeOnError } from '$lib/actions/image';
 	import logoSvg from '$lib/assets/logo-horizontal.svg?raw';
+	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { formatUsd } from '$lib/echarts/cumulative-tvl-apy';
 	import { type HistoricalTvlPayload, type HistoricalTvlSeriesBase } from '$lib/echarts/historical-tvl';
@@ -27,7 +28,7 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 	import { onMount, tick } from 'svelte';
 
 	interface Props {
-		data: HistoricalTvlPayload | null;
+		data: HistoricalTvlPayload<TSeries> | null;
 		dataLoading?: boolean;
 		error?: string | null;
 		searchParamKey: string;
@@ -36,7 +37,24 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		watermarkCorner?: 'top-left' | 'top-right' | null;
 		watermarkInset?: 'default' | 'relaxed';
 		watermarkOpacity?: number;
-		getSeriesLogoUrl?: ((series: HistoricalTvlSeriesBase) => string | undefined) | undefined;
+		getSeriesLogoUrl?: ((series: TSeries) => string | undefined) | undefined;
+	}
+
+	type HistoricalTvlChartMode = 'tvl' | 'market-share';
+	type HistoricalTvlHistoryRange = 'all' | '1y' | '3m';
+
+	interface HistoricalTvlChartDataPoint {
+		value: number;
+		tvl: number;
+		share: number;
+	}
+
+	interface HistoricalTvlTooltipParam {
+		axisValueLabel?: string;
+		seriesName?: string;
+		value?: number;
+		color?: string;
+		data?: HistoricalTvlChartDataPoint;
 	}
 
 	let {
@@ -69,6 +87,19 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 	const watermarkDesktopWidth = 224;
 	const watermarkMobileWidth = 176;
 	const watermarkAspectRatio = 314 / 60;
+	const chartModeParamKey = 'chart';
+	const chartModeOptions: readonly HistoricalTvlChartMode[] = ['tvl', 'market-share'];
+	const chartModeLabels: Record<HistoricalTvlChartMode, string> = {
+		tvl: 'TVL',
+		'market-share': 'Market share'
+	};
+	const historyRangeParamKey = 'history';
+	const historyRangeOptions: readonly HistoricalTvlHistoryRange[] = ['all', '1y', '3m'];
+	const historyRangeLabels: Record<HistoricalTvlHistoryRange, string> = {
+		all: 'All-time',
+		'1y': '1y',
+		'3m': '3m'
+	};
 	const historicalWatermarkUrl = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
 		logoSvg.replace('fill="#0B0B14"', 'fill="#d5deea"')
 	)}`;
@@ -76,7 +107,9 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 
 	function getSearchParamsSchema() {
 		return {
-			[searchParamKey]: { type: 'string', defaultValue: '' }
+			[searchParamKey]: { type: 'string', defaultValue: '' },
+			[chartModeParamKey]: { type: 'string', defaultValue: 'tvl', options: chartModeOptions },
+			[historyRangeParamKey]: { type: 'string', defaultValue: 'all', options: historyRangeOptions }
 		} as ParamSchema;
 	}
 
@@ -84,20 +117,56 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		deserialiseSearchParams(page.url.searchParams, getSearchParamsSchema()) as Record<string, string>
 	);
 	let selectedParamValue = $derived(urlState[searchParamKey] ?? '');
+	let chartMode = $derived((urlState[chartModeParamKey] ?? 'tvl') as HistoricalTvlChartMode);
+	let historyRange = $derived((urlState[historyRangeParamKey] ?? 'all') as HistoricalTvlHistoryRange);
 	let effectiveError = $derived(error ?? chartError);
 	let hasSeries = $derived((data?.series.length ?? 0) > 0);
 	let selectedSeriesKeys = $derived(selectedParamValue ? selectedParamValue.split(',').filter(Boolean) : []);
-	let visibleSeries = $derived(
-		data?.series.filter((item) => selectedSeriesKeys.length === 0 || selectedSeriesKeys.includes(item.key)) ?? []
+	let historySourceWeeks = $derived(historyRange !== 'all' && data?.daily ? data.daily.weeks : (data?.weeks ?? []));
+	let historySourceSeries = $derived(historyRange !== 'all' && data?.daily ? data.daily.series : (data?.series ?? []));
+	let selectedHistorySourceSeries = $derived(
+		historySourceSeries.filter((item) => selectedSeriesKeys.length === 0 || selectedSeriesKeys.includes(item.key))
 	);
-	let latestSelectedTvl = $derived(visibleSeries.reduce((sum, item) => sum + (item.values.at(-1) ?? 0), 0));
+	let visibleHistoryStartIndex = $derived(getHistoryStartIndex(historySourceWeeks, historyRange));
+	let visibleWeeks = $derived(historySourceWeeks.slice(visibleHistoryStartIndex));
+	let visibleHistorySeries = $derived(
+		selectedHistorySourceSeries.map((item) => ({
+			...item,
+			values: item.values.slice(visibleHistoryStartIndex)
+		}))
+	);
+	let latestSelectedTvl = $derived(visibleHistorySeries.reduce((sum, item) => sum + (item.values.at(-1) ?? 0), 0));
 
 	function formatWeekLabel(value: string) {
 		const date = new Date(`${value}T00:00:00Z`);
+		if (historyRange !== 'all') {
+			return new Intl.DateTimeFormat('en-GB', {
+				day: 'numeric',
+				month: 'short'
+			}).format(date);
+		}
+
 		return new Intl.DateTimeFormat('en-GB', {
 			month: 'short',
 			year: 'numeric'
 		}).format(date);
+	}
+
+	function getHistoryStartIndex(weeks: string[], range: HistoricalTvlHistoryRange) {
+		if (range === 'all' || weeks.length === 0) return 0;
+
+		const latestWeek = new Date(`${weeks.at(-1)}T00:00:00Z`);
+		const cutoff = new Date(latestWeek);
+
+		if (range === '1y') {
+			cutoff.setUTCFullYear(cutoff.getUTCFullYear() - 1);
+		} else {
+			cutoff.setUTCMonth(cutoff.getUTCMonth() - 3);
+		}
+
+		const cutoffValue = cutoff.toISOString().slice(0, 10);
+		const index = weeks.findIndex((week) => week >= cutoffValue);
+		return index === -1 ? 0 : index;
 	}
 
 	function withAlpha(colour: string, alpha: number) {
@@ -111,6 +180,22 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		}
 
 		return normalized;
+	}
+
+	function formatPercent(value: number) {
+		return `${value.toFixed(1)}%`;
+	}
+
+	function getTooltipTvl(item: HistoricalTvlTooltipParam) {
+		return item.data?.tvl ?? item.value ?? 0;
+	}
+
+	function getTooltipShare(item: HistoricalTvlTooltipParam, total: number) {
+		const share = item.data?.share;
+		if (typeof share === 'number' && Number.isFinite(share)) return share;
+
+		const tvl = getTooltipTvl(item);
+		return total > 0 ? (tvl / total) * 100 : 0;
 	}
 
 	function getSeriesColour(index: number) {
@@ -182,6 +267,16 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		goto(href, { replaceState: true, noScroll: true, keepFocus: true });
 	}
 
+	function setChartMode(value: string) {
+		if (!chartModeOptions.includes(value as HistoricalTvlChartMode)) return;
+		updateUrl({ [chartModeParamKey]: value });
+	}
+
+	function setHistoryRange(value: string) {
+		if (!historyRangeOptions.includes(value as HistoricalTvlHistoryRange)) return;
+		updateUrl({ [historyRangeParamKey]: value });
+	}
+
 	function isSeriesSelected(key: string) {
 		return selectedSeriesKeys.length === 0 || selectedSeriesKeys.includes(key);
 	}
@@ -226,23 +321,25 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		resizeObserver.observe(chartContainer);
 	}
 
-	function buildTooltip(
-		params: Array<{ axisValueLabel?: string; seriesName?: string; value?: number; color?: string }>
-	) {
-		const sorted = [...params].sort((left, right) => (right.value ?? 0) - (left.value ?? 0));
-		const total = sorted.reduce((sum, item) => sum + (item.value ?? 0), 0);
-		const visible = sorted.filter((item) => (item.value ?? 0) > 0).slice(0, maxTooltipSeries);
-		const hiddenCount = sorted.filter((item) => (item.value ?? 0) > 0).length - visible.length;
+	function buildTooltip(params: HistoricalTvlTooltipParam[]) {
+		const sorted = [...params].sort((left, right) => getTooltipTvl(right) - getTooltipTvl(left));
+		const total = sorted.reduce((sum, item) => sum + getTooltipTvl(item), 0);
+		const visible = sorted.filter((item) => getTooltipTvl(item) > 0).slice(0, maxTooltipSeries);
+		const hiddenCount = sorted.filter((item) => getTooltipTvl(item) > 0).length - visible.length;
 		const hiddenLabel = hiddenCount === 1 ? selectorLabel.toLowerCase() : selectorLabelPlural.toLowerCase();
 
 		return [
 			`<div style="margin-bottom: 0.4rem; color: #ffffff; font-family: ${chartFontFamily}; font-size: 1rem; font-weight: 700;">${params[0]?.axisValueLabel ?? ''}</div>`,
 			`<div style="margin-bottom: 0.5rem; color: #d5deea; font-family: ${chartFontFamily};"><strong>Total TVL:</strong> ${formatUsd(total)}</div>`,
 			...visible.map((item, index) => {
-				const value = item.value ?? 0;
-				const share = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
+				const tvl = getTooltipTvl(item);
+				const share = getTooltipShare(item, total);
 				const colour = typeof item.color === 'string' ? item.color : '#94a3b8';
-				return `<div style="color: #d5deea; font-family: ${chartFontFamily}; display: flex; justify-content: space-between; gap: 1rem;"><span style="display: inline-flex; align-items: center; gap: 0.45rem;"><span style="width: 0.72rem; height: 0.72rem; border-radius: 999px; background: ${colour}; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);"></span><span>${index + 1}. ${item.seriesName}</span></span><strong>${formatUsd(value)} (${share}%)</strong></div>`;
+				const valueLabel =
+					chartMode === 'market-share'
+						? `${formatPercent(share)} (${formatUsd(tvl)})`
+						: `${formatUsd(tvl)} (${formatPercent(share)})`;
+				return `<div style="color: #d5deea; font-family: ${chartFontFamily}; display: flex; justify-content: space-between; gap: 1rem;"><span style="display: inline-flex; align-items: center; gap: 0.45rem;"><span style="width: 0.72rem; height: 0.72rem; border-radius: 999px; background: ${colour}; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);"></span><span>${index + 1}. ${item.seriesName}</span></span><strong>${valueLabel}</strong></div>`;
 			}),
 			...(hiddenCount > 0
 				? [
@@ -252,10 +349,35 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		].join('');
 	}
 
+	function positionTooltip(
+		point: [number, number],
+		_params: unknown,
+		_dom: HTMLElement,
+		_rect: unknown,
+		size: { contentSize: [number, number] }
+	) {
+		const chartRect = chartContainer?.getBoundingClientRect();
+		const tooltipWidth = size.contentSize[0] ?? 0;
+		const tooltipHeight = size.contentSize[1] ?? 0;
+		const gap = 14;
+
+		if (!chartRect) return [point[0] + gap, point[1] + gap];
+
+		const maxLeft = chartRect.right - tooltipWidth - gap;
+		const minLeft = chartRect.left + gap;
+		const left = Math.min(maxLeft, Math.max(minLeft, point[0] + gap));
+
+		const maxTop = chartRect.bottom - tooltipHeight - gap;
+		const minTop = chartRect.top + gap;
+		const top = Math.min(maxTop, Math.max(minTop, chartRect.top + gap));
+
+		return [left, top];
+	}
+
 	async function renderChart() {
 		if (!chartContainer || !echartsApi) return;
 
-		if (!data || visibleSeries.length === 0) {
+		if (!data || visibleHistorySeries.length === 0 || visibleWeeks.length === 0) {
 			chartError = 'No historical vault TVL data available.';
 			destroyChart();
 			return;
@@ -269,7 +391,10 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		const isMobile = viewportMode === 'mobile';
 		const grid = isMobile ? gridMobile : gridDesktop;
 		lastViewportMode = viewportMode;
-		const series = visibleSeries.map((item, index) => {
+		const weekTotals = visibleWeeks.map((_, weekIndex) =>
+			visibleHistorySeries.reduce((sum, item) => sum + (item.values[weekIndex] ?? 0), 0)
+		);
+		const series = visibleHistorySeries.map((item, index) => {
 			const colour = getSeriesColour(index);
 			return {
 				name: item.label,
@@ -294,7 +419,15 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 				emphasis: {
 					focus: 'series'
 				},
-				data: item.values
+				data: item.values.map((tvl, weekIndex): HistoricalTvlChartDataPoint => {
+					const total = weekTotals[weekIndex] ?? 0;
+					const share = total > 0 ? (tvl / total) * 100 : 0;
+					return {
+						value: chartMode === 'market-share' ? share : tvl,
+						tvl,
+						share
+					};
+				})
 			};
 		});
 
@@ -326,6 +459,7 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 				backgroundColor: '#111827',
 				borderColor: '#1f2937',
 				borderWidth: 1,
+				confine: true,
 				padding: 12,
 				textStyle: {
 					color: '#f8fafc',
@@ -333,29 +467,32 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 					fontSize: tooltipFontSize,
 					lineHeight: 20
 				},
-				formatter: (params: Array<{ axisValueLabel?: string; seriesName?: string; value?: number; color?: string }>) =>
-					buildTooltip(params)
+				position: positionTooltip,
+				formatter: (params: HistoricalTvlTooltipParam[]) => buildTooltip(params)
 			},
 			xAxis: {
 				type: 'category',
 				boundaryGap: false,
-				data: data.weeks,
+				data: visibleWeeks,
 				axisLine: { lineStyle: { color: '#64748b' } },
 				axisLabel: {
 					color: '#e2e8f0',
 					fontFamily: axisFontStack,
 					fontSize: axisLabelFontSize,
 					fontWeight: 600,
+					showMinLabel: !isMobile,
 					formatter: (value: string) => formatWeekLabel(value)
 				},
 				splitLine: { show: false }
 			},
 			yAxis: {
 				type: 'value',
-				name: isMobile ? '' : 'TVL',
+				name: isMobile ? '' : chartModeLabels[chartMode],
 				nameLocation: 'end',
 				nameGap: 16,
 				position: 'right',
+				min: 0,
+				max: chartMode === 'market-share' ? 100 : undefined,
 				nameTextStyle: {
 					color: '#ffffff',
 					fontFamily: axisFontStack,
@@ -368,7 +505,7 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 					fontFamily: axisFontStack,
 					fontSize: axisLabelFontSize,
 					fontWeight: 600,
-					formatter: (value: number) => formatUsd(value)
+					formatter: (value: number) => (chartMode === 'market-share' ? `${Math.round(value)}%` : formatUsd(value))
 				},
 				splitLine: {
 					lineStyle: { color: 'rgba(148, 163, 184, 0.18)' }
@@ -436,6 +573,39 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 </script>
 
 <div class="historical-tvl-group-chart standalone-historical-tvl-shell" data-testid="vault-scatter-plot">
+	{#if data && !dataLoading && !effectiveError && hasSeries}
+		<div class="chart-controls">
+			<div class="chart-control-group">
+				<span class="chart-control-label">Chart mode</span>
+				<SegmentedControl
+					name={`${searchParamKey}-historical-tvl-chart-mode`}
+					selected={chartMode}
+					options={chartModeOptions}
+					secondary
+					onchange={({ value }) => setChartMode(value)}
+				>
+					{#snippet children(option)}
+						{chartModeLabels[option as HistoricalTvlChartMode]}
+					{/snippet}
+				</SegmentedControl>
+			</div>
+			<div class="chart-control-group">
+				<span class="chart-control-label">History</span>
+				<SegmentedControl
+					name={`${searchParamKey}-historical-tvl-history-range`}
+					selected={historyRange}
+					options={historyRangeOptions}
+					secondary
+					onchange={({ value }) => setHistoryRange(value)}
+				>
+					{#snippet children(option)}
+						{historyRangeLabels[option as HistoricalTvlHistoryRange]}
+					{/snippet}
+				</SegmentedControl>
+			</div>
+		</div>
+	{/if}
+
 	<div class="chart-surface">
 		{#if dataLoading}
 			<div class="chart-state">
@@ -457,7 +627,7 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		{/if}
 	</div>
 
-	{#if data && !dataLoading && !effectiveError && visibleSeries.length > 0}
+	{#if data && !dataLoading && !effectiveError && visibleHistorySeries.length > 0}
 		<p class="chart-summary">
 			Today selected {selectorLabelPlural.toLowerCase()} have total {formatUsd(latestSelectedTvl)} TVL
 		</p>
@@ -500,6 +670,33 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		flex-wrap: wrap;
 		gap: 0.5rem 0.625rem;
 		align-items: center;
+	}
+
+	.chart-controls {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 0.625rem 1.25rem;
+	}
+
+	.chart-control-group {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem 0.75rem;
+	}
+
+	.chart-control-label {
+		color: var(--c-text-light);
+		font: var(--f-ui-xs-medium);
+	}
+
+	.chart-controls :global(.segmented-control) {
+		--segmented-control-font: var(--f-ui-xs-medium);
+		--segmented-control-letter-spacing: var(--ls-ui-xs);
+		--segmented-control-padding: 0.48rem 0.72rem;
 	}
 
 	.group-chip {

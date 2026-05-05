@@ -5,7 +5,12 @@ import {
 	buildHistoricalTvlByChainPayload,
 	type HistoricalTvlByChainPayload
 } from '$lib/echarts/historical-tvl';
-import { getHistoricalWeeklyVaultRows, getMockWeeklyVaultRows } from '$lib/echarts/historical-tvl-server';
+import {
+	getHistoricalDailyVaultRows,
+	getHistoricalWeeklyVaultRows,
+	getMockDailyVaultRows,
+	getMockWeeklyVaultRows
+} from '$lib/echarts/historical-tvl-server';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 
 // Keep this endpoint aligned with `scripts/benchmark-historical-tvl-chain.mjs`
@@ -13,7 +18,7 @@ import { getCachedTopVaults } from '$lib/top-vaults/cache';
 const compress = promisify(brotliCompress);
 
 const CACHE_TTL_MS = HISTORICAL_TVL_CACHE_TTL_SECONDS * 1000;
-const CACHE_VERSION = 'historical-tvl-chain-daily-average-v1';
+const CACHE_VERSION = 'historical-tvl-chain-daily-short-history-v1';
 
 let cache: { json: string; br: Uint8Array; expires: number; version: string } | null = null;
 
@@ -23,14 +28,21 @@ async function getCachedChartData(fetch: Fetch) {
 
 	const startedAt = performance.now();
 	const topVaults = await getCachedTopVaults(fetch);
-	const weeklyRows =
-		import.meta.env.MODE === 'test' ? getMockWeeklyVaultRows(topVaults.vaults) : await getHistoricalWeeklyVaultRows();
+	const [weeklyRows, dailyRows] =
+		import.meta.env.MODE === 'test'
+			? [getMockWeeklyVaultRows(topVaults.vaults), getMockDailyVaultRows(topVaults.vaults)]
+			: await Promise.all([getHistoricalWeeklyVaultRows(), getHistoricalDailyVaultRows()]);
 
 	const payload: HistoricalTvlByChainPayload = buildHistoricalTvlByChainPayload(
 		weeklyRows,
 		topVaults.vaults,
 		performance.now() - startedAt
 	);
+	const dailyPayload = buildHistoricalTvlByChainPayload(dailyRows, topVaults.vaults, 0);
+	payload.daily = {
+		weeks: dailyPayload.weeks,
+		series: dailyPayload.series
+	};
 	const jsonStr = JSON.stringify(payload);
 	const br = new Uint8Array(
 		await compress(new TextEncoder().encode(jsonStr), {

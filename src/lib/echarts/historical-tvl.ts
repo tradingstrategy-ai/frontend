@@ -53,6 +53,10 @@ export interface HistoricalTvlPayload<TSeries extends HistoricalTvlSeriesBase = 
 	cacheTtlSeconds: number;
 	weeks: string[];
 	series: TSeries[];
+	daily?: {
+		weeks: string[];
+		series: TSeries[];
+	};
 	meta: HistoricalTvlPayloadMeta;
 }
 

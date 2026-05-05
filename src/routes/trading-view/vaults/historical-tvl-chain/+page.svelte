@@ -25,6 +25,7 @@ Benchmark the matching server-side aggregation with
 
 	const title = 'Historical vault TVL by chain';
 	const description = 'Explore how stablecoin vault TVL has evolved on different blockchains over time.';
+	const chartDataVersion = 'daily-short-history-v1';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 
 	onMount(() => {
@@ -35,7 +36,9 @@ Benchmark the matching server-side aggregation with
 				chartLoading = true;
 				chartError = null;
 
-				const response = await fetch(resolve('/trading-view/vaults/historical-tvl-chain/chart-data'));
+				const response = await fetch(
+					resolve(`/trading-view/vaults/historical-tvl-chain/chart-data?v=${chartDataVersion}`)
+				);
 				if (!response.ok) throw new Error(`Failed to fetch historical chart data: ${response.status}`);
 
 				const payload = (await response.json()) as HistoricalTvlByChainPayload;
