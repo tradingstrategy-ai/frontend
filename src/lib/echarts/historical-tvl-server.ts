@@ -23,6 +23,26 @@ export function getMockWeeklyVaultRows(vaults: VaultInfo[]): HistoricalWeeklyVau
 	});
 }
 
+export function getMockDailyVaultRows(vaults: VaultInfo[]): HistoricalWeeklyVaultRow[] {
+	const days = Array.from({ length: 90 }, (_, index) => {
+		const date = new Date('2025-10-08T00:00:00Z');
+		date.setUTCDate(date.getUTCDate() + index);
+		return date.toISOString().slice(0, 10);
+	});
+
+	return vaults.flatMap((vault, index) => {
+		const current = Math.max(vault.current_nav ?? 0, 25_000 + index * 1_000);
+		const peak = Math.max(vault.peak_nav ?? 0, current * 1.18, current);
+
+		return days.map((day, dayIndex) => ({
+			id: vault.id,
+			chainId: vault.chain_id,
+			week: day,
+			tvl: peak * (0.62 + (0.38 * dayIndex) / Math.max(days.length - 1, 1))
+		}));
+	});
+}
+
 export async function getHistoricalWeeklyVaultRows(
 	parquetFile = HISTORICAL_TVL_PARQUET_FILE
 ): Promise<HistoricalWeeklyVaultRow[]> {
@@ -68,6 +88,41 @@ export async function getHistoricalWeeklyVaultRows(
 			id: String(id),
 			chainId: Number(chainId),
 			week: week as string | Date,
+			tvl: Number(tvl)
+		}));
+	} finally {
+		connection.closeSync();
+	}
+}
+
+export async function getHistoricalDailyVaultRows(
+	parquetFile = HISTORICAL_TVL_PARQUET_FILE
+): Promise<HistoricalWeeklyVaultRow[]> {
+	const resolvedParquetFile =
+		parquetFile === HISTORICAL_TVL_PARQUET_FILE ? await ensureVaultPricesParquet() : parquetFile;
+	const connection = await DuckDBConnection.create();
+
+	try {
+		const reader = await connection.runAndReadAll(
+			`
+				SELECT
+					id,
+					chain AS chain_id,
+					CAST(timestamp AS DATE) AS day,
+					arg_max(total_assets, timestamp) AS tvl
+				FROM parquet_scan($parquetFile)
+				WHERE total_assets >= 0
+				GROUP BY 1, 2, 3
+				HAVING day < current_date
+				ORDER BY 3, 2, 1
+			`,
+			{ parquetFile: resolvedParquetFile }
+		);
+
+		return reader.getRows().map(([id, chainId, day, tvl]) => ({
+			id: String(id),
+			chainId: Number(chainId),
+			week: day as string | Date,
 			tvl: Number(tvl)
 		}));
 	} finally {

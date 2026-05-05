@@ -22,6 +22,7 @@ Historical vault TVL by vault protocol page with a server-side aggregated weekly
 
 	const title = 'Historical vault TVL by vault protocol';
 	const description = 'Explore how stablecoin vault TVL has evolved across different vault protocols over time.';
+	const chartDataVersion = 'daily-short-history-v1';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 
 	onMount(() => {
@@ -32,7 +33,9 @@ Historical vault TVL by vault protocol page with a server-side aggregated weekly
 				chartLoading = true;
 				chartError = null;
 
-				const response = await fetch(resolve('/trading-view/vaults/historical-tvl-protocol/chart-data'));
+				const response = await fetch(
+					resolve(`/trading-view/vaults/historical-tvl-protocol/chart-data?v=${chartDataVersion}`)
+				);
 				if (!response.ok) throw new Error(`Failed to fetch historical chart data: ${response.status}`);
 
 				const payload = (await response.json()) as HistoricalTvlByProtocolPayload;

@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add historical TVL chart controls for market share and shorter daily history views (2026-05-05)
 - Add MegaETH chain support so MegaETH vaults appear on the by-chain page (2026-05-05)
 - Show Morpho warning flags alert on vault detail pages (2026-05-01)
 - Add Hibachi chain support for perpetual DEX vaults (2026-04-30)
