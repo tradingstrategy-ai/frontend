@@ -281,6 +281,15 @@ export const chains = (() => {
 			explorer: 'https://katanascan.com',
 			nativeCurrency: 'ETH',
 			hasBackendData: false
+		},
+		{
+			id: 4326,
+			slug: 'megaeth',
+			name: 'MegaETH',
+			homepage: 'https://megaeth.com',
+			explorer: 'https://mega.etherscan.io',
+			nativeCurrency: 'ETH',
+			hasBackendData: false
 		}
 	] as const satisfies ChainData[];
 
