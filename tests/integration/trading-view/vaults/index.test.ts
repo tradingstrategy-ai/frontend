@@ -19,6 +19,17 @@ async function closeAdvancedSettings(page: import('@playwright/test').Page) {
 	await expect(advancedFilters).toHaveJSProperty('open', false);
 }
 
+async function waitForVaultRows(page: import('@playwright/test').Page) {
+	await expect(page.locator('tbody tr.targetable').first()).toBeVisible();
+}
+
+async function searchVault(page: import('@playwright/test').Page, query: string) {
+	await waitForVaultRows(page);
+	const vaultSearch = page.getByTestId('vault-search');
+	await vaultSearch.click();
+	await vaultSearch.pressSequentially(query);
+}
+
 async function toggleReturnOption(page: import('@playwright/test').Page, label: string) {
 	await page.getByTestId('return-columns-menu').getByText(label, { exact: true }).click();
 }
@@ -69,9 +80,7 @@ test.describe('vault index page', () => {
 	});
 
 	test('shows lifetime data tooltip on the lifetime return cell', async ({ page }) => {
-		const vaultSearch = page.getByTestId('vault-search');
-		await vaultSearch.click();
-		await vaultSearch.pressSequentially('Trading Strategy ICHIv3 LS 2');
+		await searchVault(page, 'Trading Strategy ICHIv3 LS 2');
 
 		const row = page.locator('tbody tr.targetable').filter({ hasText: 'Trading Strategy ICHIv3 LS 2' });
 		await expect(row).toHaveCount(1);
@@ -232,9 +241,7 @@ test.describe('vault index page', () => {
 
 	test('shows limited data tooltips for partial 3M and 1Y returns', async ({ page }) => {
 		await page.goto('/trading-view/vaults?returns=1m-ann,3m-ann,1y-ann');
-		const vaultSearch = page.getByTestId('vault-search');
-		await vaultSearch.click();
-		await vaultSearch.pressSequentially('Limited coverage vault');
+		await searchVault(page, 'Limited coverage vault');
 
 		const row = page.locator('tbody tr.targetable').filter({ hasText: 'Limited coverage vault' });
 		await expect(row).toHaveCount(1);
@@ -257,9 +264,7 @@ test.describe('vault index page', () => {
 
 	test('shows limited data tooltip for partial 6M returns', async ({ page }) => {
 		await page.goto('/trading-view/vaults?returns=1m-ann,3m-ann,6m-ann');
-		const vaultSearch = page.getByTestId('vault-search');
-		await vaultSearch.click();
-		await vaultSearch.pressSequentially('Limited coverage vault');
+		await searchVault(page, 'Limited coverage vault');
 
 		const row = page.locator('tbody tr.targetable').filter({ hasText: 'Limited coverage vault' });
 		await expect(row).toHaveCount(1);
