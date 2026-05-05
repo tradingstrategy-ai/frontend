@@ -3,7 +3,6 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import VaultGroupTable from '$lib/top-vaults/VaultGroupTable.svelte';
@@ -72,7 +71,6 @@
 					<HeroBanner>
 						{#snippet title()}
 							<span>DeFi vaults by chain</span>
-							<DataBadge class="badge" status="beta">Beta</DataBadge>
 						{/snippet}
 						{#snippet subtitle()}
 							<a class="body-link" href={glossaryLinks.defi}>DeFi</a>
@@ -142,12 +140,6 @@
 
 		.chart-column :global(.market-share-pie-chart) {
 			align-self: stretch;
-		}
-
-		:global(.badge) {
-			font-size: 0.44em;
-			margin-inline: 0.25em;
-			transform: translate(0, -0.375em);
 		}
 
 		@media (--viewport-sm-down) {

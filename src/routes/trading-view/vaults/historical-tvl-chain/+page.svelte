@@ -10,7 +10,6 @@ Benchmark the matching server-side aggregation with
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import { onMount } from 'svelte';
 	import Alert from '$lib/components/Alert.svelte';
-	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import type { HistoricalTvlByChainPayload } from '$lib/echarts/historical-tvl-chain';
@@ -95,7 +94,6 @@ Benchmark the matching server-side aggregation with
 			{/snippet}
 			{#snippet title()}
 				<span>Historical vault TVL by chain</span>
-				<DataBadge class="badge" status="beta">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
 	</Section>
@@ -112,12 +110,6 @@ Benchmark the matching server-side aggregation with
 
 <style>
 	.historical-tvl-chain-page {
-		:global(.badge) {
-			font-size: 0.44em;
-			margin-inline: 0.25em;
-			transform: translate(0, -0.375em);
-		}
-
 		:global(.subtitle a) {
 			text-decoration: underline;
 		}

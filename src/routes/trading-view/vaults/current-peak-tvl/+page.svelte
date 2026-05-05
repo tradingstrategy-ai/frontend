@@ -3,7 +3,6 @@ Scatter plot page showing vault current TVL versus historical peak TVL, coloured
 -->
 <script lang="ts">
 	import { page } from '$app/state';
-	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import Alert from '$lib/components/Alert.svelte';
@@ -67,7 +66,6 @@ Scatter plot page showing vault current TVL versus historical peak TVL, coloured
 		>
 			{#snippet title()}
 				<span>Vault current/peak TVL scatter plot</span>
-				<DataBadge class="badge" status="beta">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
 	</Section>
@@ -83,14 +81,6 @@ Scatter plot page showing vault current TVL versus historical peak TVL, coloured
 </main>
 
 <style>
-	.current-peak-tvl-page {
-		:global(.badge) {
-			font-size: 0.44em;
-			margin-inline: 0.25em;
-			transform: translate(0, -0.375em);
-		}
-	}
-
 	.mobile-notice {
 		display: none;
 

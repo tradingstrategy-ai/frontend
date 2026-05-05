@@ -7,7 +7,6 @@ Historical vault TVL by stablecoin page with a server-side aggregated weekly sta
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import { onMount } from 'svelte';
 	import Alert from '$lib/components/Alert.svelte';
-	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import type { HistoricalTvlByStablecoinPayload } from '$lib/echarts/historical-tvl';
@@ -92,7 +91,6 @@ Historical vault TVL by stablecoin page with a server-side aggregated weekly sta
 			{/snippet}
 			{#snippet title()}
 				<span>Historical vault TVL by stablecoin</span>
-				<DataBadge class="badge" status="beta">Beta</DataBadge>
 			{/snippet}
 		</HeroBanner>
 	</Section>
@@ -109,12 +107,6 @@ Historical vault TVL by stablecoin page with a server-side aggregated weekly sta
 
 <style>
 	.historical-tvl-stablecoin-page {
-		:global(.badge) {
-			font-size: 0.44em;
-			margin-inline: 0.25em;
-			transform: translate(0, -0.375em);
-		}
-
 		:global(.subtitle a) {
 			text-decoration: underline;
 		}

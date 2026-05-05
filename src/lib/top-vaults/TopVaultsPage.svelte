@@ -5,7 +5,6 @@
 	import type { VaultProtocolMetadata } from '$lib/vault-protocol/schemas';
 	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
 	import Alert from '$lib/components/Alert.svelte';
-	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import TopVaultsOptIn from './TopVaultsOptIn.svelte';
@@ -100,7 +99,6 @@
 								{/if}
 							{/if}
 							<span>{pageTitle}</span>
-							<DataBadge class="badge" status="beta">Beta</DataBadge>
 						</span>
 					{/snippet}
 				</HeroBanner>
@@ -218,10 +216,6 @@
 
 		img {
 			height: 1em;
-		}
-
-		:global(.badge) {
-			font-size: 0.44em;
 		}
 
 		.top-vaults-content {
