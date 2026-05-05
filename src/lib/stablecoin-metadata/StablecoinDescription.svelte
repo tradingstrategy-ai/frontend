@@ -15,7 +15,7 @@ with optional expandable long description and external links (homepage, Twitter,
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import IconTwitter from '~icons/local/twitter';
-	import IconArrowRightUp from '~icons/local/arrow-right-up';
+	import IconHome from '~icons/local/home';
 	import IconExternalLink from '~icons/local/external-link';
 
 	interface Props {
@@ -32,7 +32,7 @@ with optional expandable long description and external links (homepage, Twitter,
 
 	let links = $derived(
 		[
-			{ href: metadata.links.homepage, label: 'Homepage', Icon: IconArrowRightUp },
+			{ href: metadata.links.homepage, label: 'Homepage', Icon: IconHome },
 			{ href: metadata.links.twitter, label: 'Twitter', Icon: IconTwitter },
 			{ href: metadata.links.coingecko, label: 'CoinGecko', Icon: IconExternalLink },
 			{ href: metadata.links.defillama, label: 'DefiLlama', Icon: IconExternalLink }

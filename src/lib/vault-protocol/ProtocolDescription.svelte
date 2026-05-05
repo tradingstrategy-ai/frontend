@@ -11,7 +11,7 @@
 	import IconTwitter from '~icons/local/twitter';
 	import IconGithub from '~icons/local/github';
 	import IconBook from '~icons/local/book';
-	import IconArrowRightUp from '~icons/local/arrow-right-up';
+	import IconHome from '~icons/local/home';
 	import IconSecure from '~icons/local/secure';
 	import IconExternalLink from '~icons/local/external-link';
 
@@ -27,7 +27,7 @@
 
 	let links = $derived(
 		[
-			{ href: metadata.links.homepage, label: 'Homepage', Icon: IconArrowRightUp },
+			{ href: metadata.links.homepage, label: 'Homepage', Icon: IconHome },
 			{ href: metadata.links.twitter, label: 'Twitter', Icon: IconTwitter },
 			{ href: metadata.links.documentation, label: 'Documentation', Icon: IconBook },
 			{ href: metadata.links.github, label: 'GitHub', Icon: IconGithub },
