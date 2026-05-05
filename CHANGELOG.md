@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add MegaETH chain support so MegaETH vaults appear on the by-chain page (2026-05-05)
 - Show Morpho warning flags alert on vault detail pages (2026-05-01)
 - Add Hibachi chain support for perpetual DEX vaults (2026-04-30)
 - Add underwater drawdown chart pane for perpetual DEX vault share price charts (2026-04-28)
