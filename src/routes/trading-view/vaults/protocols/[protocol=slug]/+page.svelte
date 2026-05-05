@@ -6,6 +6,7 @@
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
 
 	let { data } = $props();
 	let { protocolSlug, protocolName, protocolMetadata } = $derived(data);
@@ -80,4 +81,13 @@
 	showFilters
 	defaultTvlKey="10k"
 	defaultHideUnknown={isUnsupportedProtocolSlug(protocolSlug) ? 0 : 1}
-/>
+>
+	{#snippet detailAside()}
+		<VaultGroupMiniChart
+			title="All {protocolName} vaults"
+			dataUrl="/trading-view/vaults/protocols/{protocolSlug}/chart-data"
+			compareLabel="Compare all protocols"
+			compareHref="/trading-view/vaults/historical-tvl-protocol"
+		/>
+	{/snippet}
+</TopVaultsPage>

@@ -9,9 +9,10 @@ import {
 import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
 import { isBlacklisted } from '$lib/top-vaults/helpers';
 import type { VaultInfo } from '$lib/top-vaults/schemas';
+import { VAULT_TVL_OUTLIER_THRESHOLD } from './tvl-outliers';
 
 export const STABLECOIN_CHAIN_HEATMAP_CACHE_TTL_SECONDS = 2 * 60 * 60;
-export const STABLECOIN_CHAIN_HEATMAP_OUTLIER_THRESHOLD = 50_000_000_000;
+export const STABLECOIN_CHAIN_HEATMAP_OUTLIER_THRESHOLD = VAULT_TVL_OUTLIER_THRESHOLD;
 export const STABLECOIN_CHAIN_HEATMAP_TOP_N = 10;
 
 export interface StablecoinChainHeatmapAxisEntry {
