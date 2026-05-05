@@ -1,5 +1,22 @@
 import { expect, test, type Page } from '@playwright/test';
 
+type EChartsOption = {
+	graphic?: { elements?: { id?: string }[] }[];
+	yAxis?: { inverse?: boolean } | { inverse?: boolean }[];
+};
+
+declare global {
+	interface Window {
+		echarts?: {
+			getInstanceByDom: (container: Element) =>
+				| {
+						getOption?: () => EChartsOption;
+				  }
+				| undefined;
+		};
+	}
+}
+
 async function expectNativeChartWatermark(page: Page, containerSelector: string) {
 	await expect
 		.poll(async () =>
@@ -69,6 +86,16 @@ test.describe('stablecoin / chain heatmap page', () => {
 		await expect(firstStablecoin).toBeVisible();
 		await expect(firstChain).toBeVisible();
 		await expect(plotWrapper.getByText('Min TVL:')).toHaveCount(0);
+		await expect
+			.poll(async () =>
+				page.evaluate(() => {
+					const container = document.querySelector('.chart-canvas');
+					const yAxis = container ? window.echarts?.getInstanceByDom(container)?.getOption?.().yAxis : undefined;
+					const firstYAxis = Array.isArray(yAxis) ? yAxis[0] : yAxis;
+					return firstYAxis?.inverse;
+				})
+			)
+			.toBe(true);
 	});
 
 	test('axis labels link to stablecoin and chain vault pages', async ({ page }) => {

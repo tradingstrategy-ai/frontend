@@ -214,6 +214,7 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 			yAxis: {
 				type: 'category',
 				data: data.stablecoins.map((stablecoin) => stablecoin.label),
+				inverse: true,
 				show: false
 			},
 			visualMap: {
@@ -549,11 +550,6 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 		font: var(--f-ui-sm-bold);
 		font-size: 0.98rem;
 		letter-spacing: var(--f-ui-sm-spacing, normal);
-	}
-
-	.axis-tooltip-copy {
-		display: block;
-		color: #d5deea;
 	}
 
 	.axis-tooltip-metric-line {
