@@ -140,8 +140,8 @@ Pricing page with Basic and Pro tier comparison
 
 	<Section gap="md" maxWidth="md">
 		<div class="tier-cards">
-			<SummaryBox title="Basic" subtitle="Free">
-				<p class="tier-description">The best yield hunting website for degens</p>
+			<SummaryBox title="Free" subtitle="Free to access, no sign up needed">
+				<p class="tier-description">All vault data accessible on the website</p>
 			</SummaryBox>
 
 			<div class="pro-tier">
@@ -151,7 +151,14 @@ Pricing page with Basic and Pro tier comparison
 						{#if pricingCheckoutUrl}
 							<Button label="Subscribe" href={pricingCheckoutUrl} target="_blank" rel="noreferrer" />
 						{/if}
-						<Button label="Download" href="/trading-view/vaults/datasets" secondary />
+						<Button
+							label="Purchase license"
+							href="https://www.marketsoftware.co/vaultdata"
+							target="_blank"
+							rel="noreferrer"
+							secondary
+						/>
+						<p class="sold-by">* Sold by Market Software Ltd</p>
 					</div>
 				</SummaryBox>
 			</div>
@@ -165,7 +172,7 @@ Pricing page with Basic and Pro tier comparison
 				<thead>
 					<tr>
 						<th class="feature-col">Feature</th>
-						<th class="plan-col">Basic</th>
+						<th class="plan-col">Free</th>
 						<th class="plan-col">Pro</th>
 					</tr>
 				</thead>
@@ -221,12 +228,14 @@ Pricing page with Basic and Pro tier comparison
 						<td class="check"><IconCheckSquare /></td>
 					</tr>
 					<tr>
-						<td>API access</td>
-						<td class="dash">—</td>
-						<td class="check"><IconCheckSquare /></td>
-					</tr>
-					<tr>
-						<td>Data research and notebook integration</td>
+						<td>
+							<Tooltip>
+								<span slot="trigger" class="underline">AI ready</span>
+								<svelte:fragment slot="popup">
+									Data is available as files, not API, which any AI agent can easily read
+								</svelte:fragment>
+							</Tooltip>
+						</td>
 						<td class="dash">—</td>
 						<td class="check"><IconCheckSquare /></td>
 					</tr>
@@ -236,24 +245,17 @@ Pricing page with Basic and Pro tier comparison
 						<td class="check"><IconCheckSquare /></td>
 					</tr>
 					<tr>
+						<td>Raw data files</td>
+						<td class="dash">—</td>
+						<td class="check"><IconCheckSquare /></td>
+					</tr>
+					<tr>
 						<td>Backtesting framework</td>
 						<td class="dash">—</td>
 						<td class="check"><IconCheckSquare /></td>
 					</tr>
 					<tr>
-						<td>Direct developer support</td>
-						<td class="dash">—</td>
-						<td class="check"><IconCheckSquare /></td>
-					</tr>
-					<tr>
-						<td>
-							<Tooltip>
-								<span slot="trigger" class="underline">AI ready</span>
-								<svelte:fragment slot="popup">
-									Data is available as files, not API, which any AI agent can easily read
-								</svelte:fragment>
-							</Tooltip>
-						</td>
+						<td>Support</td>
 						<td class="dash">—</td>
 						<td class="check"><IconCheckSquare /></td>
 					</tr>
@@ -359,6 +361,14 @@ Pricing page with Basic and Pro tier comparison
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--space-md);
+		align-items: center;
+	}
+
+	.sold-by {
+		width: 100%;
+		font: var(--f-ui-xs-roman);
+		letter-spacing: var(--f-ui-xs-spacing, normal);
+		color: var(--c-text-ultra-light);
 	}
 
 	.table-wrapper {
