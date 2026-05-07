@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add AI ready feature and data fields section to pricing page (2026-05-07)
 - Add historical TVL chart controls for market share and shorter daily history views (2026-05-05)
 - Add MegaETH chain support so MegaETH vaults appear on the by-chain page (2026-05-05)
 - Show Morpho warning flags alert on vault detail pages (2026-05-01)
