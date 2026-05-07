@@ -9,10 +9,10 @@ WORKDIR /app
 ENV PNPM_HOME="/pnpm"
 ENV PNPM_STORE_DIR="/pnpm/store"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && pnpm config set store-dir "$PNPM_STORE_DIR"
 
 # Install package dependencies (cache first)
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN corepack enable && pnpm config set store-dir "$PNPM_STORE_DIR"
 RUN --mount=type=cache,target=/pnpm/store pnpm install --frozen-lockfile
 
 # copy remaining files
