@@ -2,10 +2,124 @@
 Pricing page with Basic and Pro tier comparison
 -->
 <script lang="ts">
-	import { Banner, Button, Section, SummaryBox } from '$lib/components';
+	import { Banner, Button, Section, SummaryBox, Tooltip } from '$lib/components';
 	import { pricingCheckoutUrl } from '$lib/config';
 	import IconCheckSquare from '~icons/local/check-square';
 	import IconMail from '~icons/local/mail';
+
+	let { data } = $props();
+
+	const docsUrl = 'https://tradingstrategy.ai/docs/overview/defi-vault-data.html';
+
+	const vaultMetadataFields = [
+		'Name',
+		'Vault Slug',
+		'Protocol Slug',
+		'Curator Slug',
+		'Curator Name',
+		'Protocol Curator',
+		'Share Token Address',
+		'Denomination Token Addr.',
+		'Lifetime Return (Gross)',
+		'Lifetime Return (Net)',
+		'CAGR (Gross)',
+		'CAGR (Net)',
+		'3M Return (Gross)',
+		'3M Return (Net)',
+		'3M CAGR (Gross)',
+		'3M CAGR (Net)',
+		'3M Sharpe Ratio (Gross)',
+		'3M Sharpe Ratio (Net)',
+		'3M Volatility (Ann.)',
+		'1M Return (Gross)',
+		'1M Return (Net)',
+		'1M CAGR (Gross)',
+		'1M CAGR (Net)',
+		'Denomination',
+		'Normalised Denomination',
+		'Denomination Slug',
+		'Share Token',
+		'Chain',
+		'Peak TVL/NAV',
+		'Current TVL/NAV',
+		'Age (Years)',
+		'Management Fee',
+		'Performance Fee',
+		'Deposit Fee',
+		'Withdrawal Fee',
+		'Fee Mode',
+		'Fee Internalised',
+		'Fee Label',
+		'Lock-up (Estimated)',
+		'Deposit/Withdraw Events',
+		'Protocol',
+		'Risk (Category)',
+		'Risk (Numeric)',
+		'Vault ID',
+		'Start Date',
+		'End Date',
+		'Address',
+		'Chain ID',
+		'Stablecoin-Like',
+		'First Updated At',
+		'Last Updated At',
+		'Last Share Price',
+		'Detected Features',
+		'Vault Flags',
+		'Notes',
+		'Trading Strategy Link',
+		'Deposit Closed Reason',
+		'Redemption Closed Reason',
+		'Deposit Next Open',
+		'Redemption Next Open',
+		'Available Liquidity',
+		'Utilisation',
+		'Leader Fraction',
+		'Leader Commission',
+		'Follower Count',
+		'Account PnL',
+		'Cumulative Volume',
+		'Description',
+		'Short Description',
+		'Protocol Extension Data',
+		'Period Results'
+	];
+
+	const historicalReturnsFields = [
+		'chain',
+		'address',
+		'block_number',
+		'timestamp',
+		'share_price',
+		'total_assets',
+		'total_supply',
+		'performance_fee',
+		'management_fee',
+		'vault_poll_frequency',
+		'id',
+		'name',
+		'event_count',
+		'protocol',
+		'returns_1h',
+		'deposit_closed_reason',
+		'written_at',
+		'max_deposit',
+		'max_redeem',
+		'deposits_open',
+		'redemption_open',
+		'trading',
+		'available_liquidity',
+		'utilisation',
+		'leader_fraction',
+		'leader_commission',
+		'follower_count',
+		'account_pnl',
+		'cumulative_volume',
+		'daily_deposit_count',
+		'daily_withdrawal_count',
+		'daily_deposit_usd',
+		'daily_withdrawal_usd'
+	];
 </script>
 
 <svelte:head>
@@ -24,7 +138,7 @@ Pricing page with Basic and Pro tier comparison
 		</header>
 	</Section>
 
-	<Section gap="md">
+	<Section gap="md" maxWidth="md">
 		<div class="tier-cards">
 			<SummaryBox title="Basic" subtitle="Free">
 				<p class="tier-description">The best yield hunting website for degens</p>
@@ -131,9 +245,49 @@ Pricing page with Basic and Pro tier comparison
 						<td class="dash">—</td>
 						<td class="check"><IconCheckSquare /></td>
 					</tr>
+					<tr>
+						<td>
+							<Tooltip>
+								<span slot="trigger" class="underline">AI ready</span>
+								<svelte:fragment slot="popup">
+									Data is available as files, not API, which any AI agent can easily read
+								</svelte:fragment>
+							</Tooltip>
+						</td>
+						<td class="dash">—</td>
+						<td class="check"><IconCheckSquare /></td>
+					</tr>
 				</tbody>
 			</table>
 		</div>
+	</Section>
+
+	<Section padding="md" gap="md" maxWidth="md">
+		<h2>Data and fields</h2>
+		<p class="data-lead">
+			{#if data.stats}
+				Vault metadata and historical returns for <strong>{data.stats.chains}</strong> blockchains,
+				<strong>{data.stats.protocols}</strong> vault protocols and
+				<strong>{data.stats.stablecoinVaults.toLocaleString()}</strong> stablecoin vaults
+			{:else}
+				Vault metadata and historical returns across blockchains, vault protocols and stablecoin vaults
+			{/if}
+		</p>
+
+		<details class="fields-details">
+			<summary>View details</summary>
+			<div class="fields-body">
+				<div class="fields-group">
+					<h3>Vault metadata</h3>
+					<p class="monospace">{vaultMetadataFields.join(', ')}</p>
+				</div>
+				<div class="fields-group">
+					<h3>Historical returns</h3>
+					<p class="monospace">{historicalReturnsFields.join(', ')}</p>
+				</div>
+				<a href={docsUrl} target="_blank" rel="noreferrer" class="docs-link">View full field documentation</a>
+			</div>
+		</details>
 	</Section>
 
 	<Banner title="Ready to get started?" padding="md" gap="md">
@@ -260,5 +414,65 @@ Pricing page with Basic and Pro tier comparison
 
 	.dash {
 		color: var(--c-text-ultra-light);
+	}
+
+	.data-lead {
+		font: var(--f-ui-lg-roman);
+		letter-spacing: var(--f-ui-lg-spacing, normal);
+		color: var(--c-text-light);
+	}
+
+	.fields-details {
+		summary {
+			font: var(--f-ui-md-roman);
+			letter-spacing: var(--f-ui-md-spacing, normal);
+			color: var(--c-text-light);
+			cursor: pointer;
+			width: fit-content;
+
+			&:hover {
+				color: var(--c-text);
+			}
+		}
+	}
+
+	.fields-body {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-lg);
+		margin-top: var(--space-lg);
+	}
+
+	.fields-group {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-xs);
+
+		h3 {
+			font: var(--f-ui-md-medium);
+			letter-spacing: var(--f-ui-md-spacing, normal);
+		}
+
+		p {
+			font: var(--f-ui-sm-roman);
+			letter-spacing: var(--f-ui-sm-spacing, normal);
+			color: var(--c-text-light);
+		}
+
+		.monospace {
+			font-family: var(--font-monospace, monospace);
+			font-size: 0.85em;
+		}
+	}
+
+	.docs-link {
+		font: var(--f-ui-sm-roman);
+		letter-spacing: var(--f-ui-sm-spacing, normal);
+		color: var(--c-text-light);
+		text-decoration: underline;
+
+		&:hover {
+			color: var(--c-text);
+		}
 	}
 </style>
