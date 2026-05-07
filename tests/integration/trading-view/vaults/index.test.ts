@@ -304,4 +304,15 @@ test.describe('vault index page', () => {
 		// Verify URL search params are preserved
 		await page.waitForURL(urlParamsMatch(searchParams), { timeout: 5000 });
 	});
+
+	test('does not duplicate generated Morpho risk notes on vault detail pages', async ({ page }) => {
+		await page.goto('/trading-view/vaults/morpho-flagged-blacklisted-vault');
+
+		const alerts = page.locator('.alert-list');
+		await expect(alerts).toHaveCount(1);
+		await expect(alerts.first()).toHaveClass(/error/);
+		await expect(alerts.first()).toContainText('Morpho has flagged this vault');
+		await expect(alerts.first()).toContainText('bad_debt_unrealized');
+		await expect(page.locator('.notes')).toHaveCount(0);
+	});
 });

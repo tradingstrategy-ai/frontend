@@ -302,6 +302,49 @@ const yamlStrategyVault = createTestVault('Trading Strategy ICHIv3 LS 2', {
 	]
 });
 
+const morphoFlaggedBlacklistedVault = createTestVault('Morpho flagged blacklisted vault', {
+	address: '0xc3415c9231dad88f8146107372143f6dae042967',
+	chain: 'arbitrum',
+	protocol: 'Morpho',
+	current_nav: 20_000,
+	peak_nav: 30_000,
+	risk: 'Blacklisted',
+	flags: ['morpho_issues'],
+	notes: 'Morpho has flagged this vault with the following issues: bad_debt_unrealized, short_timelock',
+	other_data: {
+		morpho_vault_flags: ['not_whitelisted', 'short_timelock'],
+		morpho_market_flags: ['bad_debt_unrealized', 'not_whitelisted']
+	},
+	period_results: [
+		{
+			period: '1M',
+			error_reason: null,
+			period_start_at: '2025-12-01T00:00:00',
+			period_end_at: '2026-01-01T00:00:00',
+			share_price_start: 1,
+			share_price_end: 1.01,
+			raw_samples: 720,
+			samples_start_at: '2025-12-01T00:00:00',
+			samples_end_at: '2026-01-01T00:00:00',
+			daily_samples: 30,
+			returns_gross: 0.01,
+			returns_net: 0.01,
+			cagr_gross: 0.12,
+			cagr_net: 0.12,
+			volatility: 0.1,
+			sharpe: 1,
+			max_drawdown: -0.01,
+			tvl_start: 18_000,
+			tvl_end: 20_000,
+			tvl_low: 18_000,
+			tvl_high: 20_000,
+			ranking_overall: null,
+			ranking_chain: null,
+			ranking_protocol: null
+		}
+	]
+});
+
 // Real Parquet-backed vault IDs used by the historical TVL by chain endpoint tests.
 // These IDs need to match the local Parquet dataset so blacklist filtering can be
 // exercised against real server-side aggregation.
@@ -351,6 +394,7 @@ export default defineMock({
 		generated_at: new Date().toISOString(),
 		vaults: [
 			yamlStrategyVault,
+			morphoFlaggedBlacklistedVault,
 			limitedCoverageVault,
 			...parquetMatchedVaults,
 			...returnLeaders,
