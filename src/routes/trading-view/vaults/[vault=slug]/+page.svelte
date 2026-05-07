@@ -23,6 +23,13 @@
 	let { data } = $props();
 	let { vault, chain, protocolMetadata, stablecoinMetadata, generated_at } = $derived(data);
 	let morphoFlags = $derived(getMorphoFlags(vault));
+	let notesDuplicateMorphoFlags = $derived(
+		morphoFlags.length > 0 && vault.notes?.startsWith('Morpho has flagged this vault with the following issues:')
+	);
+	let blacklisted = $derived(isBlacklisted(vault));
+	let morphoAlertStatus = $derived(blacklisted ? 'error' : 'warning');
+	let showBlacklistedAlert = $derived(blacklisted && !notesDuplicateMorphoFlags);
+	let showNotes = $derived(vault.notes != null && !notesDuplicateMorphoFlags);
 </script>
 
 <SocialMediaTags {vault} {chain} {protocolMetadata} />
@@ -34,7 +41,7 @@
 
 	{#if morphoFlags.length > 0}
 		<Section padding="md">
-			<Alert size="md" status="warning" title="Morpho has flagged this vault">
+			<Alert size="md" status={morphoAlertStatus} title="Morpho has flagged this vault">
 				{morphoFlags.join(', ')}
 			</Alert>
 		</Section>
@@ -43,7 +50,7 @@
 	<VaultPageHeader {vault} />
 
 	<Section padding="md" --section-gap="var(--gap)">
-		{#if isBlacklisted(vault)}
+		{#if showBlacklistedAlert}
 			<Alert size="md" title="Blacklisted">
 				{vault.notes ?? 'Unknown reason'}
 			</Alert>
@@ -77,7 +84,7 @@
 			</MetricsBox>
 		{/if}
 
-		{#if vault.notes}
+		{#if showNotes && vault.notes}
 			<MetricsBox class="notes" title="Notes">
 				<Markdown content={vault.notes} />
 			</MetricsBox>
