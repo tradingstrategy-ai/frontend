@@ -103,7 +103,10 @@
 		{ label: 'Flags', value: vault.flags, type: 'array' as const },
 		{ label: 'Deposit status', value: vault.deposit_closed_reason, type: 'closedReason' as const },
 		{ label: 'Redemption status', value: vault.redemption_closed_reason, type: 'closedReason' as const },
-		{ label: 'Deposit events', value: vault.event_count, type: 'number' as const }
+		// The API uses 0 to mean deposit/redemption event counts are not tracked for this vault.
+		...(vault.event_count !== 0
+			? [{ label: 'Deposit/redemption events', value: vault.event_count, type: 'number' as const }]
+			: [])
 	]);
 
 	function formatValue(value: unknown, type?: string): string {
