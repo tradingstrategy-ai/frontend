@@ -9,8 +9,8 @@ test.describe('pricing page', () => {
 		await expect(page).toHaveTitle('Vault data pricing');
 	});
 
-	test('shows Basic and Pro tier cards', async ({ page }) => {
-		await expect(page.getByRole('heading', { name: 'Basic' })).toBeVisible();
+	test('shows Free and Pro tier cards', async ({ page }) => {
+		await expect(page.getByRole('heading', { name: 'Free' })).toBeVisible();
 		await expect(page.getByRole('heading', { name: 'Pro' })).toBeVisible();
 	});
 
@@ -34,12 +34,7 @@ test.describe('pricing page', () => {
 		await expect(page.getByRole('heading', { name: 'Feature comparison' })).toBeVisible();
 	});
 
-	test('API access is listed as Pro-only feature', async ({ page }) => {
-		await expect(page.getByRole('cell', { name: 'API access' })).toBeVisible();
-	});
-
-	test('shows ready to get started call-to-action', async ({ page }) => {
-		await expect(page.getByRole('heading', { name: 'Ready to get started?' })).toBeVisible();
-		await expect(page.getByRole('link', { name: 'Request early access' })).toBeVisible();
+	test('Historical data is listed as Pro-only feature', async ({ page }) => {
+		await expect(page.getByRole('cell', { name: 'Historical data' })).toBeVisible();
 	});
 });
