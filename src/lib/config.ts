@@ -281,3 +281,8 @@ export const vaultApiUrl = config((url: string) => {
  * Checkout URL for Pro subscription
  */
 export const pricingCheckoutUrl = config((url: string) => url, 'PRICING_CHECKOUT_URL');
+
+/**
+ * Creem checkout URL for purchasing a license
+ */
+export const creemCheckoutUrl = config((url: string) => url, 'CREEM_CHECKOUT_URL');

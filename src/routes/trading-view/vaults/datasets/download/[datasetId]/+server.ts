@@ -8,9 +8,13 @@ const TOP_VAULTS_JSON = 'top_vaults_by_chain.json';
 function resolveDataset(datasetId: string): { fileKey: string; filename: string; contentType: string } | null {
 	switch (datasetId) {
 		case 'vault-metadata':
-			return { fileKey: TOP_VAULTS_JSON, filename: TOP_VAULTS_JSON, contentType: 'application/json' };
+			return { fileKey: TOP_VAULTS_JSON, filename: 'vault-metadata.json', contentType: 'application/json' };
 		case 'vault-prices':
-			return { fileKey: VAULT_PRICES_PARQUET, filename: VAULT_PRICES_PARQUET, contentType: 'application/octet-stream' };
+			return {
+				fileKey: VAULT_PRICES_PARQUET,
+				filename: 'vault-historical.parquet',
+				contentType: 'application/octet-stream'
+			};
 		default:
 			return null;
 	}

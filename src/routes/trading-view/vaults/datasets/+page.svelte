@@ -4,7 +4,7 @@ Vault datasets download page
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { PageData } from './$types';
-	import { discordUrl, vaultApiUrl } from '$lib/config';
+	import { vaultApiUrl } from '$lib/config';
 	import { formatByteUnits } from '$lib/helpers/formatters';
 	import { Alert, Button, HeroBanner, Section, Spinner, TextInput, Timestamp } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
@@ -14,8 +14,6 @@ Vault datasets download page
 	let submitting = $state(false);
 	let validApiKey = $state('');
 	let apiKeyError = $state('');
-
-	const documentationUrl = 'https://tradingstrategy.ai/docs/overview/defi-vault-data.html';
 	const apiKeyPlaceholder = 'XXXXX-XXXXX-XXXXX-XXXXX-XXXXX';
 
 	function getDownloadUrl(originalUrl: string) {
@@ -99,16 +97,10 @@ Vault datasets download page
 		<HeroBanner title="Vault datasets">
 			{#snippet subtitle()}
 				<p>
-					<a class="body-link" href={resolve('/pricing')}>Sign up for the professional API key</a> to download the vault
-					data. Read
-					<a class="body-link" href={documentationUrl} rel="external"> data format documention </a>.
-				</p>
-				<p>
-					For any question, contact us via
-					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-					<a class="body-link" href="mailto:info@tradingstrategy.ai">email</a> or
-					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-					<a class="body-link" href={discordUrl} target="_blank" rel="noreferrer">Discord</a>.
+					DeFi vault data download. For more information and purchasing a licence, see <a
+						class="body-link"
+						href={resolve('/pricing')}>pricing page</a
+					>.
 				</p>
 			{/snippet}
 		</HeroBanner>

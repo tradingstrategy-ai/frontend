@@ -2,10 +2,9 @@
 Pricing page with Basic and Pro tier comparison
 -->
 <script lang="ts">
-	import { Banner, Button, Section, SummaryBox, Tooltip } from '$lib/components';
-	import { pricingCheckoutUrl } from '$lib/config';
-	import IconCheckSquare from '~icons/local/check-square';
-	import IconMail from '~icons/local/mail';
+	import { Button, Section, SummaryBox, Tooltip } from '$lib/components';
+	import { pricingCheckoutUrl, creemCheckoutUrl } from '$lib/config';
+	import IconCheck from '~icons/local/check-circle-gradient';
 
 	let { data } = $props();
 
@@ -151,14 +150,16 @@ Pricing page with Basic and Pro tier comparison
 						{#if pricingCheckoutUrl}
 							<Button label="Subscribe" href={pricingCheckoutUrl} target="_blank" rel="noreferrer" />
 						{/if}
-						<Button
-							label="Purchase license"
-							href="https://www.marketsoftware.co/vaultdata"
-							target="_blank"
-							rel="noreferrer"
-							secondary
-						/>
-						<p class="sold-by">* Sold by Market Software Ltd</p>
+						{#if creemCheckoutUrl}
+							<Button label="Purchase license" href={creemCheckoutUrl} target="_blank" rel="noreferrer" secondary />
+						{/if}
+						<p class="sold-by">
+							* The monthly subscription licence is sold by Market Software Ltd. After subscribing, you will receive an
+							API key in email. <a
+								href="/trading-view/vaults/datasets"
+								style="text-decoration: underline; font-weight: bold;">Download datasets here</a
+							>. For any questions, please use the on-page chat – we are happy to help you.
+						</p>
 					</div>
 				</SummaryBox>
 			</div>
@@ -179,53 +180,48 @@ Pricing page with Basic and Pro tier comparison
 				<tbody>
 					<tr>
 						<td>Vault analytics website</td>
-						<td class="check"><IconCheckSquare /></td>
-						<td class="check"><IconCheckSquare /></td>
+						<td class="check"><IconCheck /></td>
+						<td class="check"><IconCheck /></td>
 					</tr>
 					<tr>
 						<td>1,000+ stablecoin vaults</td>
-						<td class="check"><IconCheckSquare /></td>
-						<td class="check"><IconCheckSquare /></td>
+						<td class="check"><IconCheck /></td>
+						<td class="check"><IconCheck /></td>
 					</tr>
 					<tr>
 						<td>20+ blockchains</td>
-						<td class="check"><IconCheckSquare /></td>
-						<td class="check"><IconCheckSquare /></td>
+						<td class="check"><IconCheck /></td>
+						<td class="check"><IconCheck /></td>
 					</tr>
 					<tr>
 						<td>Lending protocols and perp DEXes</td>
-						<td class="check"><IconCheckSquare /></td>
-						<td class="check"><IconCheckSquare /></td>
+						<td class="check"><IconCheck /></td>
+						<td class="check"><IconCheck /></td>
 					</tr>
 					<tr>
-						<td>$25B+ profit tracked</td>
-						<td class="check"><IconCheckSquare /></td>
-						<td class="check"><IconCheckSquare /></td>
+						<td>$25B+ tracked TVL</td>
+						<td class="check"><IconCheck /></td>
+						<td class="check"><IconCheck /></td>
 					</tr>
 					<tr>
 						<td>Daily updates</td>
-						<td class="check"><IconCheckSquare /></td>
-						<td class="check"><IconCheckSquare /></td>
+						<td class="check"><IconCheck /></td>
+						<td class="check"><IconCheck /></td>
 					</tr>
 					<tr>
 						<td>Equity curves</td>
-						<td class="check"><IconCheckSquare /></td>
-						<td class="check"><IconCheckSquare /></td>
+						<td class="check"><IconCheck /></td>
+						<td class="check"><IconCheck /></td>
 					</tr>
 					<tr>
 						<td>Portfolio metrics</td>
-						<td class="check"><IconCheckSquare /></td>
-						<td class="check"><IconCheckSquare /></td>
+						<td class="check"><IconCheck /></td>
+						<td class="check"><IconCheck /></td>
 					</tr>
 					<tr>
 						<td>Community Discord</td>
-						<td class="check"><IconCheckSquare /></td>
-						<td class="check"><IconCheckSquare /></td>
-					</tr>
-					<tr>
-						<td>Non-stablecoin vaults</td>
-						<td class="dash">—</td>
-						<td class="check"><IconCheckSquare /></td>
+						<td class="check"><IconCheck /></td>
+						<td class="check"><IconCheck /></td>
 					</tr>
 					<tr>
 						<td>
@@ -237,27 +233,44 @@ Pricing page with Basic and Pro tier comparison
 							</Tooltip>
 						</td>
 						<td class="dash">—</td>
-						<td class="check"><IconCheckSquare /></td>
+						<td class="check"><IconCheck /></td>
 					</tr>
 					<tr>
 						<td>Historical data</td>
 						<td class="dash">—</td>
-						<td class="check"><IconCheckSquare /></td>
+						<td class="check"><IconCheck /></td>
 					</tr>
 					<tr>
 						<td>Raw data files</td>
 						<td class="dash">—</td>
-						<td class="check"><IconCheckSquare /></td>
+						<td class="check"><IconCheck /></td>
 					</tr>
 					<tr>
 						<td>Backtesting framework</td>
 						<td class="dash">—</td>
-						<td class="check"><IconCheckSquare /></td>
+						<td class="check"><IconCheck /></td>
 					</tr>
 					<tr>
 						<td>Support</td>
 						<td class="dash">—</td>
-						<td class="check"><IconCheckSquare /></td>
+						<td class="check"><IconCheck /></td>
+					</tr>
+					<tr>
+						<td>
+							<Tooltip>
+								<span slot="trigger" class="underline">BTC/ETH-denominated vaults</span>
+								<svelte:fragment slot="popup">
+									Ask for data for vaults that do not use stablecoins for deposits
+								</svelte:fragment>
+							</Tooltip>
+						</td>
+						<td class="dash">—</td>
+						<td class="check"><IconCheck /></td>
+					</tr>
+					<tr>
+						<td>Startup discounts available</td>
+						<td class="dash">—</td>
+						<td class="check"><IconCheck /></td>
 					</tr>
 				</tbody>
 			</table>
@@ -266,41 +279,33 @@ Pricing page with Basic and Pro tier comparison
 
 	<Section padding="md" gap="md" maxWidth="md">
 		<h2>Data and fields</h2>
-		<p class="data-lead">
-			{#if data.stats}
-				Vault metadata and historical returns for <strong>{data.stats.chains}</strong> blockchains,
-				<strong>{data.stats.protocols}</strong> vault protocols and
-				<strong>{data.stats.stablecoinVaults.toLocaleString()}</strong> stablecoin vaults
-			{:else}
-				Vault metadata and historical returns across blockchains, vault protocols and stablecoin vaults
-			{/if}
-		</p>
+		<div class="data-fields-panel">
+			<p class="data-lead">
+				{#if data.stats}
+					Vault metadata and historical returns for <strong>{data.stats.chains}</strong> blockchains,
+					<strong>{data.stats.protocols}</strong> vault protocols and
+					<strong>{data.stats.stablecoinVaults.toLocaleString()}</strong> stablecoin vaults
+				{:else}
+					Vault metadata and historical returns across blockchains, vault protocols and stablecoin vaults
+				{/if}
+			</p>
 
-		<details class="fields-details">
-			<summary>View details</summary>
-			<div class="fields-body">
-				<div class="fields-group">
-					<h3>Vault metadata</h3>
-					<p class="monospace">{vaultMetadataFields.join(', ')}</p>
+			<details class="fields-details">
+				<summary>View details</summary>
+				<div class="fields-body">
+					<div class="fields-group">
+						<h3>Vault metadata</h3>
+						<p class="monospace">{vaultMetadataFields.join(', ')}</p>
+					</div>
+					<div class="fields-group">
+						<h3>Historical returns</h3>
+						<p class="monospace">{historicalReturnsFields.join(', ')}</p>
+					</div>
+					<a href={docsUrl} target="_blank" rel="noreferrer" class="docs-link">View full field documentation</a>
 				</div>
-				<div class="fields-group">
-					<h3>Historical returns</h3>
-					<p class="monospace">{historicalReturnsFields.join(', ')}</p>
-				</div>
-				<a href={docsUrl} target="_blank" rel="noreferrer" class="docs-link">View full field documentation</a>
-			</div>
-		</details>
+			</details>
+		</div>
 	</Section>
-
-	<Banner title="Ready to get started?" padding="md" gap="md">
-		<p>
-			Request early access to Trading Strategy Pro and unlock advanced vault analytics, API access, and dedicated
-			developer support.
-		</p>
-		<Button slot="cta" label="Request early access" href="mailto:info@tradingstrategy.ai">
-			<IconMail slot="icon" />
-		</Button>
-	</Banner>
 </main>
 
 <style>
@@ -368,11 +373,19 @@ Pricing page with Basic and Pro tier comparison
 		width: 100%;
 		font: var(--f-ui-xs-roman);
 		letter-spacing: var(--f-ui-xs-spacing, normal);
-		color: var(--c-text-ultra-light);
+		color: var(--c-text-light);
 	}
 
 	.table-wrapper {
-		overflow-x: auto;
+		overflow: visible;
+		background: hsl(var(--hsl-box) / 6%);
+		backdrop-filter: blur(16px);
+		-webkit-backdrop-filter: blur(16px);
+		border: 1px solid hsl(var(--hsl-box) / 12%);
+		border-radius: var(--radius-lg, 12px);
+		box-shadow:
+			0 4px 24px hsl(var(--hsl-box) / 6%),
+			inset 0 1px 0 hsl(var(--hsl-box) / 10%);
 	}
 
 	table {
@@ -381,7 +394,7 @@ Pricing page with Basic and Pro tier comparison
 	}
 
 	thead {
-		background: var(--c-box-1);
+		background: hsl(var(--hsl-box) / 8%);
 	}
 
 	th,
@@ -389,7 +402,7 @@ Pricing page with Basic and Pro tier comparison
 		padding: var(--space-md) var(--space-lg);
 		font: var(--f-ui-md-roman);
 		letter-spacing: var(--f-ui-md-spacing, normal);
-		border-bottom: 1px solid var(--c-box-2);
+		border-bottom: 1px solid hsl(var(--hsl-box) / 8%);
 		text-align: left;
 
 		@media (--viewport-sm-down) {
@@ -404,6 +417,18 @@ Pricing page with Basic and Pro tier comparison
 
 		@media (--viewport-sm-down) {
 			font: var(--f-ui-sm-medium);
+		}
+	}
+
+	tbody tr {
+		transition: background var(--time-sm, 0.15s) ease;
+
+		&:hover {
+			background: hsl(var(--hsl-box) / 8%);
+		}
+
+		&:last-child td {
+			border-bottom: none;
 		}
 	}
 
@@ -424,6 +449,16 @@ Pricing page with Basic and Pro tier comparison
 
 	.dash {
 		color: var(--c-text-ultra-light);
+	}
+
+	.data-fields-panel {
+		background: hsl(var(--hsl-box) / 6%);
+		border: 1px solid hsl(var(--hsl-box) / 12%);
+		border-radius: var(--radius-lg, 12px);
+		padding: var(--space-lg);
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-lg);
 	}
 
 	.data-lead {

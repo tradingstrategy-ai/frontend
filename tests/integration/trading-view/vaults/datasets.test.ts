@@ -31,8 +31,8 @@ test.describe('vault datasets page', () => {
 	});
 
 	test('shows expected filenames in dataset table', async ({ page }) => {
-		await expect(page.getByText('top_vaults_by_chain.json', { exact: true })).toBeVisible();
-		await expect(page.getByText('cleaned-vault-prices-1h.parquet', { exact: true })).toBeVisible();
+		await expect(page.getByText('vault-metadata.json', { exact: true })).toBeVisible();
+		await expect(page.getByText('vault-historical.parquet', { exact: true })).toBeVisible();
 	});
 
 	test('shows JSON and Parquet format labels', async ({ page }) => {
@@ -128,7 +128,7 @@ test.describe('vault dataset download endpoint', () => {
 		const res = await request.get(`/trading-view/vaults/datasets/download/vault-metadata?api-key=${VALID_API_KEY}`);
 		expect(res.status()).toBe(200);
 		expect(res.headers()['content-type']).toContain('application/json');
-		expect(res.headers()['content-disposition']).toContain('top_vaults_by_chain.json');
+		expect(res.headers()['content-disposition']).toContain('vault-metadata.json');
 		expect(res.headers()['cache-control']).toBe('private, no-store');
 	});
 
@@ -136,7 +136,7 @@ test.describe('vault dataset download endpoint', () => {
 		const res = await request.get(`/trading-view/vaults/datasets/download/vault-prices?api-key=${VALID_API_KEY}`);
 		expect(res.status()).toBe(200);
 		expect(res.headers()['content-type']).toBe('application/octet-stream');
-		expect(res.headers()['content-disposition']).toContain('cleaned-vault-prices-1h.parquet');
+		expect(res.headers()['content-disposition']).toContain('vault-historical.parquet');
 		expect(res.headers()['cache-control']).toBe('private, no-store');
 	});
 

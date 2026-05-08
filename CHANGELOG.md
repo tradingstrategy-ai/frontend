@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Revamp pricing page with liquid glass table, Creem checkout, updated copy and dataset links (2026-05-08)
 - Add AI ready feature and data fields section to pricing page (2026-05-07)
 - Add historical TVL chart controls for market share and shorter daily history views (2026-05-05)
 - Add MegaETH chain support so MegaETH vaults appear on the by-chain page (2026-05-05)
