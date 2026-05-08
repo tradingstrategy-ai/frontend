@@ -1,7 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { headTopVaults, headVaultPrices } from '$lib/top-vaults/server-config';
 import { isR2Configured } from '$lib/r2/client';
-import { VAULT_PRICES_PARQUET } from '$lib/top-vaults/constants';
 
 const documentationUrl = 'https://tradingstrategy.ai/docs/overview/defi-vault-data.html';
 
@@ -48,7 +47,7 @@ export async function load({ fetch, setHeaders, url }) {
 				'Summary JSON for tracked vaults, including identity, chain, protocol, performance, fees and status fields.',
 			instructions:
 				'Download the summary JSON when you need the latest vault catalogue, rankings, and descriptive fields for offline research or your own pipelines.',
-			filename: 'top_vaults_by_chain.json',
+			filename: 'vault-metadata.json',
 			format: 'JSON',
 			documentation: documentationUrl,
 			downloadUrl: '/trading-view/vaults/datasets/download/vault-metadata'
@@ -60,7 +59,7 @@ export async function load({ fetch, setHeaders, url }) {
 				'Share price, TVL history in Parquet format, suitable for offline analysis, chart generation, and backtesting-style workflows.',
 			instructions:
 				'Download the hourly Parquet file to analyse historical vault performance locally or to feed your own notebooks and research jobs.',
-			filename: VAULT_PRICES_PARQUET,
+			filename: 'vault-historical.parquet',
 			format: 'Parquet',
 			documentation: documentationUrl,
 			downloadUrl: '/trading-view/vaults/datasets/download/vault-prices'
