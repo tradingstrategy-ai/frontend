@@ -1,8 +1,5 @@
 type CoinbaseProductId = 'BTC-USD' | 'ETH-USD';
-type CoinbaseCandle = [time: number, low: number, high: number, open: number, close: number, volume: number];
 
-const COINBASE_API_URL = 'https://api.exchange.coinbase.com';
-const MAX_CANDLES_PER_REQUEST = 300;
 const MIN_BENCHMARK_POINTS = 100;
 const COINBASE_GRANULARITIES_SECONDS = [60, 300, 900, 3_600, 21_600, 86_400] as const;
 const benchmarkRequestCache = new Map<string, Promise<[number, number][]>>();
@@ -21,12 +18,10 @@ export function getCoinbaseGranularitySeconds(start: Date, end: Date) {
 }
 
 /**
- * Fetch Coinbase close prices for a benchmark product across the requested chart range.
+ * Fetch Coinbase close prices for a benchmark product via the server-side proxy.
  *
- * Coinbase limits candle responses to 300 rows per request. We choose the coarsest
- * Coinbase-supported granularity that still gives about 100 samples across the
- * full chart width, then fetch the range in chunks and merge the close prices into
- * a single ascending series.
+ * The proxy handles chunking, retries, and caching to avoid CORS issues
+ * and Coinbase rate-limiting.
  */
 export function fetchCoinbaseBenchmarkCloses(
 	fetch: Fetch,
@@ -40,52 +35,23 @@ export function fetchCoinbaseBenchmarkCloses(
 	const cachedResponse = benchmarkRequestCache.get(cacheKey);
 	if (cachedResponse) return cachedResponse;
 
-	const responsePromise = fetchCoinbaseBenchmarkClosesUncached(fetch, productId, granularitySeconds, start, end).catch(
-		(error) => {
+	const params = new URLSearchParams({
+		productId,
+		granularity: String(granularitySeconds),
+		start: start.toISOString(),
+		end: end.toISOString()
+	});
+
+	const responsePromise = fetch(`/trading-view/vaults/coinbase-candles?${params}`)
+		.then((resp) => {
+			if (!resp.ok) throw new Error(`Coinbase benchmark proxy failed: ${resp.status}`);
+			return resp.json() as Promise<[number, number][]>;
+		})
+		.catch((error) => {
 			benchmarkRequestCache.delete(cacheKey);
 			throw error;
-		}
-	);
+		});
 
 	benchmarkRequestCache.set(cacheKey, responsePromise);
 	return responsePromise;
-}
-
-async function fetchCoinbaseBenchmarkClosesUncached(
-	fetch: Fetch,
-	productId: CoinbaseProductId,
-	granularitySeconds: number,
-	start: Date,
-	end: Date
-): Promise<[number, number][]> {
-	const granularityMs = granularitySeconds * 1000;
-	const maxChunkSpanMs = granularityMs * (MAX_CANDLES_PER_REQUEST - 1);
-	const candlesByTimestamp = new Map<number, number>();
-
-	for (
-		let chunkStartMs = start.getTime();
-		chunkStartMs <= end.getTime();
-		chunkStartMs += maxChunkSpanMs + granularityMs
-	) {
-		const chunkEndMs = Math.min(chunkStartMs + maxChunkSpanMs, end.getTime());
-		const searchParams = new URLSearchParams({
-			granularity: String(granularitySeconds),
-			start: new Date(chunkStartMs).toISOString(),
-			end: new Date(chunkEndMs).toISOString()
-		});
-
-		const response = await fetch(`${COINBASE_API_URL}/products/${productId}/candles?${searchParams}`);
-		if (!response.ok) {
-			throw new Error(`Failed to load Coinbase benchmark data for ${productId}: ${response.status}`);
-		}
-
-		const candles = (await response.json()) as CoinbaseCandle[];
-		for (const [timestamp, , , , close] of candles) {
-			if (timestamp >= start.getTime() / 1000 && timestamp <= end.getTime() / 1000) {
-				candlesByTimestamp.set(timestamp, close);
-			}
-		}
-	}
-
-	return Array.from(candlesByTimestamp.entries()).sort(([leftTs], [rightTs]) => leftTs - rightTs);
 }
