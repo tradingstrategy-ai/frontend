@@ -2,11 +2,24 @@
 Pricing page with Basic and Pro tier comparison
 -->
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { Button, Section, SummaryBox, Tooltip } from '$lib/components';
 	import { pricingCheckoutUrl, creemCheckoutUrl } from '$lib/config';
 	import IconCheck from '~icons/local/check-circle-gradient';
 
 	let { data } = $props();
+
+	onMount(() => {
+		(window as any).Tawk_API = (window as any).Tawk_API || {};
+		(window as any).Tawk_LoadStart = new Date();
+		const s1 = document.createElement('script');
+		const s0 = document.getElementsByTagName('script')[0];
+		s1.async = true;
+		s1.src = 'https://embed.tawk.to/6a01e4d9388ff41c35ff6f9d/1jobmbsib';
+		s1.charset = 'UTF-8';
+		s1.setAttribute('crossorigin', '*');
+		s0.parentNode!.insertBefore(s1, s0);
+	});
 
 	const docsUrl = 'https://tradingstrategy.ai/docs/overview/defi-vault-data.html';
 
