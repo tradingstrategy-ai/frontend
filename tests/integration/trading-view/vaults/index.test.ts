@@ -315,4 +315,28 @@ test.describe('vault index page', () => {
 		await expect(alerts.first()).toContainText('bad_debt_unrealized');
 		await expect(page.locator('.notes')).toHaveCount(0);
 	});
+
+	test('warns when deposits may be disabled on a vault detail page', async ({ page }) => {
+		await page.goto('/trading-view/vaults/deposit-disabled-vault');
+
+		const alert = page.locator('.alert-list.warning').first();
+		await expect(alert).toBeVisible();
+		await expect(alert).toContainText('Deposits may be disabled for this vault');
+	});
+
+	test('warns when withdrawals may be disabled on a vault detail page', async ({ page }) => {
+		await page.goto('/trading-view/vaults/withdrawal-disabled-vault');
+
+		const alert = page.locator('.alert-list.warning').first();
+		await expect(alert).toBeVisible();
+		await expect(alert).toContainText('Withdrawals may be disabled for this vault');
+	});
+
+	test('warns when deposits and withdrawals may be disabled on a vault detail page', async ({ page }) => {
+		await page.goto('/trading-view/vaults/deposit-and-withdrawal-disabled-vault');
+
+		const alert = page.locator('.alert-list.warning').first();
+		await expect(alert).toBeVisible();
+		await expect(alert).toContainText('Deposits and withdrawals may be disabled for this vault');
+	});
 });

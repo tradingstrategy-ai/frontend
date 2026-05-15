@@ -345,6 +345,55 @@ const morphoFlaggedBlacklistedVault = createTestVault('Morpho flagged blackliste
 	]
 });
 
+const closedVaultPeriodResult = {
+	period: '1M',
+	error_reason: null,
+	period_start_at: '2025-12-01T00:00:00',
+	period_end_at: '2026-01-01T00:00:00',
+	share_price_start: 1,
+	share_price_end: 1.01,
+	raw_samples: 720,
+	samples_start_at: '2025-12-01T00:00:00',
+	samples_end_at: '2026-01-01T00:00:00',
+	daily_samples: 30,
+	returns_gross: 0.01,
+	returns_net: 0.01,
+	cagr_gross: 0.12,
+	cagr_net: 0.12,
+	volatility: 0.1,
+	sharpe: 1,
+	max_drawdown: -0.01,
+	tvl_start: 18_000,
+	tvl_end: 20_000,
+	tvl_low: 18_000,
+	tvl_high: 20_000,
+	ranking_overall: 100,
+	ranking_chain: 20,
+	ranking_protocol: 10
+} satisfies VaultInfo['period_results'][number];
+
+const depositDisabledVault = createTestVault('Deposit disabled vault', {
+	chain: 'base',
+	current_nav: 20_000,
+	deposit_closed_reason: 'Deposits paused',
+	period_results: [closedVaultPeriodResult]
+});
+
+const redemptionDisabledVault = createTestVault('Withdrawal disabled vault', {
+	chain: 'base',
+	current_nav: 20_000,
+	redemption_closed_reason: 'Withdrawals paused',
+	period_results: [closedVaultPeriodResult]
+});
+
+const depositAndRedemptionDisabledVault = createTestVault('Deposit and withdrawal disabled vault', {
+	chain: 'base',
+	current_nav: 20_000,
+	deposit_closed_reason: 'Deposits paused',
+	redemption_closed_reason: 'Withdrawals paused',
+	period_results: [closedVaultPeriodResult]
+});
+
 // Real Parquet-backed vault IDs used by the historical TVL by chain endpoint tests.
 // These IDs need to match the local Parquet dataset so blacklist filtering can be
 // exercised against real server-side aggregation.
@@ -395,6 +444,9 @@ export default defineMock({
 		vaults: [
 			yamlStrategyVault,
 			morphoFlaggedBlacklistedVault,
+			depositDisabledVault,
+			redemptionDisabledVault,
+			depositAndRedemptionDisabledVault,
 			limitedCoverageVault,
 			...parquetMatchedVaults,
 			...returnLeaders,
