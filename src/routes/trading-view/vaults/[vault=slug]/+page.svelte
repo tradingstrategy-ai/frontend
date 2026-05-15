@@ -27,9 +27,20 @@
 		morphoFlags.length > 0 && vault.notes?.startsWith('Morpho has flagged this vault with the following issues:')
 	);
 	let blacklisted = $derived(isBlacklisted(vault));
-	let morphoAlertStatus = $derived(blacklisted ? 'error' : 'warning');
+	let morphoAlertStatus = $derived(blacklisted ? ('error' as const) : ('warning' as const));
 	let showBlacklistedAlert = $derived(blacklisted && !notesDuplicateMorphoFlags);
 	let showNotes = $derived(vault.notes != null && !notesDuplicateMorphoFlags);
+	let depositMayBeDisabled = $derived(vault.deposit_closed_reason != null);
+	let redemptionMayBeDisabled = $derived(vault.redemption_closed_reason != null);
+	let operationWarning = $derived(
+		depositMayBeDisabled && redemptionMayBeDisabled
+			? 'Deposits and withdrawals may be disabled for this vault'
+			: depositMayBeDisabled
+				? 'Deposits may be disabled for this vault'
+				: redemptionMayBeDisabled
+					? 'Withdrawals may be disabled for this vault'
+					: undefined
+	);
 </script>
 
 <SocialMediaTags {vault} {chain} {protocolMetadata} />
@@ -38,6 +49,12 @@
 	<Section tag="header" padding="xs">
 		<VaultListingsSelector />
 	</Section>
+
+	{#if operationWarning}
+		<Section padding="md">
+			<Alert size="md" status="warning">{operationWarning}</Alert>
+		</Section>
+	{/if}
 
 	{#if morphoFlags.length > 0}
 		<Section padding="md">
