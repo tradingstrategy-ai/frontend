@@ -10,15 +10,27 @@ Pricing page with Basic and Pro tier comparison
 	let { data } = $props();
 
 	onMount(() => {
-		(window as any).Tawk_API = (window as any).Tawk_API || {};
+		const tawkApi = ((window as any).Tawk_API = (window as any).Tawk_API || {});
 		(window as any).Tawk_LoadStart = new Date();
-		const s1 = document.createElement('script');
-		const s0 = document.getElementsByTagName('script')[0];
-		s1.async = true;
-		s1.src = 'https://embed.tawk.to/6a01e4d9388ff41c35ff6f9d/1jobmbsib';
-		s1.charset = 'UTF-8';
-		s1.setAttribute('crossorigin', '*');
-		s0.parentNode!.insertBefore(s1, s0);
+
+		if (typeof tawkApi.showWidget === 'function') {
+			tawkApi.showWidget();
+		} else {
+			const s1 = document.createElement('script');
+			const s0 = document.getElementsByTagName('script')[0];
+			s1.async = true;
+			s1.src = 'https://embed.tawk.to/6a01e4d9388ff41c35ff6f9d/1jobmbsib';
+			s1.charset = 'UTF-8';
+			s1.setAttribute('crossorigin', '*');
+			s0.parentNode!.insertBefore(s1, s0);
+		}
+
+		return () => {
+			const api = (window as any).Tawk_API;
+			if (api && typeof api.hideWidget === 'function') {
+				api.hideWidget();
+			}
+		};
 	});
 
 	const docsUrl = 'https://tradingstrategy.ai/docs/overview/defi-vault-data.html';
