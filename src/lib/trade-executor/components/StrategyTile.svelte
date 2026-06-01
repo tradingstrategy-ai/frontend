@@ -12,13 +12,12 @@
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	interface Props {
-		admin?: boolean;
 		simplified?: boolean;
 		strategy: StrategyInfo;
 		chartDateRange: [Date, Date];
 	}
 
-	let { admin = false, simplified = false, strategy, chartDateRange }: Props = $props();
+	let { simplified = false, strategy, chartDateRange }: Props = $props();
 
 	let chain = $derived(getChain(strategy.on_chain_data?.chain_id));
 

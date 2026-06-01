@@ -125,7 +125,7 @@
 				{#each filteredStrategies as strategy, idx (strategy.id)}
 					{@const params = { duration: 200, delay: 50 * idx, easing: cubicOut }}
 					<div transition:slide={{ axis: 'x', ...params }} animate:flip={params} style:display="grid">
-						<StrategyTile {admin} {strategy} {chartDateRange} />
+						<StrategyTile {strategy} {chartDateRange} />
 					</div>
 				{/each}
 			</div>
