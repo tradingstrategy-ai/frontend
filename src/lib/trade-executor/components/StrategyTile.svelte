@@ -3,13 +3,10 @@
 	import { utcDay } from 'd3-time';
 	import { resampleTimeSeries } from '$lib/charts/helpers';
 	import { getChain } from '$lib/helpers/chain';
-	import Alert from '$lib/components/Alert.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import DataBadge from '$lib/components/DataBadge.svelte';
 	import TargetableLink from '$lib/components/TargetableLink.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import StrategyIcon from 'trade-executor/components/StrategyIcon.svelte';
-	import StrategyError, { shouldDisplayError, adminOnlyError } from 'trade-executor/components/StrategyError.svelte';
 	import LazyChartThumbnail from './LazyChartThumbnail.svelte';
 	import StrategyDataSummary from './StrategyDataSummary.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
@@ -24,12 +21,6 @@
 	let { admin = false, simplified = false, strategy, chartDateRange }: Props = $props();
 
 	let chain = $derived(getChain(strategy.on_chain_data?.chain_id));
-
-	let tags = $derived(strategy.tags?.filter((tag) => tag !== 'live') ?? []);
-	let isLive = $derived(strategy.tags?.includes('live'));
-
-	let launchedAt = $derived(strategy.summary_statistics?.launched_at);
-	let isNew = $derived(launchedAt ? utcDay.count(launchedAt, new Date()) < 90 : false);
 
 	let href = $derived(`/strategies/${strategy.id}`);
 
@@ -57,45 +48,7 @@
 				{/if}
 			</div>
 
-			<div class="badges">
-				{#if !simplified && shouldDisplayError(strategy, admin)}
-					<Tooltip>
-						<DataBadge slot="trigger" status="error">Error</DataBadge>
-						<svelte:fragment slot="popup">
-							{#if adminOnlyError(strategy)}
-								<div style:margin-bottom="1em">
-									<Alert size="xs" status="info">This error is only displayed to admin users.</Alert>
-								</div>
-							{/if}
-							<StrategyError {strategy} />
-						</svelte:fragment>
-					</Tooltip>
-				{/if}
-
-				{#if !simplified && admin && isLive}
-					<DataBadge status="success">live</DataBadge>
-				{/if}
-
-				{#if isNew && !strategy.newVersionId}
-					<DataBadge status="success">new</DataBadge>
-				{/if}
-
-				{#if !simplified}
-					{#each tags as tag (tag)}
-						<DataBadge status="warning">{tag}</DataBadge>
-					{/each}
-				{/if}
-
-				{#if !simplified && strategy.newVersionId}
-					<Tooltip>
-						<DataBadge slot="trigger" status="error">Outdated</DataBadge>
-						<svelte:fragment slot="popup">
-							This is an outdated strategy. An updated version is available
-							<a href="/strategies/{strategy.newVersionId}">here</a>.
-						</svelte:fragment>
-					</Tooltip>
-				{/if}
-			</div>
+			<div class="badges"></div>
 		</div>
 
 		<a class="chart targetable-above" {href}>
@@ -164,20 +117,6 @@
 
 			.badges {
 				display: flex;
-				gap: 0.375rem;
-				font: var(--f-ui-sm-medium);
-
-				:global([data-css-props]) {
-					--data-badge-height: 100%;
-				}
-
-				:global(.tooltip .popup) {
-					position: absolute;
-					max-width: 22rem;
-					right: 0;
-					left: auto;
-					bottom: auto;
-				}
 			}
 
 			&.simplified .chart {
