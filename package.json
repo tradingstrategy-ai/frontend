@@ -69,7 +69,6 @@
     "@reown/appkit": "^1.8.18",
     "@reown/appkit-adapter-wagmi": "^1.8.18",
     "@sentry/sveltekit": "^9.47.1",
-    "@trading-strategy-ai/web-top-node": "0.1.0-beta.10",
     "@wagmi/connectors": "^5.11.2",
     "@wagmi/core": "^2.22.1",
     "@zag-js/dialog": "^1.34.1",
