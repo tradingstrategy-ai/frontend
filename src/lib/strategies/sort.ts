@@ -2,7 +2,7 @@ import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 
 const listingPinnedStrategyOrder = ['opencz', 'hyper-ai', 'master-vault', 'ichi-hyperliquid', 'gmx-ai'] as const;
 
-const frontpagePinnedStrategyOrder = ['opencz', 'master-vault'] as const;
+const frontpagePinnedStrategyOrder = ['master-vault', 'hyper-ai', 'vega'] as const;
 
 function createPinnedRankMap(strategyIds: readonly string[]) {
 	return new Map<string, number>(strategyIds.map((strategyId, index) => [strategyId, strategyIds.length - index]));
@@ -41,7 +41,7 @@ export const compareStrategiesForFrontend = createStrategyComparator(listingPinn
 /**
  * Sort strategies for the frontpage featured section.
  *
- * OpenCZ should appear before Master Vault, with all other strategies following
- * the default sort-priority behaviour.
+ * Master Vault appears first, then HyperAI, then Premium Harvest Vault (vega),
+ * with all other strategies following the default sort-priority behaviour.
  */
 export const compareStrategiesForFrontpage = createStrategyComparator(frontpagePinnedStrategyOrder);
