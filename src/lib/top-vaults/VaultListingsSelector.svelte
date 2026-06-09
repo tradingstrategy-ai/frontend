@@ -5,12 +5,15 @@
 
 	const links = [
 		{ href: '/trading-view/vaults', label: 'Top' },
-		{ href: '/trading-view/vaults/high-tvl', label: 'Top with $2M TVL' },
-		{ href: '/trading-view/vaults/new-vaults', label: 'New' },
 		{ href: '/trading-view/vaults/stablecoins', label: 'By stablecoin' },
 		{ href: '/trading-view/vaults/chains', label: 'By chain' },
 		{ href: '/trading-view/vaults/protocols', label: 'By protocol' },
-		{ href: '/trading-view/vaults/curators', label: 'By curator' },
+		{ href: '/trading-view/vaults/curators', label: 'By curator' }
+	] as const;
+
+	const otherListLinks = [
+		{ href: '/trading-view/vaults/high-tvl', label: 'Top with $2M TVL' },
+		{ href: '/trading-view/vaults/new-vaults', label: 'New' },
 		{ href: '/trading-view/vaults/negative', label: 'Negative' },
 		{ href: '/trading-view/vaults/all', label: 'All' }
 	] as const;
@@ -31,7 +34,7 @@
 		return page.url.pathname === href;
 	}
 
-	function resolveChartHref(href: string): string {
+	function resolveDropdownHref(href: string): string {
 		return (resolve as (path: string) => string)(href);
 	}
 </script>
@@ -43,7 +46,14 @@
 			{label}
 		</a>
 	{/each}
-	<DropdownMenu label="Charts" items={chartLinks} {isActive} resolveHref={resolveChartHref} class="charts-dropdown" />
+	<DropdownMenu
+		label="More rankings"
+		items={otherListLinks}
+		{isActive}
+		resolveHref={resolveDropdownHref}
+		class="nav-dropdown"
+	/>
+	<DropdownMenu label="Charts" items={chartLinks} {isActive} resolveHref={resolveDropdownHref} class="nav-dropdown" />
 </nav>
 
 <style>
@@ -84,13 +94,13 @@
 		}
 	}
 
-	:global(.charts-dropdown)::before {
+	:global(.nav-dropdown)::before {
 		content: '|';
 		color: var(--c-text-ultra-light);
 		padding-right: 0.5rem;
 	}
 
-	:global(.charts-dropdown) {
+	:global(.nav-dropdown) {
 		--dropdown-menu-open-z-index: 200;
 		--dropdown-menu-panel-z-index: 2400;
 	}
