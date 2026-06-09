@@ -340,6 +340,9 @@
 	// Count of hidden vaults
 	let hiddenByTvl = $derived(hiddenVaults.length);
 
+	// Total number of vaults available to this listing, before any filtering
+	let totalVaultCount = $derived(topVaults.vaults.length);
+
 	// Filter vaults matching all active filters (TVL, age, risk, search)
 	let filteredVaults = $derived.by(() => {
 		const filterCompareStr = filterValue.trim().toLowerCase();
@@ -576,7 +579,9 @@
 	<div class="table-extras">
 		<div class="table-stats" class:hidden={loading} data-testid="top-vaults-meta">
 			<Tooltip>
-				<svelte:fragment slot="trigger">{filteredVaults.length} vaults</svelte:fragment>
+				<svelte:fragment slot="trigger"
+					>{filteredVaults.length} vaults{#if totalVaultCount > filteredVaults.length}{' '}out of {totalVaultCount}{/if}</svelte:fragment
+				>
 				<svelte:fragment slot="popup"
 					>{#if hiddenByTvl > 0}
 						{hiddenByTvl} vault{hiddenByTvl === 1 ? ' is' : 's are'} hidden because {hiddenByTvl === 1
