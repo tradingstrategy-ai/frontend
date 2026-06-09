@@ -20,6 +20,7 @@ See `docs/theme.md`.
 ```shell
 pnpm run dev              # Start development server
 pnpm run build            # Build for production
+pnpm run preview          # Serve a production build — for verifying the build only, NOT for development
 pnpm run check            # Run Svelte type checking
 pnpm run format           # Format code with Prettier
 pnpm run lint             # Run ESLint and Prettier checks
@@ -108,7 +109,7 @@ Use it for:
 - checking rendered content
 - reproducing layout and interaction issues
 
-Typical local target:
+Always develop and verify against the Vite dev server started with `pnpm run dev` (typical local target `http://127.0.0.1:5173/`). Do **not** use `pnpm run preview` (Vite preview) for development or verification: its preview server runs its own prerender/manifest step that can resolve routes differently from both dev and the production adapter-node server (e.g. newly added routes may 404 under preview while working everywhere else). `pnpm run preview` is only for sanity-checking a production build. Integration tests (`pnpm run test:integration`) intentionally run against a build via the test harness; that is separate from manual development.
 
 ```text
 http://127.0.0.1:5173/

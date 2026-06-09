@@ -83,6 +83,13 @@ test.describe('vaults sitemap', () => {
 		expect(chainPages.length).toBeGreaterThan(0);
 	});
 
+	test('should include curator index and individual curator pages', async () => {
+		expect(urls.some((url) => url.endsWith('/trading-view/vaults/curators'))).toBe(true);
+
+		const curatorPages = urls.filter((url) => /\/trading-view\/vaults\/curators\/[a-z0-9-]+$/.test(url));
+		expect(curatorPages.length).toBeGreaterThan(0);
+	});
+
 	test('should include static vault sub-pages', async () => {
 		const expectedSubPages = [
 			'/trading-view/vaults/all',

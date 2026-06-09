@@ -30,6 +30,8 @@
 		includeRisk?: boolean;
 		includeCore3Risk?: boolean;
 		includeFullName?: boolean;
+		/** Widen the name column for groups with long display names (e.g. curators) */
+		wideName?: boolean;
 		getLogoHref?: (slug: string) => string | undefined;
 		page?: number;
 		sort?: SortOptions['keys'][number];
@@ -43,6 +45,7 @@
 		includeRisk = false,
 		includeCore3Risk = false,
 		includeFullName = false,
+		wideName = false,
 		getLogoHref,
 		page: pageIndex = 0,
 		sort = sortOptions.keys[0],
@@ -151,7 +154,7 @@
 	const tableViewModel = table.createViewModel(columns);
 </script>
 
-<div class="vault-protocol-table">
+<div class="vault-protocol-table" class:wide-name={wideName}>
 	<DataTable isResponsive hasPagination targetableRows {loading} {tableViewModel} {...restProps} />
 </div>
 
@@ -204,6 +207,16 @@
 
 				:global(.cta) {
 					width: 12rem;
+				}
+			}
+
+			&.wide-name {
+				:global(:is(th, td):not(.name, .cta)) {
+					width: 16%;
+				}
+
+				:global(.name) {
+					width: 36%;
 				}
 			}
 		}

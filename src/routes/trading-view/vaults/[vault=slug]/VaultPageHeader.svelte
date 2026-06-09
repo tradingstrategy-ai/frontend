@@ -2,6 +2,7 @@
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import Button from '$lib/components/Button.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
+	import UpdateInfoButton from '$lib/top-vaults/UpdateInfoButton.svelte';
 	import { hasSupportedProtocol } from '$lib/top-vaults/helpers';
 
 	interface Props {
@@ -24,13 +25,16 @@
 	{/snippet}
 
 	{#snippet cta()}
-		{#if vault.link}
-			<span class="external-link">
-				<Button href={vault.link} target="_blank" rel="noreferrer">
-					View on {externalSiteName}
-				</Button>
-			</span>
-		{/if}
+		<span class="cta-actions">
+			{#if vault.link}
+				<span class="external-link">
+					<Button href={vault.link} target="_blank" rel="noreferrer">
+						View on {externalSiteName}
+					</Button>
+				</span>
+			{/if}
+			<UpdateInfoButton size="md" />
+		</span>
 	{/snippet}
 </PageHeader>
 
@@ -39,6 +43,13 @@
 {/if}
 
 <style>
+	.cta-actions {
+		display: inline-flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
 	.external-link {
 		@media (--viewport-sm-down) {
 			display: none;
@@ -49,6 +60,10 @@
 		margin: 0;
 		font: var(--f-ui-lg-roman);
 		color: var(--c-text-light);
+
+		@media (--viewport-md-up) {
+			margin-top: 1rem;
+		}
 	}
 
 	.page-title {

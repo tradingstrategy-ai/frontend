@@ -4,13 +4,17 @@
 	import type { TopVaults } from './schemas';
 	import type { VaultProtocolMetadata } from '$lib/vault-protocol/schemas';
 	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
+	import type { CuratorInfo } from './schemas';
 	import Alert from '$lib/components/Alert.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import TopVaultsOptIn from './TopVaultsOptIn.svelte';
 	import TopVaultsTable from './TopVaultsTable.svelte';
 	import VaultListingsSelector from './VaultListingsSelector.svelte';
+	import UpdateInfoButton from './UpdateInfoButton.svelte';
 	import ProtocolDescription from '$lib/vault-protocol/ProtocolDescription.svelte';
+	import CuratorDescription from '$lib/curator/CuratorDescription.svelte';
+	import CuratorRecentPosts from '$lib/curator/CuratorRecentPosts.svelte';
 	import StablecoinDetailHeader from '$lib/stablecoin-metadata/StablecoinDetailHeader.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers.js';
@@ -29,6 +33,7 @@
 		includeBlacklisted?: boolean;
 		protocolMetadata?: VaultProtocolMetadata;
 		stablecoinMetadata?: StablecoinMetadata;
+		curatorMetadata?: CuratorInfo;
 		/** Show interactive filter dropdowns (Min TVL, Min age, Max risk) */
 		showFilters?: boolean;
 		/** Default TVL filter key (used to initialise the dropdown when showFilters is true) */
@@ -63,6 +68,7 @@
 		includeBlacklisted,
 		protocolMetadata,
 		stablecoinMetadata,
+		curatorMetadata,
 		showFilters,
 		defaultTvlKey,
 		defaultAgeIndex,
@@ -81,7 +87,14 @@
 <main class="top-vaults-page ds-3">
 	<Section tag="header">
 		<div class="top-vaults-header">
-			<VaultListingsSelector />
+			<div class="header-top">
+				<VaultListingsSelector />
+				{#if protocolMetadata || curatorMetadata}
+					<div class="update-info">
+						<UpdateInfoButton />
+					</div>
+				{/if}
+			</div>
 			<div class:hero-layout={renderDetailAsideInHero}>
 				<HeroBanner {subtitle}>
 					{#snippet title()}
@@ -100,6 +113,9 @@
 								{#if stablecoinLogoUrl}
 									<img src={stablecoinLogoUrl} alt={stablecoinMetadata.name} />
 								{/if}
+							{/if}
+							{#if curatorMetadata?.logos.generic}
+								<img src={curatorMetadata.logos.generic} alt={curatorMetadata.name} />
 							{/if}
 							<span>{pageTitle}</span>
 						</span>
@@ -128,16 +144,31 @@
 				<ProtocolDescription metadata={protocolMetadata} />
 			{/if}
 
+			{#if curatorMetadata && detailAside}
+				<div class="detail-overview">
+					<CuratorDescription curator={curatorMetadata} />
+					<aside class="detail-aside">
+						{@render detailAside()}
+					</aside>
+				</div>
+			{:else if curatorMetadata}
+				<CuratorDescription curator={curatorMetadata} />
+			{/if}
+
 			{#if stablecoinMetadata}
 				<StablecoinDetailHeader metadata={stablecoinMetadata} vaults={topVaults?.vaults ?? []} {detailAside} />
 			{/if}
 
-			{#if !renderDetailAsideInHero && !protocolMetadata && !stablecoinMetadata && detailAside}
+			{#if !renderDetailAsideInHero && !protocolMetadata && !stablecoinMetadata && !curatorMetadata && detailAside}
 				<div class="detail-overview detail-overview-single">
 					<aside class="detail-aside">
 						{@render detailAside()}
 					</aside>
 				</div>
+			{/if}
+
+			{#if curatorMetadata && curatorMetadata.recent_posts.length > 0}
+				<CuratorRecentPosts curator={curatorMetadata} />
 			{/if}
 
 			{@render beforeTable?.()}
@@ -189,6 +220,21 @@
 		.top-vaults-header {
 			display: grid;
 			gap: 1rem;
+		}
+
+		.header-top {
+			display: flex;
+			align-items: flex-start;
+			justify-content: space-between;
+			gap: 1rem;
+
+			:global(.vault-listings-selector) {
+				flex: 1;
+			}
+
+			.update-info {
+				flex: none;
+			}
 		}
 
 		.hero-layout {

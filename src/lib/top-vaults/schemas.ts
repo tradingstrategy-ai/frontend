@@ -80,6 +80,57 @@ export const periodMetricsSchema = z.object({
 });
 export type PeriodMetrics = z.infer<typeof periodMetricsSchema>;
 
+/** A post/update surfaced from a curator's social or RSS feed. */
+export const curatorRecentPostSchema = z.object({
+	/** Post title; may be null for sources that don't provide one (e.g. tweets) */
+	title: z.string().nullable(),
+	/** Short text excerpt of the post */
+	snippet: z.string(),
+	/** Canonical link to the post */
+	link: z.string(),
+	/** Where the post came from (e.g. "linkedin", "twitter", "rss") */
+	source_type: z.string(),
+	/** ISO datetime the post was published (format may vary by source) */
+	published_at: z.string()
+});
+export type CuratorRecentPost = z.infer<typeof curatorRecentPostSchema>;
+
+/** Curator logo URLs (absolute), one per theme variant; any may be null. */
+export const curatorLogosSchema = z.object({
+	generic: z.string().nullable(),
+	dark: z.string().nullable(),
+	light: z.string().nullable()
+});
+
+/**
+ * Metadata for a vault curator — the firm or protocol that selects and manages
+ * a vault's strategy. Keyed by slug in the top-level `curators` map of the
+ * top-vaults dataset and referenced from each vault via `curator_slug`.
+ */
+export const curatorInfoSchema = z.object({
+	/** URL-safe identifier (e.g. "steakhouse-financial") */
+	slug: z.string(),
+	/** Display name (e.g. "Steakhouse Financial") */
+	name: z.string(),
+	/** Homepage URL, null if unknown */
+	website: z.string().nullable(),
+	/** Twitter/X profile URL, null if unknown */
+	twitter: z.string().nullable(),
+	/** LinkedIn profile URL, null if unknown */
+	linkedin: z.string().nullable(),
+	/** RSS feed URL, null if unknown */
+	rss: z.string().nullable(),
+	/** Whether the curator is the protocol itself (self-curated) */
+	protocol_curator: z.boolean(),
+	/** Canonical feeder/protocol id this curator maps to, null if none */
+	canonical_feeder_id: z.string().nullable(),
+	/** Logo URLs by theme variant */
+	logos: curatorLogosSchema,
+	/** Recent posts from the curator's feeds (may be empty) */
+	recent_posts: curatorRecentPostSchema.array().default([])
+});
+export type CuratorInfo = z.infer<typeof curatorInfoSchema>;
+
 /**
  * Full vault information returned by the backend top-vaults API.
  * Contains identity, on-chain metadata, performance metrics, fees, and period results.
@@ -92,6 +143,14 @@ export const vaultInfoSchema = z.object({
 	vault_slug: z.string(),
 	/** URL-safe slug for the protocol (e.g. "aave-v3") */
 	protocol_slug: z.string(),
+
+	// --- Curator ---
+	/** URL-safe slug of the curator managing this vault; null if uncurated */
+	curator_slug: z.string().nullable(),
+	/** Display name of the curator managing this vault; null if uncurated */
+	curator_name: z.string().nullable(),
+	/** Whether the curator is the protocol itself (self-curated); null if uncurated */
+	protocol_curator: z.boolean().nullable(),
 
 	// --- Lifetime performance metrics ---
 	/** Lifetime gross absolute return as a decimal (e.g. 0.15 = 15%) */
@@ -396,7 +455,9 @@ export const topVaultsSchema = z.object({
 	 * data — `.catch({})` guarantees a malformed/changed payload here can never
 	 * break parsing of the (critical) vaults array.
 	 */
-	core3_protocols: z.record(z.string(), core3ProtocolSchema).catch({}).default({})
+	core3_protocols: z.record(z.string(), core3ProtocolSchema).catch({}).default({}),
+	/** Curator metadata keyed by curator slug; referenced by vault.curator_slug */
+	curators: z.record(z.string(), curatorInfoSchema).default({})
 });
 export type TopVaults = z.infer<typeof topVaultsSchema>;
 

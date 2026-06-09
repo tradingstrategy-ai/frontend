@@ -99,6 +99,9 @@ const returnLeaders = [
 	createTestVault('Return leader alpha', {
 		chain: 'ethereum',
 		protocol: 'Yearn',
+		curator_slug: 'steakhouse-financial',
+		curator_name: 'Steakhouse Financial',
+		protocol_curator: false,
 		current_nav: 800_000,
 		peak_nav: 900_000,
 		one_month_returns: 0.04,
@@ -112,6 +115,9 @@ const returnLeaders = [
 	createTestVault('Return leader beta', {
 		chain: 'arbitrum',
 		protocol: 'Morpho',
+		curator_slug: 'gauntlet',
+		curator_name: 'Gauntlet',
+		protocol_curator: false,
 		current_nav: 780_000,
 		peak_nav: 850_000,
 		one_month_returns: 0.035,
@@ -125,6 +131,9 @@ const returnLeaders = [
 	createTestVault('Return leader gamma', {
 		chain: 'base',
 		protocol: 'Compound',
+		curator_slug: 're7-labs',
+		curator_name: 'RE7 Labs',
+		protocol_curator: false,
 		current_nav: 760_000,
 		peak_nav: 830_000,
 		one_month_returns: 0.03,
@@ -437,10 +446,60 @@ const parquetMatchedVaults = [
 	})
 ];
 
+// Curator metadata for the by-curator pages; keyed by slug and referenced
+// from the curated returnLeaders vaults above.
+const curators = {
+	'steakhouse-financial': {
+		slug: 'steakhouse-financial',
+		name: 'Steakhouse Financial',
+		website: 'https://example.com/steakhouse',
+		twitter: 'https://x.com/steakhouse',
+		linkedin: null,
+		rss: null,
+		protocol_curator: false,
+		canonical_feeder_id: null,
+		logos: { generic: null, dark: null, light: null },
+		recent_posts: [
+			{
+				title: 'Latest market update',
+				snippet: 'A summary of recent curation activity.',
+				link: 'https://example.com/steakhouse/post-1',
+				source_type: 'rss',
+				published_at: '2026-01-05T00:00:00'
+			}
+		]
+	},
+	gauntlet: {
+		slug: 'gauntlet',
+		name: 'Gauntlet',
+		website: 'https://example.com/gauntlet',
+		twitter: null,
+		linkedin: 'https://example.com/gauntlet/linkedin',
+		rss: null,
+		protocol_curator: false,
+		canonical_feeder_id: null,
+		logos: { generic: null, dark: null, light: null },
+		recent_posts: []
+	},
+	're7-labs': {
+		slug: 're7-labs',
+		name: 'RE7 Labs',
+		website: null,
+		twitter: null,
+		linkedin: null,
+		rss: null,
+		protocol_curator: false,
+		canonical_feeder_id: null,
+		logos: { generic: null, dark: null, light: null },
+		recent_posts: []
+	}
+};
+
 export default defineMock({
 	url: '/api/top-vaults/vaults.json',
 	body: {
 		generated_at: new Date().toISOString(),
+		curators,
 		vaults: [
 			yamlStrategyVault,
 			morphoFlaggedBlacklistedVault,

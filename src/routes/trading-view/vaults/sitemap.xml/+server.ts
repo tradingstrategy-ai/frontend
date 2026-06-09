@@ -66,6 +66,13 @@ export async function GET({ fetch, setHeaders, url }) {
 		stream.write({ url: `${basePath}/chains/${slug}`, priority });
 	}
 
+	// Curator index + individual curator pages
+	const curatorSlugs = new Set(eligibleVaults.map((v) => v.curator_slug).filter(Boolean) as string[]);
+	stream.write({ url: `${basePath}/curators`, priority });
+	for (const slug of curatorSlugs) {
+		stream.write({ url: `${basePath}/curators/${slug}`, priority });
+	}
+
 	stream.end();
 
 	setHeaders({
