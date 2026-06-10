@@ -191,28 +191,15 @@
 				width: max(calc(20vw), 12rem);
 			}
 
-			:global(:has(.risk)) {
+			/* layout with a leading rating column (technical risk and/or Core3); the
+			   percentage widths must sum to 100% so the cells fill the table edge-to-edge */
+			:global(:has(:is(.risk, .core3_risk))) {
 				:global(:is(th, td)) {
 					width: 16%;
 				}
 
 				:global(.name) {
 					width: 36%;
-				}
-
-				:global(.cta) {
-					width: 12rem;
-				}
-			}
-
-			/* protocols page shows both the Core3 risk and technical risk columns */
-			:global(:has(.core3_risk)) {
-				:global(:is(th, td)) {
-					width: 13%;
-				}
-
-				:global(.name) {
-					width: 28%;
 				}
 
 				:global(.cta) {
