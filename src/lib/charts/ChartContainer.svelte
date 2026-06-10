@@ -17,7 +17,7 @@
 		range: [Date, Date] | undefined;
 	}
 
-	interface Props extends ComponentProps<typeof TvChart> {
+	interface Props extends Omit<ComponentProps<typeof TvChart>, 'tooltip'> {
 		data: [number, number][] | undefined;
 		formatValue: Formatter<number>;
 		boxed?: boolean;
@@ -25,6 +25,7 @@
 		title?: Snippet<[TimeSpan]> | string;
 		subtitle?: Snippet | string;
 		series: Snippet<[SeriesSnippetOptions]>;
+		tooltip?: Snippet<[ActiveTooltipParams, TooltipData, TimeSpan]>;
 		footer?: Snippet;
 	}
 
@@ -88,7 +89,15 @@
 		{/if}
 	{/snippet}
 
-	<TvChart options={merge({ ...chartOptions }, options)} {...restProps} tooltip={tooltip ?? defaultTooltip}>
+	{#snippet tooltipWithTimeSpan(params: ActiveTooltipParams, seriesData: TooltipData)}
+		{#if tooltip}
+			{@render tooltip(params, seriesData, timeSpan)}
+		{:else}
+			{@render defaultTooltip(params, seriesData)}
+		{/if}
+	{/snippet}
+
+	<TvChart options={merge({ ...chartOptions }, options)} {...restProps} tooltip={tooltipWithTimeSpan}>
 		{@render series({
 			data: resampledData,
 			timeSpan,

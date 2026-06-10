@@ -94,10 +94,10 @@ separator line at the 80% threshold.
 					/>
 				{/snippet}
 
-				{#snippet tooltip({ point, time }, [utilisation])}
+				{#snippet tooltip({ point, time }, [utilisation], timeSpan)}
 					{#if utilisation}
 						<ChartTooltip {point}>
-							<div class="tooltip-date">{formatDate(time as number, '1d')}</div>
+							<div class="tooltip-date">{formatDate(time as number, timeSpan.timeBucket)}</div>
 							<dl class="tooltip-items">
 								<dt>Utilisation:</dt>
 								<dd>{formatValue(utilisation.value)}</dd>
