@@ -20,6 +20,11 @@ const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+// FRED rate-limits/blocks requests from CI runner IPs (GitHub Actions), so these
+// live-network tests fail intermittently there (the fetch returns null). Skip them
+// in CI; they still run locally, where they verify the real FRED CSV export.
+const SKIP_FRED_IN_CI = !!process.env.CI;
+
 async function fetchFredCsvLatest(seriesId: string): Promise<number | null> {
 	try {
 		const resp = await fetch(`${FRED_CSV_BASE}?id=${encodeURIComponent(seriesId)}`, {
@@ -37,7 +42,7 @@ async function fetchFredCsvLatest(seriesId: string): Promise<number | null> {
 	}
 }
 
-describe('fetchFredCsvLatest', () => {
+describe.skipIf(SKIP_FRED_IN_CI)('fetchFredCsvLatest', () => {
 	test(
 		'should fetch SNDR (national savings rate) and return a number',
 		async () => {
