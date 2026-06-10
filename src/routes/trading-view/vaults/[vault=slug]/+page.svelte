@@ -16,12 +16,13 @@
 	import VaultPeriodicMetrics from './VaultPeriodicMetrics.svelte';
 	import VaultProtocolInfo from './VaultProtocolInfo.svelte';
 	import VaultRankings from './VaultRankings.svelte';
+	import Core3Ratings from '$lib/top-vaults/Core3Ratings.svelte';
 	import IconDiscord from '~icons/local/discord';
 	import { getMorphoFlags, hasSupportedProtocol, isBlacklisted } from '$lib/top-vaults/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 
 	let { data } = $props();
-	let { vault, chain, protocolMetadata, stablecoinMetadata, generated_at } = $derived(data);
+	let { vault, chain, protocolMetadata, stablecoinMetadata, generated_at, core3 } = $derived(data);
 	let morphoFlags = $derived(getMorphoFlags(vault));
 	let notesDuplicateMorphoFlags = $derived(
 		morphoFlags.length > 0 && vault.notes?.startsWith('Morpho has flagged this vault with the following issues:')
@@ -112,6 +113,10 @@
 		{/if}
 
 		<VaultPeriodicMetrics {vault} {chain} />
+
+		{#if core3}
+			<Core3Ratings {core3} protocolName={vault.protocol} protocolSlug={vault.protocol_slug} />
+		{/if}
 
 		<VaultTechnicalDetailsTable {vault} {chain} {stablecoinMetadata} {generated_at} />
 	</Section>

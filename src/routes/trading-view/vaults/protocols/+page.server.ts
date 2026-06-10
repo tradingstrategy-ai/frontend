@@ -12,7 +12,7 @@ import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 import type { MarketShareChartItem } from '../market-share-pie';
 
 export async function load({ fetch, url: { searchParams } }) {
-	const { vaults } = await getCachedTopVaults(fetch);
+	const { vaults, core3_protocols } = await getCachedTopVaults(fetch);
 
 	const eligibleVaults = vaults.filter((v) => !isBlacklisted(v) && meetsMinTvl(v));
 
@@ -26,7 +26,8 @@ export async function load({ fetch, url: { searchParams } }) {
 			tvl: 0,
 			avg_apy: null,
 			risk: vault.risk,
-			risk_numeric: vault.risk_numeric
+			risk_numeric: vault.risk_numeric,
+			core3_rating: core3_protocols[slug]?.pol?.rating ?? null
 		};
 		acc[slug].vault_count++;
 		acc[slug].tvl += vault.current_nav ?? 0;

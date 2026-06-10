@@ -47,6 +47,8 @@
 		loading?: boolean;
 		/** Optional right-hand content for listing detail page overview panels */
 		detailAside?: Snippet;
+		/** Optional content rendered above the vaults table (and its status line) */
+		beforeTable?: Snippet;
 	}
 
 	let {
@@ -69,7 +71,8 @@
 		defaultSort,
 		defaultDirection,
 		loading = false,
-		detailAside
+		detailAside,
+		beforeTable
 	}: Props = $props();
 
 	let renderDetailAsideInHero = $derived(chain && detailAside && !protocolMetadata && !stablecoinMetadata);
@@ -136,6 +139,8 @@
 					</aside>
 				</div>
 			{/if}
+
+			{@render beforeTable?.()}
 
 			{#if loading}
 				<TopVaultsTable

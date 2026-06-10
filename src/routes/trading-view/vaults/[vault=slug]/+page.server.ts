@@ -7,7 +7,7 @@ import { fetchVaultProtocolMetadata } from '$lib/vault-protocol/client';
 import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ params, fetch }) {
-	const { vaults, generated_at } = await getCachedTopVaults(fetch);
+	const { vaults, generated_at, core3_protocols } = await getCachedTopVaults(fetch);
 
 	const vault = vaults.find((v) => {
 		// redirect to canonical vault path if someone tries old vault id URL
@@ -23,6 +23,9 @@ export async function load({ params, fetch }) {
 	const chain = getChain(vault.chain_id);
 	if (!chain) error(404, 'Chain not found');
 
+	// Core3 ratings are keyed by protocol slug; null when the protocol is unrated
+	const core3 = core3_protocols[vault.protocol_slug] ?? null;
+
 	const [protocolMetadata, stablecoinMetadataIndex] = await Promise.all([
 		fetchVaultProtocolMetadata(fetch, vault.protocol_slug, vault.protocol),
 		fetchStablecoinMetadataIndex(fetch)
@@ -35,5 +38,5 @@ export async function load({ params, fetch }) {
 		vault.normalised_denomination
 	);
 
-	return { vault, chain, protocolMetadata, stablecoinMetadata, generated_at };
+	return { vault, chain, protocolMetadata, stablecoinMetadata, generated_at, core3 };
 }

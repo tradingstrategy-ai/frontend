@@ -5,11 +5,12 @@
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
+	import Core3Ratings from '$lib/top-vaults/Core3Ratings.svelte';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
 
 	let { data } = $props();
-	let { protocolSlug, protocolName, protocolMetadata } = $derived(data);
+	let { protocolSlug, protocolName, protocolMetadata, core3 } = $derived(data);
 
 	let topVaults = $state<TopVaults>();
 	let loading = $state(!hasVaultCache());
@@ -89,5 +90,11 @@
 			compareLabel="Compare all protocols"
 			compareHref="/trading-view/vaults/historical-tvl-protocol"
 		/>
+	{/snippet}
+
+	{#snippet beforeTable()}
+		{#if core3}
+			<Core3Ratings {core3} {protocolName} collapsible />
+		{/if}
 	{/snippet}
 </TopVaultsPage>

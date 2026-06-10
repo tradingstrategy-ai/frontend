@@ -19,6 +19,7 @@
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import RiskCell from './RiskCell.svelte';
+	import Core3RiskCell from './Core3RiskCell.svelte';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 
 	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
@@ -27,6 +28,7 @@
 		rows?: VaultGroup[];
 		groupLabel: string;
 		includeRisk?: boolean;
+		includeCore3Risk?: boolean;
 		includeFullName?: boolean;
 		getLogoHref?: (slug: string) => string | undefined;
 		page?: number;
@@ -39,6 +41,7 @@
 		rows,
 		groupLabel,
 		includeRisk = false,
+		includeCore3Risk = false,
 		includeFullName = false,
 		getLogoHref,
 		page: pageIndex = 0,
@@ -58,7 +61,11 @@
 		tableRowsStore.set(tableRows);
 	});
 
-	const hiddenColumns = [...(includeRisk ? [] : ['risk']), ...(includeFullName ? [] : ['full_name'])];
+	const hiddenColumns = [
+		...(includeRisk ? [] : ['risk']),
+		...(includeCore3Risk ? [] : ['core3_risk']),
+		...(includeFullName ? [] : ['full_name'])
+	];
 
 	// svelte-ignore state_referenced_locally
 	const table = createTable(tableRowsStore, {
@@ -90,6 +97,13 @@
 			header: 'Name',
 			accessor: 'fullName',
 			cell: ({ value }) => value ?? '',
+			plugins: { sort: { disable: true } }
+		}),
+		table.column({
+			id: 'core3_risk',
+			header: 'Core3',
+			accessor: (row) => ({ rating: row.core3_rating ?? null, slug: row.slug }),
+			cell: ({ value }) => createRender(Core3RiskCell, { rating: value.rating, slug: value.slug }),
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
@@ -157,7 +171,7 @@
 			:global(:is(th, td)) {
 				width: 20%;
 
-				&:not(:is(.name, .risk, .full_name)) {
+				&:not(:is(.name, .risk, .core3_risk, .full_name)) {
 					text-align: right;
 				}
 			}
@@ -178,6 +192,21 @@
 
 				:global(.name) {
 					width: 36%;
+				}
+
+				:global(.cta) {
+					width: 12rem;
+				}
+			}
+
+			/* protocols page shows both the Core3 risk and technical risk columns */
+			:global(:has(.core3_risk)) {
+				:global(:is(th, td)) {
+					width: 13%;
+				}
+
+				:global(.name) {
+					width: 28%;
 				}
 
 				:global(.cta) {

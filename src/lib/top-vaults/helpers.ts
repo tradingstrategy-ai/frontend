@@ -1,4 +1,4 @@
-import type { FeeMode, SlimVaultInfo, VaultInfo } from './schemas';
+import type { Core3Protocol, FeeMode, SlimVaultInfo, VaultInfo } from './schemas';
 import { slimVaultKeys } from './schemas';
 import { resolve } from '$app/paths';
 import { vaultSparklinesUrl } from '$lib/config';
@@ -346,6 +346,49 @@ export function rankVaultsBy<V extends Record<string, unknown>>(keys: (keyof V)[
 		}
 		return 0;
 	};
+}
+
+/**
+ * Resolve the public Core3 report URL for a rated protocol.
+ *
+ * The upstream `link` field is malformed — it concatenates the Core3 slug
+ * directly onto the origin without a path separator (e.g.
+ * `https://core3.ioinverse-finance`). We repair it by inserting the missing
+ * slash. Returns `undefined` when no usable link is present.
+ */
+export function getCore3ReportUrl(core3: Pick<Core3Protocol, 'link'>): string | undefined {
+	const link = core3.link;
+	if (!link) return undefined;
+	const origin = 'https://core3.io';
+	if (link.startsWith(`${origin}/`)) return link;
+	if (link.startsWith(origin)) return `${origin}/${link.slice(origin.length)}`;
+	return link;
+}
+
+/** Qualitative tone for a Core3 letter grade, used for colour-coding. */
+export type Core3RatingTone = 'excellent' | 'good' | 'fair' | 'poor' | 'unknown';
+
+/**
+ * Map a Core3 letter grade to a qualitative tone for colour-coding.
+ * Scale, best to worst: AAA, AA, A, BBB, BB, B, CCC, CC, C, DDD, DD, D.
+ */
+export function getCore3RatingTone(rating: string | null | undefined): Core3RatingTone {
+	const r = rating?.toUpperCase() ?? '';
+	if (r.startsWith('A')) return 'excellent';
+	if (r.startsWith('B')) return 'good';
+	if (r.startsWith('C')) return 'fair';
+	if (r.startsWith('D')) return 'poor';
+	return 'unknown';
+}
+
+/**
+ * Resolve the Core3 ranking (leaderboard) URL that a protocol's Core3 rank
+ * refers to. Core3 splits its ranking into projects and exchanges, so we pick
+ * the list matching the protocol's Core3 category.
+ */
+export function getCore3RankingUrl(core3: Pick<Core3Protocol, 'category'>): string {
+	const isExchange = /exchange/i.test(core3.category?.name ?? '');
+	return `https://core3.io/ratings/${isExchange ? 'exchanges' : 'projects'}`;
 }
 
 /**
