@@ -14,6 +14,13 @@ const pages = [
 		heading: /DeFi vaults by chain/,
 		widgetTestId: 'chain-tvl-pie-chart',
 		headerSelector: '.chain-index-header'
+	},
+	{
+		name: 'curators index page',
+		url: '/trading-view/vaults/curators',
+		heading: /DeFi vaults by curator/,
+		widgetTestId: 'curator-tvl-pie-chart',
+		headerSelector: '.curator-index-header'
 	}
 ] as const;
 

@@ -4,13 +4,17 @@
 	import type { TopVaults } from './schemas';
 	import type { VaultProtocolMetadata } from '$lib/vault-protocol/schemas';
 	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
+	import type { CuratorInfo } from './schemas';
 	import Alert from '$lib/components/Alert.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import TopVaultsOptIn from './TopVaultsOptIn.svelte';
 	import TopVaultsTable from './TopVaultsTable.svelte';
 	import VaultListingsSelector from './VaultListingsSelector.svelte';
+	import UpdateInfoButton from './UpdateInfoButton.svelte';
 	import ProtocolDescription from '$lib/vault-protocol/ProtocolDescription.svelte';
+	import CuratorDescription from '$lib/curator/CuratorDescription.svelte';
+	import CuratorRecentPosts from '$lib/curator/CuratorRecentPosts.svelte';
 	import StablecoinDetailHeader from '$lib/stablecoin-metadata/StablecoinDetailHeader.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers.js';
@@ -29,6 +33,7 @@
 		includeBlacklisted?: boolean;
 		protocolMetadata?: VaultProtocolMetadata;
 		stablecoinMetadata?: StablecoinMetadata;
+		curatorMetadata?: CuratorInfo;
 		/** Show interactive filter dropdowns (Min TVL, Min age, Max risk) */
 		showFilters?: boolean;
 		/** Default TVL filter key (used to initialise the dropdown when showFilters is true) */
@@ -49,6 +54,8 @@
 		detailAside?: Snippet;
 		/** Optional content rendered above the vaults table (and its status line) */
 		beforeTable?: Snippet;
+		/** Whole-database vault count for the "out of {total}" listing meta on pre-filtered listings */
+		totalVaultCount?: number;
 	}
 
 	let {
@@ -63,6 +70,7 @@
 		includeBlacklisted,
 		protocolMetadata,
 		stablecoinMetadata,
+		curatorMetadata,
 		showFilters,
 		defaultTvlKey,
 		defaultAgeIndex,
@@ -72,7 +80,8 @@
 		defaultDirection,
 		loading = false,
 		detailAside,
-		beforeTable
+		beforeTable,
+		totalVaultCount
 	}: Props = $props();
 
 	let renderDetailAsideInHero = $derived(chain && detailAside && !protocolMetadata && !stablecoinMetadata);
@@ -81,7 +90,14 @@
 <main class="top-vaults-page ds-3">
 	<Section tag="header">
 		<div class="top-vaults-header">
-			<VaultListingsSelector />
+			<div class="header-top">
+				<VaultListingsSelector />
+				{#if protocolMetadata || curatorMetadata}
+					<div class="update-info">
+						<UpdateInfoButton />
+					</div>
+				{/if}
+			</div>
 			<div class:hero-layout={renderDetailAsideInHero}>
 				<HeroBanner {subtitle}>
 					{#snippet title()}
@@ -100,6 +116,9 @@
 								{#if stablecoinLogoUrl}
 									<img src={stablecoinLogoUrl} alt={stablecoinMetadata.name} />
 								{/if}
+							{/if}
+							{#if curatorMetadata?.logos.generic}
+								<img src={curatorMetadata.logos.generic} alt={curatorMetadata.name} />
 							{/if}
 							<span>{pageTitle}</span>
 						</span>
@@ -128,11 +147,27 @@
 				<ProtocolDescription metadata={protocolMetadata} />
 			{/if}
 
+			{#if curatorMetadata}
+				<div class={['curator-overview', { 'detail-overview': detailAside }]}>
+					<div class="curator-main">
+						<CuratorDescription curator={curatorMetadata} />
+						{#if curatorMetadata.recent_posts.length > 0}
+							<CuratorRecentPosts curator={curatorMetadata} />
+						{/if}
+					</div>
+					{#if detailAside}
+						<aside class="detail-aside">
+							{@render detailAside()}
+						</aside>
+					{/if}
+				</div>
+			{/if}
+
 			{#if stablecoinMetadata}
 				<StablecoinDetailHeader metadata={stablecoinMetadata} vaults={topVaults?.vaults ?? []} {detailAside} />
 			{/if}
 
-			{#if !renderDetailAsideInHero && !protocolMetadata && !stablecoinMetadata && detailAside}
+			{#if !renderDetailAsideInHero && !protocolMetadata && !stablecoinMetadata && !curatorMetadata && detailAside}
 				<div class="detail-overview detail-overview-single">
 					<aside class="detail-aside">
 						{@render detailAside()}
@@ -161,6 +196,7 @@
 			{:else}
 				<TopVaultsTable
 					{topVaults}
+					{totalVaultCount}
 					{chain}
 					{tvlThreshold}
 					{tvlTriggerLabel}
@@ -189,6 +225,21 @@
 		.top-vaults-header {
 			display: grid;
 			gap: 1rem;
+		}
+
+		.header-top {
+			display: flex;
+			align-items: flex-start;
+			justify-content: space-between;
+			gap: 1rem;
+
+			:global(.vault-listings-selector) {
+				flex: 1;
+			}
+
+			.update-info {
+				flex: none;
+			}
 		}
 
 		.hero-layout {
@@ -238,6 +289,34 @@
 		.detail-aside {
 			display: grid;
 			align-self: stretch;
+		}
+
+		/* About box and Latest posts stacked in the left column; the aside chart
+		   keeps a stable height (matching the typical collapsed column) so expanding
+		   the posts or about widgets doesn't stretch and distort it */
+		.curator-main {
+			display: grid;
+			gap: 1rem;
+			min-width: 0;
+			align-content: start;
+		}
+
+		@media (--viewport-lg-up) {
+			.curator-overview {
+				align-items: start;
+
+				.detail-aside {
+					height: 28rem;
+				}
+			}
+		}
+
+		/* on tablet widths the two-column layout makes the box content unreadable —
+		   stack the about, posts and chart boxes vertically as on mobile */
+		@media (--viewport-md-down) {
+			.curator-overview {
+				grid-template-columns: 1fr;
+			}
 		}
 
 		.detail-overview-single {

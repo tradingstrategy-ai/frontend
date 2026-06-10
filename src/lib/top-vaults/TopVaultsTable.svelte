@@ -105,9 +105,16 @@
 		defaultDirection?: 'asc' | 'desc';
 		/** Show skeleton loading state while vault data is being fetched */
 		loading?: boolean;
+		/** Override for the "out of {total}" listing meta; defaults to the vaults passed in (use to show the whole-database count on pre-filtered listings) */
+		totalVaultCount?: number;
 	}
 
-	const emptyTopVaults: TopVaults = { generated_at: new Date().toISOString(), vaults: [], core3_protocols: {} };
+	const emptyTopVaults: TopVaults = {
+		generated_at: new Date().toISOString(),
+		vaults: [],
+		core3_protocols: {},
+		curators: {}
+	};
 	const SKELETON_ROW_COUNT = 10;
 
 	let {
@@ -125,7 +132,8 @@
 		defaultMonthlyReturnKey = 'any',
 		defaultSort,
 		defaultDirection,
-		loading = false
+		loading = false,
+		totalVaultCount: totalVaultCountProp
 	}: Props = $props();
 
 	// --- Sort column registry (key → compareFn + default direction) ---
@@ -339,6 +347,10 @@
 
 	// Count of hidden vaults
 	let hiddenByTvl = $derived(hiddenVaults.length);
+
+	// Total vault count for the listing meta — the whole-database count when
+	// provided by the page, otherwise the vaults available to this listing
+	let totalVaultCount = $derived(totalVaultCountProp ?? topVaults.vaults.length);
 
 	// Filter vaults matching all active filters (TVL, age, risk, search)
 	let filteredVaults = $derived.by(() => {
@@ -576,7 +588,9 @@
 	<div class="table-extras">
 		<div class="table-stats" class:hidden={loading} data-testid="top-vaults-meta">
 			<Tooltip>
-				<svelte:fragment slot="trigger">{filteredVaults.length} vaults</svelte:fragment>
+				<svelte:fragment slot="trigger"
+					>{filteredVaults.length} vaults{#if totalVaultCount > filteredVaults.length}{' '}out of {totalVaultCount}{/if}</svelte:fragment
+				>
 				<svelte:fragment slot="popup"
 					>{#if hiddenByTvl > 0}
 						{hiddenByTvl} vault{hiddenByTvl === 1 ? ' is' : 's are'} hidden because {hiddenByTvl === 1

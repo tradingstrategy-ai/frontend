@@ -1,6 +1,7 @@
 # Weblog of stuff
 
 - Add Core3 protocol risk ratings — a rating box on vault detail and protocol pages, plus a Core3 column on the protocols listing (2026-06-10)
+- Add "By curator" vault category page and per-curator vault listing pages (2026-06-09)
 - Revamp pricing page with liquid glass table, Creem checkout, updated copy and dataset links (2026-05-08)
 - Add AI ready feature and data fields section to pricing page (2026-05-07)
 - Add historical TVL chart controls for market share and shorter daily history views (2026-05-05)

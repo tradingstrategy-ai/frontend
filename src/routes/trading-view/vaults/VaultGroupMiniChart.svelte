@@ -347,6 +347,8 @@ average TVL-weighted return as a line series.
 <style>
 	.protocol-mini-chart {
 		display: grid;
+		/* chart surface absorbs any extra height when stretched to match sibling content */
+		grid-template-rows: auto 1fr auto;
 		gap: 0.5rem;
 		min-height: 17rem;
 		padding: 0.875rem;
