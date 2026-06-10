@@ -82,11 +82,11 @@ page); omit it on the protocol page itself to render the name as plain text.
 			<p class="intro">
 				Risk rating by Core3 for {#if protocolSlug}<a href={resolve(`/trading-view/vaults/protocols/${protocolSlug}`)}
 						>{protocolName}</a
-					>{:else}{protocolName}{/if}. The rating applies to all vaults on this protocol.{#if reportUrl}{' '}<a
-						href={reportUrl}
-						target="_blank"
-						rel="noreferrer">View full rating on the Core3 website</a
-					>.{/if}
+					>{:else}{protocolName}{/if}. The rating applies to all vaults on this protocol.
+				{#if reportUrl}
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+					<a href={reportUrl} target="_blank" rel="noreferrer">View full rating on the Core3 website</a>.
+				{/if}
 			</p>
 
 			<div class="columns">
@@ -96,6 +96,7 @@ page); omit it on the protocol page itself to render the name as plain text.
 							<tr>
 								<th>
 									<Tooltip>
+										<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 										<a slot="trigger" class="metric-link" href={rankingUrl} target="_blank" rel="noreferrer">
 											Risk score
 											<IconQuestionCircle />
@@ -138,6 +139,7 @@ page); omit it on the protocol page itself to render the name as plain text.
 							<tr>
 								<th>
 									<Tooltip>
+										<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 										<a slot="trigger" class="metric-link" href={rankingUrl} target="_blank" rel="noreferrer">
 											Core3 rank
 											<IconQuestionCircle />
