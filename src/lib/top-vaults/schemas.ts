@@ -424,4 +424,6 @@ export interface VaultGroup {
 	risk_numeric?: number | null;
 	/** Core3 protocol risk rating letter (e.g. "AA", "BB") — only present on protocol groups with a Core3 rating */
 	core3_rating?: string | null;
+	/** Core3 numeric risk score (lower = better) — used to sort the Core3 rating column */
+	core3_score?: number | null;
 }

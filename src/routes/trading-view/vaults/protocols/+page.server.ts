@@ -27,7 +27,8 @@ export async function load({ fetch, url: { searchParams } }) {
 			avg_apy: null,
 			risk: vault.risk,
 			risk_numeric: vault.risk_numeric,
-			core3_rating: core3_protocols[slug]?.pol?.rating ?? null
+			core3_rating: core3_protocols[slug]?.pol?.rating ?? null,
+			core3_score: core3_protocols[slug]?.pol?.score ?? null
 		};
 		acc[slug].vault_count++;
 		acc[slug].tvl += vault.current_nav ?? 0;

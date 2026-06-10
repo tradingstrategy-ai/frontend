@@ -1,6 +1,6 @@
 <script module lang="ts">
 	export const sortOptions = {
-		keys: ['tvl', 'avg_apy', 'vault_count', 'name', 'risk'],
+		keys: ['tvl', 'avg_apy', 'vault_count', 'name', 'risk', 'core3_risk'],
 		directions: ['desc', 'asc']
 	} as const;
 
@@ -102,9 +102,15 @@
 		table.column({
 			id: 'core3_risk',
 			header: 'Core3',
-			accessor: (row) => ({ rating: row.core3_rating ?? null, slug: row.slug }),
+			accessor: (row) => ({ rating: row.core3_rating ?? null, slug: row.slug, score: row.core3_score ?? null }),
 			cell: ({ value }) => createRender(Core3RiskCell, { rating: value.rating, slug: value.slug }),
-			plugins: { sort: { disable: true } }
+			plugins: {
+				sort: {
+					// lower score = better rating; unrated protocols sort last
+					getSortValue: (v) => v.score ?? Infinity,
+					invert: true
+				}
+			}
 		}),
 		table.column({
 			id: 'risk',
@@ -152,7 +158,7 @@
 <style>
 	.vault-protocol-table {
 		/* flip the sort indicator on columns that use inverted sort */
-		:global(:is(th.name, th.risk) .icon) {
+		:global(:is(th.name, th.risk, th.core3_risk) .icon) {
 			rotate: 180deg;
 		}
 
