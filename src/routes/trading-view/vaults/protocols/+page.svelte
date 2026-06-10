@@ -23,7 +23,7 @@
 
 	const title = 'DeFi stablecoin vault protocols | Trading Strategy';
 	const description =
-		'Vaults on different protocols. Vaults are build on different digital asset management protocols. The listing gives an overview of popularity of different protocols. TVL represents stablecoin deposits in particular protocol. APY represents the yield of last thirty days.';
+		'DeFi stablecoin vaults grouped by protocol. Vaults are built on different digital asset management protocols, and this listing shows the relative popularity of each. TVL represents stablecoin deposits in a protocol’s vaults. APY represents the yield of the last thirty days.';
 	const glossaryLinks = {
 		vault: resolve('/glossary/vault'),
 		protocol: resolve('/glossary/protocol'),
@@ -70,15 +70,15 @@
 						{/snippet}
 						{#snippet subtitle()}
 							<a class="body-link" href={glossaryLinks.vault}>Vaults</a>
-							on different
-							<a class="body-link" href={glossaryLinks.protocol}>protocols</a>. Vaults are build on different digital
-							asset management protocols. The listing gives an overview of popularity of different protocols.
+							grouped by
+							<a class="body-link" href={glossaryLinks.protocol}>protocol</a>. Vaults are built on different digital
+							asset management protocols, and this listing shows the relative popularity of each.
 							<a class="body-link" href={glossaryLinks.tvl}>TVL</a>
 							represents
 							<a class="body-link" href={glossaryLinks.stablecoin}>stablecoin</a>
-							deposits in particular protocol.
+							deposits in a protocol’s vaults.
 							<a class="body-link" href={glossaryLinks.apy}>APY</a>
-							represents the yield of last thirty days.
+							represents the yield of the last thirty days.
 						{/snippet}
 					</HeroBanner>
 				</div>
