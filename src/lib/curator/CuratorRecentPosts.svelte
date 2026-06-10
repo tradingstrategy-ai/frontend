@@ -36,7 +36,7 @@ its latest entry).
 
 	// Normalise the (sometimes timezone-less) published_at into a UTC timestamp.
 	function normaliseDate(value: string): string {
-		return value.includes('Z') || value.includes('+') ? value : `${value}Z`;
+		return /([zZ]|[+-]\d\d:?\d\d)$/.test(value) ? value : `${value}Z`;
 	}
 
 	function toTime(value: string): number {

@@ -132,8 +132,11 @@ export const curatorInfoSchema = z.object({
 	long_description: z.string().nullable().optional(),
 	/** Logo URLs by theme variant */
 	logos: curatorLogosSchema,
-	/** Recent posts from the curator's feeds (may be empty) */
-	recent_posts: curatorRecentPostSchema.array().default([])
+	/**
+	 * Recent posts from the curator's feeds (may be empty). Sourced from external
+	 * feeds — `.catch([])` drops malformed posts rather than failing the curator.
+	 */
+	recent_posts: curatorRecentPostSchema.array().catch([]).default([])
 });
 export type CuratorInfo = z.infer<typeof curatorInfoSchema>;
 
@@ -151,12 +154,13 @@ export const vaultInfoSchema = z.object({
 	protocol_slug: z.string(),
 
 	// --- Curator ---
+	// (defaults keep transitional payloads without curator keys parseable)
 	/** URL-safe slug of the curator managing this vault; null if uncurated */
-	curator_slug: z.string().nullable(),
+	curator_slug: z.string().nullable().default(null),
 	/** Display name of the curator managing this vault; null if uncurated */
-	curator_name: z.string().nullable(),
+	curator_name: z.string().nullable().default(null),
 	/** Whether the curator is the protocol itself (self-curated); null if uncurated */
-	protocol_curator: z.boolean().nullable(),
+	protocol_curator: z.boolean().nullable().default(null),
 
 	// --- Lifetime performance metrics ---
 	/** Lifetime gross absolute return as a decimal (e.g. 0.15 = 15%) */
@@ -462,8 +466,12 @@ export const topVaultsSchema = z.object({
 	 * break parsing of the (critical) vaults array.
 	 */
 	core3_protocols: z.record(z.string(), core3ProtocolSchema).catch({}).default({}),
-	/** Curator metadata keyed by curator slug; referenced by vault.curator_slug */
-	curators: z.record(z.string(), curatorInfoSchema).default({})
+	/**
+	 * Curator metadata keyed by curator slug; referenced by vault.curator_slug.
+	 * Partly built from external feeds — `.catch({})` guarantees a malformed
+	 * payload here can never break parsing of the (critical) vaults array.
+	 */
+	curators: z.record(z.string(), curatorInfoSchema).catch({}).default({})
 });
 export type TopVaults = z.infer<typeof topVaultsSchema>;
 
