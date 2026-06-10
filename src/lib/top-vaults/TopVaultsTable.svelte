@@ -105,9 +105,16 @@
 		defaultDirection?: 'asc' | 'desc';
 		/** Show skeleton loading state while vault data is being fetched */
 		loading?: boolean;
+		/** Override for the "out of {total}" listing meta; defaults to the vaults passed in (use to show the whole-database count on pre-filtered listings) */
+		totalVaultCount?: number;
 	}
 
-	const emptyTopVaults: TopVaults = { generated_at: new Date().toISOString(), vaults: [], core3_protocols: {}, curators: {} };
+	const emptyTopVaults: TopVaults = {
+		generated_at: new Date().toISOString(),
+		vaults: [],
+		core3_protocols: {},
+		curators: {}
+	};
 	const SKELETON_ROW_COUNT = 10;
 
 	let {
@@ -125,7 +132,8 @@
 		defaultMonthlyReturnKey = 'any',
 		defaultSort,
 		defaultDirection,
-		loading = false
+		loading = false,
+		totalVaultCount: totalVaultCountProp
 	}: Props = $props();
 
 	// --- Sort column registry (key → compareFn + default direction) ---
@@ -340,8 +348,9 @@
 	// Count of hidden vaults
 	let hiddenByTvl = $derived(hiddenVaults.length);
 
-	// Total number of vaults available to this listing, before any filtering
-	let totalVaultCount = $derived(topVaults.vaults.length);
+	// Total vault count for the listing meta — the whole-database count when
+	// provided by the page, otherwise the vaults available to this listing
+	let totalVaultCount = $derived(totalVaultCountProp ?? topVaults.vaults.length);
 
 	// Filter vaults matching all active filters (TVL, age, risk, search)
 	let filteredVaults = $derived.by(() => {

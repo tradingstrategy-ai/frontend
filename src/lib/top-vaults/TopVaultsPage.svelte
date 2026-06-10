@@ -54,6 +54,8 @@
 		detailAside?: Snippet;
 		/** Optional content rendered above the vaults table (and its status line) */
 		beforeTable?: Snippet;
+		/** Whole-database vault count for the "out of {total}" listing meta on pre-filtered listings */
+		totalVaultCount?: number;
 	}
 
 	let {
@@ -78,7 +80,8 @@
 		defaultDirection,
 		loading = false,
 		detailAside,
-		beforeTable
+		beforeTable,
+		totalVaultCount
 	}: Props = $props();
 
 	let renderDetailAsideInHero = $derived(chain && detailAside && !protocolMetadata && !stablecoinMetadata);
@@ -144,15 +147,20 @@
 				<ProtocolDescription metadata={protocolMetadata} />
 			{/if}
 
-			{#if curatorMetadata && detailAside}
-				<div class="detail-overview">
-					<CuratorDescription curator={curatorMetadata} />
-					<aside class="detail-aside">
-						{@render detailAside()}
-					</aside>
+			{#if curatorMetadata}
+				<div class={['curator-overview', { 'detail-overview': detailAside }]}>
+					<div class="curator-main">
+						<CuratorDescription curator={curatorMetadata} />
+						{#if curatorMetadata.recent_posts.length > 0}
+							<CuratorRecentPosts curator={curatorMetadata} />
+						{/if}
+					</div>
+					{#if detailAside}
+						<aside class="detail-aside">
+							{@render detailAside()}
+						</aside>
+					{/if}
 				</div>
-			{:else if curatorMetadata}
-				<CuratorDescription curator={curatorMetadata} />
 			{/if}
 
 			{#if stablecoinMetadata}
@@ -165,10 +173,6 @@
 						{@render detailAside()}
 					</aside>
 				</div>
-			{/if}
-
-			{#if curatorMetadata && curatorMetadata.recent_posts.length > 0}
-				<CuratorRecentPosts curator={curatorMetadata} />
 			{/if}
 
 			{@render beforeTable?.()}
@@ -192,6 +196,7 @@
 			{:else}
 				<TopVaultsTable
 					{topVaults}
+					{totalVaultCount}
 					{chain}
 					{tvlThreshold}
 					{tvlTriggerLabel}
@@ -284,6 +289,34 @@
 		.detail-aside {
 			display: grid;
 			align-self: stretch;
+		}
+
+		/* About box and Latest posts stacked in the left column; the aside chart
+		   keeps a stable height (matching the typical collapsed column) so expanding
+		   the posts or about widgets doesn't stretch and distort it */
+		.curator-main {
+			display: grid;
+			gap: 1rem;
+			min-width: 0;
+			align-content: start;
+		}
+
+		@media (--viewport-lg-up) {
+			.curator-overview {
+				align-items: start;
+
+				.detail-aside {
+					height: 28rem;
+				}
+			}
+		}
+
+		/* on tablet widths the two-column layout makes the box content unreadable —
+		   stack the about, posts and chart boxes vertically as on mobile */
+		@media (--viewport-md-down) {
+			.curator-overview {
+				grid-template-columns: 1fr;
+			}
 		}
 
 		.detail-overview-single {

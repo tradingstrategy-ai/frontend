@@ -47,6 +47,9 @@ its latest entry).
 	// Upstream feed caps each snippet at 200 characters, cutting mid-word with no ellipsis.
 	const SNIPPET_CAP = 200;
 
+	// Our own display cap when the untruncated post content is available.
+	const FULL_TEXT_CAP = 400;
+
 	// Strip t.co short URLs and collapse whitespace from feed text.
 	function cleanContent(text: string | null): string {
 		return (text ?? '')
@@ -55,13 +58,26 @@ its latest entry).
 			.trim();
 	}
 
-	// Render a snippet, appending an ellipsis when it was truncated by the upstream cap.
+	// Drop the dangling partial word and any trailing punctuation, then add an ellipsis.
+	function ellipsise(text: string): string {
+		return `${text.replace(/\s*\S*$/, '').replace(/[\s.,;:!?-]+$/, '')}…`;
+	}
+
+	// Render the post body: tweets show their full content (short-form by nature),
+	// other sources (RSS articles can run to tens of thousands of characters) are
+	// capped at FULL_TEXT_CAP. Falls back to the upstream snippet, appending an
+	// ellipsis when the upstream cap cut it.
 	function displaySnippet(item: CuratorRecentPost): string {
+		const fullText = cleanContent(item.full_text ?? null);
+		if (fullText) {
+			const isTweet = ['twitter', 'x'].includes(item.source_type.toLowerCase());
+			if (isTweet || fullText.length <= FULL_TEXT_CAP) return fullText;
+			return ellipsise(fullText.slice(0, FULL_TEXT_CAP));
+		}
+
 		const text = cleanContent(item.snippet);
 		const truncated = (item.snippet ?? '').length >= SNIPPET_CAP && !/[.!?…"']$/.test(text);
-		if (!truncated) return text;
-		// Drop the dangling partial word and any trailing punctuation, then add an ellipsis.
-		return `${text.replace(/\s*\S*$/, '').replace(/[\s.,;:!?-]+$/, '')}…`;
+		return truncated ? ellipsise(text) : text;
 	}
 
 	function sourceIcon(sourceType: string): Component {
@@ -89,6 +105,8 @@ its latest entry).
 		const seen = new Set<string>();
 		return sorted.filter((item) => {
 			const key = contentKey(item);
+			// Skip posts with no displayable text (e.g. a tweet that is only a t.co link)
+			if (!key) return false;
 			if (seen.has(key)) return false;
 			seen.add(key);
 			return true;
@@ -148,8 +166,6 @@ its latest entry).
 		.feed {
 			display: flex;
 			flex-direction: column;
-			max-width: 600px;
-			margin-inline: auto;
 			padding-block: 0.5rem;
 		}
 
@@ -199,7 +215,7 @@ its latest entry).
 		}
 
 		:global(.toggle-btn) {
-			align-self: center;
+			align-self: flex-start;
 			margin-top: 0.75rem;
 			color: var(--c-text-extra-light);
 

@@ -14,11 +14,13 @@ with an "about" panel and a TVL/return mini chart.
 	let { curatorSlug, curatorName, curator } = $derived(data);
 
 	let topVaults = $state<TopVaults>();
+	let totalVaultCount = $state<number>();
 	let loading = $state(!hasVaultCache());
 
 	$effect(() => {
 		fetchAllVaultData()
 			.then((allData) => {
+				totalVaultCount = allData.vaults.length;
 				topVaults = {
 					...allData,
 					vaults: allData.vaults.filter((v) => v.curator_slug === curatorSlug)
@@ -73,17 +75,17 @@ with an "about" panel and a TVL/return mini chart.
 
 <TopVaultsPage
 	{topVaults}
+	{totalVaultCount}
 	{loading}
 	curatorMetadata={curator}
 	title="Top {curatorName} vaults"
-	subtitle="Stablecoin vaults curated by {curatorName}"
 	showFilters
 	defaultTvlKey="10k"
 	defaultSort="tvl"
 >
 	{#snippet detailAside()}
 		<VaultGroupMiniChart
-			title="All {curatorName} vaults"
+			title="{curatorName}: returns and TVL"
 			dataUrl="/trading-view/vaults/curators/{curatorSlug}/chart-data"
 			compareLabel="Compare all curators"
 			compareHref="/trading-view/vaults/curators"

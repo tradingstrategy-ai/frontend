@@ -84,8 +84,10 @@ export type PeriodMetrics = z.infer<typeof periodMetricsSchema>;
 export const curatorRecentPostSchema = z.object({
 	/** Post title; may be null for sources that don't provide one (e.g. tweets) */
 	title: z.string().nullable(),
-	/** Short text excerpt of the post */
+	/** Short text excerpt of the post (capped at 200 characters upstream) */
 	snippet: z.string(),
+	/** Full post content, untruncated; may be absent for some sources */
+	full_text: z.string().nullable().optional(),
 	/** Canonical link to the post */
 	link: z.string(),
 	/** Where the post came from (e.g. "linkedin", "twitter", "rss") */
@@ -124,6 +126,10 @@ export const curatorInfoSchema = z.object({
 	protocol_curator: z.boolean(),
 	/** Canonical feeder/protocol id this curator maps to, null if none */
 	canonical_feeder_id: z.string().nullable(),
+	/** Short plain-text description shown at the top of the about box */
+	short_description: z.string().nullable().optional(),
+	/** Long description (markdown) revealed by the "View more" control */
+	long_description: z.string().nullable().optional(),
 	/** Logo URLs by theme variant */
 	logos: curatorLogosSchema,
 	/** Recent posts from the curator's feeds (may be empty) */
