@@ -30,7 +30,7 @@ with an "about" panel and a TVL/return mini chart.
 			.finally(() => (loading = false));
 	});
 
-	let title = $derived(`Top ${curatorName} vaults`);
+	let title = $derived(`Top ${curatorName} stablecoin vaults`);
 	let description = $derived(`Stablecoin vaults curated by ${curatorName}, ranked by performance.`);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived(curator.logos.generic ? new URL(curator.logos.generic, page.url.origin).href : undefined);
@@ -78,7 +78,7 @@ with an "about" panel and a TVL/return mini chart.
 	{totalVaultCount}
 	{loading}
 	curatorMetadata={curator}
-	title="Top {curatorName} vaults"
+	title="Top {curatorName} stablecoin vaults"
 	showFilters
 	defaultTvlKey="10k"
 	defaultSort="tvl"
