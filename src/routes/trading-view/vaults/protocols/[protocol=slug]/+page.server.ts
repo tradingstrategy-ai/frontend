@@ -5,7 +5,7 @@ import { getProtocolDisplayName } from '$lib/top-vaults/helpers.js';
 
 export async function load({ params, fetch }) {
 	const { protocol } = params;
-	const { vaults } = await getCachedTopVaults(fetch);
+	const { vaults, core3_protocols } = await getCachedTopVaults(fetch);
 
 	const protocolVault = vaults.find((v) => v.protocol_slug === protocol);
 	if (!protocolVault) error(404, 'Vault protocol not found');
@@ -15,6 +15,7 @@ export async function load({ params, fetch }) {
 	return {
 		protocolSlug: protocol,
 		protocolName: getProtocolDisplayName(protocolVault.protocol),
-		protocolMetadata
+		protocolMetadata,
+		core3: core3_protocols[protocol] ?? null
 	};
 }

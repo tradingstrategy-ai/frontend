@@ -1,6 +1,6 @@
 <script module lang="ts">
 	export const sortOptions = {
-		keys: ['tvl', 'avg_apy', 'vault_count', 'name', 'risk'],
+		keys: ['tvl', 'avg_apy', 'vault_count', 'name', 'risk', 'core3_risk'],
 		directions: ['desc', 'asc']
 	} as const;
 
@@ -19,6 +19,7 @@
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import RiskCell from './RiskCell.svelte';
+	import Core3RiskCell from './Core3RiskCell.svelte';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 
 	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
@@ -27,6 +28,7 @@
 		rows?: VaultGroup[];
 		groupLabel: string;
 		includeRisk?: boolean;
+		includeCore3Risk?: boolean;
 		includeFullName?: boolean;
 		getLogoHref?: (slug: string) => string | undefined;
 		page?: number;
@@ -39,6 +41,7 @@
 		rows,
 		groupLabel,
 		includeRisk = false,
+		includeCore3Risk = false,
 		includeFullName = false,
 		getLogoHref,
 		page: pageIndex = 0,
@@ -58,7 +61,11 @@
 		tableRowsStore.set(tableRows);
 	});
 
-	const hiddenColumns = [...(includeRisk ? [] : ['risk']), ...(includeFullName ? [] : ['full_name'])];
+	const hiddenColumns = [
+		...(includeRisk ? [] : ['risk']),
+		...(includeCore3Risk ? [] : ['core3_risk']),
+		...(includeFullName ? [] : ['full_name'])
+	];
 
 	// svelte-ignore state_referenced_locally
 	const table = createTable(tableRowsStore, {
@@ -91,6 +98,19 @@
 			accessor: 'fullName',
 			cell: ({ value }) => value ?? '',
 			plugins: { sort: { disable: true } }
+		}),
+		table.column({
+			id: 'core3_risk',
+			header: 'Core3',
+			accessor: (row) => ({ rating: row.core3_rating ?? null, slug: row.slug, score: row.core3_score ?? null }),
+			cell: ({ value }) => createRender(Core3RiskCell, { rating: value.rating, slug: value.slug }),
+			plugins: {
+				sort: {
+					// lower score = better rating; unrated protocols sort last
+					getSortValue: (v) => v.score ?? Infinity,
+					invert: true
+				}
+			}
 		}),
 		table.column({
 			id: 'risk',
@@ -138,7 +158,7 @@
 <style>
 	.vault-protocol-table {
 		/* flip the sort indicator on columns that use inverted sort */
-		:global(:is(th.name, th.risk) .icon) {
+		:global(:is(th.name, th.risk, th.core3_risk) .icon) {
 			rotate: 180deg;
 		}
 
@@ -157,7 +177,7 @@
 			:global(:is(th, td)) {
 				width: 20%;
 
-				&:not(:is(.name, .risk, .full_name)) {
+				&:not(:is(.name, .risk, .core3_risk, .full_name)) {
 					text-align: right;
 				}
 			}
@@ -171,7 +191,9 @@
 				width: max(calc(20vw), 12rem);
 			}
 
-			:global(:has(.risk)) {
+			/* layout with a leading rating column (technical risk and/or Core3); the
+			   percentage widths must sum to 100% so the cells fill the table edge-to-edge */
+			:global(:has(:is(.risk, .core3_risk))) {
 				:global(:is(th, td)) {
 					width: 16%;
 				}

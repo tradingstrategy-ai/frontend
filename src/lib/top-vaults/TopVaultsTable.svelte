@@ -107,7 +107,7 @@
 		loading?: boolean;
 	}
 
-	const emptyTopVaults: TopVaults = { generated_at: new Date().toISOString(), vaults: [] };
+	const emptyTopVaults: TopVaults = { generated_at: new Date().toISOString(), vaults: [], core3_protocols: {} };
 	const SKELETON_ROW_COUNT = 10;
 
 	let {

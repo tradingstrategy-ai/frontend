@@ -275,6 +275,54 @@ export const vaultInfoSchema = z.object({
 });
 export type VaultInfo = z.infer<typeof vaultInfoSchema>;
 
+/**
+ * Core3 protocol-level risk rating (https://core3.io).
+ *
+ * Third-party rating data sourced by the backend and keyed in the top-vaults
+ * payload by protocol slug (matching {@link VaultInfo.protocol_slug}). Surfaced
+ * on the vault detail page. All fields are permissive because this is external
+ * data we do not control — see {@link topVaultsSchema} for the `.catch` safety net.
+ */
+export const core3PolSchema = z.object({
+	/** Numeric risk score — lower is better (best protocols ≈ 13, worst ≈ 87) */
+	score: nullableNumber,
+	/** Letter grade, best to worst: AA, A, BBB, BB, B, CCC, CC, C, D */
+	rating: z.string().nullable(),
+	/** Confidence in the rating (e.g. "Exceptional", "High", "Moderate", "Low") */
+	confidence: z.string().nullable()
+});
+export type Core3Pol = z.infer<typeof core3PolSchema>;
+
+export const core3ProtocolSchema = z.object({
+	/** Core3 protocol slug (may differ from our protocol_slug) */
+	slug: z.string(),
+	/** Protocol display name on Core3 */
+	name: z.string(),
+	/** Overall Core3 rank across all rated protocols (1 = best) */
+	rank: z.int().nullable().optional(),
+	/** Headline rating object (grade, score, confidence) */
+	pol: core3PolSchema.nullable().optional(),
+	/** Protocol ticker (e.g. "INV") */
+	ticker: z.string().nullable().optional(),
+	/** Core3 protocol report URL — note: upstream omits the path slash, fixed in the helper */
+	link: z.string().nullable().optional(),
+	/** Core3 category (e.g. "Decentralized Finance") */
+	category: z.object({ name: z.string().nullable() }).nullable().optional(),
+	/** Share of Core3's data points populated for this protocol, as a percentage */
+	data_coverage: z.object({ percentage: nullableNumber }).nullable().optional(),
+	/** Market-cap snapshot; `in_usd` is a numeric string */
+	market_cap: z
+		.object({
+			in_usd: z.string().nullable().optional(),
+			change_24h_percentage: nullableNumber.optional()
+		})
+		.nullable()
+		.optional(),
+	/** Chains the protocol is deployed on */
+	chains: z.object({ name: z.string() }).array().optional()
+});
+export type Core3Protocol = z.infer<typeof core3ProtocolSchema>;
+
 /** Slim vault info with only the fields needed for listing/summary views (e.g., landing page). */
 export type SlimVaultInfo = Pick<
 	VaultInfo,
@@ -342,7 +390,13 @@ export const topVaultsSchema = z.object({
 	/** When the backend last regenerated the vault dataset */
 	generated_at: isoDateTime,
 	/** All tracked vaults with full performance and metadata */
-	vaults: vaultInfoSchema.array()
+	vaults: vaultInfoSchema.array(),
+	/**
+	 * Core3 protocol risk ratings, keyed by protocol slug. External third-party
+	 * data — `.catch({})` guarantees a malformed/changed payload here can never
+	 * break parsing of the (critical) vaults array.
+	 */
+	core3_protocols: z.record(z.string(), core3ProtocolSchema).catch({}).default({})
 });
 export type TopVaults = z.infer<typeof topVaultsSchema>;
 
@@ -368,4 +422,8 @@ export interface VaultGroup {
 	risk?: string | null;
 	/** Numeric risk score — only present on protocol groups */
 	risk_numeric?: number | null;
+	/** Core3 protocol risk rating letter (e.g. "AA", "BB") — only present on protocol groups with a Core3 rating */
+	core3_rating?: string | null;
+	/** Core3 numeric risk score (lower = better) — used to sort the Core3 rating column */
+	core3_score?: number | null;
 }
