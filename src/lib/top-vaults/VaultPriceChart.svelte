@@ -267,7 +267,7 @@ so relative performance is comparable on a single axis.
 			{/if}
 		{/snippet}
 
-		{#snippet tooltip({ point, time }, seriesData)}
+		{#snippet tooltip({ point, time }, seriesData, timeSpan)}
 			{#if showCryptoBenchmarks}
 				{@const price = getSeriesValuePoint(seriesData, 'vault-price')}
 				{@const btc = getBenchmarkCustomValues(seriesData[1])}
@@ -276,7 +276,7 @@ so relative performance is comparable on a single axis.
 				{@const tvl = getSeriesValuePoint(seriesData, 'tvl')}
 				{#if price || btc || eth || tvl}
 					<ChartTooltip {point}>
-						<div class="tooltip-date">{formatDate(time as number, '1d')}</div>
+						<div class="tooltip-date">{formatDate(time as number, timeSpan.timeBucket)}</div>
 						<dl class="tooltip-items">
 							<dt>1M ann return:</dt>
 							<dd>{formatPercent(price?.customValues?.annualizedReturn, 1, 1, { signDisplay: 'exceptZero' })}</dd>
@@ -305,7 +305,7 @@ so relative performance is comparable on a single axis.
 				{@const tvl = getSeriesValuePoint(seriesData, 'tvl')}
 				{#if price || treasury || tvl}
 					<ChartTooltip {point}>
-						<div class="tooltip-date">{formatDate(time as number, '1d')}</div>
+						<div class="tooltip-date">{formatDate(time as number, timeSpan.timeBucket)}</div>
 						<dl class="tooltip-items">
 							<dt>1M ann return:</dt>
 							<dd>{formatPercent(price?.customValues?.annualizedReturn, 1, 1, { signDisplay: 'exceptZero' })}</dd>
