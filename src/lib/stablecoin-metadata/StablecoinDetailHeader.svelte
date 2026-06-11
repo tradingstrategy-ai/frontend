@@ -102,7 +102,8 @@ the stablecoin's vaults. The chart is hidden on mobile.
 <style>
 	.stablecoin-detail-header {
 		display: grid;
-		grid-template-columns: 1fr 1fr;
+		/* give the chart column more room, at the expense of the description column */
+		grid-template-columns: minmax(0, 1fr) minmax(26rem, 44rem);
 		gap: 1.5rem;
 		align-items: stretch;
 
@@ -118,7 +119,9 @@ the stablecoin's vaults. The chart is hidden on mobile.
 			min-height: unset;
 		}
 
-		@media (--viewport-sm-down) {
+		/* on tablet widths the two-column layout makes the box content unreadable —
+		   stack the description and chart boxes vertically as on mobile */
+		@media (--viewport-md-down) {
 			grid-template-columns: 1fr;
 
 			.chart-column:empty {

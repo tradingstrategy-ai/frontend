@@ -9,9 +9,10 @@ with an "about" panel and a TVL/return mini chart.
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
+	import { formatDollar } from '$lib/helpers/formatters';
 
 	let { data } = $props();
-	let { curatorSlug, curatorName, curator } = $derived(data);
+	let { curatorSlug, curatorName, curator, vaultCount, tvl } = $derived(data);
 
 	let topVaults = $state<TopVaults>();
 	let totalVaultCount = $state<number>();
@@ -30,10 +31,22 @@ with an "about" panel and a TVL/return mini chart.
 			.finally(() => (loading = false));
 	});
 
-	let title = $derived(`Top ${curatorName} stablecoin vaults`);
-	let description = $derived(`Stablecoin vaults curated by ${curatorName}, ranked by performance.`);
+	/** Ensure a plain-text fragment reads as a full sentence when concatenated */
+	function asSentence(text: string) {
+		const trimmed = text.trim();
+		return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
+	}
+
+	let title = $derived(`Top ${curatorName} stablecoin vaults | Trading Strategy`);
+	let description = $derived.by(() => {
+		const stats =
+			vaultCount > 0 ? ` ${vaultCount} ${vaultCount === 1 ? 'vault' : 'vaults'} with ${formatDollar(tvl, 0)} TVL.` : '';
+		const about = curator.short_description ? ` ${asSentence(curator.short_description)}` : '';
+		return `Stablecoin vaults curated by ${curatorName}, ranked by returns and TVL.${stats}${about}`;
+	});
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived(curator.logos.generic ? new URL(curator.logos.generic, page.url.origin).href : undefined);
+	let socialProfileUrls = $derived([curator.twitter, curator.linkedin].filter((url) => url != null));
 </script>
 
 <MetaTags
@@ -45,7 +58,7 @@ with an "about" panel and a TVL/return mini chart.
 		url: pageUrl,
 		title,
 		description,
-		images: logoUrl ? [{ url: logoUrl }] : [],
+		images: logoUrl ? [{ url: logoUrl, alt: `${curatorName} logo` }] : [],
 		type: 'website'
 	}}
 	twitter={{
@@ -66,9 +79,16 @@ with an "about" panel and a TVL/return mini chart.
 		url: pageUrl,
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
 		image: logoUrl ?? undefined,
+		about: {
+			'@type': 'Organization',
+			name: curatorName,
+			url: curator.website ?? undefined,
+			logo: logoUrl ?? undefined,
+			sameAs: socialProfileUrls.length > 0 ? socialProfileUrls : undefined
+		},
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: topVaults?.vaults.length ?? 0
+			numberOfItems: vaultCount
 		}
 	}}
 />
