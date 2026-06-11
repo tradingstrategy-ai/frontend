@@ -301,6 +301,12 @@
 			align-content: start;
 		}
 
+		/* give the chart aside more room on curator pages, at the expense of the
+		   about/description column */
+		.curator-overview {
+			grid-template-columns: minmax(0, 1fr) minmax(26rem, 44rem);
+		}
+
 		@media (--viewport-lg-up) {
 			.curator-overview {
 				align-items: start;

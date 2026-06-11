@@ -30,7 +30,7 @@ average TVL-weighted return as a line series.
 	interface TooltipParam {
 		axisValueLabel?: string;
 		seriesName?: string;
-		data?: number | null;
+		data?: number | null | [string, number];
 		color?: string;
 	}
 
@@ -46,10 +46,12 @@ average TVL-weighted return as a line series.
 	let chartError = $state<string | null>(null);
 	let loadedDataUrl = $state<string | null>(null);
 
-	const tvlColour = '#14b8a6';
-	const returnColour = '#f59e0b';
+	const tvlColour = '#3b82f6';
+	const returnUpColour = '#22c55e';
+	const returnDownColour = '#ef4444';
 	const axisTextColour = '#d5deea';
 	const gridColour = 'rgba(148, 163, 184, 0.18)';
+	const axisFontSize = 12;
 
 	let points = $derived(chartData?.points ?? []);
 	let hasPoints = $derived(points.length > 0);
@@ -96,7 +98,8 @@ average TVL-weighted return as a line series.
 	function buildTooltip(params: TooltipParam[]) {
 		const date = params[0]?.axisValueLabel ?? '';
 		const tvl = params.find((param) => param.seriesName === 'TVL')?.data;
-		const averageReturn = params.find((param) => param.seriesName === 'Average TVL-weighted return')?.data;
+		const returnData = params.find((param) => param.seriesName === 'Average TVL-weighted return')?.data;
+		const averageReturn = Array.isArray(returnData) ? returnData[1] : returnData;
 
 		return [
 			`<div style="margin-bottom: 0.35rem; color: #ffffff; font-family: ${chartFontFamily}; font-weight: 700;">${formatDateLabel(date)}</div>`,
@@ -130,14 +133,31 @@ average TVL-weighted return as a line series.
 
 		const dates = points.map((point) => point.date);
 		const tvlSeries = points.map((point) => point.tvl);
-		const returnSeries = points.map((point) => point.apy);
+		// [date, value] pairs with nulls dropped — the sign-based visualMap cannot
+		// handle null points (ECharts throws while splitting the line into segments)
+		const returnSeries = points
+			.filter((point) => point.apy != null)
+			.map((point) => [point.date, point.apy] as [string, number]);
 
 		chartInstance = echartsApi.init(chartContainer);
 		chartInstance.setOption({
 			animationDuration: 300,
 			animationEasing: 'quadraticOut',
 			backgroundColor: 'transparent',
-			color: [tvlColour, returnColour],
+			color: [tvlColour, returnUpColour],
+			// colour the return line by sign: green above zero, red at/below zero;
+			// pieces need finite bounds — open-ended pieces crash the ECharts line
+			// gradient renderer ("Cannot read properties of undefined (reading 'coord')")
+			visualMap: {
+				show: false,
+				seriesIndex: 1,
+				dimension: 1,
+				pieces: [
+					{ gt: 0, lte: 1e9, color: returnUpColour },
+					{ gt: -1e9, lte: 0, color: returnDownColour }
+				],
+				outOfRange: { color: returnUpColour }
+			},
 			grid: {
 				top: 8,
 				right: 8,
@@ -163,8 +183,8 @@ average TVL-weighted return as a line series.
 				textStyle: {
 					color: '#f8fafc',
 					fontFamily: chartFontFamily,
-					fontSize: 12,
-					lineHeight: 18
+					fontSize: 13,
+					lineHeight: 19
 				},
 				formatter: (params: TooltipParam[]) => buildTooltip(params)
 			},
@@ -177,7 +197,7 @@ average TVL-weighted return as a line series.
 				axisLabel: {
 					color: axisTextColour,
 					fontFamily: chartFontFamily,
-					fontSize: 10,
+					fontSize: axisFontSize,
 					hideOverlap: true,
 					margin: 8,
 					formatter: (value: string) => formatAxisDate(value)
@@ -193,7 +213,7 @@ average TVL-weighted return as a line series.
 					axisLabel: {
 						color: axisTextColour,
 						fontFamily: chartFontFamily,
-						fontSize: 10,
+						fontSize: axisFontSize,
 						formatter: (value: number) => formatUsd(value)
 					},
 					splitLine: { lineStyle: { color: gridColour } }
@@ -201,12 +221,12 @@ average TVL-weighted return as a line series.
 				{
 					type: 'value',
 					position: 'right',
-					axisLine: { show: true, lineStyle: { color: withAlpha(returnColour, 0.75) } },
-					axisTick: { show: true, lineStyle: { color: withAlpha(returnColour, 0.48) } },
+					axisLine: { show: true, lineStyle: { color: withAlpha(returnUpColour, 0.75) } },
+					axisTick: { show: true, lineStyle: { color: withAlpha(returnUpColour, 0.48) } },
 					axisLabel: {
 						color: axisTextColour,
 						fontFamily: chartFontFamily,
-						fontSize: 10,
+						fontSize: axisFontSize,
 						formatter: (value: number) => formatReturn(value)
 					},
 					splitLine: { show: false }
@@ -239,8 +259,8 @@ average TVL-weighted return as a line series.
 					connectNulls: true,
 					symbol: 'circle',
 					symbolSize: 4,
-					lineStyle: { width: 2, color: returnColour },
-					itemStyle: { color: returnColour },
+					// line colour comes from the sign-based visualMap above
+					lineStyle: { width: 2 },
 					data: returnSeries
 				}
 			]

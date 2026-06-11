@@ -28,9 +28,9 @@ aggregate TVL, vault count and average APY, plus a market-share pie chart.
 		return resolve(`/trading-view/vaults/curators/${slug}`);
 	}
 
-	const title = 'DeFi stablecoin vaults by curator';
+	const title = 'Stablecoin vault curators';
 	const description =
-		'DeFi stablecoin vaults grouped by curator. Curators select and manage vault strategies. TVL represents stablecoin deposits across a curator’s vaults. APY represents the yield of last thirty days.';
+		'Curator rankings for DeFi stablecoin vaults. Curators select and manage vault strategies. TVL represents stablecoin deposits across a curator’s vaults. APY represents the yield of last thirty days.';
 	const glossaryLinks = {
 		defi: resolve('/glossary/defi'),
 		vault: resolve('/glossary/vault'),
@@ -73,13 +73,13 @@ aggregate TVL, vault count and average APY, plus a market-share pie chart.
 				<div class="intro-column">
 					<HeroBanner>
 						{#snippet title()}
-							<span>DeFi vaults by curator</span>
+							<span>Stablecoin vault curators</span>
 						{/snippet}
 						{#snippet subtitle()}
+							Curator rankings for
 							<a class="body-link" href={glossaryLinks.defi}>DeFi</a>
 							<a class="body-link" href={glossaryLinks.stablecoin}>stablecoin</a>
-							<a class="body-link" href={glossaryLinks.vault}>vaults</a>
-							grouped by curator. Curators select and manage vault strategies.
+							<a class="body-link" href={glossaryLinks.vault}>vaults</a>. Curators select and manage vault strategies.
 							<a class="body-link" href={glossaryLinks.tvl}>TVL</a> represents stablecoin deposits across a curator’s
 							vaults.
 							<a class="body-link" href={glossaryLinks.apy}>APY</a>
