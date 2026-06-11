@@ -8,7 +8,9 @@ import {
 	getFormattedLockup,
 	getFormattedFeeMode,
 	getFeeModeLabel,
-	getFeeModeDescription
+	getFeeModeDescription,
+	getCore3ReportUrl,
+	getCore3RankingUrl
 } from './helpers';
 import { createTestVault } from './test-utils';
 
@@ -208,5 +210,33 @@ describe('getFeeModeDescription', () => {
 
 	test('returns description for feeless', () => {
 		expect(getFeeModeDescription('feeless')).toContain('No fees');
+	});
+});
+
+describe('getCore3ReportUrl', () => {
+	test('builds the project profile URL from the CORE3 slug with the UTM source', () => {
+		expect(getCore3ReportUrl({ slug: 'sky' })).toBe('https://core3.io/projects/sky?utm_source=tradingstrategy');
+	});
+
+	test('returns undefined when the slug is missing', () => {
+		expect(getCore3ReportUrl({ slug: '' })).toBeUndefined();
+	});
+});
+
+describe('getCore3RankingUrl', () => {
+	test('returns the projects ranking URL with the UTM source for non-exchange categories', () => {
+		expect(getCore3RankingUrl({ category: { name: 'Decentralized Finance' } })).toBe(
+			'https://core3.io/ratings/projects?utm_source=tradingstrategy'
+		);
+	});
+
+	test('returns the exchanges ranking URL for exchange categories', () => {
+		expect(getCore3RankingUrl({ category: { name: 'Decentralized Exchange' } })).toBe(
+			'https://core3.io/ratings/exchanges?utm_source=tradingstrategy'
+		);
+	});
+
+	test('defaults to the projects ranking when category is missing', () => {
+		expect(getCore3RankingUrl({})).toBe('https://core3.io/ratings/projects?utm_source=tradingstrategy');
 	});
 });

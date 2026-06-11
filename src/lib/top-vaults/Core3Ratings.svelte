@@ -1,9 +1,9 @@
 <!--
 @component
-Displays the third-party Core3 protocol risk rating for a protocol. The rating is
+Displays the third-party CORE3 protocol risk rating for a protocol. The rating is
 protocol-level, so it applies to every vault on that protocol. Used on both the
 individual vault detail page and the protocol listing page; only render it when
-the protocol actually has a Core3 rating.
+the protocol actually has a CORE3 rating.
 
 The header carries the rating grade badge next to the title. Below, a two-column
 layout shows the rating metrics (risk score, confidence, rank) on the left and
@@ -58,7 +58,7 @@ page); omit it on the protocol page itself to render the name as plain text.
 	{#if rating}
 		<div class="grade" data-tone={ratingTone}>{rating}</div>
 	{/if}
-	<h2>Core3 risk rating</h2>
+	<h2>CORE3 risk rating</h2>
 {/snippet}
 
 <MetricsBox class={boxClass}>
@@ -80,12 +80,12 @@ page); omit it on the protocol page itself to render the name as plain text.
 			</header>
 
 			<p class="intro">
-				Risk rating by Core3 for {#if protocolSlug}<a href={resolve(`/trading-view/vaults/protocols/${protocolSlug}`)}
+				Risk rating by CORE3 for {#if protocolSlug}<a href={resolve(`/trading-view/vaults/protocols/${protocolSlug}`)}
 						>{protocolName}</a
 					>{:else}{protocolName}{/if}. The rating applies to all vaults on this protocol.
 				{#if reportUrl}
 					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-					<a href={reportUrl} target="_blank" rel="noreferrer">View full rating on the Core3 website</a>.
+					<a href={reportUrl} target="_blank" rel="noreferrer">View full rating on the CORE3 website</a>.
 				{/if}
 			</p>
 
@@ -103,7 +103,7 @@ page); omit it on the protocol page itself to render the name as plain text.
 										</a>
 										<svelte:fragment slot="popup">
 											<p>
-												Core3's Probability of Loss (PoL) estimates how likely users or token holders are to suffer a
+												CORE3's Probability of Loss (PoL) estimates how likely users or token holders are to suffer a
 												financially material loss, excluding market price moves.
 											</p>
 											<p>
@@ -141,12 +141,12 @@ page); omit it on the protocol page itself to render the name as plain text.
 									<Tooltip>
 										<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 										<a slot="trigger" class="metric-link" href={rankingUrl} target="_blank" rel="noreferrer">
-											Core3 rank
+											CORE3 rank
 											<IconQuestionCircle />
 										</a>
 										<svelte:fragment slot="popup">
-											Where this protocol ranks among all DeFi protocols rated by Core3, ordered by risk (1 = best).
-											Opens the Core3 ranking page.
+											Where this protocol ranks among all DeFi protocols rated by CORE3, ordered by risk (1 = best).
+											Opens the CORE3 ranking page.
 										</svelte:fragment>
 									</Tooltip>
 								</th>
@@ -342,7 +342,7 @@ page); omit it on the protocol page itself to render the name as plain text.
 		}
 	}
 
-	/* Cap the Core3 metric tooltips and give the score breakdown a real bullet list */
+	/* Cap the CORE3 metric tooltips and give the score breakdown a real bullet list */
 	:global(.core3-ratings .tooltip .popup) {
 		max-width: 400px;
 	}
