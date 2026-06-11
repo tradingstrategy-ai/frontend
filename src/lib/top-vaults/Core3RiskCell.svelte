@@ -1,8 +1,8 @@
 <!--
 @component
-Table cell showing a protocol's Core3 risk rating letter (e.g. "AA", "BB"),
+Table cell showing a protocol's CORE3 risk rating letter (e.g. "AA", "BB"),
 colour-coded by tone, with a tooltip explaining the rating. Renders an em dash
-for protocols that have no Core3 rating.
+for protocols that have no CORE3 rating.
 
 @example
 
@@ -33,7 +33,7 @@ for protocols that have no Core3 rating.
 				<span class="rating" data-tone={tone}>{rating}</span>
 			</svelte:fragment>
 			<svelte:fragment slot="popup">
-				Core3's protocol risk rating (Probability of Loss): a third-party estimate of how likely users are to suffer a
+				CORE3's protocol risk rating (Probability of Loss): a third-party estimate of how likely users are to suffer a
 				financially material loss, graded from AA (lowest risk) down to D.
 				{#if slug}<a href={resolve(`/trading-view/vaults/protocols/${slug}`)}>View more</a>{/if}
 			</svelte:fragment>

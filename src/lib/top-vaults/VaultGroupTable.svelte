@@ -104,7 +104,7 @@
 		}),
 		table.column({
 			id: 'core3_risk',
-			header: 'Core3',
+			header: 'CORE3',
 			accessor: (row) => ({ rating: row.core3_rating ?? null, slug: row.slug, score: row.core3_score ?? null }),
 			cell: ({ value }) => createRender(Core3RiskCell, { rating: value.rating, slug: value.slug }),
 			plugins: {
@@ -194,7 +194,7 @@
 				width: max(calc(20vw), 12rem);
 			}
 
-			/* layout with a leading rating column (technical risk and/or Core3); the
+			/* layout with a leading rating column (technical risk and/or CORE3); the
 			   percentage widths must sum to 100% so the cells fill the table edge-to-edge */
 			:global(:has(:is(.risk, .core3_risk))) {
 				:global(:is(th, td)) {

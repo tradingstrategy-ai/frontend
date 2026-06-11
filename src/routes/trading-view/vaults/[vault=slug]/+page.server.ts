@@ -23,7 +23,7 @@ export async function load({ params, fetch }) {
 	const chain = getChain(vault.chain_id);
 	if (!chain) error(404, 'Chain not found');
 
-	// Core3 ratings are keyed by protocol slug; null when the protocol is unrated
+	// CORE3 ratings are keyed by protocol slug; null when the protocol is unrated
 	const core3 = core3_protocols[vault.protocol_slug] ?? null;
 
 	const [protocolMetadata, stablecoinMetadataIndex] = await Promise.all([
