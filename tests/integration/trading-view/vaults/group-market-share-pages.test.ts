@@ -18,7 +18,7 @@ const pages = [
 	{
 		name: 'curators index page',
 		url: '/trading-view/vaults/curators',
-		heading: /DeFi vaults by curator/,
+		heading: /Stablecoin vault curators/,
 		widgetTestId: 'curator-tvl-pie-chart',
 		headerSelector: '.curator-index-header'
 	}
