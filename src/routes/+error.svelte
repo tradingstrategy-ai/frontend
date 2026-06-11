@@ -69,6 +69,8 @@
 		top: 0;
 		left: 0;
 		right: 0;
+		/* paint above positioned layout elements (e.g. footer social links) showing through the overlay */
+		z-index: 1;
 		min-height: 100vh;
 		background: var(--c-body);
 		display: grid;
