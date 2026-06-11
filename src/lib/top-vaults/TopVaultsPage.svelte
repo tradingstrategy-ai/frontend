@@ -244,7 +244,7 @@
 
 		.hero-layout {
 			display: grid;
-			grid-template-columns: minmax(0, 1fr) minmax(22rem, 34rem);
+			grid-template-columns: minmax(0, 1fr) minmax(26rem, 44rem);
 			gap: 1rem;
 			align-items: start;
 
@@ -279,9 +279,11 @@
 			gap: 1rem;
 		}
 
+		/* give the chart aside more room, at the expense of the about/description
+		   column */
 		.detail-overview {
 			display: grid;
-			grid-template-columns: minmax(0, 1fr) minmax(22rem, 34rem);
+			grid-template-columns: minmax(0, 1fr) minmax(26rem, 44rem);
 			gap: 1rem;
 			align-items: stretch;
 		}
@@ -301,12 +303,6 @@
 			align-content: start;
 		}
 
-		/* give the chart aside more room on curator pages, at the expense of the
-		   about/description column */
-		.curator-overview {
-			grid-template-columns: minmax(0, 1fr) minmax(26rem, 44rem);
-		}
-
 		@media (--viewport-lg-up) {
 			.curator-overview {
 				align-items: start;
@@ -317,19 +313,19 @@
 			}
 		}
 
-		/* on tablet widths the two-column layout makes the box content unreadable —
-		   stack the about, posts and chart boxes vertically as on mobile */
-		@media (--viewport-md-down) {
-			.curator-overview {
-				grid-template-columns: 1fr;
-			}
+		.detail-overview-single .detail-aside {
+			grid-column: 2;
 		}
 
-		.detail-overview-single {
-			grid-template-columns: minmax(0, 1fr) minmax(22rem, 34rem);
+		/* on tablet widths the two-column layout makes the box content unreadable —
+		   stack the description and chart boxes vertically as on mobile */
+		@media (--viewport-md-down) {
+			.detail-overview {
+				grid-template-columns: 1fr;
+			}
 
-			.detail-aside {
-				grid-column: 2;
+			.detail-overview-single .detail-aside {
+				grid-column: auto;
 			}
 		}
 
@@ -337,14 +333,6 @@
 			.hero-layout {
 				grid-template-columns: 1fr;
 				align-items: stretch;
-			}
-
-			.detail-overview {
-				grid-template-columns: 1fr;
-			}
-
-			.detail-overview-single .detail-aside {
-				grid-column: auto;
 			}
 		}
 	}

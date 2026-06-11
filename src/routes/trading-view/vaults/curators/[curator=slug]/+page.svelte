@@ -9,9 +9,10 @@ with an "about" panel and a TVL/return mini chart.
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
+	import { formatDollar } from '$lib/helpers/formatters';
 
 	let { data } = $props();
-	let { curatorSlug, curatorName, curator } = $derived(data);
+	let { curatorSlug, curatorName, curator, vaultCount, tvl } = $derived(data);
 
 	let topVaults = $state<TopVaults>();
 	let totalVaultCount = $state<number>();
@@ -30,29 +31,55 @@ with an "about" panel and a TVL/return mini chart.
 			.finally(() => (loading = false));
 	});
 
-	let title = $derived(`Top ${curatorName} stablecoin vaults`);
-	let description = $derived(`Stablecoin vaults curated by ${curatorName}, ranked by performance.`);
+	/** Google truncates search snippets around this length; keep the meta description within it */
+	const META_DESCRIPTION_MAX_LENGTH = 160;
+
+	/** Ensure a plain-text fragment reads as a full sentence when concatenated */
+	function asSentence(text: string) {
+		const trimmed = text.trim();
+		return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
+	}
+
+	/** Clip text at a word boundary (with an ellipsis) so it fits within maxLength */
+	function clipAtWord(text: string, maxLength: number) {
+		if (text.length <= maxLength) return text;
+		const clipped = text.slice(0, maxLength - 1);
+		const lastSpace = clipped.lastIndexOf(' ');
+		return `${clipped.slice(0, lastSpace > 0 ? lastSpace : maxLength - 1).replace(/[,;:.]$/, '')}…`;
+	}
+
+	let title = $derived(`Top ${curatorName} stablecoin vaults | Trading Strategy`);
+	let fullDescription = $derived.by(() => {
+		const stats =
+			vaultCount > 0 ? ` ${vaultCount} ${vaultCount === 1 ? 'vault' : 'vaults'} with ${formatDollar(tvl, 0)} TVL.` : '';
+		const about = curator.short_description ? ` ${asSentence(curator.short_description)}` : '';
+		return `Stablecoin vaults curated by ${curatorName}, ranked by returns and TVL.${stats}${about}`;
+	});
+	// search-snippet meta description: same content clipped to fit; social cards
+	// and JSON-LD carry the full curator blurb
+	let metaDescription = $derived(clipAtWord(fullDescription, META_DESCRIPTION_MAX_LENGTH));
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived(curator.logos.generic ? new URL(curator.logos.generic, page.url.origin).href : undefined);
+	let socialProfileUrls = $derived([curator.twitter, curator.linkedin].filter((url) => url != null));
 </script>
 
 <MetaTags
 	{title}
-	{description}
+	description={metaDescription}
 	canonical={pageUrl}
 	openGraph={{
 		siteName: 'Trading Strategy',
 		url: pageUrl,
 		title,
-		description,
-		images: logoUrl ? [{ url: logoUrl }] : [],
+		description: fullDescription,
+		images: logoUrl ? [{ url: logoUrl, alt: `${curatorName} logo` }] : [],
 		type: 'website'
 	}}
 	twitter={{
 		site: '@TradingProtocol',
 		cardType: logoUrl ? 'summary_large_image' : 'summary',
 		title,
-		description,
+		description: fullDescription,
 		image: logoUrl ?? undefined
 	}}
 />
@@ -62,13 +89,20 @@ with an "about" panel and a TVL/return mini chart.
 		'@context': 'http://schema.org',
 		'@type': 'CollectionPage',
 		name: title,
-		description,
+		description: fullDescription,
 		url: pageUrl,
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
 		image: logoUrl ?? undefined,
+		about: {
+			'@type': 'Organization',
+			name: curatorName,
+			url: curator.website ?? undefined,
+			logo: logoUrl ?? undefined,
+			sameAs: socialProfileUrls.length > 0 ? socialProfileUrls : undefined
+		},
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: topVaults?.vaults.length ?? 0
+			numberOfItems: vaultCount
 		}
 	}}
 />
