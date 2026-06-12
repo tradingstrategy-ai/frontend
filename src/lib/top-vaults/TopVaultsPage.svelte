@@ -137,7 +137,7 @@
 	<Section>
 		<div class="top-vaults-content">
 			{#if protocolMetadata && detailAside}
-				<div class="detail-overview">
+				<div class="detail-overview wide-detail-overview">
 					<ProtocolDescription metadata={protocolMetadata} />
 					<aside class="detail-aside">
 						{@render detailAside()}
@@ -148,7 +148,7 @@
 			{/if}
 
 			{#if curatorMetadata}
-				<div class={['curator-overview', { 'detail-overview': detailAside }]}>
+				<div class={[detailAside && 'detail-overview wide-detail-overview']}>
 					<div class="curator-main">
 						<CuratorDescription curator={curatorMetadata} />
 						{#if curatorMetadata.recent_posts.length > 0}
@@ -301,14 +301,14 @@
 			align-content: start;
 		}
 
-		/* give the chart aside more room on curator pages, at the expense of the
-		   about/description column */
-		.curator-overview {
+		/* give the chart aside more room on curator and protocol pages, at the
+		   expense of the about/description column */
+		.wide-detail-overview {
 			grid-template-columns: minmax(0, 1fr) minmax(26rem, 44rem);
 		}
 
 		@media (--viewport-lg-up) {
-			.curator-overview {
+			.wide-detail-overview {
 				align-items: start;
 
 				.detail-aside {
@@ -320,7 +320,7 @@
 		/* on tablet widths the two-column layout makes the box content unreadable —
 		   stack the about, posts and chart boxes vertically as on mobile */
 		@media (--viewport-md-down) {
-			.curator-overview {
+			.wide-detail-overview {
 				grid-template-columns: 1fr;
 			}
 		}
