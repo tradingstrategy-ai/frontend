@@ -63,4 +63,17 @@ describe('buildProtocolMiniChartPayload', () => {
 		});
 		expect(latest?.tvl).toBe(100);
 	});
+
+	test('uses table-compatible APY override for the latest point', () => {
+		const rows = [...createRows('vault-a', 100, 1, 1.01), ...createRows('vault-b', 300, 1, 1.02)];
+		const payload = buildProtocolMiniChartPayload(rows, 2, 3600, {
+			generatedAt: new Date('2026-02-01T00:00:00Z'),
+			latestApyRows: [
+				{ id: 'vault-a', tvl: 100, apy: 0.03 },
+				{ id: 'vault-b', tvl: 300, apy: 0.05 }
+			]
+		});
+
+		expect(payload.points.at(-1)?.apy).toBeCloseTo(0.045);
+	});
 });

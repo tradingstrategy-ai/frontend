@@ -14,6 +14,12 @@ export interface ProtocolMiniChartDailyRow {
 	sharePrice: number;
 }
 
+export interface ProtocolMiniChartLatestApyRow {
+	id: string;
+	tvl: number;
+	apy: number | null;
+}
+
 export interface ProtocolMiniChartPoint {
 	date: string;
 	tvl: number;
@@ -44,6 +50,11 @@ interface FilledVaultPoint {
 	dayMs: number;
 	tvl: number;
 	sharePrice: number;
+}
+
+interface ProtocolMiniChartOptions {
+	generatedAt?: Date;
+	latestApyRows?: ProtocolMiniChartLatestApyRow[];
 }
 
 function normaliseDay(value: string | Date) {
@@ -104,12 +115,39 @@ function buildFilledVaultSeries(rows: NormalisedDailyRow[], allDays: string[]) {
 	return filled;
 }
 
+function resolveOptions(optionsOrGeneratedAt?: Date | ProtocolMiniChartOptions): Required<ProtocolMiniChartOptions> {
+	if (optionsOrGeneratedAt instanceof Date) {
+		return { generatedAt: optionsOrGeneratedAt, latestApyRows: [] };
+	}
+
+	return {
+		generatedAt: optionsOrGeneratedAt?.generatedAt ?? new Date(),
+		latestApyRows: optionsOrGeneratedAt?.latestApyRows ?? []
+	};
+}
+
+function getLatestApyOverride(rows: ProtocolMiniChartLatestApyRow[]) {
+	let weightedSum = 0;
+	let weight = 0;
+
+	for (const row of rows) {
+		if (!Number.isFinite(row.tvl) || row.tvl <= 0) continue;
+		if (row.apy == null || !Number.isFinite(row.apy) || row.apy > MAX_APY_THRESHOLD) continue;
+
+		weightedSum += row.tvl * row.apy;
+		weight += row.tvl;
+	}
+
+	return weight > 0 ? weightedSum / weight : null;
+}
+
 export function buildProtocolMiniChartPayload(
 	rows: ProtocolMiniChartDailyRow[],
 	vaultCount: number,
 	cacheTtlSeconds: number,
-	generatedAt = new Date()
+	optionsOrGeneratedAt?: Date | ProtocolMiniChartOptions
 ): ProtocolMiniChartPayload {
+	const { generatedAt, latestApyRows } = resolveOptions(optionsOrGeneratedAt);
 	let excludedOutlierPoints = 0;
 	const normalisedRows = rows
 		.map((row): NormalisedDailyRow | null => {
@@ -177,6 +215,10 @@ export function buildProtocolMiniChartPayload(
 			apy: apyWeight > 0 ? apyWeightedSum / apyWeight : null
 		};
 	});
+	const latestApyOverride = getLatestApyOverride(latestApyRows);
+	if (latestApyOverride != null && points.length > 0) {
+		points[points.length - 1] = { ...points[points.length - 1], apy: latestApyOverride };
+	}
 
 	return {
 		generatedAt: generatedAt.toISOString(),
