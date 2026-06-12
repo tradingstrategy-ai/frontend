@@ -119,7 +119,7 @@ with an "about" panel and a TVL/return mini chart.
 >
 	{#snippet detailAside()}
 		<VaultGroupMiniChart
-			title="{curatorName}: returns and TVL"
+			title="{curatorName}: TVL and returns across all vaults"
 			dataUrl="/trading-view/vaults/curators/{curatorSlug}/chart-data"
 			compareLabel="Compare all curators"
 			compareHref="/trading-view/vaults/curators"
