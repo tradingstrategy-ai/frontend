@@ -77,8 +77,7 @@
 	{topVaults}
 	{loading}
 	{protocolMetadata}
-	title="Top {protocolName} vaults"
-	subtitle="Top stablecoin vaults on {protocolName}"
+	title="{protocolName} powered stablecoin vaults"
 	showFilters
 	defaultTvlKey="10k"
 	defaultHideUnknown={isUnsupportedProtocolSlug(protocolSlug) ? 0 : 1}
