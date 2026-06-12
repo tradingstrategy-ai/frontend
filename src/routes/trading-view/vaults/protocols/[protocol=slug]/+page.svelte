@@ -77,15 +77,14 @@
 	{topVaults}
 	{loading}
 	{protocolMetadata}
-	title="Top {protocolName} vaults"
-	subtitle="Top stablecoin vaults on {protocolName}"
+	title="{protocolName} powered stablecoin vaults"
 	showFilters
 	defaultTvlKey="10k"
 	defaultHideUnknown={isUnsupportedProtocolSlug(protocolSlug) ? 0 : 1}
 >
 	{#snippet detailAside()}
 		<VaultGroupMiniChart
-			title="All {protocolName} vaults"
+			title="All {protocolName} vaults: TVL and returns"
 			dataUrl="/trading-view/vaults/protocols/{protocolSlug}/chart-data"
 			compareLabel="Compare all protocols"
 			compareHref="/trading-view/vaults/historical-tvl-protocol"

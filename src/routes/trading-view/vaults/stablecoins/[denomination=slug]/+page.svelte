@@ -6,6 +6,7 @@
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
+	import VaultGroupDescription from '../../VaultGroupDescription.svelte';
 
 	let { data } = $props();
 	let { denominationSlug, denominationSymbol, denominationName, stablecoinMetadata } = $derived(data);
@@ -25,7 +26,7 @@
 			.finally(() => (loading = false));
 	});
 
-	let title = $derived(`Top ${denominationName} vaults | Trading Strategy`);
+	let title = $derived(`${denominationName} stablecoin vaults | Trading Strategy`);
 	let description = $derived(
 		stablecoinMetadata?.short_description ?? `Top ${denominationName} DeFi vaults ranked by performance.`
 	);
@@ -89,13 +90,24 @@
 	{topVaults}
 	{loading}
 	{stablecoinMetadata}
-	title="Top {denominationName} vaults"
+	title="{denominationName} stablecoin vaults"
 	showFilters
 	defaultTvlKey="10k"
 >
+	{#snippet detailDescription()}
+		{#if topVaults?.vaults.length}
+			<VaultGroupDescription
+				title="About {denominationSymbol} vaults"
+				subject={denominationName}
+				verbPhrase="is used in"
+				vaults={topVaults.vaults}
+			/>
+		{/if}
+	{/snippet}
+
 	{#snippet detailAside()}
 		<VaultGroupMiniChart
-			title="All {denominationSymbol} vaults"
+			title="All {denominationSymbol} vaults: TVL and returns"
 			dataUrl="/trading-view/vaults/stablecoins/{denominationSlug}/chart-data"
 			compareLabel="Compare all stablecoins"
 			compareHref="/trading-view/vaults/historical-tvl-stablecoin"

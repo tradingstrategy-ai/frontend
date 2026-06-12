@@ -48,7 +48,7 @@ with an "about" panel and a TVL/return mini chart.
 		return `${clipped.slice(0, lastSpace > 0 ? lastSpace : maxLength - 1).replace(/[,;:.]$/, '')}…`;
 	}
 
-	let title = $derived(`Top ${curatorName} stablecoin vaults | Trading Strategy`);
+	let title = $derived(`${curatorName} curated stablecoin vaults | Trading Strategy`);
 	let fullDescription = $derived.by(() => {
 		const stats =
 			vaultCount > 0 ? ` ${vaultCount} ${vaultCount === 1 ? 'vault' : 'vaults'} with ${formatDollar(tvl, 0)} TVL.` : '';
@@ -112,7 +112,7 @@ with an "about" panel and a TVL/return mini chart.
 	{totalVaultCount}
 	{loading}
 	curatorMetadata={curator}
-	title="Top {curatorName} stablecoin vaults"
+	title="{curatorName} curated stablecoin vaults"
 	showFilters
 	defaultTvlKey="10k"
 	defaultSort="tvl"

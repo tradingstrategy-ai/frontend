@@ -203,6 +203,28 @@ export function meetsDefaultTvl(vault: Pick<VaultInfo, 'current_nav' | 'chain_id
 	return (vault.current_nav ?? 0) >= threshold;
 }
 
+const DEFAULT_DETAIL_RISK_FILTER = riskFilterOptions[1];
+
+/**
+ * Check if vault is included in vault group (protocol/chain/curator/stablecoin)
+ * mini charts and headline stats: not blacklisted, meets the minimum TVL,
+ * supported protocol and within the default risk filter (unknown risk passes).
+ *
+ * Matches the default vault listing table filters, so stats derived from this
+ * set agree with the table's initial stats row.
+ */
+export function isEligibleVaultGroupMiniChartVault(vault: VaultInfo) {
+	if (isBlacklisted(vault)) return false;
+	if (!meetsMinTvl(vault)) return false;
+	if (!hasSupportedProtocol(vault)) return false;
+
+	if (vault.risk_numeric == null) return true;
+	return (
+		vault.risk_numeric >= DEFAULT_DETAIL_RISK_FILTER.minValue &&
+		vault.risk_numeric <= DEFAULT_DETAIL_RISK_FILTER.maxValue
+	);
+}
+
 /**
  * Return the formatted lockup value for a vault (in days, hours, minutes if needed)
  */
