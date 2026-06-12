@@ -33,8 +33,8 @@ TVL-weighted 30-day average yield from the loaded vault data.
 
 	let { chainName, vaults }: Props = $props();
 
-	// exclude blacklisted vaults and broken TVL outliers from the stats so a single
-	// bad data point doesn't inflate the total
+	// all headline stats derive from this set: exclude blacklisted vaults and broken
+	// TVL outliers so a single bad data point doesn't inflate the figures
 	let statsVaults = $derived(
 		vaults.filter((v) => !isBlacklisted(v) && (v.current_nav ?? 0) <= VAULT_TVL_OUTLIER_THRESHOLD)
 	);
@@ -57,14 +57,15 @@ TVL-weighted 30-day average yield from the loaded vault data.
 		return [...tvlByProtocol.values()].toSorted((a, b) => b.tvl - a.tvl).slice(0, 3);
 	});
 	// yield over the same eligible-vault set as the mini chart and the table's
-	// default filters, so the number agrees with the stats row below
-	let averageYield = $derived(calculateTvlWeightedApy(vaults.filter(isEligibleVaultGroupMiniChartVault)));
+	// default filters, so the number agrees with the stats row below; filtered
+	// from statsVaults so the TVL outlier guard applies here too
+	let averageYield = $derived(calculateTvlWeightedApy(statsVaults.filter(isEligibleVaultGroupMiniChartVault)));
 </script>
 
 <div class="chain-description">
 	<MetricsBox title="About {chainName} vaults">
 		<p>
-			{chainName} blockchain has {vaults.length} stablecoin vaults with {formatDollar(totalTvl, 1)} TVL across {protocolCount}
+			{chainName} blockchain has {statsVaults.length} stablecoin vaults with {formatDollar(totalTvl, 1)} TVL across {protocolCount}
 			protocols.
 			{#if largestVaults.length}
 				The largest vaults are
