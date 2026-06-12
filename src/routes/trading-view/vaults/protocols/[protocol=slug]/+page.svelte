@@ -84,7 +84,7 @@
 >
 	{#snippet detailAside()}
 		<VaultGroupMiniChart
-			title="All {protocolName} vaults"
+			title="All {protocolName} vaults: TVL and returns"
 			dataUrl="/trading-view/vaults/protocols/{protocolSlug}/chart-data"
 			compareLabel="Compare all protocols"
 			compareHref="/trading-view/vaults/historical-tvl-protocol"
