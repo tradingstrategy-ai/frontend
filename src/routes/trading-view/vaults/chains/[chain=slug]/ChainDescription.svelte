@@ -20,6 +20,7 @@ TVL-weighted 30-day average yield from the loaded vault data.
 		calculateTvlWeightedApy,
 		hasSupportedProtocol,
 		isBlacklisted,
+		isEligibleVaultGroupMiniChartVault,
 		resolveVaultDetails
 	} from '$lib/top-vaults/helpers';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
@@ -55,7 +56,9 @@ TVL-weighted 30-day average yield from the loaded vault data.
 		}
 		return [...tvlByProtocol.values()].toSorted((a, b) => b.tvl - a.tvl).slice(0, 3);
 	});
-	let averageYield = $derived(calculateTvlWeightedApy(statsVaults));
+	// yield over the same eligible-vault set as the mini chart and the table's
+	// default filters, so the number agrees with the stats row below
+	let averageYield = $derived(calculateTvlWeightedApy(vaults.filter(isEligibleVaultGroupMiniChartVault)));
 </script>
 
 <div class="chain-description">

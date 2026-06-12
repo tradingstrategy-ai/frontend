@@ -2,22 +2,10 @@ import { DuckDBConnection } from '@duckdb/node-api';
 import type { ProtocolMiniChartDailyRow } from './protocol-mini-chart';
 import type { VaultInfo } from '$lib/top-vaults/schemas';
 import { ensureVaultPricesParquet } from '$lib/top-vaults/vault-prices-parquet';
-import { hasSupportedProtocol, isBlacklisted, meetsMinTvl, riskFilterOptions } from '$lib/top-vaults/helpers';
+
+export { isEligibleVaultGroupMiniChartVault } from '$lib/top-vaults/helpers';
 
 export const VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS = 60 * 60;
-const DEFAULT_DETAIL_RISK_FILTER = riskFilterOptions[1];
-
-export function isEligibleVaultGroupMiniChartVault(vault: VaultInfo) {
-	if (isBlacklisted(vault)) return false;
-	if (!meetsMinTvl(vault)) return false;
-	if (!hasSupportedProtocol(vault)) return false;
-
-	if (vault.risk_numeric == null) return true;
-	return (
-		vault.risk_numeric >= DEFAULT_DETAIL_RISK_FILTER.minValue &&
-		vault.risk_numeric <= DEFAULT_DETAIL_RISK_FILTER.maxValue
-	);
-}
 
 export function getMockVaultGroupMiniChartRows(vaults: VaultInfo[]): ProtocolMiniChartDailyRow[] {
 	const days = Array.from({ length: 120 }, (_, index) => {
