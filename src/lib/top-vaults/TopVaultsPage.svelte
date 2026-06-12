@@ -52,6 +52,9 @@
 		loading?: boolean;
 		/** Optional right-hand content for listing detail page overview panels */
 		detailAside?: Snippet;
+		/** Optional left-hand description box rendered next to detailAside (used by pages
+		    without protocol/curator metadata, e.g. chain pages) */
+		detailDescription?: Snippet;
 		/** Optional content rendered above the vaults table (and its status line) */
 		beforeTable?: Snippet;
 		/** Whole-database vault count for the "out of {total}" listing meta on pre-filtered listings */
@@ -80,11 +83,14 @@
 		defaultDirection,
 		loading = false,
 		detailAside,
+		detailDescription,
 		beforeTable,
 		totalVaultCount
 	}: Props = $props();
 
-	let renderDetailAsideInHero = $derived(chain && detailAside && !protocolMetadata && !stablecoinMetadata);
+	let renderDetailAsideInHero = $derived(
+		chain && detailAside && !detailDescription && !protocolMetadata && !stablecoinMetadata
+	);
 </script>
 
 <main class="top-vaults-page ds-3">
@@ -147,6 +153,15 @@
 				<ProtocolDescription metadata={protocolMetadata} />
 			{/if}
 
+			{#if detailDescription && detailAside}
+				<div class="detail-overview wide-detail-overview">
+					{@render detailDescription()}
+					<aside class="detail-aside">
+						{@render detailAside()}
+					</aside>
+				</div>
+			{/if}
+
 			{#if curatorMetadata}
 				<div class={[detailAside && 'detail-overview wide-detail-overview']}>
 					<div class="curator-main">
@@ -167,7 +182,7 @@
 				<StablecoinDetailHeader metadata={stablecoinMetadata} vaults={topVaults?.vaults ?? []} {detailAside} />
 			{/if}
 
-			{#if !renderDetailAsideInHero && !protocolMetadata && !stablecoinMetadata && !curatorMetadata && detailAside}
+			{#if !renderDetailAsideInHero && !protocolMetadata && !stablecoinMetadata && !curatorMetadata && !detailDescription && detailAside}
 				<div class="detail-overview detail-overview-single">
 					<aside class="detail-aside">
 						{@render detailAside()}

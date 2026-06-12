@@ -6,16 +6,19 @@
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
+	import ChainDescription from './ChainDescription.svelte';
 
 	let { data } = $props();
 	let { chain, chainSlug, chainName } = $derived(data);
 
 	let topVaults = $state<TopVaults>();
+	let totalVaultCount = $state<number>();
 	let loading = $state(!hasVaultCache());
 
 	$effect(() => {
 		fetchAllVaultData()
 			.then((allData) => {
+				totalVaultCount = allData.vaults.length;
 				// Include vaults from all chains sharing this slug (e.g. HyperEVM + HyperCore)
 				const chainIds = new Set(getChainsBySlug(chainSlug).map((c) => c.id));
 				topVaults = {
@@ -27,7 +30,7 @@
 			.finally(() => (loading = false));
 	});
 
-	let title = $derived(`${chainName} top vaults`);
+	let title = $derived(`${chainName} stablecoin vaults`);
 	let description = $derived(`Top stablecoin vaults on ${chainName} blockchain ranked by performance.`);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
@@ -58,15 +61,23 @@
 <TopVaultsPage
 	{chain}
 	{topVaults}
+	{totalVaultCount}
 	{loading}
-	title="Top {chainName} vaults"
-	subtitle="The best performing stablecoin vaults on {chainName}"
+	title="{chainName} stablecoin vaults"
 	showFilters
 	defaultTvlKey="10k"
 >
+	{#snippet detailDescription()}
+		{#if topVaults?.vaults.length}
+			<ChainDescription {chainName} vaults={topVaults.vaults} />
+		{:else}
+			<div></div>
+		{/if}
+	{/snippet}
+
 	{#snippet detailAside()}
 		<VaultGroupMiniChart
-			title="All {chainName} vaults"
+			title="{chainName} stablecoin vaults: TVL and returns"
 			dataUrl="/trading-view/vaults/chains/{chainSlug}/chart-data"
 			compareLabel="Compare all chains"
 			compareHref="/trading-view/vaults/historical-tvl-chain"
