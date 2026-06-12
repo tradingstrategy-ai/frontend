@@ -56,10 +56,14 @@ TVL-weighted 30-day average yield from the loaded vault data.
 		}
 		return [...tvlByProtocol.values()].toSorted((a, b) => b.tvl - a.tvl).slice(0, 3);
 	});
-	// yield over the same eligible-vault set as the mini chart and the table's
-	// default filters, so the number agrees with the stats row below; filtered
-	// from statsVaults so the TVL outlier guard applies here too
-	let averageYield = $derived(calculateTvlWeightedApy(statsVaults.filter(isEligibleVaultGroupMiniChartVault)));
+	// same eligible-vault set as the mini chart and the table's default filters,
+	// so the yield agrees with the stats row below; filtered from statsVaults so
+	// the TVL outlier guard applies here too
+	let eligibleVaults = $derived(statsVaults.filter(isEligibleVaultGroupMiniChartVault));
+	let averageYield = $derived(calculateTvlWeightedApy(eligibleVaults));
+	// relative to the statsVaults count shown in the copy, so the two paragraphs
+	// stay arithmetically consistent (shown count − excluded = listed vaults)
+	let excludedVaultCount = $derived(statsVaults.length - eligibleVaults.length);
 </script>
 
 <div class="chain-description">
@@ -85,6 +89,11 @@ TVL-weighted 30-day average yield from the loaded vault data.
 				The last 30 days' average yield is {formatPercent(averageYield, 1)}.
 			{/if}
 		</p>
+		{#if excludedVaultCount > 0}
+			<p>
+				{excludedVaultCount} vaults are excluded from this ranking due to minimum TVL requirements or risk issues.
+			</p>
+		{/if}
 	</MetricsBox>
 </div>
 
@@ -97,6 +106,10 @@ TVL-weighted 30-day average yield from the loaded vault data.
 		p {
 			margin: 0;
 			line-height: 1.5;
+
+			& + p {
+				margin-top: 0.75rem;
+			}
 		}
 
 		a {
