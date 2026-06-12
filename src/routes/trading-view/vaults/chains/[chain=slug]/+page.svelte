@@ -6,7 +6,7 @@
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
-	import ChainDescription from './ChainDescription.svelte';
+	import VaultGroupDescription from '../../VaultGroupDescription.svelte';
 
 	let { data } = $props();
 	let { chain, chainSlug, chainName } = $derived(data);
@@ -69,7 +69,11 @@
 >
 	{#snippet detailDescription()}
 		{#if topVaults?.vaults.length}
-			<ChainDescription {chainName} vaults={topVaults.vaults} />
+			<VaultGroupDescription
+				title="About {chainName} vaults"
+				subject="{chainName} blockchain"
+				vaults={topVaults.vaults}
+			/>
 		{:else}
 			<div></div>
 		{/if}
