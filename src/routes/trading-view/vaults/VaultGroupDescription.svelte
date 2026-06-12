@@ -77,6 +77,10 @@ excluded vault count from the loaded vault data.
 	// the TVL outlier guard applies here too
 	let eligibleVaults = $derived(statsVaults.filter(isEligibleVaultGroupMiniChartVault));
 	let averageYield = $derived(calculateTvlWeightedApy(eligibleVaults));
+	let vaultCountLabel = $derived(`${statsVaults.length} stablecoin ${statsVaults.length === 1 ? 'vault' : 'vaults'}`);
+	let totalTvlLabel = $derived(`${formatDollar(totalTvl, 1)} TVL`);
+	let protocolCountLabel = $derived(`${protocolCount} ${protocolCount === 1 ? 'protocol' : 'protocols'}`);
+	let averageYieldLabel = $derived(averageYield == null ? null : formatPercent(averageYield, 1));
 	// relative to the statsVaults count shown in the copy, so the two paragraphs
 	// stay arithmetically consistent (shown count − excluded = listed vaults)
 	let excludedVaultCount = $derived(statsVaults.length - eligibleVaults.length);
@@ -87,9 +91,8 @@ excluded vault count from the loaded vault data.
 		<p>
 			{subject}
 			{verbPhrase}
-			{statsVaults.length} stablecoin {statsVaults.length === 1 ? 'vault' : 'vaults'} with {formatDollar(totalTvl, 1)}
-			TVL across {protocolCount}
-			{protocolCount === 1 ? 'protocol' : 'protocols'}.
+			<strong>{vaultCountLabel}</strong> with
+			<strong>{totalTvlLabel}</strong> across <strong>{protocolCountLabel}</strong>.
 			{#if largestVaults.length}
 				The largest {largestVaults.length === 1 ? 'vault is' : 'vaults are'}
 				{#each largestVaults as vault, index (vault.vault_slug)}{index > 0 ? ', ' : ''}<a
@@ -104,8 +107,8 @@ excluded vault count from the loaded vault data.
 								: ', '}<a href={resolve(`/trading-view/vaults/protocols/${protocol.slug}`)}>{protocol.name}</a
 						>{/each}{/if}.
 			{/if}
-			{#if averageYield != null}
-				The last 30 days' average yield is {formatPercent(averageYield, 1)}.
+			{#if averageYieldLabel}
+				The last 30 days' average yield is <strong>{averageYieldLabel}</strong>.
 			{/if}
 		</p>
 		{#if excludedVaultCount > 0}
@@ -131,6 +134,11 @@ excluded vault count from the loaded vault data.
 			& + p {
 				margin-top: 0.75rem;
 			}
+		}
+
+		strong {
+			color: var(--c-text);
+			font-weight: 600;
 		}
 
 		a {

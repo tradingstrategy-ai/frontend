@@ -1,11 +1,19 @@
 import { DuckDBConnection } from '@duckdb/node-api';
-import type { ProtocolMiniChartDailyRow } from './protocol-mini-chart';
+import type { ProtocolMiniChartDailyRow, ProtocolMiniChartLatestApyRow } from './protocol-mini-chart';
 import type { VaultInfo } from '$lib/top-vaults/schemas';
 import { ensureVaultPricesParquet } from '$lib/top-vaults/vault-prices-parquet';
 
 export { isEligibleVaultGroupMiniChartVault } from '$lib/top-vaults/helpers';
 
 export const VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS = 60 * 60;
+
+export function getVaultGroupMiniChartLatestApyRows(vaults: VaultInfo[]): ProtocolMiniChartLatestApyRow[] {
+	return vaults.map((vault) => ({
+		id: vault.id,
+		tvl: vault.current_nav ?? 0,
+		apy: vault.one_month_cagr_net ?? vault.one_month_cagr
+	}));
+}
 
 export function getMockVaultGroupMiniChartRows(vaults: VaultInfo[]): ProtocolMiniChartDailyRow[] {
 	const days = Array.from({ length: 120 }, (_, index) => {
@@ -54,7 +62,7 @@ export async function getVaultGroupMiniChartRows(vaultIds: string[]): Promise<Pr
 					AND share_price > 0
 					AND COALESCE(tvl_filtering_mask, FALSE) = FALSE
 				GROUP BY 1, 2
-				HAVING day < current_date
+				HAVING day <= current_date
 				ORDER BY 2, 1
 			`,
 			{ parquetFile, ...params }

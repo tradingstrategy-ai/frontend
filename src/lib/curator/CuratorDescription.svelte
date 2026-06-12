@@ -42,6 +42,9 @@ the vault protocol description widget. Sourced from the top-vaults dataset
 	);
 	let totalTvl = $derived(calculateTotalTvl(statsVaults));
 	let averageApy = $derived(calculateTvlWeightedApy(statsVaults));
+	let vaultCountLabel = $derived(`${statsVaults.length} ${statsVaults.length === 1 ? 'vault' : 'vaults'}`);
+	let totalTvlLabel = $derived(`${formatDollar(totalTvl, 1)} TVL`);
+	let averageApyLabel = $derived(averageApy == null ? null : `${formatPercent(averageApy, 1)} APY`);
 
 	let expanded = $state(false);
 
@@ -65,9 +68,9 @@ the vault protocol description widget. Sourced from the top-vaults dataset
 					<p>
 						{#if curator.short_description}{curator.short_description}{/if}
 						{#if statsVaults.length}
-							{curator.name} has {statsVaults.length}
-							{statsVaults.length === 1 ? 'vault' : 'vaults'}, with {formatDollar(totalTvl, 1)} TVL{#if averageApy != null}{' '}and
-								{formatPercent(averageApy, 1)} APY for the last 30 days{/if}.
+							{curator.name} has
+							<strong>{vaultCountLabel}</strong>, with <strong>{totalTvlLabel}</strong>{#if averageApyLabel}{' '}and
+								<strong>{averageApyLabel}</strong> for the last 30 days{/if}.
 						{/if}
 					</p>
 				{/if}
@@ -121,6 +124,11 @@ the vault protocol description widget. Sourced from the top-vaults dataset
 
 			p {
 				margin: 0;
+			}
+
+			strong {
+				color: var(--c-text);
+				font-weight: 600;
 			}
 		}
 

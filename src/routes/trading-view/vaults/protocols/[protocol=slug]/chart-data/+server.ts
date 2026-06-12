@@ -2,13 +2,14 @@ import { error, json } from '@sveltejs/kit';
 import { buildProtocolMiniChartPayload, type ProtocolMiniChartPayload } from '$lib/echarts/protocol-mini-chart';
 import {
 	getMockVaultGroupMiniChartRows,
+	getVaultGroupMiniChartLatestApyRows,
 	isEligibleVaultGroupMiniChartVault,
 	getVaultGroupMiniChartRows,
 	VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS
 } from '$lib/echarts/vault-group-mini-chart-server';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 
-const CACHE_VERSION = 'protocol-mini-chart-v3';
+const CACHE_VERSION = 'protocol-mini-chart-v4';
 const cache = new Map<string, { payload: ProtocolMiniChartPayload; expires: number; version: string }>();
 
 async function getCachedChartData(protocolSlug: string, fetch: Fetch) {
@@ -26,7 +27,9 @@ async function getCachedChartData(protocolSlug: string, fetch: Fetch) {
 		import.meta.env.MODE === 'test'
 			? getMockVaultGroupMiniChartRows(eligibleVaults)
 			: await getVaultGroupMiniChartRows(eligibleVaults.map((vault) => vault.id));
-	const payload = buildProtocolMiniChartPayload(rows, eligibleVaults.length, VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS);
+	const payload = buildProtocolMiniChartPayload(rows, eligibleVaults.length, VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS, {
+		latestApyRows: getVaultGroupMiniChartLatestApyRows(eligibleVaults)
+	});
 
 	cache.set(cacheKey, {
 		payload,
