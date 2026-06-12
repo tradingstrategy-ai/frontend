@@ -150,7 +150,7 @@
 			{#if curatorMetadata}
 				<div class={['curator-overview', { 'detail-overview': detailAside }]}>
 					<div class="curator-main">
-						<CuratorDescription curator={curatorMetadata} />
+						<CuratorDescription curator={curatorMetadata} vaults={topVaults?.vaults ?? []} />
 						{#if curatorMetadata.recent_posts.length > 0}
 							<CuratorRecentPosts curator={curatorMetadata} />
 						{/if}
