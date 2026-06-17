@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { vaultProtocolMetadataUrl } from '$lib/config';
+import { sampleDataUrl } from '$lib/config';
 import type { RequestHandler } from './$types';
 
 /**
@@ -17,7 +17,7 @@ const SAMPLE_FILES: Record<string, string> = {
 	'vault-historical.sample.parquet': 'application/vnd.apache.parquet'
 };
 
-const baseUrl = vaultProtocolMetadataUrl ? new URL(vaultProtocolMetadataUrl).origin : undefined;
+const baseUrl = new URL(sampleDataUrl).origin;
 
 export const GET: RequestHandler = async ({ params, fetch }) => {
 	const { file } = params;
@@ -25,10 +25,6 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
 
 	if (!contentType) {
 		throw error(404, 'Not found');
-	}
-
-	if (!baseUrl) {
-		throw error(500, 'Sample data source is not configured');
 	}
 
 	const upstream = await fetch(`${baseUrl}/${file}`);

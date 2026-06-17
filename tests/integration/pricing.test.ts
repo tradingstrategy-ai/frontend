@@ -34,7 +34,8 @@ test.describe('pricing page', () => {
 		await expect(page.getByRole('heading', { name: 'Feature comparison' })).toBeVisible();
 	});
 
-	test('Historical data is listed as Pro-only feature', async ({ page }) => {
-		await expect(page.getByRole('cell', { name: 'Historical data' })).toBeVisible();
+	test('lists DEX dataset rows in the comparison table', async ({ page }) => {
+		await expect(page.getByRole('cell', { name: 'Historical DEX trading data' })).toBeVisible();
+		await expect(page.getByRole('cell', { name: 'DEX price data' })).toBeVisible();
 	});
 });

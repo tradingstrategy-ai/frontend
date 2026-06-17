@@ -1,12 +1,12 @@
 import { error } from '@sveltejs/kit';
 import { headTopVaults, headVaultPrices } from '$lib/top-vaults/server-config';
 import { isR2Configured } from '$lib/r2/client';
-import { vaultProtocolMetadataUrl } from '$lib/config';
+import { sampleDataUrl } from '$lib/config';
 
 const documentationUrl = 'https://tradingstrategy.ai/docs/overview/defi-vault-data.html';
 
 /** Origin of the public CDN that hosts the free sample files (host kept server-side). */
-const sampleBaseUrl = vaultProtocolMetadataUrl ? new URL(vaultProtocolMetadataUrl).origin : undefined;
+const sampleBaseUrl = new URL(sampleDataUrl).origin;
 
 type VaultDatasetDefinition = {
 	/** Stable identifier used for list rendering and logging */
