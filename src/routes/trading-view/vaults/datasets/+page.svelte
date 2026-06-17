@@ -174,7 +174,10 @@ Vault datasets download page
 							</td>
 							<td class="links">
 								<a class="action-link" href={row.documentation} rel="external">Documentation</a>
-								{#if validApiKey}
+								{#if row.free}
+									<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+									<a class="action-link" href={row.downloadUrl} download>Download</a>
+								{:else if validApiKey}
 									<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 									<a class="action-link" target="_blank" rel="noreferrer" href={getDownloadUrl(row.downloadUrl)}>
 										Download
@@ -196,7 +199,7 @@ Vault datasets download page
 		<p>Programmatically access the data. Requires a valid API key you can enter above.</p>
 
 		<div class="curl-example">
-			<pre><code>{getCombinedCurlCommand(data.datasets)}</code></pre>
+			<pre><code>{getCombinedCurlCommand(data.datasets.filter((d) => !d.free))}</code></pre>
 		</div>
 	</Section>
 </main>
