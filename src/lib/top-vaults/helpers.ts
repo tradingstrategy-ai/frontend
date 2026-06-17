@@ -1,4 +1,4 @@
-import type { Core3Protocol, FeeMode, SlimVaultInfo, VaultInfo } from './schemas';
+import type { Core3Pol, Core3Protocol, FeeMode, SlimVaultInfo, VaultInfo } from './schemas';
 import { slimVaultKeys } from './schemas';
 import { resolve } from '$app/paths';
 import { vaultSparklinesUrl } from '$lib/config';
@@ -411,6 +411,66 @@ export function getCore3RatingTone(rating: string | null | undefined): Core3Rati
 export function getCore3RankingUrl(core3: Pick<Core3Protocol, 'category'>): string {
 	const isExchange = /exchange/i.test(core3.category?.name ?? '');
 	return `https://core3.io/ratings/${isExchange ? 'exchanges' : 'projects'}?${CORE3_UTM}`;
+}
+
+/**
+ * Resolve the headline CORE3 rating fields for a vault.
+ *
+ * Prefer the full protocol record because it contains the canonical CORE3 slug
+ * and contextual metadata. Fall back to the compact per-vault `core3` block
+ * emitted by newer vault data exports.
+ */
+export function getCore3PolForVault(
+	vault: Pick<VaultInfo, 'core3' | 'protocol_slug'>,
+	core3Protocols: Record<string, Core3Protocol>
+): Core3Pol | null {
+	const protocolPol = core3Protocols[vault.protocol_slug]?.pol;
+	if (protocolPol) return protocolPol;
+
+	const vaultCore3 = vault.core3;
+	if (!vaultCore3) return null;
+
+	const hasRating = vaultCore3.risk_rating_label != null;
+	const hasScore = vaultCore3.risk_score != null;
+	const hasConfidence = vaultCore3.confidence != null;
+	if (!hasRating && !hasScore && !hasConfidence) return null;
+
+	return {
+		score: vaultCore3.risk_score ?? null,
+		rating: vaultCore3.risk_rating_label ?? null,
+		confidence: vaultCore3.confidence ?? null
+	};
+}
+
+/**
+ * Resolve a full-enough CORE3 protocol record for display components.
+ *
+ * If the top-level `core3_protocols` map has the protocol, return it. Otherwise
+ * adapt the compact per-vault CORE3 summary into the subset used by the UI.
+ */
+export function getCore3ProtocolForVault(
+	vault: Pick<VaultInfo, 'core3' | 'protocol' | 'protocol_slug'>,
+	core3Protocols: Record<string, Core3Protocol>
+): Core3Protocol | null {
+	const protocolRecord = core3Protocols[vault.protocol_slug];
+	if (protocolRecord?.pol) return protocolRecord;
+
+	const pol = getCore3PolForVault(vault, core3Protocols);
+	if (!pol) return null;
+
+	return {
+		slug: '',
+		name: vault.protocol,
+		rank: vault.core3?.core3_ranking ?? null,
+		pol,
+		data_coverage: { percentage: vault.core3?.data_coverage ?? null },
+		market_cap:
+			vault.core3?.market_cap != null
+				? {
+						in_usd: String(vault.core3.market_cap)
+					}
+				: undefined
+	};
 }
 
 /**
