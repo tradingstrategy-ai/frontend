@@ -144,6 +144,9 @@ export async function load({ fetch, setHeaders, url }) {
 		};
 	});
 
+	// Show free samples above the paid datasets (stable sort keeps each group's order)
+	enriched.sort((a, b) => Number(b.free ?? false) - Number(a.free ?? false));
+
 	setHeaders({
 		'cache-control': 'public, max-age=600'
 	});

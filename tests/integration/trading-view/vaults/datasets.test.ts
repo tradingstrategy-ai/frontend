@@ -20,7 +20,7 @@ test.describe('vault datasets page', () => {
 	});
 
 	test('shows dataset catalogue table with all expected columns', async ({ page }) => {
-		for (const col of ['Name', 'Description', 'Format', 'Size', 'Last updated', 'Links']) {
+		for (const col of ['Plan', 'Name', 'Description', 'Format', 'Size', 'Last updated', 'Links']) {
 			await expect(page.getByRole('columnheader', { name: col })).toBeVisible();
 		}
 	});
@@ -103,7 +103,8 @@ test.describe('vault datasets page', () => {
 	test('download links include api-key query param after validation', async ({ page }) => {
 		await page.getByLabel('Enter API key to enable download').fill(VALID_API_KEY);
 		await page.getByRole('button', { name: 'Enter' }).click();
-		const link = page.locator('td.links a.action-link').filter({ hasText: 'Download' }).first();
+		// Target a paid (gated) download link — free sample links use /api and carry no key
+		const link = page.locator('td.links a.action-link[href*="/datasets/download/"]').first();
 		const href = await link.getAttribute('href');
 		expect(href).toContain(`api-key=${VALID_API_KEY}`);
 	});

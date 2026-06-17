@@ -266,6 +266,11 @@ Pricing page with Basic and Pro tier comparison
 						<td class="check"><IconCheck /></td>
 					</tr>
 					<tr>
+						<td>Historical data</td>
+						<td class="dash">—</td>
+						<td class="check"><IconCheck /></td>
+					</tr>
+					<tr>
 						<td>Raw data files</td>
 						<td class="dash">—</td>
 						<td class="check"><IconCheck /></td>

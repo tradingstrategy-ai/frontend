@@ -146,6 +146,7 @@ Vault datasets download page
 			<table class="datatable sm">
 				<thead>
 					<tr class="col-headers">
+						<th class="plan">Plan</th>
 						<th class="name">Name</th>
 						<th class="description">Description</th>
 						<th>Format</th>
@@ -158,6 +159,7 @@ Vault datasets download page
 				<tbody>
 					{#each data.datasets as row (row.id)}
 						<tr>
+							<td class="plan">{row.free ? 'Free' : 'PRO'}</td>
 							<td class="name">
 								<strong>{row.name}</strong>
 								<p class="filename">{row.filename}</p>
