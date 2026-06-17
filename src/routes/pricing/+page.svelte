@@ -249,13 +249,8 @@ Pricing page with Basic and Pro tier comparison
 						<td class="check"><IconCheck /></td>
 					</tr>
 					<tr>
-						<td><a class="feature-link" href="/trading-view/backtesting">Historical DEX trading data</a></td>
+						<td><a class="feature-link" href="/trading-view/backtesting">DEX price data</a></td>
 						<td class="check"><IconCheck /></td>
-						<td class="check"><IconCheck /></td>
-					</tr>
-					<tr>
-						<td><a class="feature-link" href="/trading-view/vaults/datasets">DEX price data</a></td>
-						<td class="dash">—</td>
 						<td class="check"><IconCheck /></td>
 					</tr>
 					<tr>
