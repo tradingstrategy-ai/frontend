@@ -9,9 +9,12 @@ import {
 	getFormattedFeeMode,
 	getFeeModeLabel,
 	getFeeModeDescription,
+	getCore3PolForVault,
+	getCore3ProtocolForVault,
 	getCore3ReportUrl,
 	getCore3RankingUrl
 } from './helpers';
+import type { Core3Protocol } from './schemas';
 import { createTestVault } from './test-utils';
 
 describe('isBlacklisted', () => {
@@ -238,5 +241,112 @@ describe('getCore3RankingUrl', () => {
 
 	test('defaults to the projects ranking when category is missing', () => {
 		expect(getCore3RankingUrl({})).toBe('https://core3.io/ratings/projects?utm_source=tradingstrategy');
+	});
+});
+
+describe('getCore3PolForVault', () => {
+	test('prefers the full top-level protocol record', () => {
+		const vault = createTestVault('Test vault', {
+			protocol: 'Morpho',
+			core3: {
+				risk_score: 42,
+				risk_rating_label: 'CCC',
+				confidence: 'Low'
+			}
+		});
+		const protocols: Record<string, Core3Protocol> = {
+			morpho: {
+				slug: 'morpho',
+				name: 'Morpho',
+				pol: {
+					score: 22.16,
+					rating: 'BBB',
+					confidence: 'High'
+				}
+			}
+		};
+
+		expect(getCore3PolForVault(vault, protocols)).toEqual({
+			score: 22.16,
+			rating: 'BBB',
+			confidence: 'High'
+		});
+	});
+
+	test('falls back to compact per-vault Core3 data', () => {
+		const vault = createTestVault('Test vault', {
+			protocol: 'Morpho',
+			core3: {
+				risk_score: 22.16,
+				risk_rating_label: 'BBB',
+				confidence: 'High'
+			}
+		});
+
+		expect(getCore3PolForVault(vault, {})).toEqual({
+			score: 22.16,
+			rating: 'BBB',
+			confidence: 'High'
+		});
+	});
+
+	test('returns null when neither Core3 shape has headline data', () => {
+		const vault = createTestVault('Test vault', { protocol: 'Morpho' });
+
+		expect(getCore3PolForVault(vault, {})).toBeNull();
+	});
+});
+
+describe('getCore3ProtocolForVault', () => {
+	test('adapts compact per-vault Core3 data for display components', () => {
+		const vault = createTestVault('Test vault', {
+			protocol: 'Morpho',
+			core3: {
+				risk_score: 22.16,
+				risk_rating_label: 'BBB',
+				confidence: 'High',
+				core3_ranking: 39,
+				data_coverage: 76.7,
+				market_cap: 1_253_724_481
+			}
+		});
+
+		expect(getCore3ProtocolForVault(vault, {})).toEqual({
+			slug: '',
+			name: 'Morpho',
+			rank: 39,
+			pol: {
+				score: 22.16,
+				rating: 'BBB',
+				confidence: 'High'
+			},
+			data_coverage: { percentage: 76.7 },
+			market_cap: { in_usd: '1253724481' }
+		});
+	});
+
+	test('falls back to compact per-vault data when top-level protocol pol is null', () => {
+		const vault = createTestVault('Test vault', {
+			protocol: 'Morpho',
+			core3: {
+				risk_score: 22.16,
+				risk_rating_label: 'BBB',
+				confidence: 'High'
+			}
+		});
+		const protocols: Record<string, Core3Protocol> = {
+			morpho: {
+				slug: 'morpho-core3',
+				name: 'Morpho',
+				pol: null
+			}
+		};
+
+		expect(getCore3ProtocolForVault(vault, protocols)?.pol).toEqual({
+			score: 22.16,
+			rating: 'BBB',
+			confidence: 'High'
+		});
+		expect(getCore3ProtocolForVault(vault, protocols)?.slug).toBe('');
 	});
 });

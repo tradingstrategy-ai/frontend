@@ -2,6 +2,7 @@ import type { VaultGroup } from '$lib/top-vaults/schemas.js';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import {
 	calculateTvlWeightedApy,
+	getCore3PolForVault,
 	getProtocolDisplayName,
 	isBlacklisted,
 	meetsMinTvl
@@ -18,6 +19,7 @@ export async function load({ fetch, url: { searchParams } }) {
 
 	const protocols = eligibleVaults.reduce<Record<string, VaultGroup>>((acc, vault) => {
 		const slug = vault.protocol_slug;
+		const core3Pol = getCore3PolForVault(vault, core3_protocols);
 
 		acc[slug] ??= {
 			slug,
@@ -27,9 +29,11 @@ export async function load({ fetch, url: { searchParams } }) {
 			avg_apy: null,
 			risk: vault.risk,
 			risk_numeric: vault.risk_numeric,
-			core3_rating: core3_protocols[slug]?.pol?.rating ?? null,
-			core3_score: core3_protocols[slug]?.pol?.score ?? null
+			core3_rating: core3Pol?.rating ?? null,
+			core3_score: core3Pol?.score ?? null
 		};
+		acc[slug].core3_rating ??= core3Pol?.rating ?? null;
+		acc[slug].core3_score ??= core3Pol?.score ?? null;
 		acc[slug].vault_count++;
 		acc[slug].tvl += vault.current_nav ?? 0;
 

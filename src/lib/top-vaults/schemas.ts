@@ -80,6 +80,29 @@ export const periodMetricsSchema = z.object({
 });
 export type PeriodMetrics = z.infer<typeof periodMetricsSchema>;
 
+/**
+ * Compact per-vault CORE3 summary emitted by the vault data pipeline.
+ *
+ * The backend also exposes the full protocol records under `core3_protocols`.
+ * This compact shape gives the frontend a fallback when a payload contains
+ * per-vault ratings but the top-level map is missing or partially malformed.
+ */
+export const core3VaultSchema = z.object({
+	/** Overall Probability of Loss score, 0 (lowest risk) to 100 (highest risk) */
+	risk_score: nullableNumber.optional(),
+	/** Market-cap snapshot in USD */
+	market_cap: nullableNumber.optional(),
+	/** CORE3 global rank (1 = lowest risk) */
+	core3_ranking: z.int().nullable().optional(),
+	/** Share of CORE3 data points populated, as a percentage */
+	data_coverage: nullableNumber.optional(),
+	/** Confidence in the rating (e.g. "Exceptional", "High", "Moderate", "Low") */
+	confidence: z.string().nullable().optional(),
+	/** Credit-style PoL rating label, e.g. "AA", "BBB", "D" */
+	risk_rating_label: z.string().nullable().optional()
+});
+export type Core3Vault = z.infer<typeof core3VaultSchema>;
+
 /** A post/update surfaced from a curator's social or RSS feed. */
 export const curatorRecentPostSchema = z.object({
 	/** Post title; may be null for sources that don't provide one (e.g. tweets) */
@@ -340,7 +363,15 @@ export const vaultInfoSchema = z.object({
 			morpho_market_flags: z.string().array()
 		})
 		.nullable()
-		.optional()
+		.optional(),
+
+	/**
+	 * Compact CORE3 protocol risk summary attached to each vault.
+	 *
+	 * This duplicates the headline fields in `core3_protocols[protocol_slug]`
+	 * and is kept as a fallback for payloads where the top-level map changes.
+	 */
+	core3: core3VaultSchema.nullable().optional()
 });
 export type VaultInfo = z.infer<typeof vaultInfoSchema>;
 
@@ -465,7 +496,16 @@ export const topVaultsSchema = z.object({
 	 * data — `.catch({})` guarantees a malformed/changed payload here can never
 	 * break parsing of the (critical) vaults array.
 	 */
-	core3_protocols: z.record(z.string(), core3ProtocolSchema).catch({}).default({}),
+	core3_protocols: z
+		.record(z.string(), core3ProtocolSchema.or(z.unknown().transform(() => null)))
+		.transform((records) => {
+			const entries = Object.entries(records).filter(
+				(entry): entry is [string, z.infer<typeof core3ProtocolSchema>] => entry[1] !== null
+			);
+			return Object.fromEntries(entries);
+		})
+		.catch({})
+		.default({}),
 	/**
 	 * Curator metadata keyed by curator slug; referenced by vault.curator_slug.
 	 * Partly built from external feeds — `.catch({})` guarantees a malformed

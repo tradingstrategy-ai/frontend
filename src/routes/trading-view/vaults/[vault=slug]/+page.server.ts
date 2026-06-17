@@ -2,7 +2,7 @@ import { getChain } from '$lib/helpers/chain';
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
 import { buildStablecoinMetadataLookup, findStablecoinMetadata } from '$lib/stablecoin-metadata/helpers';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
-import { resolveVaultDetails } from '$lib/top-vaults/helpers.js';
+import { getCore3ProtocolForVault, resolveVaultDetails } from '$lib/top-vaults/helpers.js';
 import { fetchVaultProtocolMetadata } from '$lib/vault-protocol/client';
 import { error, redirect } from '@sveltejs/kit';
 
@@ -23,8 +23,7 @@ export async function load({ params, fetch }) {
 	const chain = getChain(vault.chain_id);
 	if (!chain) error(404, 'Chain not found');
 
-	// CORE3 ratings are keyed by protocol slug; null when the protocol is unrated
-	const core3 = core3_protocols[vault.protocol_slug] ?? null;
+	const core3 = getCore3ProtocolForVault(vault, core3_protocols);
 
 	const [protocolMetadata, stablecoinMetadataIndex] = await Promise.all([
 		fetchVaultProtocolMetadata(fetch, vault.protocol_slug, vault.protocol),
