@@ -1,5 +1,4 @@
-import { test } from '@playwright/test';
-import { error } from '@sveltejs/kit';
+import { expect, test } from '@playwright/test';
 import { type IndexItem, parseSitemap, parseSitemapIndex } from 'sitemap';
 import { Readable } from 'stream';
 
@@ -14,27 +13,23 @@ test.describe('sitemap index', () => {
 		sitemapIndex = await parseSitemapIndex(Readable.from(data));
 	});
 
-	// validate sitemaps that are servied by backend
+	// validate sitemaps that are served by backend
 	test('sitemap entries served by backend should be valid sitemaps', async ({ request }) => {
+		test.setTimeout(90_000);
+
 		const backendSitemaps = sitemapIndex.filter(({ url }) => /\/api\//.test(url));
 
-		// fetch and parse sitemaps in parallel
-		const promises = backendSitemaps.map(async ({ url }) => {
+		for (const { url } of backendSitemaps) {
 			const localSitemapUrl = new URL(url);
 			const backendSitemapUrl = `${backendOrigin}${localSitemapUrl.pathname}`;
 			try {
-				const resp = await request.get(backendSitemapUrl);
-				if (!resp.ok()) {
-					error(resp.status(), resp.statusText());
-				}
+				const resp = await request.get(backendSitemapUrl, { timeout: 45_000 });
+				expect(resp.ok(), `${backendSitemapUrl} returned ${resp.status()} ${resp.statusText()}`).toBe(true);
 				const data = await resp.text();
 				await parseSitemap(Readable.from(data));
 			} catch (e) {
-				throw new Error(`Failed to load or parse sitemap ${backendSitemapUrl}`);
+				throw new Error(`Failed to load or parse sitemap ${backendSitemapUrl}`, { cause: e });
 			}
-		});
-
-		// test passes if no exceptions thrown
-		await Promise.all(promises);
+		}
 	});
 });

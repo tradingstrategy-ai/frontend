@@ -10,8 +10,9 @@ test.describe('chain index page', () => {
 		const chain = page.getByRole('link', { name: /Ethereum/ });
 		const href = await chain.getAttribute('href');
 		expect(href).toMatch(/ethereum/);
-		await page.goto(href!);
+		await page.goto(href!, { waitUntil: 'domcontentloaded' });
 		await expect(page).toHaveURL(/ethereum/);
+		await expect(page.getByRole('heading', { name: /Ethereum blockchain/ })).toBeVisible();
 	});
 
 	test('tile data (from API) should match local chain helper', async ({ page }) => {
