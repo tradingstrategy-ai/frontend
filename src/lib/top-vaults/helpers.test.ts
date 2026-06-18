@@ -13,7 +13,9 @@ import {
 	getCore3PolForVault,
 	getCore3ProtocolForVault,
 	getCore3ReportUrl,
-	getCore3RankingUrl
+	getCore3RankingUrl,
+	getCore3ScoreTone,
+	getCore3CategoryScores
 } from './helpers';
 import type { Core3Protocol } from './schemas';
 import { createTestVault } from './test-utils';
@@ -220,7 +222,7 @@ describe('getFeeModeDescription', () => {
 describe('getCore3ReportUrl', () => {
 	test('exposes the tracked project methodology URL', () => {
 		expect(CORE3_METHODOLOGY_URL).toBe(
-			'https://www.google.com/url?q=https://core3.io/methodology/projects?utm_source%3Dtradingstrategy%26utm_medium%3Dpartner%26utm_campaign%3Dintegration&sa=D&source=editors&ust=1781772908308421&usg=AOvVaw3vPHUEkPOHLmLd7zIbj5sS'
+			'https://core3.io/methodology/projects?utm_source=tradingstrategy&utm_medium=partner&utm_campaign=integration'
 		);
 	});
 
@@ -355,5 +357,59 @@ describe('getCore3ProtocolForVault', () => {
 			confidence: 'High'
 		});
 		expect(getCore3ProtocolForVault(vault, protocols)?.slug).toBe('');
+	});
+});
+
+describe('getCore3ScoreTone', () => {
+	test('maps risk sub-scores to grade tones (lower is better)', () => {
+		expect(getCore3ScoreTone(0)).toBe('excellent');
+		expect(getCore3ScoreTone(29.9)).toBe('excellent');
+		expect(getCore3ScoreTone(30)).toBe('good');
+		expect(getCore3ScoreTone(49.9)).toBe('good');
+		expect(getCore3ScoreTone(50)).toBe('fair');
+		expect(getCore3ScoreTone(69.9)).toBe('fair');
+		expect(getCore3ScoreTone(70)).toBe('poor');
+		expect(getCore3ScoreTone(100)).toBe('poor');
+	});
+
+	test('returns "unknown" when the score is missing', () => {
+		expect(getCore3ScoreTone(null)).toBe('unknown');
+		expect(getCore3ScoreTone(undefined)).toBe('unknown');
+	});
+});
+
+describe('getCore3CategoryScores', () => {
+	test('flattens pol_categories into an ordered, display-ready list', () => {
+		const result = getCore3CategoryScores({
+			pol_categories: {
+				security: 50.98,
+				financial: 56.67,
+				operational: 21.67,
+				reputational: 56.34,
+				regulatory: 50
+			}
+		});
+
+		expect(result.map((c) => c.key)).toEqual(['security', 'financial', 'operational', 'reputational', 'regulatory']);
+		expect(result[0]).toEqual({ key: 'security', label: 'Security', score: 50.98, tone: 'fair' });
+		expect(result[2]).toEqual({
+			key: 'operational',
+			label: 'Operational',
+			score: 21.67,
+			tone: 'excellent'
+		});
+	});
+
+	test('drops categories with no score', () => {
+		const result = getCore3CategoryScores({
+			pol_categories: { security: 28.58, financial: null, operational: undefined, regulatory: 24 }
+		});
+
+		expect(result.map((c) => c.key)).toEqual(['security', 'regulatory']);
+	});
+
+	test('returns an empty array when there is no per-category breakdown', () => {
+		expect(getCore3CategoryScores({})).toEqual([]);
+		expect(getCore3CategoryScores({ pol_categories: null })).toEqual([]);
 	});
 });

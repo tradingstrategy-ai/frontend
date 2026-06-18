@@ -1,4 +1,4 @@
-import type { Core3Pol, Core3Protocol, FeeMode, SlimVaultInfo, VaultInfo } from './schemas';
+import type { Core3Pol, Core3PolCategories, Core3Protocol, FeeMode, SlimVaultInfo, VaultInfo } from './schemas';
 import { slimVaultKeys } from './schemas';
 import { resolve } from '$app/paths';
 import { vaultSparklinesUrl } from '$lib/config';
@@ -373,9 +373,9 @@ export function rankVaultsBy<V extends Record<string, unknown>>(keys: (keyof V)[
 /** UTM query string appended to all outbound CORE3 links so CORE3 can attribute referral traffic. */
 const CORE3_UTM = 'utm_source=tradingstrategy';
 
-/** CORE3 project methodology page, routed through the partner tracking URL provided by CORE3. */
+/** CORE3 project methodology page, tagged with the partner integration UTM params. */
 export const CORE3_METHODOLOGY_URL =
-	'https://www.google.com/url?q=https://core3.io/methodology/projects?utm_source%3Dtradingstrategy%26utm_medium%3Dpartner%26utm_campaign%3Dintegration&sa=D&source=editors&ust=1781772908308421&usg=AOvVaw3vPHUEkPOHLmLd7zIbj5sS';
+	'https://core3.io/methodology/projects?utm_source=tradingstrategy&utm_medium=partner&utm_campaign=integration';
 
 /**
  * Resolve the public CORE3 project profile URL for a rated protocol, e.g.
@@ -405,6 +405,55 @@ export function getCore3RatingTone(rating: string | null | undefined): Core3Rati
 	if (r.startsWith('C')) return 'fair';
 	if (r.startsWith('D')) return 'poor';
 	return 'unknown';
+}
+
+/**
+ * Map a CORE3 risk sub-score (0–100, lower is better) to the same qualitative
+ * tone used for letter grades, so per-category meters share the grade colours.
+ */
+export function getCore3ScoreTone(score: number | null | undefined): Core3RatingTone {
+	if (score == null) return 'unknown';
+	if (score < 30) return 'excellent';
+	if (score < 50) return 'good';
+	if (score < 70) return 'fair';
+	return 'poor';
+}
+
+/** Human-readable labels for CORE3 risk categories, in display order. */
+export const CORE3_CATEGORY_LABELS = {
+	security: 'Security',
+	financial: 'Financial',
+	operational: 'Operational',
+	reputational: 'Reputational',
+	regulatory: 'Regulatory'
+} as const;
+
+export type Core3CategoryKey = keyof typeof CORE3_CATEGORY_LABELS;
+
+/** A single resolved CORE3 category score for display. */
+export type Core3CategoryScore = {
+	key: Core3CategoryKey;
+	label: string;
+	/** Risk sub-score, 0–100 (lower is better) */
+	score: number;
+	/** Qualitative tone for colour-coding the score meter */
+	tone: Core3RatingTone;
+};
+
+/**
+ * Flatten a protocol's `pol_categories` into an ordered, display-ready list,
+ * dropping categories with no score. Returns an empty array when the protocol
+ * has no per-category breakdown (e.g. the compact per-vault CORE3 fallback).
+ */
+export function getCore3CategoryScores(core3: Pick<Core3Protocol, 'pol_categories'>): Core3CategoryScore[] {
+	const categories = core3.pol_categories;
+	if (!categories) return [];
+
+	return (Object.keys(CORE3_CATEGORY_LABELS) as Core3CategoryKey[]).flatMap((key) => {
+		const score = categories[key as keyof Core3PolCategories];
+		if (score == null) return [];
+		return [{ key, label: CORE3_CATEGORY_LABELS[key], score, tone: getCore3ScoreTone(score) }];
+	});
 }
 
 /**

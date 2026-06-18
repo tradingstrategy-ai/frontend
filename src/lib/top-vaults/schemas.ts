@@ -393,6 +393,26 @@ export const core3PolSchema = z.object({
 });
 export type Core3Pol = z.infer<typeof core3PolSchema>;
 
+/**
+ * Per-category Probability of Loss scores (0–100, lower is better), the
+ * components that aggregate into the headline {@link core3PolSchema} score.
+ * Sourced from the `pol_categories` block on each CORE3 protocol record. The
+ * upstream object also carries a `ts` timestamp, which Zod strips.
+ */
+export const core3PolCategoriesSchema = z.object({
+	/** Security risk sub-score (highest methodology weight) */
+	security: nullableNumber.optional(),
+	/** Financial risk sub-score */
+	financial: nullableNumber.optional(),
+	/** Operational risk sub-score */
+	operational: nullableNumber.optional(),
+	/** Reputational risk sub-score */
+	reputational: nullableNumber.optional(),
+	/** Regulatory risk sub-score */
+	regulatory: nullableNumber.optional()
+});
+export type Core3PolCategories = z.infer<typeof core3PolCategoriesSchema>;
+
 export const core3ProtocolSchema = z.object({
 	/** CORE3 protocol slug (may differ from our protocol_slug) */
 	slug: z.string(),
@@ -402,6 +422,8 @@ export const core3ProtocolSchema = z.object({
 	rank: z.int().nullable().optional(),
 	/** Headline rating object (grade, score, confidence) */
 	pol: core3PolSchema.nullable().optional(),
+	/** Per-category risk sub-scores that aggregate into the headline PoL score */
+	pol_categories: core3PolCategoriesSchema.nullable().optional(),
 	/** Protocol ticker (e.g. "INV") */
 	ticker: z.string().nullable().optional(),
 	/** CORE3 protocol report URL — malformed upstream (omits the path); we build profile URLs from `slug` instead */
