@@ -1,4 +1,4 @@
-import type { Core3Pol, Core3PolCategories, Core3Protocol, FeeMode, SlimVaultInfo, VaultInfo } from './schemas';
+import type { Core3Pol, Core3Protocol, FeeMode, SlimVaultInfo, VaultInfo } from './schemas';
 import { slimVaultKeys } from './schemas';
 import { resolve } from '$app/paths';
 import { vaultSparklinesUrl } from '$lib/config';
@@ -419,16 +419,21 @@ export function getCore3ScoreTone(score: number | null | undefined): Core3Rating
 	return 'poor';
 }
 
-/** Human-readable labels for CORE3 risk categories, in display order. */
-export const CORE3_CATEGORY_LABELS = {
-	security: 'Security',
-	financial: 'Financial',
-	operational: 'Operational',
-	reputational: 'Reputational',
-	regulatory: 'Regulatory'
-} as const;
+/**
+ * CORE3 risk categories in scorecard display order, each with its methodology
+ * weight (the category's share of the aggregate Probability of Loss score).
+ * Single source of truth for the scorecard and the methodology tooltip — the
+ * tooltip derives its own weight-descending ordering from this list.
+ */
+export const CORE3_CATEGORIES = [
+	{ key: 'security', label: 'Security', weight: 35 },
+	{ key: 'financial', label: 'Financial', weight: 15 },
+	{ key: 'operational', label: 'Operational', weight: 20 },
+	{ key: 'reputational', label: 'Reputational', weight: 10 },
+	{ key: 'regulatory', label: 'Regulatory', weight: 5 }
+] as const;
 
-export type Core3CategoryKey = keyof typeof CORE3_CATEGORY_LABELS;
+export type Core3CategoryKey = (typeof CORE3_CATEGORIES)[number]['key'];
 
 /** A single resolved CORE3 category score for display. */
 export type Core3CategoryScore = {
@@ -449,10 +454,10 @@ export function getCore3CategoryScores(core3: Pick<Core3Protocol, 'pol_categorie
 	const categories = core3.pol_categories;
 	if (!categories) return [];
 
-	return (Object.keys(CORE3_CATEGORY_LABELS) as Core3CategoryKey[]).flatMap((key) => {
-		const score = categories[key as keyof Core3PolCategories];
+	return CORE3_CATEGORIES.flatMap(({ key, label }) => {
+		const score = categories[key];
 		if (score == null) return [];
-		return [{ key, label: CORE3_CATEGORY_LABELS[key], score, tone: getCore3ScoreTone(score) }];
+		return [{ key, label, score, tone: getCore3ScoreTone(score) }];
 	});
 }
 
