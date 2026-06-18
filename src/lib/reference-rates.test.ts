@@ -20,10 +20,11 @@ const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-// FRED rate-limits/blocks requests from CI runner IPs (GitHub Actions), so these
-// live-network tests fail intermittently there (the fetch returns null). Skip them
-// in CI; they still run locally, where they verify the real FRED CSV export.
-const SKIP_FRED_IN_CI = !!process.env.CI;
+// Live reference-rate providers rate-limit/block requests from CI runner IPs
+// (GitHub Actions), so these tests fail intermittently there (the fetch returns
+// null). Skip them in CI; they still run locally, where they verify the real
+// provider exports.
+const SKIP_LIVE_REFERENCE_RATES_IN_CI = !!process.env.CI;
 
 async function fetchFredCsvLatest(seriesId: string): Promise<number | null> {
 	try {
@@ -42,7 +43,7 @@ async function fetchFredCsvLatest(seriesId: string): Promise<number | null> {
 	}
 }
 
-describe.skipIf(SKIP_FRED_IN_CI)('fetchFredCsvLatest', () => {
+describe.skipIf(SKIP_LIVE_REFERENCE_RATES_IN_CI)('fetchFredCsvLatest', () => {
 	test(
 		'should fetch SNDR (national savings rate) and return a number',
 		async () => {
@@ -98,7 +99,7 @@ async function fetchTreasuryNoteRate(): Promise<number | null> {
 	}
 }
 
-describe('fetchTreasuryNoteRate', () => {
+describe.skipIf(SKIP_LIVE_REFERENCE_RATES_IN_CI)('fetchTreasuryNoteRate', () => {
 	test(
 		'should fetch Treasury note rate and return a number',
 		async () => {
