@@ -13,7 +13,7 @@ for protocols that have no CORE3 rating.
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import Tooltip from '$lib/components/Tooltip.svelte';
-	import { getCore3RatingTone } from './helpers';
+	import { CORE3_METHODOLOGY_URL, getCore3RatingTone } from './helpers';
 
 	interface Props {
 		rating?: string | null;
@@ -35,6 +35,7 @@ for protocols that have no CORE3 rating.
 			<svelte:fragment slot="popup">
 				CORE3's protocol risk rating (Probability of Loss): a third-party estimate of how likely users are to suffer a
 				financially material loss, graded from AA (lowest risk) down to D.
+				<a href={CORE3_METHODOLOGY_URL} target="_blank" rel="noreferrer">View methodology</a>
 				{#if slug}<a href={resolve(`/trading-view/vaults/protocols/${slug}`)}>View more</a>{/if}
 			</svelte:fragment>
 		</Tooltip>

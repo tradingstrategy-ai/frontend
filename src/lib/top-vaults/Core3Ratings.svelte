@@ -6,7 +6,7 @@ individual vault detail page and the protocol listing page; only render it when
 the protocol actually has a CORE3 rating.
 
 The header carries the rating grade badge next to the title. Below, a two-column
-layout shows the rating metrics (risk score, confidence, rank) on the left and
+layout shows the rating metrics (Probability of Loss, confidence, rank) on the left and
 protocol context (data coverage, category, market cap) on the right.
 
 Pass `protocolSlug` to link the protocol name to its page (e.g. from a vault
@@ -22,7 +22,12 @@ page); omit it on the protocol page itself to render the name as plain text.
 	import type { Core3Protocol } from '$lib/top-vaults/schemas';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
-	import { getCore3RankingUrl, getCore3RatingTone, getCore3ReportUrl } from '$lib/top-vaults/helpers';
+	import {
+		CORE3_METHODOLOGY_URL,
+		getCore3RankingUrl,
+		getCore3RatingTone,
+		getCore3ReportUrl
+	} from '$lib/top-vaults/helpers';
 	import { formatDollar, formatNumber } from '$lib/helpers/formatters';
 	import { resolve } from '$app/paths';
 	import IconQuestionCircle from '~icons/local/question-circle';
@@ -97,8 +102,8 @@ page); omit it on the protocol page itself to render the name as plain text.
 								<th>
 									<Tooltip>
 										<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-										<a slot="trigger" class="metric-link" href={rankingUrl} target="_blank" rel="noreferrer">
-											Risk score
+										<a slot="trigger" class="metric-link" href={CORE3_METHODOLOGY_URL} target="_blank" rel="noreferrer">
+											Probability of Loss
 											<IconQuestionCircle />
 										</a>
 										<svelte:fragment slot="popup">
@@ -122,6 +127,7 @@ page); omit it on the protocol page itself to render the name as plain text.
 											<p>
 												The total is then scaled by 1.0–1.3× for factors such as protocol longevity, past incidents and
 												category leadership.
+												<a href={CORE3_METHODOLOGY_URL} target="_blank" rel="noreferrer">Read CORE3 methodology</a>.
 											</p>
 										</svelte:fragment>
 									</Tooltip>
