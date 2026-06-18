@@ -249,6 +249,11 @@ Pricing page with Basic and Pro tier comparison
 						<td class="check"><IconCheck /></td>
 					</tr>
 					<tr>
+						<td><a class="feature-link" href="/trading-view/backtesting">DEX price data</a></td>
+						<td class="check"><IconCheck /></td>
+						<td class="check"><IconCheck /></td>
+					</tr>
+					<tr>
 						<td>
 							<Tooltip>
 								<span slot="trigger" class="underline">AI ready</span>
@@ -474,6 +479,15 @@ Pricing page with Basic and Pro tier comparison
 
 	.dash {
 		color: var(--c-text-ultra-light);
+	}
+
+	.feature-link {
+		color: inherit;
+		text-decoration: underline;
+
+		&:hover {
+			color: var(--c-text-light);
+		}
 	}
 
 	.data-fields-panel {

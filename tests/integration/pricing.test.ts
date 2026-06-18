@@ -34,7 +34,9 @@ test.describe('pricing page', () => {
 		await expect(page.getByRole('heading', { name: 'Feature comparison' })).toBeVisible();
 	});
 
-	test('Historical data is listed as Pro-only feature', async ({ page }) => {
-		await expect(page.getByRole('cell', { name: 'Historical data' })).toBeVisible();
+	test('lists DEX price data row linking to backtesting', async ({ page }) => {
+		const cell = page.getByRole('cell', { name: 'DEX price data' });
+		await expect(cell).toBeVisible();
+		await expect(cell.getByRole('link')).toHaveAttribute('href', '/trading-view/backtesting');
 	});
 });

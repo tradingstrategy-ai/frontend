@@ -1,8 +1,12 @@
 import { error } from '@sveltejs/kit';
 import { headTopVaults, headVaultPrices } from '$lib/top-vaults/server-config';
 import { isR2Configured } from '$lib/r2/client';
+import { sampleDataUrl } from '$lib/config';
 
 const documentationUrl = 'https://tradingstrategy.ai/docs/overview/defi-vault-data.html';
+
+/** Origin of the public CDN that hosts the free sample files (host kept server-side). */
+const sampleBaseUrl = new URL(sampleDataUrl).origin;
 
 type VaultDatasetDefinition = {
 	/** Stable identifier used for list rendering and logging */
@@ -21,6 +25,10 @@ type VaultDatasetDefinition = {
 	documentation: string;
 	/** Public-facing download URL (points to our proxy, not the CDN) */
 	downloadUrl: string;
+	/** Free sample — downloadable without an API key (proxied via /api) */
+	free?: boolean;
+	/** CDN object name used server-side to read freshness metadata for samples */
+	sampleFile?: string;
 };
 
 type VaultDataset = VaultDatasetDefinition & {
@@ -28,11 +36,34 @@ type VaultDataset = VaultDatasetDefinition & {
 	lastUpdatedAt: string | null;
 };
 
+const SAMPLE_DESCRIPTION = 'Limited data sample covering only vaults on the Ethereum blockchain';
+
+/**
+ * HEAD a public sample file to read its size and last-modified date.
+ * Degrades to nulls on any failure so the page still renders.
+ */
+async function headSample(fetch: typeof globalThis.fetch, file: string) {
+	if (!sampleBaseUrl) return { size: null, lastModified: null };
+	try {
+		const res = await fetch(`${sampleBaseUrl}/${file}`, { method: 'HEAD' });
+		if (!res.ok) return { size: null, lastModified: null };
+		const len = res.headers.get('content-length');
+		const lastModified = res.headers.get('last-modified');
+		return {
+			size: len ? Number(len) : null,
+			lastModified: lastModified ? new Date(lastModified) : null
+		};
+	} catch {
+		return { size: null, lastModified: null };
+	}
+}
+
 /**
  * Build the vault datasets page payload.
  *
  * Defines the frontend-owned dataset catalogue and enriches each entry with
- * server-side freshness metadata from R2.
+ * server-side freshness metadata (R2 for the licensed datasets, the public CDN
+ * for the free samples).
  */
 export async function load({ fetch, setHeaders, url }) {
 	if (!isR2Configured()) {
@@ -63,17 +94,45 @@ export async function load({ fetch, setHeaders, url }) {
 			format: 'Parquet',
 			documentation: documentationUrl,
 			downloadUrl: '/trading-view/vaults/datasets/download/vault-prices'
+		},
+		{
+			id: 'vault-metadata-sample',
+			name: 'Vault metadata (sample)',
+			description: SAMPLE_DESCRIPTION,
+			instructions: 'A free metadata sample you can download instantly without an API key.',
+			filename: 'vault-metadata.sample.json',
+			format: 'JSON',
+			documentation: documentationUrl,
+			downloadUrl: '/api/vault-metadata.sample.json',
+			free: true,
+			sampleFile: 'vault-metadata.sample.json'
+		},
+		{
+			id: 'vault-prices-sample',
+			name: 'Vault prices (sample)',
+			description: SAMPLE_DESCRIPTION,
+			instructions: 'A free price-history sample you can download instantly without an API key.',
+			filename: 'vault-historical.sample.parquet',
+			format: 'Parquet',
+			documentation: documentationUrl,
+			downloadUrl: '/api/vault-historical.sample.parquet',
+			free: true,
+			sampleFile: 'vault-historical.sample.parquet'
 		}
 	];
 
-	const [topVaultsMeta, vaultPricesMeta] = await Promise.all([
+	const [topVaultsMeta, vaultPricesMeta, metadataSampleMeta, pricesSampleMeta] = await Promise.all([
 		headTopVaults(fetch).catch(() => ({ size: null, lastModified: null })),
-		headVaultPrices(fetch).catch(() => ({ size: null, lastModified: null }))
+		headVaultPrices(fetch).catch(() => ({ size: null, lastModified: null })),
+		headSample(fetch, 'vault-metadata.sample.json'),
+		headSample(fetch, 'vault-historical.sample.parquet')
 	]);
 
 	const metadataMap: Record<string, { size: number | null; lastModified: Date | null }> = {
 		'vault-metadata': topVaultsMeta,
-		'vault-prices': vaultPricesMeta
+		'vault-prices': vaultPricesMeta,
+		'vault-metadata-sample': metadataSampleMeta,
+		'vault-prices-sample': pricesSampleMeta
 	};
 
 	const enriched: VaultDataset[] = datasets.map((dataset) => {
@@ -84,6 +143,9 @@ export async function load({ fetch, setHeaders, url }) {
 			lastUpdatedAt: meta?.lastModified?.toISOString() ?? null
 		};
 	});
+
+	// Show free samples above the paid datasets (stable sort keeps each group's order)
+	enriched.sort((a, b) => Number(b.free ?? false) - Number(a.free ?? false));
 
 	setHeaders({
 		'cache-control': 'public, max-age=600'

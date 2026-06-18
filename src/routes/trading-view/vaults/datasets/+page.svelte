@@ -146,6 +146,7 @@ Vault datasets download page
 			<table class="datatable sm">
 				<thead>
 					<tr class="col-headers">
+						<th class="plan">Plan</th>
 						<th class="name">Name</th>
 						<th class="description">Description</th>
 						<th>Format</th>
@@ -158,6 +159,7 @@ Vault datasets download page
 				<tbody>
 					{#each data.datasets as row (row.id)}
 						<tr>
+							<td class="plan">{row.free ? 'Free' : 'PRO'}</td>
 							<td class="name">
 								<strong>{row.name}</strong>
 								<p class="filename">{row.filename}</p>
@@ -174,7 +176,10 @@ Vault datasets download page
 							</td>
 							<td class="links">
 								<a class="action-link" href={row.documentation} rel="external">Documentation</a>
-								{#if validApiKey}
+								{#if row.free}
+									<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+									<a class="action-link" href={row.downloadUrl} download>Download</a>
+								{:else if validApiKey}
 									<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 									<a class="action-link" target="_blank" rel="noreferrer" href={getDownloadUrl(row.downloadUrl)}>
 										Download
@@ -196,7 +201,7 @@ Vault datasets download page
 		<p>Programmatically access the data. Requires a valid API key you can enter above.</p>
 
 		<div class="curl-example">
-			<pre><code>{getCombinedCurlCommand(data.datasets)}</code></pre>
+			<pre><code>{getCombinedCurlCommand(data.datasets.filter((d) => !d.free))}</code></pre>
 		</div>
 	</Section>
 </main>

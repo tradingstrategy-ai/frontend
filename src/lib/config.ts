@@ -245,6 +245,16 @@ export const vaultProtocolMetadataUrl = config((url: string) => {
 }, 'VAULT_PROTOCOL_METADATA_URL');
 
 /**
+ * Origin of the public CDN that hosts the free, login-less sample datasets.
+ * Optional — defaults to the production CDN so no per-environment config is
+ * required; override via TS_PUBLIC_SAMPLE_DATA_URL if the host ever changes.
+ */
+export const sampleDataUrl = config(
+	(url: string) => url || 'https://vault-protocol-metadata.tradingstrategy.ai',
+	'SAMPLE_DATA_URL'
+);
+
+/**
  * Stablecoin metadata base URL (same R2 bucket as vault protocol metadata,
  * referred to as R2_VAULT_METADATA_PUBLIC_URL elsewhere)
  */
