@@ -23,11 +23,14 @@ page); omit it on the protocol page itself to render the name as plain text.
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import {
+		CORE3_CATEGORIES,
 		CORE3_METHODOLOGY_URL,
+		getCore3CategoryScores,
 		getCore3RankingUrl,
 		getCore3RatingTone,
 		getCore3ReportUrl
 	} from '$lib/top-vaults/helpers';
+	import type { Core3CategoryKey } from '$lib/top-vaults/helpers';
 	import { formatDollar, formatNumber } from '$lib/helpers/formatters';
 	import { resolve } from '$app/paths';
 	import IconQuestionCircle from '~icons/local/question-circle';
@@ -57,6 +60,23 @@ page); omit it on the protocol page itself to render the name as plain text.
 	let rankingUrl = $derived(getCore3RankingUrl(core3));
 	let dataCoverage = $derived(core3.data_coverage?.percentage);
 	let marketCap = $derived(core3.market_cap?.in_usd);
+
+	// Per-category risk sub-scores (Security, Financial, …); empty for the
+	// compact per-vault CORE3 fallback that carries only the headline score.
+	let categoryScores = $derived(getCore3CategoryScores(core3));
+
+	// Tooltip lists the methodology weights highest-first, derived from the same
+	// single source of truth the scorecard uses.
+	const methodologyWeights = [...CORE3_CATEGORIES].sort((a, b) => b.weight - a.weight);
+
+	// Each category meter is a row of dots; each dot represents 10 risk points.
+	const meterDotIndices = Array.from({ length: 10 }, (_, i) => i);
+
+	/** Append the per-category score to a tooltip weighting bullet, e.g. " (51)". */
+	function categoryScoreSuffix(key: Core3CategoryKey): string {
+		const score = core3.pol_categories?.[key];
+		return score == null ? '' : ` (${formatNumber(score, 0, 0)})`;
+	}
 </script>
 
 {#snippet ratingHeader()}
@@ -115,13 +135,14 @@ page); omit it on the protocol page itself to render the name as plain text.
 												The scale runs 0–100 — lower is better — and maps to a letter grade from AA (lowest risk) down
 												to D.
 											</p>
-											<p>It is a weighted aggregate of risk categories:</p>
+											<p>
+												It is a weighted aggregate of risk categories
+												{#if categoryScores.length}(this protocol's sub-scores in brackets){/if}:
+											</p>
 											<ul>
-												<li>Security — 35%</li>
-												<li>Operational — 20%</li>
-												<li>Financial — 15%</li>
-												<li>Reputational — 10%</li>
-												<li>Regulatory — 5%</li>
+												{#each methodologyWeights as { key, label, weight } (key)}
+													<li>{label} — {weight}%{categoryScoreSuffix(key)}</li>
+												{/each}
 												<li>Dependency — 15% (coming soon)</li>
 											</ul>
 											<p>
@@ -185,6 +206,34 @@ page); omit it on the protocol page itself to render the name as plain text.
 					</tbody>
 				</table>
 			</div>
+
+			{#if categoryScores.length}
+				<section class="scorecard">
+					<h3>Risk score by category</h3>
+					<p class="scorecard-note">Sub-scores run 0–100 — lower is better.</p>
+					<ul class="scores">
+						{#each categoryScores as cat (cat.key)}
+							<li>
+								<span class="label">{cat.label}</span>
+								<span class="value">{formatNumber(cat.score, 0, 0)}</span>
+								<span
+									class="meter"
+									data-tone={cat.tone}
+									role="meter"
+									aria-valuemin="0"
+									aria-valuemax="100"
+									aria-valuenow={cat.score}
+									aria-label="{cat.label} risk score {formatNumber(cat.score, 0, 0)} out of 100"
+								>
+									{#each meterDotIndices as i (i)}
+										<span class="dot" style="--frac: {Math.min(Math.max(cat.score / 10 - i, 0), 1)}"></span>
+									{/each}
+								</span>
+							</li>
+						{/each}
+					</ul>
+				</section>
+			{/if}
 		</div>
 	{/if}
 </MetricsBox>
@@ -258,30 +307,35 @@ page); omit it on the protocol page itself to render the name as plain text.
 		}
 	}
 
+	/* Shared risk-tone colour for the grade badge and the category meters. */
+	.grade,
+	.meter {
+		--c-tone: var(--c-text-light);
+
+		&[data-tone='excellent'] {
+			--c-tone: var(--c-success);
+		}
+		&[data-tone='good'] {
+			--c-tone: color-mix(in srgb, var(--c-success), var(--c-warning));
+		}
+		&[data-tone='fair'] {
+			--c-tone: var(--c-warning);
+		}
+		&[data-tone='poor'] {
+			--c-tone: var(--c-error);
+		}
+	}
+
 	.grade {
-		--c-rating: var(--c-text-light);
 		display: grid;
 		place-items: center;
 		min-width: 3.25rem;
 		padding: 0.25rem 0.75rem;
 		border-radius: var(--radius-md);
-		border: 2px solid color-mix(in srgb, var(--c-rating), transparent 55%);
-		background: color-mix(in srgb, var(--c-rating), transparent 88%);
+		border: 2px solid color-mix(in srgb, var(--c-tone), transparent 55%);
+		background: color-mix(in srgb, var(--c-tone), transparent 88%);
 		font: var(--f-heading-md-medium);
-		color: color-mix(in srgb, var(--c-text), var(--c-rating) 80%);
-
-		&[data-tone='excellent'] {
-			--c-rating: var(--c-success);
-		}
-		&[data-tone='good'] {
-			--c-rating: color-mix(in srgb, var(--c-success), var(--c-warning));
-		}
-		&[data-tone='fair'] {
-			--c-rating: var(--c-warning);
-		}
-		&[data-tone='poor'] {
-			--c-rating: var(--c-error);
-		}
+		color: color-mix(in srgb, var(--c-text), var(--c-tone) 80%);
 	}
 
 	.intro {
@@ -345,6 +399,81 @@ page); omit it on the protocol page itself to render the name as plain text.
 			:global(.icon) {
 				color: var(--c-text-extra-light);
 			}
+		}
+	}
+
+	.scorecard {
+		border-top: 1px solid var(--c-box-3);
+		padding-top: 1.25rem;
+
+		h3 {
+			margin: 0;
+			font: var(--f-ui-sm-bold);
+			font-size: 0.9375rem;
+			letter-spacing: 0.04em;
+			text-transform: uppercase;
+			color: var(--c-text-light);
+		}
+
+		.scorecard-note {
+			margin: 0.25rem 0 1rem;
+			font: var(--f-ui-sm-roman);
+			color: var(--c-text-extra-light);
+		}
+	}
+
+	.scores {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: grid;
+		gap: 0.625rem;
+
+		li {
+			display: grid;
+			grid-template-columns: minmax(6rem, auto) 2.25rem 1fr;
+			align-items: center;
+			gap: 0.875rem;
+		}
+
+		.label {
+			font: var(--f-ui-md-roman);
+			color: var(--c-text-extra-light);
+		}
+
+		.value {
+			text-align: right;
+			font: var(--f-ui-md-medium);
+			font-variant-numeric: tabular-nums;
+			color: var(--c-text-light);
+		}
+	}
+
+	/* Dot meter — filled portion uses the category tone, empty portion is a faint
+	   ring, echoing the CORE3 website's "lit/unlit" score meter. */
+	.meter {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.3rem;
+
+		.dot {
+			width: 0.9rem;
+			height: 0.9rem;
+			border-radius: 50%;
+			border: 1px solid color-mix(in srgb, var(--c-text), transparent 80%);
+			background: linear-gradient(90deg, var(--c-tone) calc(var(--frac) * 100%), transparent calc(var(--frac) * 100%));
+		}
+	}
+
+	@media (--viewport-sm-down) {
+		.scores li {
+			grid-template-columns: 1fr auto;
+			column-gap: 0.75rem;
+			row-gap: 0.375rem;
+		}
+
+		.scores .meter {
+			grid-column: 1 / -1;
 		}
 	}
 
