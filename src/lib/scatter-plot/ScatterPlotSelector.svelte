@@ -17,6 +17,7 @@ Selector linking between vault scatter plot chart pages.
 		{ href: '/trading-view/vaults/yield-protocol', label: 'Yield / Protocol' },
 		{ href: '/trading-view/vaults/yield-chain', label: 'Yield / Chain' },
 		{ href: '/trading-view/vaults/current-peak-tvl', label: 'Current / Peak TVL' },
+		{ href: '/trading-view/vaults/core3-risk', label: 'CORE3 risk' },
 		{ href: '/trading-view/vaults/historical-tvl-chain', label: 'Historical TVL by chain' },
 		{ href: '/trading-view/vaults/historical-tvl-stablecoin', label: 'Historical TVL by stablecoin' },
 		{ href: '/trading-view/vaults/historical-tvl-protocol', label: 'Historical TVL by vault protocol' },
