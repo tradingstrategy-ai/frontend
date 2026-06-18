@@ -10,6 +10,10 @@ import type { RequestHandler } from './$types';
  * cannot probe the bucket for other objects. Only the whitelisted sample files
  * are reachable; any other name returns 404.
  *
+ * NOTE: this lives under /trading-view/... rather than /api/... because the
+ * production reverse proxy routes /api/* to the backend (Matilda) server, which
+ * would shadow a SvelteKit route placed there.
+ *
  * Files are streamed (not buffered) because the samples are tens of MB.
  */
 const SAMPLE_FILES: Record<string, string> = {

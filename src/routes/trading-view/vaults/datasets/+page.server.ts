@@ -25,7 +25,7 @@ type VaultDatasetDefinition = {
 	documentation: string;
 	/** Public-facing download URL (points to our proxy, not the CDN) */
 	downloadUrl: string;
-	/** Free sample — downloadable without an API key (proxied via /api) */
+	/** Free sample — downloadable without an API key (proxied via /trading-view/vaults/datasets/sample) */
 	free?: boolean;
 	/** CDN object name used server-side to read freshness metadata for samples */
 	sampleFile?: string;
@@ -103,7 +103,7 @@ export async function load({ fetch, setHeaders, url }) {
 			filename: 'vault-metadata.sample.json',
 			format: 'JSON',
 			documentation: documentationUrl,
-			downloadUrl: '/api/vault-metadata.sample.json',
+			downloadUrl: '/trading-view/vaults/datasets/sample/vault-metadata.sample.json',
 			free: true,
 			sampleFile: 'vault-metadata.sample.json'
 		},
@@ -115,7 +115,7 @@ export async function load({ fetch, setHeaders, url }) {
 			filename: 'vault-historical.sample.parquet',
 			format: 'Parquet',
 			documentation: documentationUrl,
-			downloadUrl: '/api/vault-historical.sample.parquet',
+			downloadUrl: '/trading-view/vaults/datasets/sample/vault-historical.sample.parquet',
 			free: true,
 			sampleFile: 'vault-historical.sample.parquet'
 		}
