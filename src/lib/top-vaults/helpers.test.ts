@@ -1,5 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import {
+	CORE3_METHODOLOGY_URL,
 	isBlacklisted,
 	hasSupportedProtocol,
 	getProtocolDisplayName,
@@ -217,6 +218,12 @@ describe('getFeeModeDescription', () => {
 });
 
 describe('getCore3ReportUrl', () => {
+	test('exposes the tracked project methodology URL', () => {
+		expect(CORE3_METHODOLOGY_URL).toBe(
+			'https://www.google.com/url?q=https://core3.io/methodology/projects?utm_source%3Dtradingstrategy%26utm_medium%3Dpartner%26utm_campaign%3Dintegration&sa=D&source=editors&ust=1781772908308421&usg=AOvVaw3vPHUEkPOHLmLd7zIbj5sS'
+		);
+	});
+
 	test('builds the project profile URL from the CORE3 slug with the UTM source', () => {
 		expect(getCore3ReportUrl({ slug: 'sky' })).toBe('https://core3.io/projects/sky?utm_source=tradingstrategy');
 	});

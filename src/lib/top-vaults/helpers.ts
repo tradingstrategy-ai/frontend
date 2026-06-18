@@ -373,6 +373,10 @@ export function rankVaultsBy<V extends Record<string, unknown>>(keys: (keyof V)[
 /** UTM query string appended to all outbound CORE3 links so CORE3 can attribute referral traffic. */
 const CORE3_UTM = 'utm_source=tradingstrategy';
 
+/** CORE3 project methodology page, routed through the partner tracking URL provided by CORE3. */
+export const CORE3_METHODOLOGY_URL =
+	'https://www.google.com/url?q=https://core3.io/methodology/projects?utm_source%3Dtradingstrategy%26utm_medium%3Dpartner%26utm_campaign%3Dintegration&sa=D&source=editors&ust=1781772908308421&usg=AOvVaw3vPHUEkPOHLmLd7zIbj5sS';
+
 /**
  * Resolve the public CORE3 project profile URL for a rated protocol, e.g.
  * `https://core3.io/projects/sky?utm_source=tradingstrategy`.

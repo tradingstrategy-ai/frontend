@@ -91,7 +91,11 @@
 			accessor: (row) => ({ name: row.name, slug: row.slug }),
 			// prettier-ignore
 			cell: ({ value }) => getLogoHref
-					? createRender(EntitySymbol, { label: value.name, logoUrl: getLogoHref(value.slug) })
+					? createRender(EntitySymbol, {
+							label: value.name,
+							logoUrl: getLogoHref(value.slug),
+							showPlaceholder: value.name === 'Unknown' && !getLogoHref(value.slug)
+						})
 					: value.name,
 			plugins: { sort: { getSortValue: (v) => v.name, invert: true } }
 		}),
