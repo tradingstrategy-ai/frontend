@@ -8,7 +8,7 @@ test.describe('exchange details page', () => {
 	test('should include exchange summary info', async ({ page }) => {
 		const exchangeInfo = page.getByTestId('exchange-info');
 		await expect(exchangeInfo).toHaveText(/Name Uniswap/i);
-		await expect(exchangeInfo).toHaveText(/Volume 30d \$[\d.,]+B/);
+		await expect(exchangeInfo).toHaveText(/Volume 30d \$[\d.,]+[MB]/);
 		await expect(exchangeInfo).toHaveText(/Volume all-time \$[\d.,]+B/);
 		await expect(exchangeInfo).toHaveText(/Trading pairs [\d,]/);
 		await expect(exchangeInfo).toHaveText(/Tracked trading pairs [\d,]/);
