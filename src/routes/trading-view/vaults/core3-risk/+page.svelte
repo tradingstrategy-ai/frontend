@@ -92,8 +92,9 @@ CORE3 stablecoin vault risk chart page.
 		<VaultListingsSelector />
 		<HeroBanner>
 			{#snippet subtitle()}
-				CORE3 is a third-party protocol risk rating that estimates Probability of Loss for DeFi protocols. This view
-				covers <a href={resolve('/glossary/stablecoin')}>stablecoin</a>
+				CORE3 is a third-party protocol risk rating that estimates
+				<a href={CORE3_METHODOLOGY_URL} target="_blank" rel="noreferrer">Probability of Loss</a> for DeFi protocols.
+				This view covers <a href={resolve('/glossary/stablecoin')}>stablecoin</a>
 				<a href={resolve('/glossary/vault')}>vaults</a> only. CORE3 does not yet cover {uncoveredTvlText}
 				({uncoveredShareText}) of eligible stablecoin vault
 				<a href={resolve('/glossary/total-value-locked-tvl')}>TVL</a> shown here.
