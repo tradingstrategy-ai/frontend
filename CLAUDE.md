@@ -126,6 +126,7 @@ Does not work properly yet.
 For detailed information on specific topics, see:
 
 - `docs/architecture.md` - Directory structure, patterns, theming, data fetching
+- `docs/chart-pages.md` - Chart page routes, data flow, charting libraries, chart types, navigation
 - `docs/dependencies.md` - Frontend libraries, backend integrations, build tools
 - `docs/security.md` - CSP, geographic blocking, authentication, CAPTCHA
 - `docs/tests.md` - Test suites, frameworks, running tests

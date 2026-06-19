@@ -35,16 +35,17 @@ test.describe('charts dropdown in vault listings navigation', () => {
 			await expect(trigger).toBeVisible();
 		});
 
-		test('clicking Charts opens dropdown with 9 chart links', async ({ page }) => {
+		test('clicking Charts opens dropdown with 10 chart links', async ({ page }) => {
 			const { menu } = await openChartsMenu(page);
 
 			const items = menu.locator('[role="menuitem"]');
-			await expect(items).toHaveCount(9);
+			await expect(items).toHaveCount(10);
 
 			await expect(menu).toContainText('Yield / Risk');
 			await expect(menu).toContainText('Yield / Protocol');
 			await expect(menu).toContainText('Yield / Chain');
 			await expect(menu).toContainText('Current / Peak TVL');
+			await expect(menu).toContainText('CORE3 risk');
 			await expect(menu).toContainText('Total vault earnings');
 			await expect(menu).toContainText('Historical TVL by chain');
 			await expect(menu).toContainText('Historical TVL by stablecoin');
