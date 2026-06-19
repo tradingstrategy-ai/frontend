@@ -1,9 +1,9 @@
 <!--
 @component
-Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 protocol risk score.
+Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 Probability of Loss score.
 
-- Hexbin chart: vault 3M annualised return by CORE3 score, sized by TVL
-- Bar chart: stablecoin vault TVL by CORE3 score band, including unrated TVL
+- Hexbin chart: vault 3M annualised return by Probability of Loss score, sized by TVL
+- Bar chart: stablecoin vault TVL by Probability of Loss score band, including unrated TVL
 
 @example
 
@@ -120,7 +120,7 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 protoco
 		const share = data && data.meta.totalStablecoinTvl > 0 ? band.tvl / data.meta.totalStablecoinTvl : 0;
 
 		return [
-			`<div style="margin-bottom: 0.45rem; color: #ffffff; font-family: ${chartFontFamily}; font-size: 1rem; font-weight: 700;">CORE3 score ${escapeHtml(band.label)}</div>`,
+			`<div style="margin-bottom: 0.45rem; color: #ffffff; font-family: ${chartFontFamily}; font-size: 1rem; font-weight: 700;">Probability of Loss score ${escapeHtml(band.label)}</div>`,
 			buildMetricRow('Stablecoin vault TVL', formatUsd(band.tvl)),
 			buildMetricRow('Share of stablecoin TVL', formatShare(share)),
 			buildMetricRow('Vaults', String(band.vaultCount)),
@@ -128,7 +128,7 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 protoco
 			buildMetricRow('TVL-weighted 3M return', formatReturn(band.weightedThreeMonthCagr)),
 			buildMetricRow('TVL-weighted 1M return', formatReturn(band.weightedOneMonthCagr)),
 			band.key === 'not-covered'
-				? `<div style="margin-top: 0.45rem; color: #94a3b8; font-family: ${chartFontFamily};">This TVL belongs to stablecoin vaults whose protocol does not yet have a CORE3 score in our data.</div>`
+				? `<div style="margin-top: 0.45rem; color: #94a3b8; font-family: ${chartFontFamily};">This TVL belongs to stablecoin vaults whose protocol does not yet have a Probability of Loss score in our data.</div>`
 				: `<div style="margin-top: 0.45rem; color: #94a3b8; font-family: ${chartFontFamily};">Scores are CORE3 Probability of Loss bands; lower is better.</div>`
 		].join('');
 	}
@@ -151,13 +151,13 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 protoco
 				'TVL-weighted 3M return',
 				formatReturn(point.weightedReturn == null ? null : point.weightedReturn / 100)
 			),
-			buildMetricRow('Average CORE3 score', formatScore(point.averageScore)),
+			buildMetricRow('Average PoL score', formatScore(point.averageScore)),
 			point.topProtocols.length ? buildMetricRow('Top protocols', escapeHtml(point.topProtocols.join(', '))) : '',
 			`</div>`,
 			topVaultRows
 				? `<div style="margin-top: 0.65rem; padding-top: 0.55rem; border-top: 1px solid #334155;"><div style="margin-bottom: 0.3rem; color: #94a3b8; font-family: ${chartFontFamily}; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">Largest vaults by TVL</div><div style="display: grid; gap: 0.2rem;">${topVaultRows}</div></div>`
 				: '',
-			`<div style="margin-top: 0.55rem; color: #94a3b8; font-family: ${chartFontFamily}; line-height: 1.35; white-space: normal; overflow-wrap: break-word;">Hex size follows total TVL. Colour follows average CORE3 score.</div>`,
+			`<div style="margin-top: 0.55rem; color: #94a3b8; font-family: ${chartFontFamily}; line-height: 1.35; white-space: normal; overflow-wrap: break-word;">Hex size follows total TVL. Colour follows average Probability of Loss score.</div>`,
 			`</div>`
 		].join('');
 	}
@@ -320,7 +320,7 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 protoco
 			},
 			xAxis: {
 				type: 'value',
-				name: 'CORE3 score',
+				name: 'Probability of Loss score (lower is better)',
 				nameLocation: 'middle',
 				nameGap: 30,
 				min: 0,
@@ -373,7 +373,7 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 protoco
 			grid: {
 				top: 26,
 				right: isMobile ? 12 : 24,
-				bottom: isMobile ? 54 : 48,
+				bottom: isMobile ? 76 : 68,
 				left: isMobile ? 52 : 72,
 				containLabel: false
 			},
@@ -383,8 +383,12 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 protoco
 			},
 			xAxis: {
 				type: 'category',
+				name: 'Probability of Loss score (lower is better)',
+				nameLocation: 'middle',
+				nameGap: isMobile ? 42 : 38,
 				data: bandData.map((band) => band.label),
 				axisLabel: { color: '#cbd5e1', fontFamily: chartFontFamily, fontSize: isMobile ? 10 : 12 },
+				nameTextStyle: { color: '#d5deea', fontFamily: chartFontFamily, fontSize: isMobile ? 11 : 12, fontWeight: 700 },
 				axisLine: { lineStyle: { color: 'rgba(148, 163, 184, 0.35)' } },
 				axisTick: { show: false }
 			},
