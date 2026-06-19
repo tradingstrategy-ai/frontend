@@ -66,6 +66,7 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 Probabi
 	] as const;
 	const maxReturnAxisPercent = 500;
 	const scoreBucketSize = 10;
+	const minVisibleBinTvlShare = 0.005;
 	const returnBuckets = [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30, 100, 300, 500] as const;
 	const hexagonSymbol = 'path://M0,-1 L0.866,-0.5 L0.866,0.5 L0,1 L-0.866,0.5 L-0.866,-0.5 Z';
 
@@ -164,11 +165,13 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 Probabi
 
 	function buildBandData(): BandDatum[] {
 		if (!data) return [];
-		return data.bands.map((band) => ({
-			...band,
-			value: band.tvl,
-			itemStyle: { color: getBandColour(band) }
-		}));
+		return data.bands
+			.filter((band) => band.tvl > 0 || band.key === 'not-covered')
+			.map((band) => ({
+				...band,
+				value: band.tvl,
+				itemStyle: { color: getBandColour(band) }
+			}));
 	}
 
 	function buildBinnedReturnData() {
@@ -296,9 +299,21 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 Probabi
 		destroyCharts();
 
 		const isMobile = viewportWidth <= 768;
-		const binnedData = buildBinnedReturnData();
+		const axisFontSize = isMobile ? 14 : 15;
+		const axisNameFontSize = isMobile ? 14 : 15;
+		const axisNameLineHeight = isMobile ? 18 : 20;
+		const scoreAxisName = isMobile
+			? 'Probability of Loss score\n(lower is better)'
+			: 'Probability of Loss score (lower is better)';
+		const allBinnedData = buildBinnedReturnData();
 		const bandData = buildBandData();
-		const maxBinTvl = Math.max(...binnedData.map((point) => point.totalTvl), 0);
+		const maxBinTvl = Math.max(...allBinnedData.map((point) => point.totalTvl), 0);
+		const binnedData =
+			maxBinTvl > 0
+				? allBinnedData.filter((point) => point.totalTvl / maxBinTvl >= minVisibleBinTvlShare)
+				: allBinnedData;
+		const maxVisibleScore = Math.max(...binnedData.map((point) => point.value[0]), 0);
+		const scoreAxisMax = Math.min(100, Math.max(60, Math.ceil(maxVisibleScore / 20) * 20));
 
 		hexbinInstance = echartsApi.init(hexbinContainer);
 		bandInstance = echartsApi.init(bandContainer);
@@ -308,10 +323,10 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 Probabi
 			animationEasing: 'quadraticOut',
 			backgroundColor: 'transparent',
 			grid: {
-				top: isMobile ? 44 : 42,
-				right: isMobile ? 16 : 28,
-				bottom: isMobile ? 46 : 52,
-				left: isMobile ? 52 : 72,
+				top: isMobile ? 48 : 46,
+				right: isMobile ? 16 : 30,
+				bottom: isMobile ? 104 : 70,
+				left: isMobile ? 76 : 88,
 				containLabel: false
 			},
 			tooltip: {
@@ -320,30 +335,43 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 Probabi
 			},
 			xAxis: {
 				type: 'value',
-				name: 'Probability of Loss score (lower is better)',
+				name: scoreAxisName,
 				nameLocation: 'middle',
-				nameGap: 30,
+				nameGap: isMobile ? 50 : 44,
 				min: 0,
-				max: 100,
-				axisLabel: { color: '#cbd5e1', fontFamily: chartFontFamily, fontSize: isMobile ? 11 : 12 },
-				nameTextStyle: { color: '#d5deea', fontFamily: chartFontFamily, fontSize: isMobile ? 11 : 12, fontWeight: 700 },
+				max: scoreAxisMax,
+				interval: 20,
+				axisLabel: { color: '#cbd5e1', fontFamily: chartFontFamily, fontSize: axisFontSize },
+				nameTextStyle: {
+					color: '#d5deea',
+					fontFamily: chartFontFamily,
+					fontSize: axisNameFontSize,
+					fontWeight: 700,
+					lineHeight: axisNameLineHeight
+				},
 				splitLine: { lineStyle: { color: 'rgba(148, 163, 184, 0.16)' } }
 			},
 			yAxis: {
 				type: 'log',
 				name: '3M annualised return',
 				nameLocation: 'middle',
-				nameGap: isMobile ? 38 : 52,
+				nameGap: isMobile ? 44 : 70,
 				min: minReturnLog,
 				max: maxReturnAxisPercent,
 				logBase: 10,
 				axisLabel: {
 					color: '#cbd5e1',
 					fontFamily: chartFontFamily,
-					fontSize: isMobile ? 11 : 12,
+					fontSize: axisFontSize,
 					formatter: (value: number) => (value >= 1 ? `${value.toFixed(0)}%` : `${value.toFixed(2)}%`)
 				},
-				nameTextStyle: { color: '#d5deea', fontFamily: chartFontFamily, fontSize: isMobile ? 11 : 12, fontWeight: 700 },
+				nameTextStyle: {
+					color: '#d5deea',
+					fontFamily: chartFontFamily,
+					fontSize: axisNameFontSize,
+					fontWeight: 700,
+					lineHeight: axisNameLineHeight
+				},
 				splitLine: { lineStyle: { color: 'rgba(148, 163, 184, 0.16)' } }
 			},
 			series: [
@@ -371,10 +399,10 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 Probabi
 			animationEasing: 'quadraticOut',
 			backgroundColor: 'transparent',
 			grid: {
-				top: 26,
-				right: isMobile ? 12 : 24,
-				bottom: isMobile ? 76 : 68,
-				left: isMobile ? 52 : 72,
+				top: isMobile ? 34 : 34,
+				right: isMobile ? 12 : 26,
+				bottom: isMobile ? 108 : 82,
+				left: isMobile ? 76 : 88,
 				containLabel: false
 			},
 			tooltip: {
@@ -383,12 +411,23 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 Probabi
 			},
 			xAxis: {
 				type: 'category',
-				name: 'Probability of Loss score (lower is better)',
+				name: scoreAxisName,
 				nameLocation: 'middle',
-				nameGap: isMobile ? 42 : 38,
+				nameGap: isMobile ? 50 : 48,
 				data: bandData.map((band) => band.label),
-				axisLabel: { color: '#cbd5e1', fontFamily: chartFontFamily, fontSize: isMobile ? 10 : 12 },
-				nameTextStyle: { color: '#d5deea', fontFamily: chartFontFamily, fontSize: isMobile ? 11 : 12, fontWeight: 700 },
+				axisLabel: {
+					color: '#cbd5e1',
+					fontFamily: chartFontFamily,
+					fontSize: isMobile ? 12 : axisFontSize,
+					interval: 0
+				},
+				nameTextStyle: {
+					color: '#d5deea',
+					fontFamily: chartFontFamily,
+					fontSize: axisNameFontSize,
+					fontWeight: 700,
+					lineHeight: axisNameLineHeight
+				},
 				axisLine: { lineStyle: { color: 'rgba(148, 163, 184, 0.35)' } },
 				axisTick: { show: false }
 			},
@@ -396,14 +435,20 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 Probabi
 				type: 'value',
 				name: 'Stablecoin vault TVL',
 				nameLocation: 'middle',
-				nameGap: isMobile ? 38 : 52,
+				nameGap: isMobile ? 42 : 66,
 				axisLabel: {
 					color: '#cbd5e1',
 					fontFamily: chartFontFamily,
-					fontSize: isMobile ? 11 : 12,
+					fontSize: axisFontSize,
 					formatter: (value: number) => formatUsd(value)
 				},
-				nameTextStyle: { color: '#d5deea', fontFamily: chartFontFamily, fontSize: isMobile ? 11 : 12, fontWeight: 700 },
+				nameTextStyle: {
+					color: '#d5deea',
+					fontFamily: chartFontFamily,
+					fontSize: axisNameFontSize,
+					fontWeight: 700,
+					lineHeight: axisNameLineHeight
+				},
 				splitLine: { lineStyle: { color: 'rgba(148, 163, 184, 0.16)' } }
 			},
 			series: [
@@ -417,7 +462,7 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 Probabi
 						position: 'top',
 						color: '#e2e8f0',
 						fontFamily: chartFontFamily,
-						fontSize: 12,
+						fontSize: 15,
 						fontWeight: 700,
 						formatter: (params: { data?: BandDatum }) =>
 							params.data && params.data.tvl > 0 ? formatUsd(params.data.tvl) : ''
@@ -496,7 +541,7 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 Probabi
 <div class="core3-risk-charts">
 	<section class="chart-section" aria-labelledby="core3-returns-heading">
 		<h2 id="core3-returns-heading">Returns by CORE3 Probability of Loss</h2>
-		<div class="chart-panel">
+		<div class="chart-panel chart-panel-returns">
 			<ScatterPlotShell
 				loading={dataLoading}
 				error={effectiveError}
@@ -512,7 +557,7 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 Probabi
 
 	<section class="chart-section" aria-labelledby="core3-tvl-heading">
 		<h2 id="core3-tvl-heading">TVL by CORE3 Probability of Loss</h2>
-		<div class="chart-panel">
+		<div class="chart-panel chart-panel-tvl">
 			<ScatterPlotShell
 				loading={dataLoading}
 				error={effectiveError}
@@ -541,13 +586,22 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 Probabi
 		gap: clamp(1.25rem, 2.6vw, 2rem);
 	}
 
-	:global(.core3-risk-shell .chart-surface) {
-		min-height: 360px;
-	}
-
 	.chart-section,
 	.chart-panel {
 		min-width: 0;
+	}
+
+	.chart-panel-returns {
+		--core3-chart-height: 430px;
+	}
+
+	.chart-panel-tvl {
+		--core3-chart-height: 380px;
+	}
+
+	:global(.core3-risk-shell .chart-surface),
+	:global(.core3-risk-shell .chart-content) {
+		min-height: var(--core3-chart-height);
 	}
 
 	h2 {
@@ -559,15 +613,8 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 Probabi
 
 	.chart-container {
 		width: 100%;
-		min-height: 330px;
-	}
-
-	.binned-chart {
-		min-height: 390px;
-	}
-
-	.band-chart {
-		min-height: 310px;
+		height: var(--core3-chart-height);
+		min-height: var(--core3-chart-height);
 	}
 
 	.coverage-note {
@@ -579,10 +626,18 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 Probabi
 	}
 
 	@media (--viewport-sm-down) {
+		.chart-panel-returns {
+			--core3-chart-height: 390px;
+		}
+
+		.chart-panel-tvl {
+			--core3-chart-height: 350px;
+		}
+
 		:global(.core3-risk-shell .chart-surface) {
-			min-height: 360px;
 			margin-inline: calc(-1 * var(--space-md));
 			width: calc(100% + (2 * var(--space-md)));
+			padding: 0.65rem 0.5rem;
 		}
 
 		h2 {
@@ -590,10 +645,9 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 Probabi
 			letter-spacing: var(--f-heading-md-spacing, normal);
 		}
 
-		.chart-container,
-		.binned-chart,
-		.band-chart {
-			min-height: 330px;
+		.chart-container {
+			height: var(--core3-chart-height);
+			min-height: var(--core3-chart-height);
 		}
 	}
 </style>
