@@ -7,7 +7,7 @@ The landing page vault data was optimised in PR #1171 by pre-computing aggregate
 ## Completed (PR #1171)
 
 - Landing page embeds only top 30 slim vaults + pre-computed aggregates (~15 KB vs ~1.3 MB)
-- `/top-vaults/chart-data` endpoint with in-memory Brotli cache (2h TTL)
+- `/top-vaults/chart-data` endpoint with in-memory Brotli cache (1h TTL)
 - Integration tests for compressed/uncompressed responses
 
 ## Candidates for optimisation
@@ -59,6 +59,6 @@ Fetches full vaults only to match YAML strategies by `address`. Could:
 
 ## Implementation notes
 
-- The `/top-vaults/chart-data` endpoint already has an in-memory cache with 2h TTL and Brotli pre-compression. Other server-side code could import the same caching function rather than creating a new endpoint.
+- The `/top-vaults/chart-data` endpoint already has an in-memory cache with 1h TTL and Brotli pre-compression. Other server-side code could import the same caching function rather than creating a new endpoint.
 - The vault detail page is the only route that genuinely needs full `VaultInfo`. All listing/summary views work with `SlimVaultInfo`.
 - Chart pages with `ssr=false` don't embed data in HTML at all — they fetch client-side. These could use the chart-data endpoint directly.

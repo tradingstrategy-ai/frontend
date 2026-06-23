@@ -5,7 +5,7 @@ import { slimVault } from '$lib/top-vaults/helpers';
 
 const compress = promisify(brotliCompress);
 
-const CACHE_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 let cache: { json: string; br: Uint8Array; expires: number } | null = null;
 
@@ -26,7 +26,7 @@ async function getCachedChartData(fetch: Fetch) {
 }
 
 const cacheHeaders = {
-	'cache-control': 'public, max-age=7200',
+	'cache-control': 'public, max-age=3600',
 	'content-type': 'application/json',
 	vary: 'Accept-Encoding'
 };
