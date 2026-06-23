@@ -145,6 +145,6 @@ FRED (fred.stlouisfed.org)
 
 For local development, ensure R2 credentials are set in `.env.local`. All data sources will work automatically:
 
-- Top vaults JSON is fetched on first page load and cached in memory
+- Top vaults JSON is fetched on first page load and cached in memory for 1 hour
 - Vault prices parquet (~150 MB) is downloaded on first metrics request and cached locally with a 1-hour refresh interval
 - Treasury benchmark data is fetched from FRED on demand (no credentials needed) and cached for 24 hours

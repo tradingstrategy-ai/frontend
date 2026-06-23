@@ -1,7 +1,7 @@
 import { fetchTopVaults } from './client';
 import type { TopVaults } from './schemas';
 
-const CACHE_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
 let cache: { data: TopVaults; expires: number } | null = null;
 
