@@ -75,7 +75,7 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 				<a class="title-link" href="/blog/{post.slug}">{post.title}</a>
 			</h3>
 
-			<p class="truncate lines-3">{post.excerpt}</p>
+			<p class="excerpt truncate lines-9">{post.excerpt}</p>
 		</div>
 
 		<div class="cta">
@@ -153,6 +153,12 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 			font: var(--f-ui-md-roman);
 			letter-spacing: var(--f-ui-md-spacing, normal);
 			color: var(--c-text-light);
+		}
+
+		.excerpt {
+			@media (--viewport-sm-down) {
+				-webkit-line-clamp: 11;
+			}
 		}
 	}
 
