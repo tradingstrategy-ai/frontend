@@ -16,6 +16,22 @@ The frontend uses Cloudflare CDN caching with TTL-based expiration. There is no 
 | `/glossary`                 | Dynamic | TTL from server-side cache         |
 | Sitemaps (`sitemap*.xml`)   | 10 min  |                                    |
 
+## Static build assets
+
+SvelteKit build assets under `/_app/immutable/` are content-hashed and served with long-lived immutable cache headers, for example:
+
+```text
+cache-control: public, max-age=31536000, immutable
+```
+
+This includes the self-hosted ECharts browser bundle emitted from the `echarts` npm package. Because the URL changes when the content changes, these assets are safe for Cloudflare and browsers to cache for a year.
+
+After deployment, verify an emitted ECharts asset through Cloudflare with:
+
+```bash
+curl -sI "https://tradingstrategy.ai/_app/immutable/assets/<echarts-file>.js" | grep -i cache-control
+```
+
 ## Purging the cache
 
 ### After a release

@@ -12,6 +12,7 @@ This document lists key dependencies used in the Trading Strategy frontend appli
 | `zod`                     | Schema validation          |
 | `date-fns`                | Date manipulation          |
 | `d3-array`, `d3-time`     | Data utilities for charts  |
+| `echarts`                 | ECharts browser runtime    |
 | `svelte-headless-table`   | Table component foundation |
 | `micromark`               | Markdown parsing           |
 
