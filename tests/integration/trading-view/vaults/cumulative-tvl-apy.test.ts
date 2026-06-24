@@ -15,11 +15,9 @@ async function expectNativeChartWatermark(page: Page, containerSelector: string)
 }
 
 test.describe('cumulative TVL/APY chart page', () => {
-	test.beforeEach(async ({ page }) => {
-		await page.goto('/trading-view/vaults/cumulative-tvl-apy');
-	});
-
 	test('renders the ECharts line chart', async ({ page }) => {
+		await page.goto('/trading-view/vaults/cumulative-tvl-apy');
+
 		const plotWrapper = page.getByTestId('vault-scatter-plot');
 		await expect(plotWrapper).toBeVisible();
 
@@ -29,13 +27,35 @@ test.describe('cumulative TVL/APY chart page', () => {
 	});
 
 	test('renders APY vs cumulative TVL line chart', async ({ page }) => {
+		await page.goto('/trading-view/vaults/cumulative-tvl-apy');
+
 		const plotWrapper = page.getByTestId('vault-scatter-plot');
 
 		const chart = plotWrapper.locator('.standalone-cumulative-tvl-apy-chart canvas');
 		await expect(chart).toBeVisible({ timeout: 15000 });
 	});
 
+	test('loads ECharts as an immutable first-party asset', async ({ page }) => {
+		await page.goto('/trading-view/vaults/cumulative-tvl-apy');
+
+		const chart = page.locator('.standalone-cumulative-tvl-apy-chart canvas');
+		await expect(chart).toBeVisible({ timeout: 15000 });
+
+		const scriptSrc = await page.locator('script[data-echarts-runtime]').getAttribute('src');
+		expect(scriptSrc).toBeTruthy();
+
+		const responseUrl = new URL(scriptSrc!, page.url());
+		expect(responseUrl.origin).toBe(new URL(page.url()).origin);
+		expect(responseUrl.pathname).toMatch(/^\/_app\/immutable\/assets\/echarts\.min\..+\.js$/);
+
+		const response = await page.request.get(responseUrl.toString());
+		expect(response.headers()['cache-control']).toContain('immutable');
+		expect(response.headers()['cache-control']).toContain('max-age=31536000');
+	});
+
 	test('has vault listings navigation with active Charts dropdown', async ({ page }) => {
+		await page.goto('/trading-view/vaults/cumulative-tvl-apy');
+
 		const nav = page.locator('.vault-listings-selector');
 		await expect(nav).toBeVisible();
 
@@ -48,6 +68,8 @@ test.describe('cumulative TVL/APY chart page', () => {
 	});
 
 	test('displays scatter plot selector with all chart links', async ({ page }) => {
+		await page.goto('/trading-view/vaults/cumulative-tvl-apy');
+
 		const selector = page.locator('.scatter-plot-selector');
 		await expect(selector).toBeVisible();
 		await expect(selector.locator('a')).toHaveCount(10);

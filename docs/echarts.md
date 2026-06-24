@@ -45,11 +45,13 @@ Instead we:
 1. Wait until the front page widget is near the viewport using `svelte-inview`
 2. Dynamically import the Svelte component that contains the ECharts implementation
 3. Fetch `/top-vaults/chart-data` on the client
-4. Inject the ECharts runtime from jsDelivr only when the chart is actually needed
+4. Inject the first-party ECharts runtime asset only when the chart is actually needed
 
 This keeps the initial front page payload smaller and avoids paying the charting cost for users who never scroll to that section.
 
-The runtime loader now lives in `src/lib/echarts/runtime.ts` and uses a cached `echartsPromise` plus `window.echarts` detection so the script is only loaded once per page.
+The runtime loader now lives in `src/lib/echarts/runtime.ts` and uses a cached `echartsPromise` plus `window.echarts` detection so the script is only loaded once per page. The loader gets its script URL from `resolveEChartsScriptUrl()`, which currently points at the Vite-emitted `echarts/dist/echarts.min.js` asset from the `echarts` npm package.
+
+Because the script is emitted into `/_app/immutable/assets/`, SvelteKit serves it with long-lived immutable cache headers. Cloudflare can then cache the ECharts runtime as a first-party JavaScript asset instead of relying on a third-party CDN hostname.
 
 ## Front page flow
 
@@ -60,7 +62,7 @@ The front page widget flow is:
 3. The component imports `VaultEcosystemChartECharts.svelte`
 4. The component fetches `/top-vaults/chart-data`
 5. `VaultEcosystemChartECharts.svelte` adapts the payload into the shared chart point format
-6. `src/lib/echarts/CumulativeTvlApyChart.svelte` loads the ECharts CDN runtime
+6. `src/lib/echarts/CumulativeTvlApyChart.svelte` loads the first-party ECharts runtime asset
 7. The shared renderer initialises ECharts and renders the compact homepage variant
 
 The front page widget also receives `savingsRate` and `treasuryRate` from the page data so benchmark lines can be drawn without an extra client-side reference-rate request.
@@ -196,10 +198,9 @@ The home page test checks that the page:
 The standalone page test checks that the page:
 
 - renders the ECharts canvas on the cumulative TVL / APY route
+- loads ECharts from a first-party immutable build asset
 - keeps the existing chart controls and navigation shell intact
 - does not emit browser `pageerror` exceptions
-
-This test currently uses the real CDN runtime instead of stubbing ECharts.
 
 ## Lessons learnt
 

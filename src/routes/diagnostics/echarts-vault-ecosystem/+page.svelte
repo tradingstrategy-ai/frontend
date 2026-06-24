@@ -8,13 +8,13 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 	import Button from '$lib/components/Button.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
+	import { type EChartsInstance, type EChartsStatic, loadECharts } from '$lib/echarts/runtime';
 	import { chartFontFamily } from '$lib/scatter-plot/helpers';
 	import { isBlacklisted, resolveVaultDetails } from '$lib/top-vaults/helpers';
 	import type { SlimVaultInfo } from '$lib/top-vaults/schemas';
 	import { onMount, tick } from 'svelte';
 	import type { PageData } from './$types';
 
-	const ECHARTS_CDN = 'https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js';
 	const MIN_TVL = 50_000;
 	const MAX_APY_THRESHOLD = 10;
 	const MIN_APY_CHART_VALUE = 0.01;
@@ -67,27 +67,6 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 		pctWorse: string;
 		url: string;
 	}
-
-	interface EChartsClickParams {
-		data?: {
-			url?: string;
-		} | null;
-	}
-
-	interface EChartsInstance {
-		setOption(option: unknown): void;
-		resize(): void;
-		dispose(): void;
-		on(eventName: 'click', handler: (params: EChartsClickParams) => void): void;
-		off(eventName?: string): void;
-	}
-
-	interface EChartsStatic {
-		init(element: HTMLDivElement): EChartsInstance;
-		getInstanceByDom(element: HTMLDivElement): EChartsInstance | undefined;
-	}
-
-	let echartsPromise: Promise<EChartsStatic> | null = null;
 
 	let { data }: { data: PageData } = $props();
 
@@ -168,56 +147,6 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 			`<div class="tooltip-row" style="${TOOLTIP_BODY_STYLE}"><strong>Earning less:</strong> ${formatUsd(point.worseTvl)} (${point.pctWorse}%)</div>`,
 			`<div class="tooltip-hint" style="${TOOLTIP_HINT_STYLE}"><span style="text-decoration: underline;">Click to open glossary entry</span></div>`
 		].join('');
-	}
-
-	function getWindowECharts(): EChartsStatic | undefined {
-		return (window as Window & { echarts?: EChartsStatic }).echarts;
-	}
-
-	async function loadECharts(): Promise<EChartsStatic> {
-		const existingApi = getWindowECharts();
-		if (existingApi) return existingApi;
-		if (echartsPromise) return echartsPromise;
-
-		echartsPromise = new Promise<EChartsStatic>((resolvePromise, rejectPromise) => {
-			const existingScript = document.querySelector<HTMLScriptElement>(`script[src="${ECHARTS_CDN}"]`);
-
-			const handleLoad = () => {
-				const loadedApi = getWindowECharts();
-				if (loadedApi) {
-					resolvePromise(loadedApi);
-					return;
-				}
-
-				rejectPromise(new Error('ECharts loaded but no global API was exposed.'));
-			};
-
-			if (existingScript) {
-				const loadedApi = getWindowECharts();
-				if (loadedApi) {
-					resolvePromise(loadedApi);
-					return;
-				}
-
-				existingScript.addEventListener('load', handleLoad, { once: true });
-				existingScript.addEventListener('error', () => rejectPromise(new Error('Failed to load ECharts.')), {
-					once: true
-				});
-				return;
-			}
-
-			const script = document.createElement('script');
-			script.src = ECHARTS_CDN;
-			script.async = true;
-			script.referrerPolicy = 'no-referrer';
-			script.addEventListener('load', handleLoad, { once: true });
-			script.addEventListener('error', () => rejectPromise(new Error('Failed to load ECharts from CDN.')), {
-				once: true
-			});
-			document.head.append(script);
-		});
-
-		return echartsPromise;
 	}
 
 	async function fetchChartData(signal?: AbortSignal): Promise<SlimVaultInfo[]> {

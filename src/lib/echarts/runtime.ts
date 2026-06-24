@@ -1,4 +1,18 @@
-export const ECHARTS_CDN = 'https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js';
+import echartsScriptAssetUrl from 'echarts/dist/echarts.min.js?url';
+
+const ECHARTS_SCRIPT_ATTRIBUTE = 'data-echarts-runtime';
+
+export const ECHARTS_PACKAGE_VERSION = '5.6.0';
+
+/**
+ * Resolve the first-party ECharts browser bundle location.
+ *
+ * Keep this as the single URL decision point so we can move the bundle to
+ * another asset host or route without touching chart components.
+ */
+export function resolveEChartsScriptUrl(): string {
+	return echartsScriptAssetUrl;
+}
 
 export interface EChartsClickParams {
 	data?: {
@@ -40,7 +54,8 @@ export async function loadECharts(): Promise<EChartsStatic> {
 	if (echartsPromise) return echartsPromise;
 
 	echartsPromise = new Promise<EChartsStatic>((resolvePromise, rejectPromise) => {
-		const existingScript = document.querySelector<HTMLScriptElement>(`script[src="${ECHARTS_CDN}"]`);
+		const scriptUrl = resolveEChartsScriptUrl();
+		const existingScript = document.querySelector<HTMLScriptElement>(`script[${ECHARTS_SCRIPT_ATTRIBUTE}]`);
 
 		const handleLoad = () => {
 			const loadedApi = getWindowECharts();
@@ -67,11 +82,12 @@ export async function loadECharts(): Promise<EChartsStatic> {
 		}
 
 		const script = document.createElement('script');
-		script.src = ECHARTS_CDN;
+		script.src = scriptUrl;
 		script.async = true;
+		script.setAttribute(ECHARTS_SCRIPT_ATTRIBUTE, 'true');
 		script.referrerPolicy = 'no-referrer';
 		script.addEventListener('load', handleLoad, { once: true });
-		script.addEventListener('error', () => rejectPromise(new Error('Failed to load ECharts from CDN.')), {
+		script.addEventListener('error', () => rejectPromise(new Error('Failed to load ECharts.')), {
 			once: true
 		});
 		document.head.append(script);
