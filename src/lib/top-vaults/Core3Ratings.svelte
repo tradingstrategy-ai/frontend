@@ -42,11 +42,13 @@ page); omit it on the protocol page itself to render the name as plain text.
 		protocolName: string;
 		/** When provided, the protocol name links to the protocol page; omit on the protocol page itself */
 		protocolSlug?: string;
+		/** Vault pages need copy that explains the protocol-level nature of the score */
+		context?: 'protocol' | 'vault';
 		/** When true, the box collapses to just the grade and title with a "View more" toggle */
 		collapsible?: boolean;
 	}
 
-	let { core3, protocolName, protocolSlug, collapsible = false }: Props = $props();
+	let { core3, protocolName, protocolSlug, context = 'protocol', collapsible = false }: Props = $props();
 
 	let expanded = $state(false);
 	// Collapsed: only render the grade + title summary, and the whole box opens it
@@ -107,7 +109,13 @@ page); omit it on the protocol page itself to render the name as plain text.
 			<p class="intro">
 				Risk rating by CORE3 for {#if protocolSlug}<a href={resolve(`/trading-view/vaults/protocols/${protocolSlug}`)}
 						>{protocolName}</a
-					>{:else}{protocolName}{/if}. The rating applies to all vaults on this protocol.
+					>{:else}{protocolName}{/if}.
+				{#if context === 'vault'}
+					CORE3 Probability of Loss reflects the robustness of the underlying protocol and does not reflect the
+					financial performance of an individual vault.
+				{:else}
+					The rating applies to all vaults on this protocol.
+				{/if}
 				{#if reportUrl}
 					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 					<a href={reportUrl} target="_blank" rel="noreferrer">View full rating on the CORE3 website</a>.
@@ -148,6 +156,7 @@ page); omit it on the protocol page itself to render the name as plain text.
 											<p>
 												The total is then scaled by 1.0–1.3× for factors such as protocol longevity, past incidents and
 												category leadership.
+												<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 												<a href={CORE3_METHODOLOGY_URL} target="_blank" rel="noreferrer">Read CORE3 methodology</a>.
 											</p>
 										</svelte:fragment>
