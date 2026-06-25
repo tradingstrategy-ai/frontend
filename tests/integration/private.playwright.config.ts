@@ -1,8 +1,9 @@
 import { defineConfig } from '@playwright/test';
-import { privateR2WebServerConfig } from '../helpers';
+import { ciRetries, privateR2WebServerConfig } from '../helpers';
 
 export default defineConfig({
 	testMatch: /private-r2\.test\.ts/,
 	webServer: privateR2WebServerConfig('test'),
+	retries: ciRetries,
 	reporter: process.env.GITHUB_ACTIONS ? [['dot'], ['github']] : 'list'
 });
