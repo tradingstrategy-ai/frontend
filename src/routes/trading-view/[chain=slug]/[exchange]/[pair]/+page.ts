@@ -13,9 +13,12 @@ export async function load({ fetch, params, setHeaders, url }) {
 	const timeBucket = timeBucketEnum.catch('1d').parse(timeBucketParam);
 
 	// Cache the pair data pages for 30 minutes at the Cloudflare edge so the
-	// pages are served really fast if they get popular, and also for speed test
+	// pages are served really fast if they get popular, and also for speed test.
+	// stale-while-revalidate lets the edge serve a cached copy instantly (then
+	// refresh in the background) for the long tail of rarely-hit pair URLs,
+	// which avoids a cold SSR round-trip dominating mobile LCP.
 	setHeaders({
-		'cache-control': 'public, max-age=1800' // 30 minutes: 30 * 60 = 1800
+		'cache-control': 'public, max-age=1800, stale-while-revalidate=86400' // 30 min fresh, 1 day stale
 	});
 
 	return {
