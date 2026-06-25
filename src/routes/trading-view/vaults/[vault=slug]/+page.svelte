@@ -115,7 +115,7 @@
 		<VaultPeriodicMetrics {vault} {chain} />
 
 		{#if core3}
-			<Core3Ratings {core3} protocolName={vault.protocol} protocolSlug={vault.protocol_slug} />
+			<Core3Ratings {core3} protocolName={vault.protocol} protocolSlug={vault.protocol_slug} context="vault" />
 		{/if}
 
 		<VaultTechnicalDetailsTable {vault} {chain} {stablecoinMetadata} {generated_at} />
