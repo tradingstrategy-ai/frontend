@@ -2,6 +2,23 @@ import { loadEnv } from 'vite';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
+/**
+ * Number of times Playwright retries a failing test, on CI only.
+ *
+ * The integration suite drives the whole app against a single-process `vite
+ * preview` server whose APIs are served by an in-process mock middleware
+ * (`vite-plugin-mock-dev-server`). Under the parallel worker load CI applies,
+ * that shared server intermittently mishandles a request — e.g. the
+ * vault-datasets API-key mock rejecting a *valid* key under contention — which
+ * is environmental flakiness, not a real regression (the same tests pass
+ * reliably with a single worker locally).
+ *
+ * Retrying on CI lets these transient blips self-recover instead of failing the
+ * whole run. Locally we keep 0 retries so genuine failures surface immediately
+ * rather than being masked.
+ */
+export const ciRetries = process.env.CI ? 2 : 0;
+
 export function webServerConfig(mode: string) {
 	return {
 		command: `pnpm run preview --mode=${mode} --host=127.0.0.1 --port=4173`,
