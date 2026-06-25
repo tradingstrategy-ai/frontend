@@ -56,7 +56,6 @@ strings) or named slots (for nested markup); `description` can be a prop or defa
 
 		.multiline {
 			display: grid;
-			font-weight: 700;
 		}
 
 		small {

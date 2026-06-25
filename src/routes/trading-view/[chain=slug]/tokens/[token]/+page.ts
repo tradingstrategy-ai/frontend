@@ -19,16 +19,25 @@ async function searchLendingReserves(fetch: Fetch, chain: string, address: strin
 }
 
 export async function load({ params, fetch, setHeaders }) {
-	const { chain, token } = params;
+	const { chain, token: address } = params;
 
-	// Cache the pair data pages for 30 minutes at the Cloudflare edge so the
-	// pages are served really fast if they get popular, and also for speed test
+	// Cache the token data pages for 30 minutes at the Cloudflare edge so the
+	// pages are served really fast if they get popular, and also for speed test.
+	// stale-while-revalidate lets the edge serve a cached copy instantly (then
+	// refresh in the background) for the long tail of rarely-hit token URLs,
+	// which avoids a cold SSR round-trip dominating mobile LCP.
 	setHeaders({
-		'cache-control': 'public, max-age=1800' // 30 minutes: 30 * 60 = 1800
+		'cache-control': 'public, max-age=1800, stale-while-revalidate=86400' // 30 min fresh, 1 day stale
 	});
 
-	return {
-		token: await fetchPublicApi<TokenDetails>(fetch, 'token/details', { chain_slug: chain, address: token }),
-		reserves: await searchLendingReserves(fetch, chain, token)
-	};
+	// These two requests are independent (the reserve search keys off the URL
+	// address, not the token/details response), so fetch them in parallel rather
+	// than as a waterfall — the SSR response, and therefore the LCP heading,
+	// is gated by the slower of the two instead of their sum.
+	const [token, reserves] = await Promise.all([
+		fetchPublicApi<TokenDetails>(fetch, 'token/details', { chain_slug: chain, address }),
+		searchLendingReserves(fetch, chain, address)
+	]);
+
+	return { token, reserves };
 }

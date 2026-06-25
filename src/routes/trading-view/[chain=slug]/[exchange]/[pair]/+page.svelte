@@ -6,7 +6,6 @@ Render the pair trading page
   be moved to SvelteKit routing query parameter
 -->
 <script lang="ts">
-	import type { ComponentProps } from 'svelte';
 	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
 	import { captureException } from '@sentry/sveltekit';
@@ -18,7 +17,8 @@ Render the pair trading page
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
-	import PairCandleChart from '$lib/charts/PairCandleChart.svelte';
+	// The chart component is lazy-loaded in the markup below (see {#await import(...)})
+	// so the heavy lightweight-charts bundle stays off the critical path.
 	import TimePeriodSummaryTable from './TimePeriodSummaryTable.svelte';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
 	import { formatSwapFee } from '$lib/helpers/formatters';
@@ -47,7 +47,7 @@ Render the pair trading page
 	// svelte-ignore state_referenced_locally
 	let timeBucket = new OptionGroup(timeBucketEnum.options, page.state.timeBucket ?? data.timeBucket);
 
-	const handleTimeBucketChange: ComponentProps<typeof PairCandleChart>['onchange'] = ({ name, value }) => {
+	const handleTimeBucketChange = ({ name, value }: { name: string | undefined; value: string }) => {
 		if (name !== 'timeBucket') return;
 		const { success, data: timeBucket } = timeBucketEnum.safeParse(value);
 		if (success) replaceState(`?${new URLSearchParams({ timeBucket })}`, { timeBucket });
@@ -125,14 +125,16 @@ Render the pair trading page
 
 	<section class="ds-container charts">
 		<svelte:boundary onerror={(e) => captureException(e)}>
-			<PairCandleChart
-				chainSlug={summary.chain_slug}
-				exchangeType={summary.exchange_type}
-				pairId={summary.pair_id}
-				pairSymbol={summary.pair_symbol}
-				{timeBucket}
-				onchange={handleTimeBucketChange}
-			/>
+			{#await import('$lib/charts/PairCandleChart.svelte') then { default: PairCandleChart }}
+				<PairCandleChart
+					chainSlug={summary.chain_slug}
+					exchangeType={summary.exchange_type}
+					pairId={summary.pair_id}
+					pairSymbol={summary.pair_symbol}
+					{timeBucket}
+					onchange={handleTimeBucketChange}
+				/>
+			{/await}
 
 			{#snippet failed(error)}
 				<Alert status="error" title="Render error">
