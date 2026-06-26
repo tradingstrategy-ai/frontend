@@ -146,10 +146,10 @@ export function resolveVaultDetails(vault: Pick<VaultInfo, 'vault_slug'>) {
 }
 
 /**
- * Determine if vault is blacklisted
+ * Determine if vault is blacklisted.
  */
-export function isBlacklisted(vault: Pick<VaultInfo, 'risk_numeric'>) {
-	return vault.risk_numeric === 999;
+export function isBlacklisted(vault: Pick<VaultInfo, 'risk_numeric'> & Partial<Pick<VaultInfo, 'risk'>>) {
+	return vault.risk_numeric === 999 || vault.risk?.toLowerCase() === 'blacklisted';
 }
 
 const unsupportedProtocolNames = ['<protocol not yet identified>', '<unknown erc-7450>'] as const;
