@@ -458,6 +458,7 @@ export type SlimVaultInfo = Pick<
 	| 'current_nav'
 	| 'one_month_cagr'
 	| 'one_month_cagr_net'
+	| 'risk'
 	| 'risk_numeric'
 	| 'stablecoinish'
 >;
@@ -499,6 +500,7 @@ export const slimVaultKeys = [
 	'current_nav',
 	'one_month_cagr',
 	'one_month_cagr_net',
+	'risk',
 	'risk_numeric',
 	'stablecoinish'
 ] as const satisfies readonly (keyof SlimVaultInfo)[];

@@ -15,7 +15,8 @@ import {
 	getCore3ReportUrl,
 	getCore3RankingUrl,
 	getCore3ScoreTone,
-	getCore3CategoryScores
+	getCore3CategoryScores,
+	calculateTvlWeightedApy
 } from './helpers';
 import type { Core3Protocol } from './schemas';
 import { createTestVault } from './test-utils';
@@ -25,6 +26,11 @@ describe('isBlacklisted', () => {
 		const vault = createTestVault('Test vault', { risk: 'Blacklisted' });
 		expect(vault.risk_numeric).toBe(999);
 		expect(isBlacklisted(vault)).toBe(true);
+	});
+
+	test('returns true when only the risk label is blacklisted', () => {
+		const vault = createTestVault('Test vault', { risk: 'High' });
+		expect(isBlacklisted({ ...vault, risk: 'Blacklisted', risk_numeric: null })).toBe(true);
 	});
 
 	test('returns false for non-blacklisted vaults', () => {
@@ -37,6 +43,40 @@ describe('isBlacklisted', () => {
 		const vault = createTestVault('Test vault');
 		expect(vault.risk_numeric).toBeNull();
 		expect(isBlacklisted(vault)).toBe(false);
+	});
+});
+
+describe('calculateTvlWeightedApy', () => {
+	test('excludes blacklisted vaults from the weighted average', () => {
+		const included = createTestVault('Included vault', {
+			current_nav: 100_000,
+			one_month_cagr: 0.1
+		});
+		const blacklisted = createTestVault('Blacklisted vault', {
+			current_nav: 900_000,
+			one_month_cagr: 1,
+			risk: 'Blacklisted'
+		});
+
+		expect(calculateTvlWeightedApy([included, blacklisted])).toBe(0.1);
+	});
+
+	test('excludes label-only blacklisted vaults from the weighted average', () => {
+		const included = createTestVault('Included vault', {
+			current_nav: 100_000,
+			one_month_cagr: 0.1
+		});
+		const blacklisted = {
+			...createTestVault('Blacklisted label vault', {
+				current_nav: 900_000,
+				one_month_cagr: 1,
+				risk: 'High'
+			}),
+			risk: 'Blacklisted',
+			risk_numeric: null
+		};
+
+		expect(calculateTvlWeightedApy([included, blacklisted])).toBe(0.1);
 	});
 });
 
