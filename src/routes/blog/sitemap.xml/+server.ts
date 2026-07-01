@@ -4,10 +4,10 @@
 import type { BlogPostIndexItem } from '$lib/blog/schemas';
 import { SitemapStream } from 'sitemap';
 import { Readable } from 'stream';
-import { getPosts, maxAge } from '$lib/blog/client';
+import { getAllPosts, maxAge } from '$lib/blog/client';
 
 export async function GET({ fetch, setHeaders, url }) {
-	const { posts } = await getPosts(fetch, { limit: 'all' });
+	const posts = await getAllPosts(fetch);
 
 	const stream = new SitemapStream({ hostname: url.origin });
 	const entries = posts.map((post: BlogPostIndexItem) => ({
