@@ -27,7 +27,7 @@
 			.finally(() => (loading = false));
 	});
 
-	let title = $derived(`${protocolName} vault comparison`);
+	let title = $derived(`${protocolName} vaults and yields`);
 	let description = $derived(protocolMetadata?.short_description ?? `Top stablecoin vaults on ${protocolName}`);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived.by(() => {
