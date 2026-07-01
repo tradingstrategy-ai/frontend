@@ -21,7 +21,19 @@ export const mockStablecoins: StablecoinMetadata[] = [
 		},
 		logos: {
 			light: 'http://localhost:4173/api/stablecoin-metadata/usdc/light.png'
-		}
+		},
+		coingecko_id: 'usd-coin',
+		coingecko_link: 'https://www.coingecko.com/en/coins/usd-coin',
+		coingecko_id_source: 'url',
+		coingecko_id_verified_at: '2026-06-26T12:16:16',
+		usd_rate: 0.999667,
+		usd_rate_fetched_at: '2026-06-26T12:16:16',
+		usd_rate_updated_at: '2026-06-26T12:15:26',
+		peg_rate: 0.999667,
+		peg_rate_currency: 'usd',
+		rate_fetch_failed_at: null,
+		rate_fetch_failed_reason: null,
+		depegged_at: null
 	},
 	{
 		symbol: 'USDT',
@@ -40,7 +52,19 @@ export const mockStablecoins: StablecoinMetadata[] = [
 		},
 		logos: {
 			light: 'http://localhost:4173/api/stablecoin-metadata/usdt/light.png'
-		}
+		},
+		coingecko_id: 'tether',
+		coingecko_link: 'https://www.coingecko.com/en/coins/tether',
+		coingecko_id_source: 'url',
+		coingecko_id_verified_at: '2026-06-26T12:16:16',
+		usd_rate: 0.998536,
+		usd_rate_fetched_at: '2026-06-26T12:16:16',
+		usd_rate_updated_at: '2026-06-26T12:15:26',
+		peg_rate: 0.998536,
+		peg_rate_currency: 'usd',
+		rate_fetch_failed_at: null,
+		rate_fetch_failed_reason: null,
+		depegged_at: null
 	},
 	{
 		symbol: 'DAI',
@@ -59,7 +83,48 @@ export const mockStablecoins: StablecoinMetadata[] = [
 		},
 		logos: {
 			light: 'http://localhost:4173/api/stablecoin-metadata/dai/light.png'
-		}
+		},
+		coingecko_id: 'dai',
+		coingecko_link: 'https://www.coingecko.com/en/coins/dai',
+		coingecko_id_source: 'url',
+		coingecko_id_verified_at: '2026-06-26T12:16:16',
+		usd_rate: 0.999703,
+		usd_rate_fetched_at: '2026-06-26T12:16:16',
+		usd_rate_updated_at: '2026-06-26T12:15:26',
+		peg_rate: 0.999703,
+		peg_rate_currency: 'usd',
+		rate_fetch_failed_at: null,
+		rate_fetch_failed_reason: null,
+		depegged_at: null
+	},
+	{
+		symbol: 'EURA',
+		slug: 'eura',
+		name: 'Angle EURA',
+		short_description: 'EURA is a Euro stablecoin issued by Angle.',
+		description: 'EURA is a Euro stablecoin issued by Angle.',
+		category: 'stablecoin',
+		links: {
+			homepage: 'https://www.angle.money/',
+			coingecko: 'https://www.coingecko.com/en/coins/ageur',
+			defillama: null,
+			twitter: 'https://x.com/AngleProtocol'
+		},
+		logos: {
+			light: 'http://localhost:4173/api/stablecoin-metadata/eura/light.png'
+		},
+		coingecko_id: 'ageur',
+		coingecko_link: 'https://www.coingecko.com/en/coins/ageur',
+		coingecko_id_source: 'url',
+		coingecko_id_verified_at: '2026-06-26T12:16:16',
+		usd_rate: 1.14,
+		usd_rate_fetched_at: '2026-06-26T12:16:16',
+		usd_rate_updated_at: '2026-06-26T12:15:11',
+		peg_rate: 0.996731,
+		peg_rate_currency: 'eur',
+		rate_fetch_failed_at: null,
+		rate_fetch_failed_reason: null,
+		depegged_at: null
 	},
 	{
 		symbol: 'FRAX',
@@ -76,7 +141,19 @@ export const mockStablecoins: StablecoinMetadata[] = [
 		},
 		logos: {
 			light: 'http://localhost:4173/api/stablecoin-metadata/frax/light.png'
-		}
+		},
+		coingecko_id: 'frax',
+		coingecko_link: 'https://www.coingecko.com/en/coins/frax',
+		coingecko_id_source: 'url',
+		coingecko_id_verified_at: '2026-06-26T12:16:16',
+		usd_rate: 0.82,
+		usd_rate_fetched_at: '2026-06-26T12:16:16',
+		usd_rate_updated_at: '2026-06-26T12:15:26',
+		peg_rate: 0.82,
+		peg_rate_currency: 'usd',
+		rate_fetch_failed_at: null,
+		rate_fetch_failed_reason: null,
+		depegged_at: '2026-06-26T12:15:26'
 	}
 ];
 

@@ -1,6 +1,10 @@
 <script lang="ts">
 	import type { TopVaults } from '$lib/top-vaults/schemas';
-	import { formatStablecoinDisplayName, getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers';
+	import {
+		formatStablecoinDisplayName,
+		getStablecoinCoingeckoLink,
+		getStablecoinLogoUrl
+	} from '$lib/stablecoin-metadata/helpers';
 	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
@@ -36,6 +40,7 @@
 		return logoPath ? new URL(logoPath, page.url.origin).href : undefined;
 	});
 	let aboutName = $derived(formatStablecoinDisplayName(stablecoinMetadata?.name, stablecoinMetadata?.symbol));
+	let coingeckoHref = $derived(getStablecoinCoingeckoLink(stablecoinMetadata));
 </script>
 
 <MetaTags
@@ -76,7 +81,7 @@
 					image: logoUrl ?? undefined,
 					url: stablecoinMetadata.links.homepage ?? undefined,
 					category: stablecoinMetadata.category,
-					sameAs: [stablecoinMetadata.links.coingecko, stablecoinMetadata.links.defillama].filter(Boolean)
+					sameAs: [coingeckoHref, stablecoinMetadata.links.defillama].filter(Boolean)
 				}
 			: undefined,
 		mainEntity: {
@@ -93,6 +98,7 @@
 	title="{denominationName} stablecoin vaults"
 	showFilters
 	defaultTvlKey="10k"
+	defaultHideUnknown={0}
 >
 	{#snippet detailDescription()}
 		{#if topVaults?.vaults.length}

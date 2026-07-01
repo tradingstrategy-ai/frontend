@@ -7,7 +7,7 @@
 	import Section from '$lib/components/Section.svelte';
 	import VaultGroupTable from '$lib/top-vaults/VaultGroupTable.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
-	import { getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers.js';
+	import { getStablecoinLogoUrl, isStablecoinDepegged } from '$lib/stablecoin-metadata/helpers.js';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import MarketSharePieChart from '../MarketSharePieChart.svelte';
 	import MarketShareWidgetBox from '../MarketShareWidgetBox.svelte';
@@ -100,6 +100,8 @@
 			groupLabel="Stablecoin"
 			includeFullName
 			getLogoHref={getStablecoinLogoUrl}
+			getWarningLabel={(row) =>
+				isStablecoinDepegged(row) ? `${row.name} is below 90% of its native peg rate` : undefined}
 			rows={stablecoins}
 			{...options}
 			{onChange}
