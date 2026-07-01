@@ -92,13 +92,15 @@ excluded vault count from the loaded vault data.
 			{subject}
 			{verbPhrase}
 			<strong>{vaultCountLabel}</strong> with
-			<strong>{totalTvlLabel}</strong> across <strong>{protocolCountLabel}</strong>.
+			<strong>{totalTvlLabel}</strong>{#if protocolCount > 0}
+				{' '}
+				across <strong>{protocolCountLabel}</strong>{/if}.
 			{#if largestVaults.length}
 				The largest {largestVaults.length === 1 ? 'vault is' : 'vaults are'}
 				{#each largestVaults as vault, index (vault.vault_slug)}{index > 0 ? ', ' : ''}<a
 						href={resolveVaultDetails(vault)}>{vault.name}</a
-					>{/each}
-				{#if topProtocols.length}
+					>{/each}{#if topProtocols.length}
+					{' '}
 					and the most popular vault {topProtocols.length === 1 ? 'protocol is' : 'protocols are'}
 					{#each topProtocols as protocol, index (protocol.slug)}{index === 0
 							? ''

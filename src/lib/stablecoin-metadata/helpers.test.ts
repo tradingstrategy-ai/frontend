@@ -3,6 +3,9 @@ import {
 	buildStablecoinMetadataLookup,
 	findStablecoinMetadata,
 	formatStablecoinDisplayName,
+	getStablecoinCoingeckoLink,
+	getStablecoinNativeRate,
+	isStablecoinDepegged,
 	resolveStablecoinSlug
 } from './helpers';
 import type { StablecoinMetadata } from './schemas';
@@ -65,5 +68,62 @@ describe('stablecoin metadata helpers', () => {
 
 	test('does not append symbol when already present in display name', () => {
 		expect(formatStablecoinDisplayName('USD Coin (USDC)', 'USDC')).toBe('USD Coin (USDC)');
+	});
+
+	test('uses top-level CoinGecko link before legacy nested link', () => {
+		expect(
+			getStablecoinCoingeckoLink({
+				coingecko_link: 'https://www.coingecko.com/en/coins/usd-coin',
+				links: { coingecko: 'https://old.example/usdc' }
+			})
+		).toBe('https://www.coingecko.com/en/coins/usd-coin');
+	});
+
+	test('uses native peg-currency rate for depeg detection', () => {
+		expect(isStablecoinDepegged({ usd_rate: 1.12, peg_rate: 0.89, peg_rate_currency: 'eur' })).toBe(true);
+		expect(isStablecoinDepegged({ usd_rate: 1.12, peg_rate: 0.9, peg_rate_currency: 'eur' })).toBe(false);
+		expect(isStablecoinDepegged({ usd_rate: 1.12, peg_rate: 0.99, peg_rate_currency: 'eur' })).toBe(false);
+	});
+
+	test('does not mark stablecoins above peg as depegged', () => {
+		expect(isStablecoinDepegged({ usd_rate: 1.11, peg_rate: 1.11, peg_rate_currency: 'usd' })).toBe(false);
+	});
+
+	test('uses vault denomination native rate for depeg detection', () => {
+		expect(
+			isStablecoinDepegged({
+				denomination_token_rate: {
+					usd_rate: 1.14,
+					native_rate: 0.89,
+					native_rate_currency: 'eur'
+				}
+			})
+		).toBe(true);
+		expect(
+			isStablecoinDepegged({
+				denomination_token_rate: {
+					usd_rate: 1.14,
+					native_rate: 0.99,
+					native_rate_currency: 'eur'
+				}
+			})
+		).toBe(false);
+	});
+
+	test('uses USD rate as native rate for USD-pegged vault entries', () => {
+		expect(getStablecoinNativeRate({ denomination_token_rate: { usd_rate: 0.89 } })).toBe(0.89);
+		expect(isStablecoinDepegged({ denomination_token_rate: { usd_rate: 0.89 } })).toBe(true);
+	});
+
+	test('does not use USD fallback when a non-USD native currency is known', () => {
+		expect(getStablecoinNativeRate({ usd_rate: 0.7, peg_rate_currency: 'eur' })).toBeUndefined();
+		expect(isStablecoinDepegged({ usd_rate: 0.7, peg_rate_currency: 'eur' })).toBe(false);
+	});
+
+	test('treats explicit depeg timestamp as depegged only when no rate is available', () => {
+		expect(isStablecoinDepegged({ depegged_at: '2026-06-26T12:15:26' })).toBe(true);
+		expect(isStablecoinDepegged({ peg_rate: 0.99, peg_rate_currency: 'usd', depegged_at: '2026-06-26T12:15:26' })).toBe(
+			false
+		);
 	});
 });

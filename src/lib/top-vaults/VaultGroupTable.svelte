@@ -17,7 +17,7 @@
 	import { createRender } from '$lib/components/datatable/utils';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
-	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
+	import VaultGroupNameCell from './VaultGroupNameCell.svelte';
 	import RiskCell from './RiskCell.svelte';
 	import Core3RiskCell from './Core3RiskCell.svelte';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
@@ -37,6 +37,7 @@
 		sort?: SortOptions['keys'][number];
 		direction?: SortOptions['directions'][number];
 		getHref?: (slug: string) => string;
+		getWarningLabel?: (row: VaultGroup) => string | undefined;
 	}
 
 	let {
@@ -51,6 +52,7 @@
 		sort = sortOptions.keys[0],
 		direction = sortOptions.directions[0],
 		getHref = (slug: string) => `${page.url.pathname}/${slug}`,
+		getWarningLabel,
 		loading = false,
 		...restProps
 	}: Props = $props();
@@ -63,6 +65,10 @@
 	$effect(() => {
 		tableRowsStore.set(tableRows);
 	});
+
+	function getTableRowClass(row: unknown) {
+		return getWarningLabel?.(row as VaultGroup) ? 'depegged' : undefined;
+	}
 
 	const hiddenColumns = [
 		...(includeRisk ? [] : ['risk']),
@@ -89,21 +95,25 @@
 			id: 'name',
 			header: groupLabel,
 			accessor: (row) => ({ name: row.name, slug: row.slug }),
-			// prettier-ignore
-			cell: ({ value }) => getLogoHref
-					? createRender(EntitySymbol, {
-							label: value.name,
-							logoUrl: getLogoHref(value.slug),
-							showPlaceholder: value.name === 'Unknown' && !getLogoHref(value.slug)
-						})
-					: value.name,
+			cell: ({ value }) =>
+				createRender(VaultGroupNameCell, {
+					label: value.name,
+					logoUrl: getLogoHref?.(value.slug),
+					showPlaceholder: value.name === 'Unknown' && !getLogoHref?.(value.slug)
+				}),
 			plugins: { sort: { getSortValue: (v) => v.name, invert: true } }
 		}),
 		table.column({
 			id: 'full_name',
 			header: 'Name',
-			accessor: 'fullName',
-			cell: ({ value }) => value ?? '',
+			accessor: (row) => ({ fullName: row.fullName, warningLabel: getWarningLabel?.(row) }),
+			cell: ({ value }) =>
+				value.fullName || value.warningLabel
+					? createRender(VaultGroupNameCell, {
+							label: value.fullName ?? '',
+							warningLabel: value.warningLabel
+						})
+					: '',
 			plugins: { sort: { disable: true } }
 		}),
 		table.column({
@@ -159,7 +169,15 @@
 </script>
 
 <div class="vault-protocol-table" class:wide-name={wideName}>
-	<DataTable isResponsive hasPagination targetableRows {loading} {tableViewModel} {...restProps} />
+	<DataTable
+		isResponsive
+		hasPagination
+		targetableRows
+		{loading}
+		{tableViewModel}
+		getRowClass={getTableRowClass}
+		{...restProps}
+	/>
 </div>
 
 <style>
@@ -224,5 +242,10 @@
 				}
 			}
 		}
+	}
+
+	.vault-protocol-table :global(tr.depegged td),
+	.vault-protocol-table :global(tr.depegged td *) {
+		color: var(--c-bearish) !important;
 	}
 </style>

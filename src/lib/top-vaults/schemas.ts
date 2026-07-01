@@ -103,6 +103,42 @@ export const core3VaultSchema = z.object({
 });
 export type Core3Vault = z.infer<typeof core3VaultSchema>;
 
+/**
+ * Latest exchange rate metadata for a vault denomination token.
+ *
+ * The backend attaches this to every vault as `denomination_token_rate`. For
+ * USD-pegged tokens, `usd_rate` is also the native rate. For non-USD pegs,
+ * `native_rate` is the rate in `native_rate_currency`, while `usd_rate` remains
+ * the dollar conversion rate.
+ */
+export const denominationTokenRateSchema = z.object({
+	/** CoinGecko id used by the collector, null when unknown */
+	coingecko_id: z.string().nullable(),
+	/** Source peg currency if one was explicitly detected */
+	source_currency: z.string().nullable(),
+	/** Latest denomination token rate in USD */
+	usd_rate: nullableNumber,
+	/** When the USD rate was fetched */
+	usd_rate_fetched_at: isoDateTime.nullable(),
+	/** Collector/source name for the USD rate */
+	usd_rate_source: z.string().nullable(),
+	/** Latest denomination token rate in its native peg currency */
+	native_rate: nullableNumber,
+	/** Native peg currency for `native_rate`, e.g. `eur`, `cad`, `jpy` */
+	native_rate_currency: z.string().nullable(),
+	/** When the native peg-currency rate was fetched */
+	native_rate_fetched_at: isoDateTime.nullable(),
+	/** Collector/source name for the native peg-currency rate */
+	native_rate_source: z.string().nullable(),
+	/** USD conversion rate for the source currency, when needed by the collector */
+	source_currency_usd_rate: nullableNumber,
+	/** When the source-currency USD conversion rate was fetched */
+	source_currency_usd_rate_fetched_at: isoDateTime.nullable(),
+	/** Collector/source name for the source-currency USD conversion rate */
+	source_currency_usd_rate_source: z.string().nullable()
+});
+export type DenominationTokenRate = z.infer<typeof denominationTokenRateSchema>;
+
 /** A post/update surfaced from a curator's social or RSS feed. */
 export const curatorRecentPostSchema = z.object({
 	/** Post title; may be null for sources that don't provide one (e.g. tweets) */
@@ -286,6 +322,8 @@ export const vaultInfoSchema = z.object({
 	chain_id: chainId,
 	/** Whether the denomination token is a stablecoin or stablecoin-like */
 	stablecoinish: z.boolean(),
+	/** Latest exchange rate metadata for the denomination token */
+	denomination_token_rate: denominationTokenRateSchema.nullable().optional().default(null),
 
 	// --- Block tracking ---
 	/** When the vault was first indexed */
@@ -565,4 +603,20 @@ export interface VaultGroup {
 	core3_rating?: string | null;
 	/** CORE3 numeric risk score (lower = better) — used to sort the CORE3 rating column */
 	core3_score?: number | null;
+	/** Latest stablecoin USD exchange rate — only present on stablecoin groups with metadata */
+	usd_rate?: number | null;
+	/** When the latest stablecoin USD exchange rate was updated by the source */
+	usd_rate_updated_at?: string | null;
+	/** When the latest stablecoin USD exchange rate was fetched */
+	usd_rate_fetched_at?: string | null;
+	/** Latest stablecoin exchange rate in its native peg currency */
+	peg_rate?: number | null;
+	/** Currency for the stablecoin peg rate, e.g. `usd`, `eur`, `cad` */
+	peg_rate_currency?: string | null;
+	/** Timestamp when the stablecoin was marked as depegged by the metadata export */
+	depegged_at?: string | null;
+	/** Latest exchange rate metadata from vault denomination token entries */
+	denomination_token_rate?: DenominationTokenRate | null;
+	/** CoinGecko page URL for stablecoin groups */
+	coingecko_link?: string | null;
 }

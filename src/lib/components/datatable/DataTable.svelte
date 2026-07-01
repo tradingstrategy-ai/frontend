@@ -40,6 +40,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 		hasPagination?: boolean;
 		isResponsive?: boolean;
 		targetableRows?: boolean;
+		getRowClass?: (row: unknown) => string | undefined;
 		children?: Snippet;
 		onChange?: (params: DataTableChangeParams, scrollFn: () => void) => void;
 	}
@@ -54,6 +55,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 		hasPagination = false,
 		isResponsive = false,
 		targetableRows = false,
+		getRowClass,
 		children,
 		onChange
 	}: Props = $props();
@@ -121,7 +123,13 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 		{/if}
 	</TableHeader>
 
-	<TableBody attrs={$tableBodyAttrs} rows={hasPagination ? $pageRows : $rows} page={pluginStates.page} {targetableRows}>
+	<TableBody
+		attrs={$tableBodyAttrs}
+		rows={hasPagination ? $pageRows : $rows}
+		page={pluginStates.page}
+		{targetableRows}
+		{getRowClass}
+	>
 		{@render children?.()}
 	</TableBody>
 

@@ -6,6 +6,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 SvelteKit-based frontend for the Trading Strategy protocol, featuring automated trading strategies, market data exploration, and DeFi vault management. Uses Svelte 5 with runes and async components, TypeScript strict mode, and PostCSS for styling.
 
+## Reference docs for Claude
+
+Topic deep-dives live under `.claude/docs/`. Consult the relevant one before
+working on that area:
+
+| Doc                                                | Description                                                                                                |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `.claude/docs/agent-tricks-and-troubleshooting.md` | **MANDATORY read before ANY Claude CLI or Codex CLI invocation** (reviews, sanity checks, or one-off runs) |
+
+## Agent review workflows
+
+- **BLOCKING REQUIREMENT: before running ANY `codex` / `codex exec` or `claude` CLI command — reviews, sanity checks, or one-off runs — you MUST first read `.claude/docs/agent-tricks-and-troubleshooting.md`.** Do not invoke either CLI until you have read it in the current session. This is not optional and applies even when the call "looks trivial".
+- Follow its recommended invocation patterns for plan reviews, code reviews, PR reviews, tool restrictions, timeouts, and handling silent or hanging agent runs.
+- Always run non-interactive Codex reviews in **streaming mode** (`codex exec --json`) written to a raw file — never plain text mode piped through `tail`/`head`, which buffers output until completion and makes the run look hung.
+- `codex exec` selects the sandbox directly (`--sandbox read-only` for reviews) and does **not** accept `--ask-for-approval` (that flag is interactive-only).
+- Do not fall back to generic `claude --help`, plugin docs, or ad-hoc CLI flags until the local troubleshooting doc has been checked.
+
 ## Language conventions
 
 - Use UK/British English: `visualise` not `visualize`, `colour` not `color`
@@ -114,6 +131,35 @@ Always develop and verify against the Vite dev server started with `pnpm run dev
 ```text
 http://127.0.0.1:5173/
 ```
+
+### Tailscale dev server previews
+
+When a user needs to preview an agent-hosted dev server from their own browser, expose the Vite dev server over Tailscale:
+
+```shell
+pnpm run dev --host 0.0.0.0
+```
+
+Find the Tailscale URL:
+
+```shell
+tailscale ip -4
+tailscale status --json | jq -r '.Self.DNSName'
+```
+
+Share the `*.ts.net` URL with the route being tested, for example:
+
+```text
+http://brian.tail71b97.ts.net:5173/trading-view/vaults/stablecoins/frax
+```
+
+If the DNS name is unavailable, share the Tailscale IP fallback:
+
+```text
+http://100.x.y.z:5173/trading-view/vaults/stablecoins/frax
+```
+
+`vite.config.ts` allows `.ts.net` in `server.allowedHosts` and `preview.allowedHosts` so remote agent previews are not blocked by Vite host validation. Keep this allowlist scoped to Tailscale hostnames; do not set `allowedHosts: true`.
 
 Use Chrome remote debugging MCP only when you specifically need to attach to an already running Chrome session, inspect the live DevTools state, or reuse a signed-in/manual browser context.
 

@@ -96,6 +96,29 @@ This is configured in `vite.config.ts` (sets `cacheDir` and an env var) and `sve
 
 You can safely run the dev server and test builds concurrently without cache corruption.
 
+### Manual remote previews over Tailscale
+
+For manual browser checks from another machine, use the Vite dev server rather than Vite preview:
+
+```shell
+pnpm run dev --host 0.0.0.0
+```
+
+Then share the Tailscale DNS name or IP with the route being reviewed:
+
+```shell
+tailscale status --json | jq -r '.Self.DNSName'
+tailscale ip -4
+```
+
+Example:
+
+```text
+http://brian.tail71b97.ts.net:5173/trading-view/vaults/stablecoins/frax
+```
+
+The Vite config allows `.ts.net` hosts so agent-hosted remote dev previews work without disabling host validation globally.
+
 ### End-to-end tests
 
 E2e tests are smoke tests that run against the **live production API**. They require a **production

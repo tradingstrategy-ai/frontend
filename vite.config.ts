@@ -23,6 +23,10 @@ const customLogger = ((logger) => {
 	};
 })(createLogger());
 
+// Allow remote dev-server previews when a coding agent exposes Vite over Tailscale.
+// Vite treats a leading dot as "this hostname and all subdomains".
+const TAILSCALE_ALLOWED_HOST = '.ts.net';
+
 export default defineConfig(({ mode }) => {
 	// Signal test mode to svelte.config.js via env var so it uses a separate
 	// outDir. This env var is inherited by Worker threads (unlike process.argv),
@@ -78,6 +82,8 @@ export default defineConfig(({ mode }) => {
 		resolve: process.env.VITEST ? { conditions: ['browser'] } : undefined,
 
 		server: {
+			// Lets users open an agent-hosted dev server via e.g. brian.tailnet.ts.net.
+			allowedHosts: [TAILSCALE_ALLOWED_HOST],
 			fs: {
 				allow: [process.cwd()]
 			}
@@ -92,7 +98,8 @@ export default defineConfig(({ mode }) => {
 		},
 
 		preview: {
-			allowedHosts: ['.tradingstrategy.ai']
+			// Keep preview consistent with dev for agent-hosted remote checks.
+			allowedHosts: ['.tradingstrategy.ai', TAILSCALE_ALLOWED_HOST]
 		},
 
 		// vitest configuration for unit tests (`pnpm run test:unit`)

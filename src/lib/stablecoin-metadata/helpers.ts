@@ -3,10 +3,28 @@ import { buildMetadataLogoProxyPath, type MetadataLogoOptions } from '$lib/metad
 import { slugify } from '$lib/helpers/slugify';
 import type { StablecoinMetadata } from './schemas';
 
+export const STABLECOIN_DEPEG_RATE_THRESHOLD = 0.9;
+
 interface StablecoinLookupInput {
 	slug?: string | null;
 	symbol?: string | null;
 	name?: string | null;
+}
+
+interface StablecoinRateInput {
+	usd_rate?: number | null;
+	peg_rate_currency?: string | null;
+	peg_rate?: number | null;
+	depegged_at?: string | null;
+	denomination_token_rate?: {
+		usd_rate?: number | null;
+		native_rate?: number | null;
+		native_rate_currency?: string | null;
+	} | null;
+	coingecko_link?: string | null;
+	links?: {
+		coingecko?: string | null;
+	};
 }
 
 export function formatStablecoinDisplayName(
@@ -104,6 +122,62 @@ export function resolveStablecoinSlug(
 	}
 
 	return undefined;
+}
+
+/**
+ * Return the CoinGecko URL for a stablecoin metadata record.
+ *
+ * @param metadata stablecoin metadata from the external metadata index
+ */
+export function getStablecoinCoingeckoLink(metadata: StablecoinRateInput | null | undefined): string | undefined {
+	return metadata?.coingecko_link ?? metadata?.links?.coingecko ?? undefined;
+}
+
+function isNonUsdCurrency(currency: string | null | undefined): boolean {
+	return Boolean(currency && currency.toLowerCase() !== 'usd');
+}
+
+function finiteRate(rate: number | null | undefined): number | undefined {
+	return typeof rate === 'number' && Number.isFinite(rate) ? rate : undefined;
+}
+
+/**
+ * Return the stablecoin rate in its native peg currency.
+ *
+ * Stablecoin metadata exposes this as `peg_rate`; vault entries expose the same
+ * value as `denomination_token_rate.native_rate`. USD-pegged vault entries only
+ * have `denomination_token_rate.usd_rate`, which is also their native rate.
+ *
+ * @param metadata stablecoin metadata, vault metadata, or a grouped row containing rate fields
+ */
+export function getStablecoinNativeRate(metadata: StablecoinRateInput | null | undefined): number | undefined {
+	const pegRate = finiteRate(metadata?.peg_rate);
+	if (pegRate !== undefined) return pegRate;
+
+	const vaultNativeRate = finiteRate(metadata?.denomination_token_rate?.native_rate);
+	if (vaultNativeRate !== undefined) return vaultNativeRate;
+
+	const hasNonUsdNativeCurrency =
+		isNonUsdCurrency(metadata?.peg_rate_currency) ||
+		isNonUsdCurrency(metadata?.denomination_token_rate?.native_rate_currency);
+	if (hasNonUsdNativeCurrency) return undefined;
+
+	const vaultUsdRate = finiteRate(metadata?.denomination_token_rate?.usd_rate);
+	if (vaultUsdRate !== undefined) return vaultUsdRate;
+
+	return finiteRate(metadata?.usd_rate);
+}
+
+/**
+ * Stablecoin is considered depegged when its native peg-currency rate is below 90%.
+ *
+ * @param metadata stablecoin metadata, vault metadata, or a grouped row containing rate fields
+ */
+export function isStablecoinDepegged(metadata: StablecoinRateInput | null | undefined): boolean {
+	const rate = getStablecoinNativeRate(metadata);
+	if (rate !== undefined) return rate < STABLECOIN_DEPEG_RATE_THRESHOLD;
+
+	return Boolean(metadata?.depegged_at);
 }
 
 /**
