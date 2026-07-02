@@ -25,10 +25,13 @@
 		<dt>
 			<Tooltip>
 				<span slot="trigger" class="underline">
-					Avg. 1M APY
+					Avg. 3M APY
 					<IconQuestionCircle />
 				</span>
-				<span slot="popup">TVL-weighted average of {aggregates.rankedVaultCount} vaults with minimum $50k TVL.</span>
+				<span slot="popup">
+					TVL-weighted average of {aggregates.rankedVaultCount} known-protocol vaults with severe or safer risk and minimum
+					$50k TVL.
+				</span>
 			</Tooltip>
 		</dt>
 		<dd>

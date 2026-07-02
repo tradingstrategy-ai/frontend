@@ -40,6 +40,8 @@
 		defaultTvlKey?: string;
 		/** Default age filter index (used to initialise the dropdown when showFilters is true) */
 		defaultAgeIndex?: number;
+		/** Default risk filter index (used to initialise the dropdown when showFilters is true) */
+		defaultRiskIndex?: number;
 		/** Default value for the "Hide unknown" filter (1 = hide, 0 = show) */
 		defaultHideUnknown?: number;
 		/** Default monthly return filter key */
@@ -59,6 +61,8 @@
 		beforeTable?: Snippet;
 		/** Whole-database vault count for the "out of {total}" listing meta on pre-filtered listings */
 		totalVaultCount?: number;
+		/** Include blacklisted vaults in the listing summary stats. */
+		includeBlacklistedInStats?: boolean;
 	}
 
 	let {
@@ -77,6 +81,7 @@
 		showFilters,
 		defaultTvlKey,
 		defaultAgeIndex,
+		defaultRiskIndex,
 		defaultHideUnknown,
 		defaultMonthlyReturnKey,
 		defaultSort,
@@ -85,7 +90,8 @@
 		detailAside,
 		detailDescription,
 		beforeTable,
-		totalVaultCount
+		totalVaultCount,
+		includeBlacklistedInStats
 	}: Props = $props();
 
 	let renderDetailAsideInHero = $derived(
@@ -207,10 +213,12 @@
 					{chain}
 					loading
 					{showFilters}
+					{defaultRiskIndex}
 					{defaultHideUnknown}
 					{defaultMonthlyReturnKey}
 					{defaultSort}
 					{defaultDirection}
+					{includeBlacklistedInStats}
 				/>
 			{:else if !topVaults?.vaults.length}
 				{#if stablecoinMetadata}
@@ -231,10 +239,12 @@
 					{showFilters}
 					{defaultTvlKey}
 					{defaultAgeIndex}
+					{defaultRiskIndex}
 					{defaultHideUnknown}
 					{defaultMonthlyReturnKey}
 					{defaultSort}
 					{defaultDirection}
+					{includeBlacklistedInStats}
 				/>
 			{/if}
 		</div>

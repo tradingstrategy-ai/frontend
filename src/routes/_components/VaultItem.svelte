@@ -32,7 +32,7 @@
 		</div>
 
 		<div class="profitability">
-			{formatPercentProfit(vault.one_month_cagr_net ?? vault.one_month_cagr)}
+			{formatPercentProfit(vault.three_months_cagr_net ?? vault.three_months_cagr)}
 		</div>
 
 		<div class="sparkline">

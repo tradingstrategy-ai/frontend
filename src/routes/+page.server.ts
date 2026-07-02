@@ -6,7 +6,7 @@ import { fetchTopVaults } from '$lib/top-vaults/client';
 import { type SlimVaultInfo, type VaultAggregates } from '$lib/top-vaults/schemas';
 import {
 	calculateTotalTvl,
-	isBlacklisted,
+	isEligibleFrontpageVault,
 	meetsDefaultTvl,
 	meetsMinTvl,
 	rankVaultsBy,
@@ -83,10 +83,10 @@ export async function load({ fetch }) {
 
 	if (topVaultsResult) {
 		const allSlim = topVaultsResult.vaults.map(slimVault);
-		const baseVaults = allSlim.filter((v) => !isBlacklisted(v) && meetsMinTvl(v));
+		const baseVaults = allSlim.filter((v) => isEligibleFrontpageVault(v) && meetsMinTvl(v));
 		const rankedVaults = baseVaults
 			.filter(meetsDefaultTvl)
-			.sort(rankVaultsBy(['one_month_cagr', 'one_month_cagr_net']))
+			.sort(rankVaultsBy(['three_months_cagr', 'three_months_cagr_net']))
 			.reverse();
 
 		const totalTvl = calculateTotalTvl(baseVaults);
@@ -95,7 +95,7 @@ export async function load({ fetch }) {
 			rankedTvl > 0
 				? rankedVaults.reduce((acc, v) => {
 						const weight = (v.current_nav ?? 0) / rankedTvl;
-						return acc + weight * (v.one_month_cagr_net ?? v.one_month_cagr ?? 0);
+						return acc + weight * (v.three_months_cagr_net ?? v.three_months_cagr ?? 0);
 					}, 0)
 				: 0;
 
