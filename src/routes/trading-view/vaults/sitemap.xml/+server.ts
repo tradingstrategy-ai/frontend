@@ -15,6 +15,7 @@ const priority = 0.8;
 const staticSubPages = [
 	'all',
 	'high-tvl',
+	'international',
 	'new-vaults',
 	'current-peak-tvl',
 	'cumulative-tvl-apy',

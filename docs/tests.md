@@ -70,6 +70,9 @@ pnpm run test:integration
 For normal development, keep checked-in defaults in `.env` and place local-only secrets in
 `.env.local`. Vite/SvelteKit loads `.env.local` automatically and it overrides `.env`.
 
+In git worktrees, `.env.local` is not copied from the main checkout. Symlink or copy it before
+running private-data tests or local dev servers; see [worktree setup](../.claude/docs/worktree.md).
+
 The regular integration suite intentionally stays deterministic and uses `.env.test` plus mock
 APIs. This means secret-backed features should not be added to the default `pnpm run test:integration`
 flow unless they can be mocked reliably.
@@ -99,6 +102,9 @@ You can safely run the dev server and test builds concurrently without cache cor
 ### Manual remote previews over Tailscale
 
 For manual browser checks from another machine, use the Vite dev server rather than Vite preview:
+
+If the dev server runs from a git worktree, first make sure `.env.local` and the `data/` cache are
+available in that worktree; see [worktree setup](../.claude/docs/worktree.md).
 
 ```shell
 pnpm run dev --host 0.0.0.0

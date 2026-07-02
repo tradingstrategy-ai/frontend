@@ -53,6 +53,10 @@ Environment variables required by the app are maintained in a checked-in `.env` 
 Put local-only secrets and overrides in `.env.local`, which is gitignored and loaded automatically
 by Vite/SvelteKit. Variables in `.env.local` override `.env`.
 
+When running from a git worktree, ignored local files are not copied from the main checkout. Symlink
+or copy `.env.local` and the `data/` cache before starting the dev server; see
+[worktree setup](./.claude/docs/worktree.md).
+
 Use the existing prefixes when adding variables:
 
 - `TS_PUBLIC_` for values that may be exposed client-side

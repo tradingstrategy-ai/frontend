@@ -10,7 +10,8 @@
 	import SocialMediaTags from './SocialMetaTags.svelte';
 	import VaultPageHeader from './VaultPageHeader.svelte';
 	import ChartWithFeaturedMetrics from './ChartWithFeaturedMetrics.svelte';
-	import VaultUtilisationChart from '$lib/top-vaults/VaultUtilisationChart.svelte';
+	// Vault protocols do not report useful utilisation data.
+	// import VaultUtilisationChart from '$lib/top-vaults/VaultUtilisationChart.svelte';
 	import VaultMetrics from './VaultMetrics.svelte';
 	import VaultTechnicalDetailsTable from './VaultTechnicalDetailsTable.svelte';
 	import VaultPeriodicMetrics from './VaultPeriodicMetrics.svelte';
@@ -92,7 +93,9 @@
 			protocolLogoUrl={protocolMetadata ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined}
 		/>
 
+		<!-- Vault protocols do not report useful utilisation data.
 		<VaultUtilisationChart {vault} />
+		-->
 
 		<VaultMetrics {vault} />
 

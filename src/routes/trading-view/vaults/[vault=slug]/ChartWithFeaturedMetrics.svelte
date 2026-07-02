@@ -5,7 +5,13 @@
 	import Profitability from '$lib/components/Profitability.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import Metric from './Metric.svelte';
-	import { formatDollar, formatNumber, formatPercent } from '$lib/helpers/formatters';
+	import { formatDollar, formatNumber, formatPercent, formatTokenAmount } from '$lib/helpers/formatters';
+	import {
+		getVaultCurrentTvlUsd,
+		getVaultDenominationCurrency,
+		getVaultPeakTvlUsd,
+		getVaultTvlNative
+	} from '$lib/top-vaults/helpers';
 
 	interface Props {
 		vault: VaultInfo;
@@ -13,6 +19,21 @@
 	}
 
 	let { vault, protocolLogoUrl }: Props = $props();
+
+	let denominationCurrency = $derived(getVaultDenominationCurrency(vault));
+	let showNativeTvl = $derived(denominationCurrency != null && denominationCurrency !== 'usd');
+	let currentNativeTvl = $derived(getVaultTvlNative(vault, vault.current_nav));
+	let peakNativeTvl = $derived(getVaultTvlNative(vault, vault.peak_nav));
+	let nativeTvlLabel = $derived.by(() => {
+		if (!showNativeTvl || currentNativeTvl == null || !denominationCurrency) return null;
+
+		const peak = peakNativeTvl == null ? '' : ` / ${formatNativeTvlAmount(peakNativeTvl)}`;
+		return `(${formatNativeTvlAmount(currentNativeTvl)}${peak}) ${denominationCurrency.toUpperCase()}`;
+	});
+
+	function formatNativeTvlAmount(value: number | null): string {
+		return value == null ? '' : formatTokenAmount(value, 2);
+	}
 </script>
 
 <MetricsBox>
@@ -38,8 +59,11 @@
 				{/if}
 			</Metric>
 			<Metric size="xl" label="Total value locked">
-				{formatDollar(vault.current_nav, 1)}
-				<div class="sm">peak {formatDollar(vault.peak_nav, 1)}</div>
+				{formatDollar(getVaultCurrentTvlUsd(vault), 1)}
+				<div class="sm">peak {formatDollar(getVaultPeakTvlUsd(vault), 1)}</div>
+				{#if nativeTvlLabel}
+					<div class="sm">{nativeTvlLabel}</div>
+				{/if}
 			</Metric>
 			<div class="desktop">
 				<Metric size="lg" label="3M Sharpe">
