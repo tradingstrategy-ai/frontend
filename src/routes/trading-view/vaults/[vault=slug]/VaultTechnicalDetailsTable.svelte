@@ -4,9 +4,15 @@
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import { CopyWidget, HashAddress, Timestamp, Tooltip } from '$lib/components';
-	import { formatAmount, notFilledMarker } from '$lib/helpers/formatters';
+	import { formatAmount, formatDollar, notFilledMarker } from '$lib/helpers/formatters';
 	import { parseDate } from '$lib/helpers/date';
-	import { getFeeModeLabel, getFeeModeDescription } from '$lib/top-vaults/helpers';
+	import {
+		getFeeModeLabel,
+		getFeeModeDescription,
+		getVaultDenominationUsdRate,
+		getVaultDenominationCurrency,
+		getVaultTvlNative
+	} from '$lib/top-vaults/helpers';
 	import { getStablecoinLogoUrl, resolveStablecoinSlug } from '$lib/stablecoin-metadata/helpers';
 	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
 	import { getLogoUrl } from '$lib/helpers/assets';
@@ -38,6 +44,16 @@
 
 		return `${fullName} (${symbol})`;
 	});
+	let denominationCurrency = $derived(getVaultDenominationCurrency(vault));
+	let nativeCurrencySymbol = $derived(denominationCurrency?.toUpperCase());
+	let showNativeTvlRows = $derived(denominationCurrency != null && denominationCurrency !== 'usd');
+	let lifetimePeriod = $derived(vault.period_results?.find((p) => p.period.toLowerCase() === 'lifetime') ?? null);
+	let denominationPageSlug = $derived(denominationSlug ?? vault.denomination_slug);
+	let exchangeRateFetchedAt = $derived(
+		vault.denomination_token_rate?.usd_rate_fetched_at ??
+			vault.denomination_token_rate?.source_currency_usd_rate_fetched_at ??
+			null
+	);
 
 	let lastUpdatedStale = $derived.by(() => {
 		const lastUpdated = parseDate(vault.last_updated_at);
@@ -57,6 +73,16 @@
 				address: vault.denomination_token_address
 			},
 			type: 'denomination' as const
+		},
+		{
+			label: 'Exchange rate used',
+			value: {
+				usdRate: getVaultDenominationUsdRate(vault),
+				symbol: vault.denomination,
+				slug: denominationPageSlug,
+				fetchedAt: exchangeRateFetchedAt
+			},
+			type: 'exchangeRate' as const
 		},
 		{
 			label: 'Share token',
@@ -83,6 +109,26 @@
 			value: { amount: vault.peak_nav, symbol: vault.denomination },
 			type: 'currency' as const
 		},
+		...(showNativeTvlRows && nativeCurrencySymbol
+			? [
+					{
+						label: `TVL low (${nativeCurrencySymbol})`,
+						value: {
+							amount: getVaultTvlNative(vault, lifetimePeriod?.tvl_low ?? null),
+							symbol: nativeCurrencySymbol
+						},
+						type: 'currency' as const
+					},
+					{
+						label: `TVL high (${nativeCurrencySymbol})`,
+						value: {
+							amount: getVaultTvlNative(vault, lifetimePeriod?.tvl_high ?? null),
+							symbol: nativeCurrencySymbol
+						},
+						type: 'currency' as const
+					}
+				]
+			: []),
 		{
 			label: 'Last share price',
 			value: { amount: vault.last_share_price, symbol: vault.denomination },
@@ -124,6 +170,11 @@
 			default:
 				return String(value);
 		}
+	}
+
+	function formatExchangeRate(usdRate: number | null | undefined, symbol: string): string {
+		if (usdRate == null) return notFilledMarker;
+		return `1 ${symbol} = ${formatDollar(usdRate, 4, 6)}`;
 	}
 </script>
 
@@ -181,6 +232,21 @@
 										{/if}
 										{row.value.name}
 									</a>
+								{/if}
+							{:else if row.type === 'exchangeRate'}
+								{#if row.value.usdRate != null}
+									<span class="exchange-rate-cell">
+										<a href="/trading-view/vaults/stablecoins/{row.value.slug}">
+											{formatExchangeRate(row.value.usdRate, row.value.symbol)}
+										</a>
+										{#if row.value.fetchedAt}
+											<span class="secondary">
+												fetched <Timestamp date={row.value.fetchedAt} relative />
+											</span>
+										{/if}
+									</span>
+								{:else}
+									{notFilledMarker}
 								{/if}
 							{:else if row.type === 'token'}
 								{#if row.value.address}
@@ -357,6 +423,18 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.4em;
+	}
+
+	.exchange-rate-cell {
+		display: inline-flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.4rem;
+	}
+
+	.secondary {
+		color: var(--c-text-extra-light);
+		font: var(--f-ui-sm-roman);
 	}
 
 	.denomination-logo,

@@ -16,10 +16,51 @@ import {
 	getCore3RankingUrl,
 	getCore3ScoreTone,
 	getCore3CategoryScores,
+	getCurrencyUsdRates,
+	getVaultCurrentTvlUsd,
+	getVaultDenominationCurrency,
+	getVaultDenominationUsdRate,
+	getVaultPeakTvlUsd,
+	getVaultTvlNative,
+	isNonUsdDenominatedVault,
+	withVaultDenominationTokenRate,
 	calculateTvlWeightedApy
 } from './helpers';
-import type { Core3Protocol } from './schemas';
+import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
+import type { Core3Protocol, DenominationTokenRate } from './schemas';
 import { createTestVault } from './test-utils';
+
+function createDenominationTokenRate(overrides: Partial<DenominationTokenRate> = {}): DenominationTokenRate {
+	return {
+		coingecko_id: null,
+		source_currency: null,
+		usd_rate: null,
+		usd_rate_fetched_at: null,
+		usd_rate_source: null,
+		native_rate: null,
+		native_rate_currency: null,
+		native_rate_fetched_at: null,
+		native_rate_source: null,
+		source_currency_usd_rate: null,
+		source_currency_usd_rate_fetched_at: null,
+		source_currency_usd_rate_source: null,
+		...overrides
+	};
+}
+
+function createStablecoinMetadata(overrides: Partial<StablecoinMetadata> = {}): StablecoinMetadata {
+	return {
+		symbol: 'EURA',
+		slug: 'eura',
+		name: 'Angle EURA',
+		short_description: 'Euro stablecoin',
+		description: 'Euro stablecoin',
+		category: 'stablecoin',
+		links: { homepage: null, coingecko: null, defillama: null, twitter: null },
+		logos: { light: null },
+		...overrides
+	};
+}
 
 describe('isBlacklisted', () => {
 	test('returns true for blacklisted vaults', () => {
@@ -150,6 +191,143 @@ describe('meetsMinTvl', () => {
 		const vaultAbove = createTestVault('Vault below', { current_nav: 10_000 });
 		expect(meetsMinTvl(vaultBelow)).toBe(false);
 		expect(meetsMinTvl(vaultAbove)).toBe(true);
+	});
+});
+
+describe('denomination TVL conversion', () => {
+	test('detects non-USD denomination from token rate metadata', () => {
+		const vault = createTestVault('EUR vault', {
+			denomination: 'EURS',
+			denomination_token_rate: createDenominationTokenRate({
+				native_rate_currency: 'eur',
+				usd_rate: 1.08
+			})
+		});
+
+		expect(getVaultDenominationCurrency(vault)).toBe('eur');
+		expect(isNonUsdDenominatedVault(vault)).toBe(true);
+	});
+
+	test('does not treat USD denomination as international', () => {
+		const vault = createTestVault('USDC vault', {
+			denomination_token_rate: createDenominationTokenRate({
+				native_rate_currency: 'usd',
+				usd_rate: 1
+			})
+		});
+
+		expect(getVaultDenominationCurrency(vault)).toBe('usd');
+		expect(isNonUsdDenominatedVault(vault)).toBe(false);
+	});
+
+	test('converts current and peak TVL to USD using the denomination token rate', () => {
+		const vault = createTestVault('EUR vault', {
+			current_nav: 100_000,
+			peak_nav: 120_000,
+			denomination_token_rate: createDenominationTokenRate({
+				native_rate_currency: 'eur',
+				usd_rate: 1.08
+			})
+		});
+
+		expect(getVaultCurrentTvlUsd(vault)).toBeCloseTo(108_000);
+		expect(getVaultPeakTvlUsd(vault)).toBeCloseTo(129_600);
+	});
+
+	test('infers EUR denomination when per-vault rate metadata is absent', () => {
+		const vault = createTestVault('EURCV vault', {
+			denomination: 'EURCV',
+			normalised_denomination: 'EURCV',
+			denomination_slug: 'eurcv'
+		});
+
+		expect(getVaultDenominationCurrency(vault)).toBe('eur');
+		expect(isNonUsdDenominatedVault(vault)).toBe(true);
+	});
+
+	test('keeps USD-branded denominations out of international listings', () => {
+		const vault = createTestVault('USDG vault', {
+			denomination: 'USDG',
+			normalised_denomination: 'USDG',
+			denomination_slug: 'usdg'
+		});
+
+		expect(getVaultDenominationCurrency(vault)).toBe('usd');
+		expect(isNonUsdDenominatedVault(vault)).toBe(false);
+	});
+
+	test('does not treat a missing non-USD exchange rate as one dollar', () => {
+		const vault = createTestVault('tGBP vault', {
+			current_nav: 100_000,
+			denomination: 'tGBP',
+			normalised_denomination: 'tGBP',
+			denomination_slug: 'tgbp'
+		});
+
+		expect(getVaultDenominationCurrency(vault)).toBe('gbp');
+		expect(getVaultDenominationUsdRate(vault)).toBeNull();
+		expect(getVaultCurrentTvlUsd(vault)).toBeNull();
+	});
+
+	test('enriches EUR vaults with currency fallback rates when token metadata has no USD rate', () => {
+		const vault = createTestVault('EURCV vault', {
+			current_nav: 100_000,
+			denomination: 'EURCV',
+			normalised_denomination: 'EURCV',
+			denomination_slug: 'eurcv'
+		});
+		const currencyUsdRates = getCurrencyUsdRates([
+			createStablecoinMetadata({
+				slug: 'eura',
+				symbol: 'EURA',
+				usd_rate: 1.14,
+				usd_rate_fetched_at: '2026-06-26T12:16:16Z',
+				peg_rate: 1,
+				peg_rate_currency: 'eur'
+			})
+		]);
+		const eurcvMetadata = createStablecoinMetadata({
+			slug: 'eurcv',
+			symbol: 'EURCV',
+			name: 'SG-FORGE EUR CoinVertible',
+			peg_rate_currency: null,
+			usd_rate: null,
+			peg_rate: null
+		});
+
+		const enrichedVault = withVaultDenominationTokenRate(vault, eurcvMetadata, currencyUsdRates);
+
+		expect(getVaultCurrentTvlUsd(enrichedVault)).toBeCloseTo(114_000);
+		expect(getVaultTvlNative(enrichedVault, enrichedVault.current_nav)).toBeCloseTo(100_000);
+		expect(enrichedVault.denomination_token_rate?.usd_rate_fetched_at).toBe('2026-06-26T12:16:16Z');
+		expect(enrichedVault.denomination_token_rate?.source_currency_usd_rate_fetched_at).toBe('2026-06-26T12:16:16Z');
+	});
+
+	test('replaces empty denomination token rate objects with inferred fallback rates', () => {
+		const vault = createTestVault('EURCV vault', {
+			current_nav: 100_000,
+			peak_nav: 120_000,
+			denomination: 'EURCV',
+			normalised_denomination: 'EURCV',
+			denomination_slug: 'eurcv',
+			denomination_token_rate: createDenominationTokenRate()
+		});
+		const currencyUsdRates = getCurrencyUsdRates([
+			createStablecoinMetadata({
+				slug: 'eura',
+				symbol: 'EURA',
+				usd_rate: 1.14,
+				usd_rate_fetched_at: '2026-06-26T12:16:16Z',
+				peg_rate: 1,
+				peg_rate_currency: 'eur'
+			})
+		]);
+
+		const enrichedVault = withVaultDenominationTokenRate(vault, undefined, currencyUsdRates);
+
+		expect(enrichedVault.denomination_token_rate?.usd_rate).toBe(1.14);
+		expect(getVaultCurrentTvlUsd(enrichedVault)).toBeCloseTo(114_000);
+		expect(getVaultPeakTvlUsd(enrichedVault)).toBeCloseTo(136_800);
 	});
 });
 

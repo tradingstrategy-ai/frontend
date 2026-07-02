@@ -3,6 +3,7 @@ import { type RequestHandler, error } from '@sveltejs/kit';
 import {
 	type BlogPostDetails,
 	type BlogPostIndex,
+	type BlogPostIndexItem,
 	blogPostResponseSchema,
 	blogPostIndexSchema,
 	blogPostIndexItemSchema
@@ -46,6 +47,36 @@ export async function getPosts(fetch: Fetch, params: BlogIndexParams): Promise<B
 	}
 
 	return blogPostIndexSchema.parse(await resp.json());
+}
+
+// Ghost's Content API caps the number of posts returned in a single response at
+// 100, even when `limit=all` is requested. This is the maximum usable page size.
+const maxPageSize = 100;
+
+/**
+ * Fetch every blog post across all pages.
+ *
+ * A single request cannot return more than 100 posts (Ghost silently caps
+ * `limit=all` at 100), so this paginates using the maximum page size and follows
+ * `meta.pagination.next` until exhausted. Use for consumers that must see the
+ * complete set of posts, e.g. the sitemap.
+ */
+export async function getAllPosts(fetch: Fetch): Promise<BlogPostIndexItem[]> {
+	const posts: BlogPostIndexItem[] = [];
+	let page = 1;
+
+	while (true) {
+		const { posts: pagePosts, meta } = await getPosts(fetch, { limit: maxPageSize, page });
+		posts.push(...pagePosts);
+
+		const { next } = meta.pagination;
+		// Stop when Ghost reports no further page. Guard against a malformed
+		// response that never advances (or moves backwards) to avoid looping forever.
+		if (next === null || next <= page) break;
+		page = next;
+	}
+
+	return posts;
 }
 
 /**

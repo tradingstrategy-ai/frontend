@@ -30,9 +30,11 @@
 		formatNumber,
 		formatPercent,
 		formatPercentProfit,
+		formatTokenAmount,
 		formatValue,
 		notFilledMarker
 	} from '$lib/helpers/formatters';
+	import { isStablecoinDepegged } from '$lib/stablecoin-metadata/helpers';
 	import {
 		DEFAULT_TVL_KEY,
 		DEFAULT_TVL_THRESHOLD,
@@ -44,6 +46,11 @@
 		getLockupTooltip,
 		getLifetimeMaxDrawdown,
 		getMonthlyReturn,
+		getVaultCurrentTvlUsd,
+		getVaultDenominationNativeRate,
+		getVaultDenominationCurrency,
+		getVaultPeakTvlUsd,
+		getVaultTvlNative,
 		hasSupportedProtocol,
 		isBlacklisted,
 		isGoodVaultStatus,
@@ -170,7 +177,14 @@
 			}
 		},
 		denomination: { defaultDirection: 'asc', compareFn: stringCompare((v) => v.denomination) },
-		tvl: { defaultDirection: 'desc', compareFn: rankVaultsBy(['current_nav', 'peak_nav']) },
+		tvl: {
+			defaultDirection: 'desc',
+			compareFn: (a: VaultInfo, b: VaultInfo) =>
+				rankVaultsBy(['current_tvl_usd', 'peak_tvl_usd'])(
+					{ current_tvl_usd: getVaultCurrentTvlUsd(a), peak_tvl_usd: getVaultPeakTvlUsd(a) },
+					{ current_tvl_usd: getVaultCurrentTvlUsd(b), peak_tvl_usd: getVaultPeakTvlUsd(b) }
+				)
+		},
 		age: { defaultDirection: 'desc', compareFn: rankVaultsBy(['years']) },
 		fees: { defaultDirection: 'asc', compareFn: rankVaultsBy(['mgmt_fee', 'perf_fee'], Infinity) },
 		lockup: { defaultDirection: 'asc', compareFn: rankVaultsBy(['lockup'], Infinity) },
@@ -316,11 +330,52 @@
 
 	const formatReturn = (v: MaybeNumber) => formatPercentProfit(v, 1);
 	const formatTvl = (v: MaybeNumber) => formatDollar(v, 2);
+	const formatTvlTokenAmount = (v: MaybeNumber, symbol: string) =>
+		v == null ? notFilledMarker : `${formatTokenAmount(v, 2)} ${symbol}`;
 	const formatVolatility = (v: MaybeNumber) => {
 		if (v == null) return notFilledMarker;
 		if (Math.abs(v) > VOLATILITY_CAP) return VOLATILITY_CAP_LABEL;
 		return formatPercent(v, 1);
 	};
+
+	function isFinitePositiveNumber(value: number | null | undefined): value is number {
+		return typeof value === 'number' && Number.isFinite(value) && value > 0;
+	}
+
+	function getVaultUsdRate(vault: VaultInfo): number | null {
+		const rate = vault.denomination_token_rate?.usd_rate;
+		return isFinitePositiveNumber(rate) ? rate : null;
+	}
+
+	function getVaultNativeRate(vault: VaultInfo): number | null {
+		return getVaultDenominationNativeRate(vault);
+	}
+
+	function formatNativeTvl(vault: VaultInfo, nav: number | null): string {
+		const currency = getVaultDenominationCurrency(vault);
+		if (!currency) return notFilledMarker;
+		const nativeTvl = getVaultTvlNative(vault, nav);
+		return nativeTvl == null ? notFilledMarker : `${formatTokenAmount(nativeTvl, 2)} ${currency.toUpperCase()}`;
+	}
+
+	function formatVaultExchangeRate(vault: VaultInfo): string {
+		const usdRate = getVaultUsdRate(vault);
+		if (usdRate == null) return notFilledMarker;
+
+		const currency = getVaultDenominationCurrency(vault);
+		const nativeRate = getVaultNativeRate(vault);
+		const nativeText =
+			currency && currency !== 'usd' && nativeRate != null
+				? ` (${formatTokenAmount(nativeRate, 4, 6)} ${currency.toUpperCase()})`
+				: '';
+
+		return `1 ${vault.denomination} = ${formatDollar(usdRate, 4, 6)}${nativeText}`;
+	}
+
+	function shouldShowTvlBreakdown(vault: VaultInfo): boolean {
+		const currency = getVaultDenominationCurrency(vault);
+		return currency != null && currency !== 'usd' ? true : isStablecoinDepegged(vault);
+	}
 
 	// filter out blacklisted vaults (unless includeBlacklisted, searching "blacklisted",
 	// or the risk dropdown includes blacklisted level)
@@ -339,10 +394,14 @@
 		return tvlThreshold;
 	}
 
+	function getVaultCurrentTvl(vault: VaultInfo): number {
+		return getVaultCurrentTvlUsd(vault) ?? 0;
+	}
+
 	// Get vaults hidden due to TVL threshold (only when filtering is enabled)
 	let hiddenVaults = $derived.by(() => {
 		if (!filterTvl && !showFilters) return [];
-		return baseVaults.filter((v) => (v.current_nav ?? 0) < getVaultTvlThreshold(v));
+		return baseVaults.filter((v) => getVaultCurrentTvl(v) < getVaultTvlThreshold(v));
 	});
 
 	// Count of hidden vaults
@@ -360,7 +419,7 @@
 
 			// TVL filter (prop-driven or dropdown-driven)
 			if (filterTvl || showFilters) {
-				if ((v.current_nav ?? 0) < getVaultTvlThreshold(v)) {
+				if (getVaultCurrentTvl(v) < getVaultTvlThreshold(v)) {
 					return false;
 				}
 			}
@@ -424,10 +483,12 @@
 	let statsVaults = $derived(filteredVaults.filter((v) => !isBlacklisted(v)));
 
 	// Calculate total TVL from non-blacklisted, fully-filtered vaults
-	let totalTvl = $derived(calculateTotalTvl(statsVaults));
+	let totalTvl = $derived(calculateTotalTvl(statsVaults.map((v) => ({ current_nav: getVaultCurrentTvlUsd(v) }))));
 
 	// Calculate TVL-weighted average 1M APY from non-blacklisted, fully-filtered vaults
-	let avgTvlWeightedApy1M = $derived(calculateTvlWeightedApy(statsVaults));
+	let avgTvlWeightedApy1M = $derived(
+		calculateTvlWeightedApy(statsVaults.map((v) => ({ ...v, current_nav: getVaultCurrentTvlUsd(v) })))
+	);
 
 	// sort vaults
 	let sortedVaults = $derived.by(() => {
@@ -582,6 +643,33 @@
 			lifetimeData
 		)}
 	</td>
+{/snippet}
+
+{#snippet tvlValues(vault: VaultInfo)}
+	<div class="multiline multival">
+		<span class="primary">{formatTvl(getVaultCurrentTvlUsd(vault))}</span>
+		<span class="secondary">{formatTvl(getVaultPeakTvlUsd(vault))}</span>
+	</div>
+{/snippet}
+
+{#snippet tvlBreakdown(label: string, nav: number | null, vault: VaultInfo)}
+	<section class="tvl-breakdown-section">
+		<h4>{label}</h4>
+		<dl>
+			<div>
+				<dt>{vault.denomination}</dt>
+				<dd>{formatTvlTokenAmount(nav, vault.denomination)}</dd>
+			</div>
+			<div>
+				<dt>USD</dt>
+				<dd>{formatTvl(nav == null ? null : getVaultCurrentTvlUsd({ ...vault, current_nav: nav }))}</dd>
+			</div>
+			<div>
+				<dt>{getVaultDenominationCurrency(vault)?.toUpperCase() ?? 'Native currency'}</dt>
+				<dd>{formatNativeTvl(vault, nav)}</dd>
+			</div>
+		</dl>
+	</section>
 {/snippet}
 
 <div class="top-vaults-table">
@@ -934,7 +1022,7 @@
 						'TVL USD<br/>(current/&ZeroWidthSpace;peak)',
 						'tvl',
 						'desc',
-						rankVaultsBy(['current_nav', 'peak_nav'])
+						sortColumnMap['tvl'].compareFn
 					)}
 					{@render sortColHeader('Age (y)', 'age', 'desc', rankVaultsBy(['years']))}
 					{@render sortColHeader(
@@ -1010,10 +1098,24 @@
 							{formatValue(vault.denomination)}
 						</td>
 						<td class="tvl right">
-							<div class="multiline multival">
-								<span class="primary">{formatTvl(vault.current_nav)}</span>
-								<span class="secondary">{formatTvl(vault.peak_nav)}</span>
-							</div>
+							{#if shouldShowTvlBreakdown(vault)}
+								<Tooltip>
+									<svelte:fragment slot="trigger">
+										<div class="tvl-tooltip-trigger">
+											{@render tvlValues(vault)}
+										</div>
+									</svelte:fragment>
+									<svelte:fragment slot="popup">
+										<div class="tvl-breakdown">
+											{@render tvlBreakdown('Current TVL', vault.current_nav, vault)}
+											{@render tvlBreakdown('Peak TVL', vault.peak_nav, vault)}
+											<p class="exchange-rate">Exchange rate: {formatVaultExchangeRate(vault)}</p>
+										</div>
+									</svelte:fragment>
+								</Tooltip>
+							{:else}
+								{@render tvlValues(vault)}
+							{/if}
 						</td>
 						<td class="age right">
 							{formatNumber(vault.years, 1)}
@@ -1523,6 +1625,61 @@
 
 			.tvl {
 				width: 6.25%;
+
+				.tvl-tooltip-trigger {
+					display: inline-grid;
+					justify-items: end;
+					cursor: help;
+				}
+
+				:global(.popup) {
+					right: 0;
+					width: min(90vw, 28rem);
+				}
+
+				.tvl-breakdown {
+					display: grid;
+					gap: 0.85rem;
+					min-width: min(22rem, 80vw);
+				}
+
+				.tvl-breakdown-section {
+					display: grid;
+					gap: 0.35rem;
+
+					h4 {
+						margin: 0;
+						font: var(--f-ui-sm-bold);
+					}
+
+					dl {
+						display: grid;
+						gap: 0.25rem;
+						margin: 0;
+					}
+
+					div {
+						display: grid;
+						grid-template-columns: minmax(7rem, 1fr) auto;
+						gap: 1rem;
+					}
+
+					dt {
+						color: var(--c-text-light);
+					}
+
+					dd {
+						margin: 0;
+						text-align: right;
+						font-weight: 600;
+					}
+				}
+
+				.exchange-rate {
+					margin: 0;
+					padding-top: 0.5rem;
+					border-top: 1px solid var(--c-text-ultra-light);
+				}
 			}
 
 			.age {

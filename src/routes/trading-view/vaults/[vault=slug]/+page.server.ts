@@ -2,7 +2,12 @@ import { getChain } from '$lib/helpers/chain';
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
 import { buildStablecoinMetadataLookup, findStablecoinMetadata } from '$lib/stablecoin-metadata/helpers';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
-import { getCore3ProtocolForVault, resolveVaultDetails } from '$lib/top-vaults/helpers.js';
+import {
+	getCore3ProtocolForVault,
+	getCurrencyUsdRates,
+	resolveVaultDetails,
+	withVaultDenominationTokenRate
+} from '$lib/top-vaults/helpers.js';
 import { fetchVaultProtocolMetadata } from '$lib/vault-protocol/client';
 import { error, redirect } from '@sveltejs/kit';
 
@@ -36,6 +41,11 @@ export async function load({ params, fetch }) {
 		vault.denomination,
 		vault.normalised_denomination
 	);
+	const vaultWithRates = withVaultDenominationTokenRate(
+		vault,
+		stablecoinMetadata,
+		getCurrencyUsdRates(stablecoinMetadataIndex)
+	);
 
-	return { vault, chain, protocolMetadata, stablecoinMetadata, generated_at, core3 };
+	return { vault: vaultWithRates, chain, protocolMetadata, stablecoinMetadata, generated_at, core3 };
 }

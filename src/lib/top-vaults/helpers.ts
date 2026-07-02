@@ -1,4 +1,5 @@
-import type { Core3Pol, Core3Protocol, FeeMode, SlimVaultInfo, VaultInfo } from './schemas';
+import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
+import type { Core3Pol, Core3Protocol, DenominationTokenRate, FeeMode, SlimVaultInfo, VaultInfo } from './schemas';
 import { slimVaultKeys } from './schemas';
 import { resolve } from '$app/paths';
 import { vaultSparklinesUrl } from '$lib/config';
@@ -203,6 +204,217 @@ export function meetsDefaultTvl(vault: Pick<VaultInfo, 'current_nav' | 'chain_id
 	return (vault.current_nav ?? 0) >= threshold;
 }
 
+type VaultDenominationFields = Pick<
+	VaultInfo,
+	'denomination' | 'normalised_denomination' | 'denomination_slug' | 'denomination_token_rate'
+>;
+type VaultWithRate = Pick<VaultInfo, 'denomination_token_rate'> & Partial<VaultDenominationFields>;
+type VaultWithNavAndRate = Pick<VaultInfo, 'current_nav' | 'denomination_token_rate'>;
+type VaultWithPeakNavAndRate = Pick<VaultInfo, 'peak_nav' | 'denomination_token_rate'>;
+
+export interface CurrencyUsdRate {
+	rate: number;
+	fetchedAt: string | null;
+}
+
+const nonUsdCurrencyCodes = ['eur', 'gbp', 'jpy', 'cad', 'chf', 'aud', 'try', 'sgd', 'brl', 'mxn', 'zar'] as const;
+
+function inferVaultDenominationCurrency(vault: Partial<VaultDenominationFields>): string | null {
+	const candidates = [vault.denomination_slug, vault.denomination, vault.normalised_denomination]
+		.map((value) => value?.trim().toLowerCase())
+		.filter((value): value is string => Boolean(value));
+
+	if (candidates.some((value) => value.includes('usd'))) return 'usd';
+
+	for (const currency of nonUsdCurrencyCodes) {
+		if (
+			candidates.some(
+				(value) =>
+					value === currency ||
+					value.startsWith(currency) ||
+					value.endsWith(currency) ||
+					value.includes(`${currency}-`) ||
+					value.includes(`-${currency}`)
+			)
+		) {
+			return currency;
+		}
+	}
+
+	return null;
+}
+
+/**
+ * Return the detected denomination currency for a vault, when rate metadata
+ * provides one. USD-denominated vaults resolve to `usd`; non-USD pegs resolve
+ * to currencies like `eur`, `gbp`, or `jpy`.
+ */
+export function getVaultDenominationCurrency(vault: VaultWithRate): string | null {
+	return (
+		vault.denomination_token_rate?.native_rate_currency?.toLowerCase() ??
+		vault.denomination_token_rate?.source_currency?.toLowerCase() ??
+		inferVaultDenominationCurrency(vault) ??
+		null
+	);
+}
+
+export function getStablecoinMetadataCurrency(metadata: StablecoinMetadata | undefined): string | null {
+	const currency = metadata?.peg_rate_currency?.toLowerCase();
+	if (!currency || currency === 'usd') return null;
+	return currency;
+}
+
+function isFinitePositiveNumber(value: number | null | undefined): value is number {
+	return typeof value === 'number' && Number.isFinite(value) && value > 0;
+}
+
+export function getCurrencyUsdRates(metadataIndex: StablecoinMetadata[]): Map<string, CurrencyUsdRate> {
+	const rates = new Map<string, CurrencyUsdRate[]>();
+
+	for (const metadata of metadataIndex) {
+		const currency = getStablecoinMetadataCurrency(metadata);
+		if (!currency || !isFinitePositiveNumber(metadata.usd_rate) || !isFinitePositiveNumber(metadata.peg_rate)) {
+			continue;
+		}
+
+		rates.set(currency, [
+			...(rates.get(currency) ?? []),
+			{
+				rate: metadata.usd_rate / metadata.peg_rate,
+				fetchedAt: metadata.usd_rate_fetched_at ?? metadata.usd_rate_updated_at ?? null
+			}
+		]);
+	}
+
+	return new Map(
+		[...rates.entries()].map(([currency, values]) => {
+			const sorted = values.toSorted((a, b) => a.rate - b.rate);
+			return [currency, sorted[Math.floor(sorted.length / 2)]];
+		})
+	);
+}
+
+export function buildVaultDenominationTokenRate(
+	metadata: StablecoinMetadata | undefined,
+	currency: string,
+	currencyUsdRates: Map<string, CurrencyUsdRate>
+): DenominationTokenRate | null {
+	const currencyUsdRate = currencyUsdRates.get(currency);
+	const usdRate = metadata?.usd_rate ?? currencyUsdRate?.rate ?? null;
+	if (!isFinitePositiveNumber(usdRate)) return null;
+	const usdRateFetchedAt =
+		metadata?.usd_rate_fetched_at ?? metadata?.usd_rate_updated_at ?? currencyUsdRate?.fetchedAt ?? null;
+
+	return {
+		coingecko_id: metadata?.coingecko_id ?? null,
+		source_currency: currency,
+		usd_rate: usdRate,
+		usd_rate_fetched_at: usdRateFetchedAt,
+		usd_rate_source: metadata?.usd_rate ? 'stablecoin-metadata' : 'stablecoin-metadata-currency-fallback',
+		native_rate: metadata?.peg_rate ?? null,
+		native_rate_currency: currency,
+		native_rate_fetched_at: metadata?.usd_rate_fetched_at ?? metadata?.usd_rate_updated_at ?? null,
+		native_rate_source: metadata?.peg_rate ? 'stablecoin-metadata' : null,
+		source_currency_usd_rate: currencyUsdRate?.rate ?? null,
+		source_currency_usd_rate_fetched_at: currencyUsdRate?.fetchedAt ?? null,
+		source_currency_usd_rate_source: currencyUsdRate ? 'stablecoin-metadata' : null
+	};
+}
+
+export function withVaultDenominationTokenRate(
+	vault: VaultInfo,
+	metadata: StablecoinMetadata | undefined,
+	currencyUsdRates: Map<string, CurrencyUsdRate>
+): VaultInfo {
+	if (isFinitePositiveNumber(vault.denomination_token_rate?.usd_rate)) return vault;
+
+	const vaultCurrency = getVaultDenominationCurrency(vault);
+	const metadataCurrency = getStablecoinMetadataCurrency(metadata);
+	const currency = vaultCurrency ?? metadataCurrency;
+	if (!currency || currency === 'usd') return vault;
+
+	const denominationTokenRate = buildVaultDenominationTokenRate(metadata, currency, currencyUsdRates);
+	if (!denominationTokenRate) return vault;
+
+	return {
+		...vault,
+		denomination_token_rate: denominationTokenRate
+	};
+}
+
+/**
+ * Whether the vault denomination is explicitly known to be non-USD.
+ *
+ * Backend rate metadata is preferred. When the vault feed has no rate metadata,
+ * common fiat denomination symbols are inferred conservatively so USD-branded
+ * symbols such as USDC, USDT, USDe, FDUSD and USDG stay classified as USD.
+ */
+export function isNonUsdDenominatedVault(vault: VaultWithRate): boolean {
+	const currency = getVaultDenominationCurrency(vault);
+	return currency != null && currency !== 'usd';
+}
+
+/**
+ * Return the vault denomination token USD conversion rate.
+ *
+ * Missing USD rates default to 1 only for USD-denominated or unknown-currency
+ * vaults, because existing vault pages already treat their NAV as USD. Known
+ * non-USD vaults return `null` when no exchange rate is available, avoiding an
+ * unconverted denomination-token NAV being displayed as dollars.
+ */
+export function getVaultDenominationUsdRate(vault: VaultWithRate): number | null {
+	const rate = vault.denomination_token_rate?.usd_rate;
+	if (rate != null && Number.isFinite(rate) && rate > 0) return rate;
+
+	const currency = getVaultDenominationCurrency(vault);
+	return currency == null || currency === 'usd' ? 1 : null;
+}
+
+export function getVaultDenominationNativeRate(vault: VaultWithRate): number | null {
+	const rate = vault.denomination_token_rate;
+	if (rate?.native_rate != null && Number.isFinite(rate.native_rate) && rate.native_rate > 0) return rate.native_rate;
+
+	const currency = getVaultDenominationCurrency(vault);
+	if (currency === 'usd') return getVaultDenominationUsdRate(vault);
+
+	if (
+		rate?.usd_rate != null &&
+		Number.isFinite(rate.usd_rate) &&
+		rate.usd_rate > 0 &&
+		rate.source_currency_usd_rate != null &&
+		Number.isFinite(rate.source_currency_usd_rate) &&
+		rate.source_currency_usd_rate > 0
+	) {
+		return rate.usd_rate / rate.source_currency_usd_rate;
+	}
+
+	return null;
+}
+
+export function getVaultTvlNative(vault: VaultWithRate, nav: number | null): number | null {
+	if (nav == null) return null;
+	const nativeRate = getVaultDenominationNativeRate(vault);
+	return nativeRate == null ? null : nav * nativeRate;
+}
+
+/**
+ * Current vault TVL converted from denomination token units to USD.
+ */
+export function getVaultCurrentTvlUsd(vault: VaultWithNavAndRate): number | null {
+	if (vault.current_nav == null) return null;
+	const usdRate = getVaultDenominationUsdRate(vault);
+	return usdRate == null ? null : vault.current_nav * usdRate;
+}
+
+/**
+ * Peak vault TVL converted from denomination token units to USD.
+ */
+export function getVaultPeakTvlUsd(vault: VaultWithPeakNavAndRate): number | null {
+	if (vault.peak_nav == null) return null;
+	const usdRate = getVaultDenominationUsdRate(vault);
+	return usdRate == null ? null : vault.peak_nav * usdRate;
+}
+
 const DEFAULT_DETAIL_RISK_FILTER = riskFilterOptions[1];
 
 /**
@@ -321,12 +533,15 @@ export function getFeeModeDescription(mode: string | null | undefined): string {
  */
 const MAX_APY_THRESHOLD = 10;
 
+type TvlWeightedApyVault = Pick<VaultInfo, 'current_nav' | 'one_month_cagr_net' | 'one_month_cagr' | 'risk_numeric'> &
+	Partial<Pick<VaultInfo, 'risk'>>;
+
 /**
  * Calculate TVL-weighted average APY for an array of vaults.
  * Uses net returns when available, falls back to gross returns.
  * Excludes blacklisted vaults and vaults with APY > 1000%.
  */
-export function calculateTvlWeightedApy(vaults: SlimVaultInfo[]): number | null {
+export function calculateTvlWeightedApy(vaults: TvlWeightedApyVault[]): number | null {
 	let weightedSum = 0;
 	let tvlSum = 0;
 
