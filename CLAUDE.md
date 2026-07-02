@@ -14,6 +14,7 @@ working on that area:
 | Doc                                                | Description                                                                                                |
 | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `.claude/docs/agent-tricks-and-troubleshooting.md` | **MANDATORY read before ANY Claude CLI or Codex CLI invocation** (reviews, sanity checks, or one-off runs) |
+| `.claude/docs/worktree.md`                         | Required local env and data symlinks when running dev servers or private-data checks from git worktrees    |
 
 ## Agent review workflows
 
@@ -68,6 +69,7 @@ pnpm run test:integration # Run integration tests (requires build)
 
 - `TS_PUBLIC_` prefix for client-accessible values
 - `TS_PRIVATE_` prefix for server-only values
+- In git worktrees, copy or symlink ignored local files such as `.env.local` and `data/` from the main checkout before running dev servers; see `.claude/docs/worktree.md`.
 
 **Formatting:**
 
@@ -127,6 +129,8 @@ Use it for:
 - reproducing layout and interaction issues
 
 Always develop and verify against the Vite dev server started with `pnpm run dev` (typical local target `http://127.0.0.1:5173/`). Do **not** use `pnpm run preview` (Vite preview) for development or verification: its preview server runs its own prerender/manifest step that can resolve routes differently from both dev and the production adapter-node server (e.g. newly added routes may 404 under preview while working everywhere else). `pnpm run preview` is only for sanity-checking a production build. Integration tests (`pnpm run test:integration`) intentionally run against a build via the test harness; that is separate from manual development.
+
+When using a git worktree, follow `.claude/docs/worktree.md` before starting the dev server so private env vars and cached vault datasets are available in that worktree.
 
 ```text
 http://127.0.0.1:5173/

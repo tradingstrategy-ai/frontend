@@ -107,6 +107,9 @@ The dropdown and in-page selector can intentionally have different counts. For e
 
 Use Playwright integration tests for chart page navigation and route rendering. The integration test harness uses a test-mode build and Vite preview; for manual development and visual checks, use `pnpm run dev` instead.
 
+If the dev server runs from a git worktree, follow [worktree setup](../.claude/docs/worktree.md)
+first so private env vars and the historical vault parquet cache are available to chart endpoints.
+
 Useful checks:
 
 - Run unit tests for chart payload builders, e.g. `pnpm exec vitest run src/lib/echarts/core3-risk.test.ts`.
