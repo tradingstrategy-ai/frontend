@@ -18,7 +18,7 @@
 	<h2>Top DeFi Vaults</h2>
 
 	<div class="description ds-3">
-		<span>The best-performing stablecoin vaults based on one month returns.</span>
+		<span>The best-performing stablecoin vaults based on three-month returns.</span>
 	</div>
 
 	<VaultSummaryMetrics {aggregates} />

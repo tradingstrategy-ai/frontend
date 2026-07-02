@@ -496,6 +496,8 @@ export type SlimVaultInfo = Pick<
 	| 'current_nav'
 	| 'one_month_cagr'
 	| 'one_month_cagr_net'
+	| 'three_months_cagr'
+	| 'three_months_cagr_net'
 	| 'risk'
 	| 'risk_numeric'
 	| 'stablecoinish'
@@ -520,9 +522,9 @@ export interface SlimTopVaults {
 export interface VaultAggregates {
 	/** Sum of current_nav across all eligible vaults (USD) */
 	totalTvl: number;
-	/** TVL-weighted average one-month annualised return across eligible vaults */
+	/** TVL-weighted average three-month annualised return across eligible vaults */
 	weightedAvgApy: number;
-	/** Number of vaults that meet minimum TVL and are not blacklisted */
+	/** Number of vaults in the ranked homepage set */
 	rankedVaultCount: number;
 }
 
@@ -538,6 +540,8 @@ export const slimVaultKeys = [
 	'current_nav',
 	'one_month_cagr',
 	'one_month_cagr_net',
+	'three_months_cagr',
+	'three_months_cagr_net',
 	'risk',
 	'risk_numeric',
 	'stablecoinish'

@@ -43,6 +43,7 @@ export interface TvlFilterOption {
 }
 
 export const tvlFilterOptions: TvlFilterOption[] = [
+	{ key: 'any', label: 'Any', optionLabel: 'Any', value: 0 },
 	{ key: '10k', label: '$10k', optionLabel: '$10k', value: 10_000 },
 	{
 		key: '50k-hl',
@@ -157,7 +158,8 @@ const unsupportedProtocolNames = ['<protocol not yet identified>', '<unknown erc
 const unsupportedProtocolSlugs = new Set(unsupportedProtocolNames.map((protocol) => slugify(protocol)));
 
 export function isUnsupportedProtocolName(protocol: string | null | undefined) {
-	return protocol == null || protocol.trim().startsWith('<');
+	const normalisedProtocol = protocol?.trim();
+	return !normalisedProtocol || normalisedProtocol.startsWith('<');
 }
 
 export function isUnsupportedProtocolSlug(protocolSlug: string | null | undefined) {
@@ -166,6 +168,22 @@ export function isUnsupportedProtocolSlug(protocolSlug: string | null | undefine
 
 export function hasSupportedProtocol(vault: Pick<VaultInfo, 'protocol'> & Partial<Pick<VaultInfo, 'protocol_slug'>>) {
 	return !isUnsupportedProtocolName(vault.protocol) && !isUnsupportedProtocolSlug(vault.protocol_slug);
+}
+
+const FRONTPAGE_RISK_FILTER = riskFilterOptions.find((option) => option.label === 'Severe');
+
+/**
+ * Check if vault is eligible for the frontpage Top DeFi Vaults widget.
+ */
+export function isEligibleFrontpageVault(
+	vault: Pick<VaultInfo, 'protocol' | 'risk_numeric'> & Partial<Pick<VaultInfo, 'protocol_slug' | 'risk'>>
+) {
+	if (!FRONTPAGE_RISK_FILTER) return false;
+	if (!hasSupportedProtocol(vault)) return false;
+	if (isBlacklisted(vault)) return false;
+	if (vault.risk_numeric == null) return false;
+
+	return vault.risk_numeric >= FRONTPAGE_RISK_FILTER.minValue && vault.risk_numeric <= FRONTPAGE_RISK_FILTER.maxValue;
 }
 
 export function getProtocolDisplayName(protocol: string | null | undefined): string {
@@ -536,17 +554,24 @@ const MAX_APY_THRESHOLD = 10;
 type TvlWeightedApyVault = Pick<VaultInfo, 'current_nav' | 'one_month_cagr_net' | 'one_month_cagr' | 'risk_numeric'> &
 	Partial<Pick<VaultInfo, 'risk'>>;
 
+interface TvlWeightedApyOptions {
+	includeBlacklisted?: boolean;
+}
+
 /**
  * Calculate TVL-weighted average APY for an array of vaults.
  * Uses net returns when available, falls back to gross returns.
- * Excludes blacklisted vaults and vaults with APY > 1000%.
+ * Excludes blacklisted vaults by default and vaults with APY > 1000%.
  */
-export function calculateTvlWeightedApy(vaults: TvlWeightedApyVault[]): number | null {
+export function calculateTvlWeightedApy(
+	vaults: TvlWeightedApyVault[],
+	options: TvlWeightedApyOptions = {}
+): number | null {
 	let weightedSum = 0;
 	let tvlSum = 0;
 
 	for (const vault of vaults) {
-		if (isBlacklisted(vault)) continue;
+		if (!options.includeBlacklisted && isBlacklisted(vault)) continue;
 
 		const tvl = vault.current_nav ?? 0;
 		const apy = vault.one_month_cagr_net ?? vault.one_month_cagr;

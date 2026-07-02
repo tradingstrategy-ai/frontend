@@ -16,6 +16,7 @@
 		{ href: '/trading-view/vaults/high-tvl', label: 'Top with $2M TVL' },
 		{ href: '/trading-view/vaults/new-vaults', label: 'New' },
 		{ href: '/trading-view/vaults/negative', label: 'Negative' },
+		{ href: '/trading-view/vaults/blacklisted', label: 'Blacklisted' },
 		{ href: '/trading-view/vaults/all', label: 'All' }
 	] as const;
 

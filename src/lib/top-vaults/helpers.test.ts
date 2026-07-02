@@ -2,6 +2,7 @@ import { describe, test, expect } from 'vitest';
 import {
 	CORE3_METHODOLOGY_URL,
 	isBlacklisted,
+	isEligibleFrontpageVault,
 	hasSupportedProtocol,
 	getProtocolDisplayName,
 	isUnsupportedProtocolSlug,
@@ -119,6 +120,20 @@ describe('calculateTvlWeightedApy', () => {
 
 		expect(calculateTvlWeightedApy([included, blacklisted])).toBe(0.1);
 	});
+
+	test('includes blacklisted vaults when requested', () => {
+		const included = createTestVault('Included vault', {
+			current_nav: 100_000,
+			one_month_cagr: 0.1
+		});
+		const blacklisted = createTestVault('Blacklisted vault', {
+			current_nav: 300_000,
+			one_month_cagr: 0.5,
+			risk: 'Blacklisted'
+		});
+
+		expect(calculateTvlWeightedApy([included, blacklisted], { includeBlacklisted: true })).toBe(0.4);
+	});
 });
 
 describe('hasSupportedProtocol', () => {
@@ -132,12 +147,42 @@ describe('hasSupportedProtocol', () => {
 		expect(hasSupportedProtocol(vault)).toBe(false);
 	});
 
+	test('returns false for empty protocols', () => {
+		const vault = createTestVault('Test vault', { protocol: ' ' });
+		expect(hasSupportedProtocol(vault)).toBe(false);
+	});
+
 	test('returns false for unsupported protocol slugs generated from placeholders', () => {
 		const vault = {
 			protocol: 'Yearn',
 			protocol_slug: 'unknown-erc-7450'
 		};
 		expect(hasSupportedProtocol(vault)).toBe(false);
+	});
+});
+
+describe('isEligibleFrontpageVault', () => {
+	test('returns true for known protocol vaults with severe risk or safer', () => {
+		const vault = createTestVault('Test vault', { protocol: 'Yearn', risk: 'Severe' });
+		expect(isEligibleFrontpageVault(vault)).toBe(true);
+	});
+
+	test('returns false for dangerous risk vaults', () => {
+		const vault = createTestVault('Test vault', { protocol: 'Yearn', risk: 'Dangerous' });
+		expect(isEligibleFrontpageVault(vault)).toBe(false);
+	});
+
+	test('returns false for unknown risk vaults', () => {
+		const vault = createTestVault('Test vault', { protocol: 'Yearn' });
+		expect(isEligibleFrontpageVault(vault)).toBe(false);
+	});
+
+	test('returns false for unknown protocol vaults', () => {
+		const vault = createTestVault('Test vault', {
+			protocol: '<protocol not yet identified>',
+			risk: 'Low'
+		});
+		expect(isEligibleFrontpageVault(vault)).toBe(false);
 	});
 });
 

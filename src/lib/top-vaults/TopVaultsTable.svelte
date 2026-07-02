@@ -102,6 +102,8 @@
 		defaultTvlKey?: string;
 		/** Default age filter index (used to initialise the dropdown when showFilters is true) */
 		defaultAgeIndex?: number;
+		/** Default risk filter index (used to initialise the dropdown when showFilters is true) */
+		defaultRiskIndex?: number;
 		/** Default value for the "Hide unknown" filter (1 = hide, 0 = show) */
 		defaultHideUnknown?: number;
 		/** Default monthly return filter key */
@@ -114,6 +116,8 @@
 		loading?: boolean;
 		/** Override for the "out of {total}" listing meta; defaults to the vaults passed in (use to show the whole-database count on pre-filtered listings) */
 		totalVaultCount?: number;
+		/** Include blacklisted vaults in the listing summary stats. */
+		includeBlacklistedInStats?: boolean;
 	}
 
 	const emptyTopVaults: TopVaults = {
@@ -123,6 +127,7 @@
 		curators: {}
 	};
 	const SKELETON_ROW_COUNT = 10;
+	const skeletonRows = Array.from({ length: SKELETON_ROW_COUNT }, (_, index) => index);
 
 	let {
 		topVaults = emptyTopVaults,
@@ -135,12 +140,14 @@
 		showFilters = false,
 		defaultTvlKey = DEFAULT_TVL_KEY,
 		defaultAgeIndex = 0,
+		defaultRiskIndex = 1,
 		defaultHideUnknown = 1,
 		defaultMonthlyReturnKey = 'any',
 		defaultSort,
 		defaultDirection,
 		loading = false,
-		totalVaultCount: totalVaultCountProp
+		totalVaultCount: totalVaultCountProp,
+		includeBlacklistedInStats = false
 	}: Props = $props();
 
 	// --- Sort column registry (key → compareFn + default direction) ---
@@ -196,7 +203,7 @@
 	const searchParamsSchema = {
 		tvl: { type: 'string', defaultValue: defaultTvlKey, options: tvlFilterOptions.map((o) => o.key) },
 		age: { type: 'number', defaultValue: defaultAgeIndex },
-		risk: { type: 'number', defaultValue: 1 },
+		risk: { type: 'number', defaultValue: defaultRiskIndex },
 		sort: {
 			type: 'string',
 			defaultValue: defaultSort ?? DEFAULT_RETURN_COLUMN_IDS[0],
@@ -222,7 +229,7 @@
 		const current = deserialiseSearchParams(page.url.searchParams, searchParamsSchema);
 		const updated = { ...current, ...overrides };
 		const queryString = serialiseSearchParams(updated, searchParamsSchema);
-		goto('?' + queryString, { replaceState: true, noScroll: true, keepFocus: true });
+		goto(resolve(`${page.url.pathname}?${queryString}`), { replaceState: true, noScroll: true, keepFocus: true });
 	}
 
 	// --- Filter state (derived from URL) ---
@@ -478,16 +485,21 @@
 		});
 	});
 
-	// Exclude blacklisted vaults from stats calculations; uses filteredVaults so all
+	// Uses filteredVaults so all
 	// active filters (TVL, age, risk, search) are reflected in the stats row.
-	let statsVaults = $derived(filteredVaults.filter((v) => !isBlacklisted(v)));
+	let statsVaults = $derived(
+		includeBlacklistedInStats ? filteredVaults : filteredVaults.filter((v) => !isBlacklisted(v))
+	);
 
-	// Calculate total TVL from non-blacklisted, fully-filtered vaults
+	// Calculate total TVL from fully-filtered vaults
 	let totalTvl = $derived(calculateTotalTvl(statsVaults.map((v) => ({ current_nav: getVaultCurrentTvlUsd(v) }))));
 
-	// Calculate TVL-weighted average 1M APY from non-blacklisted, fully-filtered vaults
+	// Calculate TVL-weighted average 1M APY from fully-filtered vaults
 	let avgTvlWeightedApy1M = $derived(
-		calculateTvlWeightedApy(statsVaults.map((v) => ({ ...v, current_nav: getVaultCurrentTvlUsd(v) })))
+		calculateTvlWeightedApy(
+			statsVaults.map((v) => ({ ...v, current_nav: getVaultCurrentTvlUsd(v) })),
+			{ includeBlacklisted: includeBlacklistedInStats }
+		)
 	);
 
 	// sort vaults
@@ -505,11 +517,7 @@
 	let visibleVaults = $derived(sortedVaults.slice(0, maxVisibleRows));
 	let hasMoreRows = $derived(maxVisibleRows < sortedVaults.length);
 
-	function sortBy(
-		key: SortOptions['key'],
-		defaultDirection: SortOptions['direction'],
-		_compareFn: SortOptions['compareFn']
-	) {
+	function sortBy(key: SortOptions['key'], defaultDirection: SortOptions['direction']) {
 		let direction = defaultDirection;
 		if (sortOptions.key === key) {
 			direction = sortOptions.direction === 'asc' ? 'desc' : 'asc';
@@ -553,14 +561,9 @@
 	}
 </script>
 
-{#snippet sortColHeader(
-	label: string,
-	key: string,
-	direction: SortOptions['direction'],
-	compareFn: SortOptions['compareFn']
-)}
+{#snippet sortColHeader(label: string, key: string, direction: SortOptions['direction'])}
 	<th class={isReturnSortKey(key) ? `return-column return-column-${canonicaliseReturnSortKey(key)}` : key}>
-		<button onclick={() => sortBy(key, direction, compareFn)}>
+		<button onclick={() => sortBy(key, direction)}>
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			{@html label}
 		</button>
@@ -677,7 +680,8 @@
 		<div class="table-stats" class:hidden={loading} data-testid="top-vaults-meta">
 			<Tooltip>
 				<svelte:fragment slot="trigger"
-					>{filteredVaults.length} vaults{#if totalVaultCount > filteredVaults.length}{' '}out of {totalVaultCount}{/if}</svelte:fragment
+					>{filteredVaults.length} vaults{#if totalVaultCount > filteredVaults.length}
+						<span>&nbsp;out of {totalVaultCount}</span>{/if}</svelte:fragment
 				>
 				<svelte:fragment slot="popup"
 					>{#if hiddenByTvl > 0}
@@ -983,62 +987,27 @@
 				<tr>
 					<th class="index"></th>
 					{#if showChainCol}
-						{@render sortColHeader(
-							'',
-							'chain',
-							'asc',
-							stringCompare((v) => getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`)
-						)}
+						{@render sortColHeader('', 'chain', 'asc')}
 					{/if}
-					{@render sortColHeader(
-						'Vault',
-						'vault',
-						'asc',
-						stringCompare((v) => `${v.name.trim()} ${v.protocol}`)
-					)}
+					{@render sortColHeader('Vault', 'vault', 'asc')}
 					{#each selectedReturnColumns as column (column.id)}
-						{@render sortColHeader(
-							column.headerLabel,
-							column.id,
-							column.sortDirection,
-							sortColumnMap[column.id].compareFn
-						)}
+						{@render sortColHeader(column.headerLabel, column.id, column.sortDirection)}
 					{/each}
-					{@render sortColHeader('3m Sharpe', 'three_months_sharpe', 'desc', rankVaultsBy(['three_months_sharpe']))}
-					{@render sortColHeader(
-						'3M Vola&shy;tility',
-						'three_months_volatility',
-						'asc',
-						rankVaultsBy(['three_months_volatility'])
-					)}
-					{@render sortColHeader('Max DD', 'max_dd', 'desc', sortColumnMap['max_dd'].compareFn)}
-					{@render sortColHeader(
-						'Denom&shy;ination',
-						'denomination',
-						'asc',
-						stringCompare((v) => v.denomination)
-					)}
-					{@render sortColHeader(
-						'TVL USD<br/>(current/&ZeroWidthSpace;peak)',
-						'tvl',
-						'desc',
-						sortColumnMap['tvl'].compareFn
-					)}
-					{@render sortColHeader('Age (y)', 'age', 'desc', rankVaultsBy(['years']))}
-					{@render sortColHeader(
-						'Fees<br />(mgmt/&ZeroWidthSpace;perf)',
-						'fees',
-						'asc',
-						rankVaultsBy(['mgmt_fee', 'perf_fee'], Infinity)
-					)}
-					{@render sortColHeader('Deposit and delays', 'lockup', 'asc', rankVaultsBy(['lockup'], Infinity))}
-					{@render sortColHeader('Protocol Technical Risk', 'risk', 'asc', rankVaultsBy(['risk_numeric'], Infinity))}
+					{@render sortColHeader('3m Sharpe', 'three_months_sharpe', 'desc')}
+					{@render sortColHeader('3M Vola&shy;tility', 'three_months_volatility', 'asc')}
+					{@render sortColHeader('Max DD', 'max_dd', 'desc')}
+					{@render sortColHeader('Denom&shy;ination', 'denomination', 'asc')}
+					{@render sortColHeader('TVL USD<br/>(current/&ZeroWidthSpace;peak)', 'tvl', 'desc')}
+					{@render sortColHeader('Age (y)', 'age', 'desc')}
+					{@render sortColHeader('Fees<br />(mgmt/&ZeroWidthSpace;perf)', 'fees', 'asc')}
+					{@render sortColHeader('Deposit and delays', 'lockup', 'asc')}
+					{@render sortColHeader('Protocol Technical Risk', 'risk', 'asc')}
 					<th class="sparkline">3M price</th>
 				</tr>
 			</thead>
 			<tbody>
 				{#if loading}
-					{#each { length: SKELETON_ROW_COUNT } as _}
+					{#each skeletonRows as index (index)}
 						<tr>
 							<td class="index"></td>
 							{#if showChainCol}<td class="chain"></td>{/if}

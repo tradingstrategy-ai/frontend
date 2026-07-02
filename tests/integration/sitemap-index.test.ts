@@ -38,7 +38,7 @@ test.describe('sitemap index', () => {
 			try {
 				const data = await (await request.get(url)).text();
 				await parseSitemap(Readable.from(data));
-			} catch (e) {
+			} catch {
 				throw new Error(`Failed to load or parse sitemap ${url}`);
 			}
 		});
@@ -93,6 +93,7 @@ test.describe('vaults sitemap', () => {
 	test('should include static vault sub-pages', async () => {
 		const expectedSubPages = [
 			'/trading-view/vaults/all',
+			'/trading-view/vaults/blacklisted',
 			'/trading-view/vaults/high-tvl',
 			'/trading-view/vaults/new-vaults',
 			'/trading-view/vaults/current-peak-tvl',

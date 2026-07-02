@@ -14,6 +14,7 @@ const priority = 0.8;
 
 const staticSubPages = [
 	'all',
+	'blacklisted',
 	'high-tvl',
 	'international',
 	'new-vaults',

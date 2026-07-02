@@ -354,6 +354,14 @@ const morphoFlaggedBlacklistedVault = createTestVault('Morpho flagged blackliste
 	]
 });
 
+const pausedBlacklistedOnlyVault = createTestVault('Paused blacklisted only vault', {
+	chain: 'base',
+	protocol: 'Concrete',
+	current_nav: 50_000,
+	peak_nav: 75_000,
+	flags: ['paused']
+});
+
 const closedVaultPeriodResult = {
 	period: '1M',
 	error_reason: null,
@@ -503,6 +511,7 @@ export default defineMock({
 		vaults: [
 			yamlStrategyVault,
 			morphoFlaggedBlacklistedVault,
+			pausedBlacklistedOnlyVault,
 			depositDisabledVault,
 			redemptionDisabledVault,
 			depositAndRedemptionDisabledVault,
