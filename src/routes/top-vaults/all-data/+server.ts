@@ -1,7 +1,6 @@
 import { promisify } from 'node:util';
 import { brotliCompress, constants } from 'node:zlib';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
-import { normaliseGeneratedAt } from '$lib/top-vaults/generated-at';
 
 const compress = promisify(brotliCompress);
 
@@ -22,9 +21,9 @@ const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 // vault data.
 let brCache: { generatedAt: string; json: string; br: Uint8Array; expires: number; created: number } | null = null;
 
-async function getCachedAllData(fetch: Fetch, expectedGeneratedAt: string | null) {
+async function getCachedAllData(fetch: Fetch) {
 	const now = Date.now();
-	const topVaults = await getCachedTopVaults(fetch, { minGeneratedAt: expectedGeneratedAt });
+	const topVaults = await getCachedTopVaults(fetch);
 	const generatedAt = new Date(topVaults.generated_at).toISOString();
 
 	// Version the compressed response by the backend dataset timestamp, not just
@@ -45,29 +44,18 @@ async function getCachedAllData(fetch: Fetch, expectedGeneratedAt: string | null
 	return brCache;
 }
 
-function getExpectedGeneratedAt(url: string): string | null {
-	const value = new URL(url).searchParams.get('generated_at');
-	if (!value || !Number.isFinite(Date.parse(value))) return null;
-	return normaliseGeneratedAt(value);
-}
-
 const cacheHeaders = {
-	// Keep edge/browser caching short for this large listing payload. The old
-	// max-age=3600 made a stale listing visibly outlive a refreshed detail page.
-	// stale-while-revalidate still lets caches protect bandwidth, but limits the
-	// correctness window for return metrics such as the Peter Schiff vault 1M
-	// annualised return.
-	'cache-control': 'public, max-age=300, stale-while-revalidate=300',
+	// Do not rely on query-string cache keys for correctness. Cloudflare/R2 can
+	// normalise or strip query parameters for the underlying export, so the
+	// listing API must revalidate instead of serving a long-lived CDN/browser
+	// object that can outlive refreshed detail SSR data.
+	'cache-control': 'no-cache',
 	'content-type': 'application/json',
 	vary: 'Accept-Encoding'
 };
 
 export async function GET({ fetch, request }) {
-	// Client navigations pass the layout's generatedAt here. If this server
-	// instance still has an older getCachedTopVaults() module cache, bypass it
-	// once before considering the compressed listing payload reusable.
-	const expectedGeneratedAt = getExpectedGeneratedAt(request.url);
-	const data = await getCachedAllData(fetch, expectedGeneratedAt);
+	const data = await getCachedAllData(fetch);
 	const acceptsBr = request.headers.get('accept-encoding')?.includes('br');
 	// These headers are intentionally public diagnostics. Future mismatch
 	// reports need to compare the listing payload version, its cache age, and the

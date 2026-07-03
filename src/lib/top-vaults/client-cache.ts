@@ -16,24 +16,11 @@ let inflight: { expectedGeneratedAt: string | null; promise: Promise<TopVaults> 
 // vault, while the detail page showed about -23%. Current production data later
 // converged to -23.3% in both places, which points to stale client or endpoint
 // cache data rather than a formatter-specific bug.
-// Include the expected dataset version in the request URL. The server endpoint
-// uses it to bypass older server module caches, and the query parameter also
-// prevents browser and intermediary caches from treating requests for different
-// expected exports as the same cached object.
-function getAllDataUrl(expectedGeneratedAt: string | null, cacheBust = false): string {
-	const searchParams = new URLSearchParams();
-	if (expectedGeneratedAt) searchParams.set('generated_at', expectedGeneratedAt);
-	if (cacheBust) searchParams.set('_', Date.now().toString());
-
-	const queryString = searchParams.toString();
-	return queryString ? `/top-vaults/all-data?${queryString}` : '/top-vaults/all-data';
-}
-
-async function requestAllVaultData(expectedGeneratedAt: string | null, cacheBust = false): Promise<TopVaults> {
+async function requestAllVaultData(cacheBust = false): Promise<TopVaults> {
 	// cache: 'reload' is only used after we have proof that a normal fetch returned
 	// a payload older than the layout's generatedAt. That keeps normal navigation
 	// fast while giving us a recovery path from stale HTTP cache entries.
-	const resp = await fetch(getAllDataUrl(expectedGeneratedAt, cacheBust), cacheBust ? { cache: 'reload' } : undefined);
+	const resp = await fetch('/top-vaults/all-data', cacheBust ? { cache: 'reload' } : undefined);
 	if (!resp.ok) throw new Error(`Failed to fetch vault data: ${resp.status}`);
 	return resp.json();
 }
@@ -55,16 +42,16 @@ export async function fetchAllVaultData(expectedGeneratedAt?: string | Date | nu
 	if (inflight && !isOlderThan(inflight.expectedGeneratedAt, expected)) return inflight.promise;
 
 	const promise = (async () => {
-		let data = await requestAllVaultData(expected);
+		let data = await requestAllVaultData();
 
-		// A stale intermediary cache can still return an older export even with the
-		// generated_at query parameter. Detect that condition from the payload
-		// itself and retry once with an explicit cache reload.
+		// A stale browser/intermediary cache can still return an older export.
+		// Detect that condition from the payload itself and retry once with an
+		// explicit cache reload.
 		if (isOlderThan(data.generated_at, expected)) {
 			console.warn(
 				`Vault data response ${data.generated_at} is older than expected ${expected}; retrying without HTTP cache.`
 			);
-			data = await requestAllVaultData(expected, true);
+			data = await requestAllVaultData(true);
 		}
 
 		// If this warning fires, the server-side cache or upstream export is still

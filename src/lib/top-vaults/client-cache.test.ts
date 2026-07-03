@@ -68,7 +68,7 @@ describe('top vault client cache', () => {
 		await expect(fetchAllVaultData(nextGeneratedAt)).resolves.toMatchObject({ generated_at: nextGeneratedAt });
 
 		expect(fetchMock).toHaveBeenCalledTimes(2);
-		expect(fetchMock.mock.calls[1][0]).toBe('/top-vaults/all-data?generated_at=2026-07-03T09%3A00%3A00.000Z');
+		expect(fetchMock.mock.calls[1][0]).toBe('/top-vaults/all-data');
 	});
 
 	it('retries without HTTP cache when the response is older than expected', async () => {
@@ -88,7 +88,7 @@ describe('top vault client cache', () => {
 		});
 
 		expect(fetchMock).toHaveBeenCalledTimes(2);
-		expect(fetchMock.mock.calls[1][0]).toContain('/top-vaults/all-data?generated_at=2026-07-03T09%3A00%3A00.000Z&_=');
+		expect(fetchMock.mock.calls[1][0]).toBe('/top-vaults/all-data');
 		expect(fetchMock.mock.calls[1][1]).toEqual({ cache: 'reload' });
 		expect(warn).toHaveBeenCalledTimes(1);
 	});
