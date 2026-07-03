@@ -78,6 +78,24 @@ test.describe('stablecoins index page', () => {
 		);
 	});
 
+	test('uses the updated international vault metadata title and description', async ({ page }) => {
+		await page.goto('/trading-view/vaults/international');
+
+		await expect(page).toHaveTitle('International stablecoin vaults');
+		await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+			'content',
+			'DeFi vaults nominated in CHF, EUR, GBP, JPY, SGD, and TRY'
+		);
+		await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+			'content',
+			'International stablecoin vaults'
+		);
+		await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
+			'content',
+			'DeFi vaults nominated in CHF, EUR, GBP, JPY, SGD, and TRY'
+		);
+	});
+
 	test('has no JavaScript errors after the chart loads', async ({ page }) => {
 		const errors: string[] = [];
 		page.on('pageerror', (err) => errors.push(err.message));
