@@ -63,6 +63,10 @@
 		totalVaultCount?: number;
 		/** Include blacklisted vaults in the listing summary stats. */
 		includeBlacklistedInStats?: boolean;
+		/** Exclude vaults above this TVL from listing summary TVL and TVL-weighted stats. */
+		maxSummaryTvlUsd?: number;
+		/** Do not visually strike through blacklisted vault rows. */
+		disableBlacklistedStrikethrough?: boolean;
 	}
 
 	let {
@@ -91,7 +95,9 @@
 		detailDescription,
 		beforeTable,
 		totalVaultCount,
-		includeBlacklistedInStats
+		includeBlacklistedInStats,
+		maxSummaryTvlUsd,
+		disableBlacklistedStrikethrough
 	}: Props = $props();
 
 	let renderDetailAsideInHero = $derived(
@@ -219,6 +225,8 @@
 					{defaultSort}
 					{defaultDirection}
 					{includeBlacklistedInStats}
+					{maxSummaryTvlUsd}
+					{disableBlacklistedStrikethrough}
 				/>
 			{:else if !topVaults?.vaults.length}
 				{#if stablecoinMetadata}
@@ -245,6 +253,8 @@
 					{defaultSort}
 					{defaultDirection}
 					{includeBlacklistedInStats}
+					{maxSummaryTvlUsd}
+					{disableBlacklistedStrikethrough}
 				/>
 			{/if}
 		</div>

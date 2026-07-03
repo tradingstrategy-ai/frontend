@@ -24,6 +24,8 @@ export const MIN_TVL_THRESHOLD = 10_000;
 
 /** Default TVL threshold - global and per-chain */
 export const DEFAULT_TVL_THRESHOLD = 50_000;
+/** Maximum TVL value included in listing summary totals. Higher values are treated as broken scanner data. */
+export const MAX_SUMMARY_TVL_USD = 1_000_000_000;
 // prettier-ignore
 const CHAIN_TVL_THRESHOLD_OVERRIDES = new Map([
   [HYPERCORE_CHAIN_ID, 1_000_000]
@@ -556,6 +558,7 @@ type TvlWeightedApyVault = Pick<VaultInfo, 'current_nav' | 'one_month_cagr_net' 
 
 interface TvlWeightedApyOptions {
 	includeBlacklisted?: boolean;
+	maxTvlUsd?: number;
 }
 
 /**
@@ -576,7 +579,9 @@ export function calculateTvlWeightedApy(
 		const tvl = vault.current_nav ?? 0;
 		const apy = vault.one_month_cagr_net ?? vault.one_month_cagr;
 
-		if (tvl > 0 && apy != null && apy <= MAX_APY_THRESHOLD) {
+		if (options.maxTvlUsd != null && tvl > options.maxTvlUsd) continue;
+
+		if (Number.isFinite(tvl) && tvl > 0 && apy != null && apy <= MAX_APY_THRESHOLD) {
 			weightedSum += tvl * apy;
 			tvlSum += tvl;
 		}
@@ -588,8 +593,16 @@ export function calculateTvlWeightedApy(
 /**
  * Calculate total TVL for an array of vaults
  */
-export function calculateTotalTvl(vaults: Pick<VaultInfo, 'current_nav'>[]): number {
-	return vaults.reduce((sum, v) => sum + (v.current_nav ?? 0), 0);
+export function calculateTotalTvl(
+	vaults: Pick<VaultInfo, 'current_nav'>[],
+	options: { maxTvlUsd?: number } = {}
+): number {
+	return vaults.reduce((sum, v) => {
+		const tvl = v.current_nav ?? 0;
+		if (!Number.isFinite(tvl)) return sum;
+		if (options.maxTvlUsd != null && tvl > options.maxTvlUsd) return sum;
+		return sum + tvl;
+	}, 0);
 }
 
 /**

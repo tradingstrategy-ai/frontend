@@ -25,6 +25,7 @@ import {
 	getVaultTvlNative,
 	isNonUsdDenominatedVault,
 	withVaultDenominationTokenRate,
+	calculateTotalTvl,
 	calculateTvlWeightedApy
 } from './helpers';
 import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
@@ -133,6 +134,30 @@ describe('calculateTvlWeightedApy', () => {
 		});
 
 		expect(calculateTvlWeightedApy([included, blacklisted], { includeBlacklisted: true })).toBe(0.4);
+	});
+
+	test('excludes vaults above the max TVL from the weighted average', () => {
+		const included = createTestVault('Included vault', {
+			current_nav: 100_000,
+			one_month_cagr: 0.1
+		});
+		const abnormal = createTestVault('Abnormal TVL vault', {
+			current_nav: 2_000_000_000,
+			one_month_cagr: 1
+		});
+
+		expect(calculateTvlWeightedApy([included, abnormal], { maxTvlUsd: 1_000_000_000 })).toBe(0.1);
+	});
+});
+
+describe('calculateTotalTvl', () => {
+	test('excludes non-finite and above-threshold TVL values when requested', () => {
+		expect(
+			calculateTotalTvl(
+				[{ current_nav: 100_000 }, { current_nav: 2_000_000_000 }, { current_nav: Number.POSITIVE_INFINITY }],
+				{ maxTvlUsd: 1_000_000_000 }
+			)
+		).toBe(100_000);
 	});
 });
 
