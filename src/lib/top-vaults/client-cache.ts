@@ -8,33 +8,29 @@
 import type { TopVaults } from './schemas';
 
 let cached: TopVaults | null = null;
-let inflight: { expectedGeneratedAt: string | null; promise: Promise<TopVaults> } | null = null;
+let inflight: { expectedGeneratedAt: string | Date | null; promise: Promise<TopVaults> } | null = null;
 
 // The incident this protects against was a transient listing/detail mismatch:
 // the listing showed a 1M annualised return above 100% for the Peter Schiff
 // vault, while the detail page showed about -23%. Current production data later
 // converged to -23.3% in both places, which points to stale client or endpoint
 // cache data rather than a formatter-specific bug.
-function normaliseGeneratedAt(generatedAt: string | Date | null | undefined): string | null {
+function timestamp(generatedAt: string | Date | null | undefined): number | null {
 	if (!generatedAt) return null;
 
-	const timestamp = new Date(generatedAt).getTime();
-	if (!Number.isFinite(timestamp)) return String(generatedAt);
-
-	return new Date(timestamp).toISOString();
+	const value = new Date(generatedAt).getTime();
+	return Number.isFinite(value) ? value : null;
 }
 
-function isOlderThan(generatedAt: string | Date | null | undefined, expectedGeneratedAt: string | null): boolean {
-	if (!expectedGeneratedAt) return false;
+function isOlderThan(
+	generatedAt: string | Date | null | undefined,
+	expectedGeneratedAt: string | Date | null
+): boolean {
+	const expected = timestamp(expectedGeneratedAt);
+	if (expected === null) return false;
 
-	const generatedAtTimestamp = new Date(generatedAt ?? 0).getTime();
-	const expectedTimestamp = new Date(expectedGeneratedAt).getTime();
-
-	if (Number.isFinite(generatedAtTimestamp) && Number.isFinite(expectedTimestamp)) {
-		return generatedAtTimestamp < expectedTimestamp;
-	}
-
-	return normaliseGeneratedAt(generatedAt) !== expectedGeneratedAt;
+	const actual = timestamp(generatedAt);
+	return actual === null || actual < expected;
 }
 
 async function requestAllVaultData(cacheBust = false): Promise<TopVaults> {
@@ -51,7 +47,7 @@ async function requestAllVaultData(cacheBust = false): Promise<TopVaults> {
  * Concurrent callers share the same in-flight request.
  */
 export async function fetchAllVaultData(expectedGeneratedAt?: string | Date | null): Promise<TopVaults> {
-	const expected = normaliseGeneratedAt(expectedGeneratedAt);
+	const expected = expectedGeneratedAt ?? null;
 	// Reuse the in-memory payload only if it is at least as fresh as the route
 	// layout data. Without this check, a user could navigate from a stale listing
 	// to a freshly rendered detail page and see conflicting return metrics for the
@@ -87,8 +83,7 @@ export async function fetchAllVaultData(expectedGeneratedAt?: string | Date | nu
 		// Return the fresher cached payload to the original caller as well; route
 		// components apply resolved payloads directly, so returning older data here
 		// could briefly repaint a listing with stale return metrics.
-		const cachedGeneratedAt = normaliseGeneratedAt(cached?.generated_at);
-		if (cached && isOlderThan(data.generated_at, cachedGeneratedAt)) {
+		if (cached && isOlderThan(data.generated_at, cached.generated_at)) {
 			return cached;
 		}
 
@@ -104,7 +99,7 @@ export async function fetchAllVaultData(expectedGeneratedAt?: string | Date | nu
 
 /** Whether cached data is already available (no fetch needed). */
 export function hasVaultCache(expectedGeneratedAt?: string | Date | null): boolean {
-	const expected = normaliseGeneratedAt(expectedGeneratedAt);
+	const expected = expectedGeneratedAt ?? null;
 	// Loading skeletons should appear when the only cached payload is older than
 	// the layout's expected version, because that old payload could contain the
 	// exact stale listing values that caused the Peter Schiff mismatch.
