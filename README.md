@@ -24,6 +24,13 @@ pnpm --version
 pnpm install --frozen-lockfile
 ```
 
+If `sharp` tries to build from source because Homebrew `libvips` is installed, use the prebuilt
+binary instead:
+
+```shell
+SHARP_IGNORE_GLOBAL_LIBVIPS=1 pnpm install --frozen-lockfile
+```
+
 ## Install and build submodules
 
 `frontend` has one submodule dependency installed under `deps`:
