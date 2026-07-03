@@ -47,9 +47,10 @@ async function getCachedAllData(fetch: Fetch) {
 const cacheHeaders = {
 	// Do not rely on query-string cache keys for correctness. Cloudflare/R2 can
 	// normalise or strip query parameters for the underlying export, so the
-	// listing API must revalidate instead of serving a long-lived CDN/browser
-	// object that can outlive refreshed detail SSR data.
-	'cache-control': 'no-cache',
+	// listing API uses a short HTTP freshness window and lets the client compare
+	// the response generated_at against the SSR layout generatedAt. Only a proven
+	// stale mismatch triggers a heavier cache: 'reload' retry.
+	'cache-control': 'public, max-age=300, stale-while-revalidate=300',
 	'content-type': 'application/json',
 	vary: 'Accept-Encoding'
 };
