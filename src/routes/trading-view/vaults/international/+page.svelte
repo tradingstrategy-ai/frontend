@@ -66,9 +66,8 @@ International vault listing for non-USD-denominated vaults.
 			.finally(() => (loading = false));
 	});
 
-	const title = 'International DeFi vaults';
-	const description =
-		'Non-USD-denominated DeFi vaults, with TVL converted to USD using the latest denomination token exchange rates.';
+	const title = 'International stablecoin vaults';
+	const description = 'DeFi vaults nominated in CHF, EUR, GBP, JPY, SGD, and TRY';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let pageSubtitle = $derived.by(() => {
 		if (!topVaults) return 'Loading non-USD vault TVL and currencies.';
