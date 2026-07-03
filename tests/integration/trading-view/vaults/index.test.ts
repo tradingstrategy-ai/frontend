@@ -135,17 +135,28 @@ test.describe('vault index page', () => {
 
 		const rows = page.locator('tbody tr.targetable');
 		await expect(rows).toHaveCount(3);
-		await expect(rows.first()).toContainText('atvPTmax');
-		await expect(rows.nth(1)).toContainText('Paused blacklisted only vault');
+		await expect(rows.first()).toContainText('Abnormal TVL blacklisted vault');
+		await expect(rows.first()).not.toHaveClass(/blacklisted/);
+		await expect(rows.first().locator('td').first()).toHaveCSS('text-decoration-line', 'none');
+		await expect(rows.nth(1)).toContainText('atvPTmax');
 		await expect(rows.nth(2)).toContainText('Morpho flagged blacklisted vault');
+		await expect(
+			page.getByText(/Blacklisted 3 vaults and \$8M TVL \(some of this TVL is likely to be fake\)\./)
+		).toBeVisible();
+		await expect(
+			page.getByText(
+				'Blacklisting reasons include illiquidity, depegging of the denominating fiat token, being a subvault of a composite, and suspicious activities.'
+			)
+		).toBeVisible();
 		await expect(page.getByTestId('top-vaults-meta')).toContainText('3 vaults out of');
+		await expect(page.getByTestId('top-vaults-meta')).toContainText('TVL $8M');
 		await expect(page.getByTestId('top-vaults-meta')).toContainText('Avg. return 20.00%');
 	});
 
 	test('displays vault count in table meta', async ({ page }) => {
 		const meta = page.getByTestId('top-vaults-meta');
-		// Should show 255 vaults (those above TVL threshold)
-		await expect(meta).toContainText('255 vaults');
+		// Should show 254 vaults (those above TVL threshold)
+		await expect(meta).toContainText('254 vaults');
 	});
 
 	test('renders initial batch of 150 rows', async ({ page }) => {
@@ -186,9 +197,9 @@ test.describe('vault index page', () => {
 		await sentinel.scrollIntoViewIfNeeded();
 		await expect(rows).toHaveCount(250);
 
-		// scroll a third time - loads the final 5
+		// scroll a third time - loads the final 4
 		await sentinel.scrollIntoViewIfNeeded();
-		await expect(rows).toHaveCount(255);
+		await expect(rows).toHaveCount(254);
 
 		// all rows loaded - no more sentinel
 		await expect(sentinel).not.toBeVisible();

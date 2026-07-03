@@ -4,7 +4,12 @@ Blacklisted vault listing.
 <script lang="ts">
 	import type { TopVaults } from '$lib/top-vaults/schemas';
 	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
-	import { getVaultCurrentTvlUsd, isBlacklisted } from '$lib/top-vaults/helpers';
+	import {
+		MAX_SUMMARY_TVL_USD,
+		calculateTotalTvl,
+		getVaultCurrentTvlUsd,
+		isBlacklisted
+	} from '$lib/top-vaults/helpers';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
@@ -12,10 +17,6 @@ Blacklisted vault listing.
 
 	let topVaults = $state<TopVaults>();
 	let loading = $state(!hasVaultCache(page.data.generatedAt));
-
-	function isBlacklistedRankingVault(vault: TopVaults['vaults'][number]): boolean {
-		return isBlacklisted(vault) || vault.flags.includes('paused');
-	}
 
 	$effect(() => {
 		fetchAllVaultData(page.data.generatedAt)
@@ -28,7 +29,7 @@ Blacklisted vault listing.
 		topVaults && {
 			...topVaults,
 			vaults: topVaults.vaults
-				.filter(isBlacklistedRankingVault)
+				.filter(isBlacklisted)
 				.toSorted((a, b) => (getVaultCurrentTvlUsd(b) ?? 0) - (getVaultCurrentTvlUsd(a) ?? 0))
 		}
 	);
@@ -36,10 +37,15 @@ Blacklisted vault listing.
 	const title = 'Blacklisted DeFi stablecoin vaults';
 	const description = 'Blacklisted DeFi stablecoin vaults, sorted by current TVL.';
 	let blacklistedTvl = $derived(
-		blacklistedTopVaults?.vaults.reduce((sum, vault) => sum + (getVaultCurrentTvlUsd(vault) ?? 0), 0) ?? 0
+		calculateTotalTvl(
+			blacklistedTopVaults?.vaults.map((vault) => ({ current_nav: getVaultCurrentTvlUsd(vault) })) ?? [],
+			{ maxTvlUsd: MAX_SUMMARY_TVL_USD }
+		)
 	);
+	let blacklistedCountText = $derived(blacklistedTopVaults ? String(blacklistedTopVaults.vaults.length) : '-');
+	let blacklistedTvlText = $derived(blacklistedTopVaults ? formatDollar(blacklistedTvl, 0) : '-');
 	let subtitle = $derived(
-		`Blacklisted ${blacklistedTopVaults?.vaults.length ?? 0} vaults and ${formatDollar(blacklistedTvl, 0)} TVL. Blacklisting reasons include illiquidity, depegging of the denomination currency and suspicious activities.`
+		`Blacklisted ${blacklistedCountText} vaults and ${blacklistedTvlText} TVL (some of this TVL is likely to be fake). Blacklisting reasons include illiquidity, depegging of the denominating fiat token, being a subvault of a composite, and suspicious activities.`
 	);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
@@ -72,6 +78,8 @@ Blacklisted vault listing.
 	{loading}
 	includeBlacklisted
 	includeBlacklistedInStats
+	maxSummaryTvlUsd={MAX_SUMMARY_TVL_USD}
+	disableBlacklistedStrikethrough
 	title="Blacklisted stablecoin vaults"
 	{subtitle}
 	showFilters

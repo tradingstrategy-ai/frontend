@@ -118,6 +118,10 @@
 		totalVaultCount?: number;
 		/** Include blacklisted vaults in the listing summary stats. */
 		includeBlacklistedInStats?: boolean;
+		/** Exclude vaults above this TVL from listing summary TVL and TVL-weighted stats. */
+		maxSummaryTvlUsd?: number;
+		/** Do not visually strike through blacklisted vault rows. */
+		disableBlacklistedStrikethrough?: boolean;
 	}
 
 	const emptyTopVaults: TopVaults = {
@@ -147,7 +151,9 @@
 		defaultDirection,
 		loading = false,
 		totalVaultCount: totalVaultCountProp,
-		includeBlacklistedInStats = false
+		includeBlacklistedInStats = false,
+		maxSummaryTvlUsd,
+		disableBlacklistedStrikethrough = false
 	}: Props = $props();
 
 	// --- Sort column registry (key → compareFn + default direction) ---
@@ -491,15 +497,22 @@
 		includeBlacklistedInStats ? filteredVaults : filteredVaults.filter((v) => !isBlacklisted(v))
 	);
 
+	let statsVaultsWithTvl = $derived(
+		statsVaults.map((v) => ({
+			...v,
+			current_nav: getVaultCurrentTvlUsd(v)
+		}))
+	);
+
 	// Calculate total TVL from fully-filtered vaults
-	let totalTvl = $derived(calculateTotalTvl(statsVaults.map((v) => ({ current_nav: getVaultCurrentTvlUsd(v) }))));
+	let totalTvl = $derived(calculateTotalTvl(statsVaultsWithTvl, { maxTvlUsd: maxSummaryTvlUsd }));
 
 	// Calculate TVL-weighted average 1M APY from fully-filtered vaults
 	let avgTvlWeightedApy1M = $derived(
-		calculateTvlWeightedApy(
-			statsVaults.map((v) => ({ ...v, current_nav: getVaultCurrentTvlUsd(v) })),
-			{ includeBlacklisted: includeBlacklistedInStats }
-		)
+		calculateTvlWeightedApy(statsVaultsWithTvl, {
+			includeBlacklisted: includeBlacklistedInStats,
+			maxTvlUsd: maxSummaryTvlUsd
+		})
 	);
 
 	// sort vaults
@@ -1035,7 +1048,7 @@
 					{@const statusReason = [vault.deposit_closed_reason, vault.redemption_closed_reason]
 						.filter(Boolean)
 						.join('; ')}
-					<tr class={['targetable', blacklisted && 'blacklisted']}>
+					<tr class={['targetable', blacklisted && !disableBlacklistedStrikethrough && 'blacklisted']}>
 						<!-- index cell is populated with row index via `rowNumber` CSS counter -->
 						<td class="index"></td>
 						{#if showChainCol}
