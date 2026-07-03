@@ -1,5 +1,4 @@
 import { fetchTopVaults } from './client';
-import { isOlderThan, normaliseGeneratedAt } from './generated-at';
 import type { TopVaults } from './schemas';
 
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
@@ -15,11 +14,6 @@ export async function getCachedTopVaults(fetch: Fetch): Promise<TopVaults> {
 	const now = Date.now();
 	if (cache && now < cache.expires) return cache.data;
 	const data = await fetchTopVaults(fetch);
-
-	if (cache && isOlderThan(data.generated_at, normaliseGeneratedAt(cache.data.generated_at))) {
-		return cache.data;
-	}
-
 	cache = { data, expires: now + CACHE_TTL_MS };
 	return data;
 }

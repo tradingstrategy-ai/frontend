@@ -5,7 +5,6 @@
  * deduplicates those fetches so only the first navigation triggers a network request;
  * subsequent navigations reuse the cached result instantly (no skeleton flash).
  */
-import { isOlderThan, normaliseGeneratedAt } from './generated-at';
 import type { TopVaults } from './schemas';
 
 let cached: TopVaults | null = null;
@@ -16,6 +15,28 @@ let inflight: { expectedGeneratedAt: string | null; promise: Promise<TopVaults> 
 // vault, while the detail page showed about -23%. Current production data later
 // converged to -23.3% in both places, which points to stale client or endpoint
 // cache data rather than a formatter-specific bug.
+function normaliseGeneratedAt(generatedAt: string | Date | null | undefined): string | null {
+	if (!generatedAt) return null;
+
+	const timestamp = new Date(generatedAt).getTime();
+	if (!Number.isFinite(timestamp)) return String(generatedAt);
+
+	return new Date(timestamp).toISOString();
+}
+
+function isOlderThan(generatedAt: string | Date | null | undefined, expectedGeneratedAt: string | null): boolean {
+	if (!expectedGeneratedAt) return false;
+
+	const generatedAtTimestamp = new Date(generatedAt ?? 0).getTime();
+	const expectedTimestamp = new Date(expectedGeneratedAt).getTime();
+
+	if (Number.isFinite(generatedAtTimestamp) && Number.isFinite(expectedTimestamp)) {
+		return generatedAtTimestamp < expectedTimestamp;
+	}
+
+	return normaliseGeneratedAt(generatedAt) !== expectedGeneratedAt;
+}
+
 async function requestAllVaultData(cacheBust = false): Promise<TopVaults> {
 	// cache: 'reload' is only used after we have proof that a normal fetch returned
 	// a payload older than the layout's generatedAt. That keeps normal navigation
