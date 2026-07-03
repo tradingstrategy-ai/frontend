@@ -13,10 +13,10 @@
 	let { protocolSlug, protocolName, protocolMetadata, core3 } = $derived(data);
 
 	let topVaults = $state<TopVaults>();
-	let loading = $state(!hasVaultCache());
+	let loading = $state(!hasVaultCache(page.data.generatedAt));
 
 	$effect(() => {
-		fetchAllVaultData()
+		fetchAllVaultData(page.data.generatedAt)
 			.then((allData) => {
 				topVaults = {
 					...allData,

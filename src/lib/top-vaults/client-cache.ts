@@ -8,29 +8,119 @@
 import type { TopVaults } from './schemas';
 
 let cached: TopVaults | null = null;
-let inflight: Promise<TopVaults> | null = null;
+let inflight: { expectedGeneratedAt: string | null; promise: Promise<TopVaults> } | null = null;
+
+// Normalise Date/string values before comparing cache versions. Layout server
+// data exposes generatedAt from getCachedTopVaults(), while /top-vaults/all-data
+// returns generated_at in the JSON payload. They may differ only in formatting
+// details, so compare ISO timestamps where possible.
+function normaliseGeneratedAt(generatedAt: string | Date | null | undefined): string | null {
+	if (!generatedAt) return null;
+
+	const timestamp = new Date(generatedAt).getTime();
+	if (!Number.isFinite(timestamp)) return String(generatedAt);
+
+	return new Date(timestamp).toISOString();
+}
+
+// The incident this protects against was a transient listing/detail mismatch:
+// the listing showed a 1M annualised return above 100% for the Peter Schiff
+// vault, while the detail page showed about -23%. Current production data later
+// converged to -23.3% in both places, which points to stale client or endpoint
+// cache data rather than a formatter-specific bug.
+function isOlderThan(generatedAt: string | Date | null | undefined, expectedGeneratedAt: string | null): boolean {
+	if (!expectedGeneratedAt) return false;
+
+	const generatedAtTimestamp = new Date(generatedAt ?? 0).getTime();
+	const expectedTimestamp = new Date(expectedGeneratedAt).getTime();
+
+	if (Number.isFinite(generatedAtTimestamp) && Number.isFinite(expectedTimestamp)) {
+		return generatedAtTimestamp < expectedTimestamp;
+	}
+
+	return normaliseGeneratedAt(generatedAt) !== expectedGeneratedAt;
+}
+
+// Include the expected dataset version in the request URL. The server endpoint
+// does not need the query parameter to choose data, but the parameter prevents
+// browser and intermediary caches from treating requests for different expected
+// exports as the same cached object.
+function getAllDataUrl(expectedGeneratedAt: string | null, cacheBust = false): string {
+	const searchParams = new URLSearchParams();
+	if (expectedGeneratedAt) searchParams.set('generated_at', expectedGeneratedAt);
+	if (cacheBust) searchParams.set('_', Date.now().toString());
+
+	const queryString = searchParams.toString();
+	return queryString ? `/top-vaults/all-data?${queryString}` : '/top-vaults/all-data';
+}
+
+async function requestAllVaultData(expectedGeneratedAt: string | null, cacheBust = false): Promise<TopVaults> {
+	// cache: 'reload' is only used after we have proof that a normal fetch returned
+	// a payload older than the layout's generatedAt. That keeps normal navigation
+	// fast while giving us a recovery path from stale HTTP cache entries.
+	const resp = await fetch(getAllDataUrl(expectedGeneratedAt, cacheBust), cacheBust ? { cache: 'reload' } : undefined);
+	if (!resp.ok) throw new Error(`Failed to fetch vault data: ${resp.status}`);
+	return resp.json();
+}
 
 /**
  * Fetch vault data, returning cached data immediately if available.
  * Concurrent callers share the same in-flight request.
  */
-export async function fetchAllVaultData(): Promise<TopVaults> {
-	if (cached) return cached;
-	if (inflight) return inflight;
+export async function fetchAllVaultData(expectedGeneratedAt?: string | Date | null): Promise<TopVaults> {
+	const expected = normaliseGeneratedAt(expectedGeneratedAt);
+	// Reuse the in-memory payload only if it is at least as fresh as the route
+	// layout data. Without this check, a user could navigate from a stale listing
+	// to a freshly rendered detail page and see conflicting return metrics for the
+	// same vault until the tab was reloaded.
+	if (cached && !isOlderThan(cached.generated_at, expected)) return cached;
+	// Share an in-flight request only when it targets a version fresh enough for
+	// this caller. If a newer layout generatedAt arrives while an older request is
+	// running, start a newer request instead of waiting for known-stale data.
+	if (inflight && !isOlderThan(inflight.expectedGeneratedAt, expected)) return inflight.promise;
 
-	inflight = (async () => {
-		const resp = await fetch('/top-vaults/all-data');
-		if (!resp.ok) throw new Error(`Failed to fetch vault data: ${resp.status}`);
-		const data: TopVaults = await resp.json();
-		cached = data;
-		inflight = null;
+	const promise = (async () => {
+		let data = await requestAllVaultData(expected);
+
+		// A stale intermediary cache can still return an older export even with the
+		// generated_at query parameter. Detect that condition from the payload
+		// itself and retry once with an explicit cache reload.
+		if (isOlderThan(data.generated_at, expected)) {
+			console.warn(
+				`Vault data response ${data.generated_at} is older than expected ${expected}; retrying without HTTP cache.`
+			);
+			data = await requestAllVaultData(expected, true);
+		}
+
+		// If this warning fires, the server-side cache or upstream export is still
+		// behind the route layout data. We keep the response so the UI can render,
+		// but the warning gives enough version context to debug a future mismatch.
+		if (isOlderThan(data.generated_at, expected)) {
+			console.warn(`Vault data response ${data.generated_at} is still older than expected ${expected}.`);
+		}
+
+		// If an older request completes after a newer request, do not let it
+		// regress the process-wide in-memory cache back to stale listing data.
+		// Its original caller may still receive the older payload, but subsequent
+		// navigations should continue to reuse the freshest completed response.
+		const cachedGeneratedAt = normaliseGeneratedAt(cached?.generated_at);
+		if (!cached || !isOlderThan(data.generated_at, cachedGeneratedAt)) {
+			cached = data;
+		}
 		return data;
-	})();
+	})().finally(() => {
+		if (inflight?.promise === promise) inflight = null;
+	});
 
-	return inflight;
+	inflight = { expectedGeneratedAt: expected, promise };
+	return promise;
 }
 
 /** Whether cached data is already available (no fetch needed). */
-export function hasVaultCache(): boolean {
-	return cached !== null;
+export function hasVaultCache(expectedGeneratedAt?: string | Date | null): boolean {
+	const expected = normaliseGeneratedAt(expectedGeneratedAt);
+	// Loading skeletons should appear when the only cached payload is older than
+	// the layout's expected version, because that old payload could contain the
+	// exact stale listing values that caused the Peter Schiff mismatch.
+	return cached !== null && !isOlderThan(cached.generated_at, expected);
 }

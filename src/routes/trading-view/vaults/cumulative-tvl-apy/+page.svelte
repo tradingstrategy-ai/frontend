@@ -21,10 +21,10 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 	let { savingsRate, treasuryRate } = $derived(data);
 
 	let vaults = $state<VaultInfo[]>([]);
-	let vaultsLoading = $state(!hasVaultCache());
+	let vaultsLoading = $state(!hasVaultCache(page.data.generatedAt));
 
 	$effect(() => {
-		fetchAllVaultData()
+		fetchAllVaultData(page.data.generatedAt)
 			.then((allData) => (vaults = allData.vaults))
 			.catch((e) => console.error('Failed to load vault data:', e))
 			.finally(() => (vaultsLoading = false));
