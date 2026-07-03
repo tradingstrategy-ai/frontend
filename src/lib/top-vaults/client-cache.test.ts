@@ -115,7 +115,7 @@ describe('top vault client cache', () => {
 		expect(hasVaultCache(newGeneratedAt)).toBe(true);
 
 		oldResponse.resolve(jsonResponse(oldGeneratedAt));
-		await expect(oldRequest).resolves.toMatchObject({ generated_at: oldGeneratedAt });
+		await expect(oldRequest).resolves.toMatchObject({ generated_at: newGeneratedAt });
 
 		await expect(fetchAllVaultData(newGeneratedAt)).resolves.toMatchObject({ generated_at: newGeneratedAt });
 		expect(fetchMock).toHaveBeenCalledTimes(2);

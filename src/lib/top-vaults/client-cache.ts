@@ -5,46 +5,21 @@
  * deduplicates those fetches so only the first navigation triggers a network request;
  * subsequent navigations reuse the cached result instantly (no skeleton flash).
  */
+import { isOlderThan, normaliseGeneratedAt } from './generated-at';
 import type { TopVaults } from './schemas';
 
 let cached: TopVaults | null = null;
 let inflight: { expectedGeneratedAt: string | null; promise: Promise<TopVaults> } | null = null;
-
-// Normalise Date/string values before comparing cache versions. Layout server
-// data exposes generatedAt from getCachedTopVaults(), while /top-vaults/all-data
-// returns generated_at in the JSON payload. They may differ only in formatting
-// details, so compare ISO timestamps where possible.
-function normaliseGeneratedAt(generatedAt: string | Date | null | undefined): string | null {
-	if (!generatedAt) return null;
-
-	const timestamp = new Date(generatedAt).getTime();
-	if (!Number.isFinite(timestamp)) return String(generatedAt);
-
-	return new Date(timestamp).toISOString();
-}
 
 // The incident this protects against was a transient listing/detail mismatch:
 // the listing showed a 1M annualised return above 100% for the Peter Schiff
 // vault, while the detail page showed about -23%. Current production data later
 // converged to -23.3% in both places, which points to stale client or endpoint
 // cache data rather than a formatter-specific bug.
-function isOlderThan(generatedAt: string | Date | null | undefined, expectedGeneratedAt: string | null): boolean {
-	if (!expectedGeneratedAt) return false;
-
-	const generatedAtTimestamp = new Date(generatedAt ?? 0).getTime();
-	const expectedTimestamp = new Date(expectedGeneratedAt).getTime();
-
-	if (Number.isFinite(generatedAtTimestamp) && Number.isFinite(expectedTimestamp)) {
-		return generatedAtTimestamp < expectedTimestamp;
-	}
-
-	return normaliseGeneratedAt(generatedAt) !== expectedGeneratedAt;
-}
-
 // Include the expected dataset version in the request URL. The server endpoint
-// does not need the query parameter to choose data, but the parameter prevents
-// browser and intermediary caches from treating requests for different expected
-// exports as the same cached object.
+// uses it to bypass older server module caches, and the query parameter also
+// prevents browser and intermediary caches from treating requests for different
+// expected exports as the same cached object.
 function getAllDataUrl(expectedGeneratedAt: string | null, cacheBust = false): string {
 	const searchParams = new URLSearchParams();
 	if (expectedGeneratedAt) searchParams.set('generated_at', expectedGeneratedAt);
@@ -101,12 +76,15 @@ export async function fetchAllVaultData(expectedGeneratedAt?: string | Date | nu
 
 		// If an older request completes after a newer request, do not let it
 		// regress the process-wide in-memory cache back to stale listing data.
-		// Its original caller may still receive the older payload, but subsequent
-		// navigations should continue to reuse the freshest completed response.
+		// Return the fresher cached payload to the original caller as well; route
+		// components apply resolved payloads directly, so returning older data here
+		// could briefly repaint a listing with stale return metrics.
 		const cachedGeneratedAt = normaliseGeneratedAt(cached?.generated_at);
-		if (!cached || !isOlderThan(data.generated_at, cachedGeneratedAt)) {
-			cached = data;
+		if (cached && isOlderThan(data.generated_at, cachedGeneratedAt)) {
+			return cached;
 		}
+
+		cached = data;
 		return data;
 	})().finally(() => {
 		if (inflight?.promise === promise) inflight = null;
