@@ -9,10 +9,10 @@ with an "about" panel and a TVL/return mini chart.
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
-	import { formatDollar } from '$lib/helpers/formatters';
+	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 
 	let { data } = $props();
-	let { curatorSlug, curatorName, curator, vaultCount, tvl } = $derived(data);
+	let { curatorSlug, curatorName, curator, vaultCount, tvl, averageApy } = $derived(data);
 
 	let topVaults = $state<TopVaults>();
 	let totalVaultCount = $state<number>();
@@ -51,9 +51,13 @@ with an "about" panel and a TVL/return mini chart.
 	let title = $derived(`${curatorName} curated stablecoin vaults | Trading Strategy`);
 	let fullDescription = $derived.by(() => {
 		const stats =
-			vaultCount > 0 ? ` ${vaultCount} ${vaultCount === 1 ? 'vault' : 'vaults'} with ${formatDollar(tvl, 0)} TVL.` : '';
+			vaultCount > 0
+				? `${curatorName} has ${vaultCount} ${vaultCount === 1 ? 'vault' : 'vaults'} with ${formatDollar(tvl, 1)} TVL${
+						averageApy == null ? '' : ` and a ${formatPercent(averageApy, 1)} APY over the last 30 days`
+					}. The curator may have more vaults outside supported blockchains and vault protocols.`
+				: `Stablecoin vaults curated by ${curatorName}, ranked by returns and TVL.`;
 		const about = curator.short_description ? ` ${asSentence(curator.short_description)}` : '';
-		return `Stablecoin vaults curated by ${curatorName}, ranked by returns and TVL.${stats}${about}`;
+		return `${stats}${about}`;
 	});
 	// search-snippet meta description: same content clipped to fit; social cards
 	// and JSON-LD carry the full curator blurb
@@ -115,6 +119,7 @@ with an "about" panel and a TVL/return mini chart.
 	title="{curatorName} curated stablecoin vaults"
 	showFilters
 	defaultTvlKey="10k"
+	defaultHideUnknown={0}
 	defaultSort="tvl"
 >
 	{#snippet detailAside()}

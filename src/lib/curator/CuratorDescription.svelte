@@ -66,13 +66,16 @@ the vault protocol description widget. Sourced from the top-vaults dataset
 			<div class="description-text">
 				{#if curator.short_description || statsVaults.length}
 					<p>
-						{#if curator.short_description}{curator.short_description}{/if}
 						{#if statsVaults.length}
-							{curator.name} has
-							<strong>{vaultCountLabel}</strong>, with <strong>{totalTvlLabel}</strong>{#if averageApyLabel}{' '}and
-								<strong>{averageApyLabel}</strong> for the last 30 days{/if}.
+							{curator.name} has <strong>{vaultCountLabel}</strong> with
+							<strong>{totalTvlLabel}</strong>{#if averageApyLabel}
+								and a <strong>{averageApyLabel}</strong> over the last 30 days{/if}.
+						{/if}
+						{#if curator.short_description}
+							{' '}{curator.short_description}
 						{/if}
 					</p>
+					<p>The curator may have more vaults outside supported blockchains and vault protocols.</p>
 				{/if}
 				{#if hasExpandableContent}
 					<Button ghost class="toggle-btn" on:click={() => (expanded = !expanded)}>
