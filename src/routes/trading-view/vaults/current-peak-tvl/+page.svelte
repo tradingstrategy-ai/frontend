@@ -16,10 +16,10 @@ Scatter plot page showing vault current TVL versus historical peak TVL, coloured
 	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 
 	let vaults = $state<VaultInfo[]>([]);
-	let vaultsLoading = $state(!hasVaultCache());
+	let vaultsLoading = $state(!hasVaultCache(page.data.generatedAt));
 
 	$effect(() => {
-		fetchAllVaultData()
+		fetchAllVaultData(page.data.generatedAt)
 			.then((data) => (vaults = data.vaults))
 			.catch((e) => console.error('Failed to load vault data:', e))
 			.finally(() => (vaultsLoading = false));

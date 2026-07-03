@@ -11,14 +11,14 @@ Blacklisted vault listing.
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 
 	let topVaults = $state<TopVaults>();
-	let loading = $state(!hasVaultCache());
+	let loading = $state(!hasVaultCache(page.data.generatedAt));
 
 	function isBlacklistedRankingVault(vault: TopVaults['vaults'][number]): boolean {
 		return isBlacklisted(vault) || vault.flags.includes('paused');
 	}
 
 	$effect(() => {
-		fetchAllVaultData()
+		fetchAllVaultData(page.data.generatedAt)
 			.then((data) => (topVaults = data))
 			.catch((e) => console.error('Failed to load vault data:', e))
 			.finally(() => (loading = false));

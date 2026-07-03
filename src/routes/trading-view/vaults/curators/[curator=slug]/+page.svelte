@@ -16,10 +16,10 @@ with an "about" panel and a TVL/return mini chart.
 
 	let topVaults = $state<TopVaults>();
 	let totalVaultCount = $state<number>();
-	let loading = $state(!hasVaultCache());
+	let loading = $state(!hasVaultCache(page.data.generatedAt));
 
 	$effect(() => {
-		fetchAllVaultData()
+		fetchAllVaultData(page.data.generatedAt)
 			.then((allData) => {
 				totalVaultCount = allData.vaults.length;
 				topVaults = {
