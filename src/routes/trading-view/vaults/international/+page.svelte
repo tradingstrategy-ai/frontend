@@ -21,7 +21,7 @@ International vault listing for non-USD-denominated vaults.
 	import { formatDollar } from '$lib/helpers/formatters';
 
 	let topVaults = $state<TopVaults>();
-	let loading = $state(!hasVaultCache());
+	let loading = $state(!hasVaultCache(page.data.generatedAt));
 
 	function formatCurrencyList(currencies: string[]): string {
 		if (currencies.length === 0) return 'unknown currencies';
@@ -49,7 +49,7 @@ International vault listing for non-USD-denominated vaults.
 	}
 
 	$effect(() => {
-		Promise.all([fetchAllVaultData(), fetchStablecoinMetadataIndex(fetch)])
+		Promise.all([fetchAllVaultData(page.data.generatedAt), fetchStablecoinMetadataIndex(fetch)])
 			.then(([allData, metadataIndex]) => {
 				const lookup = buildStablecoinMetadataLookup(metadataIndex);
 				const currencyUsdRates = getCurrencyUsdRates(metadataIndex);

@@ -16,10 +16,10 @@ Blacklisted vault listing.
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 
 	let topVaults = $state<TopVaults>();
-	let loading = $state(!hasVaultCache());
+	let loading = $state(!hasVaultCache(page.data.generatedAt));
 
 	$effect(() => {
-		fetchAllVaultData()
+		fetchAllVaultData(page.data.generatedAt)
 			.then((data) => (topVaults = data))
 			.catch((e) => console.error('Failed to load vault data:', e))
 			.finally(() => (loading = false));
