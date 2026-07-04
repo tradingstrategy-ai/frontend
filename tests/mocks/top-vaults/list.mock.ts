@@ -315,6 +315,7 @@ const morphoFlaggedBlacklistedVault = createTestVault('Morpho flagged blackliste
 	address: '0xc3415c9231dad88f8146107372143f6dae042967',
 	chain: 'arbitrum',
 	protocol: 'Morpho',
+	link: 'https://app.euler.finance/earn/0xc3415c9231dad88f8146107372143f6dae042967?network=arbitrum',
 	current_nav: 20_000,
 	peak_nav: 30_000,
 	risk: 'Blacklisted',
