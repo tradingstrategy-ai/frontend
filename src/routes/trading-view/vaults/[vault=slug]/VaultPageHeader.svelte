@@ -27,11 +27,9 @@
 	{#snippet cta()}
 		<span class="cta-actions">
 			{#if vault.link}
-				<span class="external-link">
-					<Button href={vault.link} target="_blank" rel="noreferrer">
-						View on {externalSiteName}
-					</Button>
-				</span>
+				<Button href={vault.link} target="_blank" rel="noreferrer">
+					View on {externalSiteName}
+				</Button>
 			{/if}
 			<UpdateInfoButton size="md" />
 		</span>
@@ -48,12 +46,6 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 0.75rem;
-	}
-
-	.external-link {
-		@media (--viewport-sm-down) {
-			display: none;
-		}
 	}
 
 	.vault-description {
