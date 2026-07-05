@@ -12,7 +12,7 @@ import { fetchVaultProtocolMetadata } from '$lib/vault-protocol/client';
 import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ params, fetch }) {
-	const { vaults, generated_at, core3_protocols } = await getCachedTopVaults(fetch);
+	const { vaults, generated_at, core3_protocols, curators } = await getCachedTopVaults(fetch);
 
 	const vault = vaults.find((v) => {
 		// redirect to canonical vault path if someone tries old vault id URL
@@ -46,6 +46,7 @@ export async function load({ params, fetch }) {
 		stablecoinMetadata,
 		getCurrencyUsdRates(stablecoinMetadataIndex)
 	);
+	const curatorMetadata = vault.curator_slug ? curators[vault.curator_slug] : null;
 
-	return { vault: vaultWithRates, chain, protocolMetadata, stablecoinMetadata, generated_at, core3 };
+	return { vault: vaultWithRates, chain, protocolMetadata, curatorMetadata, stablecoinMetadata, generated_at, core3 };
 }

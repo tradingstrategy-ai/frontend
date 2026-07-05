@@ -15,6 +15,7 @@
 	import VaultMetrics from './VaultMetrics.svelte';
 	import VaultTechnicalDetailsTable from './VaultTechnicalDetailsTable.svelte';
 	import VaultPeriodicMetrics from './VaultPeriodicMetrics.svelte';
+	import VaultCuratorInfo from './VaultCuratorInfo.svelte';
 	import VaultProtocolInfo from './VaultProtocolInfo.svelte';
 	import VaultRankings from './VaultRankings.svelte';
 	import Core3Ratings from '$lib/top-vaults/Core3Ratings.svelte';
@@ -23,7 +24,7 @@
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 
 	let { data } = $props();
-	let { vault, chain, protocolMetadata, stablecoinMetadata, generated_at, core3 } = $derived(data);
+	let { vault, chain, protocolMetadata, curatorMetadata, stablecoinMetadata, generated_at, core3 } = $derived(data);
 	let morphoFlags = $derived(getMorphoFlags(vault));
 	let notesDuplicateMorphoFlags = $derived(
 		morphoFlags.length > 0 && vault.notes?.startsWith('Morpho has flagged this vault with the following issues:')
@@ -109,6 +110,10 @@
 			<MetricsBox class="notes" title="Notes">
 				<Markdown content={vault.notes} />
 			</MetricsBox>
+		{/if}
+
+		{#if curatorMetadata}
+			<VaultCuratorInfo curator={curatorMetadata} />
 		{/if}
 
 		{#if protocolMetadata}
