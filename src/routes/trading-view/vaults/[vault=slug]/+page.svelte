@@ -44,6 +44,12 @@
 					? 'Withdrawals may be disabled for this vault'
 					: undefined
 	);
+	let chartLogoUrl = $derived(
+		curatorMetadata?.logos.generic ??
+			curatorMetadata?.logos.light ??
+			curatorMetadata?.logos.dark ??
+			(protocolMetadata ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined)
+	);
 </script>
 
 <SocialMediaTags {vault} {chain} {protocolMetadata} />
@@ -89,10 +95,7 @@
 
 		<VaultRankings {vault} {chain} {protocolMetadata} />
 
-		<ChartWithFeaturedMetrics
-			{vault}
-			protocolLogoUrl={protocolMetadata ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined}
-		/>
+		<ChartWithFeaturedMetrics {vault} {chartLogoUrl} />
 
 		<!-- Vault protocols do not report useful utilisation data.
 		<VaultUtilisationChart {vault} />

@@ -15,10 +15,10 @@
 
 	interface Props {
 		vault: VaultInfo;
-		protocolLogoUrl?: string;
+		chartLogoUrl?: string;
 	}
 
-	let { vault, protocolLogoUrl }: Props = $props();
+	let { vault, chartLogoUrl }: Props = $props();
 
 	let denominationCurrency = $derived(getVaultDenominationCurrency(vault));
 	let showNativeTvl = $derived(denominationCurrency != null && denominationCurrency !== 'usd');
@@ -38,7 +38,7 @@
 
 <MetricsBox>
 	<div class="chart-area">
-		<VaultPriceChart {vault} {protocolLogoUrl} />
+		<VaultPriceChart {vault} {chartLogoUrl} />
 
 		<div class="divider"></div>
 

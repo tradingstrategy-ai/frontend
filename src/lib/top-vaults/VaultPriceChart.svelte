@@ -22,6 +22,7 @@ so relative performance is comparable on a single axis.
 	import SeriesLabel from '$lib/charts/SeriesLabel.svelte';
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
+	import { removeOnError } from '$lib/actions/image';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { isPerpetualFuturesVault } from './isPerpetualFuturesVault';
 	import type { PriceScaleCalculator, SimpleDataItem } from '$lib/charts/types';
@@ -49,11 +50,11 @@ so relative performance is comparable on a single axis.
 
 	interface Props {
 		vault: VaultInfo;
-		/** Optional protocol logo URL to use instead of Trading Strategy brand mark */
-		protocolLogoUrl?: string;
+		/** Optional logo URL for the vault legend item, preferring curator over protocol logos. */
+		chartLogoUrl?: string;
 	}
 
-	let { vault, protocolLogoUrl }: Props = $props();
+	let { vault, chartLogoUrl }: Props = $props();
 
 	let showCryptoBenchmarks = $derived(isPerpetualFuturesVault(vault));
 
@@ -150,12 +151,12 @@ so relative performance is comparable on a single axis.
 	const benchmarkLegend: LegendItem[] = $derived(
 		showCryptoBenchmarks
 			? [
-					{ label: vault.name, color: getVaultColor(vaultDirection), logoUrl: protocolLogoUrl },
+					{ label: vault.name, color: getVaultColor(vaultDirection), logoUrl: chartLogoUrl },
 					{ label: 'BTC', color: '#f7931a80', logoUrl: getLogoUrl('token', 'btc') },
 					{ label: 'ETH', color: '#627eea80', logoUrl: getLogoUrl('token', 'eth') }
 				]
 			: [
-					{ label: vault.name, color: getVaultColor(vaultDirection), logoUrl: protocolLogoUrl },
+					{ label: vault.name, color: getVaultColor(vaultDirection), logoUrl: chartLogoUrl },
 					{
 						label: 'US 3M T-bill',
 						color: '#4a90d9a0',
@@ -344,7 +345,7 @@ so relative performance is comparable on a single axis.
 							>
 								<span class="legend-swatch" aria-hidden="true"></span>
 								{#if benchmark.logoUrl}
-									<img class="legend-logo" src={benchmark.logoUrl} alt="" aria-hidden="true" />
+									<img class="legend-logo" src={benchmark.logoUrl} alt="" aria-hidden="true" use:removeOnError />
 								{/if}
 								<span>{benchmark.label}</span>
 							</a>
@@ -359,7 +360,7 @@ so relative performance is comparable on a single axis.
 						<div class="legend-item" style:--legend-color={benchmark.color}>
 							<span class="legend-swatch" aria-hidden="true"></span>
 							{#if benchmark.logoUrl}
-								<img class="legend-logo" src={benchmark.logoUrl} alt="" aria-hidden="true" />
+								<img class="legend-logo" src={benchmark.logoUrl} alt="" aria-hidden="true" use:removeOnError />
 							{/if}
 							<span>{benchmark.label}</span>
 						</div>
