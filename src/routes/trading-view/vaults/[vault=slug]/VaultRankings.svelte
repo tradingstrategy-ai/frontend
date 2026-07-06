@@ -15,40 +15,51 @@
 
 	let { vault, chain, protocolMetadata }: Props = $props();
 
-	let period1m = $derived(vault.period_results.find((p) => p.period === '1M'))!;
+	let period1m = $derived(vault.period_results.find((p) => p.period === '1M'));
+	let hasRankings = $derived(
+		period1m?.ranking_overall != null || period1m?.ranking_chain != null || period1m?.ranking_protocol != null
+	);
 </script>
 
-<div class="vault-rankings">
-	<span>🏆</span>
+{#if hasRankings}
+	<div class="vault-rankings">
+		<span>🏆</span>
 
-	<ul>
-		<li>
-			<span class="rank">#{period1m.ranking_overall}</span>
-			<a href={resolve('/trading-view/vaults')}>overall</a>
-		</li>
-		<li>
-			<span class="rank">#{period1m.ranking_chain}</span>
-			on
-			<EntitySymbol size="0.875em" logoUrl={getLogoUrl('blockchain', chain?.slug)}>
-				<a href={resolve(`/trading-view/vaults/chains/${chain?.slug}`)}>
-					{chain?.name}
-				</a>
-			</EntitySymbol>
-		</li>
-		<li>
-			<span class="rank">#{period1m.ranking_protocol}</span>
-			on
-			<EntitySymbol
-				size="0.875em"
-				logoUrl={protocolMetadata ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined}
-			>
-				<a href={resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`)}>
-					{vault.protocol}
-				</a>
-			</EntitySymbol>
-		</li>
-	</ul>
-</div>
+		<ul>
+			{#if period1m?.ranking_overall != null}
+				<li>
+					<span class="rank">#{period1m.ranking_overall}</span>
+					<a href={resolve('/trading-view/vaults')}>overall</a>
+				</li>
+			{/if}
+			{#if period1m?.ranking_chain != null && chain}
+				<li>
+					<span class="rank">#{period1m.ranking_chain}</span>
+					on
+					<EntitySymbol size="0.875em" logoUrl={getLogoUrl('blockchain', chain.slug)}>
+						<a href={`/trading-view/vaults/chains/${chain.slug}`}>
+							{chain.name}
+						</a>
+					</EntitySymbol>
+				</li>
+			{/if}
+			{#if period1m?.ranking_protocol != null}
+				<li>
+					<span class="rank">#{period1m.ranking_protocol}</span>
+					on
+					<EntitySymbol
+						size="0.875em"
+						logoUrl={protocolMetadata ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined}
+					>
+						<a href={`/trading-view/vaults/protocols/${vault.protocol_slug}`}>
+							{vault.protocol}
+						</a>
+					</EntitySymbol>
+				</li>
+			{/if}
+		</ul>
+	</div>
+{/if}
 
 <style>
 	.vault-rankings {
