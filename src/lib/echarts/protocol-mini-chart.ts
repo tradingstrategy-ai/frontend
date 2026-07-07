@@ -11,7 +11,7 @@ export interface ProtocolMiniChartDailyRow {
 	id: string;
 	day: string | Date;
 	tvl: number;
-	sharePrice: number;
+	sharePrice: number | null;
 }
 
 export interface ProtocolMiniChartLatestApyRow {
@@ -42,14 +42,14 @@ interface NormalisedDailyRow {
 	id: string;
 	day: string;
 	tvl: number;
-	sharePrice: number;
+	sharePrice: number | null;
 }
 
 interface FilledVaultPoint {
 	day: string;
 	dayMs: number;
 	tvl: number;
-	sharePrice: number;
+	sharePrice: number | null;
 }
 
 interface ProtocolMiniChartOptions {
@@ -99,10 +99,12 @@ function buildFilledVaultSeries(rows: NormalisedDailyRow[], allDays: string[]) {
 
 		if (row) {
 			lastTvl = row.tvl;
-			lastSharePrice = row.sharePrice;
+			if (row.sharePrice != null) {
+				lastSharePrice = row.sharePrice;
+			}
 		}
 
-		if (lastTvl == null || lastSharePrice == null) continue;
+		if (lastTvl == null) continue;
 
 		filled.push({
 			day,
@@ -152,7 +154,12 @@ export function buildProtocolMiniChartPayload(
 	const normalisedRows = rows
 		.map((row): NormalisedDailyRow | null => {
 			const day = normaliseDay(row.day);
-			if (!day || !Number.isFinite(row.tvl) || row.tvl < 0 || !Number.isFinite(row.sharePrice) || row.sharePrice <= 0) {
+			if (
+				!day ||
+				!Number.isFinite(row.tvl) ||
+				row.tvl < 0 ||
+				(row.sharePrice != null && !Number.isFinite(row.sharePrice))
+			) {
 				return null;
 			}
 
@@ -165,7 +172,7 @@ export function buildProtocolMiniChartPayload(
 				id: row.id,
 				day,
 				tvl: row.tvl,
-				sharePrice: row.sharePrice
+				sharePrice: row.sharePrice != null && row.sharePrice > 0 ? row.sharePrice : null
 			};
 		})
 		.filter((row): row is NormalisedDailyRow => row !== null)
@@ -196,7 +203,15 @@ export function buildProtocolMiniChartPayload(
 			tvl += current.tvl;
 
 			const lookback = getPointAtOrBefore(vaultPoints, dayMs - LOOKBACK_MS);
-			if (!lookback || lookback.sharePrice <= 0 || current.sharePrice <= 0 || current.dayMs <= lookback.dayMs) continue;
+			if (
+				!lookback ||
+				lookback.sharePrice == null ||
+				current.sharePrice == null ||
+				lookback.sharePrice <= 0 ||
+				current.sharePrice <= 0 ||
+				current.dayMs <= lookback.dayMs
+			)
+				continue;
 
 			const returnRate = current.sharePrice / lookback.sharePrice - 1;
 			if (returnRate <= -1) continue;

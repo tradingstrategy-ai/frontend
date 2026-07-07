@@ -54,12 +54,14 @@ export async function getVaultGroupMiniChartRows(vaultIds: string[]): Promise<Pr
 					id,
 					CAST(timestamp AS DATE) AS day,
 					arg_max(total_assets, timestamp) AS tvl,
-					arg_max(share_price, timestamp) AS share_price
+					CASE
+						WHEN arg_max(share_price, timestamp) > 0 THEN arg_max(share_price, timestamp)
+						ELSE NULL
+					END AS share_price
 				FROM parquet_scan($parquetFile)
 				WHERE
 					id IN (${idPlaceholders})
 					AND total_assets >= 0
-					AND share_price > 0
 					AND COALESCE(tvl_filtering_mask, FALSE) = FALSE
 				GROUP BY 1, 2
 				HAVING day <= current_date
@@ -72,7 +74,7 @@ export async function getVaultGroupMiniChartRows(vaultIds: string[]): Promise<Pr
 			id: String(id),
 			day: day as string | Date,
 			tvl: Number(tvl),
-			sharePrice: Number(sharePrice)
+			sharePrice: sharePrice == null ? null : Number(sharePrice)
 		}));
 	} finally {
 		connection.closeSync();
