@@ -9,7 +9,7 @@ import {
 } from '$lib/echarts/vault-group-mini-chart-server';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 
-const CACHE_VERSION = 'protocol-mini-chart-v4';
+const CACHE_VERSION = 'protocol-mini-chart-v5';
 const cache = new Map<string, { payload: ProtocolMiniChartPayload; expires: number; version: string }>();
 
 async function getCachedChartData(protocolSlug: string, fetch: Fetch) {

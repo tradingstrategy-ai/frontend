@@ -49,6 +49,15 @@ describe('buildProtocolMiniChartPayload', () => {
 		expect(missingDay?.tvl).toBe(400);
 	});
 
+	test('includes TVL rows without a usable share price', () => {
+		const rows = [...createRows('vault-a', 100, 1, 1.01), ...createRows('vault-without-price', 300, 0, 0)];
+		const payload = buildProtocolMiniChartPayload(rows, 2, 3600);
+		const latest = payload.points.at(-1);
+
+		expect(latest?.tvl).toBe(400);
+		expect(latest?.apy).toBeCloseTo(0.129, 2);
+	});
+
 	test('excludes TVL outlier rows using the shared vault outlier threshold', () => {
 		const rows = [
 			...createRows('vault-a', 100, 1, 1.01),
