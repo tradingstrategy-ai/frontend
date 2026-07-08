@@ -62,6 +62,14 @@ describe('stablecoin metadata helpers', () => {
 		expect(slug).toBe('usd-plus');
 	});
 
+	test('uses punctuation as word separators for fallback slugs', () => {
+		const slug = resolveStablecoinSlug({
+			symbol: 'USD (offchain)'
+		});
+
+		expect(slug).toBe('usd-offchain');
+	});
+
 	test('appends symbol to display name when missing', () => {
 		expect(formatStablecoinDisplayName('USD Coin (Circle)', 'USDC')).toBe('USD Coin (Circle) USDC');
 	});

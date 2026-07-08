@@ -9,14 +9,16 @@
 	import { formatNumber, formatPercent, formatPercentProfit } from '$lib/helpers/formatters';
 	import { getChain } from '$lib/helpers/chain';
 	import { getStablecoinLogoUrl, resolveStablecoinSlug } from '$lib/stablecoin-metadata/helpers';
+	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
 
 	interface Props {
 		vault: VaultInfo;
+		stablecoinMetadata?: StablecoinMetadata | null;
 	}
 
 	const LIMITED_HISTORY_CHAINS = [9999, 9998, 9997];
 
-	let { vault }: Props = $props();
+	let { vault, stablecoinMetadata = null }: Props = $props();
 
 	let chain = $derived(getChain(vault.chain_id));
 	let hasLimitedHistory = $derived(LIMITED_HISTORY_CHAINS.includes(vault.chain_id));
@@ -27,6 +29,12 @@
 			symbol: vault.denomination,
 			name: vault.normalised_denomination
 		})
+	);
+	let denominationLogoUrl = $derived(
+		stablecoinMetadata?.logos.light && denominationSlug ? getStablecoinLogoUrl(denominationSlug) : undefined
+	);
+	let denominationHref = $derived(
+		stablecoinMetadata && denominationSlug ? `/trading-view/vaults/stablecoins/${denominationSlug}` : undefined
 	);
 
 	function getDaysUntil(dateString: string | null): number | null {
@@ -129,16 +137,21 @@
 			</Metric>
 
 			<Metric label="Denomination">
-				{@const denomLogoUrl = denominationSlug ? getStablecoinLogoUrl(denominationSlug) : undefined}
-				<a
-					class="denomination-link"
-					href="/trading-view/vaults/stablecoins/{denominationSlug ?? vault.denomination_slug}"
-				>
-					{#if denomLogoUrl}
-						<img class="denomination-logo" src={denomLogoUrl} alt="" />
-					{/if}
-					{vault.denomination}
-				</a>
+				{#if denominationHref}
+					<a class="denomination-link" href={denominationHref}>
+						{#if denominationLogoUrl}
+							<img class="denomination-logo" src={denominationLogoUrl} alt="" />
+						{/if}
+						{vault.denomination}
+					</a>
+				{:else}
+					<span class="denomination-link">
+						{#if denominationLogoUrl}
+							<img class="denomination-logo" src={denominationLogoUrl} alt="" />
+						{/if}
+						{vault.denomination}
+					</span>
+				{/if}
 			</Metric>
 		</div>
 	</MetricsBox>
@@ -349,7 +362,7 @@
 		}
 
 		.risk-link,
-		.denomination-link,
+		a.denomination-link,
 		.glossary-link {
 			text-decoration: underline;
 			text-decoration-style: dashed;

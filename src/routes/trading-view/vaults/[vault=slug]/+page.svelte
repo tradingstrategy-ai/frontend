@@ -101,7 +101,7 @@
 		<VaultUtilisationChart {vault} />
 		-->
 
-		<VaultMetrics {vault} />
+		<VaultMetrics {vault} {stablecoinMetadata} />
 
 		{#if vault.description}
 			<MetricsBox class="description" title="About the vault">
