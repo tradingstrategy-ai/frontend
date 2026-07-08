@@ -18,6 +18,26 @@ export function slimVault(vault: Record<string, unknown>): SlimVaultInfo {
 }
 
 const HYPERCORE_CHAIN_ID = 9999;
+const KINEXYS_PROTOCOL_SLUG = 'kinexys';
+const KINEXYS_DENOMINATION = 'USD (offchain)';
+const KINEXYS_DENOMINATION_SLUG = 'usd-offchain';
+
+/**
+ * Kinexys vault balances are denominated in off-chain USD dollars, even when
+ * the scanner reports the settlement token address as USDC.
+ */
+export function normaliseKinexysVaultDenomination(vault: VaultInfo): VaultInfo {
+	if (vault.protocol_slug !== KINEXYS_PROTOCOL_SLUG) return vault;
+
+	return {
+		...vault,
+		denomination: KINEXYS_DENOMINATION,
+		normalised_denomination: KINEXYS_DENOMINATION,
+		denomination_slug: KINEXYS_DENOMINATION_SLUG,
+		denomination_token_address: null,
+		denomination_token_rate: null
+	};
+}
 
 /** Minimum TVL threshold for vault group breakdown pages */
 export const MIN_TVL_THRESHOLD = 10_000;

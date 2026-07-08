@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
-import { publicApiError } from '$lib/helpers/public-api';
 import { fetchTopVaultsRaw } from './server-config';
 import { type TopVaults, topVaultsSchema } from './schemas';
+import { normaliseKinexysVaultDenomination } from './helpers';
 
 function getSafeErrorSummary(errorValue: unknown): string {
 	if (errorValue instanceof Error) {
@@ -13,7 +13,12 @@ function getSafeErrorSummary(errorValue: unknown): string {
 export async function fetchTopVaults(fetch: Fetch): Promise<TopVaults> {
 	try {
 		const raw = await fetchTopVaultsRaw(fetch);
-		return topVaultsSchema.parse(raw);
+		const data = topVaultsSchema.parse(raw);
+
+		return {
+			...data,
+			vaults: data.vaults.map(normaliseKinexysVaultDenomination)
+		};
 	} catch (e) {
 		if (e && typeof e === 'object' && 'status' in e) throw e;
 		console.error(`Failed to fetch top vaults: ${getSafeErrorSummary(e)}`);

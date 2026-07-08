@@ -24,6 +24,7 @@ import {
 	getVaultPeakTvlUsd,
 	getVaultTvlNative,
 	isNonUsdDenominatedVault,
+	normaliseKinexysVaultDenomination,
 	withVaultDenominationTokenRate,
 	calculateTotalTvl,
 	calculateTvlWeightedApy
@@ -86,6 +87,33 @@ describe('isBlacklisted', () => {
 		const vault = createTestVault('Test vault');
 		expect(vault.risk_numeric).toBeNull();
 		expect(isBlacklisted(vault)).toBe(false);
+	});
+});
+
+describe('normaliseKinexysVaultDenomination', () => {
+	test('uses off-chain USD dollars for Kinexys vault denomination', () => {
+		const vault = createTestVault('JPMorgan OnChain Liquidity-Token Money Market Fund', {
+			protocol: 'Kinexys',
+			denomination: 'USDC',
+			normalised_denomination: 'Circle USDC',
+			denomination_slug: 'usdc',
+			denomination_token_address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+			denomination_token_rate: createDenominationTokenRate({ usd_rate: 0.999897 })
+		});
+
+		const normalised = normaliseKinexysVaultDenomination(vault);
+
+		expect(normalised.denomination).toBe('USD (offchain)');
+		expect(normalised.normalised_denomination).toBe('USD (offchain)');
+		expect(normalised.denomination_slug).toBe('usd-offchain');
+		expect(normalised.denomination_token_address).toBeNull();
+		expect(normalised.denomination_token_rate).toBeNull();
+	});
+
+	test('does not change non-Kinexys vaults', () => {
+		const vault = createTestVault('Aave USDC', { protocol: 'Aave V3' });
+
+		expect(normaliseKinexysVaultDenomination(vault)).toBe(vault);
 	});
 });
 

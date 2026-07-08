@@ -49,6 +49,13 @@
 	let showNativeTvlRows = $derived(denominationCurrency != null && denominationCurrency !== 'usd');
 	let lifetimePeriod = $derived(vault.period_results?.find((p) => p.period.toLowerCase() === 'lifetime') ?? null);
 	let denominationPageSlug = $derived(denominationSlug ?? vault.denomination_slug);
+	let denominationLogoUrl = $derived(
+		stablecoinMetadata?.logos.light && denominationSlug ? getStablecoinLogoUrl(denominationSlug) : undefined
+	);
+	let denominationHref = $derived(
+		stablecoinMetadata && denominationSlug ? `/trading-view/vaults/stablecoins/${denominationSlug}` : undefined
+	);
+	let showExchangeRateRow = $derived(vault.protocol_slug !== 'kinexys');
 	let exchangeRateFetchedAt = $derived(
 		vault.denomination_token_rate?.usd_rate_fetched_at ??
 			vault.denomination_token_rate?.source_currency_usd_rate_fetched_at ??
@@ -70,20 +77,26 @@
 			value: {
 				name: denominationLinkLabel,
 				slug: denominationSlug ?? vault.denomination_slug,
-				address: vault.denomination_token_address
+				address: vault.denomination_token_address,
+				logoUrl: denominationLogoUrl,
+				href: denominationHref
 			},
 			type: 'denomination' as const
 		},
-		{
-			label: 'Exchange rate used',
-			value: {
-				usdRate: getVaultDenominationUsdRate(vault),
-				symbol: vault.denomination,
-				slug: denominationPageSlug,
-				fetchedAt: exchangeRateFetchedAt
-			},
-			type: 'exchangeRate' as const
-		},
+		...(showExchangeRateRow
+			? [
+					{
+						label: 'Exchange rate used',
+						value: {
+							usdRate: getVaultDenominationUsdRate(vault),
+							symbol: vault.denomination,
+							slug: denominationPageSlug,
+							fetchedAt: exchangeRateFetchedAt
+						},
+						type: 'exchangeRate' as const
+					}
+				]
+			: []),
 		{
 			label: 'Share token',
 			value: { name: vault.share_token, address: vault.share_token_address },
@@ -201,19 +214,25 @@
 									{row.value.name} ({row.value.id})
 								</a>
 							{:else if row.type === 'denomination'}
-								{@const denomLogoUrl = getStablecoinLogoUrl(row.value.slug)}
 								{#if row.value.address}
 									<Tooltip>
-										<a
-											slot="trigger"
-											class="denomination-link tooltip-hint"
-											href="/trading-view/vaults/stablecoins/{row.value.slug}"
-										>
-											{#if denomLogoUrl}
-												<img class="denomination-logo" src={denomLogoUrl} alt="" />
+										<span slot="trigger">
+											{#if row.value.href}
+												<a class="denomination-link tooltip-hint" href={row.value.href}>
+													{#if row.value.logoUrl}
+														<img class="denomination-logo" src={row.value.logoUrl} alt="" />
+													{/if}
+													{row.value.name}
+												</a>
+											{:else}
+												<span class="denomination-link tooltip-hint">
+													{#if row.value.logoUrl}
+														<img class="denomination-logo" src={row.value.logoUrl} alt="" />
+													{/if}
+													{row.value.name}
+												</span>
 											{/if}
-											{row.value.name}
-										</a>
+										</span>
 										<svelte:fragment slot="popup">
 											<a
 												class="tooltip-link"
@@ -225,13 +244,20 @@
 											</a>
 										</svelte:fragment>
 									</Tooltip>
-								{:else}
-									<a class="denomination-link" href="/trading-view/vaults/stablecoins/{row.value.slug}">
-										{#if denomLogoUrl}
-											<img class="denomination-logo" src={denomLogoUrl} alt="" />
+								{:else if row.value.href}
+									<a class="denomination-link" href={row.value.href}>
+										{#if row.value.logoUrl}
+											<img class="denomination-logo" src={row.value.logoUrl} alt="" />
 										{/if}
 										{row.value.name}
 									</a>
+								{:else}
+									<span class="denomination-link">
+										{#if row.value.logoUrl}
+											<img class="denomination-logo" src={row.value.logoUrl} alt="" />
+										{/if}
+										{row.value.name}
+									</span>
 								{/if}
 							{:else if row.type === 'exchangeRate'}
 								{#if row.value.usdRate != null}

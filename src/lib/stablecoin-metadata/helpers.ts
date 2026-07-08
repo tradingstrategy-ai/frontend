@@ -44,7 +44,10 @@ export function formatStablecoinDisplayName(
 }
 
 function normalizeStablecoinText(value: string): string {
-	return value.replaceAll('+', ' plus ').replaceAll('&', ' and ');
+	return value
+		.replaceAll('+', ' plus ')
+		.replaceAll('&', ' and ')
+		.replace(/\s+-\s+/g, ' ');
 }
 
 function getStablecoinLookupKeys(value: string | null | undefined): string[] {
