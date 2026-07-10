@@ -25,6 +25,7 @@ import {
 	getVaultTvlNative,
 	isNonUsdDenominatedVault,
 	normaliseKinexysVaultDenomination,
+	normaliseVaultProtocolDisplayName,
 	withVaultDenominationTokenRate,
 	calculateTotalTvl,
 	calculateTvlWeightedApy
@@ -244,8 +245,23 @@ describe('getProtocolDisplayName', () => {
 		expect(getProtocolDisplayName('<protocol not yet identified>')).toBe('Unknown');
 	});
 
+	test('aliases ERC-4626 slug to unknown vault protocol', () => {
+		expect(getProtocolDisplayName('ERC-4626', 'erc-4626')).toBe('Unknown vault protocol');
+	});
+
 	test('returns the protocol name when it is supported', () => {
 		expect(getProtocolDisplayName('Yearn')).toBe('Yearn');
+	});
+});
+
+describe('normaliseVaultProtocolDisplayName', () => {
+	test('maps ERC-4626 vault protocol display name', () => {
+		const vault = createTestVault('ERC-4626 vault', {
+			protocol: 'ERC-4626',
+			protocol_slug: 'erc-4626'
+		});
+
+		expect(normaliseVaultProtocolDisplayName(vault).protocol).toBe('Unknown vault protocol');
 	});
 });
 

@@ -5,11 +5,12 @@ import {
 	getVaultGroupMiniChartLatestApyRows,
 	isEligibleVaultGroupMiniChartVault,
 	getVaultGroupMiniChartRows,
-	VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS
+	VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS,
+	VAULT_GROUP_MINI_CHART_THREE_MONTH_LOOKBACK_DAYS
 } from '$lib/echarts/vault-group-mini-chart-server';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 
-const CACHE_VERSION = 'protocol-mini-chart-v5';
+const CACHE_VERSION = 'protocol-mini-chart-v6';
 const cache = new Map<string, { payload: ProtocolMiniChartPayload; expires: number; version: string }>();
 
 async function getCachedChartData(protocolSlug: string, fetch: Fetch) {
@@ -28,7 +29,8 @@ async function getCachedChartData(protocolSlug: string, fetch: Fetch) {
 			? getMockVaultGroupMiniChartRows(eligibleVaults)
 			: await getVaultGroupMiniChartRows(eligibleVaults.map((vault) => vault.id));
 	const payload = buildProtocolMiniChartPayload(rows, eligibleVaults.length, VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS, {
-		latestApyRows: getVaultGroupMiniChartLatestApyRows(eligibleVaults)
+		latestApyRows: getVaultGroupMiniChartLatestApyRows(eligibleVaults, 'three-months'),
+		lookbackDays: VAULT_GROUP_MINI_CHART_THREE_MONTH_LOOKBACK_DAYS
 	});
 
 	cache.set(cacheKey, {

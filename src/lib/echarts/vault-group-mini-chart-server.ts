@@ -6,12 +6,21 @@ import { ensureVaultPricesParquet } from '$lib/top-vaults/vault-prices-parquet';
 export { isEligibleVaultGroupMiniChartVault } from '$lib/top-vaults/helpers';
 
 export const VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS = 60 * 60;
+export const VAULT_GROUP_MINI_CHART_THREE_MONTH_LOOKBACK_DAYS = 90;
 
-export function getVaultGroupMiniChartLatestApyRows(vaults: VaultInfo[]): ProtocolMiniChartLatestApyRow[] {
+type VaultGroupMiniChartReturnWindow = 'one-month' | 'three-months';
+
+export function getVaultGroupMiniChartLatestApyRows(
+	vaults: VaultInfo[],
+	returnWindow: VaultGroupMiniChartReturnWindow = 'one-month'
+): ProtocolMiniChartLatestApyRow[] {
 	return vaults.map((vault) => ({
 		id: vault.id,
 		tvl: vault.current_nav ?? 0,
-		apy: vault.one_month_cagr_net ?? vault.one_month_cagr
+		apy:
+			returnWindow === 'three-months'
+				? (vault.three_months_cagr_net ?? vault.three_months_cagr)
+				: (vault.one_month_cagr_net ?? vault.one_month_cagr)
 	}));
 }
 

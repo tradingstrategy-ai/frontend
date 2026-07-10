@@ -5,11 +5,17 @@ import {
 	type ProtocolMiniChartDailyRow
 } from './protocol-mini-chart';
 
-function createRows(id: string, tvl: number, startPrice: number, endPrice: number): ProtocolMiniChartDailyRow[] {
-	return Array.from({ length: 31 }, (_, index) => {
+function createRows(
+	id: string,
+	tvl: number,
+	startPrice: number,
+	endPrice: number,
+	days = 31
+): ProtocolMiniChartDailyRow[] {
+	return Array.from({ length: days }, (_, index) => {
 		const date = new Date('2026-01-01T00:00:00Z');
 		date.setUTCDate(date.getUTCDate() + index);
-		const progress = index / 30;
+		const progress = index / (days - 1);
 
 		return {
 			id,
@@ -84,5 +90,20 @@ describe('buildProtocolMiniChartPayload', () => {
 		});
 
 		expect(payload.points.at(-1)?.apy).toBeCloseTo(0.045);
+	});
+
+	test('supports TVL-weighted 90 day annualised returns', () => {
+		const rows = [...createRows('vault-a', 100, 1, 1.03, 91), ...createRows('vault-b', 300, 1, 1.06, 91)];
+		const payload = buildProtocolMiniChartPayload(rows, 2, 3600, {
+			generatedAt: new Date('2026-04-02T00:00:00Z'),
+			lookbackDays: 90
+		});
+		const latest = payload.points.at(-1);
+
+		expect(payload.points).toHaveLength(91);
+		expect(payload.meta.pointsWithApy).toBe(1);
+		expect(latest?.date).toBe('2026-04-01');
+		expect(latest?.tvl).toBe(400);
+		expect(latest?.apy).toBeCloseTo(0.232, 2);
 	});
 });

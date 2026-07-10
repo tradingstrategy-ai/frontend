@@ -2,8 +2,8 @@ import { parseDate } from '$lib/helpers/date';
 import { annualizedReturn } from '$lib/helpers/financial';
 import { VAULT_TVL_OUTLIER_THRESHOLD } from './tvl-outliers';
 
-const LOOKBACK_DAYS = 30;
-const LOOKBACK_MS = LOOKBACK_DAYS * 24 * 60 * 60 * 1000;
+const DEFAULT_LOOKBACK_DAYS = 30;
+const DAY_MS = 24 * 60 * 60 * 1000;
 const MAX_APY_THRESHOLD = 10;
 export const PROTOCOL_MINI_CHART_TVL_OUTLIER_THRESHOLD = VAULT_TVL_OUTLIER_THRESHOLD;
 
@@ -55,6 +55,7 @@ interface FilledVaultPoint {
 interface ProtocolMiniChartOptions {
 	generatedAt?: Date;
 	latestApyRows?: ProtocolMiniChartLatestApyRow[];
+	lookbackDays?: number;
 }
 
 function normaliseDay(value: string | Date) {
@@ -119,12 +120,13 @@ function buildFilledVaultSeries(rows: NormalisedDailyRow[], allDays: string[]) {
 
 function resolveOptions(optionsOrGeneratedAt?: Date | ProtocolMiniChartOptions): Required<ProtocolMiniChartOptions> {
 	if (optionsOrGeneratedAt instanceof Date) {
-		return { generatedAt: optionsOrGeneratedAt, latestApyRows: [] };
+		return { generatedAt: optionsOrGeneratedAt, latestApyRows: [], lookbackDays: DEFAULT_LOOKBACK_DAYS };
 	}
 
 	return {
 		generatedAt: optionsOrGeneratedAt?.generatedAt ?? new Date(),
-		latestApyRows: optionsOrGeneratedAt?.latestApyRows ?? []
+		latestApyRows: optionsOrGeneratedAt?.latestApyRows ?? [],
+		lookbackDays: optionsOrGeneratedAt?.lookbackDays ?? DEFAULT_LOOKBACK_DAYS
 	};
 }
 
@@ -149,7 +151,8 @@ export function buildProtocolMiniChartPayload(
 	cacheTtlSeconds: number,
 	optionsOrGeneratedAt?: Date | ProtocolMiniChartOptions
 ): ProtocolMiniChartPayload {
-	const { generatedAt, latestApyRows } = resolveOptions(optionsOrGeneratedAt);
+	const { generatedAt, latestApyRows, lookbackDays } = resolveOptions(optionsOrGeneratedAt);
+	const lookbackMs = lookbackDays * DAY_MS;
 	let excludedOutlierPoints = 0;
 	const normalisedRows = rows
 		.map((row): NormalisedDailyRow | null => {
@@ -202,7 +205,7 @@ export function buildProtocolMiniChartPayload(
 
 			tvl += current.tvl;
 
-			const lookback = getPointAtOrBefore(vaultPoints, dayMs - LOOKBACK_MS);
+			const lookback = getPointAtOrBefore(vaultPoints, dayMs - lookbackMs);
 			if (
 				!lookback ||
 				lookback.sharePrice == null ||

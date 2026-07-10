@@ -1,6 +1,6 @@
 import { getChain } from '$lib/helpers/chain';
 import { getLogoUrl } from '$lib/helpers/assets';
-import { isBlacklisted, getCore3PolForVault, getCore3ReportUrl } from '$lib/top-vaults/helpers';
+import { isBlacklisted, getCore3PolForVault, getCore3ReportUrl, getProtocolDisplayName } from '$lib/top-vaults/helpers';
 import type { Core3Pol, Core3Protocol, VaultInfo } from '$lib/top-vaults/schemas';
 import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers';
 import { VAULT_TVL_OUTLIER_THRESHOLD } from './tvl-outliers';
@@ -162,7 +162,7 @@ function buildScatterPoint(
 		name: vault.name,
 		vaultSlug: vault.vault_slug,
 		href: `/trading-view/vaults/${vault.vault_slug}`,
-		protocol: vault.protocol,
+		protocol: getProtocolDisplayName(vault.protocol, vault.protocol_slug),
 		protocolSlug: vault.protocol_slug,
 		protocolLogoUrl: getVaultProtocolLogoUrl(vault.protocol_slug),
 		chain: chain?.name ?? vault.chain ?? `Chain ${vault.chain_id}`,

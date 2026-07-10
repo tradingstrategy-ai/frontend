@@ -19,7 +19,7 @@ export async function load({ params, fetch }) {
 
 	return {
 		protocolSlug: protocol,
-		protocolName: getProtocolDisplayName(protocolVault.protocol),
+		protocolName: getProtocolDisplayName(protocolVault.protocol, protocolVault.protocol_slug),
 		protocolMetadata,
 		core3
 	};

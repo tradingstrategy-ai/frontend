@@ -1,8 +1,9 @@
 <script lang="ts">
 	import type { TopVaults } from '$lib/top-vaults/schemas';
 	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
-	import { isUnsupportedProtocolSlug } from '$lib/top-vaults/helpers';
+	import { isManuallyMappedUnknownProtocolSlug, isUnsupportedProtocolSlug } from '$lib/top-vaults/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import Core3Ratings from '$lib/top-vaults/Core3Ratings.svelte';
@@ -11,6 +12,7 @@
 
 	let { data } = $props();
 	let { protocolSlug, protocolName, protocolMetadata, core3 } = $derived(data);
+	let isUnknownVaultProtocol = $derived(isManuallyMappedUnknownProtocolSlug(protocolSlug));
 
 	let topVaults = $state<TopVaults>();
 	let loading = $state(!hasVaultCache(page.data.generatedAt));
@@ -27,14 +29,26 @@
 			.finally(() => (loading = false));
 	});
 
-	let title = $derived(`${protocolName} vaults and yields`);
-	let description = $derived(protocolMetadata?.short_description ?? `Top stablecoin vaults on ${protocolName}`);
+	const unknownVaultDescription = 'These vaults are not yet mapped out. Contact us to have your vaults listed.';
+
+	let title = $derived(isUnknownVaultProtocol ? 'Unknown vaults' : `${protocolName} vaults and yields`);
+	let heroTitle = $derived(isUnknownVaultProtocol ? 'Unknown vaults' : `${protocolName} powered stablecoin vaults`);
+	let description = $derived(
+		isUnknownVaultProtocol
+			? unknownVaultDescription
+			: (protocolMetadata?.short_description ?? `Top stablecoin vaults on ${protocolName}`)
+	);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived.by(() => {
 		const logoPath = protocolMetadata?.logos.light ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined;
 		return logoPath ? new URL(logoPath, page.url.origin).href : undefined;
 	});
 </script>
+
+{#snippet unknownVaultSubtitle()}
+	These vaults are not yet mapped out. <a class="body-link" href={resolve('/community')}>Contact us</a> to have your vaults
+	listed.
+{/snippet}
 
 <MetaTags
 	{title}
@@ -77,17 +91,20 @@
 	{topVaults}
 	{loading}
 	{protocolMetadata}
-	title="{protocolName} powered stablecoin vaults"
+	title={heroTitle}
+	subtitle={isUnknownVaultProtocol ? unknownVaultSubtitle : undefined}
 	showFilters
 	defaultTvlKey="10k"
 	defaultHideUnknown={isUnsupportedProtocolSlug(protocolSlug) ? 0 : 1}
 >
 	{#snippet detailAside()}
 		<VaultGroupMiniChart
-			title="All {protocolName} vaults: TVL and returns"
+			title="All {protocolName} vaults: TVL and TVL-weighted 3-month ann. return"
 			dataUrl="/trading-view/vaults/protocols/{protocolSlug}/chart-data"
 			compareLabel="Compare all protocols"
 			compareHref="/trading-view/vaults/historical-tvl-protocol"
+			returnTooltipLabel="TVL-weighted 3-month ann. return"
+			returnWindowLabel="trailing 3-month"
 		/>
 	{/snippet}
 

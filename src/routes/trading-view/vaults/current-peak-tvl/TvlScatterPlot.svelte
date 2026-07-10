@@ -16,8 +16,12 @@ Plotly.js is loaded dynamically from CDN.
 -->
 <script lang="ts">
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
-	import { isBlacklisted, hasSupportedProtocol } from '$lib/top-vaults/helpers';
-	import { resolveVaultDetails } from '$lib/top-vaults/helpers';
+	import {
+		getProtocolDisplayName,
+		isBlacklisted,
+		hasSupportedProtocol,
+		resolveVaultDetails
+	} from '$lib/top-vaults/helpers';
 	import { getChain, getChainsBySlug } from '$lib/helpers/chain';
 	import {
 		loadPlotly,
@@ -73,10 +77,11 @@ Plotly.js is loaded dynamically from CDN.
 
 	function formatHoverText(v: VaultInfo): string {
 		const chainName = getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`;
+		const protocolName = getProtocolDisplayName(v.protocol, v.protocol_slug);
 		const retention = v.current_nav! / v.peak_nav!;
 		return [
 			`<b>${v.name}</b>`,
-			v.protocol,
+			protocolName,
 			`Chain: ${chainName}`,
 			`Current TVL: ${formatTvl(v.current_nav!)}`,
 			`Peak TVL: ${formatTvl(v.peak_nav!)}`,
@@ -149,7 +154,8 @@ Plotly.js is loaded dynamically from CDN.
 		const supported = currentVaults.filter((v) => hasSupportedProtocol(v));
 		const protocolCounts = new Map<string, number>();
 		for (const v of supported) {
-			protocolCounts.set(v.protocol, (protocolCounts.get(v.protocol) ?? 0) + 1);
+			const protocol = getProtocolDisplayName(v.protocol, v.protocol_slug);
+			protocolCounts.set(protocol, (protocolCounts.get(protocol) ?? 0) + 1);
 		}
 
 		const sortedProtocols = [...protocolCounts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
@@ -159,7 +165,7 @@ Plotly.js is loaded dynamically from CDN.
 		for (let i = 0; i < sortedProtocols.length; i++) {
 			const [protocol] = sortedProtocols[i];
 			const color = protocolPalette[i % protocolPalette.length];
-			const group = supported.filter((v) => v.protocol === protocol);
+			const group = supported.filter((v) => getProtocolDisplayName(v.protocol, v.protocol_slug) === protocol);
 			traces.push(buildTvlTrace(group, protocol, color));
 		}
 

@@ -46,6 +46,7 @@
 		getLockupTooltip,
 		getLifetimeMaxDrawdown,
 		getMonthlyReturn,
+		getProtocolDisplayName,
 		getVaultCurrentTvlUsd,
 		getVaultDenominationNativeRate,
 		getVaultDenominationCurrency,
@@ -178,7 +179,10 @@
 			defaultDirection: 'asc',
 			compareFn: stringCompare((v) => getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`)
 		},
-		vault: { defaultDirection: 'asc', compareFn: stringCompare((v) => `${v.name.trim()} ${v.protocol}`) },
+		vault: {
+			defaultDirection: 'asc',
+			compareFn: stringCompare((v) => `${v.name.trim()} ${getProtocolDisplayName(v.protocol, v.protocol_slug)}`)
+		},
 		three_months_sharpe: { defaultDirection: 'desc', compareFn: rankVaultsBy(['three_months_sharpe']) },
 		three_months_volatility: { defaultDirection: 'asc', compareFn: rankVaultsBy(['three_months_volatility']) },
 		max_dd: {
@@ -482,7 +486,7 @@
 				v.chain_id,
 				chain?.name ?? '',
 				v.name,
-				v.protocol,
+				getProtocolDisplayName(v.protocol, v.protocol_slug),
 				v.denomination,
 				v.risk ?? '',
 				v.address
@@ -1045,6 +1049,7 @@
 					{@const chain = getChain(vault.chain_id)}
 					{@const blacklisted = isBlacklisted(vault)}
 					{@const badStatus = !isGoodVaultStatus(vault)}
+					{@const protocolName = getProtocolDisplayName(vault.protocol, vault.protocol_slug)}
 					{@const statusReason = [vault.deposit_closed_reason, vault.redemption_closed_reason]
 						.filter(Boolean)
 						.join('; ')}
@@ -1059,8 +1064,8 @@
 						<td class="vault">
 							<div class="multiline">
 								<strong>{vault.name}</strong>
-								{#if vault.protocol}
-									<span class="secondary">{vault.protocol}</span>
+								{#if protocolName}
+									<span class="secondary">{protocolName}</span>
 								{/if}
 							</div>
 						</td>

@@ -21,6 +21,7 @@ excluded vault count from the loaded vault data.
 		hasSupportedProtocol,
 		isBlacklisted,
 		isEligibleVaultGroupMiniChartVault,
+		getProtocolDisplayName,
 		resolveVaultDetails
 	} from '$lib/top-vaults/helpers';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
@@ -64,7 +65,7 @@ excluded vault count from the loaded vault data.
 			if (!hasSupportedProtocol(vault)) continue;
 			const entry = tvlByProtocol.get(vault.protocol_slug) ?? {
 				slug: vault.protocol_slug,
-				name: vault.protocol,
+				name: getProtocolDisplayName(vault.protocol, vault.protocol_slug),
 				tvl: 0
 			};
 			entry.tvl += vault.current_nav ?? 0;
