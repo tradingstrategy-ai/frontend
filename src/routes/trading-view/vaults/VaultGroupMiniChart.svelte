@@ -2,11 +2,11 @@
 @component
 Compact dual-axis chart for vault group detail pages.
 
-Shows historical protocol TVL as an area series and TVL-weighted one-month
-average return as a line series. The latest return point matches the table's
-net-over-gross metric where available. Only vaults eligible for the group chart
-(not blacklisted, above minimum TVL, within the default risk filter) are included
-— the tooltip states the included vault count.
+Shows historical protocol TVL as an area series and TVL-weighted average return
+as a line series. The latest return point matches the table's net-over-gross
+metric where available. Only vaults eligible for the group chart (not
+blacklisted, above minimum TVL, within the default risk filter) are included —
+the tooltip states the included vault count.
 
 @example
 
@@ -28,6 +28,8 @@ net-over-gross metric where available. Only vaults eligible for the group chart
 		dataUrl: string;
 		compareLabel?: string;
 		compareHref?: string;
+		returnTooltipLabel?: string;
+		returnWindowLabel?: string;
 	}
 
 	interface TooltipParam {
@@ -37,7 +39,14 @@ net-over-gross metric where available. Only vaults eligible for the group chart
 		color?: string;
 	}
 
-	let { title, dataUrl, compareLabel, compareHref }: Props = $props();
+	let {
+		title,
+		dataUrl,
+		compareLabel,
+		compareHref,
+		returnTooltipLabel = 'Average TVL-weighted return',
+		returnWindowLabel = 'trailing 1 month'
+	}: Props = $props();
 
 	let chartContainer = $state<HTMLDivElement | null>(null);
 	let chartInstance = $state<ReturnType<EChartsStatic['init']> | null>(null);
@@ -109,8 +118,8 @@ net-over-gross metric where available. Only vaults eligible for the group chart
 		return [
 			`<div style="margin-bottom: 0.35rem; color: #ffffff; font-family: ${chartFontFamily}; font-weight: 700;">${formatDateLabel(date)}</div>`,
 			`<div style="color: #d5deea; font-family: ${chartFontFamily}; display: flex; justify-content: space-between; gap: 1rem;"><span>${tvlLabel}</span><strong>${typeof tvl === 'number' ? formatUsd(tvl) : 'n/a'}</strong></div>`,
-			`<div style="color: #d5deea; font-family: ${chartFontFamily}; display: flex; justify-content: space-between; gap: 1rem;"><span>Average TVL-weighted return</span><strong>${typeof averageReturn === 'number' ? formatReturn(averageReturn) : 'n/a'}</strong></div>`,
-			`<div style="width: 14rem; max-width: 14rem; white-space: normal; overflow-wrap: anywhere; margin-top: 0.45rem; color: #94a3b8; font-family: ${chartFontFamily}; font-size: 0.78rem; line-height: 1.35;">Return is annualised from each vault's trailing 1 month share-price return, weighted by that vault's TVL. The latest point uses the same net-over-gross return metric as the table where available.</div>`
+			`<div style="color: #d5deea; font-family: ${chartFontFamily}; display: flex; justify-content: space-between; gap: 1rem;"><span>${returnTooltipLabel}</span><strong>${typeof averageReturn === 'number' ? formatReturn(averageReturn) : 'n/a'}</strong></div>`,
+			`<div style="width: 14rem; max-width: 14rem; white-space: normal; overflow-wrap: anywhere; margin-top: 0.45rem; color: #94a3b8; font-family: ${chartFontFamily}; font-size: 0.78rem; line-height: 1.35;">Return is annualised from each vault's ${returnWindowLabel} share-price return, weighted by that vault's TVL. The latest point uses the same net-over-gross return metric as the table where available.</div>`
 		].join('');
 	}
 

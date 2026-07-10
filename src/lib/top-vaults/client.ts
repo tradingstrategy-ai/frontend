@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import { fetchTopVaultsRaw } from './server-config';
 import { type TopVaults, topVaultsSchema } from './schemas';
-import { normaliseKinexysVaultDenomination } from './helpers';
+import { normaliseKinexysVaultDenomination, normaliseVaultProtocolDisplayName } from './helpers';
 
 function getSafeErrorSummary(errorValue: unknown): string {
 	if (errorValue instanceof Error) {
@@ -17,7 +17,7 @@ export async function fetchTopVaults(fetch: Fetch): Promise<TopVaults> {
 
 		return {
 			...data,
-			vaults: data.vaults.map(normaliseKinexysVaultDenomination)
+			vaults: data.vaults.map((vault) => normaliseVaultProtocolDisplayName(normaliseKinexysVaultDenomination(vault)))
 		};
 	} catch (e) {
 		if (e && typeof e === 'object' && 'status' in e) throw e;

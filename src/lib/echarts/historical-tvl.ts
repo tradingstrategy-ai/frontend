@@ -164,7 +164,7 @@ function resolveProtocolGroup(metadata?: HistoricalVaultMetadata) {
 	const protocolSlug = metadata?.protocol_slug?.trim() || slugify(metadata?.protocol ?? 'unknown') || 'unknown';
 	return {
 		key: protocolSlug,
-		label: getProtocolDisplayName(metadata?.protocol) || protocolSlug,
+		label: getProtocolDisplayName(metadata?.protocol, protocolSlug) || protocolSlug,
 		protocolSlug
 	};
 }

@@ -21,6 +21,8 @@ const HYPERCORE_CHAIN_ID = 9999;
 const KINEXYS_PROTOCOL_SLUG = 'kinexys';
 const KINEXYS_DENOMINATION = 'USD (offchain)';
 const KINEXYS_DENOMINATION_SLUG = 'usd-offchain';
+export const UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME = 'Unknown vault protocol';
+const UNKNOWN_VAULT_PROTOCOL_SLUGS = new Set(['erc-4626']);
 
 /**
  * Kinexys vault balances are denominated in off-chain USD dollars, even when
@@ -36,6 +38,16 @@ export function normaliseKinexysVaultDenomination(vault: VaultInfo): VaultInfo {
 		denomination_slug: KINEXYS_DENOMINATION_SLUG,
 		denomination_token_address: null,
 		denomination_token_rate: null
+	};
+}
+
+export function normaliseVaultProtocolDisplayName(vault: VaultInfo): VaultInfo {
+	const displayName = getProtocolDisplayName(vault.protocol, vault.protocol_slug);
+	if (displayName === vault.protocol) return vault;
+
+	return {
+		...vault,
+		protocol: displayName
 	};
 }
 
@@ -192,6 +204,10 @@ export function hasSupportedProtocol(vault: Pick<VaultInfo, 'protocol'> & Partia
 	return !isUnsupportedProtocolName(vault.protocol) && !isUnsupportedProtocolSlug(vault.protocol_slug);
 }
 
+export function isManuallyMappedUnknownProtocolSlug(protocolSlug: string | null | undefined) {
+	return protocolSlug != null && UNKNOWN_VAULT_PROTOCOL_SLUGS.has(protocolSlug);
+}
+
 const FRONTPAGE_RISK_FILTER = riskFilterOptions.find((option) => option.label === 'Severe');
 
 /**
@@ -208,7 +224,8 @@ export function isEligibleFrontpageVault(
 	return vault.risk_numeric >= FRONTPAGE_RISK_FILTER.minValue && vault.risk_numeric <= FRONTPAGE_RISK_FILTER.maxValue;
 }
 
-export function getProtocolDisplayName(protocol: string | null | undefined): string {
+export function getProtocolDisplayName(protocol: string | null | undefined, protocolSlug?: string | null): string {
+	if (isManuallyMappedUnknownProtocolSlug(protocolSlug)) return UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME;
 	if (protocol == null || isUnsupportedProtocolName(protocol)) return 'Unknown';
 	return protocol;
 }
@@ -791,7 +808,7 @@ export function getCore3ProtocolForVault(
 
 	return {
 		slug: '',
-		name: vault.protocol,
+		name: getProtocolDisplayName(vault.protocol, vault.protocol_slug),
 		rank: vault.core3?.core3_ranking ?? null,
 		pol,
 		data_coverage: { percentage: vault.core3?.data_coverage ?? null },

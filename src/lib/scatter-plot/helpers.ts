@@ -1,5 +1,5 @@
 import type { VaultInfo } from '$lib/top-vaults/schemas';
-import { resolveVaultDetails } from '$lib/top-vaults/helpers';
+import { getProtocolDisplayName, resolveVaultDetails } from '$lib/top-vaults/helpers';
 import { getChain } from '$lib/helpers/chain';
 
 export const tvlOptions = [
@@ -214,7 +214,7 @@ export function buildBaseHoverLines(v: VaultInfo): string[] {
 	const tvl = `$${v.current_nav!.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
 	return [
 		`<b>${v.name}</b>`,
-		v.protocol,
+		getProtocolDisplayName(v.protocol, v.protocol_slug),
 		chainName,
 		`TVL: ${tvl}`,
 		`1M return (ann.): ${formatReturn(v.one_month_cagr)}`,

@@ -14,8 +14,7 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 	import { buildCumulativeTvlPoints, formatUsd, getEligibleItems } from '$lib/echarts/cumulative-tvl-apy';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { getChain } from '$lib/helpers/chain';
-	import { isBlacklisted } from '$lib/top-vaults/helpers';
-	import { resolveVaultDetails } from '$lib/top-vaults/helpers';
+	import { getProtocolDisplayName, isBlacklisted, resolveVaultDetails } from '$lib/top-vaults/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 	import { deserialiseSearchParams, serialiseSearchParams } from '$lib/helpers/url-search-state';
 	import { goto } from '$app/navigation';
@@ -121,7 +120,7 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 	let protocolOptions = $derived(() => {
 		const stats: Record<string, { count: number; tvl: number; logoUrl?: string }> = {};
 		for (const v of allEligible) {
-			const name = v.protocol ?? 'Unknown';
+			const name = getProtocolDisplayName(v.protocol, v.protocol_slug);
 			const tvl = v.current_nav ?? 0;
 			stats[name] ??= { count: 0, tvl: 0, logoUrl: getVaultProtocolLogoUrl(v.protocol_slug) };
 			stats[name].count += 1;
@@ -154,7 +153,7 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 	let protocolFiltered = $derived(
 		selectedProtocols.length === 0
 			? allEligible
-			: allEligible.filter((v) => selectedProtocols.includes(v.protocol ?? 'Unknown'))
+			: allEligible.filter((v) => selectedProtocols.includes(getProtocolDisplayName(v.protocol, v.protocol_slug)))
 	);
 
 	let displayedVaults = $derived(protocolFiltered);
@@ -175,7 +174,7 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 				name: vault.name,
 				chain: vault.chain ?? 'Unknown',
 				chainLogoUrl: getLogoUrl('blockchain', getChain(vault.chain_id)?.slug),
-				protocol: vault.protocol ?? 'Unknown',
+				protocol: getProtocolDisplayName(vault.protocol, vault.protocol_slug),
 				protocolLogoUrl: getVaultProtocolLogoUrl(vault.protocol_slug),
 				realApy: (getVaultCagr(vault, selectedWindow) ?? 0) * 100,
 				individualTvl: vault.current_nav ?? 0,

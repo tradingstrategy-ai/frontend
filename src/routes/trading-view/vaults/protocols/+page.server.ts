@@ -23,7 +23,7 @@ export async function load({ fetch, url: { searchParams } }) {
 
 		acc[slug] ??= {
 			slug,
-			name: getProtocolDisplayName(vault.protocol),
+			name: getProtocolDisplayName(vault.protocol, vault.protocol_slug),
 			vault_count: 0,
 			tvl: 0,
 			avg_apy: null,

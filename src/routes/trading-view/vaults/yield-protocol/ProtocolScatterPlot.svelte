@@ -14,7 +14,7 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 -->
 <script lang="ts">
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
-	import { isBlacklisted, hasSupportedProtocol } from '$lib/top-vaults/helpers';
+	import { getProtocolDisplayName, isBlacklisted, hasSupportedProtocol } from '$lib/top-vaults/helpers';
 	import {
 		loadPlotly,
 		computeScatterRanges,
@@ -57,8 +57,12 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 
 	function formatHoverText(v: VaultInfo): string {
 		const lines = buildBaseHoverLines(v);
-		lines.splice(3, 0, `Protocol: ${v.protocol}`);
+		lines.splice(3, 0, `Protocol: ${getProtocolDisplayName(v.protocol, v.protocol_slug)}`);
 		return lines.join('<br>');
+	}
+
+	function getProtocolName(vault: VaultInfo) {
+		return getProtocolDisplayName(vault.protocol, vault.protocol_slug);
 	}
 
 	/**
@@ -68,7 +72,8 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 	function buildProtocolTraces(currentVaults: VaultInfo[], minX?: number): any[] {
 		const protocolCounts = new Map<string, number>();
 		for (const v of currentVaults) {
-			protocolCounts.set(v.protocol, (protocolCounts.get(v.protocol) ?? 0) + 1);
+			const protocol = getProtocolName(v);
+			protocolCounts.set(protocol, (protocolCounts.get(protocol) ?? 0) + 1);
 		}
 
 		const sortedProtocols = [...protocolCounts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
@@ -81,11 +86,11 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 		for (let i = 0; i < majorProtocols.length; i++) {
 			const [protocol] = majorProtocols[i];
 			const color = protocolPalette[i % protocolPalette.length];
-			const group = currentVaults.filter((v) => v.protocol === protocol);
+			const group = currentVaults.filter((v) => getProtocolName(v) === protocol);
 			traces.push(buildTrace(group, protocol, color, formatHoverText, minX));
 		}
 
-		const otherVaults = currentVaults.filter((v) => otherProtocols.has(v.protocol));
+		const otherVaults = currentVaults.filter((v) => otherProtocols.has(getProtocolName(v)));
 		if (otherVaults.length > 0) {
 			traces.push(buildTrace(otherVaults, 'Other', greyColor, formatHoverText, minX));
 		}
