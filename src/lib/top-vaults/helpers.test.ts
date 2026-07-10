@@ -213,6 +213,14 @@ describe('hasSupportedProtocol', () => {
 		};
 		expect(hasSupportedProtocol(vault)).toBe(false);
 	});
+
+	test('returns false for manually mapped unknown protocol slugs', () => {
+		const vault = {
+			protocol: 'Unknown vault protocol',
+			protocol_slug: 'erc-4626'
+		};
+		expect(hasSupportedProtocol(vault)).toBe(false);
+	});
 });
 
 describe('isEligibleFrontpageVault', () => {
@@ -272,6 +280,10 @@ describe('isUnsupportedProtocolSlug', () => {
 
 	test('matches the unknown ERC-7450 placeholder slug', () => {
 		expect(isUnsupportedProtocolSlug('unknown-erc-7450')).toBe(true);
+	});
+
+	test('matches manually mapped unknown protocol slugs', () => {
+		expect(isUnsupportedProtocolSlug('erc-4626')).toBe(true);
 	});
 
 	test('ignores supported protocol slugs', () => {

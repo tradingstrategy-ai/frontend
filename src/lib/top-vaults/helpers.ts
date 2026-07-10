@@ -189,7 +189,10 @@ export function isBlacklisted(vault: Pick<VaultInfo, 'risk_numeric'> & Partial<P
 }
 
 const unsupportedProtocolNames = ['<protocol not yet identified>', '<unknown erc-7450>'] as const;
-const unsupportedProtocolSlugs = new Set(unsupportedProtocolNames.map((protocol) => slugify(protocol)));
+const unsupportedProtocolSlugs = new Set([
+	...unsupportedProtocolNames.map((protocol) => slugify(protocol)),
+	...UNKNOWN_VAULT_PROTOCOL_SLUGS
+]);
 
 export function isUnsupportedProtocolName(protocol: string | null | undefined) {
 	const normalisedProtocol = protocol?.trim();
