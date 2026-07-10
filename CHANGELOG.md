@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add Robinhood vault-only chain support (2026-07-10)
 - Add curator information boxes to vault detail pages when curator metadata is available (2026-07-05)
 - Fix blog sitemap dropping posts beyond the first 100 by paginating through all Ghost Content API pages (2026-07-01)
 - Add Core3 per-category risk score breakdown (security, financial, operational, reputational, regulatory) as a dot-meter scorecard on the Core3 rating box, plus sub-scores in the Probability of Loss tooltip (2026-06-18)
