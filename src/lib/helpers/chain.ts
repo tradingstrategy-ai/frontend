@@ -144,6 +144,15 @@ export const chains = (() => {
 			hasBackendData: false
 		},
 		{
+			id: 4217,
+			slug: 'tempo',
+			name: 'Tempo',
+			homepage: 'https://tempo.xyz/',
+			explorer: 'https://explore.tempo.xyz',
+			nativeCurrency: 'USD',
+			hasBackendData: false
+		},
+		{
 			id: 4663,
 			slug: 'robinhood',
 			name: 'Robinhood',
