@@ -144,6 +144,15 @@ export const chains = (() => {
 			hasBackendData: false
 		},
 		{
+			id: 4663,
+			slug: 'robinhood',
+			name: 'Robinhood',
+			homepage: 'https://robinhood.com/us/en/chain/',
+			explorer: 'https://robinhoodchain.blockscout.com',
+			nativeCurrency: 'ETH',
+			hasBackendData: false
+		},
+		{
 			id: 146,
 			slug: 'sonic',
 			name: 'Sonic',

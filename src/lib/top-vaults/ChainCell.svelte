@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
 	import Tooltip from '$lib/components/Tooltip.svelte';
-	import { resolve } from '$app/paths';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
 	interface Props {
@@ -16,7 +15,7 @@
 	<Tooltip>
 		<svelte:fragment slot="trigger">
 			{#if chain}
-				<a href={resolve(`/trading-view/${chain.slug}/vaults`)}>
+				<a href="/trading-view/vaults/chains/{chain.slug}">
 					<img src={getLogoUrl('blockchain', chain.slug)} alt={chain.name} />
 				</a>
 			{:else}
