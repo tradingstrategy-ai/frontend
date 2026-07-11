@@ -7,6 +7,7 @@
 	import Section from '$lib/components/Section.svelte';
 	import VaultGroupTable from '$lib/top-vaults/VaultGroupTable.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
+	import { formatDollar } from '$lib/helpers/formatters';
 	import { getStablecoinLogoUrl, isStablecoinDepegged } from '$lib/stablecoin-metadata/helpers.js';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import MarketSharePieChart from '../MarketSharePieChart.svelte';
@@ -14,6 +15,8 @@
 
 	let { data } = $props();
 	let { stablecoins, chartStablecoins, options } = $derived(data);
+	let totalTvl = $derived(stablecoins.reduce((total, stablecoin) => total + stablecoin.tvl, 0));
+	let totalTvlLabel = $derived(`${formatDollar(totalTvl / 1_000_000_000, 1, 1, { notation: 'standard' })} billion`);
 
 	const onChange: ComponentProps<typeof VaultGroupTable>['onChange'] = async (params, scrollToTop) => {
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
@@ -69,14 +72,17 @@
 							<span>{pageTitle}</span>
 						{/snippet}
 						{#snippet subtitle()}
-							<a class="body-link" href={glossaryLinks.defi}>DeFi</a>
-							<a class="body-link" href={glossaryLinks.vault}>vaults</a>
-							for different
-							<a class="body-link" href={glossaryLinks.stablecoin}>stablecoins</a>.
-							<a class="body-link" href={glossaryLinks.tvl}>TVL</a>
-							represents deposits of a stablecoin in vaults.
-							<a class="body-link" href={glossaryLinks.apy}>APY</a>
-							represents the yield of last thirty days.
+							<p>
+								<a class="body-link" href={glossaryLinks.defi}>DeFi</a>
+								<a class="body-link" href={glossaryLinks.vault}>vaults</a>
+								for different
+								<a class="body-link" href={glossaryLinks.stablecoin}>stablecoins</a>.
+								<a class="body-link" href={glossaryLinks.tvl}>TVL</a>
+								represents deposits of a stablecoin in vaults.
+								<a class="body-link" href={glossaryLinks.apy}>APY</a>
+								represents the yield of last thirty days.
+							</p>
+							<p>{totalTvlLabel} TVL tracked across {stablecoins.length} stablecoins.</p>
 						{/snippet}
 					</HeroBanner>
 				</div>

@@ -8,12 +8,15 @@
 	import VaultGroupTable from '$lib/top-vaults/VaultGroupTable.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
+	import { formatDollar } from '$lib/helpers/formatters';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import MarketSharePieChart from '../MarketSharePieChart.svelte';
 	import MarketShareWidgetBox from '../MarketShareWidgetBox.svelte';
 
 	let { data } = $props();
 	let { chains, chartChains, options } = $derived(data);
+	let totalTvl = $derived(chains.reduce((total, chain) => total + chain.tvl, 0));
+	let totalTvlLabel = $derived(`${formatDollar(totalTvl / 1_000_000_000, 1, 1, { notation: 'standard' })} billion`);
 
 	const onChange: ComponentProps<typeof VaultGroupTable>['onChange'] = async (params, scrollToTop) => {
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
@@ -73,14 +76,17 @@
 							<span>DeFi vaults by chain</span>
 						{/snippet}
 						{#snippet subtitle()}
-							<a class="body-link" href={glossaryLinks.defi}>DeFi</a>
-							<a class="body-link" href={glossaryLinks.stablecoin}>stablecoin</a>
-							<a class="body-link" href={glossaryLinks.vault}>vaults</a>
-							on each blockchain.
-							<a class="body-link" href={glossaryLinks.tvl}>TVL</a> represents stablecoin deposits in vaults on a
-							particular chain.
-							<a class="body-link" href={glossaryLinks.apy}>APY</a>
-							represents the yield of last thirty days.
+							<p>
+								<a class="body-link" href={glossaryLinks.defi}>DeFi</a>
+								<a class="body-link" href={glossaryLinks.stablecoin}>stablecoin</a>
+								<a class="body-link" href={glossaryLinks.vault}>vaults</a>
+								on each blockchain.
+								<a class="body-link" href={glossaryLinks.tvl}>TVL</a> represents stablecoin deposits in vaults on a
+								particular chain.
+								<a class="body-link" href={glossaryLinks.apy}>APY</a>
+								represents the yield of last thirty days.
+							</p>
+							<p>{totalTvlLabel} TVL tracked across {chains.length} chains.</p>
 						{/snippet}
 					</HeroBanner>
 				</div>

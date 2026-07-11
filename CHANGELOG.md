@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add live TVL and listing-count summaries to chain, protocol, curator and stablecoin vault pages (2026-07-11)
 - Add Robinhood vault-only chain support (2026-07-10)
 - Add curator information boxes to vault detail pages when curator metadata is available (2026-07-05)
 - Fix blog sitemap dropping posts beyond the first 100 by paginating through all Ghost Content API pages (2026-07-01)

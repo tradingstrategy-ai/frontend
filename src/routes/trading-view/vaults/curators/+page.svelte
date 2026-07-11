@@ -11,12 +11,15 @@ aggregate TVL, vault count and average APY, plus a market-share pie chart.
 	import Section from '$lib/components/Section.svelte';
 	import VaultGroupTable from '$lib/top-vaults/VaultGroupTable.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
+	import { formatDollar } from '$lib/helpers/formatters';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import MarketSharePieChart from '../MarketSharePieChart.svelte';
 	import MarketShareWidgetBox from '../MarketShareWidgetBox.svelte';
 
 	let { data } = $props();
 	let { curators, curatorLogos, chartCurators, options } = $derived(data);
+	let totalTvl = $derived(curators.reduce((total, curator) => total + curator.tvl, 0));
+	let totalTvlLabel = $derived(`${formatDollar(totalTvl / 1_000_000_000, 1, 1, { notation: 'standard' })} billion`);
 
 	const onChange: ComponentProps<typeof VaultGroupTable>['onChange'] = async (params, scrollToTop) => {
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
@@ -76,14 +79,17 @@ aggregate TVL, vault count and average APY, plus a market-share pie chart.
 							<span>Stablecoin vault curators</span>
 						{/snippet}
 						{#snippet subtitle()}
-							Curator rankings for
-							<a class="body-link" href={glossaryLinks.defi}>DeFi</a>
-							<a class="body-link" href={glossaryLinks.stablecoin}>stablecoin</a>
-							<a class="body-link" href={glossaryLinks.vault}>vaults</a>. Curators select and manage vault strategies.
-							<a class="body-link" href={glossaryLinks.tvl}>TVL</a> represents stablecoin deposits across a curator’s
-							vaults.
-							<a class="body-link" href={glossaryLinks.apy}>APY</a>
-							represents the yield of last thirty days.
+							<p>
+								Curator rankings for
+								<a class="body-link" href={glossaryLinks.defi}>DeFi</a>
+								<a class="body-link" href={glossaryLinks.stablecoin}>stablecoin</a>
+								<a class="body-link" href={glossaryLinks.vault}>vaults</a>. Curators select and manage vault strategies.
+								<a class="body-link" href={glossaryLinks.tvl}>TVL</a> represents stablecoin deposits across a curator’s
+								vaults.
+								<a class="body-link" href={glossaryLinks.apy}>APY</a>
+								represents the yield of last thirty days.
+							</p>
+							<p>{totalTvlLabel} TVL tracked across {curators.length} curators.</p>
 						{/snippet}
 					</HeroBanner>
 				</div>
