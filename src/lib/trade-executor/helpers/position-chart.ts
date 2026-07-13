@@ -96,6 +96,7 @@ function normalisePoints(points: PositionChartPoint[]) {
 function getMarkerTrades(trades: TradeInfo[], tradePathBase: string) {
 	return trades
 		.filter((trade) => !trade.repaired_at)
+		.filter((trade) => !trade.isRepair)
 		.filter((trade) => {
 			const plannedQuantity = trade.planned_quantity;
 			const executedQuantity = trade.executed_quantity ?? 0;
@@ -114,7 +115,7 @@ function getMarkerTrades(trades: TradeInfo[], tradePathBase: string) {
 					directionLabel: trade.direction === TradeDirections.Enter ? 'Increase' : 'Decrease',
 					quantity: trade.executed_quantity ?? trade.planned_quantity ?? null,
 					price: trade.executed_price ?? null,
-					tradeValueUsd: trade.value,
+					tradeValueUsd: getTradeValueUsd(trade),
 					tradeUrl: `${tradePathBase}/trade-${trade.trade_id}`
 				}
 			];
@@ -162,4 +163,9 @@ function getNearestPoint(points: PositionChartPoint[], timestamp: number) {
 
 function getTradeTimestamp(trade: TradeInfo) {
 	return trade.executed_at ?? trade.failed_at ?? trade.started_at ?? trade.opened_at ?? null;
+}
+
+function getTradeValueUsd(trade: TradeInfo) {
+	const reserveValue = Math.abs(trade.executed_reserve || trade.planned_reserve || 0);
+	return reserveValue || trade.value;
 }
