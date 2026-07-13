@@ -151,6 +151,15 @@ describe('buildPositionChartsModel', () => {
 					planned_quantity: '0',
 					executed_quantity: '0',
 					flags: []
+				}),
+				createTrade({
+					trade_id: 4,
+					trade_type: 'repair',
+					planned_quantity: '5',
+					executed_quantity: '0',
+					planned_reserve: '5',
+					executed_reserve: '0',
+					repaired_trade_id: 2
 				})
 			]
 		});
@@ -159,6 +168,24 @@ describe('buildPositionChartsModel', () => {
 
 		expect(model.underlyingPrice.markers).toHaveLength(1);
 		expect(model.underlyingPrice.markers[0].tradeId).toBe(1);
+	});
+
+	test('uses planned reserve amount for vault marker USD value when executed quantity is zero', () => {
+		const payload = createPayload({
+			trades: [
+				createTrade({
+					planned_quantity: '123.45',
+					executed_quantity: '0',
+					planned_reserve: '123.45',
+					executed_reserve: '0'
+				})
+			]
+		});
+
+		const model = buildPositionChartsModel(payload);
+
+		expect(model.underlyingPrice.markers).toHaveLength(1);
+		expect(model.underlyingPrice.markers[0].tradeValueUsd).toBe(123.45);
 	});
 
 	test('falls back to underlying_price samples when price_history is missing', () => {
