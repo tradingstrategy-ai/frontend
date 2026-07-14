@@ -1,10 +1,13 @@
+<!--
+@component
+Displays supplementary vault information, including transaction status, performance, fees, and risk metrics.
+-->
 <script lang="ts">
-	import type { VaultFees, VaultInfo } from '$lib/top-vaults/schemas';
+	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import Risk from '$lib/top-vaults/Risk.svelte';
 	import Metric from './Metric.svelte';
-	import IconQuestionCircle from '~icons/local/question-circle';
 	import { getFormattedLockup, isGoodVaultStatus } from '$lib/top-vaults/helpers';
 	import { formatNumber, formatPercent, formatPercentProfit } from '$lib/helpers/formatters';
 	import { getChain } from '$lib/helpers/chain';
@@ -52,6 +55,48 @@
 	let lifetimeMaxDrawdown = $derived(
 		vault.period_results?.find((p) => p.period.toLowerCase() === 'lifetime')?.max_drawdown ?? null
 	);
+	let periodResults = $derived(new Map(vault.period_results.map((metrics) => [metrics.period.toLowerCase(), metrics])));
+	let returnPeriods = $derived([
+		{ label: '1M', gross: vault.one_month_returns, net: vault.one_month_returns_net },
+		{ label: '3M', gross: vault.three_months_returns, net: vault.three_months_returns_net },
+		{
+			label: '6M',
+			gross: periodResults.get('6m')?.returns_gross ?? null,
+			net: periodResults.get('6m')?.returns_net ?? null
+		},
+		{
+			label: '1Y',
+			gross: periodResults.get('1y')?.returns_gross ?? null,
+			net: periodResults.get('1y')?.returns_net ?? null
+		},
+		{ label: 'Lifetime', gross: vault.lifetime_return, net: vault.lifetime_return_net }
+	]);
+	let feeRows = $derived([
+		{
+			label: 'Performance fee',
+			mobileLabel: 'Performance',
+			value: vault.net_fees?.performance,
+			tooltip: '<strong>Performance fee</strong> is charged against investment profits.'
+		},
+		{
+			label: 'Management fee',
+			mobileLabel: 'Management',
+			value: vault.net_fees?.management,
+			tooltip: '<strong>Management fee</strong> is charged annually for managing the vault.'
+		},
+		{
+			label: 'Deposit fee',
+			mobileLabel: 'Deposit',
+			value: vault.net_fees?.deposit,
+			tooltip: '<strong>Deposit fee</strong> is a one-time fee applied when entering the vault.'
+		},
+		{
+			label: 'Withdrawal fee',
+			mobileLabel: 'Withdrawal',
+			value: vault.net_fees?.withdraw,
+			tooltip: '<strong>Withdrawal fee</strong> is a one-time fee applied when exiting the vault.'
+		}
+	]);
 </script>
 
 <div class="additional-metrics">
@@ -156,96 +201,65 @@
 		</div>
 	</MetricsBox>
 
-	<MetricsBox class="returns" title="Returns">
-		<table class="vault-metrics-table">
-			<thead>
-				<tr>
-					<th></th>
-					<th>1 month</th>
-					<th>3 month</th>
-					<th>Lifetime</th>
-				</tr>
-			</thead>
-			<tbody>
-				{#snippet returnsCell(ann: MaybeNumber, abs: MaybeNumber)}
-					<td class="returns-cell">
-						<div class="ann">{formatPercentProfit(ann)} ann</div>
-						<div class="abs">{formatPercentProfit(abs)} abs</div>
-					</td>
-				{/snippet}
-				<tr>
-					<td>Gross</td>
-					{@render returnsCell(vault.one_month_cagr, vault.one_month_returns)}
-					{@render returnsCell(vault.three_months_cagr, vault.three_months_returns)}
-					{@render returnsCell(vault.cagr, vault.lifetime_return)}
-				</tr>
-				<tr>
-					<td>
+	<MetricsBox class="performance" title="Returns and fees">
+		<div class="table-scroll">
+			<table class="vault-metrics-table">
+				<thead>
+					<tr>
+						<th></th>
+						{#each returnPeriods as period}
+							<th scope="col">{period.label}</th>
+						{/each}
+					</tr>
+				</thead>
+				<tbody>
+					{#snippet metricLabel(tooltip: string, label: string, mobileLabel?: string)}
 						<Tooltip>
 							<span slot="trigger">
-								<span class="underline">Net</span>
-								<IconQuestionCircle />
+								<span class="underline">
+									<span class="label-desktop">{label}</span>
+									<span class="label-mobile">{mobileLabel ?? label}</span>
+								</span>
 							</span>
 							<svelte:fragment slot="popup">
-								For comparing the profitability of vaults, the vault share price is reduced by the calculated net fees
-								for the investment period.
+								<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+								{@html tooltip}
 							</svelte:fragment>
 						</Tooltip>
-					</td>
-					{@render returnsCell(vault.one_month_cagr_net, vault.one_month_returns_net)}
-					{@render returnsCell(vault.three_months_cagr_net, vault.three_months_returns_net)}
-					{@render returnsCell(vault.cagr_net, vault.lifetime_return_net)}
-				</tr>
-			</tbody>
-		</table>
-	</MetricsBox>
-
-	<MetricsBox class="fees" title="Fees">
-		<table class="vault-metrics-table">
-			<thead>
-				<tr>
-					<th></th>
-					<th>Manage&shy;ment</th>
-					<th>Perform&shy;ance</th>
-					<th>Deposit</th>
-					<th>Withdraw</th>
-				</tr>
-			</thead>
-			<tbody>
-				{#snippet feeRow(label: string, tooltip: string, fees: VaultFees | null)}
+					{/snippet}
 					<tr>
-						<td class="fee-type-cell">
-							<Tooltip>
-								<span slot="trigger">
-									<span class="underline">{label}</span>
-									<IconQuestionCircle />
-								</span>
-								<svelte:fragment slot="popup">
-									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-									{@html tooltip}
-								</svelte:fragment>
-							</Tooltip>
+						<td>
+							{@render metricLabel(
+								'<strong>Gross returns</strong> reflect the change in the vault share price before investor-facing fees are deducted.',
+								'Gross'
+							)}
 						</td>
-						<td>{formatPercent(fees?.management)}</td>
-						<td>{formatPercent(fees?.performance)}</td>
-						<td>{formatPercent(fees?.deposit)}</td>
-						<td>{formatPercent(fees?.withdraw)}</td>
+						{#each returnPeriods as period}
+							<td>{formatPercentProfit(period.gross)}</td>
+						{/each}
 					</tr>
-				{/snippet}
-
-				{@render feeRow(
-					'Gross',
-					'<strong>Gross fees</strong> are what vaults track internally. They are not exposed to an investor, and only useful for internal profit calculations of the vault. Gross fees have already been deducted when the vault share price is updated.',
-					vault.gross_fees
-				)}
-
-				{@render feeRow(
-					'Net',
-					'<strong>Net fees</strong> are deduced at a redemption. A vault investor receives less than the value of their shares back.',
-					vault.net_fees
-				)}
-			</tbody>
-		</table>
+					{#each feeRows as fee}
+						<tr class="fee-row">
+							<td>{@render metricLabel(fee.tooltip, fee.label, fee.mobileLabel)}</td>
+							{#each returnPeriods as _}
+								<td>{formatPercent(fee.value)}</td>
+							{/each}
+						</tr>
+					{/each}
+					<tr>
+						<td>
+							{@render metricLabel(
+								'<strong>Net returns</strong> are the gross returns after all investor-facing fees have been deducted.',
+								'Net'
+							)}
+						</td>
+						{#each returnPeriods as period}
+							<td>{formatPercentProfit(period.net)}</td>
+						{/each}
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</MetricsBox>
 </div>
 
@@ -259,7 +273,7 @@
 		@media (--viewport-lg-up) {
 			grid-template-columns: 1fr 1fr;
 
-			:global(:is(.other-metrics, .transaction-status)) {
+			:global(:is(.other-metrics, .transaction-status, .performance)) {
 				grid-column: span 2;
 			}
 		}
@@ -308,6 +322,7 @@
 
 		.vault-metrics-table {
 			width: 100%;
+			min-width: 44rem;
 			border-collapse: collapse;
 			font: var(--f-ui-md-roman);
 			--cell-padding: 0.5rem;
@@ -343,10 +358,21 @@
 				}
 			}
 
-			.abs {
-				padding-top: 0.25em;
-				color: var(--c-text-extra-light);
+			@media (--viewport-sm-down) {
+				:is(th, td):first-child {
+					width: 8.75rem;
+					min-width: 8.75rem;
+					white-space: nowrap;
+				}
+
+				td:first-child [slot='trigger'] {
+					min-width: 0;
+				}
 			}
+		}
+
+		.table-scroll {
+			overflow-x: auto;
 		}
 
 		@media (--viewport-md-up) {
@@ -359,6 +385,20 @@
 			display: inline-flex;
 			align-items: center;
 			gap: 0.75ex;
+		}
+
+		.label-mobile {
+			display: none;
+		}
+
+		@media (--viewport-sm-down) {
+			.label-desktop {
+				display: none;
+			}
+
+			.label-mobile {
+				display: inline;
+			}
 		}
 
 		.risk-link,
