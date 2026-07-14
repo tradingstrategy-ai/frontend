@@ -5,6 +5,7 @@ Performance metrics table for a vault across multiple lookback periods.
 	import type { VaultInfo, PeriodMetrics } from '$lib/top-vaults/schemas';
 	import type { Chain } from '$lib/helpers/chain';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
+	import Tooltip from '$lib/components/Tooltip.svelte';
 	import {
 		formatPercent,
 		formatPercentProfit,
@@ -50,6 +51,21 @@ Performance metrics table for a vault across multiple lookback periods.
 
 	// Check if net fee information is available
 	const hasNetFees = $derived(vault.net_fees?.fee_mode != null);
+	const netTransactionFees = $derived(
+		[
+			{ label: 'deposit', value: vault.net_fees?.deposit },
+			{ label: 'withdrawal', value: vault.net_fees?.withdraw }
+		].filter((fee): fee is { label: string; value: number } => typeof fee.value === 'number' && fee.value > 0)
+	);
+	const hasNetTransactionFees = $derived(netTransactionFees.length > 0);
+	const netReturnFeeTooltip = $derived.by(() => {
+		const fees = netTransactionFees.map((fee) => `${formatPercent(fee.value)} ${fee.label} fee`);
+		if (fees.length === 0) return '';
+
+		const feeDescription = fees.length === 2 ? `${fees[0]} and ${fees[1]}` : fees[0];
+
+		return `Net returns include the ${feeDescription}. These one-time fees are applied when you enter or exit the vault, so they can make a short-period net return negative even when gross returns are positive.`;
+	});
 
 	type RowDefinition = {
 		label: string | (() => string);
@@ -174,6 +190,10 @@ Performance metrics table for a vault across multiple lookback periods.
 	function getValue(period: string, field: keyof PeriodMetrics): unknown {
 		return periodMap[period]?.[field] ?? null;
 	}
+
+	function isNetReturn(row: RowDefinition): boolean {
+		return row.field === 'cagr_net' || row.field === 'returns_net';
+	}
 </script>
 
 {#if vault.period_results?.length}
@@ -203,7 +223,18 @@ Performance metrics table for a vault across multiple lookback periods.
 							<tr>
 								<td class="label">{@html getLabel(row)}</td>
 								{#each periodOrder as period}
-									<td>{row.formatter(getValue(period, row.field))}</td>
+									<td>
+										{#if hasNetTransactionFees && isNetReturn(row)}
+											<Tooltip>
+												<span slot="trigger" class="net-return-with-fees">
+													{row.formatter(getValue(period, row.field))}
+												</span>
+												<svelte:fragment slot="popup">{netReturnFeeTooltip}</svelte:fragment>
+											</Tooltip>
+										{:else}
+											{row.formatter(getValue(period, row.field))}
+										{/if}
+									</td>
 								{/each}
 							</tr>
 						{/each}
@@ -270,6 +301,10 @@ Performance metrics table for a vault across multiple lookback periods.
 				text-decoration: underline;
 				text-decoration-style: dashed;
 			}
+		}
+
+		.net-return-with-fees {
+			border-bottom: 1px dashed var(--c-text-light);
 		}
 
 		.error-row {
