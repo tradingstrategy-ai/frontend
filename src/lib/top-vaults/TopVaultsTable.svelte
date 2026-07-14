@@ -107,6 +107,8 @@
 		defaultRiskIndex?: number;
 		/** Default value for the "Hide unknown" filter (1 = hide, 0 = show) */
 		defaultHideUnknown?: number;
+		/** Show the "Hide unknown" protocol filter checkbox */
+		showUnknownFilter?: boolean;
 		/** Default monthly return filter key */
 		defaultMonthlyReturnKey?: string;
 		/** Default sort column key */
@@ -147,6 +149,7 @@
 		defaultAgeIndex = 0,
 		defaultRiskIndex = 1,
 		defaultHideUnknown = 1,
+		showUnknownFilter = true,
 		defaultMonthlyReturnKey = 'any',
 		defaultSort,
 		defaultDirection,
@@ -267,7 +270,7 @@
 	let treasuryRate = $derived((page.data as { treasuryRate?: number | null }).treasuryRate ?? null);
 
 	let hideClosed = $derived(urlState.closed === 1);
-	let hideUnknown = $derived(urlState.unknown === 1);
+	let hideUnknown = $derived(showUnknownFilter && urlState.unknown === 1);
 	let returnsDropdownOpen = $state(false);
 	let selectedReturnColumnIds = $derived(sanitiseReturnColumnSelection(urlState.returns));
 	let selectedReturnColumns = $derived(
@@ -806,21 +809,23 @@
 						</Tooltip>
 					</div>
 
-					<div class="filter-group">
-						<Tooltip>
-							<label class="checkbox-filter" slot="trigger">
-								<span class="filter-label filter-label-hint">Hide unknown</span>
-								<input
-									type="checkbox"
-									checked={hideUnknown}
-									onchange={() => updateSearchParams({ unknown: hideUnknown ? 0 : 1 })}
-								/>
-							</label>
-							<svelte:fragment slot="popup">
-								Don't show vaults whose protocol has not been identified yet
-							</svelte:fragment>
-						</Tooltip>
-					</div>
+					{#if showUnknownFilter}
+						<div class="filter-group">
+							<Tooltip>
+								<label class="checkbox-filter" slot="trigger">
+									<span class="filter-label filter-label-hint">Hide unknown</span>
+									<input
+										type="checkbox"
+										checked={hideUnknown}
+										onchange={() => updateSearchParams({ unknown: hideUnknown ? 0 : 1 })}
+									/>
+								</label>
+								<svelte:fragment slot="popup">
+									Don't show vaults whose protocol has not been identified yet
+								</svelte:fragment>
+							</Tooltip>
+						</div>
+					{/if}
 
 					<div class="filter">
 						<TextInput

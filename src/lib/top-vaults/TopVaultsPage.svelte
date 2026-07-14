@@ -44,6 +44,8 @@
 		defaultRiskIndex?: number;
 		/** Default value for the "Hide unknown" filter (1 = hide, 0 = show) */
 		defaultHideUnknown?: number;
+		/** Show the "Hide unknown" protocol filter checkbox */
+		showUnknownFilter?: boolean;
 		/** Default monthly return filter key */
 		defaultMonthlyReturnKey?: string;
 		/** Default sort column key */
@@ -87,6 +89,7 @@
 		defaultAgeIndex,
 		defaultRiskIndex,
 		defaultHideUnknown,
+		showUnknownFilter,
 		defaultMonthlyReturnKey,
 		defaultSort,
 		defaultDirection,
@@ -221,6 +224,7 @@
 					{showFilters}
 					{defaultRiskIndex}
 					{defaultHideUnknown}
+					{showUnknownFilter}
 					{defaultMonthlyReturnKey}
 					{defaultSort}
 					{defaultDirection}
@@ -249,6 +253,7 @@
 					{defaultAgeIndex}
 					{defaultRiskIndex}
 					{defaultHideUnknown}
+					{showUnknownFilter}
 					{defaultMonthlyReturnKey}
 					{defaultSort}
 					{defaultDirection}

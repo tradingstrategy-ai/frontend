@@ -33,6 +33,7 @@
 	let title = $derived(`${chainName} stablecoin vaults`);
 	let description = $derived(`Top stablecoin vaults on ${chainName} blockchain ranked by performance.`);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
+	let defaultTvlKey = $derived(chainSlug === 'robinhood' ? 'any' : '10k');
 </script>
 
 <MetaTags
@@ -65,7 +66,7 @@
 	{loading}
 	title="{chainName} stablecoin vaults"
 	showFilters
-	defaultTvlKey="10k"
+	{defaultTvlKey}
 >
 	{#snippet detailDescription()}
 		{#if topVaults?.vaults.length}

@@ -94,6 +94,7 @@
 	title={heroTitle}
 	subtitle={isUnknownVaultProtocol ? unknownVaultSubtitle : undefined}
 	showFilters
+	showUnknownFilter={false}
 	defaultTvlKey="10k"
 	defaultHideUnknown={isUnsupportedProtocolSlug(protocolSlug) ? 0 : 1}
 >
