@@ -1,3 +1,10 @@
+<!--
+@component
+Displays the vault price chart alongside its featured performance metrics.
+
+For non-USD vaults, hovering over the TVL metric reveals the equivalent
+amounts in the denomination's native currency.
+-->
 <script lang="ts">
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
@@ -24,6 +31,14 @@
 	let showNativeTvl = $derived(denominationCurrency != null && denominationCurrency !== 'usd');
 	let currentNativeTvl = $derived(getVaultTvlNative(vault, vault.current_nav));
 	let peakNativeTvl = $derived(getVaultTvlNative(vault, vault.peak_nav));
+	// Some international vault feeds provide a USD rate but no native-rate
+	// conversion. Their denomination amount is still useful in the tooltip.
+	let currentNativeTvlTooltip = $derived(currentNativeTvl ?? vault.current_nav);
+	let peakNativeTvlTooltip = $derived(peakNativeTvl ?? vault.peak_nav);
+	let nativeTvlTooltipCurrency = $derived(
+		currentNativeTvl == null ? vault.denomination : denominationCurrency?.toUpperCase()
+	);
+	let showNativeTvlTooltip = $derived(showNativeTvl && currentNativeTvlTooltip != null);
 	let nativeTvlLabel = $derived.by(() => {
 		if (!showNativeTvl || currentNativeTvl == null || !denominationCurrency) return null;
 
@@ -59,8 +74,33 @@
 				{/if}
 			</Metric>
 			<Metric size="xl" label="Total value locked">
-				{formatDollar(getVaultCurrentTvlUsd(vault), 1)}
-				<div class="sm">peak {formatDollar(getVaultPeakTvlUsd(vault), 1)}</div>
+				{#if showNativeTvlTooltip}
+					<Tooltip>
+						<svelte:fragment slot="trigger">
+							<span class="tvl-tooltip-trigger underline">
+								{formatDollar(getVaultCurrentTvlUsd(vault), 1)}
+								<span class="sm">peak {formatDollar(getVaultPeakTvlUsd(vault), 1)}</span>
+							</span>
+						</svelte:fragment>
+						<svelte:fragment slot="popup">
+							<dl class="native-tvl-tooltip">
+								<div>
+									<dt>Current TVL ({nativeTvlTooltipCurrency})</dt>
+									<dd>{formatNativeTvlAmount(currentNativeTvlTooltip)}</dd>
+								</div>
+								{#if peakNativeTvlTooltip != null}
+									<div>
+										<dt>Peak TVL ({nativeTvlTooltipCurrency})</dt>
+										<dd>{formatNativeTvlAmount(peakNativeTvlTooltip)}</dd>
+									</div>
+								{/if}
+							</dl>
+						</svelte:fragment>
+					</Tooltip>
+				{:else}
+					{formatDollar(getVaultCurrentTvlUsd(vault), 1)}
+					<div class="sm">peak {formatDollar(getVaultPeakTvlUsd(vault), 1)}</div>
+				{/if}
 				{#if nativeTvlLabel}
 					<div class="sm">{nativeTvlLabel}</div>
 				{/if}
@@ -97,6 +137,32 @@
 
 			.gross-indicator {
 				color: var(--c-text-light);
+			}
+
+			.tvl-tooltip-trigger {
+				display: inline-grid;
+				justify-items: center;
+			}
+
+			.native-tvl-tooltip {
+				display: grid;
+				gap: 0.35rem;
+				margin: 0;
+
+				div {
+					display: flex;
+					justify-content: space-between;
+					gap: 1rem;
+				}
+
+				dt {
+					color: var(--c-text-light);
+				}
+
+				dd {
+					margin: 0;
+					font-weight: 600;
+				}
 			}
 
 			.sm {
