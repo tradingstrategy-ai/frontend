@@ -58,6 +58,7 @@ pnpm run test:integration # Run integration tests (requires build)
 - Use runes (`$state`, `$derived`, `$effect`, etc.)
 - Async components supported (can use `await` in markup)
 - Update legacy Svelte 4 syntax to runes when modifying components
+- For Svelte UI changes, check that tooltips remain readable and are not too wide.
 - Run `pnpm run check` on modified files before committing (e.g., `pnpm run check src/lib/components/MyComponent.svelte`)
 
 **TypeScript:**

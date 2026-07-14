@@ -53,7 +53,8 @@ For more information see:
 			display: none;
 			position: absolute;
 			contain: content;
-			width: min(90vw, 32rem, auto);
+			width: max-content;
+			max-width: min(90vw, 300px);
 			padding: 0.25rem 0 0 0;
 			border: none;
 			background: transparent;
