@@ -467,6 +467,16 @@ export function getVaultCurrentTvlUsd(vault: VaultWithNavAndRate): number | null
 }
 
 /**
+ * Copy a vault with its current TVL expressed in USD.
+ *
+ * Aggregate helpers use `current_nav` as their TVL input. Call this before
+ * calculating a cross-denomination total or TVL-weighted return.
+ */
+export function withVaultCurrentTvlUsd(vault: VaultInfo): VaultInfo {
+	return { ...vault, current_nav: getVaultCurrentTvlUsd(vault) };
+}
+
+/**
  * Peak vault TVL converted from denomination token units to USD.
  */
 export function getVaultPeakTvlUsd(vault: VaultWithPeakNavAndRate): number | null {
