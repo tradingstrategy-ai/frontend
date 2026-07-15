@@ -26,6 +26,7 @@ import {
 	isNonUsdDenominatedVault,
 	normaliseKinexysVaultDenomination,
 	normaliseVaultProtocolDisplayName,
+	withVaultCurrentTvlUsd,
 	withVaultDenominationTokenRate,
 	calculateTotalTvl,
 	calculateTvlWeightedApy
@@ -358,6 +359,24 @@ describe('denomination TVL conversion', () => {
 
 		expect(getVaultCurrentTvlUsd(vault)).toBeCloseTo(108_000);
 		expect(getVaultPeakTvlUsd(vault)).toBeCloseTo(129_600);
+	});
+
+	test('uses USD TVL for cross-denomination aggregate inputs', () => {
+		const eurVault = createTestVault('EUR vault', {
+			current_nav: 100_000,
+			one_month_cagr: 0.1,
+			denomination_token_rate: createDenominationTokenRate({ usd_rate: 1.08 })
+		});
+		const usdVault = createTestVault('USD vault', {
+			current_nav: 100_000,
+			one_month_cagr: 0,
+			denomination_token_rate: createDenominationTokenRate({ usd_rate: 1 })
+		});
+
+		const usdVaults = [eurVault, usdVault].map(withVaultCurrentTvlUsd);
+
+		expect(calculateTotalTvl(usdVaults)).toBeCloseTo(208_000);
+		expect(calculateTvlWeightedApy(usdVaults)).toBeCloseTo(108_000 / 208_000 / 10);
 	});
 
 	test('infers EUR denomination when per-vault rate metadata is absent', () => {

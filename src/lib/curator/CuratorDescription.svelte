@@ -19,7 +19,12 @@ the vault protocol description widget. Sourced from the top-vaults dataset
 	import { micromark } from 'micromark';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import { calculateTotalTvl, calculateTvlWeightedApy, isBlacklisted } from '$lib/top-vaults/helpers';
+	import {
+		calculateTotalTvl,
+		calculateTvlWeightedApy,
+		isBlacklisted,
+		withVaultCurrentTvlUsd
+	} from '$lib/top-vaults/helpers';
 	import { VAULT_TVL_OUTLIER_THRESHOLD } from '$lib/echarts/tvl-outliers';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import IconTwitter from '~icons/local/twitter';
@@ -40,8 +45,9 @@ the vault protocol description widget. Sourced from the top-vaults dataset
 	let statsVaults = $derived(
 		vaults.filter((v) => !isBlacklisted(v) && (v.current_nav ?? 0) <= VAULT_TVL_OUTLIER_THRESHOLD)
 	);
-	let totalTvl = $derived(calculateTotalTvl(statsVaults));
-	let averageApy = $derived(calculateTvlWeightedApy(statsVaults));
+	let statsVaultsWithUsdTvl = $derived(statsVaults.map(withVaultCurrentTvlUsd));
+	let totalTvl = $derived(calculateTotalTvl(statsVaultsWithUsdTvl));
+	let averageApy = $derived(calculateTvlWeightedApy(statsVaultsWithUsdTvl));
 	let vaultCountLabel = $derived(`${statsVaults.length} ${statsVaults.length === 1 ? 'vault' : 'vaults'}`);
 	let totalTvlLabel = $derived(`${formatDollar(totalTvl, 1)} TVL`);
 	let averageApyLabel = $derived(averageApy == null ? null : `${formatPercent(averageApy, 1)} APY`);
