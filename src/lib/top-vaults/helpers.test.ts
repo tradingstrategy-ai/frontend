@@ -5,6 +5,7 @@ import {
 	isEligibleFrontpageVault,
 	hasSupportedProtocol,
 	getProtocolDisplayName,
+	isUnknownVaultProtocol,
 	isUnsupportedProtocolSlug,
 	meetsMinTvl,
 	getFormattedLockup,
@@ -289,6 +290,20 @@ describe('isUnsupportedProtocolSlug', () => {
 
 	test('ignores supported protocol slugs', () => {
 		expect(isUnsupportedProtocolSlug('yearn')).toBe(false);
+	});
+});
+
+describe('isUnknownVaultProtocol', () => {
+	test.each([
+		{ protocol: 'ERC-4626', protocol_slug: 'erc-4626' },
+		{ protocol: '<protocol not yet identified>', protocol_slug: 'protocol-not-yet-identified' },
+		{ protocol: 'Unknown', protocol_slug: 'unknown' }
+	])('groups $protocol as unknown', (vault) => {
+		expect(isUnknownVaultProtocol(vault)).toBe(true);
+	});
+
+	test('does not group a recognised protocol as unknown', () => {
+		expect(isUnknownVaultProtocol({ protocol: 'Yearn', protocol_slug: 'yearn' })).toBe(false);
 	});
 });
 

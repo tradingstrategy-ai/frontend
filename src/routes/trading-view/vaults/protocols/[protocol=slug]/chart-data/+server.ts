@@ -9,8 +9,9 @@ import {
 	VAULT_GROUP_MINI_CHART_THREE_MONTH_LOOKBACK_DAYS
 } from '$lib/echarts/vault-group-mini-chart-server';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
+import { isUnknownVaultProtocol, UNKNOWN_VAULT_PROTOCOL_SLUG } from '$lib/top-vaults/helpers';
 
-const CACHE_VERSION = 'protocol-mini-chart-v6';
+const CACHE_VERSION = 'protocol-mini-chart-v7';
 const cache = new Map<string, { payload: ProtocolMiniChartPayload; expires: number; version: string }>();
 
 async function getCachedChartData(protocolSlug: string, fetch: Fetch) {
@@ -20,7 +21,9 @@ async function getCachedChartData(protocolSlug: string, fetch: Fetch) {
 	if (cached && cached.version === CACHE_VERSION && now < cached.expires) return cached.payload;
 
 	const { vaults } = await getCachedTopVaults(fetch);
-	const protocolVaults = vaults.filter((vault) => vault.protocol_slug === protocolSlug);
+	const protocolVaults = vaults.filter((vault) =>
+		protocolSlug === UNKNOWN_VAULT_PROTOCOL_SLUG ? isUnknownVaultProtocol(vault) : vault.protocol_slug === protocolSlug
+	);
 	if (protocolVaults.length === 0) error(404, 'Vault protocol not found');
 
 	const eligibleVaults = protocolVaults.filter(isEligibleVaultGroupMiniChartVault);

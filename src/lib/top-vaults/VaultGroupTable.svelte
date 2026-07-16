@@ -17,6 +17,7 @@
 	import { createRender } from '$lib/components/datatable/utils';
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
+	import { UNKNOWN_VAULT_PROTOCOL_SLUG } from '$lib/top-vaults/helpers';
 	import VaultGroupNameCell from './VaultGroupNameCell.svelte';
 	import RiskCell from './RiskCell.svelte';
 	import Core3RiskCell from './Core3RiskCell.svelte';
@@ -99,7 +100,7 @@
 				createRender(VaultGroupNameCell, {
 					label: value.name,
 					logoUrl: getLogoHref?.(value.slug),
-					showPlaceholder: value.name === 'Unknown' && !getLogoHref?.(value.slug)
+					showPlaceholder: value.slug === UNKNOWN_VAULT_PROTOCOL_SLUG && !getLogoHref?.(value.slug)
 				}),
 			plugins: { sort: { getSortValue: (v) => v.name, invert: true } }
 		}),

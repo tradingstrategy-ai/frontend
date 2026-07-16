@@ -22,6 +22,8 @@ const KINEXYS_PROTOCOL_SLUG = 'kinexys';
 const KINEXYS_DENOMINATION = 'USD (offchain)';
 const KINEXYS_DENOMINATION_SLUG = 'usd-offchain';
 export const UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME = 'Unknown vault protocol';
+/** Canonical group used for vaults whose underlying protocol is unidentified or unsupported. */
+export const UNKNOWN_VAULT_PROTOCOL_SLUG = 'unknown';
 const UNKNOWN_VAULT_PROTOCOL_SLUGS = new Set(['erc-4626']);
 
 /**
@@ -209,6 +211,18 @@ export function hasSupportedProtocol(vault: Pick<VaultInfo, 'protocol'> & Partia
 
 export function isManuallyMappedUnknownProtocolSlug(protocolSlug: string | null | undefined) {
 	return protocolSlug != null && UNKNOWN_VAULT_PROTOCOL_SLUGS.has(protocolSlug);
+}
+
+/**
+ * Whether a vault belongs in the combined unknown-protocol group.
+ *
+ * This includes protocol placeholders from the data source, the generic ERC-4626
+ * classification, and records explicitly labelled "Unknown".
+ */
+export function isUnknownVaultProtocol(vault: Pick<VaultInfo, 'protocol'> & Partial<Pick<VaultInfo, 'protocol_slug'>>) {
+	if (isManuallyMappedUnknownProtocolSlug(vault.protocol_slug)) return true;
+	if (isUnsupportedProtocolName(vault.protocol) || isUnsupportedProtocolSlug(vault.protocol_slug)) return true;
+	return vault.protocol?.trim().toLowerCase() === 'unknown';
 }
 
 const FRONTPAGE_RISK_FILTER = riskFilterOptions.find((option) => option.label === 'Severe');
