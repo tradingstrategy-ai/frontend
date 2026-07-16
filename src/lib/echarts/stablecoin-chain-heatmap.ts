@@ -3,6 +3,7 @@ import { getLogoUrl } from '$lib/helpers/assets';
 import {
 	buildStablecoinMetadataLookup,
 	formatStablecoinDisplayName,
+	getStablecoinDetailsHref,
 	getStablecoinLogoUrl,
 	resolveStablecoinSlug
 } from '$lib/stablecoin-metadata/helpers';
@@ -69,7 +70,7 @@ interface ResolvedStablecoinGroup {
 	label: string;
 	tooltipLabel: string;
 	stablecoinSlug: string;
-	href: string;
+	href?: string;
 	logoUrl?: string;
 }
 
@@ -151,7 +152,7 @@ function resolveStablecoinGroup(
 		label,
 		tooltipLabel,
 		stablecoinSlug,
-		href: `/trading-view/vaults/stablecoins/${stablecoinSlug}`,
+		href: getStablecoinDetailsHref(stablecoinSlug),
 		logoUrl: getStablecoinLogoUrl(stablecoinSlug)
 	};
 }
@@ -179,7 +180,7 @@ export function buildStablecoinChainHeatmapPayload(
 			tooltipLabel: string;
 			totalTvl: number;
 			stablecoinSlug: string;
-			href: string;
+			href?: string;
 			logoUrl?: string;
 		}
 	>();

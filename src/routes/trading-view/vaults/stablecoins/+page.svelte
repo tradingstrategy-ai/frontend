@@ -8,7 +8,11 @@
 	import VaultGroupTable from '$lib/top-vaults/VaultGroupTable.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
 	import { formatDollar } from '$lib/helpers/formatters';
-	import { getStablecoinLogoUrl, isStablecoinDepegged } from '$lib/stablecoin-metadata/helpers.js';
+	import {
+		getStablecoinDetailsHref,
+		getStablecoinLogoUrl,
+		isStablecoinDepegged
+	} from '$lib/stablecoin-metadata/helpers.js';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import MarketSharePieChart from '../MarketSharePieChart.svelte';
 	import MarketShareWidgetBox from '../MarketShareWidgetBox.svelte';
@@ -27,13 +31,6 @@
 	const pageTitle = 'Vaults by stablecoin';
 	const description =
 		'DeFi vaults for different stablecoins. TVL represents deposits of a stablecoin in vaults. APY represents the yield of last thirty days.';
-	const glossaryLinks = {
-		defi: resolve('/glossary/defi'),
-		vault: resolve('/glossary/vault'),
-		stablecoin: resolve('/glossary/stablecoin'),
-		tvl: resolve('/glossary/total-value-locked-tvl'),
-		apy: resolve('/glossary/apy')
-	};
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
@@ -73,13 +70,13 @@
 						{/snippet}
 						{#snippet subtitle()}
 							<p>
-								<a class="body-link" href={glossaryLinks.defi}>DeFi</a>
-								<a class="body-link" href={glossaryLinks.vault}>vaults</a>
+								<a class="body-link" href={resolve('/glossary/defi')}>DeFi</a>
+								<a class="body-link" href={resolve('/glossary/vault')}>vaults</a>
 								for different
-								<a class="body-link" href={glossaryLinks.stablecoin}>stablecoins</a>.
-								<a class="body-link" href={glossaryLinks.tvl}>TVL</a>
+								<a class="body-link" href={resolve('/glossary/stablecoin')}>stablecoins</a>.
+								<a class="body-link" href={resolve('/glossary/total-value-locked-tvl')}>TVL</a>
 								represents deposits of a stablecoin in vaults.
-								<a class="body-link" href={glossaryLinks.apy}>APY</a>
+								<a class="body-link" href={resolve('/glossary/apy')}>APY</a>
 								represents the yield of last thirty days.
 							</p>
 							<p>{totalTvlLabel} TVL tracked across {stablecoins.length} stablecoins.</p>
@@ -106,6 +103,7 @@
 			groupLabel="Stablecoin"
 			includeFullName
 			getLogoHref={getStablecoinLogoUrl}
+			getHref={getStablecoinDetailsHref}
 			getWarningLabel={(row) =>
 				isStablecoinDepegged(row) ? `${row.name} is below 90% of its native peg rate` : undefined}
 			rows={stablecoins}

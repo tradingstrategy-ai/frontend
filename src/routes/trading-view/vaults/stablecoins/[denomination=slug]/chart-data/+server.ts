@@ -8,7 +8,11 @@ import {
 	VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS
 } from '$lib/echarts/vault-group-mini-chart-server';
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
-import { buildStablecoinMetadataLookup, resolveStablecoinSlug } from '$lib/stablecoin-metadata/helpers';
+import {
+	buildStablecoinMetadataLookup,
+	OFFCHAIN_USD_STABLECOIN_SLUG,
+	resolveStablecoinSlug
+} from '$lib/stablecoin-metadata/helpers';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 
 const CACHE_VERSION = 'stablecoin-mini-chart-v4';
@@ -36,7 +40,14 @@ async function getCachedChartData(denominationSlug: string, fetch: Fetch) {
 		);
 		return slug === denominationSlug;
 	});
-	if (stablecoinVaults.length === 0) error(404, 'Vault stablecoin not found');
+	if (stablecoinVaults.length === 0) {
+		if (denominationSlug === OFFCHAIN_USD_STABLECOIN_SLUG) {
+			return buildProtocolMiniChartPayload([], 0, VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS, {
+				latestApyRows: []
+			});
+		}
+		error(404, 'Vault stablecoin not found');
+	}
 
 	const eligibleVaults = stablecoinVaults.filter(isEligibleVaultGroupMiniChartVault);
 	const rows =

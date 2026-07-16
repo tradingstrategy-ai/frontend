@@ -30,6 +30,8 @@ excluded vault count from the loaded vault data.
 	interface Props {
 		/** MetricsBox heading, e.g. "About Base vaults" */
 		title: string;
+		/** Optional introductory sentence shown before the generated vault summary. */
+		description?: string;
 		/** Sentence opener naming the group, e.g. "Base blockchain" or "Circle USDC" */
 		subject: string;
 		/** Verb phrase linking the subject to the vault count, e.g. "has" or "is used in" */
@@ -37,7 +39,7 @@ excluded vault count from the loaded vault data.
 		vaults: VaultInfo[];
 	}
 
-	let { title, subject, verbPhrase = 'has', vaults }: Props = $props();
+	let { title, description, subject, verbPhrase = 'has', vaults }: Props = $props();
 
 	// all headline stats derive from this set: exclude blacklisted vaults and broken
 	// TVL outliers so a single bad data point doesn't inflate the figures
@@ -89,6 +91,9 @@ excluded vault count from the loaded vault data.
 
 <div class="vault-group-description">
 	<MetricsBox {title}>
+		{#if description}
+			<p>{description}</p>
+		{/if}
 		<p>
 			{subject}
 			{verbPhrase}

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-label="United States flag">
+	<defs>
+		<clipPath id="circle"><circle cx="12" cy="12" r="11" /></clipPath>
+	</defs>
+	<g clip-path="url(#circle)">
+		<rect width="24" height="24" fill="#fff" />
+		<path fill="#b22234" d="M0 0h24v1.85H0zm0 3.69h24v1.85H0zm0 3.69h24v1.85H0zm0 3.69h24v1.85H0zm0 3.69h24v1.85H0zm0 3.69h24v1.85H0zm0 3.69h24v1.85H0z" />
+		<rect width="10.5" height="12.92" fill="#3c3b6e" />
+		<g fill="#fff">
+			<circle cx="1.6" cy="1.7" r=".45" /><circle cx="4" cy="1.7" r=".45" /><circle cx="6.4" cy="1.7" r=".45" /><circle cx="8.8" cy="1.7" r=".45" />
+			<circle cx="2.8" cy="3.4" r=".45" /><circle cx="5.2" cy="3.4" r=".45" /><circle cx="7.6" cy="3.4" r=".45" />
+			<circle cx="1.6" cy="5.1" r=".45" /><circle cx="4" cy="5.1" r=".45" /><circle cx="6.4" cy="5.1" r=".45" /><circle cx="8.8" cy="5.1" r=".45" />
+			<circle cx="2.8" cy="6.8" r=".45" /><circle cx="5.2" cy="6.8" r=".45" /><circle cx="7.6" cy="6.8" r=".45" />
+			<circle cx="1.6" cy="8.5" r=".45" /><circle cx="4" cy="8.5" r=".45" /><circle cx="6.4" cy="8.5" r=".45" /><circle cx="8.8" cy="8.5" r=".45" />
+			<circle cx="2.8" cy="10.2" r=".45" /><circle cx="5.2" cy="10.2" r=".45" /><circle cx="7.6" cy="10.2" r=".45" />
+		</g>
+	</g>
+	<circle cx="12" cy="12" r="11" fill="none" stroke="rgba(15, 23, 42, .18)" />
+</svg>

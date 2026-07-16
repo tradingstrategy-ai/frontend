@@ -90,9 +90,10 @@
 			: `<span>${titleLabel}</span>`;
 		const showNameRow = slice.name !== slice.label;
 		const groupedLabel = `${toTitleCase(groupLabelPlural)} grouped`;
-		const hint = slice.isOther
-			? ''
-			: `<div class="tooltip-hint" style="margin-top: 0.75rem; display: inline-flex; align-items: center; border: 1px solid rgba(191, 219, 254, 0.16); border-radius: 999px; padding: 0.38rem 0.72rem; color: #f8fafc; font-family: ${chartFontFamily}; background: rgba(125, 211, 252, 0.08); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);"><span style="text-decoration: underline;">Click to view more</span></div>`;
+		const hint =
+			slice.isOther || !slice.url
+				? ''
+				: `<div class="tooltip-hint" style="margin-top: 0.75rem; display: inline-flex; align-items: center; border: 1px solid rgba(191, 219, 254, 0.16); border-radius: 999px; padding: 0.38rem 0.72rem; color: #f8fafc; font-family: ${chartFontFamily}; background: rgba(125, 211, 252, 0.08); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);"><span style="text-decoration: underline;">Click to view more</span></div>`;
 
 		return [
 			`<div style="margin-bottom: 0.7rem; padding-bottom: 0.65rem; border-bottom: 1px solid rgba(191, 219, 254, 0.12);"><div class="tooltip-title" style="${TOOLTIP_TITLE_STYLE}">${title}</div>${showNameRow ? `<div style="margin-top: 0.18rem; color: rgba(226, 232, 240, 0.76); font-family: ${chartFontFamily}; line-height: 1.35;">${escapeHtml(slice.name)}</div>` : ''}</div>`,

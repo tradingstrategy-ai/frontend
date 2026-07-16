@@ -5,6 +5,8 @@ import {
 	buildStablecoinMetadataLookup,
 	formatStablecoinDisplayName,
 	findStablecoinMetadata,
+	OFFCHAIN_USD_STABLECOIN_SLUG,
+	OFFCHAIN_USD_SHORT_DESCRIPTION,
 	resolveStablecoinSlug
 } from '$lib/stablecoin-metadata/helpers';
 
@@ -31,8 +33,11 @@ export async function load({ params, fetch }) {
 		return slug === denomination;
 	});
 
-	// 404 only if neither vault data nor metadata exists
-	if (!match && !stablecoinMetadata) error(404, 'Vault stablecoin not found');
+	// Off-chain USD is a recognised accounting denomination even if no vault is
+	// currently present in the dataset, so retain its standalone information page.
+	if (!match && !stablecoinMetadata && denomination !== OFFCHAIN_USD_STABLECOIN_SLUG) {
+		error(404, 'Vault stablecoin not found');
+	}
 
 	const denominationSymbol = stablecoinMetadata?.symbol ?? match?.denomination ?? denomination.toUpperCase();
 	const denominationName =
@@ -45,6 +50,10 @@ export async function load({ params, fetch }) {
 		denominationSlug: denomination,
 		denominationSymbol,
 		denominationName,
+		shortDescription:
+			denomination === OFFCHAIN_USD_STABLECOIN_SLUG
+				? OFFCHAIN_USD_SHORT_DESCRIPTION
+				: (stablecoinMetadata?.short_description ?? null),
 		stablecoinMetadata
 	};
 }

@@ -4,6 +4,9 @@ import { slugify } from '$lib/helpers/slugify';
 import type { StablecoinMetadata } from './schemas';
 
 export const STABLECOIN_DEPEG_RATE_THRESHOLD = 0.9;
+export const OFFCHAIN_USD_STABLECOIN_SLUG = 'usd-offchain';
+export const OFFCHAIN_USD_SHORT_DESCRIPTION = 'U.S. Dollars in the banking system without onchain transparency';
+const OFFCHAIN_USD_LOGO_URL = '/flags/us.svg';
 
 interface StablecoinLookupInput {
 	slug?: string | null;
@@ -128,6 +131,54 @@ export function resolveStablecoinSlug(
 }
 
 /**
+ * Return the stablecoin details page URL when the denomination is navigable.
+ *
+ * Off-chain USD has a standalone page, but is intentionally not linked from
+ * stablecoin listings because it is a vault accounting denomination rather
+ * than an on-chain stablecoin product.
+ *
+ * @param slug stablecoin denomination slug
+ */
+export function getStablecoinDetailsHref(slug: string | null | undefined): string | undefined {
+	const trimmedSlug = slug?.trim().toLowerCase();
+	if (!trimmedSlug || trimmedSlug === OFFCHAIN_USD_STABLECOIN_SLUG) return undefined;
+
+	return `/trading-view/vaults/stablecoins/${trimmedSlug}`;
+}
+
+/**
+ * Whether a vault is denominated in Midas' raw USD accounting currency.
+ *
+ * This is distinct from tokenised stablecoins such as USDT, even though their
+ * metadata can expose a USD symbol alias.
+ *
+ * @param vault vault denomination fields
+ */
+export function isMidasRawUsdVault(vault: { protocol_slug?: string | null; denomination?: string | null }): boolean {
+	return vault.protocol_slug === 'midas' && vault.denomination?.trim().toLowerCase() === 'usd';
+}
+
+/**
+ * Return the denomination logo for a vault.
+ *
+ * Midas reports certain vaults as raw USD rather than an on-chain token. These
+ * use the US flag; tokenised denominations such as USDT retain their own logos.
+ *
+ * @param vault vault denomination fields
+ * @param slug resolved stablecoin denomination slug
+ */
+export function getVaultDenominationLogoUrl(
+	vault: { protocol_slug?: string | null; denomination?: string | null },
+	slug: string | null | undefined
+): string | undefined {
+	if (isMidasRawUsdVault(vault)) {
+		return OFFCHAIN_USD_LOGO_URL;
+	}
+
+	return slug ? getStablecoinLogoUrl(slug) : undefined;
+}
+
+/**
  * Return the CoinGecko URL for a stablecoin metadata record.
  *
  * @param metadata stablecoin metadata from the external metadata index
@@ -193,6 +244,10 @@ export function isStablecoinDepegged(metadata: StablecoinRateInput | null | unde
  * Returns undefined if the stablecoin metadata URL is not configured.
  */
 export function getStablecoinLogoUrl(slug: string, options: MetadataLogoOptions = {}): string | undefined {
+	const normalisedSlug = slug.trim().toLowerCase();
+	if (normalisedSlug === OFFCHAIN_USD_STABLECOIN_SLUG) {
+		return OFFCHAIN_USD_LOGO_URL;
+	}
 	if (!stablecoinMetadataUrl) return undefined;
 	return buildMetadataLogoProxyPath('stablecoin', slug, {
 		format: 'webp',
