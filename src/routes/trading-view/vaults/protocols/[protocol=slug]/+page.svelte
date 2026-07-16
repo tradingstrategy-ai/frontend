@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { TopVaults } from '$lib/top-vaults/schemas';
 	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
-	import { isManuallyMappedUnknownProtocolSlug, isUnsupportedProtocolSlug } from '$lib/top-vaults/helpers';
+	import { isUnknownVaultProtocol, UNKNOWN_VAULT_PROTOCOL_SLUG } from '$lib/top-vaults/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
@@ -12,7 +12,7 @@
 
 	let { data } = $props();
 	let { protocolSlug, protocolName, protocolMetadata, core3 } = $derived(data);
-	let isUnknownVaultProtocol = $derived(isManuallyMappedUnknownProtocolSlug(protocolSlug));
+	let isUnknownVaultProtocolGroup = $derived(protocolSlug === UNKNOWN_VAULT_PROTOCOL_SLUG);
 
 	let topVaults = $state<TopVaults>();
 	let loading = $state(!hasVaultCache(page.data.generatedAt));
@@ -22,7 +22,9 @@
 			.then((allData) => {
 				topVaults = {
 					...allData,
-					vaults: allData.vaults.filter((v) => v.protocol_slug === protocolSlug)
+					vaults: allData.vaults.filter((vault) =>
+						isUnknownVaultProtocolGroup ? isUnknownVaultProtocol(vault) : vault.protocol_slug === protocolSlug
+					)
 				};
 			})
 			.catch((e) => console.error('Failed to load vault data:', e))
@@ -31,10 +33,12 @@
 
 	const unknownVaultDescription = 'These vaults are not yet mapped out. Contact us to have your vaults listed.';
 
-	let title = $derived(isUnknownVaultProtocol ? 'Unknown vaults' : `${protocolName} vaults and yields`);
-	let heroTitle = $derived(isUnknownVaultProtocol ? 'Unknown vaults' : `${protocolName} powered stablecoin vaults`);
+	let title = $derived(isUnknownVaultProtocolGroup ? 'Unknown vaults' : `${protocolName} vaults and yields`);
+	let heroTitle = $derived(
+		isUnknownVaultProtocolGroup ? 'Unknown vaults' : `${protocolName} powered stablecoin vaults`
+	);
 	let description = $derived(
-		isUnknownVaultProtocol
+		isUnknownVaultProtocolGroup
 			? unknownVaultDescription
 			: (protocolMetadata?.short_description ?? `Top stablecoin vaults on ${protocolName}`)
 	);
@@ -92,11 +96,11 @@
 	{loading}
 	{protocolMetadata}
 	title={heroTitle}
-	subtitle={isUnknownVaultProtocol ? unknownVaultSubtitle : undefined}
+	subtitle={isUnknownVaultProtocolGroup ? unknownVaultSubtitle : undefined}
 	showFilters
 	showUnknownFilter={false}
 	defaultTvlKey="10k"
-	defaultHideUnknown={isUnsupportedProtocolSlug(protocolSlug) ? 0 : 1}
+	defaultHideUnknown={isUnknownVaultProtocolGroup ? 0 : 1}
 >
 	{#snippet detailAside()}
 		<VaultGroupMiniChart
