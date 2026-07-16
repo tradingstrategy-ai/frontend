@@ -9,7 +9,7 @@ export interface MarketShareChartItem {
 	tvl: number;
 	avgApy: number | null;
 	logoUrl?: string;
-	href: string;
+	href?: string;
 }
 
 export interface MarketSharePieSlice {

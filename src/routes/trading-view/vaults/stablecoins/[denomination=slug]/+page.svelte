@@ -13,7 +13,7 @@
 	import VaultGroupDescription from '../../VaultGroupDescription.svelte';
 
 	let { data } = $props();
-	let { denominationSlug, denominationSymbol, denominationName, stablecoinMetadata } = $derived(data);
+	let { denominationSlug, denominationSymbol, denominationName, shortDescription, stablecoinMetadata } = $derived(data);
 
 	let topVaults = $state<TopVaults>();
 	let loading = $state(!hasVaultCache(page.data.generatedAt));
@@ -31,12 +31,10 @@
 	});
 
 	let title = $derived(`${denominationName} stablecoin vaults | Trading Strategy`);
-	let description = $derived(
-		stablecoinMetadata?.short_description ?? `Top ${denominationName} DeFi vaults ranked by performance.`
-	);
+	let description = $derived(shortDescription ?? `Top ${denominationName} DeFi vaults ranked by performance.`);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived.by(() => {
-		const logoPath = stablecoinMetadata?.logos.light ? getStablecoinLogoUrl(stablecoinMetadata.slug) : undefined;
+		const logoPath = denominationSlug ? getStablecoinLogoUrl(denominationSlug) : undefined;
 		return logoPath ? new URL(logoPath, page.url.origin).href : undefined;
 	});
 	let aboutName = $derived(formatStablecoinDisplayName(stablecoinMetadata?.name, stablecoinMetadata?.symbol));
@@ -95,6 +93,7 @@
 	{topVaults}
 	{loading}
 	{stablecoinMetadata}
+	stablecoinLogoSlug={denominationSlug}
 	title="{denominationName} stablecoin vaults"
 	showFilters
 	defaultTvlKey="10k"

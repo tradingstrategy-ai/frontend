@@ -37,7 +37,7 @@
 		page?: number;
 		sort?: SortOptions['keys'][number];
 		direction?: SortOptions['directions'][number];
-		getHref?: (slug: string) => string;
+		getHref?: (slug: string) => string | undefined;
 		getWarningLabel?: (row: VaultGroup) => string | undefined;
 	}
 
@@ -161,7 +161,8 @@
 			id: 'cta',
 			header: '',
 			accessor: (row) => getHref(row.slug),
-			cell: ({ value }) => createRender(TableRowTarget, { size: 'sm', label: 'View vaults', href: value }),
+			cell: ({ value }) =>
+				value ? createRender(TableRowTarget, { size: 'sm', label: 'View vaults', href: value }) : '',
 			plugins: { sort: { disable: true } }
 		})
 	]);

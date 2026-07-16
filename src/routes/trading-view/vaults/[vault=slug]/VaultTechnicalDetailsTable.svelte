@@ -13,7 +13,11 @@
 		getVaultDenominationCurrency,
 		getVaultTvlNative
 	} from '$lib/top-vaults/helpers';
-	import { getStablecoinLogoUrl, resolveStablecoinSlug } from '$lib/stablecoin-metadata/helpers';
+	import {
+		getStablecoinDetailsHref,
+		getVaultDenominationLogoUrl,
+		resolveStablecoinSlug
+	} from '$lib/stablecoin-metadata/helpers';
 	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
 	import { getLogoUrl } from '$lib/helpers/assets';
 
@@ -49,12 +53,8 @@
 	let showNativeTvlRows = $derived(denominationCurrency != null && denominationCurrency !== 'usd');
 	let lifetimePeriod = $derived(vault.period_results?.find((p) => p.period.toLowerCase() === 'lifetime') ?? null);
 	let denominationPageSlug = $derived(denominationSlug ?? vault.denomination_slug);
-	let denominationLogoUrl = $derived(
-		stablecoinMetadata?.logos.light && denominationSlug ? getStablecoinLogoUrl(denominationSlug) : undefined
-	);
-	let denominationHref = $derived(
-		stablecoinMetadata && denominationSlug ? `/trading-view/vaults/stablecoins/${denominationSlug}` : undefined
-	);
+	let denominationLogoUrl = $derived(getVaultDenominationLogoUrl(vault, denominationSlug));
+	let denominationHref = $derived(stablecoinMetadata ? getStablecoinDetailsHref(denominationSlug) : undefined);
 	let showExchangeRateRow = $derived(vault.protocol_slug !== 'kinexys');
 	let exchangeRateFetchedAt = $derived(
 		vault.denomination_token_rate?.usd_rate_fetched_at ??
@@ -91,7 +91,8 @@
 							usdRate: getVaultDenominationUsdRate(vault),
 							symbol: vault.denomination,
 							slug: denominationPageSlug,
-							fetchedAt: exchangeRateFetchedAt
+							fetchedAt: exchangeRateFetchedAt,
+							href: getStablecoinDetailsHref(denominationPageSlug)
 						},
 						type: 'exchangeRate' as const
 					}
@@ -262,9 +263,11 @@
 							{:else if row.type === 'exchangeRate'}
 								{#if row.value.usdRate != null}
 									<span class="exchange-rate-cell">
-										<a href="/trading-view/vaults/stablecoins/{row.value.slug}">
+										{#if row.value.href}
+											<a href={row.value.href}>{formatExchangeRate(row.value.usdRate, row.value.symbol)}</a>
+										{:else}
 											{formatExchangeRate(row.value.usdRate, row.value.symbol)}
-										</a>
+										{/if}
 										{#if row.value.fetchedAt}
 											<span class="secondary">
 												fetched <Timestamp date={row.value.fetchedAt} relative />

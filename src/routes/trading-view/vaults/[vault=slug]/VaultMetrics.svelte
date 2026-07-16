@@ -8,10 +8,15 @@ Displays supplementary vault information, including transaction status, performa
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import Risk from '$lib/top-vaults/Risk.svelte';
 	import Metric from './Metric.svelte';
+	import { resolve } from '$app/paths';
 	import { getFormattedLockup, isGoodVaultStatus } from '$lib/top-vaults/helpers';
 	import { formatNumber, formatPercent, formatPercentProfit } from '$lib/helpers/formatters';
 	import { getChain } from '$lib/helpers/chain';
-	import { getStablecoinLogoUrl, resolveStablecoinSlug } from '$lib/stablecoin-metadata/helpers';
+	import {
+		getStablecoinDetailsHref,
+		getVaultDenominationLogoUrl,
+		resolveStablecoinSlug
+	} from '$lib/stablecoin-metadata/helpers';
 	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
 
 	interface Props {
@@ -33,12 +38,8 @@ Displays supplementary vault information, including transaction status, performa
 			name: vault.normalised_denomination
 		})
 	);
-	let denominationLogoUrl = $derived(
-		stablecoinMetadata?.logos.light && denominationSlug ? getStablecoinLogoUrl(denominationSlug) : undefined
-	);
-	let denominationHref = $derived(
-		stablecoinMetadata && denominationSlug ? `/trading-view/vaults/stablecoins/${denominationSlug}` : undefined
-	);
+	let denominationLogoUrl = $derived(getVaultDenominationLogoUrl(vault, denominationSlug));
+	let denominationHref = $derived(stablecoinMetadata ? getStablecoinDetailsHref(denominationSlug) : undefined);
 
 	function getDaysUntil(dateString: string | null): number | null {
 		if (!dateString) return null;
@@ -57,19 +58,48 @@ Displays supplementary vault information, including transaction status, performa
 	);
 	let periodResults = $derived(new Map(vault.period_results.map((metrics) => [metrics.period.toLowerCase(), metrics])));
 	let returnPeriods = $derived([
-		{ label: '1M', gross: vault.one_month_returns, net: vault.one_month_returns_net },
-		{ label: '3M', gross: vault.three_months_returns, net: vault.three_months_returns_net },
+		{
+			label: '1M',
+			samplePeriod: periodResults.get('1m'),
+			gross: { annualised: vault.one_month_cagr, raw: vault.one_month_returns },
+			net: { annualised: vault.one_month_cagr_net, raw: vault.one_month_returns_net }
+		},
+		{
+			label: '3M',
+			samplePeriod: periodResults.get('3m'),
+			gross: { annualised: vault.three_months_cagr, raw: vault.three_months_returns },
+			net: { annualised: vault.three_months_cagr_net, raw: vault.three_months_returns_net }
+		},
 		{
 			label: '6M',
-			gross: periodResults.get('6m')?.returns_gross ?? null,
-			net: periodResults.get('6m')?.returns_net ?? null
+			samplePeriod: periodResults.get('6m'),
+			gross: {
+				annualised: periodResults.get('6m')?.cagr_gross ?? null,
+				raw: periodResults.get('6m')?.returns_gross ?? null
+			},
+			net: {
+				annualised: periodResults.get('6m')?.cagr_net ?? null,
+				raw: periodResults.get('6m')?.returns_net ?? null
+			}
 		},
 		{
 			label: '1Y',
-			gross: periodResults.get('1y')?.returns_gross ?? null,
-			net: periodResults.get('1y')?.returns_net ?? null
+			samplePeriod: periodResults.get('1y'),
+			gross: {
+				annualised: periodResults.get('1y')?.cagr_gross ?? null,
+				raw: periodResults.get('1y')?.returns_gross ?? null
+			},
+			net: {
+				annualised: periodResults.get('1y')?.cagr_net ?? null,
+				raw: periodResults.get('1y')?.returns_net ?? null
+			}
 		},
-		{ label: 'Lifetime', gross: vault.lifetime_return, net: vault.lifetime_return_net }
+		{
+			label: 'Lifetime',
+			samplePeriod: periodResults.get('lifetime'),
+			gross: { annualised: vault.cagr, raw: vault.lifetime_return },
+			net: { annualised: vault.cagr_net, raw: vault.lifetime_return_net }
+		}
 	]);
 	let feeRows = $derived([
 		{
@@ -97,6 +127,17 @@ Displays supplementary vault information, including transaction status, performa
 			tooltip: '<strong>Withdrawal fee</strong> is a one-time fee applied when exiting the vault.'
 		}
 	]);
+
+	function formatDate(value: string | null | undefined): string {
+		if (value == null) return 'unknown';
+		return value.split('T')[0] ?? 'unknown';
+	}
+
+	function getSamplePeriodLabel(period: (typeof returnPeriods)[number]): string {
+		if (!period.samplePeriod) return period.label;
+
+		return `${period.label}, ${formatDate(period.samplePeriod.period_start_at)} to ${formatDate(period.samplePeriod.period_end_at)}`;
+	}
 </script>
 
 <div class="additional-metrics">
@@ -161,7 +202,7 @@ Displays supplementary vault information, including transaction status, performa
 			{#snippet maxDrawdownLabel()}
 				<Tooltip>
 					<span slot="trigger">
-						<a class="glossary-link" href="/glossary/maximum-drawdown">Maximum drawdown</a>
+						<a class="glossary-link" href={resolve('/glossary/maximum-drawdown')}>Maximum drawdown</a>
 					</span>
 					<svelte:fragment slot="popup">Maximum drawdown over the vault lifetime.</svelte:fragment>
 				</Tooltip>
@@ -172,7 +213,7 @@ Displays supplementary vault information, including transaction status, performa
 			</Metric>
 
 			<Metric label="Protocol Technical Risk">
-				<a class="risk-link" href="/blog/announcing-vault-technical-risk-framework-beta">
+				<a class="risk-link" href={resolve('/blog/announcing-vault-technical-risk-framework-beta')}>
 					<Risk risk={vault.risk} />
 				</a>
 			</Metric>
@@ -183,6 +224,7 @@ Displays supplementary vault information, including transaction status, performa
 
 			<Metric label="Denomination">
 				{#if denominationHref}
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 					<a class="denomination-link" href={denominationHref}>
 						{#if denominationLogoUrl}
 							<img class="denomination-logo" src={denominationLogoUrl} alt="" />
@@ -207,7 +249,7 @@ Displays supplementary vault information, including transaction status, performa
 				<thead>
 					<tr>
 						<th></th>
-						{#each returnPeriods as period}
+						{#each returnPeriods as period (period.label)}
 							<th scope="col">{period.label}</th>
 						{/each}
 					</tr>
@@ -230,31 +272,71 @@ Displays supplementary vault information, including transaction status, performa
 					<tr>
 						<td>
 							{@render metricLabel(
-								'<strong>Gross returns</strong> reflect the change in the vault share price before investor-facing fees are deducted.',
+								'<strong>Gross returns</strong> are annualised. They reflect the change in the vault share price before investor-facing fees are deducted.',
 								'Gross'
 							)}
 						</td>
-						{#each returnPeriods as period}
-							<td>{formatPercentProfit(period.gross)}</td>
+						{#each returnPeriods as period (period.label)}
+							<td>
+								<Tooltip>
+									<span slot="trigger" class="return-cell">{formatPercentProfit(period.gross.annualised)}</span>
+									<svelte:fragment slot="popup">
+										<dl class="return-tooltip">
+											<div>
+												<dt>Annualised:</dt>
+												<dd>{formatPercentProfit(period.gross.annualised)}</dd>
+											</div>
+											<div>
+												<dt>Raw:</dt>
+												<dd>{formatPercentProfit(period.gross.raw)}</dd>
+											</div>
+											<div>
+												<dt>Sampled period:</dt>
+												<dd>{getSamplePeriodLabel(period)}</dd>
+											</div>
+										</dl>
+									</svelte:fragment>
+								</Tooltip>
+							</td>
 						{/each}
 					</tr>
-					{#each feeRows as fee}
+					{#each feeRows as fee (fee.label)}
 						<tr class="fee-row">
 							<td>{@render metricLabel(fee.tooltip, fee.label, fee.mobileLabel)}</td>
-							{#each returnPeriods as _}
-								<td>{formatPercent(fee.value)}</td>
+							{#each returnPeriods as period (period.label)}
+								<td aria-label={`${fee.label} for ${period.label}`}>{formatPercent(fee.value)}</td>
 							{/each}
 						</tr>
 					{/each}
 					<tr>
 						<td>
 							{@render metricLabel(
-								'<strong>Net returns</strong> are the gross returns after all investor-facing fees have been deducted.',
+								'<strong>Net returns</strong> are annualised. They are the gross returns after all investor-facing fees have been deducted.',
 								'Net'
 							)}
 						</td>
-						{#each returnPeriods as period}
-							<td>{formatPercentProfit(period.net)}</td>
+						{#each returnPeriods as period (period.label)}
+							<td>
+								<Tooltip>
+									<span slot="trigger" class="return-cell">{formatPercentProfit(period.net.annualised)}</span>
+									<svelte:fragment slot="popup">
+										<dl class="return-tooltip">
+											<div>
+												<dt>Annualised:</dt>
+												<dd>{formatPercentProfit(period.net.annualised)}</dd>
+											</div>
+											<div>
+												<dt>Raw:</dt>
+												<dd>{formatPercentProfit(period.net.raw)}</dd>
+											</div>
+											<div>
+												<dt>Sampled period:</dt>
+												<dd>{getSamplePeriodLabel(period)}</dd>
+											</div>
+										</dl>
+									</svelte:fragment>
+								</Tooltip>
+							</td>
 						{/each}
 					</tr>
 				</tbody>
@@ -385,6 +467,32 @@ Displays supplementary vault information, including transaction status, performa
 			display: inline-flex;
 			align-items: center;
 			gap: 0.75ex;
+		}
+
+		.return-cell {
+			border-bottom: 1px dotted var(--c-text-light);
+		}
+
+		.return-tooltip {
+			display: grid;
+			gap: 0.35rem;
+			margin: 0;
+
+			div {
+				display: grid;
+				grid-template-columns: max-content 1fr;
+				gap: 0.75rem;
+			}
+
+			dt {
+				color: var(--c-text-light);
+			}
+
+			dd {
+				margin: 0;
+				text-align: right;
+				font-weight: 500;
+			}
 		}
 
 		.label-mobile {

@@ -353,33 +353,63 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 				<div class="stablecoin-axis" aria-label="Stablecoins">
 					{#each data?.stablecoins ?? [] as stablecoin (stablecoin.key)}
 						{@const tooltipId = getAxisTooltipId('stablecoin', stablecoin.key)}
-						<a
-							class="axis-label stablecoin-label"
-							href={stablecoin.href}
-							aria-describedby={tooltipId}
-							data-tooltip-active={activeAxisTooltipId === tooltipId ? 'true' : 'false'}
-							onmouseenter={() => showAxisTooltip(tooltipId)}
-							onmouseleave={() => hideAxisTooltip(tooltipId)}
-							onfocus={() => showAxisTooltip(tooltipId)}
-							onblur={() => hideAxisTooltip(tooltipId)}
-						>
-							{#if stablecoin.logoUrl}
-								<img class="axis-logo" src={stablecoin.logoUrl} alt="" loading="lazy" />
-							{/if}
-							<span>{stablecoin.label}</span>
-							<span
-								id={tooltipId}
-								class="axis-tooltip"
-								role="tooltip"
-								style={getAxisTooltipStyle('stablecoin', tooltipId)}
+						{#if stablecoin.href}
+							<a
+								class="axis-label stablecoin-label"
+								href={stablecoin.href}
+								aria-describedby={tooltipId}
+								data-tooltip-active={activeAxisTooltipId === tooltipId ? 'true' : 'false'}
+								onmouseenter={() => showAxisTooltip(tooltipId)}
+								onmouseleave={() => hideAxisTooltip(tooltipId)}
+								onfocus={() => showAxisTooltip(tooltipId)}
+								onblur={() => hideAxisTooltip(tooltipId)}
 							>
-								<span class="axis-tooltip-title">{stablecoin.tooltipLabel}</span>
-								<span class="axis-tooltip-metric-line">
-									TVL:&nbsp;<span class="axis-tooltip-metric-value">{buildAxisTooltipValue(stablecoin.totalTvl)}</span>
+								{#if stablecoin.logoUrl}
+									<img class="axis-logo" src={stablecoin.logoUrl} alt="" loading="lazy" />
+								{/if}
+								<span>{stablecoin.label}</span>
+								<span
+									id={tooltipId}
+									class="axis-tooltip"
+									role="tooltip"
+									style={getAxisTooltipStyle('stablecoin', tooltipId)}
+								>
+									<span class="axis-tooltip-title">{stablecoin.tooltipLabel}</span>
+									<span class="axis-tooltip-metric-line">
+										TVL:&nbsp;<span class="axis-tooltip-metric-value">{buildAxisTooltipValue(stablecoin.totalTvl)}</span
+										>
+									</span>
+									<span class="axis-tooltip-cta">Click here to view more.</span>
 								</span>
-								<span class="axis-tooltip-cta">Click here to view more.</span>
-							</span>
-						</a>
+							</a>
+						{:else}
+							<a
+								class="axis-label stablecoin-label"
+								aria-describedby={tooltipId}
+								data-tooltip-active={activeAxisTooltipId === tooltipId ? 'true' : 'false'}
+								onmouseenter={() => showAxisTooltip(tooltipId)}
+								onmouseleave={() => hideAxisTooltip(tooltipId)}
+								onfocus={() => showAxisTooltip(tooltipId)}
+								onblur={() => hideAxisTooltip(tooltipId)}
+							>
+								{#if stablecoin.logoUrl}
+									<img class="axis-logo" src={stablecoin.logoUrl} alt="" loading="lazy" />
+								{/if}
+								<span>{stablecoin.label}</span>
+								<span
+									id={tooltipId}
+									class="axis-tooltip"
+									role="tooltip"
+									style={getAxisTooltipStyle('stablecoin', tooltipId)}
+								>
+									<span class="axis-tooltip-title">{stablecoin.tooltipLabel}</span>
+									<span class="axis-tooltip-metric-line">
+										TVL:&nbsp;<span class="axis-tooltip-metric-value">{buildAxisTooltipValue(stablecoin.totalTvl)}</span
+										>
+									</span>
+								</span>
+							</a>
+						{/if}
 					{/each}
 				</div>
 

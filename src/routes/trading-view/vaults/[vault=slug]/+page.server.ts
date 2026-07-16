@@ -1,6 +1,10 @@
 import { getChain } from '$lib/helpers/chain';
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
-import { buildStablecoinMetadataLookup, findStablecoinMetadata } from '$lib/stablecoin-metadata/helpers';
+import {
+	buildStablecoinMetadataLookup,
+	findStablecoinMetadata,
+	isMidasRawUsdVault
+} from '$lib/stablecoin-metadata/helpers';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import {
 	getCore3ProtocolForVault,
@@ -35,12 +39,14 @@ export async function load({ params, fetch }) {
 		fetchStablecoinMetadataIndex(fetch)
 	]);
 	const stablecoinMetadataLookup = buildStablecoinMetadataLookup(stablecoinMetadataIndex);
-	const stablecoinMetadata = findStablecoinMetadata(
-		stablecoinMetadataLookup,
-		vault.denomination_slug,
-		vault.denomination,
-		vault.normalised_denomination
-	);
+	const stablecoinMetadata = isMidasRawUsdVault(vault)
+		? undefined
+		: findStablecoinMetadata(
+				stablecoinMetadataLookup,
+				vault.denomination_slug,
+				vault.denomination,
+				vault.normalised_denomination
+			);
 	const vaultWithRates = withVaultDenominationTokenRate(
 		vault,
 		stablecoinMetadata,

@@ -7,6 +7,7 @@ import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
 import {
 	buildStablecoinMetadataLookup,
 	getStablecoinCoingeckoLink,
+	getStablecoinDetailsHref,
 	getStablecoinLogoUrl,
 	resolveStablecoinSlug
 } from '$lib/stablecoin-metadata/helpers.js';
@@ -106,7 +107,7 @@ export async function load({ fetch, url: { searchParams } }) {
 		tvl: group.tvl,
 		avgApy: group.avg_apy ?? null,
 		logoUrl: getStablecoinLogoUrl(group.slug),
-		href: `/trading-view/vaults/stablecoins/${group.slug}`
+		href: getStablecoinDetailsHref(group.slug)
 	}));
 
 	const options = {

@@ -33,6 +33,8 @@
 		includeBlacklisted?: boolean;
 		protocolMetadata?: VaultProtocolMetadata;
 		stablecoinMetadata?: StablecoinMetadata;
+		/** Stablecoin slug used for a logo when no metadata record exists. */
+		stablecoinLogoSlug?: string;
 		curatorMetadata?: CuratorInfo;
 		/** Show interactive filter dropdowns (Min TVL, Min age, Max risk) */
 		showFilters?: boolean;
@@ -83,6 +85,7 @@
 		includeBlacklisted,
 		protocolMetadata,
 		stablecoinMetadata,
+		stablecoinLogoSlug,
 		curatorMetadata,
 		showFilters,
 		defaultTvlKey,
@@ -132,10 +135,10 @@
 									<img src={protocolLogoUrl} alt={protocolMetadata.name} />
 								{/if}
 							{/if}
-							{#if stablecoinMetadata?.logos.light}
-								{@const stablecoinLogoUrl = getStablecoinLogoUrl(stablecoinMetadata.slug)}
+							{#if stablecoinMetadata?.logos.light || stablecoinLogoSlug}
+								{@const stablecoinLogoUrl = getStablecoinLogoUrl(stablecoinMetadata?.slug ?? stablecoinLogoSlug ?? '')}
 								{#if stablecoinLogoUrl}
-									<img src={stablecoinLogoUrl} alt={stablecoinMetadata.name} />
+									<img src={stablecoinLogoUrl} alt={stablecoinMetadata?.name ?? pageTitle} />
 								{/if}
 							{/if}
 							{#if curatorMetadata?.logos.generic}
