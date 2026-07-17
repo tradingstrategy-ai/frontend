@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add tokenised fund listings, NAV market-share chart, and fund-specific vault detail messaging (2026-07-17)
 - Add live TVL and listing-count summaries to chain, protocol, curator and stablecoin vault pages (2026-07-11)
 - Add Robinhood vault-only chain support (2026-07-10)
 - Add curator information boxes to vault detail pages when curator metadata is available (2026-07-05)

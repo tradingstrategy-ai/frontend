@@ -351,12 +351,14 @@ test.describe('vault index page', () => {
 		);
 	});
 
-	test('warns when deposits may be disabled on a vault detail page', async ({ page }) => {
+	test('explains the tokenised fund structure when deposits may be disabled on a vault detail page', async ({
+		page
+	}) => {
 		await page.goto('/trading-view/vaults/deposit-disabled-vault');
 
-		const alert = page.locator('.alert-list.warning').first();
+		const alert = page.locator('.alert-list.info').first();
 		await expect(alert).toBeVisible();
-		await expect(alert).toContainText('Deposits may be disabled for this vault');
+		await expect(alert).toContainText('Deposit disabled vault is a tokenised fund');
 	});
 
 	test('warns when withdrawals may be disabled on a vault detail page', async ({ page }) => {

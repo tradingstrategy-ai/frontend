@@ -18,6 +18,7 @@
 	let { vault, protocolMetadata }: Props = $props();
 
 	let protocolPageUrl = $derived(resolve(`/trading-view/vaults/protocols/${vault.protocol_slug}`));
+	let assetType = $derived(vault.flags.includes('tokenised_fund') ? 'tokenised fund' : 'vault');
 </script>
 
 <MetricsBox>
@@ -31,7 +32,7 @@
 		<div class="content">
 			<h2>About {protocolMetadata.name}</h2>
 			<p class="description">
-				This vault is running on <a href={protocolPageUrl}>{protocolMetadata.name}</a>:
+				This {assetType} is running on <a href={protocolPageUrl}>{protocolMetadata.name}</a>:
 			</p>
 			<p class="description">{protocolMetadata.short_description}</p>
 		</div>

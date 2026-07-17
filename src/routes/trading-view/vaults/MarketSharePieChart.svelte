@@ -12,11 +12,26 @@
 		items: MarketShareChartItem[];
 		groupLabel: string;
 		groupLabelPlural: string;
+		/** Group items below this share into an Other slice. Defaults to 2%. */
+		otherThreshold?: number;
+		/** Split long slice names across two lines before the value label. */
+		wrapLabels?: boolean;
+		/** Label for the value shown in chart tooltips. */
+		valueLabel?: string;
 		testId?: string;
 		class?: string;
 	}
 
-	let { items, groupLabel, groupLabelPlural, testId = 'market-share-pie-chart', class: classes = '' }: Props = $props();
+	let {
+		items,
+		groupLabel,
+		groupLabelPlural,
+		otherThreshold,
+		wrapLabels = false,
+		valueLabel = 'TVL',
+		testId = 'market-share-pie-chart',
+		class: classes = ''
+	}: Props = $props();
 
 	const palette = [
 		'#22c55e',
@@ -32,7 +47,7 @@
 		'#64748b'
 	];
 
-	let slices = $derived(buildMarketSharePieSlices(items, { groupLabelPlural }));
+	let slices = $derived(buildMarketSharePieSlices(items, { groupLabelPlural, otherThreshold }));
 	let chartContainer = $state<HTMLDivElement | null>(null);
 	let chartInstance = $state<ReturnType<EChartsStatic['init']> | null>(null);
 	let echartsApi = $state<EChartsStatic | null>(null);
@@ -53,14 +68,58 @@
 		return value >= 10 ? value.toFixed(0) : value.toFixed(1);
 	}
 
+	function splitLabelIntoTwoLines(label: string): string[] {
+		const words = label.trim().split(/\s+/);
+		if (label.length <= 24 || words.length < 2) return [label];
+
+		const targetLength = label.length / 2;
+		let bestIndex = 1;
+		let bestDistance = Infinity;
+		let currentLength = 0;
+
+		for (let index = 1; index < words.length; index++) {
+			currentLength += words[index - 1].length + (index > 1 ? 1 : 0);
+			const distance = Math.abs(currentLength - targetLength);
+			if (distance < bestDistance) {
+				bestIndex = index;
+				bestDistance = distance;
+			}
+		}
+
+		return [words.slice(0, bestIndex).join(' '), words.slice(bestIndex).join(' ')];
+	}
+
+	function formatSliceLabel(label: string): string {
+		const lines = wrapLabels ? splitLabelIntoTwoLines(label) : [label];
+		const style = wrapLabels && label.length > 45 ? 'labelCompact' : 'label';
+		return lines.map((line) => `{${style}|${line}}`).join('\n');
+	}
+
+	function getValueLabelStyle(label: string): string {
+		return wrapLabels && label.length > 45 ? 'valueCompact' : 'value';
+	}
+
 	function buildLabelRichStyles(isMobile: boolean) {
+		const labelFontSize = wrapLabels ? (isMobile ? 9 : 9.5) : 11;
+		const valueFontSize = wrapLabels ? (isMobile ? 9 : 9.5) : 10.5;
+		const compactLabelFontSize = wrapLabels ? (isMobile ? 7.5 : 8) : labelFontSize;
+		const compactValueFontSize = wrapLabels ? (isMobile ? 8 : 8.5) : valueFontSize;
 		const rich: Record<string, Record<string, unknown>> = {
 			label: {
 				color: '#f8fbff',
 				fontFamily: chartFontFamily,
 				fontWeight: 700,
-				fontSize: isMobile ? 11 : 11,
+				fontSize: labelFontSize,
 				lineHeight: isMobile ? 15 : 15,
+				align: 'center',
+				verticalAlign: 'middle'
+			},
+			labelCompact: {
+				color: '#f8fbff',
+				fontFamily: chartFontFamily,
+				fontWeight: 700,
+				fontSize: compactLabelFontSize,
+				lineHeight: isMobile ? 12 : 13,
 				align: 'center',
 				verticalAlign: 'middle'
 			},
@@ -68,8 +127,17 @@
 				color: '#dbeafe',
 				fontFamily: chartFontFamily,
 				fontWeight: 600,
-				fontSize: isMobile ? 10.5 : 10.5,
+				fontSize: valueFontSize,
 				lineHeight: isMobile ? 14 : 14,
+				align: 'center',
+				verticalAlign: 'middle'
+			},
+			valueCompact: {
+				color: '#dbeafe',
+				fontFamily: chartFontFamily,
+				fontWeight: 600,
+				fontSize: compactValueFontSize,
+				lineHeight: isMobile ? 12 : 13,
 				align: 'center',
 				verticalAlign: 'middle'
 			}
@@ -97,7 +165,7 @@
 
 		return [
 			`<div style="margin-bottom: 0.7rem; padding-bottom: 0.65rem; border-bottom: 1px solid rgba(191, 219, 254, 0.12);"><div class="tooltip-title" style="${TOOLTIP_TITLE_STYLE}">${title}</div>${showNameRow ? `<div style="margin-top: 0.18rem; color: rgba(226, 232, 240, 0.76); font-family: ${chartFontFamily}; line-height: 1.35;">${escapeHtml(slice.name)}</div>` : ''}</div>`,
-			buildTooltipRow('TVL', formatDollar(slice.tvl, 2)),
+			buildTooltipRow(valueLabel, formatDollar(slice.tvl, 2)),
 			buildTooltipRow('APY', formatPercent(slice.avgApy)),
 			buildTooltipRow('Share', `${slice.percentage.toFixed(1)}%`),
 			slice.isOther && slice.memberCount ? buildTooltipRow(groupedLabel, String(slice.memberCount)) : '',
@@ -171,7 +239,7 @@
 			},
 			series: [
 				{
-					name: `${groupLabel} TVL`,
+					name: `${groupLabel} ${valueLabel}`,
 					type: 'pie',
 					radius: isMobile ? ['24%', '49%'] : ['35%', '70%'],
 					center: ['50%', '53%'],
@@ -189,7 +257,7 @@
 						fontFamily: chartFontFamily,
 						fontSize: isMobile ? 12 : 12,
 						lineHeight: isMobile ? 18 : 18,
-						padding: isMobile ? [5, 8, 5, 8] : [6, 11, 6, 11],
+						padding: wrapLabels ? (isMobile ? [4, 6, 4, 6] : [4, 8, 4, 8]) : isMobile ? [5, 8, 5, 8] : [6, 11, 6, 11],
 						borderRadius: 999,
 						backgroundColor: 'rgba(255, 255, 255, 0.14)',
 						shadowBlur: 10,
@@ -197,7 +265,7 @@
 						formatter: (params: { data?: MarketSharePieSlice }) => {
 							const slice = params.data;
 							if (!slice) return '';
-							return `{label|${slice.label}}\n{value|${formatLabelPercentage(slice.percentage)}%}`;
+							return `${formatSliceLabel(slice.label)}\n{${getValueLabelStyle(slice.label)}|${formatLabelPercentage(slice.percentage)}%}`;
 						},
 						rich: labelRichStyles
 					},
@@ -272,6 +340,9 @@
 		slices;
 		groupLabel;
 		groupLabelPlural;
+		otherThreshold;
+		wrapLabels;
+		valueLabel;
 		if (!runtimeReady || !echartsApi || !chartContainer) return;
 
 		let cancelled = false;

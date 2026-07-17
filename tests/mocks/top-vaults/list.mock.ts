@@ -395,6 +395,7 @@ const closedVaultPeriodResult = {
 const depositDisabledVault = createTestVault('Deposit disabled vault', {
 	chain: 'base',
 	current_nav: 20_000,
+	flags: ['tokenised_fund'],
 	deposit_closed_reason: 'Deposits paused',
 	period_results: [closedVaultPeriodResult]
 });
