@@ -5,11 +5,12 @@
 
 	const links = [
 		{ href: '/trading-view/vaults', label: 'Top' },
-		{ href: '/trading-view/vaults/stablecoins', label: 'By stablecoin' },
-		{ href: '/trading-view/vaults/chains', label: 'By chain' },
-		{ href: '/trading-view/vaults/protocols', label: 'By protocol' },
-		{ href: '/trading-view/vaults/curators', label: 'By curator' },
-		{ href: '/trading-view/vaults/international', label: 'International' }
+		{ href: '/trading-view/vaults/stablecoins', label: 'Stablecoins' },
+		{ href: '/trading-view/vaults/chains', label: 'Chains' },
+		{ href: '/trading-view/vaults/protocols', label: 'Protocols' },
+		{ href: '/trading-view/vaults/curators', label: 'Curators' },
+		{ href: '/trading-view/vaults/international', label: 'International' },
+		{ href: '/trading-view/vaults/tokenised-funds', label: 'Tokenised funds' }
 	] as const;
 
 	const otherListLinks = [
@@ -49,14 +50,8 @@
 			{label}
 		</a>
 	{/each}
-	<DropdownMenu
-		label="More rankings"
-		items={otherListLinks}
-		{isActive}
-		resolveHref={resolveDropdownHref}
-		class="nav-dropdown"
-	/>
 	<DropdownMenu label="Charts" items={chartLinks} {isActive} resolveHref={resolveDropdownHref} class="nav-dropdown" />
+	<DropdownMenu label="More" items={otherListLinks} {isActive} resolveHref={resolveDropdownHref} class="nav-dropdown" />
 </nav>
 
 <style>

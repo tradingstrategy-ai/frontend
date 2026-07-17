@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { discordUrl } from '$lib/config';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
 	import Alert from '$lib/components/Alert.svelte';
@@ -33,6 +34,7 @@
 	let morphoAlertStatus = $derived(blacklisted ? ('error' as const) : ('warning' as const));
 	let showBlacklistedAlert = $derived(blacklisted && !notesDuplicateMorphoFlags);
 	let showNotes = $derived(vault.notes != null && !notesDuplicateMorphoFlags);
+	let isTokenisedFund = $derived(vault.flags.includes('tokenised_fund'));
 	let depositMayBeDisabled = $derived(vault.deposit_closed_reason != null);
 	let redemptionMayBeDisabled = $derived(vault.redemption_closed_reason != null);
 	let operationWarning = $derived(
@@ -61,7 +63,16 @@
 
 	{#if operationWarning}
 		<Section padding="md">
-			<Alert size="md" status="warning">{operationWarning}</Alert>
+			{#if isTokenisedFund}
+				<Alert size="md" status="info">
+					{vault.name} is a tokenised fund. It is smart contract-based, but may not offer all features of vaults.
+					<a href={resolve('/glossary/tokenised-fund')}
+						>Read more about the differences between vaults and tokenised funds here.</a
+					>
+				</Alert>
+			{:else}
+				<Alert size="md" status="warning">{operationWarning}</Alert>
+			{/if}
 		</Section>
 	{/if}
 
@@ -116,7 +127,7 @@
 		{/if}
 
 		{#if curatorMetadata}
-			<VaultCuratorInfo curator={curatorMetadata} />
+			<VaultCuratorInfo {vault} curator={curatorMetadata} />
 		{/if}
 
 		{#if protocolMetadata}

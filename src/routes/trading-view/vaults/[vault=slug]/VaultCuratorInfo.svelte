@@ -15,16 +15,18 @@ curator.
 	import { resolve } from '$app/paths';
 	import Button from '$lib/components/Button.svelte';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
-	import type { CuratorInfo } from '$lib/top-vaults/schemas';
+	import type { CuratorInfo, VaultInfo } from '$lib/top-vaults/schemas';
 
 	interface Props {
 		curator: CuratorInfo;
+		vault: VaultInfo;
 	}
 
-	let { curator }: Props = $props();
+	let { curator, vault }: Props = $props();
 
 	let curatorPageUrl = $derived(resolve(`/trading-view/vaults/curators/${curator.slug}`));
 	let curatorLogoUrl = $derived(curator.logos.generic ?? curator.logos.light ?? curator.logos.dark);
+	let assetType = $derived(vault.flags.includes('tokenised_fund') ? 'tokenised fund' : 'vault');
 </script>
 
 <MetricsBox>
@@ -35,7 +37,7 @@ curator.
 		<div class="content">
 			<h2>About {curator.name}</h2>
 			<p class="description">
-				This vault is curated by <a href={curatorPageUrl}>{curator.name}</a>.
+				This {assetType} is curated by <a href={curatorPageUrl}>{curator.name}</a>.
 			</p>
 			{#if curator.short_description}
 				<p class="description">{curator.short_description}</p>

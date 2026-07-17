@@ -29,6 +29,21 @@ test.describe('charts dropdown in vault listings navigation', () => {
 			await page.goto('/trading-view/vaults');
 		});
 
+		test('shows the requested navigation order', async ({ page }) => {
+			const nav = page.locator('.vault-listings-selector');
+			await expect(nav.locator('a, button')).toHaveText([
+				'Top',
+				'Stablecoins',
+				'Chains',
+				'Protocols',
+				'Curators',
+				'International',
+				'Tokenised funds',
+				'Charts',
+				'More'
+			]);
+		});
+
 		test('Charts trigger is visible in the nav', async ({ page }) => {
 			const nav = page.locator('.vault-listings-selector');
 			const trigger = nav.locator('button', { hasText: 'Charts' });

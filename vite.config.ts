@@ -2,6 +2,7 @@
  * Vite configuration file; see: https://vite.dev/config/
  */
 import { defineConfig } from 'vitest/config';
+import { realpathSync } from 'node:fs';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { type LogOptions, createLogger } from 'vite';
 import Icons from 'unplugin-icons/vite';
@@ -85,7 +86,9 @@ export default defineConfig(({ mode }) => {
 			// Lets users open an agent-hosted dev server via e.g. brian.tailnet.ts.net.
 			allowedHosts: [TAILSCALE_ALLOWED_HOST],
 			fs: {
-				allow: [process.cwd()]
+				// Worktrees can symlink node_modules from their main checkout. Vite serves
+				// client modules through /@fs, so permit the resolved dependency directory too.
+				allow: [process.cwd(), realpathSync('node_modules')]
 			}
 		},
 
