@@ -16,6 +16,7 @@ the tooltip states the included vault count.
 -->
 <script lang="ts">
 	import { base } from '$app/paths';
+	import Alert from '$lib/components/Alert.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { formatRate, formatUsd } from '$lib/echarts/cumulative-tvl-apy';
 	import type { ProtocolMiniChartPayload } from '$lib/echarts/protocol-mini-chart';
@@ -30,6 +31,7 @@ the tooltip states the included vault count.
 		compareHref?: string;
 		returnTooltipLabel?: string;
 		returnWindowLabel?: string;
+		returnHistoryMonthsRequired?: number;
 	}
 
 	interface TooltipParam {
@@ -45,7 +47,8 @@ the tooltip states the included vault count.
 		compareLabel,
 		compareHref,
 		returnTooltipLabel = 'Average TVL-weighted return',
-		returnWindowLabel = 'trailing 1 month'
+		returnWindowLabel = 'trailing 1 month',
+		returnHistoryMonthsRequired
 	}: Props = $props();
 
 	let chartContainer = $state<HTMLDivElement | null>(null);
@@ -64,9 +67,38 @@ the tooltip states the included vault count.
 	const axisTextColour = '#d5deea';
 	const gridColour = 'rgba(148, 163, 184, 0.18)';
 	const axisFontSize = 12;
+	const daysPerMonth = 30;
+	const millisecondsPerDay = 24 * 60 * 60 * 1000;
 
 	let points = $derived(chartData?.points ?? []);
 	let hasPoints = $derived(points.length > 0);
+	let returnPointCount = $derived(points.filter((point) => point.apy != null).length);
+	let hasReturnLine = $derived(returnPointCount >= 2);
+	let availableHistoryMonths = $derived.by(() => {
+		const firstDate = Date.parse(`${points[0]?.date}T00:00:00Z`);
+		const lastDate = Date.parse(`${points.at(-1)?.date}T00:00:00Z`);
+		if (!Number.isFinite(firstDate) || !Number.isFinite(lastDate)) return 0;
+
+		const availableDays = Math.floor((lastDate - firstDate) / millisecondsPerDay);
+		return Math.floor(availableDays / daysPerMonth);
+	});
+	let showInsufficientReturnHistory = $derived(
+		hasPoints &&
+			returnHistoryMonthsRequired != null &&
+			returnHistoryMonthsRequired > 0 &&
+			availableHistoryMonths < returnHistoryMonthsRequired &&
+			!hasReturnLine
+	);
+	let requiredHistoryLabel = $derived(
+		returnHistoryMonthsRequired === 3
+			? 'Three months'
+			: `${returnHistoryMonthsRequired} month${returnHistoryMonthsRequired === 1 ? '' : 's'}`
+	);
+	let availableHistoryLabel = $derived(
+		availableHistoryMonths < 1
+			? 'less than one month'
+			: `only ${availableHistoryMonths} month${availableHistoryMonths === 1 ? '' : 's'}`
+	);
 
 	function formatDateLabel(value: string) {
 		const date = new Date(`${value}T00:00:00Z`);
@@ -373,6 +405,12 @@ the tooltip states the included vault count.
 		{/if}
 	</div>
 
+	{#if showInsufficientReturnHistory}
+		<Alert size="xs" status="info">
+			{requiredHistoryLabel} of data are required to display rolling returns, and we have {availableHistoryLabel}.
+		</Alert>
+	{/if}
+
 	{#if compareLabel && compareHref}
 		<a class="compare-link" href={resolveHref(compareHref)}>{compareLabel}</a>
 	{/if}
@@ -382,7 +420,7 @@ the tooltip states the included vault count.
 	.protocol-mini-chart {
 		display: grid;
 		/* chart surface absorbs any extra height when stretched to match sibling content */
-		grid-template-rows: auto 1fr auto;
+		grid-template-rows: auto 1fr auto auto;
 		gap: 0.5rem;
 		min-height: 17rem;
 		padding: 0.875rem;
