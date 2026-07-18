@@ -104,12 +104,13 @@
 >
 	{#snippet detailAside()}
 		<VaultGroupMiniChart
-			title="All {protocolName} vaults: TVL and TVL-weighted 3-month ann. return"
+			title="All {protocolName} vaults: TVL and TVL-weighted 3-month annualised return"
 			dataUrl="/trading-view/vaults/protocols/{protocolSlug}/chart-data"
 			compareLabel="Compare all protocols"
 			compareHref="/trading-view/vaults/historical-tvl-protocol"
 			returnTooltipLabel="TVL-weighted 3-month ann. return"
 			returnWindowLabel="trailing 3-month"
+			returnHistoryMonthsRequired={3}
 		/>
 	{/snippet}
 
