@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 // Benchmark the same aggregation used by
-// `/trading-view/vaults/historical-tvl-chain/chart-data`
-// for the page at `/trading-view/vaults/historical-tvl-chain`.
+// `/vaults/historical-tvl-chain/chart-data`
+// for the page at `/vaults/historical-tvl-chain`.
 //
 // Local benchmark baseline from 2026-03-21 on this checkout after
 // weekly daily-close averaging and dropping the current partial week:

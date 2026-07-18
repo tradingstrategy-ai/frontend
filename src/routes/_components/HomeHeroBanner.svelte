@@ -22,7 +22,7 @@
 
 				<div class="ctas">
 					<Button primaryHeroBanner size="lg" label="Earn with our vaults" href={resolve('/strategies')} />
-					<Button secondary size="lg" label="Explore vault data" href={resolve('/trading-view/vaults')} />
+					<Button secondary size="lg" label="Explore vault data" href={resolve('/vaults')} />
 				</div>
 
 				<div class="differentiators">

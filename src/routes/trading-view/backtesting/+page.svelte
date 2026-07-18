@@ -79,7 +79,7 @@
 			{#snippet subtitle()}
 				<p>
 					The following datasets are available for historical DEX trading data.
-					<a class="body-link" href="/trading-view/api">Sign up for a free API key to download the data.</a>
+					<a class="body-link" href="/vaults/api/register">Sign up for a free API key to download the data.</a>
 				</p>
 				<p>
 					Read the documentation

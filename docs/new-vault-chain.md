@@ -57,11 +57,11 @@ Vaults with `risk_numeric: null` (common for new chains without risk scoring) mu
 If the new chain's vaults need a different default TVL threshold, add an entry to:
 
 - `CHAIN_TVL_THRESHOLD_OVERRIDES` map in `src/lib/top-vaults/helpers.ts` (affects `meetsDefaultTvl` used on the front page)
-- `chainOverrides` in the `tvlFilterOptions` array in the same file (affects the interactive filter on `/trading-view/vaults`)
+- `chainOverrides` in the `tvlFilterOptions` array in the same file (affects the interactive filter on `/vaults`)
 
 ## 6. Parquet data
 
-Vault share price chart data is served from a locally cached `data/cleaned-vault-prices-1h.parquet` file. The server refreshes this cache from the configured Cloudflare source when the file has not been checked for over one hour. The metrics endpoint (`src/routes/trading-view/vaults/[vault=vaultId]/metrics/+server.ts`) queries this file by vault ID.
+Vault share price chart data is served from a locally cached `data/cleaned-vault-prices-1h.parquet` file. The server refreshes this cache from the configured Cloudflare source when the file has not been checked for over one hour. The metrics endpoint (`src/routes/vaults/[vault=vaultId]/metrics/+server.ts`) queries this file by vault ID.
 
 Ensure the parquet file is updated to include rows for the new chain's vaults. Without this, the chart will render empty (no error shown to the user).
 
@@ -70,7 +70,7 @@ Ensure the parquet file is updated to include rows for the new chain's vaults. W
 After adding a new chain, verify:
 
 - [ ] Chain logo appears on the blockchains page (`/trading-view/blockchains`)
-- [ ] Vaults appear in the listing (`/trading-view/vaults`) — try the search box and lower TVL filters
-- [ ] Vault detail page loads (`/trading-view/vaults/{slug}`)
+- [ ] Vaults appear in the listing (`/vaults`) — try the search box and lower TVL filters
+- [ ] Vault detail page loads (`/vaults/{slug}`)
 - [ ] Share price chart shows data on the vault detail page
-- [ ] Chain appears in the "by chain" vault grouping (`/trading-view/vaults/chains`)
+- [ ] Chain appears in the "by chain" vault grouping (`/vaults/chains`)

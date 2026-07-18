@@ -30,7 +30,7 @@
 	</ul>
 
 	<div class="cta">
-		<Button secondary label="See all vaults" href={resolve('/trading-view/vaults')} />
+		<Button secondary label="See all vaults" href={resolve('/vaults')} />
 	</div>
 </Section>
 

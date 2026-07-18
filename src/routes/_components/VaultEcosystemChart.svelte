@@ -111,7 +111,7 @@ loaded dynamically from CDN.
 					marker: { color: '#22c55e', size: 3 },
 					fill: 'tozeroy' as const,
 					fillcolor: 'rgba(34,197,94,0.15)',
-					customdata: vaultSlugs.map((slug) => `/trading-view/vaults/${slug}`),
+					customdata: vaultSlugs.map((slug) => `/vaults/${slug}`),
 					hovertemplate: labels.map((name, i) => {
 						const tvlEarningBetter = cumulativeTvl[i] - individualTvl[i];
 						const tvlEarningLess = totalTvl - cumulativeTvl[i];

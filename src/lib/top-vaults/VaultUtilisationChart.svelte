@@ -37,7 +37,7 @@ separator line at the 80% threshold.
 		loading = true;
 		utilisationData = undefined;
 		try {
-			const resp = await fetch(`/trading-view/vaults/${vaultId}/metrics`);
+			const resp = await fetch(`/vaults/${vaultId}/metrics`);
 			const data = await resp.json();
 			utilisationData = data.utilisation;
 		} finally {

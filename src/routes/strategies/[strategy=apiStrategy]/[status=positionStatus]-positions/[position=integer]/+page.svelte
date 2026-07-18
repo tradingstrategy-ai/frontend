@@ -17,7 +17,7 @@
 
 	const isVaultPosition = position.pair.isVault;
 	const assetUrl = isVaultPosition
-		? `https://tradingstrategy.ai/trading-view/vaults/address/${position.pair.pool_address}`
+		? `https://tradingstrategy.ai/vaults/address/${position.pair.pool_address}`
 		: position.pricingPair.info_url;
 	const hyperliquidVaultUrl =
 		isVaultPosition && strategy.on_chain_data.chain_id === 9999

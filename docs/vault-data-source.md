@@ -63,11 +63,11 @@ R2 downloads stream the object body via the AWS SDK (`getR2Object`) and pipe it 
 
 ### Treasury benchmark (FRED DTB3)
 
-**Code:** `src/routes/trading-view/vaults/treasury-benchmark/+server.ts` (server proxy) and `src/lib/top-vaults/treasury-benchmark.ts` (client fetcher)
+**Code:** `src/routes/vaults/treasury-benchmark/+server.ts` (server proxy) and `src/lib/top-vaults/treasury-benchmark.ts` (client fetcher)
 
 The US 3-month Treasury bill rate is used as a risk-free benchmark on non-perpetual-futures vault charts. FRED blocks browser CORS and rate-limits aggressively, so the data is proxied through a server endpoint.
 
-**Server endpoint** (`/trading-view/vaults/treasury-benchmark?cosd=YYYY-MM-DD&coed=YYYY-MM-DD`):
+**Server endpoint** (`/vaults/treasury-benchmark?cosd=YYYY-MM-DD&coed=YYYY-MM-DD`):
 
 1. Validates and clamps date range (rejects future `cosd`, clamps to DTB3 series bounds)
 2. Checks file cache at `~/.cache/ts-frontend/fred-DTB3-{cosd}-{coed}.json` (24h TTL)
@@ -96,11 +96,11 @@ The US 3-month Treasury bill rate is used as a risk-free benchmark on non-perpet
 
 ### Datasets download endpoint
 
-**Code:** `src/routes/trading-view/vaults/datasets/download/[datasetId]/+server.ts`
+**Code:** `src/routes/vaults/datasets/download/[datasetId]/+server.ts`
 
 This public-facing endpoint proxies downloads through a separate Vault API service (`TS_PUBLIC_VAULT_API_URL`), not through R2 or the local cache. It is used by the datasets listing page for user-facing downloads.
 
-The datasets listing page (`src/routes/trading-view/vaults/datasets/+page.server.ts`) requires R2 to be configured for displaying file metadata (size, last modified), even though the actual download goes through the Vault API.
+The datasets listing page (`src/routes/vaults/datasets/+page.server.ts`) requires R2 to be configured for displaying file metadata (size, last modified), even though the actual download goes through the Vault API.
 
 ## Data flow diagram
 

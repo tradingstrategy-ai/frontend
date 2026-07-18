@@ -38,7 +38,7 @@ describe('fetchCoinbaseBenchmarkCloses', () => {
 
 		expect(fetch).toHaveBeenCalledOnce();
 		const calledUrl = new URL(String(fetch.mock.calls[0][0]), 'http://localhost');
-		expect(calledUrl.pathname).toBe('/trading-view/vaults/coinbase-candles');
+		expect(calledUrl.pathname).toBe('/vaults/coinbase-candles');
 		expect(calledUrl.searchParams.get('productId')).toBe('BTC-USD');
 		expect(calledUrl.searchParams.get('granularity')).toBe('86400');
 		expect(calledUrl.searchParams.get('start')).toBe(start.toISOString());

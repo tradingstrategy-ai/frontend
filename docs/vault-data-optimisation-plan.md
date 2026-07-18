@@ -12,7 +12,7 @@ The landing page vault data was optimised in PR #1171 by pre-computing aggregate
 
 ## Candidates for optimisation
 
-### 1. `/trading-view/vaults/+layout.ts` (highest impact)
+### 1. `/vaults/+layout.ts` (highest impact)
 
 Central hub for all vault listing pages (~15 child routes). Currently fetches full `VaultInfo[]` (80+ fields per vault) and passes it to every child.
 

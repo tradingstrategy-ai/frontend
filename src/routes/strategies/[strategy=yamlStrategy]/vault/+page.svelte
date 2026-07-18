@@ -2,7 +2,7 @@
 Vault info page for YAML-configured strategies — shows full technical details table.
 -->
 <script lang="ts">
-	import VaultTechnicalDetailsTable from '../../../trading-view/vaults/[vault=slug]/VaultTechnicalDetailsTable.svelte';
+	import VaultTechnicalDetailsTable from '../../../vaults/[vault=slug]/VaultTechnicalDetailsTable.svelte';
 
 	export let data;
 

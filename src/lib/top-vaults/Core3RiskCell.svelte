@@ -36,7 +36,7 @@ for protocols that have no CORE3 rating.
 				CORE3's protocol risk rating (Probability of Loss): a third-party estimate of how likely users are to suffer a
 				financially material loss, graded from AA (lowest risk) down to D.
 				<a href={CORE3_METHODOLOGY_URL} target="_blank" rel="noreferrer">View methodology</a>
-				{#if slug}<a href={resolve(`/trading-view/vaults/protocols/${slug}`)}>View more</a>{/if}
+				{#if slug}<a href={resolve(`/vaults/protocols/${slug}`)}>View more</a>{/if}
 			</svelte:fragment>
 		</Tooltip>
 	</span>

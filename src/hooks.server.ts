@@ -115,7 +115,7 @@ const prominentPageFontPreloadLinks = [
 ];
 
 function getFontPreloadLinks(pathname: string): string {
-	if (pathname === '/' || /^\/trading-view\/vaults\/[^/]+$/.test(pathname)) {
+	if (pathname === '/' || /^\/vaults\/[^/]+$/.test(pathname)) {
 		return [...baseFontPreloadLinks, ...prominentPageFontPreloadLinks].join(', ');
 	}
 

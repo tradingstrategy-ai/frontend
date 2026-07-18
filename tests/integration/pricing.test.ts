@@ -27,7 +27,7 @@ test.describe('pricing page', () => {
 
 	test('Download button navigates to vault datasets page', async ({ page }) => {
 		await page.getByRole('link', { name: 'Download' }).click();
-		await expect(page).toHaveURL('/trading-view/vaults/datasets');
+		await expect(page).toHaveURL('/vaults/datasets');
 	});
 
 	test('shows feature comparison table', async ({ page }) => {
