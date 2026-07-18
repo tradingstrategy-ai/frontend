@@ -25,12 +25,15 @@ Displays supplementary vault information, including transaction status, performa
 	}
 
 	const LIMITED_HISTORY_CHAINS = [9999, 9998, 9997];
+	const NO_DATA_LABEL = 'No data';
+	const MISSING_FEE_TOOLTIP = 'The fee information is not available onchain. Net returns cannot be calculated.';
 
 	let { vault, stablecoinMetadata = null }: Props = $props();
 
 	let chain = $derived(getChain(vault.chain_id));
 	let hasLimitedHistory = $derived(LIMITED_HISTORY_CHAINS.includes(vault.chain_id));
 	let showTransactionStatus = $derived(!isGoodVaultStatus(vault));
+	let hasNetFeeInformation = $derived(vault.net_fees?.fee_mode != null);
 	let denominationSlug = $derived(
 		resolveStablecoinSlug({
 			slug: vault.denomination_slug,
@@ -137,6 +140,14 @@ Displays supplementary vault information, including transaction status, performa
 		if (!period.samplePeriod) return period.label;
 
 		return `${period.label}, ${formatDate(period.samplePeriod.period_start_at)} to ${formatDate(period.samplePeriod.period_end_at)}`;
+	}
+
+	function isMissingFeeValue(value: number | null | undefined): boolean {
+		return value == null;
+	}
+
+	function isNetReturnUnavailable(period: (typeof returnPeriods)[number]): boolean {
+		return !hasNetFeeInformation && period.net.annualised == null;
 	}
 </script>
 
@@ -269,6 +280,14 @@ Displays supplementary vault information, including transaction status, performa
 							</svelte:fragment>
 						</Tooltip>
 					{/snippet}
+					{#snippet noDataCell()}
+						<span class="no-data-tooltip">
+							<Tooltip>
+								<span slot="trigger" class="no-data-cell">{NO_DATA_LABEL}</span>
+								<svelte:fragment slot="popup">{MISSING_FEE_TOOLTIP}</svelte:fragment>
+							</Tooltip>
+						</span>
+					{/snippet}
 					<tr>
 						<td>
 							{@render metricLabel(
@@ -304,7 +323,13 @@ Displays supplementary vault information, including transaction status, performa
 						<tr class="fee-row">
 							<td>{@render metricLabel(fee.tooltip, fee.label, fee.mobileLabel)}</td>
 							{#each returnPeriods as period (period.label)}
-								<td aria-label={`${fee.label} for ${period.label}`}>{formatPercent(fee.value)}</td>
+								<td aria-label={`${fee.label} for ${period.label}`}>
+									{#if isMissingFeeValue(fee.value)}
+										{@render noDataCell()}
+									{:else}
+										{formatPercent(fee.value)}
+									{/if}
+								</td>
 							{/each}
 						</tr>
 					{/each}
@@ -317,25 +342,29 @@ Displays supplementary vault information, including transaction status, performa
 						</td>
 						{#each returnPeriods as period (period.label)}
 							<td>
-								<Tooltip>
-									<span slot="trigger" class="return-cell">{formatPercentProfit(period.net.annualised)}</span>
-									<svelte:fragment slot="popup">
-										<dl class="return-tooltip">
-											<div>
-												<dt>Annualised:</dt>
-												<dd>{formatPercentProfit(period.net.annualised)}</dd>
-											</div>
-											<div>
-												<dt>Raw:</dt>
-												<dd>{formatPercentProfit(period.net.raw)}</dd>
-											</div>
-											<div>
-												<dt>Sampled period:</dt>
-												<dd>{getSamplePeriodLabel(period)}</dd>
-											</div>
-										</dl>
-									</svelte:fragment>
-								</Tooltip>
+								{#if isNetReturnUnavailable(period)}
+									{@render noDataCell()}
+								{:else}
+									<Tooltip>
+										<span slot="trigger" class="return-cell">{formatPercentProfit(period.net.annualised)}</span>
+										<svelte:fragment slot="popup">
+											<dl class="return-tooltip">
+												<div>
+													<dt>Annualised:</dt>
+													<dd>{formatPercentProfit(period.net.annualised)}</dd>
+												</div>
+												<div>
+													<dt>Raw:</dt>
+													<dd>{formatPercentProfit(period.net.raw)}</dd>
+												</div>
+												<div>
+													<dt>Sampled period:</dt>
+													<dd>{getSamplePeriodLabel(period)}</dd>
+												</div>
+											</dl>
+										</svelte:fragment>
+									</Tooltip>
+								{/if}
 							</td>
 						{/each}
 					</tr>
@@ -471,6 +500,14 @@ Displays supplementary vault information, including transaction status, performa
 
 		.return-cell {
 			border-bottom: 1px dotted var(--c-text-light);
+		}
+
+		.no-data-cell {
+			border-bottom: 1px dotted var(--c-text-light);
+		}
+
+		.no-data-tooltip :global(.popup) {
+			max-width: 200px;
 		}
 
 		.return-tooltip {
