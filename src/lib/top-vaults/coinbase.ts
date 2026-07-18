@@ -42,7 +42,7 @@ export function fetchCoinbaseBenchmarkCloses(
 		end: end.toISOString()
 	});
 
-	const responsePromise = fetch(`/trading-view/vaults/coinbase-candles?${params}`)
+	const responsePromise = fetch(`/vaults/coinbase-candles?${params}`)
 		.then((resp) => {
 			if (!resp.ok) throw new Error(`Coinbase benchmark proxy failed: ${resp.status}`);
 			return resp.json() as Promise<[number, number][]>;

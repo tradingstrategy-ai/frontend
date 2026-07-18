@@ -120,7 +120,7 @@ tailscale ip -4
 Example:
 
 ```text
-http://brian.tail71b97.ts.net:5173/trading-view/vaults/stablecoins/frax
+http://brian.tail71b97.ts.net:5173/vaults/stablecoins/frax
 ```
 
 The Vite config allows `.ts.net` hosts so agent-hosted remote dev previews work without disabling host validation globally.

@@ -180,7 +180,7 @@ export function getLifetimeMaxDrawdown(vault: Pick<VaultInfo, 'period_results'>)
  * Resolve path to vault details page for a given vault
  */
 export function resolveVaultDetails(vault: Pick<VaultInfo, 'vault_slug'>) {
-	return resolve(`/trading-view/vaults/${vault.vault_slug}`);
+	return resolve(`/vaults/${vault.vault_slug}`);
 }
 
 /**

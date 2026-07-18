@@ -9,8 +9,8 @@ const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 // This cache stores the already-serialised and Brotli-compressed listing payload.
 // The original production symptom was a transient split-brain between the vault
 // listing and an individual vault detail page:
-// - /trading-view/vaults?q=Peter%20Schiff showed a 1M annualised return above 100%.
-// - /trading-view/vaults/systemic-strategies-peter-schiff-s-vault showed -23%.
+// - /vaults?q=Peter%20Schiff showed a 1M annualised return above 100%.
+// - /vaults/systemic-strategies-peter-schiff-s-vault showed -23%.
 // By the time this was investigated, production had converged and both views
 // showed -23.3%, with the source data reporting one_month_cagr_net
 // -0.23331116202113666.

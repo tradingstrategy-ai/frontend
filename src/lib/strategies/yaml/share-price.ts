@@ -12,7 +12,7 @@ const NINETY_DAYS_SECONDS = 90 * 24 * 60 * 60;
  */
 async function fetchSharePriceReturns90d(fetch: Fetch, vaultId: string): Promise<[number, number][] | undefined> {
 	try {
-		const resp = await fetch(`/trading-view/vaults/${vaultId}/metrics`);
+		const resp = await fetch(`/vaults/${vaultId}/metrics`);
 		if (!resp.ok) return undefined;
 
 		const data: { price: [number, number][] } = await resp.json();

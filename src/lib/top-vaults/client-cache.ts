@@ -1,7 +1,7 @@
 /**
  * Client-side in-memory cache for vault data fetched from `/top-vaults/all-data`.
  *
- * Multiple pages under `/trading-view/vaults/` fetch the same data. This module
+ * Multiple pages under `/vaults/` fetch the same data. This module
  * deduplicates those fetches so only the first navigation triggers a network request;
  * subsequent navigations reuse the cached result instantly (no skeleton flash).
  */

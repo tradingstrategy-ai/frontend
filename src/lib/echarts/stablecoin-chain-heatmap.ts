@@ -105,7 +105,7 @@ function resolveDisplayChain(chainId: number, fallbackName?: string): ResolvedCh
 			key: chain.slug,
 			label: chain.name,
 			chainId: chain.id,
-			href: `/trading-view/vaults/chains/${chain.slug}`,
+			href: `/vaults/chains/${chain.slug}`,
 			logoUrl: getLogoUrl('blockchain', chain.slug)
 		};
 	}

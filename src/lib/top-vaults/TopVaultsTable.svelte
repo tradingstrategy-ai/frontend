@@ -1,7 +1,7 @@
 <script lang="ts">
 	/**
 	 * Table component for displaying top DeFi vaults with sorting, filtering, and infinite scroll.
-	 * Used on /trading-view/vaults and chain-specific vault pages.
+	 * Used on /vaults and chain-specific vault pages.
 	 */
 	import type { Chain } from '$lib/helpers/chain';
 	import type { TopVaults, VaultInfo } from './schemas';
@@ -81,7 +81,7 @@
 
 	const INITIAL_ROW_COUNT = 150;
 	const ROW_BATCH_SIZE = 50;
-	const allVaultsPath = resolve('/trading-view/vaults/all');
+	const allVaultsPath = resolve('/vaults/all');
 
 	interface SortOptions {
 		key: string;

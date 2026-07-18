@@ -2,7 +2,7 @@
 Performance metrics subpage for YAML-configured strategies.
 -->
 <script lang="ts">
-	import VaultPeriodicMetrics from '../../../trading-view/vaults/[vault=slug]/VaultPeriodicMetrics.svelte';
+	import VaultPeriodicMetrics from '../../../vaults/[vault=slug]/VaultPeriodicMetrics.svelte';
 
 	export let data;
 

@@ -1,25 +1,25 @@
 # Chart pages
 
-This document describes chart pages and chart navigation in the Trading Strategy frontend. It focuses on vault chart pages under `src/routes/trading-view/vaults/`, but also notes the shared charting libraries used elsewhere.
+This document describes chart pages and chart navigation in the Trading Strategy frontend. It focuses on vault chart pages under `src/routes/vaults/`, but also notes the shared charting libraries used elsewhere.
 
 ## Vault chart pages
 
 The vault chart pages linked from the top `Charts` menu are:
 
-- `/trading-view/vaults/cumulative-tvl-apy` - cumulative vault TVL by annualised return, with benchmark lines.
-- `/trading-view/vaults/yield-risk` - vault annualised return by TVL, grouped by risk level.
-- `/trading-view/vaults/yield-protocol` - vault annualised return by TVL, grouped by protocol.
-- `/trading-view/vaults/yield-chain` - vault annualised return by TVL, grouped by chain.
-- `/trading-view/vaults/current-peak-tvl` - current TVL by peak TVL.
-- `/trading-view/vaults/core3-risk` - stablecoin vault returns and TVL by CORE3 Probability of Loss.
-- `/trading-view/vaults/historical-tvl-chain` - historical vault TVL grouped by chain.
-- `/trading-view/vaults/historical-tvl-stablecoin` - historical vault TVL grouped by stablecoin.
-- `/trading-view/vaults/historical-tvl-protocol` - historical vault TVL grouped by vault protocol.
-- `/trading-view/vaults/stablecoin-chain-heatmap` - current stablecoin vault TVL by stablecoin and chain.
+- `/vaults/cumulative-tvl-apy` - cumulative vault TVL by annualised return, with benchmark lines.
+- `/vaults/yield-risk` - vault annualised return by TVL, grouped by risk level.
+- `/vaults/yield-protocol` - vault annualised return by TVL, grouped by protocol.
+- `/vaults/yield-chain` - vault annualised return by TVL, grouped by chain.
+- `/vaults/current-peak-tvl` - current TVL by peak TVL.
+- `/vaults/core3-risk` - stablecoin vault returns and TVL by CORE3 Probability of Loss.
+- `/vaults/historical-tvl-chain` - historical vault TVL grouped by chain.
+- `/vaults/historical-tvl-stablecoin` - historical vault TVL grouped by stablecoin.
+- `/vaults/historical-tvl-protocol` - historical vault TVL grouped by vault protocol.
+- `/vaults/stablecoin-chain-heatmap` - current stablecoin vault TVL by stablecoin and chain.
 
 Related vault list pages also include charts:
 
-- `/trading-view/vaults/stablecoins`, `/chains`, `/protocols`, and `/curators` use `MarketSharePieChart.svelte`.
+- `/vaults/stablecoins`, `/chains`, `/protocols`, and `/curators` use `MarketSharePieChart.svelte`.
 - Group detail pages use `VaultGroupMiniChart.svelte`.
 - Vault detail pages use lightweight-charts components for share price, utilisation, and benchmark series.
 
@@ -36,7 +36,7 @@ The common data sources are:
 - Route-local `chart-data/+server.ts` endpoints for heavier ECharts pages that need cached JSON payloads.
 - Client-side `fetch()` from `+page.svelte` for pages that opt out of SSR or need lazy chart data loading.
 - `+page.server.ts` for pages that can prepare their data during server rendering.
-- Vault detail metrics endpoints such as `/trading-view/vaults/[vault]/metrics` for time-series data.
+- Vault detail metrics endpoints such as `/vaults/[vault]/metrics` for time-series data.
 
 Current cached chart-data endpoints include:
 
@@ -98,7 +98,7 @@ Its `charts` array controls the `See charts:` link row displayed within chart pa
 
 When adding or removing a chart page, update both arrays unless there is a deliberate reason for the page to appear in only one navigation surface. Also update integration tests that assert menu or selector counts:
 
-- `tests/integration/trading-view/vaults/charts-dropdown.test.ts`
+- `tests/integration/vaults/charts-dropdown.test.ts`
 - chart-page tests that assert `.scatter-plot-selector a` counts
 
 The dropdown and in-page selector can intentionally have different counts. For example, a page can be present in the in-page selector before it is added to the top dropdown, but this should be explicit in the change.
@@ -113,6 +113,6 @@ first so private env vars and the historical vault parquet cache are available t
 Useful checks:
 
 - Run unit tests for chart payload builders, e.g. `pnpm exec vitest run src/lib/echarts/core3-risk.test.ts`.
-- Run focused Playwright specs after navigation changes, e.g. `pnpm exec playwright test --config tests/integration tests/integration/trading-view/vaults/charts-dropdown.test.ts`.
+- Run focused Playwright specs after navigation changes, e.g. `pnpm exec playwright test --config tests/integration tests/integration/vaults/charts-dropdown.test.ts`.
 - Run `pnpm run build:test` before focused integration specs if `.svelte-kit-test/output/server` is missing.
 - Use Playwright browser checks to verify canvas count, tooltip content, and navigation when adding a new ECharts page.

@@ -180,9 +180,8 @@ Pricing page with Basic and Pro tier comparison
 						{/if}
 						<p class="sold-by">
 							* The monthly subscription licence is sold by Market Software Ltd. After subscribing, you will receive an
-							API key in email. <a
-								href="/trading-view/vaults/datasets"
-								style="text-decoration: underline; font-weight: bold;">Download datasets here</a
+							API key in email. <a href="/vaults/datasets" style="text-decoration: underline; font-weight: bold;"
+								>Download datasets here</a
 							>. For any questions, please use the on-page chat – we are happy to help you.
 						</p>
 					</div>

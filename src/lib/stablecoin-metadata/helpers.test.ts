@@ -78,7 +78,7 @@ describe('stablecoin metadata helpers', () => {
 	test('uses the US flag and hides off-chain USD from stablecoin navigation', () => {
 		expect(getStablecoinLogoUrl('usd-offchain')).toBe('/flags/us.svg');
 		expect(getStablecoinDetailsHref('usd-offchain')).toBeUndefined();
-		expect(getStablecoinDetailsHref('usdc')).toBe('/trading-view/vaults/stablecoins/usdc');
+		expect(getStablecoinDetailsHref('usdc')).toBe('/vaults/stablecoins/usdc');
 		expect(OFFCHAIN_USD_SHORT_DESCRIPTION).toBe('U.S. Dollars in the banking system without onchain transparency');
 	});
 

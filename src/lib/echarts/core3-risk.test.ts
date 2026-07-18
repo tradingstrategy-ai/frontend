@@ -166,7 +166,7 @@ describe('buildCore3RiskPayload', () => {
 			core3Score: 18,
 			core3Rating: 'AA',
 			threeMonthCagr: 0.06,
-			href: '/trading-view/vaults/aave-usdc'
+			href: '/vaults/aave-usdc'
 		});
 	});
 

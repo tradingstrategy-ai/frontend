@@ -116,6 +116,21 @@ codex exec --json --sandbox read-only "Review uncommitted changes for correctnes
 
 Claude CLI is useful for independent second opinions, code reviews, background agents, and checking whether another agent's change makes sense.
 
+### Review timeout policy
+
+Every Claude CLI or Codex CLI review request must have an execution timeout of
+**at least 15 minutes**. Large diffs may take several minutes to inspect, and
+streaming output can remain quiet while the reviewer reads targeted files. Do
+not terminate a review merely because it has produced no final answer within a
+minute; check its stream or raw output file while allowing the full timeout.
+
+For review tools that expose their own timeout option, pass a value of 15
+minutes or greater, for example:
+
+```shell
+claude ultrareview master --timeout 15
+```
+
 Common commands:
 
 ```shell
@@ -251,9 +266,9 @@ claude -p "Review .claude/plans/my-plan.md for correctness and completeness. Foc
   --verbose
 ```
 
-If a grounded review produces no output after roughly a minute, stop it and
-switch to the no-tools inline review unless fresh repository inspection is
-strictly required.
+If a grounded review has not produced output, inspect its stream or raw output
+file while allowing the required 15-minute timeout. Only then switch to the
+no-tools inline review unless fresh repository inspection is strictly required.
 
 Notes:
 

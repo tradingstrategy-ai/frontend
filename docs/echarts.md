@@ -23,7 +23,7 @@ The front page adapter lives in:
 
 The standalone page adapter lives in:
 
-- `src/routes/trading-view/vaults/cumulative-tvl-apy/CumulativeTvlApyChart.svelte`
+- `src/routes/vaults/cumulative-tvl-apy/CumulativeTvlApyChart.svelte`
 
 The diagnostics implementation lives here:
 
@@ -185,7 +185,7 @@ The standalone page uses a larger preset so axis labels, tooltip text, and plot 
 The ECharts migration is covered by integration tests in:
 
 - `tests/integration/index.test.ts`
-- `tests/integration/trading-view/vaults/cumulative-tvl-apy.test.ts`
+- `tests/integration/vaults/cumulative-tvl-apy.test.ts`
 
 The home page test checks that the page:
 
@@ -257,8 +257,8 @@ If you change the front page widget, check these areas together:
 
 If you change the standalone page, check these areas together:
 
-- `src/routes/trading-view/vaults/cumulative-tvl-apy/CumulativeTvlApyChart.svelte` control logic and URL state
+- `src/routes/vaults/cumulative-tvl-apy/CumulativeTvlApyChart.svelte` control logic and URL state
 - `src/lib/scatter-plot/ScatterPlotShell.svelte` chart hosting behaviour
-- `tests/integration/trading-view/vaults/cumulative-tvl-apy.test.ts`
+- `tests/integration/vaults/cumulative-tvl-apy.test.ts`
 
 If the change is primarily visual or experimental, prefer trying it on the diagnostics page first and then porting the result into the front page widget once the behaviour is stable.

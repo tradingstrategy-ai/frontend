@@ -448,7 +448,7 @@ describe('buildStablecoinChainHeatmapPayload', () => {
 				label: 'Hyperliquid',
 				totalTvl: 250,
 				chainIds: [9999],
-				href: '/trading-view/vaults/chains/hyperliquid',
+				href: '/vaults/chains/hyperliquid',
 				logoUrl: '/logos/blockchains/hyperliquid'
 			}),
 			expect.objectContaining({
@@ -456,7 +456,7 @@ describe('buildStablecoinChainHeatmapPayload', () => {
 				label: 'Ethereum',
 				totalTvl: 100,
 				chainIds: [1],
-				href: '/trading-view/vaults/chains/ethereum',
+				href: '/vaults/chains/ethereum',
 				logoUrl: '/logos/blockchains/ethereum'
 			}),
 			expect.objectContaining({
@@ -464,7 +464,7 @@ describe('buildStablecoinChainHeatmapPayload', () => {
 				label: 'Base',
 				totalTvl: 80,
 				chainIds: [8453],
-				href: '/trading-view/vaults/chains/base',
+				href: '/vaults/chains/base',
 				logoUrl: '/logos/blockchains/base'
 			})
 		]);
@@ -474,14 +474,14 @@ describe('buildStablecoinChainHeatmapPayload', () => {
 				label: 'USDC',
 				totalTvl: 350,
 				stablecoinSlug: 'usdc',
-				href: '/trading-view/vaults/stablecoins/usdc'
+				href: '/vaults/stablecoins/usdc'
 			}),
 			expect.objectContaining({
 				key: 'dai',
 				label: 'DAI',
 				totalTvl: 80,
 				stablecoinSlug: 'dai',
-				href: '/trading-view/vaults/stablecoins/dai'
+				href: '/vaults/stablecoins/dai'
 			})
 		]);
 		expect(payload.cells).toEqual([

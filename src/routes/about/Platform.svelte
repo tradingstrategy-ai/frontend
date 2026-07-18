@@ -60,7 +60,7 @@
 			blockchains
 		</li>
 		<li>Converts raw data to the familiar OHLCV candles and XY liquidity format</li>
-		<Button slot="cta" label="See more" href="/trading-view" />
+		<Button slot="cta" label="See more" href="/vaults/api" />
 	</Feature>
 
 	<Feature title="Real-time API (REST)" image={RealtimeApiImage}>

@@ -143,7 +143,7 @@ export function getStablecoinDetailsHref(slug: string | null | undefined): strin
 	const trimmedSlug = slug?.trim().toLowerCase();
 	if (!trimmedSlug || trimmedSlug === OFFCHAIN_USD_STABLECOIN_SLUG) return undefined;
 
-	return `/trading-view/vaults/stablecoins/${trimmedSlug}`;
+	return `/vaults/stablecoins/${trimmedSlug}`;
 }
 
 /**

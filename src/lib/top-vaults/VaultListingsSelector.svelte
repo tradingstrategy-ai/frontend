@@ -4,34 +4,34 @@
 	import DropdownMenu from '$lib/components/DropdownMenu.svelte';
 
 	const links = [
-		{ href: '/trading-view/vaults', label: 'Top' },
-		{ href: '/trading-view/vaults/stablecoins', label: 'Stablecoins' },
-		{ href: '/trading-view/vaults/chains', label: 'Chains' },
-		{ href: '/trading-view/vaults/protocols', label: 'Protocols' },
-		{ href: '/trading-view/vaults/curators', label: 'Curators' },
-		{ href: '/trading-view/vaults/international', label: 'International' },
-		{ href: '/trading-view/vaults/tokenised-funds', label: 'Tokenised funds' }
+		{ href: '/vaults', label: 'Top' },
+		{ href: '/vaults/stablecoins', label: 'Stablecoins' },
+		{ href: '/vaults/chains', label: 'Chains' },
+		{ href: '/vaults/protocols', label: 'Protocols' },
+		{ href: '/vaults/curators', label: 'Curators' },
+		{ href: '/vaults/international', label: 'International' },
+		{ href: '/vaults/tokenised-funds', label: 'Tokenised funds' }
 	] as const;
 
 	const otherListLinks = [
-		{ href: '/trading-view/vaults/high-tvl', label: 'Top with $2M TVL' },
-		{ href: '/trading-view/vaults/new-vaults', label: 'New' },
-		{ href: '/trading-view/vaults/negative', label: 'Negative' },
-		{ href: '/trading-view/vaults/blacklisted', label: 'Blacklisted' },
-		{ href: '/trading-view/vaults/all', label: 'All' }
+		{ href: '/vaults/high-tvl', label: 'Top with $2M TVL' },
+		{ href: '/vaults/new-vaults', label: 'New' },
+		{ href: '/vaults/negative', label: 'Negative' },
+		{ href: '/vaults/blacklisted', label: 'Blacklisted' },
+		{ href: '/vaults/all', label: 'All' }
 	] as const;
 
 	const chartLinks = [
-		{ href: '/trading-view/vaults/cumulative-tvl-apy', label: 'Total vault earnings' },
-		{ href: '/trading-view/vaults/yield-risk', label: 'Yield / Risk' },
-		{ href: '/trading-view/vaults/yield-protocol', label: 'Yield / Protocol' },
-		{ href: '/trading-view/vaults/yield-chain', label: 'Yield / Chain' },
-		{ href: '/trading-view/vaults/current-peak-tvl', label: 'Current / Peak TVL' },
-		{ href: '/trading-view/vaults/core3-risk', label: 'CORE3 risk' },
-		{ href: '/trading-view/vaults/historical-tvl-chain', label: 'Historical TVL by chain' },
-		{ href: '/trading-view/vaults/historical-tvl-stablecoin', label: 'Historical TVL by stablecoin' },
-		{ href: '/trading-view/vaults/historical-tvl-protocol', label: 'Historical TVL by vault protocol' },
-		{ href: '/trading-view/vaults/stablecoin-chain-heatmap', label: 'Stablecoin / Chain heatmap' }
+		{ href: '/vaults/cumulative-tvl-apy', label: 'Total vault earnings' },
+		{ href: '/vaults/yield-risk', label: 'Yield / Risk' },
+		{ href: '/vaults/yield-protocol', label: 'Yield / Protocol' },
+		{ href: '/vaults/yield-chain', label: 'Yield / Chain' },
+		{ href: '/vaults/current-peak-tvl', label: 'Current / Peak TVL' },
+		{ href: '/vaults/core3-risk', label: 'CORE3 risk' },
+		{ href: '/vaults/historical-tvl-chain', label: 'Historical TVL by chain' },
+		{ href: '/vaults/historical-tvl-stablecoin', label: 'Historical TVL by stablecoin' },
+		{ href: '/vaults/historical-tvl-protocol', label: 'Historical TVL by vault protocol' },
+		{ href: '/vaults/stablecoin-chain-heatmap', label: 'Stablecoin / Chain heatmap' }
 	] as const;
 
 	function isActive(href: string): boolean {

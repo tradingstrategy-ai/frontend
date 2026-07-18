@@ -36,7 +36,7 @@
 				title="{chainName} data under maintenance"
 				details="This page is temporarily unavailable due to maintenance related to {chainName} blockchain. Data will be back soon."
 			>
-				<Button label="Explore DEX data" href="/trading-view" />
+				<Button label="Explore DEX data" href="/vaults/api" />
 			</ErrorPageInfo>
 		{:else if status === 503}
 			<ErrorPageInfo {status} title={'Service is unavailable'}>

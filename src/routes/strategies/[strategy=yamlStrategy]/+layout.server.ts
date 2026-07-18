@@ -50,7 +50,7 @@ export async function load({ params, parent, fetch }) {
 				: null,
 			vaultChart: vaultInfo
 				? {
-						endpoint: `/trading-view/vaults/${vaultInfo.id}/metrics`,
+						endpoint: `/vaults/${vaultInfo.id}/metrics`,
 						cacheNote: 'Fetched client-side after hydration; no frontend SWR cache in app code.'
 					}
 				: null

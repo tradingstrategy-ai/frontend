@@ -107,7 +107,7 @@ page); omit it on the protocol page itself to render the name as plain text.
 			</header>
 
 			<p class="intro">
-				Risk rating by CORE3 for {#if protocolSlug}<a href={resolve(`/trading-view/vaults/protocols/${protocolSlug}`)}
+				Risk rating by CORE3 for {#if protocolSlug}<a href={resolve(`/vaults/protocols/${protocolSlug}`)}
 						>{protocolName}</a
 					>{:else}{protocolName}{/if}.
 				{#if context === 'vault'}

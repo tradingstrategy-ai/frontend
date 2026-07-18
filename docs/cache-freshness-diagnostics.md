@@ -30,7 +30,7 @@ If those sources are refreshed at different times, the homepage and detail page 
 
 - Vault summary metrics come from the top-vaults feed
   - Loaded in [src/routes/strategies/[strategy=yamlStrategy]/+layout.ts](/Users/moo/code/frontend/src/routes/strategies/[strategy=yamlStrategy]/+layout.ts)
-- The chart fetches `/trading-view/vaults/:id/metrics` client-side after hydration
+- The chart fetches `/vaults/:id/metrics` client-side after hydration
   - Implemented in [src/lib/top-vaults/VaultPriceChart.svelte](/Users/moo/code/frontend/src/lib/top-vaults/VaultPriceChart.svelte)
 - The frontend app code does not add SWR caching to this chart request
 

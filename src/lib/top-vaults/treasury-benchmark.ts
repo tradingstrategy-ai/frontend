@@ -37,7 +37,7 @@ export function fetchTreasuryBenchmarkSeries(fetch: Fetch, start: Date, end: Dat
 	if (cached) return cached;
 
 	const params = new URLSearchParams({ cosd, coed });
-	const promise = fetch(`/trading-view/vaults/treasury-benchmark?${params}`)
+	const promise = fetch(`/vaults/treasury-benchmark?${params}`)
 		.then((resp) => {
 			if (!resp.ok) throw new Error(`Treasury benchmark fetch failed: ${resp.status}`);
 			return resp.json() as Promise<RateEntry[]>;

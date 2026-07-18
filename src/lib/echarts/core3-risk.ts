@@ -161,7 +161,7 @@ function buildScatterPoint(
 		id: vault.id,
 		name: vault.name,
 		vaultSlug: vault.vault_slug,
-		href: `/trading-view/vaults/${vault.vault_slug}`,
+		href: `/vaults/${vault.vault_slug}`,
 		protocol: getProtocolDisplayName(vault.protocol, vault.protocol_slug),
 		protocolSlug: vault.protocol_slug,
 		protocolLogoUrl: getVaultProtocolLogoUrl(vault.protocol_slug),
