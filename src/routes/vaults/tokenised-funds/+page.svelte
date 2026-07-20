@@ -20,15 +20,18 @@ Tokenised fund listing for vaults with a regulated fund structure.
 	import MarketShareWidgetBox from '../MarketShareWidgetBox.svelte';
 	import type { MarketShareChartItem } from '../market-share-pie';
 
+	let { data } = $props();
 	let topVaults = $state<TopVaults>();
-	let loading = $state(!hasVaultCache(page.data.generatedAt));
+	let fetchSettled = $state(false);
+	let loading = $derived(!fetchSettled && !hasVaultCache(data.generatedAt));
 
 	function isTokenisedFund(vault: VaultInfo): boolean {
 		return vault.flags.includes('tokenised_fund');
 	}
 
 	$effect(() => {
-		fetchAllVaultData(page.data.generatedAt)
+		fetchSettled = false;
+		fetchAllVaultData(data.generatedAt)
 			.then((allData) => {
 				topVaults = {
 					...allData,
@@ -36,15 +39,17 @@ Tokenised fund listing for vaults with a regulated fund structure.
 				};
 			})
 			.catch((e) => console.error('Failed to load vault data:', e))
-			.finally(() => (loading = false));
+			.finally(() => (fetchSettled = true));
 	});
 
 	const title = 'Tokenised funds';
-	const description =
-		'Tokenised funds are regulated investment funds with on-chain shares and varying levels of data transparency.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let totalNavUsd = $derived(
-		topVaults?.vaults.reduce((total, vault) => total + (getVaultCurrentTvlUsd(vault) ?? 0), 0) ?? 0
+		topVaults?.vaults.reduce((total, vault) => total + (getVaultCurrentTvlUsd(vault) ?? 0), 0) ?? data.totalNavUsd
+	);
+	let fundCount = $derived(topVaults?.vaults.length ?? data.fundCount);
+	let description = $derived(
+		`Tracking ${formatDollar(totalNavUsd, 2, 3)} total net asset value of ${fundCount} tokenised funds.`
 	);
 	let chartTitle = $derived(`Total ${formatDollar(totalNavUsd, 2, 3)} tokenised fund NAV`);
 	let chartFunds = $derived.by((): MarketShareChartItem[] => {
@@ -79,7 +84,7 @@ Tokenised fund listing for vaults with a regulated fund structure.
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: topVaults?.vaults.length ?? 0
+			numberOfItems: fundCount
 		}
 	}}
 />
