@@ -27,6 +27,9 @@ Displays supplementary vault information, including transaction status, performa
 	const LIMITED_HISTORY_CHAINS = [9999, 9998, 9997];
 	const NO_DATA_LABEL = 'No data';
 	const MISSING_FEE_TOOLTIP = 'The fee information is not available onchain. Net returns cannot be calculated.';
+	const INTERNALISED_FEE_TOOLTIP =
+		'Fees are internalised and already reduced from the gross profit and thus reflected in the share price.';
+	const INTERNALISED_FEE_DISCLAIMER = 'Fees are internalised for this vault and already removed from the gross profit.';
 
 	let { vault, stablecoinMetadata = null }: Props = $props();
 
@@ -34,6 +37,11 @@ Displays supplementary vault information, including transaction status, performa
 	let hasLimitedHistory = $derived(LIMITED_HISTORY_CHAINS.includes(vault.chain_id));
 	let showTransactionStatus = $derived(!isGoodVaultStatus(vault));
 	let hasNetFeeInformation = $derived(vault.net_fees?.fee_mode != null);
+	let hasInternalisedFees = $derived(
+		vault.fee_internalised === true ||
+			vault.gross_fees?.fee_mode?.startsWith('internalised') ||
+			vault.net_fees?.fee_mode?.startsWith('internalised')
+	);
 	let denominationSlug = $derived(
 		resolveStablecoinSlug({
 			slug: vault.denomination_slug,
@@ -108,25 +116,25 @@ Displays supplementary vault information, including transaction status, performa
 		{
 			label: 'Performance fee',
 			mobileLabel: 'Performance',
-			value: vault.net_fees?.performance,
+			value: vault.gross_fees?.performance,
 			tooltip: '<strong>Performance fee</strong> is charged against investment profits.'
 		},
 		{
 			label: 'Management fee',
 			mobileLabel: 'Management',
-			value: vault.net_fees?.management,
+			value: vault.gross_fees?.management,
 			tooltip: '<strong>Management fee</strong> is charged annually for managing the vault.'
 		},
 		{
 			label: 'Deposit fee',
 			mobileLabel: 'Deposit',
-			value: vault.net_fees?.deposit,
+			value: vault.gross_fees?.deposit,
 			tooltip: '<strong>Deposit fee</strong> is a one-time fee applied when entering the vault.'
 		},
 		{
 			label: 'Withdrawal fee',
 			mobileLabel: 'Withdrawal',
-			value: vault.net_fees?.withdraw,
+			value: vault.gross_fees?.withdraw,
 			tooltip: '<strong>Withdrawal fee</strong> is a one-time fee applied when exiting the vault.'
 		}
 	]);
@@ -148,6 +156,11 @@ Displays supplementary vault information, including transaction status, performa
 
 	function isNetReturnUnavailable(period: (typeof returnPeriods)[number]): boolean {
 		return !hasNetFeeInformation && period.net.annualised == null;
+	}
+
+	function withInternalisedFeeTooltip(tooltip: string): string {
+		if (!hasInternalisedFees) return tooltip;
+		return `${tooltip}<p>${INTERNALISED_FEE_TOOLTIP}</p>`;
 	}
 </script>
 
@@ -321,7 +334,7 @@ Displays supplementary vault information, including transaction status, performa
 					</tr>
 					{#each feeRows as fee (fee.label)}
 						<tr class="fee-row">
-							<td>{@render metricLabel(fee.tooltip, fee.label, fee.mobileLabel)}</td>
+							<td>{@render metricLabel(withInternalisedFeeTooltip(fee.tooltip), fee.label, fee.mobileLabel)}</td>
 							{#each returnPeriods as period (period.label)}
 								<td aria-label={`${fee.label} for ${period.label}`}>
 									{#if isMissingFeeValue(fee.value)}
@@ -336,7 +349,9 @@ Displays supplementary vault information, including transaction status, performa
 					<tr>
 						<td>
 							{@render metricLabel(
-								'<strong>Net returns</strong> are annualised. They are the gross returns after all investor-facing fees have been deducted.',
+								withInternalisedFeeTooltip(
+									'<strong>Net returns</strong> are annualised. They are the gross returns after all investor-facing fees have been deducted.'
+								),
 								'Net'
 							)}
 						</td>
@@ -371,6 +386,9 @@ Displays supplementary vault information, including transaction status, performa
 				</tbody>
 			</table>
 		</div>
+		{#if hasInternalisedFees}
+			<p class="fee-disclaimer">{INTERNALISED_FEE_DISCLAIMER}</p>
+		{/if}
 	</MetricsBox>
 </div>
 
@@ -484,6 +502,12 @@ Displays supplementary vault information, including transaction status, performa
 
 		.table-scroll {
 			overflow-x: auto;
+		}
+
+		.fee-disclaimer {
+			margin: 0.75rem 0 0;
+			font: var(--f-ui-sm-roman);
+			color: var(--c-text-light);
 		}
 
 		@media (--viewport-md-up) {

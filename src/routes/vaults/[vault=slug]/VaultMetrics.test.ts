@@ -5,6 +5,9 @@ import type { PeriodMetrics } from '$lib/top-vaults/schemas';
 import VaultMetrics from './VaultMetrics.svelte';
 
 const MISSING_FEE_TOOLTIP = 'The fee information is not available onchain. Net returns cannot be calculated.';
+const INTERNALISED_FEE_TOOLTIP =
+	'Fees are internalised and already reduced from the gross profit and thus reflected in the share price.';
+const INTERNALISED_FEE_DISCLAIMER = 'Fees are internalised for this vault and already removed from the gross profit.';
 
 afterEach(cleanup);
 
@@ -76,6 +79,13 @@ describe('VaultMetrics', () => {
 			cagr_net: 0.09,
 			lifetime_return: 0.08,
 			lifetime_return_net: 0.07,
+			gross_fees: {
+				fee_mode: 'externalised',
+				performance: 0.3,
+				management: 0.02,
+				deposit: 0,
+				withdraw: 0
+			},
 			net_fees: {
 				fee_mode: 'externalised',
 				performance: 0.2,
@@ -89,8 +99,48 @@ describe('VaultMetrics', () => {
 		render(VaultMetrics, { props: { vault } });
 
 		expect(screen.queryByText('No data')).not.toBeInTheDocument();
-		expect(screen.getAllByText('20.0%').length).toBeGreaterThan(0);
+		expect(screen.queryByText('20.0%')).not.toBeInTheDocument();
+		expect(screen.getAllByText('30.0%').length).toBeGreaterThan(0);
+		expect(screen.getAllByText('2.0%').length).toBeGreaterThan(0);
 		expect(screen.getAllByText('0.0%').length).toBeGreaterThan(0);
 		expect(screen.getAllByText('10.0%').length).toBeGreaterThan(0);
+	});
+
+	test('explains internalised fees in fee and net return tooltips', () => {
+		const vault = createTestVault('Internalised fee vault', {
+			one_month_cagr: 0.12,
+			one_month_returns: 0.01,
+			one_month_cagr_net: 0.12,
+			one_month_returns_net: 0.01,
+			three_months_cagr: 0.14,
+			three_months_returns: 0.03,
+			three_months_cagr_net: 0.14,
+			three_months_returns_net: 0.03,
+			cagr: 0.11,
+			cagr_net: 0.11,
+			lifetime_return: 0.08,
+			lifetime_return_net: 0.08,
+			fee_internalised: true,
+			gross_fees: {
+				fee_mode: 'internalised_skimming',
+				performance: 0.1,
+				management: 0,
+				deposit: 0,
+				withdraw: 0
+			},
+			net_fees: {
+				fee_mode: 'internalised_skimming',
+				performance: 0,
+				management: 0,
+				deposit: 0,
+				withdraw: 0
+			},
+			period_results: [createPeriodMetrics('6m', 0.05, 0.1, 0.05), createPeriodMetrics('1y', 0.08, 0.08, 0.08)]
+		});
+
+		render(VaultMetrics, { props: { vault } });
+
+		expect(screen.getAllByText(INTERNALISED_FEE_TOOLTIP)).toHaveLength(5);
+		expect(screen.getByText(INTERNALISED_FEE_DISCLAIMER)).toBeInTheDocument();
 	});
 });

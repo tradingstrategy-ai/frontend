@@ -18,6 +18,7 @@
 	import DataTable from '$lib/components/datatable/DataTable.svelte';
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import { UNKNOWN_VAULT_PROTOCOL_SLUG } from '$lib/top-vaults/helpers';
+	import AvgApyHeader from './AvgApyHeader.svelte';
 	import VaultGroupNameCell from './VaultGroupNameCell.svelte';
 	import RiskCell from './RiskCell.svelte';
 	import Core3RiskCell from './Core3RiskCell.svelte';
@@ -149,7 +150,7 @@
 		}),
 		table.column({
 			accessor: 'avg_apy',
-			header: 'Avg. APY%',
+			header: createRender(AvgApyHeader, {}),
 			cell: ({ value }) => formatPercent(value)
 		}),
 		table.column({
