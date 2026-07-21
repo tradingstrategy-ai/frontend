@@ -14,6 +14,10 @@
 		groupLabelPlural: string;
 		/** Group items below this share into an Other slice. Defaults to 2%. */
 		otherThreshold?: number;
+		/** Maximum number of standalone slices before grouping the rest as Other. */
+		maxIndividualSlices?: number;
+		/** Show slice logos inside chart labels when `logoUrl` is available. */
+		showLabelLogos?: boolean;
 		/** Split long slice names across two lines before the value label. */
 		wrapLabels?: boolean;
 		/** Label for the value shown in chart tooltips. */
@@ -27,6 +31,8 @@
 		groupLabel,
 		groupLabelPlural,
 		otherThreshold,
+		maxIndividualSlices,
+		showLabelLogos = false,
 		wrapLabels = false,
 		valueLabel = 'TVL',
 		testId = 'market-share-pie-chart',
@@ -47,7 +53,7 @@
 		'#64748b'
 	];
 
-	let slices = $derived(buildMarketSharePieSlices(items, { groupLabelPlural, otherThreshold }));
+	let slices = $derived(buildMarketSharePieSlices(items, { groupLabelPlural, otherThreshold, maxIndividualSlices }));
 	let chartContainer = $state<HTMLDivElement | null>(null);
 	let chartInstance = $state<ReturnType<EChartsStatic['init']> | null>(null);
 	let echartsApi = $state<EChartsStatic | null>(null);
@@ -66,6 +72,10 @@
 
 	function formatLabelPercentage(value: number): string {
 		return value >= 10 ? value.toFixed(0) : value.toFixed(1);
+	}
+
+	function getLogoRichKey(slice: MarketSharePieSlice): string {
+		return `logo_${(slice.slug ?? slice.label).replace(/\W+/g, '_')}`;
 	}
 
 	function splitLabelIntoTwoLines(label: string): string[] {
@@ -89,21 +99,34 @@
 		return [words.slice(0, bestIndex).join(' '), words.slice(bestIndex).join(' ')];
 	}
 
-	function formatSliceLabel(label: string): string {
+	function formatSliceLabel(slice: MarketSharePieSlice, includeLogo: boolean): string {
+		const { label } = slice;
 		const lines = wrapLabels ? splitLabelIntoTwoLines(label) : [label];
 		const style = wrapLabels && label.length > 45 ? 'labelCompact' : 'label';
-		return lines.map((line) => `{${style}|${line}}`).join('\n');
+		const labelText = lines.map((line) => `{${style}|${line}}`).join('\n');
+
+		if (includeLogo && slice.logoUrl && !slice.isOther) {
+			return `{${getLogoRichKey(slice)}|}\n${labelText}`;
+		}
+
+		return labelText;
 	}
 
 	function getValueLabelStyle(label: string): string {
 		return wrapLabels && label.length > 45 ? 'valueCompact' : 'value';
 	}
 
-	function buildLabelRichStyles(isMobile: boolean) {
+	function trackChartInputs(...inputs: unknown[]): void {
+		// Svelte tracks effect dependencies when arguments are evaluated.
+		inputs.forEach(Boolean);
+	}
+
+	function buildLabelRichStyles(isMobile: boolean, currentSlices: MarketSharePieSlice[]) {
 		const labelFontSize = wrapLabels ? (isMobile ? 9 : 9.5) : 11;
 		const valueFontSize = wrapLabels ? (isMobile ? 9 : 9.5) : 10.5;
 		const compactLabelFontSize = wrapLabels ? (isMobile ? 7.5 : 8) : labelFontSize;
 		const compactValueFontSize = wrapLabels ? (isMobile ? 8 : 8.5) : valueFontSize;
+		const logoSize = isMobile ? 14 : 16;
 		const rich: Record<string, Record<string, unknown>> = {
 			label: {
 				color: '#f8fbff',
@@ -142,6 +165,21 @@
 				verticalAlign: 'middle'
 			}
 		};
+
+		for (const slice of currentSlices) {
+			if (!showLabelLogos || isMobile || !slice.logoUrl || slice.isOther) continue;
+			rich[getLogoRichKey(slice)] = {
+				width: logoSize,
+				height: logoSize,
+				lineHeight: logoSize + 2,
+				align: 'center',
+				verticalAlign: 'middle',
+				borderRadius: logoSize / 2,
+				backgroundColor: {
+					image: slice.logoUrl
+				}
+			};
+		}
 
 		return rich;
 	}
@@ -205,7 +243,9 @@
 		destroyChart();
 
 		const isMobile = window.innerWidth <= 768;
-		const labelRichStyles = buildLabelRichStyles(isMobile);
+		const includeLabelLogos = showLabelLogos && !isMobile;
+		const currentSlices = slices;
+		const labelRichStyles = buildLabelRichStyles(isMobile, currentSlices);
 		chartInstance = echartsApi.init(chartContainer);
 		chartInstance.setOption({
 			animationDuration: 450,
@@ -241,7 +281,7 @@
 				{
 					name: `${groupLabel} ${valueLabel}`,
 					type: 'pie',
-					radius: isMobile ? ['24%', '49%'] : ['35%', '70%'],
+					radius: isMobile ? ['24%', '48%'] : ['35%', '70%'],
 					center: ['50%', '53%'],
 					avoidLabelOverlap: true,
 					minAngle: 2,
@@ -257,15 +297,15 @@
 						fontFamily: chartFontFamily,
 						fontSize: isMobile ? 12 : 12,
 						lineHeight: isMobile ? 18 : 18,
-						padding: wrapLabels ? (isMobile ? [4, 6, 4, 6] : [4, 8, 4, 8]) : isMobile ? [5, 8, 5, 8] : [6, 11, 6, 11],
-						borderRadius: 999,
+						padding: wrapLabels ? (isMobile ? [4, 5, 4, 5] : [4, 8, 4, 8]) : isMobile ? [4, 6, 4, 6] : [6, 11, 6, 11],
+						borderRadius: isMobile ? 0 : 999,
 						backgroundColor: 'rgba(255, 255, 255, 0.14)',
 						shadowBlur: 10,
 						shadowColor: 'rgba(15, 23, 42, 0.16)',
 						formatter: (params: { data?: MarketSharePieSlice }) => {
 							const slice = params.data;
 							if (!slice) return '';
-							return `${formatSliceLabel(slice.label)}\n{${getValueLabelStyle(slice.label)}|${formatLabelPercentage(slice.percentage)}%}`;
+							return `${formatSliceLabel(slice, includeLabelLogos)}\n{${getValueLabelStyle(slice.label)}|${formatLabelPercentage(slice.percentage)}%}`;
 						},
 						rich: labelRichStyles
 					},
@@ -289,13 +329,14 @@
 							shadowColor: 'rgba(56, 189, 248, 0.22)'
 						}
 					},
-					data: slices
+					data: currentSlices
 				}
 			]
 		});
 
 		chartInstance.on('click', (params) => {
 			const targetUrl = params.data?.url;
+			// eslint-disable-next-line svelte/no-navigation-without-resolve -- Chart items already provide resolved hrefs.
 			if (targetUrl) goto(targetUrl);
 		});
 
@@ -337,12 +378,16 @@
 	});
 
 	$effect(() => {
-		slices;
-		groupLabel;
-		groupLabelPlural;
-		otherThreshold;
-		wrapLabels;
-		valueLabel;
+		trackChartInputs(
+			slices,
+			groupLabel,
+			groupLabelPlural,
+			otherThreshold,
+			maxIndividualSlices,
+			showLabelLogos,
+			wrapLabels,
+			valueLabel
+		);
 		if (!runtimeReady || !echartsApi || !chartContainer) return;
 
 		let cancelled = false;
