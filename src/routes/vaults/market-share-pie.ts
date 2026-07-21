@@ -40,6 +40,7 @@ export interface MarketSharePieSlice {
 interface BuildMarketSharePieOptions {
 	otherThreshold?: number;
 	groupLabelPlural?: string;
+	maxIndividualSlices?: number;
 }
 
 function calculateWeightedApy(items: MarketShareChartItem[]): number | null {
@@ -63,7 +64,13 @@ export function buildMarketSharePieSlices(
 	items: MarketShareChartItem[],
 	options: BuildMarketSharePieOptions = {}
 ): MarketSharePieSlice[] {
-	const { otherThreshold = MARKET_SHARE_OTHER_THRESHOLD, groupLabelPlural = 'items' } = options;
+	const {
+		otherThreshold = MARKET_SHARE_OTHER_THRESHOLD,
+		groupLabelPlural = 'items',
+		maxIndividualSlices: rawMaxIndividualSlices
+	} = options;
+	const maxIndividualSlices =
+		rawMaxIndividualSlices == null ? undefined : Math.max(0, Math.floor(rawMaxIndividualSlices));
 	const chartableItems = items.filter((item) => item.tvl > 0).toSorted((a, b) => b.tvl - a.tvl);
 	const totalTvl = chartableItems.reduce((sum, item) => sum + item.tvl, 0);
 
@@ -74,7 +81,8 @@ export function buildMarketSharePieSlices(
 
 	for (const item of chartableItems) {
 		const percentage = item.tvl / totalTvl;
-		if (percentage < otherThreshold) {
+		const reachedIndividualSliceLimit = maxIndividualSlices != null && visibleSlices.length >= maxIndividualSlices;
+		if (reachedIndividualSliceLimit || percentage < otherThreshold) {
 			otherMembers.push(item);
 			continue;
 		}
@@ -118,5 +126,5 @@ export function buildMarketSharePieSlices(
 		});
 	}
 
-	return visibleSlices.toSorted((a, b) => b.tvl - a.tvl);
+	return maxIndividualSlices == null ? visibleSlices.toSorted((a, b) => b.tvl - a.tvl) : visibleSlices;
 }

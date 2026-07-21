@@ -34,13 +34,6 @@ aggregate TVL, vault count and average APY, plus a market-share pie chart.
 	const title = 'Stablecoin vault curators';
 	const description =
 		'Curator rankings for DeFi stablecoin vaults. Curators select and manage vault strategies. TVL represents stablecoin deposits across a curator’s vaults. APY represents the yield of last thirty days.';
-	const glossaryLinks = {
-		defi: resolve('/glossary/defi'),
-		vault: resolve('/glossary/vault'),
-		stablecoin: resolve('/glossary/stablecoin'),
-		tvl: resolve('/glossary/total-value-locked-tvl'),
-		apy: resolve('/glossary/apy')
-	};
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
@@ -81,12 +74,13 @@ aggregate TVL, vault count and average APY, plus a market-share pie chart.
 						{#snippet subtitle()}
 							<p>
 								Curator rankings for
-								<a class="body-link" href={glossaryLinks.defi}>DeFi</a>
-								<a class="body-link" href={glossaryLinks.stablecoin}>stablecoin</a>
-								<a class="body-link" href={glossaryLinks.vault}>vaults</a>. Curators select and manage vault strategies.
-								<a class="body-link" href={glossaryLinks.tvl}>TVL</a> represents stablecoin deposits across a curator’s
-								vaults.
-								<a class="body-link" href={glossaryLinks.apy}>APY</a>
+								<a class="body-link" href={resolve('/glossary/defi')}>DeFi</a>
+								<a class="body-link" href={resolve('/glossary/stablecoin')}>stablecoin</a>
+								<a class="body-link" href={resolve('/glossary/vault')}>vaults</a>. Curators select and manage vault
+								strategies.
+								<a class="body-link" href={resolve('/glossary/total-value-locked-tvl')}>TVL</a> represents stablecoin
+								deposits across a curator’s vaults.
+								<a class="body-link" href={resolve('/glossary/apy')}>APY</a>
 								represents the yield of last thirty days.
 							</p>
 							<p>{totalTvlLabel} TVL tracked across {curators.length} curators.</p>
@@ -100,6 +94,7 @@ aggregate TVL, vault count and average APY, plus a market-share pie chart.
 							items={chartCurators}
 							groupLabel="Curator"
 							groupLabelPlural="curators"
+							showLabelLogos
 							testId="curator-tvl-pie-chart"
 						/>
 					</MarketShareWidgetBox>

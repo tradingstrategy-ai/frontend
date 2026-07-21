@@ -57,4 +57,38 @@ describe('buildMarketSharePieSlices', () => {
 		expect(slices.map((slice) => slice.label)).toEqual(['USDC', 'DAI']);
 		expect(slices.some((slice) => slice.isOther)).toBe(false);
 	});
+
+	test('groups entries after the standalone slice limit into Other', () => {
+		const slices = buildMarketSharePieSlices(
+			[
+				{ slug: 'fund-1', label: 'Fund 1', name: 'Fund 1', tvl: 100, avgApy: 0.01, href: '/fund-1' },
+				{ slug: 'fund-2', label: 'Fund 2', name: 'Fund 2', tvl: 90, avgApy: 0.02, href: '/fund-2' },
+				{ slug: 'fund-3', label: 'Fund 3', name: 'Fund 3', tvl: 80, avgApy: 0.03, href: '/fund-3' },
+				{ slug: 'fund-4', label: 'Fund 4', name: 'Fund 4', tvl: 70, avgApy: 0.04, href: '/fund-4' },
+				{ slug: 'fund-5', label: 'Fund 5', name: 'Fund 5', tvl: 60, avgApy: 0.05, href: '/fund-5' },
+				{ slug: 'fund-6', label: 'Fund 6', name: 'Fund 6', tvl: 50, avgApy: 0.06, href: '/fund-6' },
+				{ slug: 'fund-7', label: 'Fund 7', name: 'Fund 7', tvl: 40, avgApy: 0.07, href: '/fund-7' },
+				{ slug: 'fund-8', label: 'Fund 8', name: 'Fund 8', tvl: 30, avgApy: 0.08, href: '/fund-8' },
+				{ slug: 'fund-9', label: 'Fund 9', name: 'Fund 9', tvl: 20, avgApy: 0.09, href: '/fund-9' }
+			],
+			{ groupLabelPlural: 'funds', otherThreshold: 0, maxIndividualSlices: 7 }
+		);
+
+		expect(slices.map((slice) => slice.label)).toEqual([
+			'Fund 1',
+			'Fund 2',
+			'Fund 3',
+			'Fund 4',
+			'Fund 5',
+			'Fund 6',
+			'Fund 7',
+			'Other'
+		]);
+		expect(slices.at(-1)).toMatchObject({
+			label: 'Other',
+			name: 'Other funds',
+			memberCount: 2,
+			tvl: 50
+		});
+	});
 });

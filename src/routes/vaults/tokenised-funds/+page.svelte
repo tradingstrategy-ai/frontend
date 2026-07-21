@@ -61,6 +61,7 @@ Tokenised fund listing for vaults with a regulated fund structure.
 			name: vault.name,
 			tvl: getVaultCurrentTvlUsd(vault) ?? 0,
 			avgApy: vault.cagr_net ?? vault.three_months_cagr ?? null,
+			logoUrl: vault.curator_slug ? (topVaults.curators[vault.curator_slug]?.logos.generic ?? undefined) : undefined,
 			href: resolveVaultDetails(vault)
 		}));
 	});
@@ -100,7 +101,7 @@ Tokenised fund listing for vaults with a regulated fund structure.
 						{#snippet subtitle()}
 							<p>
 								{#if topVaults}
-									Tracking {formatDollar(totalNavUsd, 2, 3)} net asset value across {topVaults.vaults.length}{' '}
+									Tracking {formatDollar(totalNavUsd, 2, 3)} net asset value across {topVaults.vaults.length}
 									{topVaults.vaults.length === 1 ? 'fund' : 'funds'}.
 								{:else}
 									Loading tokenised fund net asset value.
@@ -124,7 +125,9 @@ Tokenised fund listing for vaults with a regulated fund structure.
 								items={chartFunds}
 								groupLabel="Fund"
 								groupLabelPlural="funds"
-								otherThreshold={0.1}
+								otherThreshold={0}
+								maxIndividualSlices={7}
+								showLabelLogos
 								wrapLabels
 								valueLabel="Net asset value"
 								testId="tokenised-fund-nav-pie-chart"
