@@ -272,6 +272,7 @@
 	let hideClosed = $derived(urlState.closed === 1);
 	let hideUnknown = $derived(showUnknownFilter && urlState.unknown === 1);
 	let returnsDropdownOpen = $state(false);
+	let mobileFiltersOpen = $state(false);
 	let selectedReturnColumnIds = $derived(sanitiseReturnColumnSelection(urlState.returns));
 	let selectedReturnColumns = $derived(
 		selectedReturnColumnIds.map(
@@ -754,7 +755,17 @@
 		</div>
 
 		{#if showFilters}
-			<div class="table-filters">
+			<button
+				class="mobile-filters-trigger"
+				data-testid="mobile-filters-trigger"
+				aria-expanded={mobileFiltersOpen}
+				onclick={() => (mobileFiltersOpen = !mobileFiltersOpen)}
+			>
+				<IconChevronDown />
+				<span>Filters</span>
+			</button>
+
+			<div class="table-filters" class:mobile-filters-open={mobileFiltersOpen}>
 				<div class="primary-filters">
 					<div class="filter-group">
 						<Tooltip>
@@ -837,7 +848,7 @@
 					</div>
 				</div>
 
-				<details class="advanced-filters" data-testid="advanced-filters">
+				<details class="advanced-filters" data-testid="advanced-filters" open={mobileFiltersOpen}>
 					<summary class="advanced-filters-summary" data-testid="advanced-filters-summary">
 						<IconChevronDown />
 						<span>Advanced filters</span>
@@ -1206,6 +1217,10 @@
 			font: var(--f-ui-sm-medium);
 		}
 
+		.mobile-filters-trigger {
+			display: none;
+		}
+
 		.primary-filters,
 		.advanced-filters-content {
 			display: flex;
@@ -1408,6 +1423,62 @@
 			}
 		}
 
+		@media (--viewport-sm-down) {
+			.filter {
+				display: none;
+			}
+
+			.mobile-filters-trigger {
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+				width: 100%;
+				padding: var(--space-sl) var(--space-md);
+				border: 1px solid var(--c-input-border);
+				border-radius: var(--radius-sm);
+				background: color-mix(in srgb, var(--c-input-background), transparent 15%);
+				color: var(--c-text-extra-light);
+				font: var(--f-ui-sm-medium);
+				text-align: left;
+				cursor: pointer;
+
+				:global(.icon) {
+					--icon-size: 0.875em;
+					transition: transform var(--time-sm) ease-out;
+				}
+
+				&[aria-expanded='true'] :global(.icon) {
+					transform: rotate(180deg);
+				}
+			}
+
+			.table-filters {
+				display: none;
+
+				&.mobile-filters-open {
+					display: grid;
+					padding: var(--space-md);
+					border: 1px solid var(--c-input-border);
+					border-radius: var(--radius-sm);
+					background: color-mix(in srgb, var(--c-input-background), transparent 15%);
+				}
+			}
+
+			.advanced-filters {
+				border: 0;
+				border-radius: 0;
+				background: transparent;
+			}
+
+			.advanced-filters-summary {
+				display: none;
+			}
+
+			.advanced-filters-content {
+				padding: 0;
+			}
+		}
+
 		.table-wrapper {
 			width: 100%;
 
@@ -1432,11 +1503,18 @@
 			counter-reset: rowNumber;
 
 			@media (--viewport-sm-down) {
-				min-width: 64rem;
-			}
+				width: 58rem;
+				min-width: 58rem;
+				font-size: 11px;
+				line-height: 1.25;
 
-			@media (--viewport-xs) {
-				font-size: 14px;
+				th {
+					--th-padding: 0.375rem 0.25rem calc(0.375rem + 2px) 0.25rem;
+
+					button {
+						min-height: 2.5rem;
+					}
+				}
 			}
 
 			:is(td, th) {
@@ -1492,6 +1570,10 @@
 				border-block: 1px solid var(--c-text-ultra-light);
 				padding: 0.25em 0.5em;
 
+				@media (--viewport-sm-down) {
+					padding: 0.125em 0.25em;
+				}
+
 				--c-col-a: var(--c-box-3);
 				--c-col-b: var(--c-box-1);
 
@@ -1535,6 +1617,18 @@
 			:global(.multiline) {
 				display: grid;
 				gap: 0.5rem;
+
+				@media (--viewport-sm-down) {
+					gap: 0.125rem;
+					min-width: 0;
+				}
+			}
+
+			:global(.multiline > *) {
+				@media (--viewport-sm-down) {
+					min-width: 0;
+					overflow-wrap: anywhere;
+				}
 			}
 
 			:global(.secondary) {
@@ -1565,6 +1659,14 @@
 			 */
 			.index {
 				width: 2.25rem;
+
+				@media (--viewport-sm-down) {
+					width: 1.5rem;
+
+					&:is(td) {
+						padding-inline: 0;
+					}
+				}
 
 				/* no background on index column header */
 				&:is(th) {
@@ -1597,26 +1699,60 @@
 			.vault {
 				width: 20.5%;
 				--icon-left: 8ch;
+
+				@media (--viewport-sm-down) {
+					width: 10rem;
+					max-width: 10rem;
+				}
 			}
 
 			.return-column {
 				width: 6.5%;
+
+				@media (--viewport-sm-down) {
+					width: 7%;
+
+					&:is(th) {
+						font-size: 10px;
+					}
+				}
 			}
 
 			:is(.three_months_sharpe, .three_months_volatility) {
 				width: 4.5%;
+
+				@media (--viewport-sm-down) {
+					width: 5.5%;
+				}
 			}
 
 			.max_dd {
 				width: 4.5%;
+
+				@media (--viewport-sm-down) {
+					width: 5%;
+				}
 			}
 
 			.denomination {
 				width: 5%;
+
+				@media (--viewport-sm-down) {
+					width: 7%;
+					overflow-wrap: anywhere;
+				}
 			}
 
 			.tvl {
 				width: 6.25%;
+
+				@media (--viewport-sm-down) {
+					width: 8%;
+
+					.multival {
+						white-space: nowrap;
+					}
+				}
 
 				.tvl-tooltip-trigger {
 					display: inline-grid;
@@ -1680,10 +1816,18 @@
 
 			.fees {
 				width: 4.5%;
+
+				@media (--viewport-sm-down) {
+					width: 5.5%;
+				}
 			}
 
 			.lockup {
 				width: 7.5%;
+
+				@media (--viewport-sm-down) {
+					width: 8%;
+				}
 
 				:global(.popup) {
 					right: 0;
@@ -1710,6 +1854,10 @@
 			.risk {
 				width: 5.5%;
 
+				@media (--viewport-sm-down) {
+					width: 8%;
+				}
+
 				:global(.popup) {
 					right: 0;
 					white-space: nowrap;
@@ -1723,6 +1871,10 @@
 
 			.sparkline {
 				width: 9%;
+
+				@media (--viewport-sm-down) {
+					display: none;
+				}
 
 				&:is(td) {
 					text-align: center;

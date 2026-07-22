@@ -383,6 +383,11 @@
 		}
 
 		@media (--viewport-sm-down) {
+			.top-vaults-header :global(.hero-banner) {
+				min-height: 0;
+				padding-block: var(--space-xs);
+			}
+
 			.hero-layout {
 				grid-template-columns: 1fr;
 				align-items: stretch;
