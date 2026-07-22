@@ -124,6 +124,53 @@ test.describe('vault index page', () => {
 		await expect(returnColumnsTrigger(page)).not.toBeVisible();
 	});
 
+	test('groups all filters under a mobile Filters disclosure', async ({ page }) => {
+		await page.setViewportSize({ width: 375, height: 667 });
+		await page.goto('/vaults');
+
+		const mobileFiltersTrigger = page.getByTestId('mobile-filters-trigger');
+		const primaryFilters = page.locator('.primary-filters');
+		const advancedFilters = page.getByTestId('advanced-filters');
+
+		await expect(mobileFiltersTrigger).toBeVisible();
+		await expect(mobileFiltersTrigger).toHaveAttribute('aria-expanded', 'false');
+		await expect(primaryFilters).not.toBeVisible();
+		await expect(advancedFilters).not.toBeVisible();
+
+		await mobileFiltersTrigger.click();
+
+		await expect(mobileFiltersTrigger).toHaveAttribute('aria-expanded', 'true');
+		await expect(primaryFilters.getByText('Technical risk', { exact: true })).toBeVisible();
+		await expect(primaryFilters.getByTestId('vault-search')).not.toBeVisible();
+		await expect(page.locator('.advanced-filters-content').getByText('Min TVL')).toBeVisible();
+		await expect(page.getByTestId('advanced-filters-summary')).not.toBeVisible();
+	});
+
+	test('closes the mobile Filters disclosure', async ({ page }) => {
+		await page.setViewportSize({ width: 375, height: 667 });
+		await page.goto('/vaults');
+
+		const mobileFiltersTrigger = page.getByTestId('mobile-filters-trigger');
+		await mobileFiltersTrigger.click();
+		await expect(page.locator('.primary-filters')).toBeVisible();
+
+		await mobileFiltersTrigger.click();
+		await expect(mobileFiltersTrigger).toHaveAttribute('aria-expanded', 'false');
+		await expect(page.locator('.primary-filters')).not.toBeVisible();
+	});
+
+	test('constrains and wraps vault labels on mobile', async ({ page }) => {
+		await page.setViewportSize({ width: 375, height: 667 });
+		await page.goto('/vaults');
+
+		const vaultCell = page.locator('td.vault').first();
+		const vaultLabel = vaultCell.locator('.multiline > *').first();
+
+		const vaultCellWidth = await vaultCell.evaluate((element) => element.getBoundingClientRect().width);
+		expect(vaultCellWidth).toBeLessThanOrEqual(170);
+		await expect(vaultLabel).toHaveCSS('overflow-wrap', 'anywhere');
+	});
+
 	test('hides the all-vaults note on the all vaults page', async ({ page }) => {
 		await page.goto('/vaults/all');
 		await openAdvancedSettings(page);
