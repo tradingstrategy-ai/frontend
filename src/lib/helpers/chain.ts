@@ -322,11 +322,25 @@ export const chains = (() => {
 
 export type Chain = (typeof chains)[number];
 
+const HYPEREVM_CHAIN_ID = 999;
+
 /**
  * Get a chain by id or slug
  */
 export function getChain(identifier: Maybe<number | string>) {
 	return chains.find(({ id, slug }) => id === identifier || slug === identifier);
+}
+
+/**
+ * Return the human-readable name for an individual chain.
+ *
+ * HyperEVM and HyperCore intentionally share the `hyperliquid` slug for
+ * grouping, but an individual HyperEVM vault must still identify its chain.
+ */
+export function getChainDisplayName(identifier: Maybe<number | string>): string {
+	const chain = getChain(identifier);
+	if (!chain) return typeof identifier === 'number' ? `Chain ${identifier}` : 'Unknown chain';
+	return chain.id === HYPEREVM_CHAIN_ID ? 'HyperEVM' : chain.name;
 }
 
 /**

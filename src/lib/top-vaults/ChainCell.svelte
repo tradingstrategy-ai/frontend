@@ -16,7 +16,7 @@
 		<svelte:fragment slot="trigger">
 			{#if chain}
 				<a href="/vaults/chains/{chain.slug}">
-					<img src={getLogoUrl('blockchain', chain.slug)} alt={chain.name} />
+					<img src={getLogoUrl('blockchain', chain.slug)} alt={label} />
 				</a>
 			{:else}
 				<div class="no-logo">?</div>

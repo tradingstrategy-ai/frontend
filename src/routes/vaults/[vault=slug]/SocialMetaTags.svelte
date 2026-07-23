@@ -2,7 +2,8 @@
 	import { page } from '$app/state';
 	import type { Chain } from '$lib/helpers/chain';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
-	import { getVaultSparklineUrl } from '$lib/top-vaults/helpers';
+	import { getVaultProtocolDisplayName, getVaultSparklineUrl } from '$lib/top-vaults/helpers';
+	import { getChainDisplayName } from '$lib/helpers/chain';
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 	import type { VaultProtocolMetadata } from '$lib/vault-protocol/schemas';
@@ -17,7 +18,7 @@
 	let { vault, chain, protocolMetadata }: Props = $props();
 
 	let generatedDescription = $derived.by(() => {
-		const parts = [`${vault.name} on ${vault.protocol} on ${chain.name}`];
+		const parts = [`${vault.name} on ${getVaultProtocolDisplayName(vault)} on ${getChainDisplayName(vault.chain_id)}`];
 		if (vault.current_nav != null) {
 			parts.push(`TVL: ${formatDollar(vault.current_nav, 0)}`);
 		}
@@ -54,7 +55,7 @@
 		if (vault.risk_numeric != null) {
 			props.push({ '@type': 'PropertyValue', name: 'riskScore', value: vault.risk_numeric });
 		}
-		props.push({ '@type': 'PropertyValue', name: 'blockchain', value: chain.name });
+		props.push({ '@type': 'PropertyValue', name: 'blockchain', value: getChainDisplayName(vault.chain_id) });
 		if (vault.denomination) {
 			props.push({ '@type': 'PropertyValue', name: 'denomination', value: vault.denomination });
 		}
@@ -100,7 +101,7 @@
 	let provider = $derived.by(() => {
 		const org: Record<string, unknown> = {
 			'@type': 'Organization',
-			name: vault.protocol
+			name: getVaultProtocolDisplayName(vault)
 		};
 		if (protocolMetadata?.links.homepage) {
 			org.url = protocolMetadata.links.homepage;

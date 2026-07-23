@@ -6,7 +6,8 @@ loaded dynamically from CDN.
 -->
 <script lang="ts">
 	import type { SlimVaultInfo } from '$lib/top-vaults/schemas';
-	import { isBlacklisted } from '$lib/top-vaults/helpers';
+	import { getChainDisplayName } from '$lib/helpers/chain';
+	import { getVaultProtocolDisplayName, isBlacklisted } from '$lib/top-vaults/helpers';
 	import {
 		loadPlotly,
 		buildPlotlyChrome,
@@ -95,8 +96,8 @@ loaded dynamically from CDN.
 					labels.push(v.name);
 					individualTvl.push(tvl);
 					vaultSlugs.push(v.vault_slug);
-					chains.push(v.chain ?? 'Unknown');
-					protocols.push(v.protocol ?? 'Unknown');
+					chains.push(getChainDisplayName(v.chain_id));
+					protocols.push(getVaultProtocolDisplayName(v));
 				}
 
 				const totalTvl = runningTvl;

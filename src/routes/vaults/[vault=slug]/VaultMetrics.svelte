@@ -11,7 +11,7 @@ Displays supplementary vault information, including transaction status, performa
 	import { resolve } from '$app/paths';
 	import { getFormattedLockup, isGoodVaultStatus } from '$lib/top-vaults/helpers';
 	import { formatNumber, formatPercent, formatPercentProfit } from '$lib/helpers/formatters';
-	import { getChain } from '$lib/helpers/chain';
+	import { getChain, getChainDisplayName } from '$lib/helpers/chain';
 	import {
 		getStablecoinDetailsHref,
 		getVaultDenominationLogoUrl,
@@ -213,8 +213,8 @@ Displays supplementary vault information, including transaction status, performa
 						<span class="underline">Age*</span>
 					</span>
 					<svelte:fragment slot="popup">
-						Due to {chain?.name} architecture, we currently have limited history of data on this vault and it might not reach
-						all the way back to the launch of the vault.
+						Due to {getChainDisplayName(vault.chain_id)} architecture, we currently have limited history of data on this vault
+						and it might not reach all the way back to the launch of the vault.
 					</svelte:fragment>
 				</Tooltip>
 			{/snippet}

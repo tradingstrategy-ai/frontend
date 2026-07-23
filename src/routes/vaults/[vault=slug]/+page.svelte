@@ -21,7 +21,12 @@
 	import VaultRankings from './VaultRankings.svelte';
 	import Core3Ratings from '$lib/top-vaults/Core3Ratings.svelte';
 	import IconDiscord from '~icons/local/discord';
-	import { getMorphoFlags, hasSupportedProtocol, isBlacklisted } from '$lib/top-vaults/helpers';
+	import {
+		getMorphoFlags,
+		getVaultProtocolDisplayName,
+		hasSupportedProtocol,
+		isBlacklisted
+	} from '$lib/top-vaults/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 
 	let { data } = $props();
@@ -137,7 +142,12 @@
 		<VaultPeriodicMetrics {vault} {chain} />
 
 		{#if core3}
-			<Core3Ratings {core3} protocolName={vault.protocol} protocolSlug={vault.protocol_slug} context="vault" />
+			<Core3Ratings
+				{core3}
+				protocolName={getVaultProtocolDisplayName(vault)}
+				protocolSlug={vault.protocol_slug}
+				context="vault"
+			/>
 		{/if}
 
 		<VaultTechnicalDetailsTable {vault} {chain} {stablecoinMetadata} {generated_at} />

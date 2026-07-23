@@ -1,6 +1,6 @@
 import type { VaultInfo } from '$lib/top-vaults/schemas';
-import { getProtocolDisplayName, resolveVaultDetails } from '$lib/top-vaults/helpers';
-import { getChain } from '$lib/helpers/chain';
+import { getVaultProtocolDisplayName, resolveVaultDetails } from '$lib/top-vaults/helpers';
+import { getChainDisplayName } from '$lib/helpers/chain';
 
 export const tvlOptions = [
 	{ value: 50_000, label: '$50k' },
@@ -210,11 +210,11 @@ export function buildChartConfig() {
  * Returns an array of HTML strings; callers insert view-specific lines.
  */
 export function buildBaseHoverLines(v: VaultInfo): string[] {
-	const chainName = getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`;
+	const chainName = getChainDisplayName(v.chain_id);
 	const tvl = `$${v.current_nav!.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
 	return [
 		`<b>${v.name}</b>`,
-		getProtocolDisplayName(v.protocol, v.protocol_slug),
+		getVaultProtocolDisplayName(v),
 		chainName,
 		`TVL: ${tvl}`,
 		`1M return (ann.): ${formatReturn(v.one_month_cagr)}`,

@@ -5,6 +5,7 @@ import {
 	isEligibleFrontpageVault,
 	hasSupportedProtocol,
 	getProtocolDisplayName,
+	getVaultProtocolDisplayName,
 	isUnknownVaultProtocol,
 	isUnsupportedProtocolSlug,
 	meetsMinTvl,
@@ -261,6 +262,25 @@ describe('getProtocolDisplayName', () => {
 
 	test('returns the protocol name when it is supported', () => {
 		expect(getProtocolDisplayName('Yearn')).toBe('Yearn');
+	});
+});
+
+describe('getVaultProtocolDisplayName', () => {
+	test('labels Lighter vaults on Robinhood without changing their protocol slug', () => {
+		const vault = createTestVault('Lighter Robinhood vault', {
+			protocol: 'Lighter',
+			chain: 'robinhood'
+		});
+
+		expect(getVaultProtocolDisplayName(vault)).toBe('Lighter Robinhood');
+		expect(vault.protocol_slug).toBe('lighter');
+		expect(getProtocolDisplayName(vault.protocol, vault.protocol_slug)).toBe('Lighter');
+	});
+
+	test('keeps the standard Lighter display name on the Lighter chain', () => {
+		const vault = createTestVault('Lighter vault', { protocol: 'Lighter', chain: 'lighter' });
+
+		expect(getVaultProtocolDisplayName(vault)).toBe('Lighter');
 	});
 });
 
