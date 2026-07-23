@@ -7,8 +7,8 @@ Homepage adapter around the shared ECharts cumulative TVL / APY renderer.
 	import CumulativeTvlApyChart from '$lib/echarts/CumulativeTvlApyChart.svelte';
 	import { buildCumulativeTvlPoints, getEligibleItems } from '$lib/echarts/cumulative-tvl-apy';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { getChain } from '$lib/helpers/chain';
-	import { isBlacklisted, resolveVaultDetails } from '$lib/top-vaults/helpers';
+	import { getChain, getChainDisplayName } from '$lib/helpers/chain';
+	import { getVaultProtocolDisplayName, isBlacklisted, resolveVaultDetails } from '$lib/top-vaults/helpers';
 	import type { SlimVaultInfo } from '$lib/top-vaults/schemas';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 
@@ -46,9 +46,9 @@ Homepage adapter around the shared ECharts cumulative TVL / APY renderer.
 		buildCumulativeTvlPoints(
 			eligibleVaults.map((vault) => ({
 				name: vault.name,
-				chain: vault.chain ?? 'Unknown',
+				chain: getChainDisplayName(vault.chain_id),
 				chainLogoUrl: getLogoUrl('blockchain', getChain(vault.chain_id)?.slug),
-				protocol: vault.protocol ?? 'Unknown',
+				protocol: getVaultProtocolDisplayName(vault),
 				protocolLogoUrl: getVaultProtocolLogoUrl(vault.protocol_slug),
 				realApy: (getCagr(vault) ?? 0) * 100,
 				individualTvl: vault.current_nav ?? 0,

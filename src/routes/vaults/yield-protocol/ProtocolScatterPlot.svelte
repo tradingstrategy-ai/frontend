@@ -14,7 +14,12 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 -->
 <script lang="ts">
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
-	import { getProtocolDisplayName, isBlacklisted, hasSupportedProtocol } from '$lib/top-vaults/helpers';
+	import {
+		getProtocolDisplayName,
+		getVaultProtocolDisplayName,
+		isBlacklisted,
+		hasSupportedProtocol
+	} from '$lib/top-vaults/helpers';
 	import {
 		loadPlotly,
 		computeScatterRanges,
@@ -57,7 +62,7 @@ coloured by protocol. Plotly.js is loaded dynamically from CDN.
 
 	function formatHoverText(v: VaultInfo): string {
 		const lines = buildBaseHoverLines(v);
-		lines.splice(3, 0, `Protocol: ${getProtocolDisplayName(v.protocol, v.protocol_slug)}`);
+		lines.splice(3, 0, `Protocol: ${getVaultProtocolDisplayName(v)}`);
 		return lines.join('<br>');
 	}
 

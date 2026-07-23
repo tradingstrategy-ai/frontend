@@ -11,6 +11,7 @@
 		getFeeModeDescription,
 		getVaultDenominationUsdRate,
 		getVaultDenominationCurrency,
+		getVaultProtocolDisplayName,
 		getVaultTvlNative
 	} from '$lib/top-vaults/helpers';
 	import {
@@ -105,7 +106,7 @@
 		},
 		{
 			label: 'Protocol',
-			value: { name: vault.protocol, slug: vault.protocol_slug },
+			value: { name: getVaultProtocolDisplayName(vault), slug: vault.protocol_slug },
 			type: 'protocol' as const
 		},
 		{

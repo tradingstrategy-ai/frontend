@@ -15,7 +15,7 @@ coloured by blockchain. Plotly.js is loaded dynamically from CDN.
 <script lang="ts">
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import { isBlacklisted } from '$lib/top-vaults/helpers';
-	import { getChain, getChainsBySlug } from '$lib/helpers/chain';
+	import { getChain, getChainDisplayName, getChainsBySlug } from '$lib/helpers/chain';
 	import {
 		loadPlotly,
 		computeScatterRanges,
@@ -58,7 +58,7 @@ coloured by blockchain. Plotly.js is loaded dynamically from CDN.
 
 	function formatHoverText(v: VaultInfo): string {
 		const lines = buildBaseHoverLines(v);
-		const chainName = getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`;
+		const chainName = getChainDisplayName(v.chain_id);
 		lines.splice(3, 0, `Chain: ${chainName}`);
 		return lines.join('<br>');
 	}

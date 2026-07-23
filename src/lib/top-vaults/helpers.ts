@@ -4,6 +4,7 @@ import { slimVaultKeys } from './schemas';
 import { resolve } from '$app/paths';
 import { vaultSparklinesUrl } from '$lib/config';
 import { capitalize, isNumber } from '$lib/helpers/formatters';
+import { getChain } from '$lib/helpers/chain';
 import { slugify } from '$lib/helpers/slugify';
 
 /**
@@ -245,6 +246,18 @@ export function getProtocolDisplayName(protocol: string | null | undefined, prot
 	if (isManuallyMappedUnknownProtocolSlug(protocolSlug)) return UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME;
 	if (protocol == null || isUnsupportedProtocolName(protocol)) return 'Unknown';
 	return protocol;
+}
+
+/**
+ * Return the protocol name for an individual vault without changing the
+ * protocol slug used for grouping.
+ */
+export function getVaultProtocolDisplayName(vault: Pick<VaultInfo, 'protocol' | 'protocol_slug' | 'chain_id'>): string {
+	const displayName = getProtocolDisplayName(vault.protocol, vault.protocol_slug);
+	if (vault.protocol_slug === 'lighter' && getChain(vault.chain_id)?.slug === 'robinhood') {
+		return 'Lighter Robinhood';
+	}
+	return displayName;
 }
 
 /**

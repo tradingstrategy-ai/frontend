@@ -18,11 +18,12 @@ Plotly.js is loaded dynamically from CDN.
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import {
 		getProtocolDisplayName,
+		getVaultProtocolDisplayName,
 		isBlacklisted,
 		hasSupportedProtocol,
 		resolveVaultDetails
 	} from '$lib/top-vaults/helpers';
-	import { getChain, getChainsBySlug } from '$lib/helpers/chain';
+	import { getChain, getChainDisplayName, getChainsBySlug } from '$lib/helpers/chain';
 	import {
 		loadPlotly,
 		buildMarker,
@@ -76,8 +77,8 @@ Plotly.js is loaded dynamically from CDN.
 	}
 
 	function formatHoverText(v: VaultInfo): string {
-		const chainName = getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`;
-		const protocolName = getProtocolDisplayName(v.protocol, v.protocol_slug);
+		const chainName = getChainDisplayName(v.chain_id);
+		const protocolName = getVaultProtocolDisplayName(v);
 		const retention = v.current_nav! / v.peak_nav!;
 		return [
 			`<b>${v.name}</b>`,

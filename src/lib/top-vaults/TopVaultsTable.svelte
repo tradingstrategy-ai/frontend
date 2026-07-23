@@ -24,7 +24,7 @@
 	import IconChevronUp from '~icons/local/chevron-up';
 	import IconChevronDown from '~icons/local/chevron-down';
 	import IconLock from '~icons/local/lock';
-	import { getChain } from '$lib/helpers/chain';
+	import { getChain, getChainDisplayName } from '$lib/helpers/chain';
 	import {
 		formatDollar,
 		formatNumber,
@@ -46,7 +46,7 @@
 		getLockupTooltip,
 		getLifetimeMaxDrawdown,
 		getMonthlyReturn,
-		getProtocolDisplayName,
+		getVaultProtocolDisplayName,
 		getVaultCurrentTvlUsd,
 		getVaultDenominationNativeRate,
 		getVaultDenominationCurrency,
@@ -180,11 +180,11 @@
 		...returnSortColumnMap,
 		chain: {
 			defaultDirection: 'asc',
-			compareFn: stringCompare((v) => getChain(v.chain_id)?.name ?? `Chain ${v.chain_id}`)
+			compareFn: stringCompare((v) => getChainDisplayName(v.chain_id))
 		},
 		vault: {
 			defaultDirection: 'asc',
-			compareFn: stringCompare((v) => `${v.name.trim()} ${getProtocolDisplayName(v.protocol, v.protocol_slug)}`)
+			compareFn: stringCompare((v) => `${v.name.trim()} ${getVaultProtocolDisplayName(v)}`)
 		},
 		three_months_sharpe: { defaultDirection: 'desc', compareFn: rankVaultsBy(['three_months_sharpe']) },
 		three_months_volatility: { defaultDirection: 'asc', compareFn: rankVaultsBy(['three_months_volatility']) },
@@ -488,9 +488,9 @@
 
 			const vaultCompareStr = [
 				v.chain_id,
-				chain?.name ?? '',
+				getChainDisplayName(v.chain_id),
 				v.name,
-				getProtocolDisplayName(v.protocol, v.protocol_slug),
+				getVaultProtocolDisplayName(v),
 				v.denomination,
 				v.risk ?? '',
 				v.address
@@ -1065,7 +1065,7 @@
 					{@const chain = getChain(vault.chain_id)}
 					{@const blacklisted = isBlacklisted(vault)}
 					{@const badStatus = !isGoodVaultStatus(vault)}
-					{@const protocolName = getProtocolDisplayName(vault.protocol, vault.protocol_slug)}
+					{@const protocolName = getVaultProtocolDisplayName(vault)}
 					{@const statusReason = [vault.deposit_closed_reason, vault.redemption_closed_reason]
 						.filter(Boolean)
 						.join('; ')}
@@ -1074,7 +1074,7 @@
 						<td class="index"></td>
 						{#if showChainCol}
 							<td class="chain">
-								<ChainCell {chain} label={chain?.name ?? `Chain ${vault.chain_id}`} />
+								<ChainCell {chain} label={getChainDisplayName(vault.chain_id)} />
 							</td>
 						{/if}
 						<td class="vault">

@@ -2,8 +2,8 @@
 	import type { SlimVaultInfo } from '$lib/top-vaults/schemas';
 	import { formatPercentProfit } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { getChain } from '$lib/helpers/chain';
-	import { resolveVaultDetails } from '$lib/top-vaults/helpers';
+	import { getChain, getChainDisplayName } from '$lib/helpers/chain';
+	import { getVaultProtocolDisplayName, resolveVaultDetails } from '$lib/top-vaults/helpers';
 	import VaultSparkline from '$lib/top-vaults/VaultSparkline.svelte';
 
 	interface Props {
@@ -20,14 +20,18 @@
 <li class="vault-item">
 	<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 	<a href={resolveVaultDetails(vault)}>
-		<img class="chain-logo" src={getLogoUrl('blockchain', getChain(vault.chain_id)?.slug)} alt={chain.name} />
+		<img
+			class="chain-logo"
+			src={getLogoUrl('blockchain', getChain(vault.chain_id)?.slug)}
+			alt={getChainDisplayName(vault.chain_id)}
+		/>
 
 		<div class="name">
 			<div class="vault-name truncate lines-2">
 				{vault.name}
 			</div>
 			<div class="protocol-name">
-				{vault.protocol}
+				{getVaultProtocolDisplayName(vault)}
 			</div>
 		</div>
 

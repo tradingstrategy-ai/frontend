@@ -3,7 +3,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import UpdateInfoButton from '$lib/top-vaults/UpdateInfoButton.svelte';
-	import { hasSupportedProtocol } from '$lib/top-vaults/helpers';
+	import { getVaultProtocolDisplayName, hasSupportedProtocol } from '$lib/top-vaults/helpers';
 
 	interface Props {
 		vault: VaultInfo;
@@ -12,7 +12,7 @@
 	let { vault }: Props = $props();
 
 	let externalSiteName = $derived.by(() => {
-		if (hasSupportedProtocol(vault)) return vault.protocol;
+		if (hasSupportedProtocol(vault)) return getVaultProtocolDisplayName(vault);
 		if (vault.link) return new URL(vault.link).host;
 	});
 </script>

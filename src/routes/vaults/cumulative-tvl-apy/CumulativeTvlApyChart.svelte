@@ -13,8 +13,13 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 	import CumulativeTvlApyECharts from '$lib/echarts/CumulativeTvlApyChart.svelte';
 	import { buildCumulativeTvlPoints, formatUsd, getEligibleItems } from '$lib/echarts/cumulative-tvl-apy';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { getChain } from '$lib/helpers/chain';
-	import { getProtocolDisplayName, isBlacklisted, resolveVaultDetails } from '$lib/top-vaults/helpers';
+	import { getChain, getChainDisplayName } from '$lib/helpers/chain';
+	import {
+		getProtocolDisplayName,
+		getVaultProtocolDisplayName,
+		isBlacklisted,
+		resolveVaultDetails
+	} from '$lib/top-vaults/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 	import { deserialiseSearchParams, serialiseSearchParams } from '$lib/helpers/url-search-state';
 	import { goto } from '$app/navigation';
@@ -172,9 +177,9 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 		buildCumulativeTvlPoints(
 			displayedVaults.map((vault) => ({
 				name: vault.name,
-				chain: vault.chain ?? 'Unknown',
+				chain: getChainDisplayName(vault.chain_id),
 				chainLogoUrl: getLogoUrl('blockchain', getChain(vault.chain_id)?.slug),
-				protocol: getProtocolDisplayName(vault.protocol, vault.protocol_slug),
+				protocol: getVaultProtocolDisplayName(vault),
 				protocolLogoUrl: getVaultProtocolLogoUrl(vault.protocol_slug),
 				realApy: (getVaultCagr(vault, selectedWindow) ?? 0) * 100,
 				individualTvl: vault.current_nav ?? 0,
