@@ -32,6 +32,8 @@
 		filterTvl?: boolean;
 		includeBlacklisted?: boolean;
 		protocolMetadata?: VaultProtocolMetadata;
+		/** Optional context shown beneath the protocol metadata description. */
+		protocolDescriptionExtra?: Snippet;
 		stablecoinMetadata?: StablecoinMetadata;
 		/** Stablecoin slug used for a logo when no metadata record exists. */
 		stablecoinLogoSlug?: string;
@@ -84,6 +86,7 @@
 		filterTvl,
 		includeBlacklisted,
 		protocolMetadata,
+		protocolDescriptionExtra,
 		stablecoinMetadata,
 		stablecoinLogoSlug,
 		curatorMetadata,
@@ -162,13 +165,13 @@
 		<div class="top-vaults-content">
 			{#if protocolMetadata && detailAside}
 				<div class="detail-overview wide-detail-overview">
-					<ProtocolDescription metadata={protocolMetadata} />
+					<ProtocolDescription metadata={protocolMetadata} additionalDescription={protocolDescriptionExtra} />
 					<aside class="detail-aside">
 						{@render detailAside()}
 					</aside>
 				</div>
 			{:else if protocolMetadata}
-				<ProtocolDescription metadata={protocolMetadata} />
+				<ProtocolDescription metadata={protocolMetadata} additionalDescription={protocolDescriptionExtra} />
 			{/if}
 
 			{#if detailDescription && detailAside && !protocolMetadata && !stablecoinMetadata && !curatorMetadata}

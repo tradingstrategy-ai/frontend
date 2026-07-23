@@ -13,6 +13,7 @@
 	let { data } = $props();
 	let { protocolSlug, protocolName, protocolMetadata, core3 } = $derived(data);
 	let isUnknownVaultProtocolGroup = $derived(protocolSlug === UNKNOWN_VAULT_PROTOCOL_SLUG);
+	let isHyperliquidProtocolGroup = $derived(protocolSlug === 'hyperliquid');
 
 	let topVaults = $state<TopVaults>();
 	let loading = $state(!hasVaultCache(page.data.generatedAt));
@@ -52,6 +53,13 @@
 {#snippet unknownVaultSubtitle()}
 	These vaults are not yet mapped out. <a class="body-link" href={resolve('/community')}>Contact us</a> to have your vaults
 	listed.
+{/snippet}
+
+{#snippet hyperliquidChainDescription()}
+	<p>
+		If you want to see both Hyperliquid native vaults and HyperEVM vaults, visit
+		<a class="body-link" href={resolve('/vaults/chains/hyperliquid')}>Hyperliquid chain page</a>.
+	</p>
 {/snippet}
 
 <MetaTags
@@ -95,6 +103,7 @@
 	{topVaults}
 	{loading}
 	{protocolMetadata}
+	protocolDescriptionExtra={isHyperliquidProtocolGroup ? hyperliquidChainDescription : undefined}
 	title={heroTitle}
 	subtitle={isUnknownVaultProtocolGroup ? unknownVaultSubtitle : undefined}
 	showFilters
