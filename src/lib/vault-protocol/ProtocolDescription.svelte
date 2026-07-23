@@ -3,6 +3,7 @@
   Used on vault protocol detail pages to display protocol metadata.
 -->
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import { micromark } from 'micromark';
 	import type { VaultProtocolMetadata } from './schemas';
@@ -17,9 +18,10 @@
 
 	interface Props {
 		metadata: VaultProtocolMetadata;
+		additionalDescription?: Snippet;
 	}
 
-	let { metadata }: Props = $props();
+	let { metadata, additionalDescription }: Props = $props();
 
 	let expanded = $state(false);
 
@@ -47,6 +49,12 @@
 				</Button>
 			{/if}
 		</div>
+
+		{#if additionalDescription}
+			<div class="additional-description">
+				{@render additionalDescription()}
+			</div>
+		{/if}
 
 		{#if expanded}
 			<div transition:slide>
@@ -84,6 +92,14 @@
 			gap: 1rem;
 
 			p {
+				margin: 0;
+			}
+		}
+
+		.additional-description {
+			margin-top: 0.75rem;
+
+			:global(p) {
 				margin: 0;
 			}
 		}
