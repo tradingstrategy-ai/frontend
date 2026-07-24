@@ -13,21 +13,35 @@
 	import VaultGroupDescription from '../../VaultGroupDescription.svelte';
 
 	let { data } = $props();
-	let { denominationSlug, denominationSymbol, denominationName, shortDescription, stablecoinMetadata } = $derived(data);
+	let {
+		denominationSlug,
+		denominationSymbol,
+		denominationName,
+		shortDescription,
+		stablecoinMetadata,
+		initialTopVaults
+	} = $derived(data);
 
-	let topVaults = $state<TopVaults>();
-	let loading = $state(!hasVaultCache(page.data.generatedAt));
+	let fetchedTopVaults = $state<TopVaults>();
+	let fetchSettled = $state(false);
+	let topVaults = $derived(initialTopVaults ?? fetchedTopVaults);
+	let loading = $derived(!initialTopVaults && !fetchSettled && !hasVaultCache(page.data.generatedAt));
 
 	$effect(() => {
+		if (initialTopVaults) {
+			return;
+		}
+
+		fetchSettled = false;
 		fetchAllVaultData(page.data.generatedAt)
 			.then((allData) => {
-				topVaults = {
+				fetchedTopVaults = {
 					...allData,
 					vaults: allData.vaults.filter((v) => v.denomination_slug === denominationSlug)
 				};
 			})
 			.catch((e) => console.error('Failed to load vault data:', e))
-			.finally(() => (loading = false));
+			.finally(() => (fetchSettled = true));
 	});
 
 	let title = $derived(`${denominationName} stablecoin vaults | Trading Strategy`);

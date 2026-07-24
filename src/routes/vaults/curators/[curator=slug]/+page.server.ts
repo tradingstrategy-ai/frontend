@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
+import { getInlineVaultListing } from '$lib/top-vaults/inline-data';
 import {
 	calculateTotalTvl,
 	calculateTvlWeightedApy,
@@ -10,7 +11,8 @@ import {
 
 export async function load({ params, fetch }) {
 	const { curator } = params;
-	const { vaults, curators } = await getCachedTopVaults(fetch);
+	const topVaults = await getCachedTopVaults(fetch);
+	const { vaults, curators } = topVaults;
 
 	const curatorInfo = curators[curator];
 	if (!curatorInfo) error(404, 'Curator not found');
@@ -28,6 +30,11 @@ export async function load({ params, fetch }) {
 		curator: curatorInfo,
 		vaultCount: eligibleVaults.length,
 		tvl,
-		averageApy
+		averageApy,
+		totalVaultCount: vaults.length,
+		initialTopVaults: getInlineVaultListing(
+			topVaults,
+			vaults.filter((vault) => vault.curator_slug === curator)
+		)
 	};
 }

@@ -9,25 +9,33 @@
 	import VaultGroupDescription from '../../VaultGroupDescription.svelte';
 
 	let { data } = $props();
-	let { chain, chainSlug, chainName } = $derived(data);
+	let { chain, chainSlug, chainName, initialTopVaults } = $derived(data);
 
-	let topVaults = $state<TopVaults>();
-	let totalVaultCount = $state<number>();
-	let loading = $state(!hasVaultCache(page.data.generatedAt));
+	let fetchedTopVaults = $state<TopVaults>();
+	let fetchedTotalVaultCount = $state<number>();
+	let fetchSettled = $state(false);
+	let topVaults = $derived(initialTopVaults ?? fetchedTopVaults);
+	let totalVaultCount = $derived(initialTopVaults ? data.totalVaultCount : fetchedTotalVaultCount);
+	let loading = $derived(!initialTopVaults && !fetchSettled && !hasVaultCache(page.data.generatedAt));
 
 	$effect(() => {
+		if (initialTopVaults) {
+			return;
+		}
+
+		fetchSettled = false;
 		fetchAllVaultData(page.data.generatedAt)
 			.then((allData) => {
-				totalVaultCount = allData.vaults.length;
+				fetchedTotalVaultCount = allData.vaults.length;
 				// Include vaults from all chains sharing this slug (e.g. HyperEVM + HyperCore)
 				const chainIds = new Set(getChainsBySlug(chainSlug).map((c) => c.id));
-				topVaults = {
+				fetchedTopVaults = {
 					...allData,
 					vaults: allData.vaults.filter((v) => chainIds.has(v.chain_id))
 				};
 			})
 			.catch((e) => console.error('Failed to load vault data:', e))
-			.finally(() => (loading = false));
+			.finally(() => (fetchSettled = true));
 	});
 
 	let title = $derived(`${chainName} stablecoin vaults`);

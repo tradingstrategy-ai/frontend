@@ -21,19 +21,24 @@ Tokenised fund listing for vaults with a regulated fund structure.
 	import type { MarketShareChartItem } from '../market-share-pie';
 
 	let { data } = $props();
-	let topVaults = $state<TopVaults>();
+	let fetchedTopVaults = $state<TopVaults>();
+	let topVaults = $derived(data.initialTopVaults ?? fetchedTopVaults);
 	let fetchSettled = $state(false);
-	let loading = $derived(!fetchSettled && !hasVaultCache(data.generatedAt));
+	let loading = $derived(!data.initialTopVaults && !fetchSettled && !hasVaultCache(data.generatedAt));
 
 	function isTokenisedFund(vault: VaultInfo): boolean {
 		return vault.flags.includes('tokenised_fund');
 	}
 
 	$effect(() => {
+		if (data.initialTopVaults) {
+			return;
+		}
+
 		fetchSettled = false;
 		fetchAllVaultData(data.generatedAt)
 			.then((allData) => {
-				topVaults = {
+				fetchedTopVaults = {
 					...allData,
 					vaults: allData.vaults.filter(isTokenisedFund)
 				};
@@ -53,15 +58,16 @@ Tokenised fund listing for vaults with a regulated fund structure.
 	);
 	let chartTitle = $derived(`Total ${formatDollar(totalNavUsd, 2, 3)} tokenised fund NAV`);
 	let chartFunds = $derived.by((): MarketShareChartItem[] => {
-		if (!topVaults) return [];
+		const vaultData = topVaults;
+		if (!vaultData) return [];
 
-		return topVaults.vaults.filter(isTokenisedFund).map((vault) => ({
+		return vaultData.vaults.filter(isTokenisedFund).map((vault) => ({
 			slug: vault.id,
 			label: vault.name,
 			name: vault.name,
 			tvl: getVaultCurrentTvlUsd(vault) ?? 0,
 			avgApy: vault.cagr_net ?? vault.three_months_cagr ?? null,
-			logoUrl: vault.curator_slug ? (topVaults.curators[vault.curator_slug]?.logos.generic ?? undefined) : undefined,
+			logoUrl: vault.curator_slug ? (vaultData.curators[vault.curator_slug]?.logos.generic ?? undefined) : undefined,
 			href: resolveVaultDetails(vault)
 		}));
 	});

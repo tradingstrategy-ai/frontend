@@ -12,23 +12,31 @@ with an "about" panel and a TVL/return mini chart.
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 
 	let { data } = $props();
-	let { curatorSlug, curatorName, curator, vaultCount, tvl, averageApy } = $derived(data);
+	let { curatorSlug, curatorName, curator, vaultCount, tvl, averageApy, initialTopVaults } = $derived(data);
 
-	let topVaults = $state<TopVaults>();
-	let totalVaultCount = $state<number>();
-	let loading = $state(!hasVaultCache(page.data.generatedAt));
+	let fetchedTopVaults = $state<TopVaults>();
+	let fetchedTotalVaultCount = $state<number>();
+	let fetchSettled = $state(false);
+	let topVaults = $derived(initialTopVaults ?? fetchedTopVaults);
+	let totalVaultCount = $derived(initialTopVaults ? data.totalVaultCount : fetchedTotalVaultCount);
+	let loading = $derived(!initialTopVaults && !fetchSettled && !hasVaultCache(page.data.generatedAt));
 
 	$effect(() => {
+		if (initialTopVaults) {
+			return;
+		}
+
+		fetchSettled = false;
 		fetchAllVaultData(page.data.generatedAt)
 			.then((allData) => {
-				totalVaultCount = allData.vaults.length;
-				topVaults = {
+				fetchedTotalVaultCount = allData.vaults.length;
+				fetchedTopVaults = {
 					...allData,
 					vaults: allData.vaults.filter((v) => v.curator_slug === curatorSlug)
 				};
 			})
 			.catch((e) => console.error('Failed to load vault data:', e))
-			.finally(() => (loading = false));
+			.finally(() => (fetchSettled = true));
 	});
 
 	/** Google truncates search snippets around this length; keep the meta description within it */
