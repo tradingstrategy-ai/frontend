@@ -11,17 +11,24 @@
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
 
 	let { data } = $props();
-	let { protocolSlug, protocolName, protocolMetadata, core3 } = $derived(data);
+	let { protocolSlug, protocolName, protocolMetadata, core3, initialTopVaults } = $derived(data);
 	let isUnknownVaultProtocolGroup = $derived(protocolSlug === UNKNOWN_VAULT_PROTOCOL_SLUG);
 	let isHyperliquidProtocolGroup = $derived(protocolSlug === 'hyperliquid');
 
-	let topVaults = $state<TopVaults>();
-	let loading = $state(!hasVaultCache(page.data.generatedAt));
+	let fetchedTopVaults = $state<TopVaults>();
+	let fetchSettled = $state(false);
+	let topVaults = $derived(initialTopVaults ?? fetchedTopVaults);
+	let loading = $derived(!initialTopVaults && !fetchSettled && !hasVaultCache(page.data.generatedAt));
 
 	$effect(() => {
+		if (initialTopVaults) {
+			return;
+		}
+
+		fetchSettled = false;
 		fetchAllVaultData(page.data.generatedAt)
 			.then((allData) => {
-				topVaults = {
+				fetchedTopVaults = {
 					...allData,
 					vaults: allData.vaults.filter((vault) =>
 						isUnknownVaultProtocolGroup ? isUnknownVaultProtocol(vault) : vault.protocol_slug === protocolSlug
@@ -29,7 +36,7 @@
 				};
 			})
 			.catch((e) => console.error('Failed to load vault data:', e))
-			.finally(() => (loading = false));
+			.finally(() => (fetchSettled = true));
 	});
 
 	const unknownVaultDescription = 'These vaults are not yet mapped out. Contact us to have your vaults listed.';

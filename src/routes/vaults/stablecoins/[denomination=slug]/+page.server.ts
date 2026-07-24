@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
+import { getInlineVaultListing } from '$lib/top-vaults/inline-data';
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
 import {
 	buildStablecoinMetadataLookup,
@@ -13,10 +14,11 @@ import {
 export async function load({ params, fetch }) {
 	const { denomination } = params;
 
-	const [{ vaults }, metadataIndex] = await Promise.all([
+	const [topVaults, metadataIndex] = await Promise.all([
 		getCachedTopVaults(fetch),
 		fetchStablecoinMetadataIndex(fetch)
 	]);
+	const { vaults } = topVaults;
 
 	const metadataLookup = buildStablecoinMetadataLookup(metadataIndex);
 	const stablecoinMetadata = findStablecoinMetadata(metadataLookup, denomination);
@@ -54,6 +56,10 @@ export async function load({ params, fetch }) {
 			denomination === OFFCHAIN_USD_STABLECOIN_SLUG
 				? OFFCHAIN_USD_SHORT_DESCRIPTION
 				: (stablecoinMetadata?.short_description ?? null),
-		stablecoinMetadata
+		stablecoinMetadata,
+		initialTopVaults: getInlineVaultListing(
+			topVaults,
+			vaults.filter((vault) => vault.denomination_slug === denomination)
+		)
 	};
 }
