@@ -14,6 +14,11 @@
 	let { protocolSlug, protocolName, protocolMetadata, core3, initialTopVaults } = $derived(data);
 	let isUnknownVaultProtocolGroup = $derived(protocolSlug === UNKNOWN_VAULT_PROTOCOL_SLUG);
 	let isHyperliquidProtocolGroup = $derived(protocolSlug === 'hyperliquid');
+	let isApexProtocolGroup = $derived(protocolSlug === 'apex');
+
+	// Apex does not have a track record yet, so its vaults sit below the usual TVL
+	// threshold. Default the Min TVL filter to "Any" so they are not hidden.
+	let defaultTvlKey = $derived(isApexProtocolGroup ? 'any' : '10k');
 
 	let fetchedTopVaults = $state<TopVaults>();
 	let fetchSettled = $state(false);
@@ -115,7 +120,7 @@
 	subtitle={isUnknownVaultProtocolGroup ? unknownVaultSubtitle : undefined}
 	showFilters
 	showUnknownFilter={false}
-	defaultTvlKey="10k"
+	{defaultTvlKey}
 	defaultHideUnknown={isUnknownVaultProtocolGroup ? 0 : 1}
 >
 	{#snippet detailAside()}

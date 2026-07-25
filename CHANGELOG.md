@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add ApeX perpetual futures DEX support — chain logo and entry, perp DEX detection, "Any" default TVL filter on the protocol page, and perp DEX wording in chain descriptions (2026-07-25)
 - Add tokenised fund listings, NAV market-share chart, and fund-specific vault detail messaging (2026-07-17)
 - Add live TVL and listing-count summaries to chain, protocol, curator and stablecoin vault pages (2026-07-11)
 - Add Robinhood vault-only chain support (2026-07-10)

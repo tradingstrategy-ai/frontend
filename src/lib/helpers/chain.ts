@@ -208,6 +208,16 @@ export const chains = (() => {
 			nativeCurrency: 'ETH',
 			hasBackendData: false
 		},
+		// ApeX: Synthetic chain created for ApeX perpetual DEX vaults
+		{
+			id: 9995,
+			slug: 'apex',
+			name: 'ApeX',
+			homepage: 'https://www.apex.exchange',
+			explorer: 'https://www.apex.exchange',
+			nativeCurrency: 'ETH',
+			hasBackendData: false
+		},
 		// HyperEVM: The EVM varient of Hyperliquid
 		{
 			id: 999,
@@ -348,6 +358,17 @@ export function getChainDisplayName(identifier: Maybe<number | string>): string 
  */
 export function getChainsBySlug(slug: string): ChainData[] {
 	return chains.filter((c) => c.slug === slug);
+}
+
+/**
+ * Whether a chain ID belongs to a perpetual futures DEX venue.
+ *
+ * Synthetic perp DEX "chains" (e.g. HyperCore 9999, Lighter 9998, Hibachi 9997,
+ * ApeX 9995) are modelled in the reserved 9900–9999 chain ID range rather than
+ * being real blockchains.
+ */
+export function isPerpDexChainId(chainId: Maybe<number>): boolean {
+	return chainId != null && chainId >= 9900 && chainId <= 9999;
 }
 
 /**

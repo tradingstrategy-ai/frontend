@@ -24,7 +24,7 @@ Displays supplementary vault information, including transaction status, performa
 		stablecoinMetadata?: StablecoinMetadata | null;
 	}
 
-	const LIMITED_HISTORY_CHAINS = [9999, 9998, 9997];
+	const LIMITED_HISTORY_CHAINS = [9999, 9998, 9997, 9995];
 	const NO_DATA_LABEL = 'No data';
 	const MISSING_FEE_TOOLTIP = 'The fee information is not available onchain. Net returns cannot be calculated.';
 	const INTERNALISED_FEE_TOOLTIP =

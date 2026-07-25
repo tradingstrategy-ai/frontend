@@ -18,6 +18,10 @@ describe('vaultId param matcher', () => {
 		expect(match('9997-hibachi-vault-2')).toBe(true);
 	});
 
+	test('matches ApeX vault format', () => {
+		expect(match('9995-apex-vault-1856279848381710336')).toBe(true);
+	});
+
 	test('rejects bare address without chain ID', () => {
 		expect(match('0xabc123')).toBe(false);
 	});

@@ -4,9 +4,10 @@
  * - HyperCore / GRVT (chain 325): `${chainId}-vlt:${id}`
  * - Lighter (chain 9998): `${chainId}-lighter-pool-${id}`
  * - Hibachi (chain 9997): `${chainId}-hibachi-vault-${id}`
+ * - ApeX (chain 9995): `${chainId}-apex-vault-${id}`
  *
  * To add a new format, append a new alternative to the regex group.
  */
 export function match(param: string) {
-	return /^\d+-(0x[0-9a-f]+|vlt:[0-9a-z]+|lighter-pool-\d+|hibachi-vault-\d+)$/i.test(param);
+	return /^\d+-(0x[0-9a-f]+|vlt:[0-9a-z]+|lighter-pool-\d+|hibachi-vault-\d+|apex-vault-\d+)$/i.test(param);
 }
