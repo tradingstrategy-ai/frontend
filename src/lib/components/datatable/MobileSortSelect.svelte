@@ -3,6 +3,7 @@
 	import type { SortKey } from 'svelte-headless-table/plugins';
 	import { Subscribe, type HeaderRow } from 'svelte-headless-table';
 	import Select from '$lib/components/Select.svelte';
+	import { getColumnLabel } from './utils';
 
 	interface Props {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,7 +39,7 @@
 							{#each [['desc', '▼'], ['asc', '▲']] as [order, indicator] (order)}
 								<option value={sortValue({ ...cell, order })} selected={sort.order === order}>
 									<!-- eslint-disable-next-line svelte/require-store-reactive-access -->
-									{cell.label}
+									{getColumnLabel(cell.label)}
 									{indicator}
 								</option>
 							{/each}

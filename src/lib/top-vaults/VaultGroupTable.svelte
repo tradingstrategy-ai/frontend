@@ -150,7 +150,7 @@
 		}),
 		table.column({
 			accessor: 'avg_apy',
-			header: createRender(AvgApyHeader, {}),
+			header: createRender(AvgApyHeader, { label: 'Avg. APY%' }),
 			cell: ({ value }) => formatPercent(value)
 		}),
 		table.column({
@@ -192,6 +192,14 @@
 
 		/* hide full_name column on mobile */
 		:global(:is(th.full_name, td.full_name)) {
+			@media (--viewport-sm-down) {
+				display: none;
+			}
+		}
+
+		/* hide the CORE3 cell in the mobile card view when a protocol has no rating,
+		   so an empty "CORE3 –" row is not shown */
+		:global(td.core3_risk:has(.empty)) {
 			@media (--viewport-sm-down) {
 				display: none;
 			}

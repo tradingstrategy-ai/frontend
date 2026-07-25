@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
 	import { type BodyCell, Subscribe, Render } from 'svelte-headless-table';
+	import { getColumnLabel } from './utils';
 
 	interface Props {
 		index: number | undefined;
@@ -18,7 +19,7 @@
 	{#each cells as cell (cell.id)}
 		<Subscribe cellAttrs={cell.attrs()} let:cellAttrs>
 			<!-- eslint-disable-next-line svelte/require-store-reactive-access -->
-			<td class={cell.id} {...cellAttrs} data-label={cell.column.header}>
+			<td class={cell.id} {...cellAttrs} data-label={getColumnLabel(cell.column.header)}>
 				<Render of={cell.render()} />
 			</td>
 		</Subscribe>
