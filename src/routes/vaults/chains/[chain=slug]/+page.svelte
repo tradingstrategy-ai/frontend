@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { TopVaults } from '$lib/top-vaults/schemas';
 	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
-	import { getChainsBySlug } from '$lib/helpers/chain';
+	import { getChainsBySlug, isPerpDexChainId } from '$lib/helpers/chain';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
@@ -42,6 +42,12 @@
 	let description = $derived(`Top stablecoin vaults on ${chainName} blockchain ranked by performance.`);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let defaultTvlKey = $derived(chainSlug === 'robinhood' ? 'any' : '10k');
+	// Perp DEX venues (chain IDs 9900–9999) are not real blockchains, so the
+	// generated description opens with a perp DEX phrasing instead of "blockchain".
+	let isPerpDex = $derived(isPerpDexChainId(chain?.id));
+	let descriptionSubject = $derived(
+		isPerpDex ? `${chainName} perpetual futures decentralised exchange (perp DEX)` : `${chainName} blockchain`
+	);
 </script>
 
 <MetaTags
@@ -78,11 +84,7 @@
 >
 	{#snippet detailDescription()}
 		{#if topVaults?.vaults.length}
-			<VaultGroupDescription
-				title="About {chainName} vaults"
-				subject="{chainName} blockchain"
-				vaults={topVaults.vaults}
-			/>
+			<VaultGroupDescription title="About {chainName} vaults" subject={descriptionSubject} vaults={topVaults.vaults} />
 		{:else}
 			<div></div>
 		{/if}
