@@ -18,7 +18,7 @@ const staticSubPages = [
 	'high-tvl',
 	'international',
 	'new-vaults',
-	'tokenised-funds',
+	'funds',
 	'current-peak-tvl',
 	'cumulative-tvl-apy',
 	'yield-chain',

@@ -96,6 +96,7 @@ test.describe('vaults sitemap', () => {
 			'/vaults/blacklisted',
 			'/vaults/high-tvl',
 			'/vaults/new-vaults',
+			'/vaults/funds',
 			'/vaults/current-peak-tvl',
 			'/vaults/cumulative-tvl-apy',
 			'/vaults/yield-chain',

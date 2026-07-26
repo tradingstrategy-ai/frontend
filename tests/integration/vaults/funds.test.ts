@@ -1,14 +1,14 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('tokenised funds page', () => {
+test.describe('funds page', () => {
 	test('lists tokenised funds and links to the glossary explanation', async ({ page }) => {
-		await page.goto('/vaults/tokenised-funds');
+		await page.goto('/vaults/funds');
 
 		await expect(page).toHaveTitle('Tokenised funds');
 		await expect(page.locator('h1')).toHaveText('Tokenised funds');
 		await expect(page.locator('.vault-listings-selector a', { hasText: 'Tokenised funds' })).toHaveAttribute(
 			'href',
-			'/vaults/tokenised-funds'
+			'/vaults/funds'
 		);
 		await expect(
 			page.getByRole('link', { name: 'Read more about the differences between vaults and tokenised funds here.' })
@@ -20,6 +20,13 @@ test.describe('tokenised funds page', () => {
 		});
 		await expect(page.locator('tbody tr.targetable')).toHaveCount(1);
 		await expect(page.locator('tbody tr.targetable')).toContainText('Deposit disabled vault');
+	});
+
+	test('permanently redirects the legacy tokenised funds URL', async ({ request }) => {
+		const response = await request.get('/vaults/tokenised-funds?source=legacy', { maxRedirects: 0 });
+
+		expect(response.status()).toBe(301);
+		expect(response.headers().location).toBe('/vaults/funds?source=legacy');
 	});
 
 	test('explains the tokenised fund structure instead of the deposit warning', async ({ page }) => {
