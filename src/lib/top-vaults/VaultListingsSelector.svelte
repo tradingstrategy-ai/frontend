@@ -10,7 +10,7 @@
 		{ href: '/vaults/protocols', label: 'Protocols' },
 		{ href: '/vaults/curators', label: 'Curators' },
 		{ href: '/vaults/international', label: 'International' },
-		{ href: '/vaults/tokenised-funds', label: 'Tokenised funds' }
+		{ href: '/vaults/funds', label: 'Tokenised funds' }
 	] as const;
 
 	const otherListLinks = [
