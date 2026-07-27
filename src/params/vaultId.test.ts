@@ -14,6 +14,10 @@ describe('vaultId param matcher', () => {
 		expect(match('9998-lighter-pool-281474976625478')).toBe(true);
 	});
 
+	test('matches Lighter Robinhood pool format', () => {
+		expect(match('9998-lighter-pool-robinhood-281474976710654')).toBe(true);
+	});
+
 	test('matches Hibachi vault format', () => {
 		expect(match('9997-hibachi-vault-2')).toBe(true);
 	});
