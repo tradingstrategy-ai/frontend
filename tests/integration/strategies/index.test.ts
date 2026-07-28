@@ -17,13 +17,6 @@ test.describe('strategy index page', () => {
 		await expect(rows).toHaveCount(4); // 2 API + 2 YAML
 	});
 
-	test('should sort strategies with higher sort_priority first', async ({ page }) => {
-		await page.goto('/strategies?pw=secret');
-		const rows = page.locator(`[data-testid="strategy-tiles"] > *`);
-		// Below strategy is second in config, but has higher sort_priority
-		await expect(rows.first()).toHaveText(/Multipair breakout strategy on Uniswap v3/);
-	});
-
 	test('should only display live strategies to admin user when live filter applied', async ({ page }) => {
 		await page.goto('/strategies?pw=secret');
 		await page.locator('label:has-text("live")').click();

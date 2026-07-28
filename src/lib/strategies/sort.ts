@@ -1,6 +1,6 @@
 import type { StrategyInfo } from 'trade-executor/models/strategy-info';
-
-const listingPinnedStrategyOrder = ['opencz', 'hyper-ai', 'master-vault', 'ichi-hyperliquid', 'gmx-ai'] as const;
+import { getMetricsWithAltCAGR } from 'trade-executor/helpers/metrics';
+import { relativeReturn } from '$lib/helpers/financial';
 
 const frontpagePinnedStrategyOrder = ['master-vault', 'hyper-ai', 'vega'] as const;
 
@@ -31,17 +31,79 @@ function createStrategyComparator(pinnedStrategyOrder: readonly string[]) {
 }
 
 /**
- * Sort strategies for frontend listings.
+ * Get the return used to colour a strategy tile chart.
  *
- * Pinned strategies always appear first in a fixed order.
- * Remaining strategies fall back to existing sort priority rules.
+ * The main listing uses this same value to group vaults, so green charts are
+ * shown before red charts.
  */
-export const compareStrategiesForFrontend = createStrategyComparator(listingPinnedStrategyOrder);
+function getTileChartReturn(strategy: StrategyInfo): number | undefined {
+	const data = strategy.useSharePrice
+		? strategy.summary_statistics?.share_price_returns_90_days
+		: strategy.summary_statistics?.compounding_unrealised_trading_profitability;
+
+	const start = data?.[0]?.[1];
+	const end = data?.at(-1)?.[1];
+	const value = strategy.tileChartDirection === 'relative' ? relativeReturn(start, end) : end;
+
+	return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+}
+
+/**
+ * Get a strategy's displayed annual return for ordering within its chart-colour group.
+ */
+function getAnnualReturn(strategy: StrategyInfo): number | undefined {
+	const value = getMetricsWithAltCAGR(strategy).cagr?.value;
+	return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+}
+
+function getTileChartColourRank(strategy: StrategyInfo) {
+	const chartReturn = getTileChartReturn(strategy);
+
+	if (chartReturn === undefined) return 3;
+	if (chartReturn > 0) return 0;
+	if (chartReturn < 0) return 1;
+	return 2;
+}
+
+/**
+ * Sort strategies for the main listing by chart colour and annual return.
+ *
+ * Green tile charts appear first, then red charts. Neutral and unavailable
+ * charts follow. Within each group, the highest annual return appears first.
+ * Sort priority and name provide a deterministic order for ties or missing data.
+ */
+export function compareStrategiesForFrontend(a: StrategyInfo, b: StrategyInfo) {
+	const chartColourRankA = getTileChartColourRank(a);
+	const chartColourRankB = getTileChartColourRank(b);
+
+	if (chartColourRankA !== chartColourRankB) {
+		return chartColourRankA - chartColourRankB;
+	}
+
+	const annualReturnA = getAnnualReturn(a);
+	const annualReturnB = getAnnualReturn(b);
+
+	if (annualReturnA !== undefined && annualReturnB !== undefined && annualReturnA !== annualReturnB) {
+		return annualReturnB - annualReturnA;
+	}
+
+	if (annualReturnA !== undefined && annualReturnB === undefined) return -1;
+	if (annualReturnA === undefined && annualReturnB !== undefined) return 1;
+
+	const sortPriorityA = a.sort_priority ?? 0;
+	const sortPriorityB = b.sort_priority ?? 0;
+
+	if (sortPriorityA !== sortPriorityB) {
+		return sortPriorityB - sortPriorityA;
+	}
+
+	return a.name.localeCompare(b.name);
+}
 
 /**
  * Sort strategies for the frontpage featured section.
  *
- * Master Vault appears first, then HyperAI, then Premium Harvest Vault (vega),
- * with all other strategies following the default sort-priority behaviour.
+ * Its curated order is intentionally independent of the performance-ranked
+ * strategy listing.
  */
 export const compareStrategiesForFrontpage = createStrategyComparator(frontpagePinnedStrategyOrder);

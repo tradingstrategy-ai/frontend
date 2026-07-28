@@ -22,7 +22,8 @@
 	import { getChain } from '$lib/helpers/chain';
 
 	const title = 'Trading Strategy vaults';
-	const description = 'Active trading DeFi vaults with high returns.';
+	const description =
+		'Trading Strategy offers vault-of-vault and multistrategy vaults that focus on diversification and high returns, based on proprietary vault returns and risk datasets.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 
 	let { data } = $props();
@@ -100,7 +101,7 @@
 
 <main class="strategies-index-page ds-3">
 	<Section>
-		<PageHeading title="Trading Strategy vaults" description="Currently available automated trading vaults for you" />
+		<PageHeading title="Trading Strategy vaults" {description} />
 
 		<div class="filters" class:admin>
 			<ChainFilter options={chainOptions} selected={selectedChain} onchange={handleFilterChange} />
