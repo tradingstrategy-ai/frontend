@@ -258,6 +258,7 @@
 			:global(table.datatable.responsive) {
 				--border-spacing: 0;
 				gap: 0;
+				margin-block: var(--space-xxs);
 			}
 
 			:global(table.datatable.responsive .mobile-sort-select th) {
@@ -266,23 +267,32 @@
 
 			:global(table.datatable.responsive tbody tr) {
 				gap: 0;
-				padding: 0;
+				padding: var(--space-xxs);
 			}
 
 			:global(table.datatable.responsive tbody tr[data-row-index]::before) {
-				top: 0;
-				left: 0;
+				top: var(--space-xxs);
+				left: calc(1.5rem + var(--space-xxs));
 				font-size: 66%;
 				pointer-events: none;
 			}
 
 			:global(table.datatable.responsive tbody tr td.name) {
-				padding-inline-start: 1.75em;
+				padding-inline-start: calc(1.5rem + var(--space-xxs) + 1.75em);
 			}
 
 			:global(table.datatable.responsive tbody tr td) {
 				padding: 0;
 				font-size: 66%;
+			}
+
+			:global(table.datatable.responsive tbody tr td.name .entity-symbol .logo),
+			:global(table.datatable.responsive tbody tr td.name .entity-symbol .placeholder-logo) {
+				position: absolute;
+				top: var(--space-xxs);
+				left: var(--space-xxs);
+				width: 1.5rem;
+				height: 1.5rem;
 			}
 
 			:global(table.datatable.responsive tbody tr td:not(.cta)::before) {
