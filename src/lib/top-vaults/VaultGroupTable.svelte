@@ -257,7 +257,7 @@
 		@media (--viewport-sm-down) {
 			:global(table.datatable.responsive) {
 				--border-spacing: 0;
-				gap: 2px;
+				gap: 0.375rem;
 				margin-block: var(--space-xxs);
 			}
 
@@ -266,25 +266,37 @@
 			}
 
 			:global(table.datatable.responsive tbody tr) {
-				grid-template-columns: 1fr 1fr;
-				gap: var(--space-xxs) var(--space-sm);
-				padding: var(--space-sm);
+				grid-template-columns: max-content max-content minmax(0, 1fr);
+				gap: 0 0.5rem;
+				padding: 0.75rem 0.875rem;
+				border-radius: 0.75rem;
+			}
+
+			:global(table.datatable.responsive tbody tr::after) {
+				content: '›';
+				position: absolute;
+				top: 0.75rem;
+				right: 0.875rem;
+				font: var(--f-ui-xl-medium);
+				line-height: 2.5rem;
+				color: var(--c-text-extra-light);
+				pointer-events: none;
 			}
 
 			:global(table.datatable.responsive tbody tr[data-row-index]::before) {
-				top: calc(var(--space-sm) + var(--space-xs));
-				left: calc(var(--space-sm) + 2.25rem + var(--space-sm));
-				font: var(--f-ui-lg-bold);
-				line-height: 2.25rem;
+				top: 0.75rem;
+				left: calc(0.875rem + 2.5rem + 0.5rem);
+				font: var(--f-ui-md-bold);
+				line-height: 2.5rem;
+				color: var(--c-text-light);
 				pointer-events: none;
 			}
 
 			:global(table.datatable.responsive tbody tr td.name) {
 				grid-column: 1 / -1;
 				align-items: center;
-				min-height: 2.25rem;
-				padding-block: var(--space-xs);
-				padding-inline-start: calc(2.25rem + var(--space-sm) + 3rem);
+				min-height: 2.5rem;
+				padding-inline: calc(2.5rem + 0.5rem + 2.75rem) 1.5rem;
 				font: var(--f-ui-lg-bold);
 				line-height: 1.1;
 			}
@@ -295,18 +307,20 @@
 				gap: var(--space-xxs);
 				min-width: 0;
 				padding: 0;
-				font: var(--f-ui-sm-medium);
-				line-height: 1.1;
+				font: var(--f-ui-sm-roman);
+				line-height: 1.2;
+				color: var(--c-text-light);
+				white-space: nowrap;
 				word-break: normal;
 			}
 
 			:global(table.datatable.responsive tbody tr td.name .entity-symbol .logo),
 			:global(table.datatable.responsive tbody tr td.name .entity-symbol .placeholder-logo) {
 				position: absolute;
-				top: calc(var(--space-sm) + var(--space-xs));
-				left: var(--space-sm);
-				width: 2.25rem;
-				height: 2.25rem;
+				top: 0.75rem;
+				left: 0.875rem;
+				width: 2.5rem;
+				height: 2.5rem;
 				object-fit: contain;
 			}
 
@@ -326,21 +340,44 @@
 				display: none;
 			}
 
+			:global(table.datatable.responsive tbody tr td.core3_risk) {
+				display: none;
+			}
+
 			:global(table.datatable.responsive tbody tr td:not(.cta)::before) {
 				flex: none;
-				font: var(--f-ui-xs-roman);
-				line-height: 1.1;
+				font: inherit;
+				line-height: inherit;
+			}
+
+			:global(table.datatable.responsive tbody tr td.vault_count) {
+				margin-inline-start: calc(2.5rem + 0.5rem + 2.75rem);
+			}
+
+			:global(table.datatable.responsive tbody tr td.vault_count::before) {
+				content: 'vaults';
+				order: 2;
+			}
+
+			:global(table.datatable.responsive tbody tr td.avg_apy::before),
+			:global(table.datatable.responsive tbody tr td.tvl::before) {
+				content: '·';
+			}
+
+			:global(table.datatable.responsive tbody tr td.avg_apy::after) {
+				content: 'APY';
+			}
+
+			:global(table.datatable.responsive tbody tr td.tvl::after) {
+				content: 'TVL';
 			}
 
 			:global(table.datatable.responsive tbody tr td.cta) {
-				grid-column: 1 / -1;
-				padding: 0;
+				display: contents;
 			}
 
 			:global(table.datatable.responsive tbody tr td .row-link) {
-				padding-right: 0;
-				font: var(--f-ui-sm-medium);
-				line-height: 1.1;
+				display: none;
 			}
 		}
 	}
