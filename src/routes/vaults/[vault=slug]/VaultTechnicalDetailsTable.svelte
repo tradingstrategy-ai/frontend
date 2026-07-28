@@ -2,6 +2,7 @@
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import type { Chain } from '$lib/helpers/chain';
 	import { getExplorerUrl } from '$lib/helpers/chain';
+	import Button from '$lib/components/Button.svelte';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import { CopyWidget, HashAddress, Timestamp, Tooltip } from '$lib/components';
 	import { formatAmount, formatDollar, notFilledMarker } from '$lib/helpers/formatters';
@@ -57,6 +58,9 @@
 	let denominationLogoUrl = $derived(getVaultDenominationLogoUrl(vault, denominationSlug));
 	let denominationHref = $derived(stablecoinMetadata ? getStablecoinDetailsHref(denominationSlug) : undefined);
 	let showExchangeRateRow = $derived(vault.protocol_slug !== 'kinexys');
+	let mobileOstiumHref = $derived(
+		getVaultProtocolDisplayName(vault) === 'Ostium' ? (vault.link ?? undefined) : undefined
+	);
 	let exchangeRateFetchedAt = $derived(
 		vault.denomination_token_rate?.usd_rate_fetched_at ??
 			vault.denomination_token_rate?.source_currency_usd_rate_fetched_at ??
@@ -353,11 +357,32 @@
 			</tbody>
 		</table>
 	</div>
+
+	{#if mobileOstiumHref}
+		<div class="mobile-ostium-link">
+			<Button class="mobile-ostium-button" href={mobileOstiumHref} target="_blank" rel="noreferrer"
+				>Open vault on Ostium</Button
+			>
+		</div>
+	{/if}
 </MetricsBox>
 
 <style>
 	.table-wrapper {
 		overflow-x: auto;
+	}
+
+	.mobile-ostium-link {
+		display: none;
+		margin-top: 1rem;
+
+		@media (--viewport-sm-down) {
+			display: block;
+		}
+
+		:global(.mobile-ostium-button) {
+			--button-width: 100%;
+		}
 	}
 
 	.details-table {
