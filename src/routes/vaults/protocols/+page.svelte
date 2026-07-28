@@ -95,6 +95,7 @@
 							items={chartProtocols}
 							groupLabel="Protocol"
 							groupLabelPlural="protocols"
+							showLabelLogos
 							testId="protocol-tvl-pie-chart"
 						/>
 					</MarketShareWidgetBox>
