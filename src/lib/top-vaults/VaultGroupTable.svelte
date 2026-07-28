@@ -257,55 +257,89 @@
 		@media (--viewport-sm-down) {
 			:global(table.datatable.responsive) {
 				--border-spacing: 0;
-				gap: 0;
+				gap: 2px;
 				margin-block: var(--space-xxs);
 			}
 
 			:global(table.datatable.responsive .mobile-sort-select th) {
-				padding: 0;
+				padding: var(--space-xxs) 0;
 			}
 
 			:global(table.datatable.responsive tbody tr) {
-				gap: 0;
-				padding: var(--space-xxs);
+				grid-template-columns: 1fr 1fr;
+				gap: var(--space-xxs) var(--space-sm);
+				padding: var(--space-xs);
 			}
 
 			:global(table.datatable.responsive tbody tr[data-row-index]::before) {
-				top: var(--space-xxs);
-				left: calc(1.5rem + var(--space-xxs));
-				font-size: 66%;
+				top: var(--space-xs);
+				left: calc(var(--space-xs) + 2rem + var(--space-xs));
+				font: var(--f-ui-md-bold);
+				line-height: 2rem;
 				pointer-events: none;
 			}
 
 			:global(table.datatable.responsive tbody tr td.name) {
-				padding-inline-start: calc(1.5rem + var(--space-xxs) + 1.75em);
+				grid-column: 1 / -1;
+				align-items: center;
+				min-height: 2rem;
+				padding-inline-start: calc(2rem + var(--space-xs) + 2.5rem);
+				font: var(--f-ui-md-bold);
+				line-height: 1.1;
 			}
 
 			:global(table.datatable.responsive tbody tr td) {
+				display: flex;
+				align-items: baseline;
+				gap: var(--space-xxs);
+				min-width: 0;
 				padding: 0;
-				font-size: 66%;
+				font: var(--f-ui-sm-medium);
+				line-height: 1.1;
+				word-break: normal;
 			}
 
 			:global(table.datatable.responsive tbody tr td.name .entity-symbol .logo),
 			:global(table.datatable.responsive tbody tr td.name .entity-symbol .placeholder-logo) {
 				position: absolute;
-				top: var(--space-xxs);
-				left: var(--space-xxs);
-				width: 1.5rem;
-				height: 1.5rem;
+				top: var(--space-xs);
+				left: var(--space-xs);
+				width: 2rem;
+				height: 2rem;
+				object-fit: contain;
+			}
+
+			:global(table.datatable.responsive tbody tr td.name .entity-symbol),
+			:global(table.datatable.responsive tbody tr td.name .entity-symbol .label),
+			:global(table.datatable.responsive tbody tr td.name .group-name) {
+				min-width: 0;
+			}
+
+			:global(table.datatable.responsive tbody tr td.name .group-name > span:last-child) {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+			:global(table.datatable.responsive tbody tr td.name::before) {
+				display: none;
 			}
 
 			:global(table.datatable.responsive tbody tr td:not(.cta)::before) {
-				font: inherit;
+				flex: none;
+				font: var(--f-ui-xs-roman);
+				line-height: 1.1;
 			}
 
 			:global(table.datatable.responsive tbody tr td.cta) {
+				grid-column: 1 / -1;
 				padding: 0;
 			}
 
 			:global(table.datatable.responsive tbody tr td .row-link) {
 				padding-right: 0;
-				font: inherit;
+				font: var(--f-ui-sm-medium);
+				line-height: 1.1;
 			}
 		}
 	}
