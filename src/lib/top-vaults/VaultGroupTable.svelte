@@ -266,7 +266,7 @@
 			}
 
 			:global(table.datatable.responsive tbody tr) {
-				grid-template-columns: max-content max-content minmax(0, 1fr);
+				grid-template-columns: calc(2.5rem + 0.5rem + 2.5rem + 1rem) max-content max-content minmax(0, 1fr);
 				gap: 0 0.5rem;
 				padding: 0.75rem 0.875rem;
 				border-radius: 0.75rem;
@@ -285,10 +285,11 @@
 
 			:global(table.datatable.responsive tbody tr[data-row-index]::before) {
 				top: 0.75rem;
-				left: calc(0.875rem + 2.5rem + 0.5rem);
+				left: calc(0.875rem + 1.25rem);
+				transform: translateX(-50%);
 				font: var(--f-ui-md-bold);
 				line-height: 2.5rem;
-				color: var(--c-text-light);
+				color: var(--c-text);
 				pointer-events: none;
 			}
 
@@ -296,7 +297,7 @@
 				grid-column: 1 / -1;
 				align-items: center;
 				min-height: 2.5rem;
-				padding-inline: calc(2.5rem + 0.5rem + 2.75rem) 1.5rem;
+				padding-inline: calc(2.5rem + 0.5rem + 2.5rem + 1.5rem) 2.25rem;
 				font: var(--f-ui-lg-bold);
 				line-height: 1.1;
 			}
@@ -307,18 +308,23 @@
 				gap: var(--space-xxs);
 				min-width: 0;
 				padding: 0;
-				font: var(--f-ui-sm-roman);
+				font: var(--f-ui-xs-roman);
 				line-height: 1.2;
-				color: var(--c-text-light);
+				color: var(--c-text);
 				white-space: nowrap;
 				word-break: normal;
+			}
+
+			:global(table.datatable.responsive tbody tr td:not(.name)::before),
+			:global(table.datatable.responsive tbody tr td:not(.name)::after) {
+				color: var(--c-text-light);
 			}
 
 			:global(table.datatable.responsive tbody tr td.name .entity-symbol .logo),
 			:global(table.datatable.responsive tbody tr td.name .entity-symbol .placeholder-logo) {
 				position: absolute;
-				top: 0.75rem;
-				left: 0.875rem;
+				top: calc(0.75rem + 0.625rem);
+				left: calc(0.875rem + 2.5rem + 0.5rem);
 				width: 2.5rem;
 				height: 2.5rem;
 				object-fit: contain;
@@ -328,9 +334,15 @@
 			:global(table.datatable.responsive tbody tr td.name .entity-symbol .label),
 			:global(table.datatable.responsive tbody tr td.name .group-name) {
 				min-width: 0;
+				max-width: 100%;
+			}
+
+			:global(table.datatable.responsive tbody tr td.name .entity-symbol) {
+				width: 100%;
 			}
 
 			:global(table.datatable.responsive tbody tr td.name .group-name > span:last-child) {
+				min-width: 0;
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
@@ -351,12 +363,20 @@
 			}
 
 			:global(table.datatable.responsive tbody tr td.vault_count) {
-				margin-inline-start: calc(2.5rem + 0.5rem + 2.75rem);
+				grid-column: 2;
 			}
 
 			:global(table.datatable.responsive tbody tr td.vault_count::before) {
 				content: 'vaults';
 				order: 2;
+			}
+
+			:global(table.datatable.responsive tbody tr td.avg_apy) {
+				grid-column: 3;
+			}
+
+			:global(table.datatable.responsive tbody tr td.tvl) {
+				grid-column: 4;
 			}
 
 			:global(table.datatable.responsive tbody tr td.avg_apy::before),
@@ -378,6 +398,24 @@
 
 			:global(table.datatable.responsive tbody tr td .row-link) {
 				display: none;
+			}
+
+			@media (width < 480px) {
+				:global(table.datatable.responsive tbody tr) {
+					grid-template-columns: calc(2.5rem + 0.5rem + 2.5rem + 1rem) max-content minmax(0, 1fr);
+				}
+
+				:global(table.datatable.responsive tbody tr td.avg_apy) {
+					grid-column: 3;
+				}
+
+				:global(table.datatable.responsive tbody tr td.tvl) {
+					grid-column: 2 / -1;
+				}
+
+				:global(table.datatable.responsive tbody tr td.tvl::before) {
+					display: none;
+				}
 			}
 		}
 	}
