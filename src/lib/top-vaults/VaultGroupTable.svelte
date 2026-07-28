@@ -270,7 +270,14 @@
 			}
 
 			:global(table.datatable.responsive tbody tr[data-row-index]::before) {
-				display: none;
+				top: 0;
+				left: 0;
+				font-size: 66%;
+				pointer-events: none;
+			}
+
+			:global(table.datatable.responsive tbody tr td.name) {
+				padding-inline-start: 1.75em;
 			}
 
 			:global(table.datatable.responsive tbody tr td) {
