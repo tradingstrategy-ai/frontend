@@ -253,6 +253,44 @@
 				}
 			}
 		}
+
+		@media (--viewport-sm-down) {
+			:global(table.datatable.responsive) {
+				--border-spacing: 0;
+				gap: 0;
+			}
+
+			:global(table.datatable.responsive .mobile-sort-select th) {
+				padding: 0;
+			}
+
+			:global(table.datatable.responsive tbody tr) {
+				gap: 0;
+				padding: 0;
+			}
+
+			:global(table.datatable.responsive tbody tr[data-row-index]::before) {
+				display: none;
+			}
+
+			:global(table.datatable.responsive tbody tr td) {
+				padding: 0;
+				font-size: 66%;
+			}
+
+			:global(table.datatable.responsive tbody tr td:not(.cta)::before) {
+				font: inherit;
+			}
+
+			:global(table.datatable.responsive tbody tr td.cta) {
+				padding: 0;
+			}
+
+			:global(table.datatable.responsive tbody tr td .row-link) {
+				padding-right: 0;
+				font: inherit;
+			}
+		}
 	}
 
 	.vault-protocol-table :global(tr.depegged td),
