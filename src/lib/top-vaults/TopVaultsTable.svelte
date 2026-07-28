@@ -1873,7 +1873,12 @@
 				width: 9%;
 
 				@media (--viewport-sm-down) {
-					display: none;
+					width: 4.5rem;
+					padding-inline: 0.125rem;
+
+					:global(.vault-sparkline) {
+						--sparkline-width: 4rem;
+					}
 				}
 
 				&:is(td) {

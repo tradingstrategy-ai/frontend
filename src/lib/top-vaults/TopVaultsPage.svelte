@@ -386,6 +386,10 @@
 		}
 
 		@media (--viewport-sm-down) {
+			.update-info {
+				display: none;
+			}
+
 			.top-vaults-header :global(.hero-banner) {
 				min-height: 0;
 				padding-block: var(--space-xs);
@@ -394,6 +398,20 @@
 			.hero-layout {
 				grid-template-columns: 1fr;
 				align-items: stretch;
+			}
+
+			.page-title {
+				display: flex;
+				flex-wrap: nowrap;
+
+				img {
+					flex: none;
+				}
+
+				span {
+					flex: 1;
+					min-width: 0;
+				}
 			}
 		}
 	}

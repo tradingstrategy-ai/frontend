@@ -36,6 +36,7 @@ export async function load({ params, fetch }) {
 			: getProtocolDisplayName(protocolVault.protocol, protocolVault.protocol_slug),
 		protocolMetadata,
 		core3,
+		totalVaultCount: vaults.length,
 		initialTopVaults: getInlineVaultListing(topVaults, protocolVaults)
 	};
 }

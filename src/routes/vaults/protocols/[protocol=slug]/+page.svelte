@@ -21,8 +21,10 @@
 	let defaultTvlKey = $derived(isApexProtocolGroup ? 'any' : '10k');
 
 	let fetchedTopVaults = $state<TopVaults>();
+	let fetchedTotalVaultCount = $state<number>();
 	let fetchSettled = $state(false);
 	let topVaults = $derived(initialTopVaults ?? fetchedTopVaults);
+	let totalVaultCount = $derived(initialTopVaults ? data.totalVaultCount : fetchedTotalVaultCount);
 	let loading = $derived(!initialTopVaults && !fetchSettled && !hasVaultCache(page.data.generatedAt));
 
 	$effect(() => {
@@ -33,6 +35,7 @@
 		fetchSettled = false;
 		fetchAllVaultData(page.data.generatedAt)
 			.then((allData) => {
+				fetchedTotalVaultCount = allData.vaults.length;
 				fetchedTopVaults = {
 					...allData,
 					vaults: allData.vaults.filter((vault) =>
@@ -113,6 +116,7 @@
 
 <TopVaultsPage
 	{topVaults}
+	{totalVaultCount}
 	{loading}
 	{protocolMetadata}
 	protocolDescriptionExtra={isHyperliquidProtocolGroup ? hyperliquidChainDescription : undefined}
