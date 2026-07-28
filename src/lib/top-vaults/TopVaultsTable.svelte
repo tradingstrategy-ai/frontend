@@ -131,6 +131,8 @@
 		generated_at: new Date().toISOString(),
 		vaults: [],
 		core3_protocols: {},
+		xerberus_protocols: {},
+		xerberus_stats: null,
 		curators: {}
 	};
 	const SKELETON_ROW_COUNT = 10;
