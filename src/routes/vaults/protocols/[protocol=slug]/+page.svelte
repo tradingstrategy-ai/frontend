@@ -1,8 +1,17 @@
 <script lang="ts">
 	import type { TopVaults } from '$lib/top-vaults/schemas';
 	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
-	import { isUnknownVaultProtocol, UNKNOWN_VAULT_PROTOCOL_SLUG } from '$lib/top-vaults/helpers';
+	import {
+		calculateTotalTvl,
+		calculateTvlWeightedApy,
+		isBlacklisted,
+		isEligibleVaultGroupMiniChartVault,
+		isUnknownVaultProtocol,
+		UNKNOWN_VAULT_PROTOCOL_SLUG
+	} from '$lib/top-vaults/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
+	import { VAULT_TVL_OUTLIER_THRESHOLD } from '$lib/echarts/tvl-outliers';
+	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
@@ -63,6 +72,13 @@
 		const logoPath = protocolMetadata?.logos.light ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined;
 		return logoPath ? new URL(logoPath, page.url.origin).href : undefined;
 	});
+	let statsVaults = $derived(
+		(topVaults?.vaults ?? []).filter(
+			(vault) => !isBlacklisted(vault) && (vault.current_nav ?? 0) <= VAULT_TVL_OUTLIER_THRESHOLD
+		)
+	);
+	let totalTvl = $derived(calculateTotalTvl(statsVaults));
+	let averageMonthlyReturn = $derived(calculateTvlWeightedApy(statsVaults.filter(isEligibleVaultGroupMiniChartVault)));
 </script>
 
 {#snippet unknownVaultSubtitle()}
@@ -75,6 +91,19 @@
 		If you want to see both Hyperliquid native vaults and HyperEVM vaults, visit
 		<a class="body-link" href={resolve('/vaults/chains/hyperliquid')}>Hyperliquid chain page</a>.
 	</p>
+{/snippet}
+
+{#snippet protocolDescriptionExtra()}
+	{#if averageMonthlyReturn != null}
+		<p>
+			{protocolName} has <strong>{formatDollar(totalTvl, 1)}</strong> TVL in
+			<strong>{statsVaults.length} {statsVaults.length === 1 ? 'vault' : 'vaults'}</strong> with the TVL-weighted
+			average monthly returns of <strong>{formatPercent(averageMonthlyReturn, 1)}</strong>.
+		</p>
+	{/if}
+	{#if isHyperliquidProtocolGroup}
+		{@render hyperliquidChainDescription()}
+	{/if}
 {/snippet}
 
 <MetaTags
@@ -119,7 +148,9 @@
 	{totalVaultCount}
 	{loading}
 	{protocolMetadata}
-	protocolDescriptionExtra={isHyperliquidProtocolGroup ? hyperliquidChainDescription : undefined}
+	protocolDescriptionExtra={averageMonthlyReturn != null || isHyperliquidProtocolGroup
+		? protocolDescriptionExtra
+		: undefined}
 	title={heroTitle}
 	subtitle={isUnknownVaultProtocolGroup ? unknownVaultSubtitle : undefined}
 	showFilters

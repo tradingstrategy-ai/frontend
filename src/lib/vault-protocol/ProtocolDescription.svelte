@@ -41,18 +41,28 @@
 
 <div class="protocol-description">
 	<MetricsBox title="About {metadata.name}">
-		<div class="description-text">
-			<p>{metadata.short_description}</p>
+		{#if additionalDescription}
+			<div class="description-text">
+				<p>{metadata.short_description}</p>
+			</div>
+
+			<div class="additional-description">
+				{@render additionalDescription()}
+			</div>
+
 			{#if hasExpandableContent}
 				<Button ghost class="toggle-btn" on:click={() => (expanded = !expanded)}>
 					{expanded ? 'View less' : 'View more'}
 				</Button>
 			{/if}
-		</div>
-
-		{#if additionalDescription}
-			<div class="additional-description">
-				{@render additionalDescription()}
+		{:else}
+			<div class="description-text">
+				<p>{metadata.short_description}</p>
+				{#if hasExpandableContent}
+					<Button ghost class="toggle-btn" on:click={() => (expanded = !expanded)}>
+						{expanded ? 'View less' : 'View more'}
+					</Button>
+				{/if}
 			</div>
 		{/if}
 
@@ -102,9 +112,16 @@
 			:global(p) {
 				margin: 0;
 			}
+
+			:global(strong) {
+				color: var(--c-text);
+				font-weight: 600;
+			}
 		}
 
 		:global(.toggle-btn) {
+			justify-self: start;
+			margin-top: 0.75rem;
 			color: var(--c-text-extra-light);
 
 			&:hover {
