@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { curatorInfoSchema, topVaultsSchema } from './schemas';
+import { createTestVault } from './test-utils';
 
 const validCurator = {
 	slug: 'steakhouse-financial',
@@ -53,5 +54,43 @@ describe('topVaultsSchema resilience', () => {
 		const result = curatorInfoSchema.parse(curator);
 		expect(result.recent_posts).toEqual([]);
 		expect(result.name).toBe('Steakhouse Financial');
+	});
+
+	it('preserves Xerberus protocol and per-vault assessments', () => {
+		const xerberus = {
+			score: 78,
+			score_scale: '0_100_higher_is_better',
+			entity_type: 'pool',
+			entity_id: 'lagoon-example-vault',
+			name: 'Example vault',
+			protocol_slug: null,
+			report_url: 'https://app.xerberus.io/pool/dendrogram/lagoon-example-vault',
+			fetched_at: '2026-07-27T16:01:01.992171'
+		};
+		const result = topVaultsSchema.parse({
+			...basePayload,
+			vaults: [createTestVault('Example vault', { xerberus })],
+			xerberus_protocols: {
+				example: {
+					protocol_slug: 'example',
+					entity_id: 'example-v1',
+					name: 'Example',
+					score: 78,
+					score_scale: '0_100_higher_is_better',
+					fetched_at: '2026-07-27T16:01:01.992171'
+				}
+			},
+			xerberus_stats: {
+				total_vaults: 1,
+				pool_matches: 1,
+				protocol_fallbacks: 0,
+				unmatched: 0,
+				coverage_pct: 100
+			}
+		});
+
+		expect(result.vaults[0].xerberus).toEqual(xerberus);
+		expect(result.xerberus_protocols.example?.score).toBe(78);
+		expect(result.xerberus_stats?.coverage_pct).toBe(100);
 	});
 });

@@ -447,6 +447,10 @@ Displays supplementary vault information, including transaction status, performa
 			flex-wrap: wrap;
 			justify-content: space-between;
 			gap: var(--gap);
+
+			@media (--viewport-sm-down) {
+				justify-content: flex-start;
+			}
 		}
 
 		.vault-metrics-table {
