@@ -268,23 +268,24 @@
 			:global(table.datatable.responsive tbody tr) {
 				grid-template-columns: 1fr 1fr;
 				gap: var(--space-xxs) var(--space-sm);
-				padding: var(--space-xs);
+				padding: var(--space-sm);
 			}
 
 			:global(table.datatable.responsive tbody tr[data-row-index]::before) {
-				top: var(--space-xs);
-				left: calc(var(--space-xs) + 2rem + var(--space-xs));
-				font: var(--f-ui-md-bold);
-				line-height: 2rem;
+				top: calc(var(--space-sm) + var(--space-xs));
+				left: calc(var(--space-sm) + 2.25rem + var(--space-sm));
+				font: var(--f-ui-lg-bold);
+				line-height: 2.25rem;
 				pointer-events: none;
 			}
 
 			:global(table.datatable.responsive tbody tr td.name) {
 				grid-column: 1 / -1;
 				align-items: center;
-				min-height: 2rem;
-				padding-inline-start: calc(2rem + var(--space-xs) + 2.5rem);
-				font: var(--f-ui-md-bold);
+				min-height: 2.25rem;
+				padding-block: var(--space-xs);
+				padding-inline-start: calc(2.25rem + var(--space-sm) + 3rem);
+				font: var(--f-ui-lg-bold);
 				line-height: 1.1;
 			}
 
@@ -302,10 +303,10 @@
 			:global(table.datatable.responsive tbody tr td.name .entity-symbol .logo),
 			:global(table.datatable.responsive tbody tr td.name .entity-symbol .placeholder-logo) {
 				position: absolute;
-				top: var(--space-xs);
-				left: var(--space-xs);
-				width: 2rem;
-				height: 2rem;
+				top: calc(var(--space-sm) + var(--space-xs));
+				left: var(--space-sm);
+				width: 2.25rem;
+				height: 2.25rem;
 				object-fit: contain;
 			}
 
