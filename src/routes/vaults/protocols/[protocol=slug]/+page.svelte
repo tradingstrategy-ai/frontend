@@ -156,6 +156,8 @@
 	showFilters
 	showUnknownFilter={false}
 	{defaultTvlKey}
+	defaultSort={data.protocolSlug === 'apex' ? 'tvl' : undefined}
+	defaultDirection={data.protocolSlug === 'apex' ? 'desc' : undefined}
 	defaultHideUnknown={isUnknownVaultProtocolGroup ? 0 : 1}
 >
 	{#snippet detailAside()}

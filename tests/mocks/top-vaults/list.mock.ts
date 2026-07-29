@@ -242,6 +242,27 @@ const limitedCoverageVault = createTestVault('Limited coverage vault', {
 	]
 });
 
+const apexVaults = [
+	createTestVault('ApeX high TVL vault', {
+		address: '0x1000000000000000000000000000000000000001',
+		chain: 'apex',
+		protocol: 'ApeX',
+		current_nav: 9_000,
+		peak_nav: 10_000,
+		one_month_cagr: 0.01,
+		three_months_cagr: 0.01
+	}),
+	createTestVault('ApeX high return vault', {
+		address: '0x1000000000000000000000000000000000000002',
+		chain: 'apex',
+		protocol: 'ApeX',
+		current_nav: 1_000,
+		peak_nav: 1_500,
+		one_month_cagr: 0.5,
+		three_months_cagr: 0.5
+	})
+];
+
 // Named vault for YAML strategy integration tests
 const yamlStrategyVault = createTestVault('Trading Strategy ICHIv3 LS 2', {
 	address: '0x1234567890abcdef1234567890abcdef12345678',
@@ -520,6 +541,7 @@ export default defineMock({
 			redemptionDisabledVault,
 			depositAndRedemptionDisabledVault,
 			limitedCoverageVault,
+			...apexVaults,
 			...parquetMatchedVaults,
 			...returnLeaders,
 			...belowTvl,
