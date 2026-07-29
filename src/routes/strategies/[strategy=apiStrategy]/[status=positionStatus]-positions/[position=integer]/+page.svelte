@@ -67,6 +67,12 @@
 				</div>
 			</svelte:fragment>
 		</PageHeading>
+
+		{#if position.isDustPositionWarning}
+			<div class="dust-position-warning">
+				<Alert size="sm" status="warning">The metrics might be off because the position is too small (dusty).</Alert>
+			</div>
+		{/if}
 	</Section>
 
 	<Section class={position.failedOpen || position.frozen ? 'has-error' : ''}>
@@ -168,6 +174,10 @@
 			flex-wrap: wrap;
 			gap: 0.75rem;
 			justify-content: flex-end;
+		}
+
+		.dust-position-warning {
+			margin-top: var(--space-lg);
 		}
 	}
 </style>
