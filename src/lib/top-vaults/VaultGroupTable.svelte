@@ -94,6 +94,12 @@
 	// svelte-ignore state_referenced_locally
 	const columns = table.createColumns([
 		table.column({
+			id: 'index',
+			header: '',
+			accessor: () => '',
+			plugins: { sort: { disable: true } }
+		}),
+		table.column({
 			id: 'name',
 			header: groupLabel,
 			accessor: (row) => ({ name: row.name, slug: row.slug }),
@@ -171,7 +177,7 @@
 	const tableViewModel = table.createViewModel(columns);
 </script>
 
-<div class="vault-protocol-table" class:wide-name={wideName}>
+<div class="vault-protocol-table" class:wide-name={wideName} style:--rank-offset={pageIndex * 150}>
 	<DataTable
 		isResponsive
 		hasPagination
@@ -208,14 +214,49 @@
 		@media (--viewport-md-up) {
 			:global(table) {
 				table-layout: fixed;
+				counter-reset: group-rank var(--rank-offset);
 			}
 
 			:global(:is(th, td)) {
-				width: 20%;
+				width: 16%;
 
-				&:not(:is(.name, .risk, .core3_risk, .full_name)) {
+				&:not(:is(.index, .name, .risk, .core3_risk, .full_name)) {
 					text-align: right;
 				}
+			}
+
+			:global(.index) {
+				box-sizing: border-box;
+				width: 2.75rem;
+				min-width: 2.75rem;
+				max-width: 2.75rem;
+				padding-inline: var(--space-xs);
+				text-align: center;
+			}
+
+			:global(td.index) {
+				counter-increment: group-rank;
+				color: #6b7280;
+
+				&::before {
+					content: '#' counter(group-rank);
+				}
+			}
+
+			:global(tr[data-row-index='1'] td.index) {
+				color: #d4af37;
+			}
+
+			:global(tr[data-row-index='2'] td.index) {
+				color: #c0c0c0;
+			}
+
+			:global(tr[data-row-index='3'] td.index) {
+				color: #cd7f32;
+			}
+
+			:global(.name) {
+				width: 32%;
 			}
 
 			:global(.full_name) {
@@ -230,12 +271,12 @@
 			/* layout with a leading rating column (technical risk and/or CORE3); the
 			   percentage widths must sum to 100% so the cells fill the table edge-to-edge */
 			:global(:has(:is(.risk, .core3_risk))) {
-				:global(:is(th, td)) {
-					width: 16%;
+				:global(:is(th, td):not(.index)) {
+					width: 15%;
 				}
 
 				:global(.name) {
-					width: 36%;
+					width: 29%;
 				}
 
 				:global(.cta) {
@@ -244,17 +285,21 @@
 			}
 
 			&.wide-name {
-				:global(:is(th, td):not(.name, .cta)) {
-					width: 16%;
+				:global(:is(th, td):not(.index, .name, .cta)) {
+					width: 15%;
 				}
 
 				:global(.name) {
-					width: 36%;
+					width: 35%;
 				}
 			}
 		}
 
 		@media (--viewport-sm-down) {
+			:global(table.datatable.responsive :is(th.index, td.index)) {
+				display: none;
+			}
+
 			:global(table.datatable.responsive) {
 				--border-spacing: 0;
 				gap: 0.375rem;
