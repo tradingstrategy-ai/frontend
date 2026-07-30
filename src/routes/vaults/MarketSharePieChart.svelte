@@ -274,9 +274,15 @@
 
 		const isMobile = window.innerWidth <= 768;
 		const includeLabelLogos = showLabelLogos && !isMobile;
-		const currentSlices = slices.map((slice) => ({ ...slice, colour: getSliceColour?.(slice) }));
+		const currentSlices = slices.map((slice) => {
+			const colour = getSliceColour?.(slice);
+			return {
+				...slice,
+				colour,
+				itemStyle: colour ? { ...slice.itemStyle, color: colour } : slice.itemStyle
+			};
+		});
 		const labelRichStyles = buildLabelRichStyles(isMobile, currentSlices);
-		const centreImageSize = isMobile ? 28 : 40;
 		chartInstance = echartsApi.init(chartContainer);
 		chartInstance.setOption({
 			animationDuration: 450,
@@ -308,28 +314,6 @@
 					return slice ? buildTooltip(slice) : '';
 				}
 			},
-			graphic: centreImageUrl
-				? [
-						{
-							type: 'group',
-							left: 'center',
-							top: '53%',
-							z: 10,
-							children: [
-								{
-									type: 'image',
-									style: {
-										image: centreImageUrl,
-										x: -centreImageSize / 2,
-										y: -centreImageSize / 2,
-										width: centreImageSize,
-										height: centreImageSize
-									}
-								}
-							]
-						}
-					]
-				: [],
 			series: [
 				{
 					name: `${groupLabel} ${valueLabel}`,
@@ -463,6 +447,9 @@
 		<div class="chart-stage-glow"></div>
 		<div class="chart-stage-reflection"></div>
 		<div bind:this={chartContainer} class="chart"></div>
+		{#if centreImageUrl}
+			<img class="centre-logo" src={centreImageUrl} alt="" aria-hidden="true" />
+		{/if}
 	</div>
 	{#if loading}
 		<div class="loading-overlay">
@@ -565,6 +552,24 @@
 		z-index: 1;
 		width: 100%;
 		height: 23rem;
+	}
+
+	.centre-logo {
+		position: absolute;
+		top: 53%;
+		left: 50%;
+		z-index: 2;
+		display: none;
+		width: 2.5rem;
+		height: 2.5rem;
+		transform: translate(-50%, -50%);
+		pointer-events: none;
+	}
+
+	@media (--viewport-lg-up) {
+		.centre-logo {
+			display: block;
+		}
 	}
 
 	.chart-stage.obscured .chart {

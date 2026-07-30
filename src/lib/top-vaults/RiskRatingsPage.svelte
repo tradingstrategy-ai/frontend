@@ -83,17 +83,38 @@ the score in a column beside each vault name.
 		fair: 'var(--c-warning)',
 		poor: 'var(--c-error)'
 	};
+	const xerberusRiskColourValues = [
+		'var(--c-error)',
+		'color-mix(in srgb, var(--c-error), var(--c-warning))',
+		'var(--c-warning)',
+		'color-mix(in srgb, var(--c-warning), var(--c-success))',
+		'color-mix(in srgb, var(--c-warning), var(--c-success) 72%)',
+		'var(--c-success)'
+	];
 
-	function getCore3SliceColour(slice: MarketSharePieSlice): string | undefined {
-		const colourValue = core3ToneColourValues[slice.tone as keyof typeof core3ToneColourValues];
-		if (!colourValue) return undefined;
-
+	function resolveCssColour(colourValue: string): string {
 		const probe = document.createElement('span');
 		probe.style.color = colourValue;
 		document.body.append(probe);
 		const resolvedColour = getComputedStyle(probe).color;
 		probe.remove();
 		return resolvedColour;
+	}
+
+	function getCore3SliceColour(slice: MarketSharePieSlice): string | undefined {
+		const colourValue = core3ToneColourValues[slice.tone as keyof typeof core3ToneColourValues];
+		if (!colourValue) return undefined;
+		return resolveCssColour(colourValue);
+	}
+
+	function getXerberusSliceColour(slice: MarketSharePieSlice): string | undefined {
+		const bandIndex = Number(slice.slug?.replace('risk-', '')) - 1;
+		const colourValue = xerberusRiskColourValues[bandIndex];
+		return colourValue ? resolveCssColour(colourValue) : undefined;
+	}
+
+	function getRiskSliceColour(slice: MarketSharePieSlice): string | undefined {
+		return provider === 'core3' ? getCore3SliceColour(slice) : getXerberusSliceColour(slice);
 	}
 
 	function formatRiskChartTvl(slice: MarketSharePieSlice): string {
@@ -164,7 +185,7 @@ the score in a column beside each vault name.
 				groupLabelPlural={riskRatingGroupLabelPlural}
 				otherThreshold={0}
 				labelValueFormatter={formatRiskChartTvl}
-				getSliceColour={provider === 'core3' ? getCore3SliceColour : undefined}
+				getSliceColour={getRiskSliceColour}
 				centreImageUrl={providerDetails.logoUrl}
 				testId={`${provider}-risk-by-tvl-pie-chart`}
 			/>
