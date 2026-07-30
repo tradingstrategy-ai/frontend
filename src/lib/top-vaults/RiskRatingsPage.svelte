@@ -15,21 +15,22 @@ the score in a column beside each vault name.
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { fetchAllVaultData, hasVaultCache } from './client-cache';
-	import { getCore3PolForVault } from './helpers';
 	import { riskRatingProviders, type RiskRatingProvider } from './risk-rating-providers';
-	import type { TopVaults, VaultInfo } from './schemas';
+	import { getRiskRatedVaults, getRiskRatingStatistics, type RiskRatingStatistics } from './risk-rating-statistics';
+	import type { TopVaults } from './schemas';
 	import TopVaultsPage from './TopVaultsPage.svelte';
 
 	interface Props {
 		provider: RiskRatingProvider;
+		initialRatingStatistics?: RiskRatingStatistics;
 	}
 
-	let { provider }: Props = $props();
+	let { provider, initialRatingStatistics }: Props = $props();
 	let topVaults = $state<TopVaults>();
 	let loading = $state(!hasVaultCache(page.data.generatedAt));
 	let providerDetails = $derived(riskRatingProviders[provider]);
-	let metadataDescription = $derived(`Compare DeFi stablecoin vaults by ${providerDetails.name} risk rating.`);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let ratedTopVaults = $derived.by(() => {
 		const vaultData = topVaults;
@@ -37,15 +38,29 @@ the score in a column beside each vault name.
 
 		return {
 			...vaultData,
-			vaults: vaultData.vaults.filter((vault) => hasProviderRating(vault, vaultData, provider))
+			vaults: getRiskRatedVaults(vaultData, provider)
 		};
 	});
+	let ratingStatistics = $derived.by(() => {
+		return ratedTopVaults ? getRiskRatingStatistics(ratedTopVaults.vaults) : initialRatingStatistics;
+	});
+	let ratingSummary = $derived.by(() => {
+		const { totalTvl, vaultCount, blockchainCount, averageMonthlyReturn } = ratingStatistics ?? {
+			totalTvl: 0,
+			vaultCount: 0,
+			blockchainCount: 0,
+			averageMonthlyReturn: null
+		};
+		const vaultLabel = vaultCount === 1 ? 'vault' : 'vaults';
+		const blockchainLabel = blockchainCount === 1 ? 'blockchain' : 'blockchains';
 
-	function hasProviderRating(vault: VaultInfo, vaultData: TopVaults, ratingProvider: RiskRatingProvider): boolean {
-		if (ratingProvider === 'xerberus') return vault.xerberus?.score != null;
-		const core3 = getCore3PolForVault(vault, vaultData.core3_protocols);
-		return core3?.score != null && core3.rating != null;
-	}
+		return `${providerDetails.name} risk rates ${formatDollar(totalTvl, 0)} TVL in ${vaultCount} ${vaultLabel} on ${blockchainCount} ${blockchainLabel}. The current TVL-weighted average monthly return is ${formatPercent(averageMonthlyReturn, 1)}.`;
+	});
+	let metadataDescription = $derived(
+		`${providerDetails.name} risk rates ${formatDollar(ratingStatistics?.totalTvl ?? 0, 0)} TVL in ${
+			ratingStatistics?.vaultCount ?? 0
+		} ${(ratingStatistics?.vaultCount ?? 0) === 1 ? 'vault' : 'vaults'}`
+	);
 
 	$effect(() => {
 		fetchAllVaultData(page.data.generatedAt)
@@ -95,7 +110,6 @@ the score in a column beside each vault name.
 <TopVaultsPage
 	topVaults={ratedTopVaults}
 	{loading}
-	includeBlacklisted
 	tvlTriggerLabel="All TVL"
 	tvlTooltip="This list includes all vaults with a rating from this provider, regardless of TVL."
 	title={providerDetails.pageTitle}
@@ -106,19 +120,34 @@ the score in a column beside each vault name.
 >
 	{#snippet subtitle()}
 		{#if provider === 'core3'}
-			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-			<a href={providerDetails.website} target="_blank" rel="noreferrer">CORE3</a> publishes Probability of Loss ratings
-			for DeFi protocols. Lower scores indicate lower estimated risk.
-			<a href={resolve('/vaults/core3-risk')}>See also CORE3 charts</a>.
+			<p>
+				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+				<a href={providerDetails.website} target="_blank" rel="noreferrer">CORE3</a> publishes Probability of Loss
+				ratings for DeFi protocols. Lower scores indicate lower estimated risk.
+				<a href={resolve('/vaults/core3-risk')}>See also CORE3 charts</a>.
+			</p>
 		{:else}
-			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-			<a href={providerDetails.website} target="_blank" rel="noreferrer">Xerberus</a> provides independent risk ratings for
-			DeFi vaults and protocols. Higher scores indicate stronger ratings.
+			<p>
+				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+				<a href={providerDetails.website} target="_blank" rel="noreferrer">Xerberus</a> provides independent risk ratings
+				for DeFi vaults and protocols. Higher scores indicate stronger ratings.
+			</p>
+		{/if}
+		{#if ratedTopVaults}
+			<p>{ratingSummary}</p>
 		{/if}
 	{/snippet}
 </TopVaultsPage>
 
 <style>
+	:global(.hero-banner .subtitle p) {
+		margin: 0;
+	}
+
+	:global(.hero-banner .subtitle p + p) {
+		margin-top: var(--space-sm);
+	}
+
 	:global(.hero-banner .subtitle a) {
 		text-decoration: underline;
 		text-underline-offset: 0.15em;

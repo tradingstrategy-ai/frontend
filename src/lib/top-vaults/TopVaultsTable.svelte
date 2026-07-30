@@ -358,6 +358,7 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 
 	let showChainCol = $derived(!chain);
 	let showProviderRiskRating = $derived(ratingProvider != null);
+	let showTechnicalRisk = $derived(ratingProvider == null);
 
 	let offsetWidth = $state<number>();
 
@@ -1034,11 +1035,7 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 					{/if}
 					{@render sortColHeader('Vault', 'vault', 'asc')}
 					{#if showProviderRiskRating}
-						{@render sortColHeader(
-							'Risk rating',
-							'provider_risk_rating',
-							ratingProvider === 'xerberus' ? 'desc' : 'asc'
-						)}
+						{@render sortColHeader('Risk', 'provider_risk_rating', ratingProvider === 'xerberus' ? 'desc' : 'asc')}
 					{/if}
 					{#each selectedReturnColumns as column (column.id)}
 						{@render sortColHeader(column.headerLabel, column.id, column.sortDirection)}
@@ -1051,7 +1048,9 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 					{@render sortColHeader('Age (y)', 'age', 'desc')}
 					{@render sortColHeader('Fees<br />(mgmt/&ZeroWidthSpace;perf)', 'fees', 'asc')}
 					{@render sortColHeader('Deposit and delays', 'lockup', 'asc')}
-					{@render sortColHeader('Protocol Technical Risk', 'risk', 'asc')}
+					{#if showTechnicalRisk}
+						{@render sortColHeader('Protocol Technical Risk', 'risk', 'asc')}
+					{/if}
 					<th class="sparkline">3M price</th>
 				</tr>
 			</thead>
@@ -1074,7 +1073,7 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 							<td class="age right"></td>
 							<td class="fees right"></td>
 							<td class="lockup"></td>
-							<td class="risk"></td>
+							{#if showTechnicalRisk}<td class="risk"></td>{/if}
 							<td class="sparkline"></td>
 						</tr>
 					{/each}
@@ -1172,9 +1171,11 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 								</Tooltip>
 							{/if}
 						</td>
-						<td class="risk">
-							<RiskCell risk={vault.risk} />
-						</td>
+						{#if showTechnicalRisk}
+							<td class="risk">
+								<RiskCell risk={vault.risk} />
+							</td>
+						{/if}
 						<td class="sparkline">
 							<VaultSparkline {vault} />
 							<TargetableLink label="View {vault.name} details" href={resolveVaultDetails(vault)} class="row-link" />
@@ -1726,8 +1727,8 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 
 			/* Apply the fixed width to both the cells and its sortable header. */
 			:is(.risk-rating, .provider_risk_rating) {
-				width: 7.5rem;
-				min-width: 7.5rem;
+				width: 4.5rem;
+				min-width: 4.5rem;
 			}
 
 			.risk-rating {
