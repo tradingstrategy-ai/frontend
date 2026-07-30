@@ -153,7 +153,7 @@ the score in a column beside each vault name.
 	defaultDirection={providerDetails.defaultDirection}
 >
 	{#snippet heroAside()}
-		<MarketShareWidgetBox title="Risk by TVL">
+		<MarketShareWidgetBox title={`TVL by ${providerDetails.name} rated risk`}>
 			<MarketSharePieChart
 				items={riskRatingTvlBands}
 				groupLabel={riskRatingGroupLabel}
