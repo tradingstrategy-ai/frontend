@@ -314,7 +314,8 @@ export async function searchVaultEntities(
 	return {
 		query: trimmedQuery,
 		results: selectedMatches.map(({ record }) => {
-			const { searchTerms: _, ...result } = record;
+			const { searchTerms, ...result } = record;
+			void searchTerms;
 			return result;
 		}),
 		total: matches.length
@@ -322,8 +323,7 @@ export async function searchVaultEntities(
 }
 
 /**
- * Mirror the original TypeSense widget's `group_by: ['type']` behaviour while
- * retaining useful additional results when the widget has room for them.
+ * Select varied entity types before filling the remaining available suggestions.
  */
 function selectDiversifiedMatches(matches: Array<{ record: IndexedSearchRecord; score: number }>, limit: number) {
 	const selected: Array<{ record: IndexedSearchRecord; score: number }> = [];

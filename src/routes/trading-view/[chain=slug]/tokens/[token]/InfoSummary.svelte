@@ -1,11 +1,14 @@
+<!--
+@component
+Summarise a token's identity, supply and smart-contract address.
+-->
 <script lang="ts">
-	import type { LendingReserveDocument } from '$lib/search/trading-entities';
+	import type { TokenDetails } from '$lib/explorer/token-client.js';
 	import { formatAmount } from '$lib/helpers/formatters';
 	import { getTokenStandardName } from '$lib/chain/tokenstandard';
 	import { CryptoAddressWidget } from '$lib/components';
 
-	export let token: any;
-	export let reserves: LendingReserveDocument[];
+	let { token }: { token: TokenDetails } = $props();
 </script>
 
 <div class="summary">
@@ -22,17 +25,6 @@
 			There are total {formatAmount(token.pair_count)} pairs trading against <strong>{token.symbol}</strong>.
 		{/if}
 	</p>
-
-	{#if reserves.length}
-		<p>
-			<strong>{token.symbol}</strong> tokens may be supplied (to earn interst) or borrowed (with collateral) using an
-			{#each reserves as reserve, idx}
-				{idx > 0 ? ' or ' : ''}
-				<a href={reserve.url_path}>{reserve.lending_protocol}</a>
-			{/each}
-			lending reserve.
-		</p>
-	{/if}
 
 	<p class="smart-contract">
 		The token smart contract address is

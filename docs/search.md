@@ -2,7 +2,7 @@
 
 ## Overview
 
-The site-wide vault search is implemented in SvelteKit and searches the vault JSON data already used by the frontend. It does not use Typesense for this feature.
+The site-wide vault search is implemented in SvelteKit and searches the vault JSON data already used by the frontend.
 
 Search is available from the desktop navigation, the compact mobile navigation and the server-rendered [`/search`](/search) page. The full results page is a normal GET form, so links such as `/search?q=USDC` work without client-side JavaScript.
 

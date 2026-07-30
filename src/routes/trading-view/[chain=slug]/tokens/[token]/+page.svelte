@@ -1,3 +1,6 @@
+<!--
+Token detail page with token metadata and its tracked trading pairs.
+-->
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
 	import { page } from '$app/state';
@@ -13,7 +16,7 @@
 	import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
 
 	let { data } = $props();
-	let { token, reserves } = $derived(data);
+	let { token } = $derived(data);
 
 	let breadcrumbs = $derived({
 		[token.chain_slug]: token.chain_name,
@@ -62,7 +65,7 @@
 
 	<section class="ds-container ds-2-col info" data-testid="token-info">
 		<InfoTable {token} />
-		<InfoSummary {token} {reserves} />
+		<InfoSummary {token} />
 	</section>
 
 	<section class="ds-container blockchain-alert">
