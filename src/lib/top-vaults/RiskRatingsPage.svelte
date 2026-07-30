@@ -165,6 +165,7 @@ the score in a column beside each vault name.
 				otherThreshold={0}
 				labelValueFormatter={formatRiskChartTvl}
 				getSliceColour={provider === 'core3' ? getCore3SliceColour : undefined}
+				centreImageUrl={providerDetails.logoUrl}
 				testId={`${provider}-risk-by-tvl-pie-chart`}
 			/>
 		</MarketShareWidgetBox>

@@ -26,6 +26,8 @@
 		labelValueFormatter?: (slice: MarketSharePieSlice) => string;
 		/** Resolve a chart and label colour for an individual pie slice. */
 		getSliceColour?: (slice: MarketSharePieSlice) => string | undefined;
+		/** Optional image displayed in the centre of the donut. */
+		centreImageUrl?: string;
 		testId?: string;
 		class?: string;
 	}
@@ -41,6 +43,7 @@
 		valueLabel = 'TVL',
 		labelValueFormatter,
 		getSliceColour,
+		centreImageUrl,
 		testId = 'market-share-pie-chart',
 		class: classes = ''
 	}: Props = $props();
@@ -273,6 +276,7 @@
 		const includeLabelLogos = showLabelLogos && !isMobile;
 		const currentSlices = slices.map((slice) => ({ ...slice, colour: getSliceColour?.(slice) }));
 		const labelRichStyles = buildLabelRichStyles(isMobile, currentSlices);
+		const centreImageSize = isMobile ? 28 : 40;
 		chartInstance = echartsApi.init(chartContainer);
 		chartInstance.setOption({
 			animationDuration: 450,
@@ -304,6 +308,28 @@
 					return slice ? buildTooltip(slice) : '';
 				}
 			},
+			graphic: centreImageUrl
+				? [
+						{
+							type: 'group',
+							left: 'center',
+							top: '53%',
+							z: 10,
+							children: [
+								{
+									type: 'image',
+									style: {
+										image: centreImageUrl,
+										x: -centreImageSize / 2,
+										y: -centreImageSize / 2,
+										width: centreImageSize,
+										height: centreImageSize
+									}
+								}
+							]
+						}
+					]
+				: [],
 			series: [
 				{
 					name: `${groupLabel} ${valueLabel}`,
@@ -415,7 +441,8 @@
 			wrapLabels,
 			valueLabel,
 			labelValueFormatter,
-			getSliceColour
+			getSliceColour,
+			centreImageUrl
 		);
 		if (!runtimeReady || !echartsApi || !chartContainer) return;
 
