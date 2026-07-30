@@ -120,8 +120,13 @@ amounts in the denomination's native currency.
 <style>
 	.chart-area {
 		display: grid;
-		grid-template-columns: 1fr auto auto;
+		grid-template-columns: minmax(0, 1fr) auto auto;
 		gap: 1.75rem;
+		min-width: 0;
+
+		:global(.vault-price-chart) {
+			min-width: 0;
+		}
 
 		.divider {
 			width: 2px;
@@ -172,7 +177,7 @@ amounts in the denomination's native currency.
 		}
 
 		@media (--viewport-md-down) {
-			grid-template-columns: auto;
+			grid-template-columns: minmax(0, 1fr);
 
 			.divider {
 				display: none;
@@ -181,6 +186,7 @@ amounts in the denomination's native currency.
 			.featured-metrics {
 				grid-row: 1;
 				display: flex;
+				min-width: 0;
 				justify-content: space-between;
 			}
 		}
