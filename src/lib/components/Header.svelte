@@ -7,7 +7,6 @@ Responsive site header with menu, search and compact-navigation controls.
 	import Logo from '$lib/components/Logo.svelte';
 	import Menu from '$lib/components/Menu.svelte';
 	import NavPanel from '$lib/components/NavPanel.svelte';
-	import TextInput from '$lib/components/TextInput.svelte';
 	import IconMenu from '~icons/local/menu';
 
 	interface Props {
@@ -34,11 +33,7 @@ Responsive site header with menu, search and compact-navigation controls.
 	</nav>
 
 	<div class="search">
-		{#if search}
-			{@render search(false, noop)}
-		{:else}
-			<TextInput type="search" --text-input-width="100%" />
-		{/if}
+		{@render search?.(false, noop)}
 	</div>
 
 	<button class="show-nav-panel mobile-only" aria-label="Show navigation panel" onclick={() => (panelOpen = true)}>

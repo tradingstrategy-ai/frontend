@@ -19,15 +19,19 @@ async function closeAdvancedSettings(page: import('@playwright/test').Page) {
 	await expect(advancedFilters).toHaveJSProperty('open', false);
 }
 
-async function waitForVaultRows(page: import('@playwright/test').Page) {
+/** Load additional listing rows until a named vault is rendered. */
+async function getVaultRow(page: import('@playwright/test').Page, name: string) {
 	await expect(page.locator('tbody tr.targetable').first()).toBeVisible();
-}
-
-async function searchVault(page: import('@playwright/test').Page, query: string) {
-	await waitForVaultRows(page);
-	const vaultSearch = page.getByTestId('vault-search');
-	await vaultSearch.click();
-	await vaultSearch.pressSequentially(query);
+	const row = page.locator('tbody tr.targetable').filter({ hasText: name });
+	for (let attempt = 0; attempt < 3 && (await row.count()) === 0; attempt++) {
+		const sentinel = page.getByTestId('load-more-sentinel');
+		if (!(await sentinel.isVisible())) break;
+		const previousRowCount = await page.locator('tbody tr.targetable').count();
+		await sentinel.scrollIntoViewIfNeeded();
+		await expect.poll(() => page.locator('tbody tr.targetable').count()).toBeGreaterThan(previousRowCount);
+	}
+	await expect(row).toHaveCount(1);
+	return row;
 }
 
 async function toggleReturnOption(page: import('@playwright/test').Page, label: string) {
@@ -80,10 +84,7 @@ test.describe('vault index page', () => {
 	});
 
 	test('shows lifetime data tooltip on the lifetime return cell', async ({ page }) => {
-		await searchVault(page, 'Trading Strategy ICHIv3 LS 2');
-
-		const row = page.locator('tbody tr.targetable').filter({ hasText: 'Trading Strategy ICHIv3 LS 2' });
-		await expect(row).toHaveCount(1);
+		const row = await getVaultRow(page, 'Trading Strategy ICHIv3 LS 2');
 
 		await expectLifetimeDataTooltip(
 			row.locator('td.return-column-lifetime-abs .tooltip'),
@@ -97,7 +98,6 @@ test.describe('vault index page', () => {
 		const primaryFilters = page.locator('.primary-filters');
 		await expect(primaryFilters.getByText('Technical risk', { exact: true })).toBeVisible();
 		await expect(primaryFilters.getByText('Hide undepositable', { exact: true })).toBeVisible();
-		await expect(primaryFilters.getByTestId('vault-search')).toBeVisible();
 
 		const advanced = page.getByTestId('advanced-filters');
 		await expect(advanced).not.toHaveAttribute('open', '');
@@ -141,7 +141,6 @@ test.describe('vault index page', () => {
 
 		await expect(mobileFiltersTrigger).toHaveAttribute('aria-expanded', 'true');
 		await expect(primaryFilters.getByText('Technical risk', { exact: true })).toBeVisible();
-		await expect(primaryFilters.getByTestId('vault-search')).not.toBeVisible();
 		await expect(page.locator('.advanced-filters-content').getByText('Min TVL')).toBeVisible();
 		await expect(page.getByTestId('advanced-filters-summary')).not.toBeVisible();
 	});
@@ -298,11 +297,8 @@ test.describe('vault index page', () => {
 	});
 
 	test('shows limited data tooltips for partial 3M and 1Y returns', async ({ page }) => {
-		await page.goto('/vaults?returns=1m-ann,3m-ann,1y-ann');
-		await searchVault(page, 'Limited coverage vault');
-
-		const row = page.locator('tbody tr.targetable').filter({ hasText: 'Limited coverage vault' });
-		await expect(row).toHaveCount(1);
+		await page.goto('/vaults?returns=1m-ann,3m-ann,1y-ann&unknown=0');
+		const row = await getVaultRow(page, 'Limited coverage vault');
 
 		await expectLimitedDataTooltip(
 			page,
@@ -321,11 +317,8 @@ test.describe('vault index page', () => {
 	});
 
 	test('shows limited data tooltip for partial 6M returns', async ({ page }) => {
-		await page.goto('/vaults?returns=1m-ann,3m-ann,6m-ann');
-		await searchVault(page, 'Limited coverage vault');
-
-		const row = page.locator('tbody tr.targetable').filter({ hasText: 'Limited coverage vault' });
-		await expect(row).toHaveCount(1);
+		await page.goto('/vaults?returns=1m-ann,3m-ann,6m-ann&unknown=0');
+		const row = await getVaultRow(page, 'Limited coverage vault');
 
 		await expectLimitedDataTooltip(
 			page,

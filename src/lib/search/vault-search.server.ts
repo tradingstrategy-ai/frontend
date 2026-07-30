@@ -1,6 +1,5 @@
 import { getLogoUrl } from '$lib/helpers/assets';
 import { getChain } from '$lib/helpers/chain';
-import { slugify } from '$lib/helpers/slugify';
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
 import {
 	buildStablecoinMetadataLookup,
@@ -16,7 +15,11 @@ import {
 	getProtocolDisplayName,
 	getVaultCurrentTvlUsd,
 	isBlacklisted,
+	isUnknownVaultProtocol,
 	meetsMinTvl,
+	UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME,
+	UNKNOWN_VAULT_PROTOCOL_SLUG,
+	withVaultCurrentTvlUsd,
 	withVaultDenominationTokenRate
 } from '$lib/top-vaults/helpers';
 import type { TopVaults, VaultInfo } from '$lib/top-vaults/schemas';
@@ -81,7 +84,7 @@ function getEligibleVaults(vaults: VaultInfo[]): VaultInfo[] {
 
 function getGroupMetrics(vaults: VaultInfo[]) {
 	const eligibleVaults = getEligibleVaults(vaults);
-	const weightedVaults = eligibleVaults.map((vault) => ({ ...vault, current_nav: getVaultCurrentTvlUsd(vault) }));
+	const weightedVaults = eligibleVaults.map(withVaultCurrentTvlUsd);
 
 	return {
 		averageApy1m: calculateTvlWeightedApy(weightedVaults),
@@ -147,29 +150,31 @@ function buildIndex(topVaults: TopVaults, stablecoins: StablecoinMetadata[]): In
 	for (const vault of vaults) {
 		if (vault.curator_slug)
 			curatorVaults.set(vault.curator_slug, [...(curatorVaults.get(vault.curator_slug) ?? []), vault]);
-		protocolVaults.set(vault.protocol_slug, [...(protocolVaults.get(vault.protocol_slug) ?? []), vault]);
+		const protocolSlug = isUnknownVaultProtocol(vault) ? UNKNOWN_VAULT_PROTOCOL_SLUG : vault.protocol_slug;
+		protocolVaults.set(protocolSlug, [...(protocolVaults.get(protocolSlug) ?? []), vault]);
 
-		const stablecoinSlug =
-			resolveStablecoinSlug(
-				{ slug: vault.denomination_slug, symbol: vault.denomination, name: vault.normalised_denomination },
-				metadataLookup
-			) ?? vault.denomination_slug;
-		stablecoinVaults.set(stablecoinSlug, [...(stablecoinVaults.get(stablecoinSlug) ?? []), vault]);
+		if (vault.stablecoinish) {
+			const stablecoinSlug =
+				resolveStablecoinSlug(
+					{ slug: vault.denomination_slug, symbol: vault.denomination, name: vault.normalised_denomination },
+					metadataLookup
+				) ?? vault.denomination_slug;
+			stablecoinVaults.set(stablecoinSlug, [...(stablecoinVaults.get(stablecoinSlug) ?? []), vault]);
+		}
 
 		const chain = getChain(vault.chain_id);
-		const chainSlug = chain?.slug ?? slugify(vault.chain);
-		chainVaults.set(chainSlug, [...(chainVaults.get(chainSlug) ?? []), vault]);
+		if (chain) chainVaults.set(chain.slug, [...(chainVaults.get(chain.slug) ?? []), vault]);
 	}
 
 	for (const [slug, groupVaults] of curatorVaults) {
 		const curator = topVaults.curators[slug];
-		const fallbackVault = groupVaults[0];
-		const logos = curator?.logos;
+		if (!curator) continue;
+		const logos = curator.logos;
 		addRecord(
 			records,
 			{
 				id: `curator:${slug}`,
-				name: curator?.name ?? fallbackVault.curator_name ?? slug,
+				name: curator.name,
 				entityType: 'curator',
 				vaultId: null,
 				address: null,
@@ -177,17 +182,18 @@ function buildIndex(topVaults: TopVaults, stablecoins: StablecoinMetadata[]): In
 				href: `/vaults/curators/${slug}`,
 				logoUrl: logos?.generic ?? logos?.light ?? logos?.dark ?? null
 			},
-			[slug, fallbackVault.curator_name]
+			[slug, curator.name]
 		);
 	}
 
 	for (const [slug, groupVaults] of protocolVaults) {
 		const fallbackVault = groupVaults[0];
+		const isUnknown = slug === UNKNOWN_VAULT_PROTOCOL_SLUG;
 		addRecord(
 			records,
 			{
 				id: `protocol:${slug}`,
-				name: getProtocolDisplayName(fallbackVault.protocol, slug),
+				name: isUnknown ? UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME : getProtocolDisplayName(fallbackVault.protocol, slug),
 				entityType: 'protocol',
 				vaultId: null,
 				address: null,
@@ -195,7 +201,7 @@ function buildIndex(topVaults: TopVaults, stablecoins: StablecoinMetadata[]): In
 				href: `/vaults/protocols/${slug}`,
 				logoUrl: getVaultProtocolLogoUrl(slug) ?? null
 			},
-			[slug, fallbackVault.protocol]
+			[slug, fallbackVault.protocol, isUnknown ? UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME : null]
 		);
 	}
 
@@ -284,8 +290,8 @@ export async function searchVaultEntities(
 	options: SearchOptions = {}
 ): Promise<SearchResponse> {
 	const trimmedQuery = query.trim();
-	const index = await getIndex(fetch);
 	if (!trimmedQuery) return { query: '', results: [], total: 0 };
+	const index = await getIndex(fetch);
 
 	const normalisedQuery = normalise(trimmedQuery);
 	if (!normalisedQuery) return { query: trimmedQuery, results: [], total: 0 };

@@ -59,6 +59,19 @@ test.describe('site search typeahead', () => {
 		await expect(page.getByRole('dialog', { name: 'Search' })).toBeHidden();
 	});
 
+	test('closes desktop quick results when interacting outside search', async ({ page }) => {
+		await page.goto('/vaults');
+		await page.waitForLoadState('networkidle');
+
+		const search = page.getByTestId('nav-search').getByRole('combobox');
+		await search.fill('Euler');
+		const dialog = page.getByRole('dialog', { name: 'Search' });
+		await expect(dialog).toBeVisible();
+
+		await page.getByTestId('top-vaults-meta').click();
+		await expect(dialog).toBeHidden();
+	});
+
 	test('opens a vault result from a nested page without a route-relative 404', async ({ page }) => {
 		await page.goto('/vaults/curators/steakhouse-financial');
 		await page.waitForLoadState('networkidle');

@@ -10,7 +10,7 @@ underlying vault JSON index private.
 	import { goto } from '$app/navigation';
 	import { disableScroll } from '$lib/actions/scroll';
 	import { removeOnError } from '$lib/actions/image';
-	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
+	import { formatDollar, formatPercent, notFilledMarker } from '$lib/helpers/formatters';
 	import {
 		formatVaultAddressPrefix,
 		searchEntityColours,
@@ -42,6 +42,7 @@ underlying vault JSON index private.
 	let requestSequence = 0;
 	let mobileSearchInput = $state<HTMLInputElement>();
 	let searchTrigger = $state<HTMLButtonElement>();
+	let searchRoot: HTMLDivElement;
 
 	let hasQuery = $derived(query.trim().length > 0);
 	let activeOptionId = $derived(selectedIndex >= 0 ? `${listboxId}-${selectedIndex}` : undefined);
@@ -88,12 +89,23 @@ underlying vault JSON index private.
 		};
 	});
 
+	$effect(() => {
+		if (!open || mobileDialogOpen) return;
+
+		function closeOnOutsidePointerDown(event: PointerEvent) {
+			if (event.target instanceof Node && !searchRoot.contains(event.target)) closeSearch();
+		}
+
+		document.addEventListener('pointerdown', closeOnOutsidePointerDown);
+		return () => document.removeEventListener('pointerdown', closeOnOutsidePointerDown);
+	});
+
 	function formatApy(value: number | null) {
-		return value === null ? 'N/A' : formatPercent(value, 1, 1);
+		return value === null ? notFilledMarker : formatPercent(value, 1, 1);
 	}
 
 	function formatTvl(value: number | null) {
-		return value === null ? 'N/A' : formatDollar(value, 1, 1);
+		return value === null ? notFilledMarker : formatDollar(value, 1, 1);
 	}
 
 	function openSearch() {
@@ -149,7 +161,12 @@ underlying vault JSON index private.
 
 <svelte:body use:disableScroll={mobileDialogOpen} />
 
-<div class="search" class:menu-search={menu} data-testid={menu ? 'mobile-menu-search' : 'nav-search'}>
+<div
+	bind:this={searchRoot}
+	class="search"
+	class:menu-search={menu}
+	data-testid={menu ? 'mobile-menu-search' : 'nav-search'}
+>
 	<form class="desktop-search" action="/search" role="search" onsubmit={handleSubmit}>
 		<input
 			bind:value={query}

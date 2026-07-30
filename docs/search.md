@@ -21,12 +21,14 @@ Blacklisted vaults remain findable but are shown as the distinct **Blacklisted v
 Every result provides a name, entity type, one-month APY, latest TVL, canonical destination and logo URL. Aggregate entity metrics use eligible, non-blacklisted vaults and USD-normalised TVL. One-month APY is TVL-weighted and excludes invalid or extreme values through the same helper used by vault listings.
 
 Results sort by relevance first, then latest TVL descending and name ascending. The full results table starts sorted by latest TVL, with blacklisted vaults still placed last. The typeahead diversifies the initial suggestions by entity type before filling any remaining positions.
+The results page returns at most 100 rows and explicitly reports when a broader query has been truncated.
 
 ## Typeahead
 
 `src/lib/search/components/Search.svelte` sends a request to `/search/suggestions` after a 200 ms debounce. It cancels the preceding request and ignores stale responses. The endpoint caps requests at 20 results (the widget asks for 10) and queries at 100 characters.
 
 Keyboard navigation follows the combobox pattern: Arrow keys choose a suggestion, Enter opens the selected result or submits the query, and Escape closes the quick search. On mobile, the widget opens as a full-height dialog and restores focus to its trigger when closed. The dialog is layered above page content and only the mobile dialog locks body scrolling.
+On desktop, interacting outside the search closes the quick-results panel.
 
 Desktop vault suggestions and full results show the 90-day price mini-map when chart data is available. Aggregate entities do not show a mini-map.
 

@@ -112,7 +112,13 @@ Search vaults and vault-related data about curators, protocols and stablecoins.
 		{:else if !data.total}
 			<div class="message">No results found for “{data.query}”. Try another name or symbol.</div>
 		{:else}
-			<p class="result-count">{data.total} result{data.total === 1 ? '' : 's'} for “{data.query}”</p>
+			<p class="result-count">
+				{#if data.total > data.results.length}
+					Showing {data.results.length} of {data.total} results for “{data.query}”
+				{:else}
+					{data.total} result{data.total === 1 ? '' : 's'} for “{data.query}”
+				{/if}
+			</p>
 
 			<VaultGroupTable
 				class="search-results-table"
