@@ -6,7 +6,18 @@ test.describe('pricing page', () => {
 	});
 
 	test('renders with correct title', async ({ page }) => {
-		await expect(page).toHaveTitle('Vault data pricing');
+		await expect(page).toHaveTitle('DeFi vault API and datasets');
+	});
+
+	test('renders with correct meta description', async ({ page }) => {
+		await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+			'content',
+			'Download datasets for vault analysis'
+		);
+	});
+
+	test('renders with correct in-page title', async ({ page }) => {
+		await expect(page.getByRole('heading', { name: 'Professional vault data analytics' })).toBeVisible();
 	});
 
 	test('shows Free and Pro tier cards', async ({ page }) => {
