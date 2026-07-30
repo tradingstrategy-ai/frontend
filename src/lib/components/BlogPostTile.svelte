@@ -22,7 +22,7 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 	let thumbnailSrc = $derived(
 		getBlogImageUrl(post.feature_image, {
 			width: 380,
-			height: 230,
+			height: 380,
 			quality: 42,
 			format: 'webp',
 			version: post.updated_at
@@ -33,14 +33,14 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 		[
 			`${getBlogImageUrl(post.feature_image, {
 				width: 380,
-				height: 230,
+				height: 380,
 				quality: 42,
 				format: 'webp',
 				version: post.updated_at
 			})} 380w`,
 			`${getBlogImageUrl(post.feature_image, {
 				width: 760,
-				height: 460,
+				height: 760,
 				quality: 42,
 				format: 'webp',
 				version: post.updated_at
@@ -57,7 +57,7 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 			sizes="(max-width: 640px) calc(100vw - 2rem), (max-width: 896px) calc(100vw - 3rem), 380px"
 			alt={post.feature_image_alt ?? 'Blog post image'}
 			width="760"
-			height="460"
+			height="760"
 			loading="lazy"
 			decoding="async"
 		/>
@@ -95,22 +95,15 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 
 	.image-link {
 		display: block;
+		aspect-ratio: 1;
+		overflow: hidden;
 	}
 
 	img {
 		width: 100%;
 		height: 100%;
-		aspect-ratio: 1;
 		object-fit: cover;
 		background: var(--c-box-2);
-
-		@media (--viewport-sm-up) {
-			max-height: 20rem;
-		}
-
-		@media (--viewport-xs) {
-			height: min(16rem, 28vh);
-		}
 	}
 
 	.content {
