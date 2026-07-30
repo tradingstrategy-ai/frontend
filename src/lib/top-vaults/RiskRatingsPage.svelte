@@ -59,6 +59,9 @@ the score in a column beside each vault name.
 	);
 	let riskRatingGroupLabel = $derived(provider === 'core3' ? 'CORE3 rating' : 'Risk bracket');
 	let riskRatingGroupLabelPlural = $derived(provider === 'core3' ? 'CORE3 ratings' : 'risk brackets');
+	let riskChartTitle = $derived(
+		`${formatDollar(ratingStatistics?.totalTvl ?? 0, 1, 1)} TVL by ${providerDetails.name} rated risk`
+	);
 	let ratingSummary = $derived.by(() => {
 		const { totalTvl, vaultCount, blockchainCount, averageMonthlyReturn } = ratingStatistics ?? {
 			totalTvl: 0,
@@ -178,7 +181,7 @@ the score in a column beside each vault name.
 	defaultDirection={providerDetails.defaultDirection}
 >
 	{#snippet heroAside()}
-		<MarketShareWidgetBox title={`TVL by ${providerDetails.name} rated risk`}>
+		<MarketShareWidgetBox title={riskChartTitle}>
 			<MarketSharePieChart
 				items={riskRatingTvlBands}
 				groupLabel={riskRatingGroupLabel}
