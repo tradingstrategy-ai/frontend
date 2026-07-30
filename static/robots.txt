@@ -1,6 +1,8 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 
+Sitemap: https://tradingstrategy.ai/sitemap.xml
+
 # Make sure Google Bot is not hitting JSON API directly
 Disallow: /api/
 Allow: /api/sitemap/

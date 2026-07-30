@@ -1,12 +1,11 @@
+<!--
+@component
+Interactive vault listing with filters, sorting and progressive row loading.
+-->
 <script lang="ts">
-	/**
-	 * Table component for displaying top DeFi vaults with sorting, filtering, and infinite scroll.
-	 * Used on /vaults and chain-specific vault pages.
-	 */
 	import type { Chain } from '$lib/helpers/chain';
 	import type { TopVaults, VaultInfo } from './schemas';
 	import type { ParamSchema } from '$lib/helpers/url-search-state';
-	import { untrack } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { inview } from 'svelte-inview';
@@ -14,7 +13,6 @@
 	import { deserialiseSearchParams, serialiseSearchParams } from '$lib/helpers/url-search-state';
 	import Select from '$lib/components/Select.svelte';
 	import TargetableLink from '$lib/components/TargetableLink.svelte';
-	import TextInput from '$lib/components/TextInput.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import ChainCell from './ChainCell.svelte';
@@ -223,7 +221,6 @@
 			options: [...Object.keys(sortColumnMap), ...Object.keys(LEGACY_RETURN_SORT_ALIASES)]
 		},
 		direction: { type: 'string', defaultValue: defaultDirection ?? 'desc', options: ['asc', 'desc'] },
-		q: { type: 'string', defaultValue: '' },
 		closed: { type: 'number', defaultValue: 0 },
 		unknown: { type: 'number', defaultValue: defaultHideUnknown },
 		dd: { type: 'string', defaultValue: 'any', options: ddFilterOptions.map((o) => o.key) },
@@ -283,29 +280,6 @@
 		selectedReturnColumns.length > 0 ? selectedReturnColumns.map((item) => item.shortLabel).join(', ') : 'None'
 	);
 	let showAllVaultsFilterNote = $derived(page.url.pathname !== allVaultsPath);
-
-	// Text search: local state for responsive typing, synced to/from URL
-	let filterValue = $state('');
-
-	// Sync filterValue from URL (handles initial load and popstate/back navigation)
-	$effect(() => {
-		const urlQ = urlState.q;
-		const current = untrack(() => filterValue);
-		if (urlQ !== current) {
-			filterValue = urlQ;
-		}
-	});
-
-	// Debounce text search → URL sync
-	$effect(() => {
-		const value = filterValue;
-		const timer = setTimeout(() => {
-			if (value !== untrack(() => urlState.q)) {
-				updateSearchParams({ q: value });
-			}
-		}, 300);
-		return () => clearTimeout(timer);
-	});
 
 	// --- Sort state (derived from URL) ---
 
@@ -398,10 +372,9 @@
 		return currency != null && currency !== 'usd' ? true : isStablecoinDepegged(vault);
 	}
 
-	// filter out blacklisted vaults (unless includeBlacklisted, searching "blacklisted",
-	// or the risk dropdown includes blacklisted level)
+	// Filter out blacklisted vaults unless explicitly included or selected by risk level.
 	let baseVaults = $derived.by(() => {
-		if (includeBlacklisted || filterValue.startsWith('blacklist') || selectedRisk.maxValue >= 999) {
+		if (includeBlacklisted || selectedRisk.maxValue >= 999) {
 			return topVaults.vaults;
 		}
 		return topVaults.vaults.filter((v) => !isBlacklisted(v));
@@ -432,12 +405,9 @@
 	// provided by the page, otherwise the vaults available to this listing
 	let totalVaultCount = $derived(totalVaultCountProp ?? topVaults.vaults.length);
 
-	// Filter vaults matching all active filters (TVL, age, risk, search)
+	// Filter vaults matching all active listing filters.
 	let filteredVaults = $derived.by(() => {
-		const filterCompareStr = filterValue.trim().toLowerCase();
 		return baseVaults.filter((v) => {
-			const chain = getChain(v.chain_id);
-
 			// TVL filter (prop-driven or dropdown-driven)
 			if (filterTvl || showFilters) {
 				if (getVaultCurrentTvl(v) < getVaultTvlThreshold(v)) {
@@ -486,21 +456,11 @@
 			// Hide unknown protocol filter (checkbox-driven)
 			if (hideUnknown && !hasSupportedProtocol(v)) return false;
 
-			const vaultCompareStr = [
-				v.chain_id,
-				getChainDisplayName(v.chain_id),
-				v.name,
-				getVaultProtocolDisplayName(v),
-				v.denomination,
-				v.risk ?? '',
-				v.address
-			].join(' ');
-			return vaultCompareStr.toLowerCase().includes(filterCompareStr);
+			return true;
 		});
 	});
 
-	// Uses filteredVaults so all
-	// active filters (TVL, age, risk, search) are reflected in the stats row.
+	// Uses filteredVaults so all active listing filters are reflected in the stats row.
 	let statsVaults = $derived(
 		includeBlacklistedInStats ? filteredVaults : filteredVaults.filter((v) => !isBlacklisted(v))
 	);
@@ -837,15 +797,6 @@
 							</Tooltip>
 						</div>
 					{/if}
-
-					<div class="filter">
-						<TextInput
-							bind:value={filterValue}
-							type="search"
-							placeholder="Search by name, protocol, chain, denomination, risk or address"
-							data-testid="vault-search"
-						/>
-					</div>
 				</div>
 
 				<details class="advanced-filters" data-testid="advanced-filters" open={mobileFiltersOpen}>
@@ -1000,15 +951,6 @@
 						{/if}
 					</div>
 				</details>
-			</div>
-		{:else}
-			<div class="filter">
-				<TextInput
-					bind:value={filterValue}
-					type="search"
-					placeholder="Search by name, protocol, chain, denomination, risk or address"
-					data-testid="vault-search"
-				/>
 			</div>
 		{/if}
 	</div>
@@ -1229,10 +1171,6 @@
 			align-items: center;
 		}
 
-		.primary-filters > .filter {
-			flex: 1 12rem;
-		}
-
 		.filter-group {
 			display: flex;
 			align-items: center;
@@ -1367,10 +1305,6 @@
 			font: inherit;
 		}
 
-		.filter {
-			flex: 1 24rem;
-		}
-
 		.advanced-filters {
 			width: 100%;
 			border: 1px solid var(--c-input-border);
@@ -1424,10 +1358,6 @@
 		}
 
 		@media (--viewport-sm-down) {
-			.filter {
-				display: none;
-			}
-
 			.mobile-filters-trigger {
 				display: flex;
 				align-items: center;

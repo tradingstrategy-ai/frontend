@@ -1,14 +1,23 @@
+<!--
+@component
+Responsive site header with menu, search and compact-navigation controls.
+-->
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import Logo from '$lib/components/Logo.svelte';
 	import Menu from '$lib/components/Menu.svelte';
 	import NavPanel from '$lib/components/NavPanel.svelte';
-	// NOTE: un-comment below line to bring back search box
-	// import TextInput from '$lib/components/TextInput.svelte';
+	import TextInput from '$lib/components/TextInput.svelte';
 	import IconMenu from '~icons/local/menu';
-	// NOTE: un-comment below line to bring back color mode picker
-	// import ColorModePicker from '$lib/header/ColorModePicker.svelte';
 
-	let panelOpen = false;
+	interface Props {
+		menu?: Snippet;
+		search?: Snippet<[menu: boolean, onNavigate: () => void]>;
+	}
+
+	let { menu, search }: Props = $props();
+	let panelOpen = $state(false);
+	const noop = () => {};
 </script>
 
 <div class="header-bar">
@@ -20,34 +29,29 @@
 
 	<nav class="desktop-only">
 		<Menu horizontal align="center">
-			<slot name="menu" />
+			{@render menu?.()}
 		</Menu>
 	</nav>
 
-	<!-- NOTE: un-comment below section to bring back search box -->
-	<!--
 	<div class="search">
-		<slot name="search">
+		{#if search}
+			{@render search(false, noop)}
+		{:else}
 			<TextInput type="search" --text-input-width="100%" />
-		</slot>
+		{/if}
 	</div>
-	-->
 
-	<!-- NOTE: un-comment below section to bring back color mode picker -->
-	<!--
-	<div class="desktop-only">
-		<ColorModePicker />
-	</div>
-	-->
-
-	<button class="show-nav-panel mobile-only" aria-label="Show navigation panel" on:click={() => (panelOpen = true)}>
+	<button class="show-nav-panel mobile-only" aria-label="Show navigation panel" onclick={() => (panelOpen = true)}>
 		<IconMenu />
 	</button>
 </div>
 
 <div class="nav-panel mobile-only">
 	<NavPanel bind:open={panelOpen}>
-		<slot name="menu" />
+		{#snippet panelSearch()}
+			{@render search?.(true, () => (panelOpen = false))}
+		{/snippet}
+		{@render menu?.()}
 	</NavPanel>
 </div>
 
@@ -71,7 +75,7 @@
 			[logo-start] 10.5rem
 			[logo-end-sm search-start-sm] 0.75rem
 			[logo-end-lg menu-start] 1fr
-			[menu-end search-start-lg] auto /* NOTE: replace `auto` with the `minmax(auto, 12rem)` to bring back search box */
+			[menu-end search-start-lg] minmax(12rem, 14.75rem)
 			[search-end];
 		grid-auto-flow: column;
 		align-items: center;
@@ -97,16 +101,13 @@
 		grid-column: menu-start / menu-end;
 	}
 
-	/* NOTE: un-comment below section to bring back search box */
-	/*
 	.search {
-		display: none;
+		display: grid;
 		grid-column: search-start-lg / search-end;
 		width: 100%;
 		max-width: 14.75rem;
 		justify-self: end;
 	}
-	*/
 
 	.show-nav-panel {
 		display: flex;
@@ -123,21 +124,31 @@
 	}
 
 	@media (--nav-collapsed) {
+		.header-bar {
+			grid-template-columns:
+				[logo-start] 10.5rem
+				[logo-end search-start] minmax(0, 1fr)
+				[search-end menu-start] auto
+				[menu-end];
+		}
+
 		.desktop-only {
 			display: none;
 		}
 
 		.logo {
-			grid-column-end: logo-end-sm;
+			grid-column: logo-start / logo-end;
 			--logo-height: 32px;
 		}
 
-		/* NOTE: un-comment below section to bring back search box */
-		/*
 		.search {
-			grid-column-start: search-start-sm;
+			grid-column: search-start / search-end;
+			max-width: none;
 		}
-		*/
+
+		.show-nav-panel {
+			grid-column: menu-start / menu-end;
+		}
 	}
 
 	@media (--nav-expanded) {

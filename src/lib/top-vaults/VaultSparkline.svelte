@@ -1,12 +1,18 @@
+<!--
+@component
+Render a vault's 90-day price sparkline, optionally leaving no fallback text when unavailable.
+-->
 <script lang="ts">
 	import type { SlimVaultInfo } from './schemas';
 	import { getVaultSparklineUrl } from './helpers';
 
 	interface Props {
-		vault: SlimVaultInfo;
+		vault: Pick<SlimVaultInfo, 'id' | 'name'>;
+		/** Keep the layout empty instead of showing a fallback message when chart data is unavailable. */
+		hideUnavailable?: boolean;
 	}
 
-	let { vault }: Props = $props();
+	let { vault, hideUnavailable = false }: Props = $props();
 
 	let src = $derived(getVaultSparklineUrl(vault));
 
@@ -15,7 +21,7 @@
 
 <div class="vault-sparkline">
 	{#if !src || loadError}
-		chart unavailable
+		{#if !hideUnavailable}chart unavailable{/if}
 	{:else}
 		<img {src} alt="{vault.name} 90 day price" onerror={() => (loadError = true)} />
 	{/if}

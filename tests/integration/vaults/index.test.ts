@@ -252,20 +252,8 @@ test.describe('vault index page', () => {
 		await expect(sentinel).not.toBeVisible();
 	});
 
-	test('search filters displayed vaults', async ({ page }) => {
-		const vaultSearch = page.getByTestId('vault-search');
-
-		// Verify we have initial rows > 1
-		const rows = page.locator('tbody tr.targetable');
-		await expect(rows.first()).toBeVisible();
-		const initialCount = await rows.count();
-		expect(initialCount).toBeGreaterThan(1);
-
-		// Use pressSequentially to simulate real keystrokes — Playwright's fill()
-		// doesn't reliably trigger Svelte's on:input handler with one-way {value} binding
-		await vaultSearch.click();
-		await vaultSearch.pressSequentially('Above TVL 042');
-		await expect(rows).toHaveCount(1);
+	test('does not show a search widget inside the vault listing', async ({ page }) => {
+		await expect(page.getByTestId('vault-search')).toHaveCount(0);
 	});
 
 	test('selecting a fourth return column evicts the current third selection', async ({ page }) => {

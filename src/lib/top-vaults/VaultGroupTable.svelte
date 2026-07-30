@@ -1,6 +1,13 @@
+<!--
+@component
+Reusable entity listing table for vault groups and search results.
+
+Supports configurable metric labels, optional count and secondary-name columns,
+logos, target links, sorting, pagination and the shared responsive card layout.
+-->
 <script module lang="ts">
 	export const sortOptions = {
-		keys: ['tvl', 'avg_apy', 'vault_count', 'name', 'risk', 'core3_risk'],
+		keys: ['tvl', 'avg_apy', 'vault_count', 'name', 'full_name', 'risk', 'core3_risk'],
 		directions: ['desc', 'asc']
 	} as const;
 
@@ -20,6 +27,7 @@
 	import { UNKNOWN_VAULT_PROTOCOL_SLUG } from '$lib/top-vaults/helpers';
 	import AvgApyHeader from './AvgApyHeader.svelte';
 	import VaultGroupNameCell from './VaultGroupNameCell.svelte';
+	import VaultSparkline from './VaultSparkline.svelte';
 	import RiskCell from './RiskCell.svelte';
 	import Core3RiskCell from './Core3RiskCell.svelte';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
@@ -32,11 +40,24 @@
 		includeRisk?: boolean;
 		includeCore3Risk?: boolean;
 		includeFullName?: boolean;
+		includeVaultCount?: boolean;
+		/** Display a 90-day price sparkline for rows that resolve to a vault. */
+		includeSparkline?: boolean;
 		/** Widen the name column for groups with long display names (e.g. curators) */
 		wideName?: boolean;
+		fullNameLabel?: string;
+		averageApyLabel?: string;
+		tvlLabel?: string;
+		ctaLabel?: string;
 		getLogoHref?: (slug: string) => string | undefined;
+		getNameDetail?: (row: VaultGroup) => string | undefined;
+		getNameStrikethrough?: (row: VaultGroup) => boolean;
+		getFullNameMarkerColour?: (row: VaultGroup) => string | undefined;
+		getSparklineVault?: (row: VaultGroup) => { id: string; name: string } | undefined;
+		getTvlSortValue?: (row: VaultGroup) => string | number | (string | number)[];
 		page?: number;
-		sort?: SortOptions['keys'][number];
+		/** Set to `null` to preserve the supplied relevance order initially. */
+		sort?: SortOptions['keys'][number] | null;
 		direction?: SortOptions['directions'][number];
 		getHref?: (slug: string) => string | undefined;
 		getWarningLabel?: (row: VaultGroup) => string | undefined;
@@ -48,8 +69,19 @@
 		includeRisk = false,
 		includeCore3Risk = false,
 		includeFullName = false,
+		includeVaultCount = true,
+		includeSparkline = false,
 		wideName = false,
+		fullNameLabel = 'Name',
+		averageApyLabel = 'Avg. APY%',
+		tvlLabel = 'TVL',
+		ctaLabel = 'View vaults',
 		getLogoHref,
+		getNameDetail,
+		getNameStrikethrough,
+		getFullNameMarkerColour,
+		getSparklineVault,
+		getTvlSortValue,
 		page: pageIndex = 0,
 		sort = sortOptions.keys[0],
 		direction = sortOptions.directions[0],
@@ -75,14 +107,16 @@
 	const hiddenColumns = [
 		...(includeRisk ? [] : ['risk']),
 		...(includeCore3Risk ? [] : ['core3_risk']),
-		...(includeFullName ? [] : ['full_name'])
+		...(includeFullName ? [] : ['full_name']),
+		...(includeVaultCount ? [] : ['vault_count']),
+		...(includeSparkline ? [] : ['sparkline'])
 	];
 
 	// svelte-ignore state_referenced_locally
 	const table = createTable(tableRowsStore, {
 		hide: addHiddenColumns({ initialHiddenColumnIds: hiddenColumns.length ? hiddenColumns : [''] }),
 		sort: addSortBy({
-			initialSortKeys: [{ id: sort, order: direction }],
+			initialSortKeys: sort ? [{ id: sort, order: direction }] : [],
 			toggleOrder: ['desc', 'asc']
 		}),
 		page: addPagination({
@@ -102,27 +136,39 @@
 		table.column({
 			id: 'name',
 			header: groupLabel,
-			accessor: (row) => ({ name: row.name, slug: row.slug }),
+			accessor: (row) => ({
+				name: row.name,
+				slug: row.slug,
+				detail: getNameDetail?.(row),
+				strikethrough: getNameStrikethrough?.(row)
+			}),
 			cell: ({ value }) =>
 				createRender(VaultGroupNameCell, {
 					label: value.name,
 					logoUrl: getLogoHref?.(value.slug),
+					detail: value.detail,
+					strikethrough: value.strikethrough,
 					showPlaceholder: value.slug === UNKNOWN_VAULT_PROTOCOL_SLUG && !getLogoHref?.(value.slug)
 				}),
 			plugins: { sort: { getSortValue: (v) => v.name, invert: true } }
 		}),
 		table.column({
 			id: 'full_name',
-			header: 'Name',
-			accessor: (row) => ({ fullName: row.fullName, warningLabel: getWarningLabel?.(row) }),
+			header: fullNameLabel,
+			accessor: (row) => ({
+				fullName: row.fullName,
+				markerColour: getFullNameMarkerColour?.(row),
+				warningLabel: getWarningLabel?.(row)
+			}),
 			cell: ({ value }) =>
 				value.fullName || value.warningLabel
 					? createRender(VaultGroupNameCell, {
 							label: value.fullName ?? '',
+							markerColour: value.markerColour,
 							warningLabel: value.warningLabel
 						})
 					: '',
-			plugins: { sort: { disable: true } }
+			plugins: { sort: { getSortValue: (value) => value.fullName ?? '' } }
 		}),
 		table.column({
 			id: 'core3_risk',
@@ -156,20 +202,28 @@
 		}),
 		table.column({
 			accessor: 'avg_apy',
-			header: createRender(AvgApyHeader, { label: 'Avg. APY%' }),
+			header: createRender(AvgApyHeader, { label: averageApyLabel }),
 			cell: ({ value }) => formatPercent(value)
 		}),
 		table.column({
-			accessor: 'tvl',
-			header: 'TVL',
-			cell: ({ value }) => formatDollar(value, 2)
+			id: 'tvl',
+			accessor: (row) => ({ value: row.tvl, sortValue: getTvlSortValue?.(row) ?? row.tvl }),
+			header: tvlLabel,
+			cell: ({ value }) => formatDollar(value.value, 2),
+			plugins: { sort: { getSortValue: (value) => value.sortValue } }
+		}),
+		table.column({
+			id: 'sparkline',
+			header: 'History 3M',
+			accessor: (row) => getSparklineVault?.(row),
+			cell: ({ value }) => (value ? createRender(VaultSparkline, { vault: value, hideUnavailable: true }) : ''),
+			plugins: { sort: { disable: true } }
 		}),
 		table.column({
 			id: 'cta',
 			header: '',
 			accessor: (row) => getHref(row.slug),
-			cell: ({ value }) =>
-				value ? createRender(TableRowTarget, { size: 'sm', label: 'View vaults', href: value }) : '',
+			cell: ({ value }) => (value ? createRender(TableRowTarget, { size: 'sm', label: ctaLabel, href: value }) : ''),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -177,7 +231,13 @@
 	const tableViewModel = table.createViewModel(columns);
 </script>
 
-<div class="vault-protocol-table" class:wide-name={wideName} style:--rank-offset={pageIndex * 150}>
+<div
+	class="vault-protocol-table"
+	class:wide-name={wideName}
+	class:withoutVaultCount={!includeVaultCount}
+	class:with-sparkline={includeSparkline}
+	style:--rank-offset={pageIndex * 150}
+>
 	<DataTable
 		isResponsive
 		hasPagination
@@ -196,9 +256,9 @@
 			rotate: 180deg;
 		}
 
-		/* hide full_name column on mobile */
-		:global(:is(th.full_name, td.full_name)) {
-			@media (--viewport-sm-down) {
+		/* Hide secondary entity and sparkline columns in the compact mobile card layout. */
+		@media (--viewport-sm-down) {
+			:global(table.datatable.responsive :is(th.full_name, td.full_name, th.sparkline, td.sparkline)) {
 				display: none;
 			}
 		}
@@ -427,6 +487,14 @@
 				grid-row: 3;
 			}
 
+			&.withoutVaultCount :global(table.datatable.responsive tbody tr td.avg_apy) {
+				margin-inline-start: calc(2.5rem + 0.5rem + 2.75rem);
+			}
+
+			&.withoutVaultCount :global(table.datatable.responsive tbody tr td.avg_apy::before) {
+				display: none;
+			}
+
 			:global(table.datatable.responsive tbody tr td.vault_count::before) {
 				content: 'vaults';
 				order: 2;
@@ -488,6 +556,43 @@
 				:global(table.datatable.responsive tbody tr td.tvl) {
 					grid-column: 2 / -1;
 					grid-row: 4;
+				}
+			}
+		}
+
+		@media (--viewport-md-up) {
+			&.with-sparkline {
+				:global(:is(th, td)) {
+					width: auto;
+				}
+
+				:global(.name) {
+					width: 30%;
+				}
+
+				:global(.full_name) {
+					width: 17%;
+				}
+
+				:global(.avg_apy),
+				:global(.tvl) {
+					width: 13%;
+				}
+
+				:global(.sparkline) {
+					width: 15%;
+					text-align: center;
+					vertical-align: middle;
+
+					:global(.vault-sparkline) {
+						margin-inline: auto;
+						--sparkline-width: 7rem;
+					}
+				}
+
+				:global(.cta) {
+					--button-width: 100%;
+					width: 12%;
 				}
 			}
 		}

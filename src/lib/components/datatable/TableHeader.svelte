@@ -1,3 +1,7 @@
+<!--
+@component
+Render sortable table column headers for the shared data-table component.
+-->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
@@ -27,7 +31,7 @@
 							class={cell.id}
 							class:sortable={props.sort && !props.sort.disabled}
 							class:sorted={props.sort?.order}
-							onclick={() => props.sort?.toggle?.()}
+							onclick={(event) => props.sort?.toggle?.(event)}
 						>
 							<!-- this conditional is needed to support header strings that contain HTML entity refs -->
 							{#if typeof renderConfig === 'string'}
