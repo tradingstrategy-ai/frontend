@@ -48,7 +48,8 @@ describe('TopVaultsTable risk rating column', () => {
 			}
 		});
 
-		expect(screen.getByRole('columnheader', { name: 'Risk rating' })).toBeInTheDocument();
+		expect(screen.getByRole('columnheader', { name: 'Risk' })).toBeInTheDocument();
+		expect(screen.queryByRole('columnheader', { name: 'Protocol Technical Risk' })).not.toBeInTheDocument();
 		expect(getRenderedVaultNames()).toEqual(['Safer CORE3 vault', 'Riskier CORE3 vault']);
 		expect(screen.getByText('AA')).toHaveAttribute('data-tone', 'excellent');
 		expect(screen.getByText('D')).toHaveAttribute('data-tone', 'poor');
@@ -95,6 +96,8 @@ describe('TopVaultsTable risk rating column', () => {
 			}
 		});
 
+		expect(screen.getByRole('columnheader', { name: 'Risk' })).toBeInTheDocument();
+		expect(screen.queryByRole('columnheader', { name: 'Protocol Technical Risk' })).not.toBeInTheDocument();
 		expect(getRenderedVaultNames()).toEqual(['Safer Xerberus vault', 'Riskier Xerberus vault']);
 		expect(screen.getByText('91')).toBeInTheDocument();
 		expect(screen.getAllByText(/Xerberus scored this vault directly/)).toHaveLength(2);

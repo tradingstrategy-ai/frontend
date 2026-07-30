@@ -120,7 +120,11 @@ function buildIndex(topVaults: TopVaults, stablecoins: StablecoinMetadata[]): In
 			{
 				id: `vault:${vault.id}`,
 				name: vault.name,
-				entityType: isBlacklisted(vault) ? 'blacklisted-vault' : 'vault',
+				entityType: isBlacklisted(vault)
+					? 'blacklisted-vault'
+					: vault.flags.includes('tokenised_fund')
+						? 'tokenised-fund'
+						: 'vault',
 				vaultId: vault.id,
 				address: vault.address,
 				averageApy1m: getMonthlyReturn(vault),

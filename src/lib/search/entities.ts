@@ -4,10 +4,18 @@
  * The server-side index keeps additional matching terms private; browser code
  * only receives this serialisable result shape.
  */
-export type SearchEntityType = 'vault' | 'blacklisted-vault' | 'curator' | 'protocol' | 'stablecoin' | 'chain';
+export type SearchEntityType =
+	| 'vault'
+	| 'tokenised-fund'
+	| 'blacklisted-vault'
+	| 'curator'
+	| 'protocol'
+	| 'stablecoin'
+	| 'chain';
 
 export const searchEntityColours: Record<SearchEntityType, string> = {
 	vault: 'var(--c-search-entity-vault)',
+	'tokenised-fund': 'var(--c-search-entity-tokenised-fund)',
 	'blacklisted-vault': 'var(--c-search-entity-blacklisted-vault)',
 	curator: 'var(--c-search-entity-curator)',
 	protocol: 'var(--c-search-entity-protocol)',
@@ -17,6 +25,7 @@ export const searchEntityColours: Record<SearchEntityType, string> = {
 
 export const searchEntityLabels: Record<SearchEntityType, string> = {
 	vault: 'Vault',
+	'tokenised-fund': 'Tokenised fund',
 	'blacklisted-vault': 'Blacklisted vault',
 	curator: 'Curator',
 	protocol: 'Protocol',
