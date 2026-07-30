@@ -96,6 +96,10 @@ the score in a column beside each vault name.
 		return resolvedColour;
 	}
 
+	function formatRiskChartTvl(slice: MarketSharePieSlice): string {
+		return formatDollar(slice.tvl, 1, 1);
+	}
+
 	$effect(() => {
 		fetchAllVaultData(page.data.generatedAt)
 			.then((data) => (topVaults = data))
@@ -159,6 +163,7 @@ the score in a column beside each vault name.
 				groupLabel={riskRatingGroupLabel}
 				groupLabelPlural={riskRatingGroupLabelPlural}
 				otherThreshold={0}
+				labelValueFormatter={formatRiskChartTvl}
 				getSliceColour={provider === 'core3' ? getCore3SliceColour : undefined}
 				testId={`${provider}-risk-by-tvl-pie-chart`}
 			/>

@@ -22,6 +22,8 @@
 		wrapLabels?: boolean;
 		/** Label for the value shown in chart tooltips. */
 		valueLabel?: string;
+		/** Format the secondary label shown beside each pie slice. Defaults to its share percentage. */
+		labelValueFormatter?: (slice: MarketSharePieSlice) => string;
 		/** Resolve a chart and label colour for an individual pie slice. */
 		getSliceColour?: (slice: MarketSharePieSlice) => string | undefined;
 		testId?: string;
@@ -37,6 +39,7 @@
 		showLabelLogos = false,
 		wrapLabels = false,
 		valueLabel = 'TVL',
+		labelValueFormatter,
 		getSliceColour,
 		testId = 'market-share-pie-chart',
 		class: classes = ''
@@ -75,6 +78,10 @@
 
 	function formatLabelPercentage(value: number): string {
 		return value >= 10 ? value.toFixed(0) : value.toFixed(1);
+	}
+
+	function formatSliceValue(slice: MarketSharePieSlice): string {
+		return labelValueFormatter?.(slice) ?? `${formatLabelPercentage(slice.percentage)}%`;
 	}
 
 	function getLogoRichKey(slice: MarketSharePieSlice): string {
@@ -325,7 +332,7 @@
 						formatter: (params: { data?: MarketSharePieSlice }) => {
 							const slice = params.data;
 							if (!slice) return '';
-							return `${formatSliceLabel(slice, includeLabelLogos)}\n{${getValueLabelStyle(slice)}|${formatLabelPercentage(slice.percentage)}%}`;
+							return `${formatSliceLabel(slice, includeLabelLogos)}\n{${getValueLabelStyle(slice)}|${formatSliceValue(slice)}}`;
 						},
 						rich: labelRichStyles
 					},
@@ -407,6 +414,7 @@
 			showLabelLogos,
 			wrapLabels,
 			valueLabel,
+			labelValueFormatter,
 			getSliceColour
 		);
 		if (!runtimeReady || !echartsApi || !chartContainer) return;
