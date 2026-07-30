@@ -1,6 +1,7 @@
 # Weblog of stuff
 
 - Restore site-wide vault search with server-side vault JSON indexing, typeahead and responsive result listings, replacing the retired external integration (2026-07-30)
+- Add CORE3 and Xerberus risk-rating vault lists, per-vault Xerberus report links, and reordered footer social links (2026-07-30)
 - Rank strategy vaults by displayed annual return within green and red chart groups, and clarify the strategy listing description (2026-07-28)
 - Add ApeX perpetual futures DEX support — chain logo and entry, perp DEX detection, "Any" default TVL filter on the protocol page, and perp DEX wording in chain descriptions (2026-07-25)
 - Add tokenised fund listings, NAV market-share chart, and fund-specific vault detail messaging (2026-07-17)

@@ -1,10 +1,13 @@
 <!--
 @component
-Interactive vault listing with filters, sorting and progressive row loading.
+Interactive vault listing with filters, sorting, and progressive row loading.
+
+Use `ratingProvider` to add its risk-rating column beside the vault name.
 -->
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
 	import type { TopVaults, VaultInfo } from './schemas';
+	import type { RiskRatingProvider } from './risk-rating-providers';
 	import type { ParamSchema } from '$lib/helpers/url-search-state';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -16,6 +19,7 @@ Interactive vault listing with filters, sorting and progressive row loading.
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import ChainCell from './ChainCell.svelte';
+	import Core3RiskCell from './Core3RiskCell.svelte';
 	import FeesCell from './FeesCell.svelte';
 	import RiskCell from './RiskCell.svelte';
 	import VaultSparkline from './VaultSparkline.svelte';
@@ -41,6 +45,7 @@ Interactive vault listing with filters, sorting and progressive row loading.
 		calculateTvlWeightedApy,
 		ddFilterOptions,
 		getFormattedLockup,
+		getCore3PolForVault,
 		getLockupTooltip,
 		getLifetimeMaxDrawdown,
 		getMonthlyReturn,
@@ -123,12 +128,16 @@ Interactive vault listing with filters, sorting and progressive row loading.
 		maxSummaryTvlUsd?: number;
 		/** Do not visually strike through blacklisted vault rows. */
 		disableBlacklistedStrikethrough?: boolean;
+		/** Show a third-party risk rating column immediately after the vault name. */
+		ratingProvider?: RiskRatingProvider;
 	}
 
 	const emptyTopVaults: TopVaults = {
 		generated_at: new Date().toISOString(),
 		vaults: [],
 		core3_protocols: {},
+		xerberus_protocols: {},
+		xerberus_stats: null,
 		curators: {}
 	};
 	const SKELETON_ROW_COUNT = 10;
@@ -155,13 +164,26 @@ Interactive vault listing with filters, sorting and progressive row loading.
 		totalVaultCount: totalVaultCountProp,
 		includeBlacklistedInStats = false,
 		maxSummaryTvlUsd,
-		disableBlacklistedStrikethrough = false
+		disableBlacklistedStrikethrough = false,
+		ratingProvider
 	}: Props = $props();
 
 	// --- Sort column registry (key → compareFn + default direction) ---
 
 	function stringCompare(fn: (v: VaultInfo) => string) {
 		return (a: VaultInfo, b: VaultInfo) => fn(a).localeCompare(fn(b));
+	}
+
+	function getProviderRiskScore(vault: VaultInfo): number | null {
+		if (ratingProvider === 'xerberus') return vault.xerberus?.score ?? null;
+		if (ratingProvider === 'core3') return getCore3PolForVault(vault, topVaults.core3_protocols)?.score ?? null;
+		return null;
+	}
+
+	function getXerberusRiskRating(vault: VaultInfo): string {
+		const score = vault.xerberus?.score;
+		if (score == null) return notFilledMarker;
+		return formatNumber(score, 0, 0);
 	}
 
 	const returnSortColumnMap = Object.fromEntries(
@@ -206,7 +228,14 @@ Interactive vault listing with filters, sorting and progressive row loading.
 		age: { defaultDirection: 'desc', compareFn: rankVaultsBy(['years']) },
 		fees: { defaultDirection: 'asc', compareFn: rankVaultsBy(['mgmt_fee', 'perf_fee'], Infinity) },
 		lockup: { defaultDirection: 'asc', compareFn: rankVaultsBy(['lockup'], Infinity) },
-		risk: { defaultDirection: 'asc', compareFn: rankVaultsBy(['risk_numeric'], Infinity) }
+		risk: { defaultDirection: 'asc', compareFn: rankVaultsBy(['risk_numeric'], Infinity) },
+		provider_risk_rating: {
+			defaultDirection: 'asc',
+			compareFn: (a, b) => {
+				const missingScore = ratingProvider === 'xerberus' ? -Infinity : Infinity;
+				return (getProviderRiskScore(a) ?? missingScore) - (getProviderRiskScore(b) ?? missingScore);
+			}
+		}
 	};
 
 	// --- URL search state schema ---
@@ -316,6 +345,7 @@ Interactive vault listing with filters, sorting and progressive row loading.
 	});
 
 	let showChainCol = $derived(!chain);
+	let showProviderRiskRating = $derived(ratingProvider != null);
 
 	let offsetWidth = $state<number>();
 
@@ -627,6 +657,22 @@ Interactive vault listing with filters, sorting and progressive row loading.
 			lifetimeData
 		)}
 	</td>
+{/snippet}
+
+{#snippet providerRiskRatingCell(vault: VaultInfo)}
+	{#if ratingProvider === 'core3'}
+		<!-- Reuse the protocol-list grade and tone treatment for consistency. -->
+		<Core3RiskCell rating={getCore3PolForVault(vault, topVaults.core3_protocols)?.rating} slug={vault.protocol_slug} />
+	{:else}
+		<Tooltip>
+			<span slot="trigger" class="risk-rating-value">{getXerberusRiskRating(vault)}</span>
+			<svelte:fragment slot="popup">
+				<p>
+					Xerberus scores run from 0 to 100. Higher scores indicate a stronger risk rating and lower estimated risk.
+				</p>
+			</svelte:fragment>
+		</Tooltip>
+	{/if}
 {/snippet}
 
 {#snippet tvlValues(vault: VaultInfo)}
@@ -965,6 +1011,13 @@ Interactive vault listing with filters, sorting and progressive row loading.
 						{@render sortColHeader('', 'chain', 'asc')}
 					{/if}
 					{@render sortColHeader('Vault', 'vault', 'asc')}
+					{#if showProviderRiskRating}
+						{@render sortColHeader(
+							'Risk rating',
+							'provider_risk_rating',
+							ratingProvider === 'xerberus' ? 'desc' : 'asc'
+						)}
+					{/if}
 					{#each selectedReturnColumns as column (column.id)}
 						{@render sortColHeader(column.headerLabel, column.id, column.sortDirection)}
 					{/each}
@@ -987,6 +1040,7 @@ Interactive vault listing with filters, sorting and progressive row loading.
 							<td class="index"></td>
 							{#if showChainCol}<td class="chain"></td>{/if}
 							<td class="vault"></td>
+							{#if showProviderRiskRating}<td class="risk-rating right"></td>{/if}
 							{#each selectedReturnColumns as column (column.id)}
 								<td class={`${getReturnCellClass(column)} right`}></td>
 							{/each}
@@ -1027,6 +1081,9 @@ Interactive vault listing with filters, sorting and progressive row loading.
 								{/if}
 							</div>
 						</td>
+						{#if showProviderRiskRating}
+							<td class="risk-rating right">{@render providerRiskRatingCell(vault)}</td>
+						{/if}
 						{#each selectedReturnColumns as column (column.id)}
 							{@render returnColumnCell(vault, column)}
 						{/each}
@@ -1104,7 +1161,7 @@ Interactive vault listing with filters, sorting and progressive row loading.
 				{/each}
 				{#if hasMoreRows}
 					<tr class="load-more-sentinel" data-testid="load-more-sentinel">
-						<td colspan={12 + selectedReturnColumns.length + (showChainCol ? 1 : 0)}>
+						<td colspan={12 + selectedReturnColumns.length + (showChainCol ? 1 : 0) + (showProviderRiskRating ? 1 : 0)}>
 							<div use:inview={{ rootMargin: '300px' }} oninview_enter={() => (maxVisibleRows += ROW_BATCH_SIZE)}>
 								Loading more vaults... ({maxVisibleRows} of {sortedVaults.length})
 							</div>
@@ -1425,7 +1482,7 @@ Interactive vault listing with filters, sorting and progressive row loading.
 			position: relative;
 			table-layout: fixed;
 			border-collapse: collapse;
-			width: 86rem;
+			width: 92rem;
 			color: inherit;
 			font: var(--f-mono-xs-regular);
 			line-height: 1;
@@ -1633,6 +1690,33 @@ Interactive vault listing with filters, sorting and progressive row loading.
 				@media (--viewport-sm-down) {
 					width: 10rem;
 					max-width: 10rem;
+				}
+			}
+
+			/* Apply the fixed width to both the cells and its sortable header. */
+			:is(.risk-rating, .provider_risk_rating) {
+				width: 7.5rem;
+				min-width: 7.5rem;
+
+				@media (--viewport-sm-down) {
+					width: 7.5rem;
+					min-width: 7.5rem;
+				}
+			}
+
+			.risk-rating {
+				/* The tooltip trigger only appears in body cells. */
+				.risk-rating-value {
+					white-space: nowrap;
+					text-decoration: underline;
+					text-decoration-style: dashed;
+					text-underline-offset: 0.2em;
+					cursor: help;
+				}
+
+				:global(.popup) {
+					right: 0;
+					width: min(20rem, 80vw);
 				}
 			}
 

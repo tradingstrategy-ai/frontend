@@ -1,4 +1,11 @@
+<!--
+@component
+Displays the site footer with social links and the Trading Strategy disclaimer.
+
+Set `small` to use the compact spacing variant.
+-->
 <script>
+	import { resolve } from '$app/paths';
 	import { Tooltip } from '$lib/components';
 	import { discordUrl } from '$lib/config';
 	import IconGithub from '~icons/local/github';
@@ -6,6 +13,7 @@
 	import IconTelegram from '~icons/local/telegram';
 	import IconTwitter from '~icons/local/twitter';
 	import IconLinkedin from '~icons/local/linkedin';
+	import IconYoutube from '~icons/local/youtube';
 	import IconRss from '~icons/local/rss';
 
 	export let small = false;
@@ -14,30 +22,6 @@
 <footer>
 	<div class="social-links" class:small>
 		<div class="link-group">
-			<Tooltip>
-				<a
-					slot="trigger"
-					href="https://github.com/tradingstrategy-ai"
-					aria-label="GitHub"
-					target="_blank"
-					rel="noreferrer"
-				>
-					<IconGithub />
-				</a>
-				<div slot="popup">GitHub</div>
-			</Tooltip>
-			<Tooltip>
-				<a slot="trigger" href={discordUrl} aria-label="Discord" target="_blank" rel="noreferrer">
-					<IconDiscord />
-				</a>
-				<div slot="popup">Discord</div>
-			</Tooltip>
-			<Tooltip>
-				<a slot="trigger" href="https://t.me/trading_protocol" aria-label="Telegram" target="_blank" rel="noreferrer">
-					<IconTelegram />
-				</a>
-				<div slot="popup">Telegram</div>
-			</Tooltip>
 			<Tooltip>
 				<a
 					slot="trigger"
@@ -50,9 +34,6 @@
 				</a>
 				<div slot="popup">Twitter</div>
 			</Tooltip>
-		</div>
-
-		<div class="link-group">
 			<Tooltip>
 				<a
 					slot="trigger"
@@ -66,10 +47,47 @@
 				<div slot="popup">LinkedIn</div>
 			</Tooltip>
 			<Tooltip>
-				<a slot="trigger" href="/blog/rss.xml" aria-label="RSS" target="_blank">
+				<a slot="trigger" href="https://t.me/trading_protocol" aria-label="Telegram" target="_blank" rel="noreferrer">
+					<IconTelegram />
+				</a>
+				<div slot="popup">Telegram</div>
+			</Tooltip>
+			<Tooltip>
+				<a
+					slot="trigger"
+					href="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
+					aria-label="YouTube"
+					target="_blank"
+					rel="noreferrer"
+				>
+					<IconYoutube />
+				</a>
+				<div slot="popup">YouTube</div>
+			</Tooltip>
+			<Tooltip>
+				<a slot="trigger" href={resolve('/blog/rss.xml')} aria-label="RSS" target="_blank">
 					<IconRss />
 				</a>
 				<div slot="popup">RSS</div>
+			</Tooltip>
+			<Tooltip>
+				<a
+					slot="trigger"
+					href="https://github.com/tradingstrategy-ai"
+					aria-label="GitHub"
+					target="_blank"
+					rel="noreferrer"
+				>
+					<IconGithub />
+				</a>
+				<div slot="popup">GitHub</div>
+			</Tooltip>
+			<Tooltip>
+				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+				<a slot="trigger" href={discordUrl} aria-label="Discord" target="_blank" rel="noreferrer">
+					<IconDiscord />
+				</a>
+				<div slot="popup">Discord</div>
 			</Tooltip>
 		</div>
 	</div>

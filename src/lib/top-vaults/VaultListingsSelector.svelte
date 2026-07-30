@@ -1,3 +1,7 @@
+<!--
+@component
+Renders navigation links for vault listing and chart pages.
+-->
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
@@ -18,7 +22,9 @@
 		{ href: '/vaults/new-vaults', label: 'New' },
 		{ href: '/vaults/negative', label: 'Negative' },
 		{ href: '/vaults/blacklisted', label: 'Blacklisted' },
-		{ href: '/vaults/all', label: 'All' }
+		{ href: '/vaults/all', label: 'All' },
+		{ href: '/vaults/core3-ratings', label: 'CORE3 ratings' },
+		{ href: '/vaults/xerberus-ratings', label: 'Xerberus ratings' }
 	] as const;
 
 	const chartLinks = [

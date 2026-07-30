@@ -104,6 +104,33 @@ export const core3VaultSchema = z.object({
 export type Core3Vault = z.infer<typeof core3VaultSchema>;
 
 /**
+ * Xerberus risk assessment attached directly to a vault.
+ *
+ * `entity_type` distinguishes a direct pool assessment from a fallback
+ * protocol assessment. Xerberus scores are on a 0–100 scale where higher is
+ * better.
+ */
+export const xerberusVaultSchema = z.object({
+	/** Xerberus score on the scale described by `score_scale` */
+	score: z.number(),
+	/** Score interpretation supplied by Xerberus */
+	score_scale: z.string(),
+	/** Assessed entity level, currently `pool` or `protocol` */
+	entity_type: z.string(),
+	/** Xerberus's identifier for the assessed entity */
+	entity_id: z.string(),
+	/** Xerberus display name for the assessed entity */
+	name: z.string(),
+	/** Trading Strategy protocol slug; absent for direct pool matches */
+	protocol_slug: z.string().nullable(),
+	/** Direct Xerberus report URL for this exact pool or protocol assessment */
+	report_url: z.url().nullable(),
+	/** When the Xerberus record was fetched by the data pipeline */
+	fetched_at: isoDateTime
+});
+export type XerberusVault = z.infer<typeof xerberusVaultSchema>;
+
+/**
  * Latest exchange rate metadata for a vault denomination token.
  *
  * The backend attaches this to every vault as `denomination_token_rate`. For
@@ -409,7 +436,9 @@ export const vaultInfoSchema = z.object({
 	 * This duplicates the headline fields in `core3_protocols[protocol_slug]`
 	 * and is kept as a fallback for payloads where the top-level map changes.
 	 */
-	core3: core3VaultSchema.nullable().optional()
+	core3: core3VaultSchema.nullable().optional(),
+	/** Third-party Xerberus risk assessment, when the vault or its protocol is covered. */
+	xerberus: xerberusVaultSchema.nullable().optional()
 });
 export type VaultInfo = z.infer<typeof vaultInfoSchema>;
 
@@ -482,6 +511,35 @@ export const core3ProtocolSchema = z.object({
 	chains: z.object({ name: z.string() }).array().optional()
 });
 export type Core3Protocol = z.infer<typeof core3ProtocolSchema>;
+
+/**
+ * Xerberus protocol-level risk assessment, keyed by our protocol slug.
+ *
+ * This map is retained in the dataset for consumers that need the canonical
+ * protocol records. Vault pages use the compact `vault.xerberus` record so
+ * direct pool matches take precedence.
+ */
+export const xerberusProtocolSchema = z.object({
+	protocol_slug: z.string(),
+	entity_id: z.string(),
+	name: z.string(),
+	score: z.number(),
+	score_scale: z.string(),
+	/** Direct Xerberus report URL for this exact protocol assessment */
+	report_url: z.url().nullable(),
+	fetched_at: isoDateTime
+});
+export type XerberusProtocol = z.infer<typeof xerberusProtocolSchema>;
+
+/** Coverage counters emitted alongside the Xerberus dataset. */
+export const xerberusStatsSchema = z.object({
+	total_vaults: z.int(),
+	pool_matches: z.int(),
+	protocol_fallbacks: z.int(),
+	unmatched: z.int(),
+	coverage_pct: z.number()
+});
+export type XerberusStats = z.infer<typeof xerberusStatsSchema>;
 
 /** Slim vault info with only the fields needed for listing/summary views (e.g., landing page). */
 export type SlimVaultInfo = Pick<
@@ -572,6 +630,22 @@ export const topVaultsSchema = z.object({
 		})
 		.catch({})
 		.default({}),
+	/**
+	 * Xerberus protocol risk assessments, keyed by protocol slug. The compact
+	 * per-vault record remains the source used on a vault detail page.
+	 */
+	xerberus_protocols: z
+		.record(z.string(), xerberusProtocolSchema.or(z.unknown().transform(() => null)))
+		.transform((records) => {
+			const entries = Object.entries(records).filter(
+				(entry): entry is [string, z.infer<typeof xerberusProtocolSchema>] => entry[1] !== null
+			);
+			return Object.fromEntries(entries);
+		})
+		.catch({})
+		.default({}),
+	/** Xerberus coverage counters, retained for aggregate consumers. */
+	xerberus_stats: xerberusStatsSchema.nullable().catch(null).default(null),
 	/**
 	 * Curator metadata keyed by curator slug; referenced by vault.curator_slug.
 	 * Partly built from external feeds — `.catch({})` guarantees a malformed

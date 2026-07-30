@@ -1,7 +1,14 @@
+<!--
+@component
+Composes a vault-listing page with its heading, navigation, metadata cards, and table.
+
+Use `ratingProvider` to show a provider-specific risk rating column.
+-->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { Chain } from '$lib/helpers/chain';
 	import type { TopVaults } from './schemas';
+	import type { RiskRatingProvider } from './risk-rating-providers';
 	import type { VaultProtocolMetadata } from '$lib/vault-protocol/schemas';
 	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
 	import type { CuratorInfo } from './schemas';
@@ -73,6 +80,10 @@
 		maxSummaryTvlUsd?: number;
 		/** Do not visually strike through blacklisted vault rows. */
 		disableBlacklistedStrikethrough?: boolean;
+		/** Optional logo shown in the page heading. */
+		headingLogo?: { src: string; alt: string };
+		/** Show a third-party risk rating column beside the vault name. */
+		ratingProvider?: RiskRatingProvider;
 	}
 
 	let {
@@ -106,7 +117,9 @@
 		totalVaultCount,
 		includeBlacklistedInStats,
 		maxSummaryTvlUsd,
-		disableBlacklistedStrikethrough
+		disableBlacklistedStrikethrough,
+		headingLogo,
+		ratingProvider
 	}: Props = $props();
 
 	let renderDetailAsideInHero = $derived(
@@ -129,6 +142,9 @@
 				<HeroBanner {subtitle}>
 					{#snippet title()}
 						<span class="page-title">
+							{#if headingLogo}
+								<img src={headingLogo.src} alt={headingLogo.alt} />
+							{/if}
 							{#if chain}
 								<img src={getLogoUrl('blockchain', chain.slug)} alt={chain.name} />
 							{/if}
@@ -237,6 +253,7 @@
 					{includeBlacklistedInStats}
 					{maxSummaryTvlUsd}
 					{disableBlacklistedStrikethrough}
+					{ratingProvider}
 				/>
 			{:else if !topVaults?.vaults.length}
 				{#if stablecoinMetadata}
@@ -266,6 +283,7 @@
 					{includeBlacklistedInStats}
 					{maxSummaryTvlUsd}
 					{disableBlacklistedStrikethrough}
+					{ratingProvider}
 				/>
 			{/if}
 		</div>
