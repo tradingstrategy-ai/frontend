@@ -7,9 +7,11 @@ import {
 	calculateTotalTvl,
 	calculateTvlWeightedApy,
 	getCore3PolForVault,
+	getCore3RatingTone,
 	getVaultCurrentTvlUsd,
 	isBlacklisted
 } from './helpers';
+import type { Core3RatingTone } from './helpers';
 
 export type RiskRatingStatistics = {
 	totalTvl: number;
@@ -25,10 +27,12 @@ export type RiskRatingTvlBand = {
 	name: string;
 	tvl: number;
 	avgApy: number | null;
+	tone?: Core3RatingTone;
 };
 
 const RISK_RATING_BAND_COUNT = 6;
 const RISK_RATING_SCORE_MAX = 100;
+const CORE3_RATING_ORDER = ['AAA', 'AA', 'A', 'BBB', 'BB', 'B', 'CCC', 'CC', 'C', 'DDD', 'DD', 'D'];
 
 function getRiskScore(vault: VaultInfo, topVaults: TopVaults, provider: RiskRatingProvider): number | null {
 	if (provider === 'xerberus') return vault.xerberus?.score ?? null;
@@ -79,6 +83,52 @@ export function getRiskRatingStatistics(vaults: VaultInfo[]): RiskRatingStatisti
 	};
 }
 
+function getCore3RatingDescription(tone: Core3RatingTone): string {
+	if (tone === 'excellent') return 'lowest risk';
+	if (tone === 'good') return 'lower risk';
+	if (tone === 'fair') return 'higher risk';
+	if (tone === 'poor') return 'highest risk';
+
+	return 'risk rating';
+}
+
+/** Group CORE3-rated vault TVL by its published letter grades, safest first. */
+function getCore3RatingTvlBands(topVaults: TopVaults): RiskRatingTvlBand[] {
+	const vaultsByRating = new Map<string, VaultInfo[]>();
+
+	for (const vault of getRiskRatedVaults(topVaults, 'core3')) {
+		const rating = getCore3PolForVault(vault, topVaults.core3_protocols)?.rating?.toUpperCase();
+		if (!rating) continue;
+
+		const ratedVaults = vaultsByRating.get(rating) ?? [];
+		ratedVaults.push(vault);
+		vaultsByRating.set(rating, ratedVaults);
+	}
+
+	return Array.from(vaultsByRating.entries())
+		.toSorted(([leftRating], [rightRating]) => {
+			const leftIndex = CORE3_RATING_ORDER.indexOf(leftRating);
+			const rightIndex = CORE3_RATING_ORDER.indexOf(rightRating);
+			return (
+				(leftIndex < 0 ? Infinity : leftIndex) - (rightIndex < 0 ? Infinity : rightIndex) ||
+				leftRating.localeCompare(rightRating)
+			);
+		})
+		.map(([rating, vaults]) => {
+			const tone = getCore3RatingTone(rating);
+			const vaultsWithUsdTvl = vaults.map((vault) => ({ ...vault, current_nav: getVaultCurrentTvlUsd(vault) }));
+
+			return {
+				slug: `core3-${rating.toLowerCase()}`,
+				label: rating,
+				name: `${rating} · ${getCore3RatingDescription(tone)}`,
+				tvl: calculateTotalTvl(vaultsWithUsdTvl),
+				avgApy: calculateTvlWeightedApy(vaultsWithUsdTvl),
+				tone
+			};
+		});
+}
+
 /**
  * Group a provider's rated vault TVL into six evenly sized score ranges.
  * CORE3 considers lower scores safer, whereas Xerberus considers higher
@@ -88,6 +138,8 @@ export function getRiskRatingStatistics(vaults: VaultInfo[]): RiskRatingStatisti
  * @param provider - Risk provider whose rated vaults are grouped.
  */
 export function getRiskRatingTvlBands(topVaults: TopVaults, provider: RiskRatingProvider): RiskRatingTvlBand[] {
+	if (provider === 'core3') return getCore3RatingTvlBands(topVaults);
+
 	const bands = Array.from({ length: RISK_RATING_BAND_COUNT }, (_, index) => ({
 		slug: `risk-${index + 1}`,
 		label: getRiskBandLabel(index),

@@ -29,6 +29,7 @@ the score in a column beside each vault name.
 	import TopVaultsPage from './TopVaultsPage.svelte';
 	import MarketSharePieChart from '../../routes/vaults/MarketSharePieChart.svelte';
 	import MarketShareWidgetBox from '../../routes/vaults/MarketShareWidgetBox.svelte';
+	import type { MarketSharePieSlice } from '../../routes/vaults/market-share-pie';
 
 	interface Props {
 		provider: RiskRatingProvider;
@@ -56,6 +57,8 @@ the score in a column beside each vault name.
 	let riskRatingTvlBands = $derived(
 		topVaults ? getRiskRatingTvlBands(topVaults, provider) : (initialRiskRatingTvlBands ?? [])
 	);
+	let riskRatingGroupLabel = $derived(provider === 'core3' ? 'CORE3 rating' : 'Risk bracket');
+	let riskRatingGroupLabelPlural = $derived(provider === 'core3' ? 'CORE3 ratings' : 'risk brackets');
 	let ratingSummary = $derived.by(() => {
 		const { totalTvl, vaultCount, blockchainCount, averageMonthlyReturn } = ratingStatistics ?? {
 			totalTvl: 0,
@@ -73,6 +76,25 @@ the score in a column beside each vault name.
 			ratingStatistics?.vaultCount ?? 0
 		} ${(ratingStatistics?.vaultCount ?? 0) === 1 ? 'vault' : 'vaults'}`
 	);
+
+	const core3ToneColourValues = {
+		excellent: 'var(--c-success)',
+		good: 'color-mix(in srgb, var(--c-success), var(--c-warning))',
+		fair: 'var(--c-warning)',
+		poor: 'var(--c-error)'
+	};
+
+	function getCore3SliceColour(slice: MarketSharePieSlice): string | undefined {
+		const colourValue = core3ToneColourValues[slice.tone as keyof typeof core3ToneColourValues];
+		if (!colourValue) return undefined;
+
+		const probe = document.createElement('span');
+		probe.style.color = colourValue;
+		document.body.append(probe);
+		const resolvedColour = getComputedStyle(probe).color;
+		probe.remove();
+		return resolvedColour;
+	}
 
 	$effect(() => {
 		fetchAllVaultData(page.data.generatedAt)
@@ -134,9 +156,10 @@ the score in a column beside each vault name.
 		<MarketShareWidgetBox title="Risk by TVL">
 			<MarketSharePieChart
 				items={riskRatingTvlBands}
-				groupLabel="Risk bracket"
-				groupLabelPlural="risk brackets"
+				groupLabel={riskRatingGroupLabel}
+				groupLabelPlural={riskRatingGroupLabelPlural}
 				otherThreshold={0}
+				getSliceColour={provider === 'core3' ? getCore3SliceColour : undefined}
 				testId={`${provider}-risk-by-tvl-pie-chart`}
 			/>
 		</MarketShareWidgetBox>

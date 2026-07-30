@@ -22,6 +22,8 @@
 		wrapLabels?: boolean;
 		/** Label for the value shown in chart tooltips. */
 		valueLabel?: string;
+		/** Resolve a chart and label colour for an individual pie slice. */
+		getSliceColour?: (slice: MarketSharePieSlice) => string | undefined;
 		testId?: string;
 		class?: string;
 	}
@@ -35,6 +37,7 @@
 		showLabelLogos = false,
 		wrapLabels = false,
 		valueLabel = 'TVL',
+		getSliceColour,
 		testId = 'market-share-pie-chart',
 		class: classes = ''
 	}: Props = $props();
@@ -78,6 +81,15 @@
 		return `logo_${(slice.slug ?? slice.label).replace(/\W+/g, '_')}`;
 	}
 
+	function getSliceRichKey(slice: MarketSharePieSlice): string {
+		return (slice.slug ?? slice.label).replace(/\W+/g, '_');
+	}
+
+	function getLabelStyleName(slice: MarketSharePieSlice, compact: boolean): string {
+		const baseStyle = compact ? 'labelCompact' : 'label';
+		return slice.colour ? `${baseStyle}_${getSliceRichKey(slice)}` : baseStyle;
+	}
+
 	function splitLabelIntoTwoLines(label: string): string[] {
 		const words = label.trim().split(/\s+/);
 		if (label.length <= 24 || words.length < 2) return [label];
@@ -102,7 +114,7 @@
 	function formatSliceLabel(slice: MarketSharePieSlice, includeLogo: boolean): string {
 		const { label } = slice;
 		const lines = wrapLabels ? splitLabelIntoTwoLines(label) : [label];
-		const style = wrapLabels && label.length > 45 ? 'labelCompact' : 'label';
+		const style = getLabelStyleName(slice, wrapLabels && label.length > 45);
 		const labelText = lines.map((line) => `{${style}|${line}}`).join('\n');
 
 		if (includeLogo && slice.logoUrl && !slice.isOther) {
@@ -112,8 +124,9 @@
 		return labelText;
 	}
 
-	function getValueLabelStyle(label: string): string {
-		return wrapLabels && label.length > 45 ? 'valueCompact' : 'value';
+	function getValueLabelStyle(slice: MarketSharePieSlice): string {
+		const baseStyle = wrapLabels && slice.label.length > 45 ? 'valueCompact' : 'value';
+		return slice.colour ? `${baseStyle}_${getSliceRichKey(slice)}` : baseStyle;
 	}
 
 	function trackChartInputs(...inputs: unknown[]): void {
@@ -167,6 +180,13 @@
 		};
 
 		for (const slice of currentSlices) {
+			if (slice.colour) {
+				for (const [baseStyle, style] of Object.entries(rich)) {
+					if (!['label', 'labelCompact', 'value', 'valueCompact'].includes(baseStyle)) continue;
+					rich[`${baseStyle}_${getSliceRichKey(slice)}`] = { ...style, color: slice.colour };
+				}
+			}
+
 			if (!showLabelLogos || isMobile || !slice.logoUrl || slice.isOther) continue;
 			rich[getLogoRichKey(slice)] = {
 				width: logoSize,
@@ -244,7 +264,7 @@
 
 		const isMobile = window.innerWidth <= 768;
 		const includeLabelLogos = showLabelLogos && !isMobile;
-		const currentSlices = slices;
+		const currentSlices = slices.map((slice) => ({ ...slice, colour: getSliceColour?.(slice) }));
 		const labelRichStyles = buildLabelRichStyles(isMobile, currentSlices);
 		chartInstance = echartsApi.init(chartContainer);
 		chartInstance.setOption({
@@ -305,7 +325,7 @@
 						formatter: (params: { data?: MarketSharePieSlice }) => {
 							const slice = params.data;
 							if (!slice) return '';
-							return `${formatSliceLabel(slice, includeLabelLogos)}\n{${getValueLabelStyle(slice.label)}|${formatLabelPercentage(slice.percentage)}%}`;
+							return `${formatSliceLabel(slice, includeLabelLogos)}\n{${getValueLabelStyle(slice)}|${formatLabelPercentage(slice.percentage)}%}`;
 						},
 						rich: labelRichStyles
 					},
@@ -386,7 +406,8 @@
 			maxIndividualSlices,
 			showLabelLogos,
 			wrapLabels,
-			valueLabel
+			valueLabel,
+			getSliceColour
 		);
 		if (!runtimeReady || !echartsApi || !chartContainer) return;
 

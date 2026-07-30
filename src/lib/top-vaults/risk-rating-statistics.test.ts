@@ -46,7 +46,7 @@ describe('getRiskRatingTvlBands', () => {
 		expect(bands[5]).toMatchObject({ tvl: 90, name: '84–100 · safest scores' });
 	});
 
-	it('uses the compact CORE3 score when no protocol record is present', () => {
+	it('uses compact CORE3 letter ratings and their existing risk tones', () => {
 		const saferVault = createTestVault('Safer CORE3 vault', {
 			current_nav: 75,
 			core3: {
@@ -75,7 +75,9 @@ describe('getRiskRatingTvlBands', () => {
 			'core3'
 		);
 
-		expect(bands[0]).toMatchObject({ tvl: 75, name: '0–16 · safest scores' });
-		expect(bands[5]).toMatchObject({ tvl: 25, name: '84–100 · highest risk scores' });
+		expect(bands).toMatchObject([
+			{ label: 'AA', name: 'AA · lowest risk', tvl: 75, tone: 'excellent' },
+			{ label: 'D', name: 'D · highest risk', tvl: 25, tone: 'poor' }
+		]);
 	});
 });
