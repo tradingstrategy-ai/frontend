@@ -1,5 +1,6 @@
 <!--
-	Page to display vault information.
+@component
+Displays blockchain information for a strategy vault.
 -->
 <script lang="ts">
 	import { page } from '$app/state';
@@ -16,8 +17,8 @@
 	let { data } = $props();
 	let { chain, strategy, vault } = $derived(data);
 
-	let title = $derived(`Enzyme vault | ${strategy.name} | Trading Strategy`);
-	let description = $derived(`Enzyme vault information for ${strategy.name} strategy`);
+	let title = $derived(`${strategy.name} info | Trading Strategy`);
+	let description = $derived(`Information for ${strategy.name} strategy`);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
