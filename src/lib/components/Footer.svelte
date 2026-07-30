@@ -4,7 +4,7 @@ Displays the site footer with social links and the Trading Strategy disclaimer.
 
 Set `small` to use the compact spacing variant.
 -->
-<script>
+<script lang="ts">
 	import { resolve } from '$app/paths';
 	import { Tooltip } from '$lib/components';
 	import { discordUrl } from '$lib/config';
@@ -16,7 +16,7 @@ Set `small` to use the compact spacing variant.
 	import IconYoutube from '~icons/local/youtube';
 	import IconRss from '~icons/local/rss';
 
-	export let small = false;
+	let { small = false }: { small?: boolean } = $props();
 </script>
 
 <footer>

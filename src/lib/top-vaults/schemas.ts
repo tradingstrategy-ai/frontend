@@ -438,7 +438,7 @@ export const vaultInfoSchema = z.object({
 	 */
 	core3: core3VaultSchema.nullable().optional(),
 	/** Third-party Xerberus risk assessment, when the vault or its protocol is covered. */
-	xerberus: xerberusVaultSchema.nullable().optional()
+	xerberus: xerberusVaultSchema.nullable().catch(null).optional()
 });
 export type VaultInfo = z.infer<typeof vaultInfoSchema>;
 
@@ -511,35 +511,6 @@ export const core3ProtocolSchema = z.object({
 	chains: z.object({ name: z.string() }).array().optional()
 });
 export type Core3Protocol = z.infer<typeof core3ProtocolSchema>;
-
-/**
- * Xerberus protocol-level risk assessment, keyed by our protocol slug.
- *
- * This map is retained in the dataset for consumers that need the canonical
- * protocol records. Vault pages use the compact `vault.xerberus` record so
- * direct pool matches take precedence.
- */
-export const xerberusProtocolSchema = z.object({
-	protocol_slug: z.string(),
-	entity_id: z.string(),
-	name: z.string(),
-	score: z.number(),
-	score_scale: z.string(),
-	/** Direct Xerberus report URL for this exact protocol assessment */
-	report_url: z.url().nullable(),
-	fetched_at: isoDateTime
-});
-export type XerberusProtocol = z.infer<typeof xerberusProtocolSchema>;
-
-/** Coverage counters emitted alongside the Xerberus dataset. */
-export const xerberusStatsSchema = z.object({
-	total_vaults: z.int(),
-	pool_matches: z.int(),
-	protocol_fallbacks: z.int(),
-	unmatched: z.int(),
-	coverage_pct: z.number()
-});
-export type XerberusStats = z.infer<typeof xerberusStatsSchema>;
 
 /** Slim vault info with only the fields needed for listing/summary views (e.g., landing page). */
 export type SlimVaultInfo = Pick<
@@ -630,22 +601,6 @@ export const topVaultsSchema = z.object({
 		})
 		.catch({})
 		.default({}),
-	/**
-	 * Xerberus protocol risk assessments, keyed by protocol slug. The compact
-	 * per-vault record remains the source used on a vault detail page.
-	 */
-	xerberus_protocols: z
-		.record(z.string(), xerberusProtocolSchema.or(z.unknown().transform(() => null)))
-		.transform((records) => {
-			const entries = Object.entries(records).filter(
-				(entry): entry is [string, z.infer<typeof xerberusProtocolSchema>] => entry[1] !== null
-			);
-			return Object.fromEntries(entries);
-		})
-		.catch({})
-		.default({}),
-	/** Xerberus coverage counters, retained for aggregate consumers. */
-	xerberus_stats: xerberusStatsSchema.nullable().catch(null).default(null),
 	/**
 	 * Curator metadata keyed by curator slug; referenced by vault.curator_slug.
 	 * Partly built from external feeds — `.catch({})` guarantees a malformed

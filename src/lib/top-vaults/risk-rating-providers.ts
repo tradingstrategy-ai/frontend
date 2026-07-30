@@ -8,7 +8,7 @@ export const riskRatingProviders = {
 	core3: {
 		name: 'CORE3',
 		pageTitle: 'CORE3 risk ratings for DeFi vaults',
-		website: 'https://core3.io/',
+		website: 'https://core3.io/?utm_source=tradingstrategy',
 		logoUrl: 'https://core3.io/images/fav-icon-32.png',
 		logoAlt: 'CORE3 logo',
 		defaultDirection: 'asc' as const

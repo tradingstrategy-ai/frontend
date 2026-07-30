@@ -40,8 +40,6 @@ describe('TopVaultsTable risk rating column', () => {
 							pol: { score: 76, rating: 'D', confidence: 'High' }
 						}
 					},
-					xerberus_protocols: {},
-					xerberus_stats: null,
 					curators: {}
 				},
 				ratingProvider: 'core3',
@@ -89,8 +87,6 @@ describe('TopVaultsTable risk rating column', () => {
 					generated_at: '2026-07-30T11:30:40Z',
 					vaults: [riskierVault, saferVault],
 					core3_protocols: {},
-					xerberus_protocols: {},
-					xerberus_stats: null,
 					curators: {}
 				},
 				ratingProvider: 'xerberus',
@@ -101,6 +97,6 @@ describe('TopVaultsTable risk rating column', () => {
 
 		expect(getRenderedVaultNames()).toEqual(['Safer Xerberus vault', 'Riskier Xerberus vault']);
 		expect(screen.getByText('91')).toBeInTheDocument();
-		expect(screen.getAllByText(/Higher scores indicate a stronger risk rating/)).toHaveLength(2);
+		expect(screen.getAllByText(/Xerberus scored this vault directly/)).toHaveLength(2);
 	});
 });

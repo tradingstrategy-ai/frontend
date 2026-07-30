@@ -29,7 +29,7 @@ describe('XerberusRisk', () => {
 		expect(screen.getByAltText('Xerberus')).toHaveAttribute('src', 'https://app.xerberus.io/favicon.ico');
 		expect(screen.getByText('78 / 100')).toBeInTheDocument();
 		expect(screen.getByText('Pool-level')).toBeInTheDocument();
-		expect(screen.getByText('This is Xerberus risk rating for the vault. Higher is better.')).toBeInTheDocument();
+		expect(screen.getByText('This is a Xerberus risk rating for this vault. Higher is better.')).toBeInTheDocument();
 		expect(screen.getByRole('link', { name: 'View this vault rating on Xerberus' })).toHaveAttribute(
 			'href',
 			'https://app.xerberus.io/pool/dendrogram/example-vault'
@@ -50,6 +50,9 @@ describe('XerberusRisk', () => {
 		});
 
 		expect(screen.getByText('Protocol-level')).toBeInTheDocument();
+		expect(
+			screen.getByText('This is a Xerberus risk rating for this vault’s underlying protocol. Higher is better.')
+		).toBeInTheDocument();
 		expect(screen.getByRole('link', { name: 'View this protocol rating on Xerberus' })).toHaveAttribute(
 			'href',
 			'https://app.xerberus.io/protocol/dendrogram/example-protocol'

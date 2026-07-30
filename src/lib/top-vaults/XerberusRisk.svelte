@@ -27,6 +27,11 @@ mistake protocol coverage for a vault-specific assessment.
 	let { xerberus }: Props = $props();
 	let isPoolAssessment = $derived(xerberus.entity_type === 'pool');
 	let assessmentLabel = $derived(isPoolAssessment ? 'Pool-level' : 'Protocol-level');
+	let assessmentDescription = $derived(
+		isPoolAssessment
+			? 'This is a Xerberus risk rating for this vault.'
+			: 'This is a Xerberus risk rating for this vault’s underlying protocol.'
+	);
 </script>
 
 <MetricsBox class="xerberus-risk">
@@ -65,7 +70,7 @@ mistake protocol coverage for a vault-specific assessment.
 		</table>
 
 		<footer class="footer">
-			<p>This is Xerberus risk rating for the vault. Higher is better.</p>
+			<p>{assessmentDescription} Higher is better.</p>
 			{#if xerberus.report_url}
 				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 				<a href={xerberus.report_url} target="_blank" rel="noreferrer"

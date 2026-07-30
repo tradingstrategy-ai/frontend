@@ -31,18 +31,20 @@ the score in a column beside each vault name.
 	let providerDetails = $derived(riskRatingProviders[provider]);
 	let metadataDescription = $derived(`Compare DeFi stablecoin vaults by ${providerDetails.name} risk rating.`);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
-	let ratedTopVaults = $derived(
-		topVaults
-			? {
-					...topVaults,
-					vaults: topVaults.vaults.filter((vault) => hasProviderScore(vault, topVaults, provider))
-				}
-			: undefined
-	);
+	let ratedTopVaults = $derived.by(() => {
+		const vaultData = topVaults;
+		if (!vaultData) return undefined;
 
-	function hasProviderScore(vault: VaultInfo, vaultData: TopVaults, ratingProvider: RiskRatingProvider): boolean {
+		return {
+			...vaultData,
+			vaults: vaultData.vaults.filter((vault) => hasProviderRating(vault, vaultData, provider))
+		};
+	});
+
+	function hasProviderRating(vault: VaultInfo, vaultData: TopVaults, ratingProvider: RiskRatingProvider): boolean {
 		if (ratingProvider === 'xerberus') return vault.xerberus?.score != null;
-		return getCore3PolForVault(vault, vaultData.core3_protocols)?.score != null;
+		const core3 = getCore3PolForVault(vault, vaultData.core3_protocols);
+		return core3?.score != null && core3.rating != null;
 	}
 
 	$effect(() => {

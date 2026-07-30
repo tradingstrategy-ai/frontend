@@ -56,7 +56,7 @@ describe('topVaultsSchema resilience', () => {
 		expect(result.name).toBe('Steakhouse Financial');
 	});
 
-	it('preserves Xerberus protocol and per-vault assessments', () => {
+	it('preserves valid Xerberus per-vault assessments and drops malformed ones', () => {
 		const xerberus = {
 			score: 78,
 			score_scale: '0_100_higher_is_better',
@@ -69,32 +69,15 @@ describe('topVaultsSchema resilience', () => {
 		};
 		const result = topVaultsSchema.parse({
 			...basePayload,
-			vaults: [createTestVault('Example vault', { xerberus })],
-			xerberus_protocols: {
-				example: {
-					protocol_slug: 'example',
-					entity_id: 'example-v1',
-					name: 'Example',
-					score: 78,
-					score_scale: '0_100_higher_is_better',
-					report_url: 'https://app.xerberus.io/protocol/dendrogram/example-v1',
-					fetched_at: '2026-07-27T16:01:01.992171'
-				}
-			},
-			xerberus_stats: {
-				total_vaults: 1,
-				pool_matches: 1,
-				protocol_fallbacks: 0,
-				unmatched: 0,
-				coverage_pct: 100
-			}
+			vaults: [
+				createTestVault('Example vault', { xerberus }),
+				createTestVault('Malformed Xerberus vault', {
+					xerberus: { ...xerberus, report_url: 'not a URL' }
+				})
+			]
 		});
 
 		expect(result.vaults[0].xerberus).toEqual(xerberus);
-		expect(result.xerberus_protocols.example?.score).toBe(78);
-		expect(result.xerberus_protocols.example?.report_url).toBe(
-			'https://app.xerberus.io/protocol/dendrogram/example-v1'
-		);
-		expect(result.xerberus_stats?.coverage_pct).toBe(100);
+		expect(result.vaults[1].xerberus).toBeNull();
 	});
 });

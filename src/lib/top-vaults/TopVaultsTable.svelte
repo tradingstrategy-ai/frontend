@@ -9,6 +9,7 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 	import type { TopVaults, VaultInfo } from './schemas';
 	import type { RiskRatingProvider } from './risk-rating-providers';
 	import type { ParamSchema } from '$lib/helpers/url-search-state';
+	import { untrack } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { inview } from 'svelte-inview';
@@ -136,8 +137,6 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 		generated_at: new Date().toISOString(),
 		vaults: [],
 		core3_protocols: {},
-		xerberus_protocols: {},
-		xerberus_stats: null,
 		curators: {}
 	};
 	const SKELETON_ROW_COUNT = 10;
@@ -186,6 +185,15 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 		return formatNumber(score, 0, 0);
 	}
 
+	function compareProviderRiskRatings(a: VaultInfo, b: VaultInfo): number {
+		const aScore = getProviderRiskScore(a);
+		const bScore = getProviderRiskScore(b);
+		if (aScore == null && bScore == null) return 0;
+
+		const missingScore = ratingProvider === 'xerberus' ? -Infinity : Infinity;
+		return (aScore ?? missingScore) - (bScore ?? missingScore);
+	}
+
 	const returnSortColumnMap = Object.fromEntries(
 		returnColumnDefinitions.map((definition) => [
 			definition.id,
@@ -195,6 +203,16 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 			}
 		])
 	) as Record<ReturnColumnId, { defaultDirection: 'desc'; compareFn: SortOptions['compareFn'] }>;
+
+	// The provider is a page-level configuration and does not change after the table mounts.
+	const providerSortColumnMap: Record<
+		string,
+		{ defaultDirection: 'asc' | 'desc'; compareFn: SortOptions['compareFn'] }
+	> = untrack(() =>
+		ratingProvider
+			? { provider_risk_rating: { defaultDirection: 'asc' as const, compareFn: compareProviderRiskRatings } }
+			: {}
+	);
 
 	const sortColumnMap: Record<string, { defaultDirection: 'asc' | 'desc'; compareFn: SortOptions['compareFn'] }> = {
 		...returnSortColumnMap,
@@ -229,13 +247,7 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 		fees: { defaultDirection: 'asc', compareFn: rankVaultsBy(['mgmt_fee', 'perf_fee'], Infinity) },
 		lockup: { defaultDirection: 'asc', compareFn: rankVaultsBy(['lockup'], Infinity) },
 		risk: { defaultDirection: 'asc', compareFn: rankVaultsBy(['risk_numeric'], Infinity) },
-		provider_risk_rating: {
-			defaultDirection: 'asc',
-			compareFn: (a, b) => {
-				const missingScore = ratingProvider === 'xerberus' ? -Infinity : Infinity;
-				return (getProviderRiskScore(a) ?? missingScore) - (getProviderRiskScore(b) ?? missingScore);
-			}
-		}
+		...providerSortColumnMap
 	};
 
 	// --- URL search state schema ---
@@ -667,9 +679,14 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 		<Tooltip>
 			<span slot="trigger" class="risk-rating-value">{getXerberusRiskRating(vault)}</span>
 			<svelte:fragment slot="popup">
-				<p>
-					Xerberus scores run from 0 to 100. Higher scores indicate a stronger risk rating and lower estimated risk.
-				</p>
+				{#if vault.xerberus?.entity_type === 'pool'}
+					<p>Xerberus scored this vault directly on a 0–100 scale. Higher scores indicate lower estimated risk.</p>
+				{:else}
+					<p>
+						Xerberus scored this vault's underlying protocol on a 0–100 scale. Higher scores indicate lower estimated
+						risk.
+					</p>
+				{/if}
 			</svelte:fragment>
 		</Tooltip>
 	{/if}
@@ -1003,7 +1020,12 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 
 	<div class="table-wrapper">
 		<!-- --table-width needed for proper tr.targetable styling  -->
-		<table bind:offsetWidth style:--table-width="{offsetWidth}px" class:loading>
+		<table
+			bind:offsetWidth
+			style:--table-width="{offsetWidth}px"
+			class:loading
+			class:with-rating={showProviderRiskRating}
+		>
 			<thead>
 				<tr>
 					<th class="index"></th>
@@ -1482,7 +1504,7 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 			position: relative;
 			table-layout: fixed;
 			border-collapse: collapse;
-			width: 92rem;
+			width: 86rem;
 			color: inherit;
 			font: var(--f-mono-xs-regular);
 			line-height: 1;
@@ -1501,6 +1523,15 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 					button {
 						min-height: 2.5rem;
 					}
+				}
+			}
+
+			&.with-rating {
+				width: 92rem;
+
+				@media (--viewport-sm-down) {
+					width: 65.5rem;
+					min-width: 65.5rem;
 				}
 			}
 
@@ -1697,11 +1728,6 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 			:is(.risk-rating, .provider_risk_rating) {
 				width: 7.5rem;
 				min-width: 7.5rem;
-
-				@media (--viewport-sm-down) {
-					width: 7.5rem;
-					min-width: 7.5rem;
-				}
 			}
 
 			.risk-rating {
