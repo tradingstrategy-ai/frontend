@@ -88,10 +88,10 @@ the score in a column beside each vault name.
 	};
 	const xerberusRiskColourValues = [
 		'var(--c-error)',
-		'color-mix(in srgb, var(--c-error), var(--c-warning))',
+		'hsl(18 92% 52%)',
 		'var(--c-warning)',
-		'color-mix(in srgb, var(--c-warning), var(--c-success))',
-		'color-mix(in srgb, var(--c-warning), var(--c-success) 72%)',
+		'hsl(82 70% 43%)',
+		'hsl(174 70% 40%)',
 		'var(--c-success)'
 	];
 
