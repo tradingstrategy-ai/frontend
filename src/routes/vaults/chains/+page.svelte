@@ -97,6 +97,9 @@
 							items={chartChains}
 							groupLabel="Chain"
 							groupLabelPlural="chains"
+							showLabelLogos
+							otherThreshold={0}
+							maxIndividualSlices={5}
 							testId="chain-tvl-pie-chart"
 						/>
 					</MarketShareWidgetBox>
