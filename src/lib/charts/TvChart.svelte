@@ -296,6 +296,7 @@
 		contain: size;
 		display: grid;
 		width: 100%;
+		min-width: 0;
 		height: var(--chart-height);
 		aspect-ratio: var(--chart-aspect-ratio);
 		font: var(--f-ui-sm-roman);

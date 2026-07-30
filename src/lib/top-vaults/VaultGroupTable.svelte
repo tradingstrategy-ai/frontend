@@ -341,6 +341,7 @@
 			:global(table.datatable.responsive tbody tr td.name) {
 				grid-column: 1 / -1;
 				align-items: center;
+				box-sizing: border-box;
 				min-height: 2.5rem;
 				padding-inline: calc(2.5rem + 0.5rem + 2.5rem + 1.5rem) 2.25rem;
 				font: var(--f-ui-lg-bold);
@@ -401,6 +402,10 @@
 				display: none;
 			}
 
+			:global(table.datatable.responsive tbody tr td.full_name) {
+				display: none;
+			}
+
 			:global(table.datatable.responsive tbody tr td:not(.cta)::before) {
 				flex: none;
 				font: inherit;
@@ -409,6 +414,17 @@
 
 			:global(table.datatable.responsive tbody tr td.vault_count) {
 				grid-column: 2;
+				grid-row: 2;
+			}
+
+			:global(table.datatable.responsive tbody tr td.avg_apy) {
+				grid-column: 3;
+				grid-row: 2;
+			}
+
+			:global(table.datatable.responsive tbody tr td.tvl) {
+				grid-column: 2 / -1;
+				grid-row: 3;
 			}
 
 			:global(table.datatable.responsive tbody tr td.vault_count::before) {
@@ -416,17 +432,13 @@
 				order: 2;
 			}
 
-			:global(table.datatable.responsive tbody tr td.avg_apy) {
-				grid-column: 3;
-			}
-
-			:global(table.datatable.responsive tbody tr td.tvl) {
-				grid-column: 4;
-			}
-
 			:global(table.datatable.responsive tbody tr td.avg_apy::before),
 			:global(table.datatable.responsive tbody tr td.tvl::before) {
 				content: '·';
+			}
+
+			:global(table.datatable.responsive tbody tr td.tvl::before) {
+				content: none;
 			}
 
 			:global(table.datatable.responsive tbody tr td.avg_apy::after) {
@@ -460,6 +472,22 @@
 
 				:global(table.datatable.responsive tbody tr td.tvl::before) {
 					display: none;
+				}
+			}
+
+			@media (width < 360px) {
+				:global(table.datatable.responsive tbody tr td.avg_apy) {
+					grid-column: 2 / -1;
+					grid-row: 3;
+				}
+
+				:global(table.datatable.responsive tbody tr td.avg_apy::before) {
+					content: none;
+				}
+
+				:global(table.datatable.responsive tbody tr td.tvl) {
+					grid-column: 2 / -1;
+					grid-row: 4;
 				}
 			}
 		}
