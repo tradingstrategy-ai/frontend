@@ -18,16 +18,26 @@ the score in a column beside each vault name.
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { fetchAllVaultData, hasVaultCache } from './client-cache';
 	import { riskRatingProviders, type RiskRatingProvider } from './risk-rating-providers';
-	import { getRiskRatedVaults, getRiskRatingStatistics, type RiskRatingStatistics } from './risk-rating-statistics';
+	import {
+		getRiskRatedVaults,
+		getRiskRatingStatistics,
+		getRiskRatingTvlBands,
+		type RiskRatingStatistics,
+		type RiskRatingTvlBand
+	} from './risk-rating-statistics';
 	import type { TopVaults } from './schemas';
 	import TopVaultsPage from './TopVaultsPage.svelte';
+	import MarketSharePieChart from '../../routes/vaults/MarketSharePieChart.svelte';
+	import MarketShareWidgetBox from '../../routes/vaults/MarketShareWidgetBox.svelte';
+	import type { MarketSharePieSlice } from '../../routes/vaults/market-share-pie';
 
 	interface Props {
 		provider: RiskRatingProvider;
 		initialRatingStatistics?: RiskRatingStatistics;
+		initialRiskRatingTvlBands?: RiskRatingTvlBand[];
 	}
 
-	let { provider, initialRatingStatistics }: Props = $props();
+	let { provider, initialRatingStatistics, initialRiskRatingTvlBands }: Props = $props();
 	let topVaults = $state<TopVaults>();
 	let loading = $state(!hasVaultCache(page.data.generatedAt));
 	let providerDetails = $derived(riskRatingProviders[provider]);
@@ -44,6 +54,14 @@ the score in a column beside each vault name.
 	let ratingStatistics = $derived.by(() => {
 		return ratedTopVaults ? getRiskRatingStatistics(ratedTopVaults.vaults) : initialRatingStatistics;
 	});
+	let riskRatingTvlBands = $derived(
+		topVaults ? getRiskRatingTvlBands(topVaults, provider) : (initialRiskRatingTvlBands ?? [])
+	);
+	let riskRatingGroupLabel = $derived(provider === 'core3' ? 'CORE3 rating' : 'Risk bracket');
+	let riskRatingGroupLabelPlural = $derived(provider === 'core3' ? 'CORE3 ratings' : 'risk brackets');
+	let riskChartTitle = $derived(
+		`${formatDollar(ratingStatistics?.totalTvl ?? 0, 1, 1)} TVL by ${providerDetails.name} rated risk`
+	);
 	let ratingSummary = $derived.by(() => {
 		const { totalTvl, vaultCount, blockchainCount, averageMonthlyReturn } = ratingStatistics ?? {
 			totalTvl: 0,
@@ -61,6 +79,50 @@ the score in a column beside each vault name.
 			ratingStatistics?.vaultCount ?? 0
 		} ${(ratingStatistics?.vaultCount ?? 0) === 1 ? 'vault' : 'vaults'}`
 	);
+
+	const core3ToneColourValues = {
+		excellent: 'var(--c-success)',
+		good: 'color-mix(in srgb, var(--c-success), var(--c-warning))',
+		fair: 'var(--c-warning)',
+		poor: 'var(--c-error)'
+	};
+	const xerberusRiskColourValues = [
+		'var(--c-error)',
+		'hsl(18 92% 52%)',
+		'var(--c-warning)',
+		'hsl(82 70% 43%)',
+		'hsl(174 70% 40%)',
+		'var(--c-success)'
+	];
+
+	function resolveCssColour(colourValue: string): string {
+		const probe = document.createElement('span');
+		probe.style.color = colourValue;
+		document.body.append(probe);
+		const resolvedColour = getComputedStyle(probe).color;
+		probe.remove();
+		return resolvedColour;
+	}
+
+	function getCore3SliceColour(slice: MarketSharePieSlice): string | undefined {
+		const colourValue = core3ToneColourValues[slice.tone as keyof typeof core3ToneColourValues];
+		if (!colourValue) return undefined;
+		return resolveCssColour(colourValue);
+	}
+
+	function getXerberusSliceColour(slice: MarketSharePieSlice): string | undefined {
+		const bandIndex = Number(slice.slug?.replace('risk-', '')) - 1;
+		const colourValue = xerberusRiskColourValues[bandIndex];
+		return colourValue ? resolveCssColour(colourValue) : undefined;
+	}
+
+	function getRiskSliceColour(slice: MarketSharePieSlice): string | undefined {
+		return provider === 'core3' ? getCore3SliceColour(slice) : getXerberusSliceColour(slice);
+	}
+
+	function formatRiskChartTvl(slice: MarketSharePieSlice): string {
+		return formatDollar(slice.tvl, 1, 1);
+	}
 
 	$effect(() => {
 		fetchAllVaultData(page.data.generatedAt)
@@ -118,6 +180,21 @@ the score in a column beside each vault name.
 	defaultSort="provider_risk_rating"
 	defaultDirection={providerDetails.defaultDirection}
 >
+	{#snippet heroAside()}
+		<MarketShareWidgetBox title={riskChartTitle}>
+			<MarketSharePieChart
+				items={riskRatingTvlBands}
+				groupLabel={riskRatingGroupLabel}
+				groupLabelPlural={riskRatingGroupLabelPlural}
+				otherThreshold={0}
+				labelValueFormatter={formatRiskChartTvl}
+				getSliceColour={getRiskSliceColour}
+				centreImageUrl={providerDetails.logoUrl}
+				testId={`${provider}-risk-by-tvl-pie-chart`}
+			/>
+		</MarketShareWidgetBox>
+	{/snippet}
+
 	{#snippet subtitle()}
 		{#if provider === 'core3'}
 			<p>

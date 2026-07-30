@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add TVL distribution charts for CORE3 and Xerberus risk-rated vaults (2026-07-30)
 - Restore site-wide vault search with server-side vault JSON indexing, typeahead and responsive result listings, replacing the retired external integration (2026-07-30)
 - Add CORE3 and Xerberus risk-rating vault lists, per-vault Xerberus report links, and a YouTube footer link with reordered social icons (2026-07-30)
 - Rank strategy vaults by displayed annual return within green and red chart groups, and clarify the strategy listing description (2026-07-28)
