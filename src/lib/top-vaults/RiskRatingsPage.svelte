@@ -18,16 +18,25 @@ the score in a column beside each vault name.
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { fetchAllVaultData, hasVaultCache } from './client-cache';
 	import { riskRatingProviders, type RiskRatingProvider } from './risk-rating-providers';
-	import { getRiskRatedVaults, getRiskRatingStatistics, type RiskRatingStatistics } from './risk-rating-statistics';
+	import {
+		getRiskRatedVaults,
+		getRiskRatingStatistics,
+		getRiskRatingTvlBands,
+		type RiskRatingStatistics,
+		type RiskRatingTvlBand
+	} from './risk-rating-statistics';
 	import type { TopVaults } from './schemas';
 	import TopVaultsPage from './TopVaultsPage.svelte';
+	import MarketSharePieChart from '../../routes/vaults/MarketSharePieChart.svelte';
+	import MarketShareWidgetBox from '../../routes/vaults/MarketShareWidgetBox.svelte';
 
 	interface Props {
 		provider: RiskRatingProvider;
 		initialRatingStatistics?: RiskRatingStatistics;
+		initialRiskRatingTvlBands?: RiskRatingTvlBand[];
 	}
 
-	let { provider, initialRatingStatistics }: Props = $props();
+	let { provider, initialRatingStatistics, initialRiskRatingTvlBands }: Props = $props();
 	let topVaults = $state<TopVaults>();
 	let loading = $state(!hasVaultCache(page.data.generatedAt));
 	let providerDetails = $derived(riskRatingProviders[provider]);
@@ -44,6 +53,9 @@ the score in a column beside each vault name.
 	let ratingStatistics = $derived.by(() => {
 		return ratedTopVaults ? getRiskRatingStatistics(ratedTopVaults.vaults) : initialRatingStatistics;
 	});
+	let riskRatingTvlBands = $derived(
+		topVaults ? getRiskRatingTvlBands(topVaults, provider) : (initialRiskRatingTvlBands ?? [])
+	);
 	let ratingSummary = $derived.by(() => {
 		const { totalTvl, vaultCount, blockchainCount, averageMonthlyReturn } = ratingStatistics ?? {
 			totalTvl: 0,
@@ -118,6 +130,18 @@ the score in a column beside each vault name.
 	defaultSort="provider_risk_rating"
 	defaultDirection={providerDetails.defaultDirection}
 >
+	{#snippet heroAside()}
+		<MarketShareWidgetBox title="Risk by TVL">
+			<MarketSharePieChart
+				items={riskRatingTvlBands}
+				groupLabel="Risk bracket"
+				groupLabelPlural="risk brackets"
+				otherThreshold={0}
+				testId={`${provider}-risk-by-tvl-pie-chart`}
+			/>
+		</MarketShareWidgetBox>
+	{/snippet}
+
 	{#snippet subtitle()}
 		{#if provider === 'core3'}
 			<p>

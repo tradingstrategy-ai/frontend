@@ -67,6 +67,8 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		loading?: boolean;
 		/** Optional right-hand content for listing detail page overview panels */
 		detailAside?: Snippet;
+		/** Optional right-hand content rendered alongside the page heading. */
+		heroAside?: Snippet;
 		/** Optional left-hand description box rendered next to detailAside (used by
 		    chain pages on its own, and by stablecoin pages above the about box) */
 		detailDescription?: Snippet;
@@ -112,6 +114,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		defaultDirection,
 		loading = false,
 		detailAside,
+		heroAside,
 		detailDescription,
 		beforeTable,
 		totalVaultCount,
@@ -125,6 +128,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 	let renderDetailAsideInHero = $derived(
 		chain && detailAside && !detailDescription && !protocolMetadata && !stablecoinMetadata
 	);
+	let showHeroAside = $derived(renderDetailAsideInHero || heroAside);
 </script>
 
 <main class="top-vaults-page ds-3">
@@ -138,7 +142,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 					</div>
 				{/if}
 			</div>
-			<div class:hero-layout={renderDetailAsideInHero}>
+			<div class:hero-layout={showHeroAside}>
 				<HeroBanner {subtitle}>
 					{#snippet title()}
 						<span class="page-title">
@@ -168,7 +172,11 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 					{/snippet}
 				</HeroBanner>
 
-				{#if renderDetailAsideInHero && detailAside}
+				{#if heroAside}
+					<aside class="hero-aside">
+						{@render heroAside()}
+					</aside>
+				{:else if renderDetailAsideInHero && detailAside}
 					<aside class="hero-aside">
 						{@render detailAside()}
 					</aside>
@@ -401,6 +409,11 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 			.detail-overview-single .detail-aside {
 				grid-column: auto;
 			}
+
+			.hero-layout {
+				grid-template-columns: 1fr;
+				align-items: stretch;
+			}
 		}
 
 		@media (--viewport-sm-down) {
@@ -411,11 +424,6 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 			.top-vaults-header :global(.hero-banner) {
 				min-height: 0;
 				padding-block: var(--space-xs);
-			}
-
-			.hero-layout {
-				grid-template-columns: 1fr;
-				align-items: stretch;
 			}
 
 			.page-title {

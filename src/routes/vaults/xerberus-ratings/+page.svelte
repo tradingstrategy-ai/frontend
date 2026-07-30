@@ -7,4 +7,8 @@ Xerberus-rated DeFi stablecoin vaults
 	let { data } = $props();
 </script>
 
-<RiskRatingsPage provider="xerberus" initialRatingStatistics={data.initialRatingStatistics} />
+<RiskRatingsPage
+	provider="xerberus"
+	initialRatingStatistics={data.initialRatingStatistics}
+	initialRiskRatingTvlBands={data.initialRiskRatingTvlBands}
+/>
