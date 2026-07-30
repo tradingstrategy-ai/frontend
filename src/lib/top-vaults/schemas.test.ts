@@ -67,14 +67,13 @@ describe('topVaultsSchema resilience', () => {
 			report_url: 'https://app.xerberus.io/pool/dendrogram/lagoon-example-vault',
 			fetched_at: '2026-07-27T16:01:01.992171'
 		};
+		const malformedVault = {
+			...createTestVault('Malformed Xerberus vault'),
+			xerberus: { ...xerberus, report_url: 'not a URL' }
+		};
 		const result = topVaultsSchema.parse({
 			...basePayload,
-			vaults: [
-				createTestVault('Example vault', { xerberus }),
-				createTestVault('Malformed Xerberus vault', {
-					xerberus: { ...xerberus, report_url: 'not a URL' }
-				})
-			]
+			vaults: [createTestVault('Example vault', { xerberus }), malformedVault]
 		});
 
 		expect(result.vaults[0].xerberus).toEqual(xerberus);

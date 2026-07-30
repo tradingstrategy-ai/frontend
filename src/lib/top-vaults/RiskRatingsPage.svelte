@@ -96,6 +96,8 @@ the score in a column beside each vault name.
 	topVaults={ratedTopVaults}
 	{loading}
 	includeBlacklisted
+	tvlTriggerLabel="All TVL"
+	tvlTooltip="This list includes all vaults with a rating from this provider, regardless of TVL."
 	title={providerDetails.pageTitle}
 	headingLogo={{ src: providerDetails.logoUrl, alt: providerDetails.logoAlt }}
 	ratingProvider={provider}
