@@ -5,7 +5,7 @@ import { SitemapStream } from 'sitemap';
 import { getCachedStrategies } from 'trade-executor/client/strategy-info';
 
 // see StrategyNav menuOptions
-// also see special-case vault and backtest pages below
+// also see special-case info and backtest pages below
 const strategyPages = [
 	'',
 	'description',
@@ -33,7 +33,7 @@ export async function GET({ fetch, setHeaders, url }) {
 		const pages = [...strategyPages];
 
 		if (strategy.on_chain_data?.asset_management_mode === 'enzyme') {
-			pages.push('vault');
+			pages.push('info');
 		}
 
 		if (strategy.backtest_available) {

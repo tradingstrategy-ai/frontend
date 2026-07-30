@@ -41,7 +41,7 @@
 			label: 'Performance'
 		},
 		{
-			slug: 'vault',
+			slug: 'info',
 			label: 'Vault info'
 		},
 		{
@@ -121,7 +121,7 @@
 		switch (slug) {
 			case currentOption?.slug : return true;
 			case 'frozen-positions'  : return hasFrozenPositions;
-			case 'vault'             : return hasVault;
+			case 'info'              : return hasVault;
 			case 'fees'              : return hasVault;
 			case 'backtest'          : return backtestAvailable;
 			default                  : return true;
