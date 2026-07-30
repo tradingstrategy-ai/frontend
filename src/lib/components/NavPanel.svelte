@@ -1,26 +1,42 @@
+<!--
+@component
+Responsive navigation drawer with optional search entry, primary links and site footer.
+-->
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import { Logo, Menu, Footer } from '$lib/components';
 	import IconCancel from '~icons/local/cancel';
 	// NOTE: un-comment below line to bring back color mode picker
 	// import ColorModePicker from '$lib/header/ColorModePicker.svelte';
 	import { disableScroll } from '$lib/actions/scroll';
 
-	export let open = false;
+	interface Props {
+		open?: boolean;
+		children?: Snippet;
+		panelSearch?: Snippet;
+	}
+
+	let { open = $bindable(false), children, panelSearch }: Props = $props();
 
 	const close = () => (open = false);
 </script>
 
 <svelte:body use:disableScroll={open} />
 
-<nav class:open>
+<nav class:open aria-label="Mobile navigation">
 	<header>
-		<a href="/" aria-label="Home" on:click={close}><Logo /></a>
-		<button aria-label="Close navigation panel" on:click={close}>
+		<a href="/" aria-label="Home" onclick={close}><Logo /></a>
+		<button aria-label="Close navigation panel" onclick={close}>
 			<IconCancel />
 		</button>
 	</header>
-	<Menu align="center" on:click={close}>
-		<slot />
+	{#if panelSearch}
+		<div class="panel-search">
+			{@render panelSearch()}
+		</div>
+	{/if}
+	<Menu align="center" onclick={close}>
+		{@render children?.()}
 	</Menu>
 	<!-- NOTE: un-comment below section to bring back color mode picker -->
 	<!--
@@ -61,6 +77,12 @@
 		align-items: center;
 		padding-bottom: var(--space-md);
 		--logo-height: 32px;
+	}
+
+	.panel-search {
+		width: min(100%, 22rem);
+		justify-self: center;
+		padding-inline: var(--space-md);
 	}
 
 	button {

@@ -13,6 +13,12 @@
 	--c-error: hsl(358 56% 55%);
 	--c-success: hsl(149 64% 44%);
 	--c-warning: hsl(43 92% 50%);
+	--c-search-entity-vault: hsl(187 86% 68%);
+	--c-search-entity-blacklisted-vault: var(--c-bearish);
+	--c-search-entity-curator: hsl(43 96% 68%);
+	--c-search-entity-protocol: hsl(267 86% 76%);
+	--c-search-entity-stablecoin: hsl(145 63% 60%);
+	--c-search-entity-chain: hsl(342 88% 74%);
 
 	/* Box shading levels; see theme-specific hsl-box and alpha values */
 	--c-box-1: hsl(var(--hsl-box) / var(--box-1-alpha));
@@ -84,6 +90,11 @@
 
 		--c-bullish: hsl(var(--hue-bullish) 68% 42%);
 		--c-bearish: hsl(var(--hue-bearish) 92% 57%);
+		--c-search-entity-vault: hsl(190 85% 30%);
+		--c-search-entity-curator: hsl(35 90% 30%);
+		--c-search-entity-protocol: hsl(266 65% 43%);
+		--c-search-entity-stablecoin: hsl(145 65% 30%);
+		--c-search-entity-chain: hsl(342 70% 42%);
 
 		--c-shadow: black;
 

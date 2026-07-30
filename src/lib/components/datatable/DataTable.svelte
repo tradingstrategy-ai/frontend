@@ -47,7 +47,7 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 
 	let {
 		tableViewModel,
-		class: classes = 'datatable',
+		class: classes = '',
 		size = 'md',
 		totalRowCount,
 		loading = false,
@@ -113,7 +113,11 @@ See: https://svelte-headless-table.bryanmylee.com/docs/api/create-view-model
 	}
 </script>
 
-<table bind:this={table} {...$tableAttrs} class={[classes, size, isResponsive && 'responsive', loading && 'loading']}>
+<table
+	bind:this={table}
+	{...$tableAttrs}
+	class={['datatable', classes, size, isResponsive && 'responsive', loading && 'loading']}
+>
 	<TableHeader attrs={$tableHeadAttrs} rows={$headerRows}>
 		{#if isResponsive}
 			<MobileSortSelect rows={$headerRows} {sortKeys} />
