@@ -596,7 +596,7 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 		progressive && listingSummary ? listingSummary.matchingCount : filteredVaults.length
 	);
 
-	// Uses filteredVaults so all active listing filters are reflected in the stats row.
+	// Uses filteredVaults so all active filters (TVL, age, risk, search) are reflected in the stats row.
 	let statsVaults = $derived(
 		includeBlacklistedInStats ? filteredVaults : filteredVaults.filter((v) => !isBlacklisted(v))
 	);
