@@ -141,6 +141,7 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 		disableBlacklistedStrikethrough?: boolean;
 		/** Show a third-party risk rating column immediately after the vault name. */
 		ratingProvider?: RiskRatingProvider;
+		/** Whether rows are fetched in pages from the server. */
 		progressive?: boolean;
 		listingKey?: string;
 		listingScope?: string;
