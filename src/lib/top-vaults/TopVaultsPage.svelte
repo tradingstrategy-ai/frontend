@@ -12,6 +12,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 	import type { VaultProtocolMetadata } from '$lib/vault-protocol/schemas';
 	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
 	import type { CuratorInfo } from './schemas';
+	import type { VaultListingSummary } from './listing/types';
 	import Alert from '$lib/components/Alert.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
@@ -86,6 +87,10 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		headingLogo?: { src: string; alt: string };
 		/** Show a third-party risk rating column beside the vault name. */
 		ratingProvider?: RiskRatingProvider;
+		progressive?: boolean;
+		listingKey?: string;
+		listingScope?: string;
+		listingSummary?: VaultListingSummary;
 	}
 
 	let {
@@ -122,7 +127,11 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		maxSummaryTvlUsd,
 		disableBlacklistedStrikethrough,
 		headingLogo,
-		ratingProvider
+		ratingProvider,
+		progressive = false,
+		listingKey = 'top',
+		listingScope,
+		listingSummary
 	}: Props = $props();
 
 	let renderDetailAsideInHero = $derived(
@@ -262,8 +271,12 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 					{maxSummaryTvlUsd}
 					{disableBlacklistedStrikethrough}
 					{ratingProvider}
+					{progressive}
+					{listingKey}
+					{listingScope}
+					{listingSummary}
 				/>
-			{:else if !topVaults?.vaults.length}
+			{:else if !topVaults}
 				{#if stablecoinMetadata}
 					<Alert status="info">We have not indexed any vaults using this stablecoin as a denomination token yet.</Alert>
 				{:else}
@@ -292,6 +305,10 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 					{maxSummaryTvlUsd}
 					{disableBlacklistedStrikethrough}
 					{ratingProvider}
+					{progressive}
+					{listingKey}
+					{listingScope}
+					{listingSummary}
 				/>
 			{/if}
 		</div>
