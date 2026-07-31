@@ -19,6 +19,7 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 	import TargetableLink from '$lib/components/TargetableLink.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
+	import Spinner from '$lib/components/Spinner.svelte';
 	import ChainCell from './ChainCell.svelte';
 	import Core3RiskCell from './Core3RiskCell.svelte';
 	import FeesCell from './FeesCell.svelte';
@@ -82,9 +83,9 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 		type ReturnColumnDefinition,
 		type ReturnColumnId
 	} from './return-columns';
+	import { sortVaults } from './listing/query';
+	import { INITIAL_VAULT_LISTING_LIMIT, VAULT_LISTING_PAGE_SIZE, type VaultListingSummary } from './listing/types';
 
-	const INITIAL_ROW_COUNT = 150;
-	const ROW_BATCH_SIZE = 50;
 	const allVaultsPath = resolve('/vaults/all');
 
 	interface SortOptions {
@@ -131,6 +132,10 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 		disableBlacklistedStrikethrough?: boolean;
 		/** Show a third-party risk rating column immediately after the vault name. */
 		ratingProvider?: RiskRatingProvider;
+		progressive?: boolean;
+		listingKey?: string;
+		listingScope?: string;
+		listingSummary?: VaultListingSummary;
 	}
 
 	const emptyTopVaults: TopVaults = {
@@ -164,8 +169,21 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 		includeBlacklistedInStats = false,
 		maxSummaryTvlUsd,
 		disableBlacklistedStrikethrough = false,
-		ratingProvider
+		ratingProvider,
+		progressive = false,
+		listingKey = 'top',
+		listingScope,
+		listingSummary
 	}: Props = $props();
+	let accumulatedVaults = $state<VaultInfo[]>(topVaults.vaults);
+	let remoteHasMore = $state(progressive);
+	let remoteLoading = $state(false);
+	let remoteOffset = $state(topVaults.vaults.length);
+	$effect(() => {
+		accumulatedVaults = topVaults.vaults;
+		remoteOffset = topVaults.vaults.length;
+		remoteHasMore = progressive;
+	});
 
 	// --- Sort column registry (key → compareFn + default direction) ---
 
@@ -417,10 +435,11 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 
 	// Filter out blacklisted vaults unless explicitly included or selected by risk level.
 	let baseVaults = $derived.by(() => {
+		const sourceVaults = progressive ? accumulatedVaults : topVaults.vaults;
 		if (includeBlacklisted || selectedRisk.maxValue >= 999) {
-			return topVaults.vaults;
+			return sourceVaults;
 		}
-		return topVaults.vaults.filter((v) => !isBlacklisted(v));
+		return sourceVaults.filter((v) => !isBlacklisted(v));
 	});
 
 	/** Resolve the effective TVL threshold for a vault, accounting for chain overrides */
@@ -442,7 +461,7 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 	});
 
 	// Count of hidden vaults
-	let hiddenByTvl = $derived(hiddenVaults.length);
+	let hiddenByTvl = $derived(progressive && listingSummary ? listingSummary.hiddenByTvl : hiddenVaults.length);
 
 	// Total vault count for the listing meta — the whole-database count when
 	// provided by the page, otherwise the vaults available to this listing
@@ -516,7 +535,11 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 	);
 
 	// Calculate total TVL from fully-filtered vaults
-	let totalTvl = $derived(calculateTotalTvl(statsVaultsWithTvl, { maxTvlUsd: maxSummaryTvlUsd }));
+	let totalTvl = $derived(
+		progressive && listingSummary
+			? listingSummary.totalTvl
+			: calculateTotalTvl(statsVaultsWithTvl, { maxTvlUsd: maxSummaryTvlUsd })
+	);
 
 	// Calculate TVL-weighted average 1M APY from fully-filtered vaults
 	let avgTvlWeightedApy1M = $derived(
@@ -528,6 +551,8 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 
 	// sort vaults
 	let sortedVaults = $derived.by(() => {
+		if (progressive && sortOptions.key !== 'provider_risk_rating')
+			return sortVaults(filteredVaults, sortOptions.key, sortOptions.direction);
 		const sorted = filteredVaults.toSorted(sortOptions.compareFn);
 		if (sortOptions.direction === 'desc') sorted.reverse();
 		return sorted;
@@ -537,9 +562,38 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 	// - limit the displayed vaults during initial render
 	// - track sortedVaults as dependency (reset to initial count when it changes)
 	// - progressively increemnt maxVisibleRows on-scroll (see load-more-sentinel)
-	let maxVisibleRows = $derived(sortedVaults && INITIAL_ROW_COUNT);
-	let visibleVaults = $derived(sortedVaults.slice(0, maxVisibleRows));
-	let hasMoreRows = $derived(maxVisibleRows < sortedVaults.length);
+	let maxVisibleRows = $state(INITIAL_VAULT_LISTING_LIMIT);
+	let visibleVaults = $derived(progressive ? sortedVaults : sortedVaults.slice(0, maxVisibleRows));
+	let hasMoreRows = $derived(progressive ? remoteHasMore : maxVisibleRows < sortedVaults.length);
+
+	async function loadMore() {
+		if (!progressive) {
+			maxVisibleRows += VAULT_LISTING_PAGE_SIZE;
+			return;
+		}
+		if (remoteLoading || !remoteHasMore) return;
+		remoteLoading = true;
+		try {
+			const params = new URLSearchParams(page.url.searchParams);
+			params.set('listing', listingKey);
+			if (listingScope) params.set('scope', listingScope);
+			params.set('offset', String(remoteOffset));
+			params.set('version', new Date(topVaults.generated_at).toISOString());
+			const response = await fetch(`/top-vaults/listing-data?${params}`);
+			if (response.status === 409) {
+				await goto(page.url, { invalidateAll: true, replaceState: true, noScroll: true, keepFocus: true });
+				return;
+			}
+			if (!response.ok) throw new Error(`Vault listing continuation failed: ${response.status}`);
+			const next = (await response.json()) as { vaults: VaultInfo[]; nextOffset: number; hasMore: boolean };
+			const seen = new Set(accumulatedVaults.map((vault) => vault.id));
+			accumulatedVaults = [...accumulatedVaults, ...next.vaults.filter((vault) => !seen.has(vault.id))];
+			remoteOffset = next.nextOffset;
+			remoteHasMore = next.hasMore;
+		} finally {
+			remoteLoading = false;
+		}
+	}
 
 	function sortBy(key: SortOptions['key'], defaultDirection: SortOptions['direction']) {
 		let direction = defaultDirection;
@@ -1185,8 +1239,9 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 				{#if hasMoreRows}
 					<tr class="load-more-sentinel" data-testid="load-more-sentinel">
 						<td colspan={12 + selectedReturnColumns.length + (showChainCol ? 1 : 0) + (showProviderRiskRating ? 1 : 0)}>
-							<div use:inview={{ rootMargin: '300px' }} oninview_enter={() => (maxVisibleRows += ROW_BATCH_SIZE)}>
-								Loading more vaults... ({maxVisibleRows} of {sortedVaults.length})
+							<div use:inview={{ rootMargin: '300px' }} oninview_enter={loadMore}>
+								<Spinner size="18" /> Loading more vaults... ({visibleVaults.length}{#if !progressive}
+									of {sortedVaults.length}{/if})
 							</div>
 						</td>
 					</tr>
