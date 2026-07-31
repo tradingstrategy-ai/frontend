@@ -288,6 +288,21 @@ test.describe('vault index page', () => {
 		await expect(sentinel).not.toBeVisible();
 	});
 
+	test('loads 500 vaults through progressive scrolling', async ({ page }) => {
+		await page.goto('/vaults?tvl=any&q=Progressive%20scroll%20vault');
+
+		const rows = page.locator('tbody tr.targetable');
+		const sentinel = page.getByTestId('load-more-sentinel');
+		await expect(rows).toHaveCount(150);
+
+		for (let expectedCount = 200; expectedCount <= 500; expectedCount += 50) {
+			await sentinel.scrollIntoViewIfNeeded();
+			await expect(rows).toHaveCount(expectedCount);
+		}
+
+		await expect(sentinel).not.toBeVisible();
+	});
+
 	test('sentinel disappears when all rows loaded', async ({ page }) => {
 		const rows = page.locator('tbody tr.targetable');
 		const sentinel = page.getByTestId('load-more-sentinel');
