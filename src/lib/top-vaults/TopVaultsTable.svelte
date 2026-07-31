@@ -522,6 +522,12 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 		});
 	});
 
+	// A progressive listing contains only its initial page here, while the server
+	// summary describes every vault matching the same filters.
+	let matchingVaultCount = $derived(
+		progressive && listingSummary ? listingSummary.matchingCount : filteredVaults.length
+	);
+
 	// Uses filteredVaults so all active listing filters are reflected in the stats row.
 	let statsVaults = $derived(
 		includeBlacklistedInStats ? filteredVaults : filteredVaults.filter((v) => !isBlacklisted(v))
@@ -779,7 +785,7 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 		<div class="table-stats" class:hidden={loading} data-testid="top-vaults-meta">
 			<Tooltip>
 				<svelte:fragment slot="trigger"
-					>{filteredVaults.length} vaults{#if totalVaultCount > filteredVaults.length}
+					>{matchingVaultCount} vaults{#if totalVaultCount > matchingVaultCount}
 						<span>&nbsp;out of {totalVaultCount}</span>{/if}</svelte:fragment
 				>
 				<svelte:fragment slot="popup"
