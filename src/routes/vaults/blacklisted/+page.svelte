@@ -2,48 +2,19 @@
 Blacklisted vault listing.
 -->
 <script lang="ts">
-	import type { TopVaults } from '$lib/top-vaults/schemas';
-	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
-	import {
-		MAX_SUMMARY_TVL_USD,
-		calculateTotalTvl,
-		getVaultCurrentTvlUsd,
-		isBlacklisted
-	} from '$lib/top-vaults/helpers';
+	import { MAX_SUMMARY_TVL_USD } from '$lib/top-vaults/helpers';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 
-	let topVaults = $state<TopVaults>();
-	let loading = $state(!hasVaultCache(page.data.generatedAt));
-
-	$effect(() => {
-		fetchAllVaultData(page.data.generatedAt)
-			.then((data) => (topVaults = data))
-			.catch((e) => console.error('Failed to load vault data:', e))
-			.finally(() => (loading = false));
-	});
-
-	let blacklistedTopVaults = $derived<TopVaults | undefined>(
-		topVaults && {
-			...topVaults,
-			vaults: topVaults.vaults
-				.filter(isBlacklisted)
-				.toSorted((a, b) => (getVaultCurrentTvlUsd(b) ?? 0) - (getVaultCurrentTvlUsd(a) ?? 0))
-		}
-	);
+	let { data } = $props();
+	let blacklistedTopVaults = $derived(data.initialTopVaults);
 
 	const title = 'Blacklisted DeFi stablecoin vaults';
 	const description = 'Blacklisted DeFi stablecoin vaults, sorted by current TVL.';
-	let blacklistedTvl = $derived(
-		calculateTotalTvl(
-			blacklistedTopVaults?.vaults.map((vault) => ({ current_nav: getVaultCurrentTvlUsd(vault) })) ?? [],
-			{ maxTvlUsd: MAX_SUMMARY_TVL_USD }
-		)
-	);
-	let blacklistedCountText = $derived(blacklistedTopVaults ? String(blacklistedTopVaults.vaults.length) : '-');
-	let blacklistedTvlText = $derived(blacklistedTopVaults ? formatDollar(blacklistedTvl, 0) : '-');
+	let blacklistedCountText = $derived(String(data.listingSummary.matchingCount));
+	let blacklistedTvlText = $derived(formatDollar(data.listingSummary.totalTvl, 0));
 	let subtitle = $derived(
 		`Blacklisted ${blacklistedCountText} vaults and ${blacklistedTvlText} TVL (some of this TVL is likely to be fake). Blacklisting reasons include illiquidity, depegging of the denominating fiat token, being a subvault of a composite, and suspicious activities.`
 	);
@@ -68,14 +39,17 @@ Blacklisted vault listing.
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: blacklistedTopVaults?.vaults.length ?? 0
+			numberOfItems: data.listingSummary.matchingCount
 		}
 	}}
 />
 
 <TopVaultsPage
 	topVaults={blacklistedTopVaults}
-	{loading}
+	loading={false}
+	progressive={data.initialVaultListingHasMore}
+	listingKey={data.listingKey}
+	listingSummary={data.listingSummary}
 	includeBlacklisted
 	includeBlacklistedInStats
 	maxSummaryTvlUsd={MAX_SUMMARY_TVL_USD}
@@ -88,5 +62,5 @@ Blacklisted vault listing.
 	defaultHideUnknown={0}
 	defaultSort="tvl"
 	defaultDirection="desc"
-	totalVaultCount={topVaults?.vaults.length}
+	totalVaultCount={data.totalVaultCount}
 />

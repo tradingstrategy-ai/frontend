@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
-import { getInlineVaultListing } from '$lib/top-vaults/inline-data';
+import { loadVaultListing } from '$lib/server/top-vaults/listing';
 import { fetchVaultProtocolMetadata } from '$lib/vault-protocol/client';
 import {
 	getCore3ProtocolForVault,
@@ -10,7 +10,7 @@ import {
 	UNKNOWN_VAULT_PROTOCOL_SLUG
 } from '$lib/top-vaults/helpers.js';
 
-export async function load({ params, fetch }) {
+export async function load({ params, fetch, url }) {
 	const { protocol } = params;
 	const topVaults = await getCachedTopVaults(fetch);
 	const { vaults, core3_protocols } = topVaults;
@@ -36,7 +36,6 @@ export async function load({ params, fetch }) {
 			: getProtocolDisplayName(protocolVault.protocol, protocolVault.protocol_slug),
 		protocolMetadata,
 		core3,
-		totalVaultCount: vaults.length,
-		initialTopVaults: getInlineVaultListing(topVaults, protocolVaults)
+		...(await loadVaultListing(fetch, url, 'protocol', protocol))
 	};
 }

@@ -5,23 +5,10 @@ International vault listing for non-USD-denominated vaults.
 	import { page } from '$app/state';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
-	import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
-	import { buildStablecoinMetadataLookup, findStablecoinMetadata } from '$lib/stablecoin-metadata/helpers';
-	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
-	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
-	import {
-		type CurrencyUsdRate,
-		getCurrencyUsdRates,
-		getVaultCurrentTvlUsd,
-		getVaultDenominationCurrency,
-		isNonUsdDenominatedVault,
-		withVaultDenominationTokenRate
-	} from '$lib/top-vaults/helpers';
-	import type { TopVaults, VaultInfo } from '$lib/top-vaults/schemas';
 	import { formatDollar } from '$lib/helpers/formatters';
 
-	let topVaults = $state<TopVaults>();
-	let loading = $state(!hasVaultCache(page.data.generatedAt));
+	let { data } = $props();
+	let topVaults = $derived(data.initialTopVaults);
 
 	function formatCurrencyList(currencies: string[]): string {
 		if (currencies.length === 0) return 'unknown currencies';
@@ -31,58 +18,11 @@ International vault listing for non-USD-denominated vaults.
 		return `${currencies.slice(0, -1).join(', ')}, and ${currencies[currencies.length - 1]}`;
 	}
 
-	function getVaultMetadata(vault: VaultInfo, lookup: Map<string, StablecoinMetadata>): StablecoinMetadata | undefined {
-		return findStablecoinMetadata(lookup, vault.denomination_slug, vault.denomination, vault.normalised_denomination);
-	}
-
-	function toInternationalVault(
-		vault: VaultInfo,
-		lookup: Map<string, StablecoinMetadata>,
-		currencyUsdRates: Map<string, CurrencyUsdRate>
-	): VaultInfo | null {
-		const metadata = getVaultMetadata(vault, lookup);
-		const enrichedVault = withVaultDenominationTokenRate(vault, metadata, currencyUsdRates);
-
-		return isNonUsdDenominatedVault(enrichedVault) && getVaultCurrentTvlUsd(enrichedVault) != null
-			? enrichedVault
-			: null;
-	}
-
-	$effect(() => {
-		Promise.all([fetchAllVaultData(page.data.generatedAt), fetchStablecoinMetadataIndex(fetch)])
-			.then(([allData, metadataIndex]) => {
-				const lookup = buildStablecoinMetadataLookup(metadataIndex);
-				const currencyUsdRates = getCurrencyUsdRates(metadataIndex);
-				const internationalVaults = allData.vaults
-					.map((vault) => toInternationalVault(vault, lookup, currencyUsdRates))
-					.filter((vault): vault is VaultInfo => vault != null && isNonUsdDenominatedVault(vault));
-
-				topVaults = {
-					...allData,
-					vaults: internationalVaults
-				};
-			})
-			.catch((e) => console.error('Failed to load vault data:', e))
-			.finally(() => (loading = false));
-	});
-
 	const title = 'International stablecoin vaults';
 	const description = 'DeFi vaults nominated in CHF, EUR, GBP, JPY, SGD, and TRY';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let pageSubtitle = $derived.by(() => {
-		if (!topVaults) return 'Loading non-USD vault TVL and currencies.';
-
-		const vaults = topVaults.vaults;
-		const totalTvlUsd = vaults.reduce((sum, vault) => sum + (getVaultCurrentTvlUsd(vault) ?? 0), 0);
-		const currencies = [
-			...new Set(
-				vaults
-					.map((vault) => getVaultDenominationCurrency(vault)?.toUpperCase())
-					.filter((currency): currency is string => Boolean(currency))
-			)
-		].toSorted((a, b) => a.localeCompare(b));
-
-		return `Total ${vaults.length} non-USD vaults with ${formatDollar(totalTvlUsd, 0)} USD TVL with currencies of ${formatCurrencyList(currencies)}.`;
+		return `The current listing contains ${data.listingSummary.matchingCount} non-USD vaults with ${formatDollar(data.listingSummary.totalTvl, 0)} USD TVL with currencies of ${formatCurrencyList(data.listingCurrencies ?? [])}.`;
 	});
 </script>
 
@@ -104,14 +44,18 @@ International vault listing for non-USD-denominated vaults.
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: topVaults?.vaults.length ?? 0
+			numberOfItems: data.listingSummary.matchingCount
 		}
 	}}
 />
 
 <TopVaultsPage
 	{topVaults}
-	{loading}
+	loading={false}
+	progressive={data.initialVaultListingHasMore}
+	listingKey={data.listingKey}
+	listingSummary={data.listingSummary}
+	totalVaultCount={data.totalVaultCount}
 	title="International stablecoin vaults"
 	subtitle={pageSubtitle}
 	showFilters

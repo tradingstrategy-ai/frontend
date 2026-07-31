@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
-import { getInlineVaultListing } from '$lib/top-vaults/inline-data';
+import { loadVaultListing } from '$lib/server/top-vaults/listing';
 import {
 	calculateTotalTvl,
 	calculateTvlWeightedApy,
@@ -9,7 +9,7 @@ import {
 	withVaultCurrentTvlUsd
 } from '$lib/top-vaults/helpers.js';
 
-export async function load({ params, fetch }) {
+export async function load({ params, fetch, url }) {
 	const { curator } = params;
 	const topVaults = await getCachedTopVaults(fetch);
 	const { vaults, curators } = topVaults;
@@ -31,10 +31,6 @@ export async function load({ params, fetch }) {
 		vaultCount: eligibleVaults.length,
 		tvl,
 		averageApy,
-		totalVaultCount: vaults.length,
-		initialTopVaults: getInlineVaultListing(
-			topVaults,
-			vaults.filter((vault) => vault.curator_slug === curator)
-		)
+		...(await loadVaultListing(fetch, url, 'curator', curator))
 	};
 }
