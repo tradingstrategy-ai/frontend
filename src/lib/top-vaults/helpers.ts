@@ -556,12 +556,13 @@ export function getFormattedLockup({ lockup: seconds }: VaultInfo): string {
 }
 
 /**
- * Return a tooltip string describing the vault's deposit acceptance and lockup period.
+ * Return a tooltip string describing only the vault's lockup period.
+ *
+ * This deliberately does not make a claim about whether deposits are currently available.
  */
-export function getLockupTooltip({ lockup }: Pick<VaultInfo, 'lockup'>): string {
+export function getLockupDescription({ lockup }: Pick<VaultInfo, 'lockup'>): string {
 	if (lockup == null) return 'This vault is unlikely to have any standard lockup mechanism.';
-	if (lockup <= 0)
-		return 'This vault currently accepts deposits. This vault should allow instant redemptions under normal conditions.';
+	if (lockup <= 0) return 'This vault should allow instant redemptions under normal conditions.';
 
 	const hours = lockup / 3600;
 	const days = Math.floor(hours / 24);
@@ -573,7 +574,14 @@ export function getLockupTooltip({ lockup }: Pick<VaultInfo, 'lockup'>): string 
 	if (remainderHours > 0) parts.push(`${remainderHours} ${remainderHours === 1 ? 'hour' : 'hours'}`);
 	if (parts.length === 0 && minutes > 0) parts.push(`${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`);
 
-	return `This vault currently accepts deposits. Deposits have ${parts.join(', ')} lockup.`;
+	return `Deposits have ${parts.join(', ')} lockup.`;
+}
+
+/**
+ * Return a tooltip string for a vault that accepts public deposits under normal conditions.
+ */
+export function getLockupTooltip(vault: Pick<VaultInfo, 'lockup'>): string {
+	return `This vault currently accepts deposits. ${getLockupDescription(vault)}`;
 }
 
 /**

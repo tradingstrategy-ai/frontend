@@ -46,6 +46,18 @@ If R2 credentials are unavailable, each dataset can be configured with a direct 
 
 The response is parsed, validated against the Zod schema, and cached in memory with SWR (stale-while-revalidate) via `src/lib/top-vaults/cache.ts`.
 
+#### Whitelist status
+
+Each vault may include a `whitelist` object that records whether deposits are publicly available:
+
+| Status           | Meaning in the frontend                                                                                                              |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `whitelisted`    | The depositor needs permission. The vault is labelled **Private** and the detail page warns that it does not accept public deposits. |
+| `permissionless` | The vault accepts public deposits.                                                                                                   |
+| `unknown`        | The source could not determine the deposit-permission status.                                                                        |
+
+The frontend treats unrecognised source values as `unknown`, and preserves optional `whitelist.notes` in the vault's Technical details table.
+
 ### Vault prices parquet
 
 **Code:** `src/lib/top-vaults/vault-prices-parquet.ts` → `ensureVaultPricesParquet()`

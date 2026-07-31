@@ -143,4 +143,17 @@ describe('VaultMetrics', () => {
 		expect(screen.getAllByText(INTERNALISED_FEE_TOOLTIP)).toHaveLength(5);
 		expect(screen.getByText(INTERNALISED_FEE_DISCLAIMER)).toBeInTheDocument();
 	});
+
+	test('shows private instead of open for deposits that need whitelisting', () => {
+		const vault = createTestVault('Private vault', {
+			whitelist: { status: 'whitelisted', notes: null }
+		});
+
+		render(VaultMetrics, { props: { vault } });
+
+		expect(screen.getByText('Transaction status')).toBeInTheDocument();
+		const deposits = screen.getByText('Deposits').parentElement;
+		expect(deposits).toContainElement(screen.getByText('Private'));
+		expect(deposits).not.toHaveTextContent('Open');
+	});
 });

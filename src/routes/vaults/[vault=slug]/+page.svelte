@@ -1,3 +1,6 @@
+<!--
+Vault detail page with operational, private-deposit, and risk notices.
+-->
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { discordUrl } from '$lib/config';
@@ -40,6 +43,7 @@
 	let showBlacklistedAlert = $derived(blacklisted && !notesDuplicateMorphoFlags);
 	let showNotes = $derived(vault.notes != null && !notesDuplicateMorphoFlags);
 	let isTokenisedFund = $derived(vault.flags.includes('tokenised_fund'));
+	let isPrivate = $derived(vault.whitelist?.status === 'whitelisted');
 	let depositMayBeDisabled = $derived(vault.deposit_closed_reason != null);
 	let redemptionMayBeDisabled = $derived(vault.redemption_closed_reason != null);
 	let operationWarning = $derived(
@@ -66,26 +70,32 @@
 		<VaultListingsSelector />
 	</Section>
 
-	{#if operationWarning}
+	{#if operationWarning || isPrivate || morphoFlags.length > 0}
 		<Section padding="md">
-			{#if isTokenisedFund}
-				<Alert size="md" status="info">
-					{vault.name} is a tokenised fund. It is smart contract-based, but may not offer all features of vaults.
-					<a href={resolve('/glossary/tokenised-fund')}
-						>Read more about the differences between vaults and tokenised funds here.</a
-					>
-				</Alert>
-			{:else}
-				<Alert size="md" status="warning">{operationWarning}</Alert>
-			{/if}
-		</Section>
-	{/if}
+			<div class="notification-stack">
+				{#if isTokenisedFund && (operationWarning || isPrivate)}
+					<Alert size="md" status="info">
+						{vault.name} is a tokenised fund. It is smart contract-based, but may not offer all features of vaults.
+						<a href={resolve('/glossary/tokenised-fund')}
+							>Read more about the differences between vaults and tokenised funds here.</a
+						>
+					</Alert>
+				{:else if operationWarning}
+					<Alert size="md" status="warning">{operationWarning}</Alert>
+				{/if}
 
-	{#if morphoFlags.length > 0}
-		<Section padding="md">
-			<Alert size="md" status={morphoAlertStatus} title="Morpho has flagged this vault">
-				{morphoFlags.join(', ')}
-			</Alert>
+				{#if isPrivate && !isTokenisedFund}
+					<Alert size="md" status="warning"
+						>This is a permissioned vault and is not accepting deposits from outsiders</Alert
+					>
+				{/if}
+
+				{#if morphoFlags.length > 0}
+					<Alert size="md" status={morphoAlertStatus} title="Morpho has flagged this vault">
+						{morphoFlags.join(', ')}
+					</Alert>
+				{/if}
+			</div>
 		</Section>
 	{/if}
 
@@ -181,6 +191,11 @@
 				display: none;
 			}
 		}
+	}
+
+	.notification-stack {
+		display: grid;
+		gap: var(--space-md);
 	}
 
 	:global(:is(.description, .notes)) {

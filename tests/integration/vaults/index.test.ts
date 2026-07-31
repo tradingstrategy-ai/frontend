@@ -423,4 +423,33 @@ test.describe('vault index page', () => {
 		await expect(alert).toBeVisible();
 		await expect(alert).toContainText('Deposits and withdrawals may be disabled for this vault');
 	});
+
+	test('marks private vaults and explains their whitelist status', async ({ page }) => {
+		await page.goto('/vaults/all');
+		await searchVault(page, 'Private vault');
+
+		const cell = page.locator('tbody tr.targetable').filter({ hasText: 'Private vault' }).locator('td.lockup');
+		await expect(cell).toContainText('Private');
+		const tooltip = cell.locator('.tooltip');
+		await tooltip.hover();
+		await expect(tooltip.locator('.popup')).toContainText('This vault does not accept public deposits.');
+
+		await page.goto('/vaults/private-vault');
+		await expect(page.locator('.alert-list.warning').first()).toContainText(
+			'This is a permissioned vault and is not accepting deposits from outsiders'
+		);
+		const technicalDetails = page.getByText('Whitelist status', { exact: true }).locator('..');
+		await expect(technicalDetails).toContainText('Whitelisted');
+		await expect(page.getByText('Whitelist notes', { exact: true }).locator('..')).toContainText(
+			'Whitelist checks are handled by the vault'
+		);
+	});
+
+	test('shows the tokenised-fund disclaimer instead of the permissioned warning', async ({ page }) => {
+		await page.goto('/vaults/private-tokenised-fund');
+		await expect(page.locator('.notification-stack .alert-list.info')).toContainText(
+			'Private tokenised fund is a tokenised fund'
+		);
+		await expect(page.locator('.notification-stack .alert-list.warning')).toHaveCount(0);
+	});
 });
