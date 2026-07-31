@@ -22,7 +22,7 @@ test.describe('pricing page', () => {
 
 	test('shows Free and Pro tier cards', async ({ page }) => {
 		await expect(page.getByRole('heading', { name: 'Free' })).toBeVisible();
-		await expect(page.getByRole('heading', { name: 'Pro' })).toBeVisible();
+		await expect(page.getByRole('heading', { name: 'Pro', exact: true })).toBeVisible();
 	});
 
 	test('Pro tier shows $199/month price', async ({ page }) => {
