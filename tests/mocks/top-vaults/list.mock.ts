@@ -95,6 +95,15 @@ const aboveTvl = generateMockVaults('Above TVL', 246, {
 	}
 });
 
+// Keep these below the normal $10k threshold so existing vault-index fixtures
+// retain their counts. The progressive-scroll test opts into TVL "Any".
+const progressiveScrollVaults = generateMockVaults('Progressive scroll vault', 500, {
+	current_nav: 1_000,
+	peak_nav: 1_000,
+	one_month_cagr: 0.05,
+	three_months_cagr: 0.08
+});
+
 const returnLeaders = [
 	createTestVault('Return leader alpha', {
 		chain: 'ethereum',
@@ -545,7 +554,8 @@ export default defineMock({
 			...parquetMatchedVaults,
 			...returnLeaders,
 			...belowTvl,
-			...aboveTvl
+			...aboveTvl,
+			...progressiveScrollVaults
 		]
 	}
 });
