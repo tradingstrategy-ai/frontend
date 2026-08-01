@@ -4,7 +4,7 @@ import { fetchVaultProtocolMetadata } from '$lib/vault-protocol/client';
 import { error, redirect } from '@sveltejs/kit';
 
 const FETCH_TIMEOUT_MS = 5000;
-const VAULT_ID_PATTERN = /^[a-zA-Z0-9_-]+$/;
+const VAULT_ID_PATTERN = /^[a-zA-Z0-9:_-]+$/;
 
 /** Return whether an image fallback is served by this application. */
 function isLocalFallbackUrl(fallbackUrl: URL, requestUrl: URL): boolean {

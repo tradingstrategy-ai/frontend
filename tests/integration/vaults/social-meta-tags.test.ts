@@ -38,7 +38,7 @@ async function getImageDimensions(page: Page, src: string) {
 	);
 }
 
-async function imageHasNonWhitePixel(page: Page, src: string) {
+async function imageHasCardContent(page: Page, src: string) {
 	return page.evaluate(
 		(imageSrc) =>
 			new Promise<boolean>((resolve, reject) => {
@@ -52,7 +52,8 @@ async function imageHasNonWhitePixel(page: Page, src: string) {
 					context.drawImage(image, 0, 0);
 					const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
 					for (let index = 0; index < pixels.length; index += 4) {
-						if (pixels[index] !== 255 || pixels[index + 1] !== 255 || pixels[index + 2] !== 255) return resolve(true);
+						const [red, green, blue] = [pixels[index], pixels[index + 1], pixels[index + 2]];
+						if (Math.max(Math.abs(red - 23), Math.abs(green - 37), Math.abs(blue - 84)) > 8) return resolve(true);
 					}
 					resolve(false);
 				};
@@ -85,6 +86,7 @@ test.describe('vault social meta tags', () => {
 			const src = await page.locator('meta[property="og:image"]').getAttribute('content');
 
 			expect(await getImageDimensions(page, src!)).toEqual({ width: 1200, height: 630 });
+			expect(await imageHasCardContent(page, src!)).toBe(true);
 		});
 
 		test('has twitter card meta tags', async ({ page }) => {
@@ -268,6 +270,14 @@ test.describe('vault social meta tags', () => {
 			expect(response.status()).toBe(400);
 		});
 
+		test('serves sparklines for colon-containing vault IDs', async ({ page }) => {
+			const response = await page.request.get(
+				'/social-card/vault/325-vlt%3Atest?fallback=/social-card/trading-strategy'
+			);
+
+			expect(response.headers()['content-type']).toMatch(/^image\/png/);
+		});
+
 		test('uses a curator logo on a curator listing', async ({ page }) => {
 			await page.goto('/vaults/curators/steakhouse-financial');
 
@@ -289,12 +299,12 @@ test.describe('vault social meta tags', () => {
 			expect(await getImageDimensions(page, src!)).toEqual({ width: 1200, height: 630 });
 		});
 
-		test('renders white blockchain logos on a visible card background', async ({ page }) => {
-			await page.goto('/vaults/chains/lighter');
-			await expectSocialCardImage(page, /\/social-card\/blockchain\/lighter$/);
+		test('renders dark blockchain logos with visible card content', async ({ page }) => {
+			await page.goto('/vaults/chains/megaeth');
+			await expectSocialCardImage(page, /\/social-card\/blockchain\/megaeth$/);
 			const src = await page.locator('meta[property="og:image"]').getAttribute('content');
 
-			expect(await imageHasNonWhitePixel(page, src!)).toBe(true);
+			expect(await imageHasCardContent(page, src!)).toBe(true);
 		});
 	});
 
