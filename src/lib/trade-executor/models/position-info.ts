@@ -13,6 +13,9 @@ import type { TimeBucket } from '$lib/schemas/utility';
 import { type TradeDirection, TradeDirections } from './trade-info';
 import { isNumber } from '$lib/helpers/formatters';
 
+const DUST_POSITION_VALUE_THRESHOLD_USD = 2;
+const MIN_RESIDUAL_QUANTITY = 1e-12;
+
 export const createTradingPositionInfo = <T extends TradingPosition>(base: T, stats: PositionStatistics[] = []) => ({
 	...base,
 
@@ -133,6 +136,43 @@ export const createTradingPositionInfo = <T extends TradingPosition>(base: T, st
 	 */
 	get valueAtPeak() {
 		return Math.max(...this.stats.map((s) => s.value));
+	},
+
+	get hasDustNote() {
+		const hasPositionDustNote = /dust/i.test(this.notes ?? '');
+		const hasTradeDustNote = this.trades.some((trade) => /dust/i.test(trade.notes ?? ''));
+		return hasPositionDustNote || hasTradeDustNote;
+	},
+
+	get latestQuantity() {
+		return this.latestStats?.quantity;
+	},
+
+	get latestRecordedValue() {
+		return this.latestStats?.value;
+	},
+
+	get latestNominalValue() {
+		if (isNumber(this.latestQuantity) && isNumber(this.last_token_price)) {
+			return Math.abs(this.latestQuantity * this.last_token_price);
+		}
+	},
+
+	get hasResidualQuantity() {
+		return isNumber(this.latestQuantity) && Math.abs(this.latestQuantity) > MIN_RESIDUAL_QUANTITY;
+	},
+
+	get isDustPositionWarning() {
+		if (this.hasDustNote) return true;
+		if (!this.hasResidualQuantity) return false;
+
+		const latestRecordedValue = isNumber(this.latestRecordedValue) ? Math.abs(this.latestRecordedValue) : undefined;
+		const latestNominalValue = this.latestNominalValue;
+
+		return (
+			(isNumber(latestRecordedValue) && latestRecordedValue <= DUST_POSITION_VALUE_THRESHOLD_USD) ||
+			(isNumber(latestNominalValue) && latestNominalValue <= DUST_POSITION_VALUE_THRESHOLD_USD)
+		);
 	},
 
 	get quantityAtOpen() {

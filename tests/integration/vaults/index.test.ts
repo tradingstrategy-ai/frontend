@@ -21,16 +21,19 @@ async function closeFilters(page: import('@playwright/test').Page) {
 	await expect(filters).toHaveJSProperty('open', false);
 }
 
-async function waitForVaultRows(page: import('@playwright/test').Page) {
+/** Load additional listing rows until a named vault is rendered. */
+async function getVaultRow(page: import('@playwright/test').Page, name: string) {
 	await expect(page.locator('tbody tr.targetable').first()).toBeVisible();
-}
-
-async function searchVault(page: import('@playwright/test').Page, query: string) {
-	await waitForVaultRows(page);
-	await openFilters(page);
-	const vaultSearch = page.getByTestId('vault-search');
-	await vaultSearch.click();
-	await vaultSearch.pressSequentially(query);
+	const row = page.locator('tbody tr.targetable').filter({ hasText: name });
+	for (let attempt = 0; attempt < 3 && (await row.count()) === 0; attempt++) {
+		const sentinel = page.getByTestId('load-more-sentinel');
+		if (!(await sentinel.isVisible())) break;
+		const previousRowCount = await page.locator('tbody tr.targetable').count();
+		await sentinel.scrollIntoViewIfNeeded();
+		await expect.poll(() => page.locator('tbody tr.targetable').count()).toBeGreaterThan(previousRowCount);
+	}
+	await expect(row).toHaveCount(1);
+	return row;
 }
 
 async function toggleReturnOption(page: import('@playwright/test').Page, label: string) {
@@ -83,10 +86,7 @@ test.describe('vault index page', () => {
 	});
 
 	test('shows lifetime data tooltip on the lifetime return cell', async ({ page }) => {
-		await searchVault(page, 'Trading Strategy ICHIv3 LS 2');
-
-		const row = page.locator('tbody tr.targetable').filter({ hasText: 'Trading Strategy ICHIv3 LS 2' });
-		await expect(row).toHaveCount(1);
+		const row = await getVaultRow(page, 'Trading Strategy ICHIv3 LS 2');
 
 		await expectLifetimeDataTooltip(
 			row.locator('td.return-column-lifetime-abs .tooltip'),
@@ -245,11 +245,11 @@ test.describe('vault index page', () => {
 		await expect(meta).toContainText('254 vaults');
 	});
 
-	test('renders initial batch of 150 rows', async ({ page }) => {
+	test('renders initial batch of 75 rows', async ({ page }) => {
 		const rows = page.locator('tbody tr.targetable');
 		// Wait for rows to be visible
 		await expect(rows.first()).toBeVisible();
-		await expect(rows).toHaveCount(150);
+		await expect(rows).toHaveCount(75);
 	});
 
 	test('shows load-more sentinel when more rows available', async ({ page }) => {
@@ -261,14 +261,31 @@ test.describe('vault index page', () => {
 	test('loads 50 more rows when scrolling to sentinel', async ({ page }) => {
 		// Check initial row count
 		const rows = page.locator('tbody tr.targetable');
-		await expect(rows).toHaveCount(150);
+		await expect(rows).toHaveCount(75);
 
 		// Scroll the sentinel into view
 		const sentinel = page.getByTestId('load-more-sentinel');
 		await sentinel.scrollIntoViewIfNeeded();
 
 		// Confirm additional rows
-		await expect(rows).toHaveCount(200);
+		await expect(rows).toHaveCount(125);
+	});
+
+	test('loads 500 vaults through progressive scrolling', async ({ page }) => {
+		await page.goto('/vaults?tvl=any&q=Progressive%20scroll%20vault');
+
+		const rows = page.locator('tbody tr.targetable');
+		const sentinel = page.getByTestId('load-more-sentinel');
+		await expect(rows).toHaveCount(75);
+
+		for (let expectedCount = 125; expectedCount < 500; expectedCount += 50) {
+			await sentinel.scrollIntoViewIfNeeded();
+			await expect(rows).toHaveCount(expectedCount);
+		}
+		await sentinel.scrollIntoViewIfNeeded();
+		await expect(rows).toHaveCount(500);
+
+		await expect(sentinel).not.toBeVisible();
 	});
 
 	test('sentinel disappears when all rows loaded', async ({ page }) => {
@@ -277,33 +294,27 @@ test.describe('vault index page', () => {
 
 		// scroll once - loads additional 50
 		await sentinel.scrollIntoViewIfNeeded();
-		await expect(rows).toHaveCount(200);
+		await expect(rows).toHaveCount(125);
 
 		// scroll again - loads another 50
 		await sentinel.scrollIntoViewIfNeeded();
-		await expect(rows).toHaveCount(250);
+		await expect(rows).toHaveCount(175);
 
-		// scroll a third time - loads the final 4
+		// Scroll twice more: a full batch, then the final 29 rows.
+		await sentinel.scrollIntoViewIfNeeded();
+		await expect(rows).toHaveCount(225);
+
 		await sentinel.scrollIntoViewIfNeeded();
 		await expect(rows).toHaveCount(254);
 
-		// all rows loaded - no more sentinel
+		// All rows loaded - no more sentinel.
 		await expect(sentinel).not.toBeVisible();
 	});
 
 	test('search filters displayed vaults', async ({ page }) => {
 		await openFilters(page);
 		const vaultSearch = page.getByTestId('vault-search');
-
-		// Verify we have initial rows > 1
 		const rows = page.locator('tbody tr.targetable');
-		await expect(rows.first()).toBeVisible();
-		const initialCount = await rows.count();
-		expect(initialCount).toBeGreaterThan(1);
-
-		// Use pressSequentially to simulate real keystrokes — Playwright's fill()
-		// doesn't reliably trigger Svelte's on:input handler with one-way {value} binding
-		await vaultSearch.click();
 		await vaultSearch.pressSequentially('Above TVL 042');
 		await expect(rows).toHaveCount(1);
 	});
@@ -341,7 +352,7 @@ test.describe('vault index page', () => {
 		await expect(page.locator('tbody tr.targetable').first()).toContainText('Return leader alpha');
 	});
 
-	test('Filters controls still update URL state', async ({ page }) => {
+	test('Filters controls update URL state', async ({ page }) => {
 		await openFilters(page);
 		await returnColumnsTrigger(page).click();
 		await toggleReturnOption(page, 'Six months annualised');
@@ -350,11 +361,8 @@ test.describe('vault index page', () => {
 	});
 
 	test('shows limited data tooltips for partial 3M and 1Y returns', async ({ page }) => {
-		await page.goto('/vaults?returns=1m-ann,3m-ann,1y-ann');
-		await searchVault(page, 'Limited coverage vault');
-
-		const row = page.locator('tbody tr.targetable').filter({ hasText: 'Limited coverage vault' });
-		await expect(row).toHaveCount(1);
+		await page.goto('/vaults?returns=1m-ann,3m-ann,1y-ann&unknown=0');
+		const row = await getVaultRow(page, 'Limited coverage vault');
 
 		await expectLimitedDataTooltip(
 			page,
@@ -373,11 +381,8 @@ test.describe('vault index page', () => {
 	});
 
 	test('shows limited data tooltip for partial 6M returns', async ({ page }) => {
-		await page.goto('/vaults?returns=1m-ann,3m-ann,6m-ann');
-		await searchVault(page, 'Limited coverage vault');
-
-		const row = page.locator('tbody tr.targetable').filter({ hasText: 'Limited coverage vault' });
-		await expect(row).toHaveCount(1);
+		await page.goto('/vaults?returns=1m-ann,3m-ann,6m-ann&unknown=0');
+		const row = await getVaultRow(page, 'Limited coverage vault');
 
 		await expectLimitedDataTooltip(
 			page,

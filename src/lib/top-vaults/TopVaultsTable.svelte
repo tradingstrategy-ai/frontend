@@ -1,12 +1,16 @@
+<!--
+@component
+Interactive vault listing with filters, sorting, and progressive row loading.
+
+Use `ratingProvider` to add its risk-rating column beside the vault name.
+-->
 <script lang="ts">
-	/**
-	 * Table component for displaying top DeFi vaults with sorting, filtering, and infinite scroll.
-	 * Used on /vaults and chain-specific vault pages.
-	 */
 	import type { Chain } from '$lib/helpers/chain';
 	import type { TopVaults, VaultInfo } from './schemas';
+	import type { RiskRatingProvider } from './risk-rating-providers';
 	import type { ParamSchema } from '$lib/helpers/url-search-state';
 	import { onMount, untrack } from 'svelte';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { inview } from 'svelte-inview';
@@ -17,7 +21,9 @@
 	import TextInput from '$lib/components/TextInput.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
+	import Spinner from '$lib/components/Spinner.svelte';
 	import ChainCell from './ChainCell.svelte';
+	import Core3RiskCell from './Core3RiskCell.svelte';
 	import FeesCell from './FeesCell.svelte';
 	import RiskCell from './RiskCell.svelte';
 	import VaultSparkline from './VaultSparkline.svelte';
@@ -43,6 +49,7 @@
 		calculateTvlWeightedApy,
 		ddFilterOptions,
 		getFormattedLockup,
+		getCore3PolForVault,
 		getLockupTooltip,
 		getLifetimeMaxDrawdown,
 		getMonthlyReturn,
@@ -78,9 +85,9 @@
 		type ReturnColumnDefinition,
 		type ReturnColumnId
 	} from './return-columns';
+	import { sortVaults } from './listing/query';
+	import { INITIAL_VAULT_LISTING_LIMIT, VAULT_LISTING_PAGE_SIZE, type VaultListingSummary } from './listing/types';
 
-	const INITIAL_ROW_COUNT = 150;
-	const ROW_BATCH_SIZE = 50;
 	const allVaultsPath = resolve('/vaults/all');
 	const filtersOpenStorageKey = 'top-vaults-filters-open';
 	const filterSearchParamKeys = ['tvl', 'age', 'risk', 'q', 'closed', 'unknown', 'dd', 'mr', 'returns'] as const;
@@ -132,6 +139,12 @@
 		maxSummaryTvlUsd?: number;
 		/** Do not visually strike through blacklisted vault rows. */
 		disableBlacklistedStrikethrough?: boolean;
+		/** Show a third-party risk rating column immediately after the vault name. */
+		ratingProvider?: RiskRatingProvider;
+		progressive?: boolean;
+		listingKey?: string;
+		listingScope?: string;
+		listingSummary?: VaultListingSummary;
 	}
 
 	const emptyTopVaults: TopVaults = {
@@ -164,13 +177,48 @@
 		totalVaultCount: totalVaultCountProp,
 		includeBlacklistedInStats = false,
 		maxSummaryTvlUsd,
-		disableBlacklistedStrikethrough = false
+		disableBlacklistedStrikethrough = false,
+		ratingProvider,
+		progressive = false,
+		listingKey = 'top',
+		listingScope,
+		listingSummary
 	}: Props = $props();
+	let accumulatedVaults = $state<VaultInfo[]>(topVaults.vaults);
+	let remoteHasMore = $state(progressive);
+	let remoteLoading = $state(false);
+	let remoteOffset = $state(topVaults.vaults.length);
+	$effect(() => {
+		accumulatedVaults = topVaults.vaults;
+		remoteOffset = topVaults.vaults.length;
+		remoteHasMore = progressive;
+	});
 
 	// --- Sort column registry (key → compareFn + default direction) ---
 
 	function stringCompare(fn: (v: VaultInfo) => string) {
 		return (a: VaultInfo, b: VaultInfo) => fn(a).localeCompare(fn(b));
+	}
+
+	function getProviderRiskScore(vault: VaultInfo): number | null {
+		if (ratingProvider === 'xerberus') return vault.xerberus?.score ?? null;
+		if (ratingProvider === 'core3') return getCore3PolForVault(vault, topVaults.core3_protocols)?.score ?? null;
+		return null;
+	}
+
+	function getXerberusRiskRating(vault: VaultInfo): string {
+		const score = vault.xerberus?.score;
+		if (score == null) return notFilledMarker;
+		return formatNumber(score, 0, 0);
+	}
+
+	function compareProviderRiskRatings(a: VaultInfo, b: VaultInfo): number {
+		const aScore = getProviderRiskScore(a);
+		const bScore = getProviderRiskScore(b);
+		if (aScore == null && bScore == null) return 0;
+
+		const missingScore = ratingProvider === 'xerberus' ? -Infinity : Infinity;
+		return (aScore ?? missingScore) - (bScore ?? missingScore);
 	}
 
 	const returnSortColumnMap = Object.fromEntries(
@@ -182,6 +230,16 @@
 			}
 		])
 	) as Record<ReturnColumnId, { defaultDirection: 'desc'; compareFn: SortOptions['compareFn'] }>;
+
+	// The provider is a page-level configuration and does not change after the table mounts.
+	const providerSortColumnMap: Record<
+		string,
+		{ defaultDirection: 'asc' | 'desc'; compareFn: SortOptions['compareFn'] }
+	> = untrack(() =>
+		ratingProvider
+			? { provider_risk_rating: { defaultDirection: 'asc' as const, compareFn: compareProviderRiskRatings } }
+			: {}
+	);
 
 	const sortColumnMap: Record<string, { defaultDirection: 'asc' | 'desc'; compareFn: SortOptions['compareFn'] }> = {
 		...returnSortColumnMap,
@@ -215,7 +273,8 @@
 		age: { defaultDirection: 'desc', compareFn: rankVaultsBy(['years']) },
 		fees: { defaultDirection: 'asc', compareFn: rankVaultsBy(['mgmt_fee', 'perf_fee'], Infinity) },
 		lockup: { defaultDirection: 'asc', compareFn: rankVaultsBy(['lockup'], Infinity) },
-		risk: { defaultDirection: 'asc', compareFn: rankVaultsBy(['risk_numeric'], Infinity) }
+		risk: { defaultDirection: 'asc', compareFn: rankVaultsBy(['risk_numeric'], Infinity) },
+		...providerSortColumnMap
 	};
 
 	// --- URL search state schema ---
@@ -317,10 +376,9 @@
 		hasLoadedFilterPreference = true;
 	});
 
-	// Text search: local state for responsive typing, synced to/from URL
+	// Text search: local state for responsive typing, synced to/from URL.
 	let filterValue = $state('');
 
-	// Sync filterValue from URL (handles initial load and popstate/back navigation)
 	$effect(() => {
 		const urlQ = urlState.q;
 		const current = untrack(() => filterValue);
@@ -329,7 +387,6 @@
 		}
 	});
 
-	// Debounce text search → URL sync
 	$effect(() => {
 		const value = filterValue;
 		const timer = setTimeout(() => {
@@ -375,6 +432,8 @@
 	});
 
 	let showChainCol = $derived(!chain);
+	let showProviderRiskRating = $derived(ratingProvider != null);
+	let showTechnicalRisk = $derived(ratingProvider == null);
 
 	let offsetWidth = $state<number>();
 
@@ -431,13 +490,13 @@
 		return currency != null && currency !== 'usd' ? true : isStablecoinDepegged(vault);
 	}
 
-	// filter out blacklisted vaults (unless includeBlacklisted, searching "blacklisted",
-	// or the risk dropdown includes blacklisted level)
+	// Filter out blacklisted vaults unless explicitly included, searched for, or selected by risk level.
 	let baseVaults = $derived.by(() => {
+		const sourceVaults = progressive ? accumulatedVaults : topVaults.vaults;
 		if (includeBlacklisted || filterValue.startsWith('blacklist') || selectedRisk.maxValue >= 999) {
-			return topVaults.vaults;
+			return sourceVaults;
 		}
-		return topVaults.vaults.filter((v) => !isBlacklisted(v));
+		return sourceVaults.filter((v) => !isBlacklisted(v));
 	});
 
 	/** Resolve the effective TVL threshold for a vault, accounting for chain overrides */
@@ -459,13 +518,13 @@
 	});
 
 	// Count of hidden vaults
-	let hiddenByTvl = $derived(hiddenVaults.length);
+	let hiddenByTvl = $derived(progressive && listingSummary ? listingSummary.hiddenByTvl : hiddenVaults.length);
 
 	// Total vault count for the listing meta — the whole-database count when
 	// provided by the page, otherwise the vaults available to this listing
 	let totalVaultCount = $derived(totalVaultCountProp ?? topVaults.vaults.length);
 
-	// Filter vaults matching all active filters (TVL, age, risk, search)
+	// Filter vaults matching all active listing filters.
 	let filteredVaults = $derived.by(() => {
 		const filterCompareStr = filterValue.trim().toLowerCase();
 		return baseVaults.filter((v) => {
@@ -530,8 +589,13 @@
 		});
 	});
 
-	// Uses filteredVaults so all
-	// active filters (TVL, age, risk, search) are reflected in the stats row.
+	// A progressive listing contains only its initial page here, while the server
+	// summary describes every vault matching the same filters.
+	let matchingVaultCount = $derived(
+		progressive && listingSummary ? listingSummary.matchingCount : filteredVaults.length
+	);
+
+	// Uses filteredVaults so all active listing filters are reflected in the stats row.
 	let statsVaults = $derived(
 		includeBlacklistedInStats ? filteredVaults : filteredVaults.filter((v) => !isBlacklisted(v))
 	);
@@ -544,7 +608,11 @@
 	);
 
 	// Calculate total TVL from fully-filtered vaults
-	let totalTvl = $derived(calculateTotalTvl(statsVaultsWithTvl, { maxTvlUsd: maxSummaryTvlUsd }));
+	let totalTvl = $derived(
+		progressive && listingSummary
+			? listingSummary.totalTvl
+			: calculateTotalTvl(statsVaultsWithTvl, { maxTvlUsd: maxSummaryTvlUsd })
+	);
 
 	// Calculate TVL-weighted average 1M APY from fully-filtered vaults
 	let avgTvlWeightedApy1M = $derived(
@@ -556,6 +624,8 @@
 
 	// sort vaults
 	let sortedVaults = $derived.by(() => {
+		if (progressive && sortOptions.key !== 'provider_risk_rating')
+			return sortVaults(filteredVaults, sortOptions.key, sortOptions.direction);
 		const sorted = filteredVaults.toSorted(sortOptions.compareFn);
 		if (sortOptions.direction === 'desc') sorted.reverse();
 		return sorted;
@@ -565,9 +635,43 @@
 	// - limit the displayed vaults during initial render
 	// - track sortedVaults as dependency (reset to initial count when it changes)
 	// - progressively increemnt maxVisibleRows on-scroll (see load-more-sentinel)
-	let maxVisibleRows = $derived(sortedVaults && INITIAL_ROW_COUNT);
-	let visibleVaults = $derived(sortedVaults.slice(0, maxVisibleRows));
-	let hasMoreRows = $derived(maxVisibleRows < sortedVaults.length);
+	let maxVisibleRows = $state(INITIAL_VAULT_LISTING_LIMIT);
+	let visibleVaults = $derived(progressive ? sortedVaults : sortedVaults.slice(0, maxVisibleRows));
+	let hasMoreRows = $derived(progressive ? remoteHasMore : maxVisibleRows < sortedVaults.length);
+
+	async function loadMore() {
+		if (!progressive) {
+			maxVisibleRows += VAULT_LISTING_PAGE_SIZE;
+			return;
+		}
+		if (remoteLoading || !remoteHasMore) return;
+		remoteLoading = true;
+		try {
+			const params = new SvelteURLSearchParams(page.url.searchParams);
+			params.set('listing', listingKey);
+			if (listingScope) params.set('scope', listingScope);
+			params.set('offset', String(remoteOffset));
+			params.set('version', new Date(topVaults.generated_at).toISOString());
+			const response = await fetch(`/top-vaults/listing-data?${params}`);
+			if (response.status === 409) {
+				await goto(resolve(`${page.url.pathname}${page.url.search}`), {
+					invalidateAll: true,
+					replaceState: true,
+					noScroll: true,
+					keepFocus: true
+				});
+				return;
+			}
+			if (!response.ok) throw new Error(`Vault listing continuation failed: ${response.status}`);
+			const next = (await response.json()) as { vaults: VaultInfo[]; nextOffset: number; hasMore: boolean };
+			const seen = new Set(accumulatedVaults.map((vault) => vault.id));
+			accumulatedVaults = [...accumulatedVaults, ...next.vaults.filter((vault) => !seen.has(vault.id))];
+			remoteOffset = next.nextOffset;
+			remoteHasMore = next.hasMore;
+		} finally {
+			remoteLoading = false;
+		}
+	}
 
 	function sortBy(key: SortOptions['key'], defaultDirection: SortOptions['direction']) {
 		let direction = defaultDirection;
@@ -700,6 +804,27 @@
 	</td>
 {/snippet}
 
+{#snippet providerRiskRatingCell(vault: VaultInfo)}
+	{#if ratingProvider === 'core3'}
+		<!-- Reuse the protocol-list grade and tone treatment for consistency. -->
+		<Core3RiskCell rating={getCore3PolForVault(vault, topVaults.core3_protocols)?.rating} slug={vault.protocol_slug} />
+	{:else}
+		<Tooltip>
+			<span slot="trigger" class="risk-rating-value">{getXerberusRiskRating(vault)}</span>
+			<svelte:fragment slot="popup">
+				{#if vault.xerberus?.entity_type === 'pool'}
+					<p>Xerberus scored this vault directly on a 0–100 scale. Higher scores indicate lower estimated risk.</p>
+				{:else}
+					<p>
+						Xerberus scored this vault's underlying protocol on a 0–100 scale. Higher scores indicate lower estimated
+						risk.
+					</p>
+				{/if}
+			</svelte:fragment>
+		</Tooltip>
+	{/if}
+{/snippet}
+
 {#snippet tvlValues(vault: VaultInfo)}
 	<div class="multiline multival">
 		<span class="primary">{formatTvl(getVaultCurrentTvlUsd(vault))}</span>
@@ -732,7 +857,7 @@
 		<div class="table-stats" class:hidden={loading} data-testid="top-vaults-meta">
 			<Tooltip>
 				<svelte:fragment slot="trigger"
-					>{filteredVaults.length} vaults{#if totalVaultCount > filteredVaults.length}
+					>{matchingVaultCount} vaults{#if totalVaultCount > matchingVaultCount}
 						<span>&nbsp;out of {totalVaultCount}</span>{/if}</svelte:fragment
 				>
 				<svelte:fragment slot="popup"
@@ -1050,7 +1175,12 @@
 
 	<div class="table-wrapper">
 		<!-- --table-width needed for proper tr.targetable styling  -->
-		<table bind:offsetWidth style:--table-width="{offsetWidth}px" class:loading>
+		<table
+			bind:offsetWidth
+			style:--table-width="{offsetWidth}px"
+			class:loading
+			class:with-rating={showProviderRiskRating}
+		>
 			<thead>
 				<tr>
 					<th class="index"></th>
@@ -1058,6 +1188,9 @@
 						{@render sortColHeader('', 'chain', 'asc')}
 					{/if}
 					{@render sortColHeader('Vault', 'vault', 'asc')}
+					{#if showProviderRiskRating}
+						{@render sortColHeader('Risk', 'provider_risk_rating', ratingProvider === 'xerberus' ? 'desc' : 'asc')}
+					{/if}
 					{#each selectedReturnColumns as column (column.id)}
 						{@render sortColHeader(column.headerLabel, column.id, column.sortDirection)}
 					{/each}
@@ -1069,7 +1202,9 @@
 					{@render sortColHeader('Age (y)', 'age', 'desc')}
 					{@render sortColHeader('Fees<br />(mgmt/&ZeroWidthSpace;perf)', 'fees', 'asc')}
 					{@render sortColHeader('Deposit and delays', 'lockup', 'asc')}
-					{@render sortColHeader('Protocol Technical Risk', 'risk', 'asc')}
+					{#if showTechnicalRisk}
+						{@render sortColHeader('Protocol Technical Risk', 'risk', 'asc')}
+					{/if}
 					<th class="sparkline">3M price</th>
 				</tr>
 			</thead>
@@ -1080,6 +1215,7 @@
 							<td class="index"></td>
 							{#if showChainCol}<td class="chain"></td>{/if}
 							<td class="vault"></td>
+							{#if showProviderRiskRating}<td class="risk-rating right"></td>{/if}
 							{#each selectedReturnColumns as column (column.id)}
 								<td class={`${getReturnCellClass(column)} right`}></td>
 							{/each}
@@ -1091,7 +1227,7 @@
 							<td class="age right"></td>
 							<td class="fees right"></td>
 							<td class="lockup"></td>
-							<td class="risk"></td>
+							{#if showTechnicalRisk}<td class="risk"></td>{/if}
 							<td class="sparkline"></td>
 						</tr>
 					{/each}
@@ -1120,6 +1256,9 @@
 								{/if}
 							</div>
 						</td>
+						{#if showProviderRiskRating}
+							<td class="risk-rating right">{@render providerRiskRatingCell(vault)}</td>
+						{/if}
 						{#each selectedReturnColumns as column (column.id)}
 							{@render returnColumnCell(vault, column)}
 						{/each}
@@ -1186,9 +1325,11 @@
 								</Tooltip>
 							{/if}
 						</td>
-						<td class="risk">
-							<RiskCell risk={vault.risk} />
-						</td>
+						{#if showTechnicalRisk}
+							<td class="risk">
+								<RiskCell risk={vault.risk} />
+							</td>
+						{/if}
 						<td class="sparkline">
 							<VaultSparkline {vault} />
 							<TargetableLink label="View {vault.name} details" href={resolveVaultDetails(vault)} class="row-link" />
@@ -1197,9 +1338,10 @@
 				{/each}
 				{#if hasMoreRows}
 					<tr class="load-more-sentinel" data-testid="load-more-sentinel">
-						<td colspan={12 + selectedReturnColumns.length + (showChainCol ? 1 : 0)}>
-							<div use:inview={{ rootMargin: '300px' }} oninview_enter={() => (maxVisibleRows += ROW_BATCH_SIZE)}>
-								Loading more vaults... ({maxVisibleRows} of {sortedVaults.length})
+						<td colspan={12 + selectedReturnColumns.length + (showChainCol ? 1 : 0) + (showProviderRiskRating ? 1 : 0)}>
+							<div use:inview={{ rootMargin: '300px' }} oninview_enter={loadMore}>
+								<Spinner size="18" /> Loading more vaults... ({visibleVaults.length}{#if !progressive}
+									of {sortedVaults.length}{/if})
 							</div>
 						</td>
 					</tr>
@@ -1550,6 +1692,15 @@
 				}
 			}
 
+			&.with-rating {
+				width: 92rem;
+
+				@media (--viewport-sm-down) {
+					width: 65.5rem;
+					min-width: 65.5rem;
+				}
+			}
+
 			:is(td, th) {
 				vertical-align: top;
 			}
@@ -1736,6 +1887,28 @@
 				@media (--viewport-sm-down) {
 					width: 10rem;
 					max-width: 10rem;
+				}
+			}
+
+			/* Apply the fixed width to both the cells and its sortable header. */
+			:is(.risk-rating, .provider_risk_rating) {
+				width: 4.5rem;
+				min-width: 4.5rem;
+			}
+
+			.risk-rating {
+				/* The tooltip trigger only appears in body cells. */
+				.risk-rating-value {
+					white-space: nowrap;
+					text-decoration: underline;
+					text-decoration-style: dashed;
+					text-underline-offset: 0.2em;
+					cursor: help;
+				}
+
+				:global(.popup) {
+					right: 0;
+					width: min(20rem, 80vw);
 				}
 			}
 

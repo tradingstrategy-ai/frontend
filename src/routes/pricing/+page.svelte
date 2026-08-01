@@ -147,17 +147,14 @@ Pricing page with Basic and Pro tier comparison
 </script>
 
 <svelte:head>
-	<title>Vault data pricing</title>
-	<meta
-		name="description"
-		content="Compare Trading Strategy pricing plans. Free Basic tier with 1000+ stablecoin vaults, or Pro at $199/month with API access and developer support."
-	/>
+	<title>DeFi vault API and datasets</title>
+	<meta name="description" content="Download datasets for vault analysis" />
 </svelte:head>
 
 <main>
 	<Section padding="md" gap="sm">
 		<header class="hero">
-			<h1>Vault data pricing</h1>
+			<h1>Professional vault data analytics</h1>
 			<p>The most comprehensive DeFi vault datasets and API</p>
 		</header>
 	</Section>

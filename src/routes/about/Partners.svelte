@@ -1,3 +1,7 @@
+<!--
+@component
+Display the current Trading Strategy partner logos.
+-->
 <script lang="ts">
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import AvalancheImage from '$lib/assets/partners/avalanche.svg?raw';
@@ -5,7 +9,6 @@
 	import TradingViewImage from '$lib/assets/partners/tradingview.svg?raw';
 	import InfinityVenturesImage from '$lib/assets/partners/infinity-ventures-crypto.svg?raw';
 	import MenthaPartnersImage from '$lib/assets/partners/mentha-partners.svg?raw';
-	import TypesenseImage from '$lib/assets/partners/typesense.svg?raw';
 	import TimescaleImage from '$lib/assets/partners/timescale.svg?raw';
 	import PetRockCapitalImage from '$lib/assets/partners/pet-rock-capital.svg?raw';
 	import RepublicCapitalImage from '$lib/assets/partners/republic-capital.svg?raw';
@@ -41,10 +44,6 @@
 
 		<a href="https://www.timescale.com/" target="_blank" style:width="220px">
 			{@html TimescaleImage}
-		</a>
-
-		<a href="https://typesense.org/" target="_blank" style:width="160px">
-			{@html TypesenseImage}
 		</a>
 
 		<Tooltip>
