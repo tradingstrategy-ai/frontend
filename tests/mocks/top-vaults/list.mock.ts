@@ -105,6 +105,23 @@ const progressiveScrollVaults = generateMockVaults('Progressive scroll vault', 5
 	three_months_cagr: 0.08
 });
 
+// These rows exercise the headline statistics used with progressive listings.
+// Keep them below the normal $50k threshold so they do not affect other vault
+// index fixtures. The regression test opts into TVL "Any".
+const summaryRegressionHighReturnVaults = generateMockVaults('Summary regression high return vault', 150, {
+	protocol: '<Summary regression protocol>',
+	current_nav: 1_000,
+	peak_nav: 1_000,
+	one_month_cagr: 1
+});
+
+const summaryRegressionAnchorVault = createTestVault('Summary regression large low return vault', {
+	protocol: '<Summary regression protocol>',
+	current_nav: 49_000,
+	peak_nav: 49_000,
+	one_month_cagr: 0.05
+});
+
 const returnLeaders = [
 	createTestVault('Return leader alpha', {
 		chain: 'ethereum',
@@ -560,7 +577,9 @@ export default defineMock({
 			...returnLeaders,
 			...belowTvl,
 			...aboveTvl,
-			...progressiveScrollVaults
+			...progressiveScrollVaults,
+			...summaryRegressionHighReturnVaults,
+			summaryRegressionAnchorVault
 		]
 	}
 });

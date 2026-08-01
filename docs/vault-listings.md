@@ -42,3 +42,10 @@ The server sends compact full-result aggregates with the first row batch.
 Listing counts, TVL, weighted returns, and SEO item counts must use those
 aggregates, not the initial 75 rows. Charts that need every member receive a
 separate, purpose-built payload rather than reusing table rows.
+
+Summary calculations use the same scope and filters as the listing. They omit
+blacklisted vaults by default, even on listings that display them; the dedicated
+blacklisted listing explicitly includes its matching vaults in its own summary.
+This keeps headline TVL and returns aligned with the established listing rules.
+The server resolves the cached US Treasury rate when that monthly-return filter
+is selected, so the initial batch and continuation requests apply the same rule.

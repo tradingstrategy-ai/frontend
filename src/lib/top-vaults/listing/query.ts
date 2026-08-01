@@ -21,7 +21,8 @@ import {
 	monthlyReturnFilterOptions,
 	rankVaultsBy,
 	riskFilterOptions,
-	tvlFilterOptions
+	tvlFilterOptions,
+	withVaultCurrentTvlUsd
 } from '../helpers';
 import { compareVaultsByReturn, type ReturnColumnId } from '../return-columns';
 
@@ -179,17 +180,15 @@ export function queryVaultListing(
 			? matchesWithoutTvl.filter((vault) => (getVaultCurrentTvlUsd(vault) ?? 0) >= threshold(vault))
 			: matchesWithoutTvl;
 	const stats = options.includeBlacklistedInStats ? matches : matches.filter((vault) => !isBlacklisted(vault));
+	const statsWithUsdTvl = stats.map(withVaultCurrentTvlUsd);
 	return {
 		vaults: sortVaults(matches, query.sort, query.direction),
 		hiddenByTvl: hiddenVaults.length,
 		hiddenVaults,
-		totalTvl: calculateTotalTvl(
-			stats.map((vault) => ({ ...vault, current_nav: getVaultCurrentTvlUsd(vault) })),
-			{ maxTvlUsd: options.maxSummaryTvlUsd }
-		),
-		avgTvlWeightedApy1M: calculateTvlWeightedApy(
-			stats.map((vault) => ({ ...vault, current_nav: getVaultCurrentTvlUsd(vault) })),
-			{ includeBlacklisted: options.includeBlacklistedInStats, maxTvlUsd: options.maxSummaryTvlUsd }
-		)
+		totalTvl: calculateTotalTvl(statsWithUsdTvl, { maxTvlUsd: options.maxSummaryTvlUsd }),
+		avgTvlWeightedApy1M: calculateTvlWeightedApy(statsWithUsdTvl, {
+			includeBlacklisted: options.includeBlacklistedInStats,
+			maxTvlUsd: options.maxSummaryTvlUsd
+		})
 	};
 }

@@ -87,6 +87,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		headingLogo?: { src: string; alt: string };
 		/** Show a third-party risk rating column beside the vault name. */
 		ratingProvider?: RiskRatingProvider;
+		/** Whether rows are fetched in pages from the server. */
 		progressive?: boolean;
 		listingKey?: string;
 		listingScope?: string;

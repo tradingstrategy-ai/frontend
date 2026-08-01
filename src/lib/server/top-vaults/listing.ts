@@ -1,5 +1,6 @@
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
 import { buildStablecoinMetadataLookup, findStablecoinMetadata } from '$lib/stablecoin-metadata/helpers';
+import { fetchLatestTreasuryRate } from '$lib/reference-rates';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import {
 	getCurrencyUsdRates,
@@ -15,6 +16,7 @@ import {
 	type VaultListingKey
 } from '$lib/top-vaults/listing/definitions';
 import { queryVaultListing } from '$lib/top-vaults/listing/query';
+import type { VaultListingOptions, VaultListingQuery } from '$lib/top-vaults/listing/query';
 import { parseVaultListingQuery } from '$lib/top-vaults/listing/state';
 import { INITIAL_VAULT_LISTING_LIMIT } from '$lib/top-vaults/listing/types';
 import type { VaultInfo } from '$lib/top-vaults/schemas';
@@ -36,6 +38,12 @@ async function resolveListingVaults(fetchFn: typeof fetch, vaults: VaultInfo[], 
 		.filter((vault) => isNonUsdDenominatedVault(vault) && getVaultCurrentTvlUsd(vault) != null);
 }
 
+/** Add the cached Treasury rate only when the active server-side filter needs it. */
+async function getListingOptions(options: VaultListingOptions, query: VaultListingQuery): Promise<VaultListingOptions> {
+	if (query.mr !== 'treasury') return options;
+	return { ...options, treasuryRate: await fetchLatestTreasuryRate().catch(() => null) };
+}
+
 /**
  * Build an SSR-safe first listing page from the complete server-cached export.
  * The returned rows have already passed the definition scope, filters, and
@@ -46,7 +54,7 @@ export async function loadVaultListing(fetchFn: typeof fetch, url: URL, key: Vau
 	const topVaults = await getCachedTopVaults(fetchFn);
 	const scopedVaults = await resolveListingVaults(fetchFn, topVaults.vaults, key, scope);
 	const query = parseVaultListingQuery(url.searchParams, getVaultListingDefaults(key, scope));
-	const listing = queryVaultListing(scopedVaults, query, definition.options);
+	const listing = queryVaultListing(scopedVaults, query, await getListingOptions(definition.options, query));
 	const initialVaults = listing.vaults.slice(0, INITIAL_VAULT_LISTING_LIMIT);
 
 	return {
@@ -95,12 +103,9 @@ export async function loadVaultListingContinuation(
 	const definition = getVaultListingDefinition(key);
 	const topVaults = await getCachedTopVaults(fetchFn);
 	const scopedVaults = await resolveListingVaults(fetchFn, topVaults.vaults, key, scope);
+	const query = parseVaultListingQuery(url.searchParams, getVaultListingDefaults(key, scope));
 	return {
 		topVaults,
-		listing: queryVaultListing(
-			scopedVaults,
-			parseVaultListingQuery(url.searchParams, getVaultListingDefaults(key, scope)),
-			definition.options
-		)
+		listing: queryVaultListing(scopedVaults, query, await getListingOptions(definition.options, query))
 	};
 }
