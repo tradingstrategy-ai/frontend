@@ -258,6 +258,15 @@ test.describe('vault index page', () => {
 		await expect(sentinel).toContainText(/Loading more vaults/);
 	});
 
+	test('uses the full server-side listing summary for the average return', async ({ page }) => {
+		await page.goto('/vaults?tvl=any&q=Summary%20regression&unknown=0');
+
+		const rows = page.locator('tbody tr.targetable');
+		await expect(rows).toHaveCount(75);
+		await expect(page.getByTestId('top-vaults-meta')).toContainText('151 vaults');
+		await expect(page.getByTestId('top-vaults-meta')).toContainText('Avg. return 76.61%');
+	});
+
 	test('loads 50 more rows when scrolling to sentinel', async ({ page }) => {
 		// Check initial row count
 		const rows = page.locator('tbody tr.targetable');
@@ -284,21 +293,6 @@ test.describe('vault index page', () => {
 		}
 		await sentinel.scrollIntoViewIfNeeded();
 		await expect(rows).toHaveCount(500);
-
-		await expect(sentinel).not.toBeVisible();
-	});
-
-	test('loads 500 vaults through progressive scrolling', async ({ page }) => {
-		await page.goto('/vaults?tvl=any&q=Progressive%20scroll%20vault');
-
-		const rows = page.locator('tbody tr.targetable');
-		const sentinel = page.getByTestId('load-more-sentinel');
-		await expect(rows).toHaveCount(150);
-
-		for (let expectedCount = 200; expectedCount <= 500; expectedCount += 50) {
-			await sentinel.scrollIntoViewIfNeeded();
-			await expect(rows).toHaveCount(expectedCount);
-		}
 
 		await expect(sentinel).not.toBeVisible();
 	});

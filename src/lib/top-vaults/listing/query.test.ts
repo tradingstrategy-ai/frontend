@@ -46,6 +46,40 @@ describe('vault listing query', () => {
 		expect(result.hiddenByTvl).toBe(1);
 	});
 
+	it('excludes blacklisted vaults from the listing summary by default', () => {
+		const included = createTestVault('Included', {
+			current_nav: 100_000,
+			one_month_cagr: 0.05,
+			risk: 'Low'
+		});
+		const blacklisted = createTestVault('Blacklisted', {
+			current_nav: 10_000_000,
+			one_month_cagr: 5,
+			risk: 'Blacklisted'
+		});
+		const query = parseVaultListingQuery(new URLSearchParams(), { tvl: '10k', risk: 0 });
+
+		const result = queryVaultListing([included, blacklisted], query, {
+			...options,
+			includeBlacklisted: true,
+			includeBlacklistedInStats: false
+		});
+
+		expect(result.vaults).toHaveLength(2);
+		expect(result.totalTvl).toBe(100_000);
+		expect(result.avgTvlWeightedApy1M).toBe(0.05);
+	});
+
+	it('applies the supplied Treasury rate to monthly-return filters', () => {
+		const aboveTreasury = createTestVault('Above Treasury', { current_nav: 100_000, one_month_cagr: 0.06 });
+		const belowTreasury = createTestVault('Below Treasury', { current_nav: 100_000, one_month_cagr: 0.04 });
+		const query = parseVaultListingQuery(new URLSearchParams('mr=treasury'), { tvl: '10k' });
+
+		const result = queryVaultListing([aboveTreasury, belowTreasury], query, { ...options, treasuryRate: 5 });
+
+		expect(result.vaults.map((vault) => vault.name)).toEqual(['Above Treasury']);
+	});
+
 	it('uses defaults when URL filter indexes are absent', () => {
 		const query = parseVaultListingQuery(new URLSearchParams(), { risk: 1, tvl: '10k' });
 

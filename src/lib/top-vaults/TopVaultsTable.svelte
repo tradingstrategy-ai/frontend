@@ -517,9 +517,13 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 		if (!filterTvl && !showFilters) return [];
 		return baseVaults.filter((v) => getVaultCurrentTvl(v) < getVaultTvlThreshold(v));
 	});
+	let serverListingSummary = $derived(progressive ? listingSummary : undefined);
+	let hiddenVaultNames = $derived(
+		serverListingSummary?.hiddenVaultNames ?? hiddenVaults.slice(0, 2).map((vault) => vault.name)
+	);
 
 	// Count of hidden vaults
-	let hiddenByTvl = $derived(progressive && listingSummary ? listingSummary.hiddenByTvl : hiddenVaults.length);
+	let hiddenByTvl = $derived(serverListingSummary?.hiddenByTvl ?? hiddenVaults.length);
 
 	// Total vault count for the listing meta — the whole-database count when
 	// provided by the page, otherwise the vaults available to this listing
@@ -592,9 +596,7 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 
 	// A progressive listing contains only its initial page here, while the server
 	// summary describes every vault matching the same filters.
-	let matchingVaultCount = $derived(
-		progressive && listingSummary ? listingSummary.matchingCount : filteredVaults.length
-	);
+	let matchingVaultCount = $derived(serverListingSummary?.matchingCount ?? filteredVaults.length);
 
 	// Uses filteredVaults so all active filters (TVL, age, risk, search) are reflected in the stats row.
 	let statsVaults = $derived(
@@ -610,17 +612,21 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 
 	// Calculate total TVL from fully-filtered vaults
 	let totalTvl = $derived(
-		progressive && listingSummary
-			? listingSummary.totalTvl
+		serverListingSummary
+			? serverListingSummary.totalTvl
 			: calculateTotalTvl(statsVaultsWithTvl, { maxTvlUsd: maxSummaryTvlUsd })
 	);
 
-	// Calculate TVL-weighted average 1M APY from fully-filtered vaults
+	// A progressive listing only contains its initial row batch in the browser.
+	// Use the server calculation over the complete filtered listing so the headline
+	// does not become skewed by the current batch or its sort order.
 	let avgTvlWeightedApy1M = $derived(
-		calculateTvlWeightedApy(statsVaultsWithTvl, {
-			includeBlacklisted: includeBlacklistedInStats,
-			maxTvlUsd: maxSummaryTvlUsd
-		})
+		serverListingSummary
+			? serverListingSummary.avgTvlWeightedApy1M
+			: calculateTvlWeightedApy(statsVaultsWithTvl, {
+					includeBlacklisted: includeBlacklistedInStats,
+					maxTvlUsd: maxSummaryTvlUsd
+				})
 	);
 
 	// sort vaults
@@ -867,10 +873,7 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 							? 'it does'
 							: 'they do'}
 						not meet the minimum TVL threshold:
-						{hiddenVaults
-							.slice(0, 2)
-							.map((v) => v.name)
-							.join(', ')}{#if hiddenByTvl > 2}, and {hiddenByTvl - 2} more{/if}.
+						{hiddenVaultNames.join(', ')}{#if hiddenByTvl > 2}, and {hiddenByTvl - 2} more{/if}.
 					{:else}
 						The number of vaults listed on this page.
 					{/if}</svelte:fragment
