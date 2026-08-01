@@ -143,6 +143,17 @@ test.describe('vault index page', () => {
 		await expect(page.locator('.primary-filters').getByText('Technical risk', { exact: true })).toBeVisible();
 	});
 
+	test('keeps Filters closed after updating a filtered listing', async ({ page }) => {
+		await page.goto('/vaults?risk=2');
+		await closeFilters(page);
+
+		await page.locator('th.vault button').click();
+		await expect(page.getByTestId('vault-filters')).not.toHaveAttribute('open', '');
+
+		await page.goto('/vaults/all');
+		await expect(page.getByTestId('vault-filters')).not.toHaveAttribute('open', '');
+	});
+
 	test('groups all filters under a mobile Filters disclosure', async ({ page }) => {
 		await page.setViewportSize({ width: 375, height: 667 });
 		await page.goto('/vaults');
@@ -176,6 +187,15 @@ test.describe('vault index page', () => {
 		await mobileFiltersTrigger.click();
 		await expect(mobileFiltersTrigger).toHaveAttribute('aria-expanded', 'false');
 		await expect(page.locator('.primary-filters')).not.toBeVisible();
+	});
+
+	test('opens mobile Filters from the saved preference', async ({ page }) => {
+		await page.evaluate(() => window.localStorage.setItem('top-vaults-filters-open', 'true'));
+		await page.setViewportSize({ width: 375, height: 667 });
+		await page.goto('/vaults');
+
+		await expect(page.getByTestId('mobile-filters-trigger')).toHaveAttribute('aria-expanded', 'true');
+		await expect(page.locator('.primary-filters')).toBeVisible();
 	});
 
 	test('constrains and wraps vault labels on mobile', async ({ page }) => {

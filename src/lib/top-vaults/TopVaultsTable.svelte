@@ -280,7 +280,7 @@
 	let hideUnknown = $derived(showUnknownFilter && urlState.unknown === 1);
 	let returnsDropdownOpen = $state(false);
 	let filtersOpen = $state(hasFilterSearchParams(page.url.searchParams));
-	let hasLoadedFilterPreference = $state(false);
+	let hasLoadedFilterPreference = false;
 	let selectedReturnColumnIds = $derived(sanitiseReturnColumnSelection(urlState.returns));
 	let selectedReturnColumns = $derived(
 		selectedReturnColumnIds.map(
@@ -292,24 +292,29 @@
 	);
 	let showAllVaultsFilterNote = $derived(page.url.pathname !== allVaultsPath);
 
-	// Keep the disclosure preference while moving between vault listings. A URL with
-	// explicit filter state always takes precedence, so shared filtered links reveal
-	// the controls that produced their results.
+	/** Save the user's explicit Filters disclosure choice for other vault listings. */
+	function saveFiltersOpenPreference() {
+		if (hasLoadedFilterPreference) {
+			window.localStorage.setItem(filtersOpenStorageKey, String(filtersOpen));
+		}
+	}
+
+	function toggleFilters() {
+		filtersOpen = !filtersOpen;
+		saveFiltersOpenPreference();
+	}
+
+	function toggleDesktopFilters(event: MouseEvent) {
+		event.preventDefault();
+		toggleFilters();
+	}
+
+	// Keep the disclosure preference while moving between vault listings. Filtered
+	// URLs open the disclosure on arrival without changing that saved preference.
 	onMount(() => {
 		filtersOpen =
 			hasFilterSearchParams(page.url.searchParams) || window.localStorage.getItem(filtersOpenStorageKey) === 'true';
 		hasLoadedFilterPreference = true;
-	});
-
-	$effect(() => {
-		if (hasFilterSearchParams(page.url.searchParams)) {
-			filtersOpen = true;
-		}
-	});
-
-	$effect(() => {
-		if (!hasLoadedFilterPreference) return;
-		window.localStorage.setItem(filtersOpenStorageKey, String(filtersOpen));
 	});
 
 	// Text search: local state for responsive typing, synced to/from URL
@@ -785,7 +790,7 @@
 				class="mobile-filters-trigger"
 				data-testid="mobile-filters-trigger"
 				aria-expanded={filtersOpen}
-				onclick={() => (filtersOpen = !filtersOpen)}
+				onclick={toggleFilters}
 			>
 				<IconChevronDown />
 				<span>Filters</span>
@@ -793,7 +798,7 @@
 
 			<div class="table-filters" class:mobile-filters-open={filtersOpen}>
 				<details class="vault-filters" data-testid="vault-filters" bind:open={filtersOpen}>
-					<summary class="filters-summary" data-testid="filters-summary">
+					<summary class="filters-summary" data-testid="filters-summary" onclick={toggleDesktopFilters}>
 						<IconChevronDown />
 						<span>Filters</span>
 					</summary>
