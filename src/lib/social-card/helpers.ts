@@ -2,6 +2,7 @@ import { getVaultSparklineUrl } from '$lib/top-vaults/helpers';
 import type { CuratorInfo, VaultInfo } from '$lib/top-vaults/schemas';
 
 export const TRADING_STRATEGY_SOCIAL_IMAGE_PATH = '/social-card/trading-strategy';
+const blockchainLogoModules = import.meta.glob('/src/lib/assets/logos/blockchains/*.svg');
 
 interface SocialCardImageContext {
 	curatorLogoUrl?: string | null;
@@ -53,5 +54,7 @@ export function getCuratorSocialLogoUrl(curator?: CuratorInfo | null): string | 
  * @param slug Blockchain slug used by the local logo registry
  */
 export function getBlockchainSocialLogoUrl(slug?: string | null): string | undefined {
-	return slug ? `/social-card/blockchain/${encodeURIComponent(slug)}` : undefined;
+	if (!slug || !blockchainLogoModules[`/src/lib/assets/logos/blockchains/${slug}.svg`]) return undefined;
+
+	return `/social-card/blockchain/${encodeURIComponent(slug)}`;
 }

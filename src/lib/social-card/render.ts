@@ -2,6 +2,7 @@ import sharp from 'sharp';
 
 export const SOCIAL_CARD_WIDTH = 1200;
 export const SOCIAL_CARD_HEIGHT = 630;
+const SOCIAL_CARD_BACKGROUND = '#172554';
 
 interface SocialCardLogoSize {
 	width: number;
@@ -15,7 +16,7 @@ interface SocialCardLogoSize {
  * @param size Maximum rendered logo dimensions
  */
 export async function renderSocialCard(logo: string, size: SocialCardLogoSize): Promise<Buffer> {
-	const resizedLogo = await sharp(Buffer.from(logo))
+	const resizedLogo = await sharp(Buffer.from(logo), { density: 288 })
 		.resize({ ...size, fit: 'inside' })
 		.png()
 		.toBuffer();
@@ -25,7 +26,7 @@ export async function renderSocialCard(logo: string, size: SocialCardLogoSize): 
 			width: SOCIAL_CARD_WIDTH,
 			height: SOCIAL_CARD_HEIGHT,
 			channels: 4,
-			background: '#ffffff'
+			background: SOCIAL_CARD_BACKGROUND
 		}
 	})
 		.composite([{ input: resizedLogo, gravity: 'centre' }])

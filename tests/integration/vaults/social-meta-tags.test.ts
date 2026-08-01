@@ -38,6 +38,31 @@ async function getImageDimensions(page: Page, src: string) {
 	);
 }
 
+async function imageHasNonWhitePixel(page: Page, src: string) {
+	return page.evaluate(
+		(imageSrc) =>
+			new Promise<boolean>((resolve, reject) => {
+				const image = new Image();
+				image.onload = () => {
+					const canvas = document.createElement('canvas');
+					canvas.width = image.naturalWidth;
+					canvas.height = image.naturalHeight;
+					const context = canvas.getContext('2d');
+					if (!context) return reject(new Error('Could not create social-card canvas'));
+					context.drawImage(image, 0, 0);
+					const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+					for (let index = 0; index < pixels.length; index += 4) {
+						if (pixels[index] !== 255 || pixels[index + 1] !== 255 || pixels[index + 2] !== 255) return resolve(true);
+					}
+					resolve(false);
+				};
+				image.onerror = () => reject(new Error(`Could not decode social card image: ${imageSrc}`));
+				image.src = imageSrc;
+			}),
+		src
+	);
+}
+
 test.describe('vault social meta tags', () => {
 	test.describe('vault index page', () => {
 		test.beforeEach(async ({ page }) => {
@@ -203,6 +228,14 @@ test.describe('vault social meta tags', () => {
 			expect(response?.headers()['content-type']).toMatch(/^image\/png/);
 		});
 
+		test('rejects external fallback redirects', async ({ page }) => {
+			const response = await page.request.get('/social-card/vault/missing?fallback=https://example.com/image.png', {
+				maxRedirects: 0
+			});
+
+			expect(response.status()).toBe(400);
+		});
+
 		test('uses a curator logo on a curator listing', async ({ page }) => {
 			await page.goto('/vaults/curators/steakhouse-financial');
 
@@ -222,6 +255,14 @@ test.describe('vault social meta tags', () => {
 			const src = await page.locator('meta[property="og:image"]').getAttribute('content');
 
 			expect(await getImageDimensions(page, src!)).toEqual({ width: 1200, height: 630 });
+		});
+
+		test('renders white blockchain logos on a visible card background', async ({ page }) => {
+			await page.goto('/vaults/chains/lighter');
+			await expectSocialCardImage(page, /\/social-card\/blockchain\/lighter$/);
+			const src = await page.locator('meta[property="og:image"]').getAttribute('content');
+
+			expect(await imageHasNonWhitePixel(page, src!)).toBe(true);
 		});
 	});
 

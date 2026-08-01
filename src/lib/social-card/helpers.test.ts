@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { selectSocialCardImage, TRADING_STRATEGY_SOCIAL_IMAGE_PATH } from './helpers';
+import { getBlockchainSocialLogoUrl, selectSocialCardImage, TRADING_STRATEGY_SOCIAL_IMAGE_PATH } from './helpers';
 
 describe('selectSocialCardImage', () => {
 	test('uses contextual logos in priority order before the site fallback', () => {
@@ -24,5 +24,12 @@ describe('selectSocialCardImage', () => {
 			})
 		).toBe('/stablecoin.png');
 		expect(selectSocialCardImage({})).toBe(TRADING_STRATEGY_SOCIAL_IMAGE_PATH);
+	});
+});
+
+describe('getBlockchainSocialLogoUrl', () => {
+	test('only returns a card URL for a blockchain with a local logo', () => {
+		expect(getBlockchainSocialLogoUrl('ethereum')).toBe('/social-card/blockchain/ethereum');
+		expect(getBlockchainSocialLogoUrl('not-a-blockchain')).toBeUndefined();
 	});
 });
