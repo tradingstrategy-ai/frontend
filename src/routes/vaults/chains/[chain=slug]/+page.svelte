@@ -60,7 +60,7 @@
 	image={logoUrl}
 	imageAlt={`${chainName} blockchain logo`}
 	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
-	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
+	twitter={{ site: '@TradingProtocol', title, description }}
 />
 
 <JsonLd

@@ -2,7 +2,11 @@ import { getVaultSparklineUrl } from '$lib/top-vaults/helpers';
 import type { CuratorInfo, VaultInfo } from '$lib/top-vaults/schemas';
 
 export const TRADING_STRATEGY_SOCIAL_IMAGE_PATH = '/social-card/trading-strategy';
-const blockchainLogoModules = import.meta.glob('/src/lib/assets/logos/blockchains/*.svg');
+const blockchainLogoModules = import.meta.glob('/src/lib/assets/logos/blockchains/*.svg', {
+	eager: true,
+	query: '?url',
+	import: 'default'
+});
 
 interface SocialCardImageContext {
 	curatorLogoUrl?: string | null;

@@ -236,6 +236,38 @@ test.describe('vault social meta tags', () => {
 			expect(response.status()).toBe(400);
 		});
 
+		test('accepts normalised curator and protocol fallbacks for their vaults', async ({ page }) => {
+			const vaultsResponse = await page.request.get('/api/top-vaults/vaults.json');
+			const { vaults } = (await vaultsResponse.json()) as {
+				vaults: Array<{ id: string; protocol: string; curator_slug: string | null }>;
+			};
+			const curatorVault = vaults.find((vault) => vault.curator_slug === 'steakhouse-financial');
+			const protocolVault = vaults.find((vault) => vault.protocol === 'Yearn' && !vault.curator_slug);
+
+			expect(curatorVault).toBeDefined();
+			expect(protocolVault).toBeDefined();
+
+			const curatorResponse = await page.request.get(
+				`/social-card/vault/${encodeURIComponent(curatorVault!.id)}?fallback=${encodeURIComponent(
+					'http://LOCALHOST:4173/api/curators/steakhouse-financial/light.png'
+				)}`
+			);
+			const protocolResponse = await page.request.get(
+				`/social-card/vault/${encodeURIComponent(protocolVault!.id)}?fallback=${encodeURIComponent(
+					'http://localhost:4173/api/vault-protocols/yearn/dark.png'
+				)}`
+			);
+
+			expect(curatorResponse.headers()['content-type']).toMatch(/^image\/png/);
+			expect(protocolResponse.headers()['content-type']).toMatch(/^image\/png/);
+		});
+
+		test('rejects malformed vault IDs', async ({ page }) => {
+			const response = await page.request.get('/social-card/vault/not.a-vault?fallback=/social-card/trading-strategy');
+
+			expect(response.status()).toBe(400);
+		});
+
 		test('uses a curator logo on a curator listing', async ({ page }) => {
 			await page.goto('/vaults/curators/steakhouse-financial');
 

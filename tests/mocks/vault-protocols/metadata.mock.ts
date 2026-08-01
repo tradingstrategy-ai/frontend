@@ -17,7 +17,7 @@ export default defineMock({
 		},
 		logos: {
 			light: 'http://localhost:4173/api/vault-protocols/yearn/light.png',
-			dark: null
+			dark: 'http://localhost:4173/api/vault-protocols/yearn/dark.png'
 		}
 	}
 });
