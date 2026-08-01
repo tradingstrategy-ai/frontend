@@ -15,6 +15,7 @@
 		if (hasSupportedProtocol(vault)) return getVaultProtocolDisplayName(vault);
 		if (vault.link) return new URL(vault.link).host;
 	});
+	let hideCtaOnMobile = $derived(externalSiteName === 'Ostium');
 </script>
 
 <PageHeader>
@@ -25,10 +26,10 @@
 	{/snippet}
 
 	{#snippet cta()}
-		<span class="cta-actions">
+		<span class="cta-actions" class:mobile-hidden={hideCtaOnMobile}>
 			{#if vault.link}
 				<Button href={vault.link} target="_blank" rel="noreferrer">
-					View on {externalSiteName}
+					{externalSiteName === 'Ostium' ? 'Open vault on Ostium' : `View on ${externalSiteName}`}
 				</Button>
 			{/if}
 			<UpdateInfoButton size="md" />
@@ -46,6 +47,12 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 0.75rem;
+
+		&.mobile-hidden {
+			@media (--viewport-sm-down) {
+				display: none;
+			}
+		}
 	}
 
 	.vault-description {

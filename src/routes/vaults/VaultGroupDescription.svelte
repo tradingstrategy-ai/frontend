@@ -14,6 +14,7 @@ excluded vault count from the loaded vault data.
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
+	import type { VaultListingSummary } from '$lib/top-vaults/listing/types';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import {
 		calculateTotalTvl,
@@ -37,9 +38,11 @@ excluded vault count from the loaded vault data.
 		/** Verb phrase linking the subject to the vault count, e.g. "has" or "is used in" */
 		verbPhrase?: string;
 		vaults: VaultInfo[];
+		/** Complete matching-listing stats, used when rows are loaded progressively. */
+		listingSummary?: VaultListingSummary;
 	}
 
-	let { title, description, subject, verbPhrase = 'has', vaults }: Props = $props();
+	let { title, description, subject, verbPhrase = 'has', vaults, listingSummary }: Props = $props();
 
 	// all headline stats derive from this set: exclude blacklisted vaults and broken
 	// TVL outliers so a single bad data point doesn't inflate the figures
@@ -47,7 +50,7 @@ excluded vault count from the loaded vault data.
 		vaults.filter((v) => !isBlacklisted(v) && (v.current_nav ?? 0) <= VAULT_TVL_OUTLIER_THRESHOLD)
 	);
 
-	let totalTvl = $derived(calculateTotalTvl(statsVaults));
+	let totalTvl = $derived(listingSummary?.totalTvl ?? calculateTotalTvl(statsVaults));
 	let protocolCount = $derived(new Set(statsVaults.filter(hasSupportedProtocol).map((v) => v.protocol_slug)).size);
 	// dedupe by name so the same fund deployed on multiple chains isn't repeated
 	let largestVaults = $derived.by(() => {
@@ -79,14 +82,17 @@ excluded vault count from the loaded vault data.
 	// so the yield agrees with the stats row below; filtered from statsVaults so
 	// the TVL outlier guard applies here too
 	let eligibleVaults = $derived(statsVaults.filter(isEligibleVaultGroupMiniChartVault));
-	let averageYield = $derived(calculateTvlWeightedApy(eligibleVaults));
-	let vaultCountLabel = $derived(`${statsVaults.length} stablecoin ${statsVaults.length === 1 ? 'vault' : 'vaults'}`);
+	let averageYield = $derived(
+		listingSummary ? listingSummary.avgTvlWeightedApy1M : calculateTvlWeightedApy(eligibleVaults)
+	);
+	let vaultCount = $derived(listingSummary?.matchingCount ?? statsVaults.length);
+	let vaultCountLabel = $derived(`${vaultCount} stablecoin ${vaultCount === 1 ? 'vault' : 'vaults'}`);
 	let totalTvlLabel = $derived(`${formatDollar(totalTvl, 1)} TVL`);
 	let protocolCountLabel = $derived(`${protocolCount} ${protocolCount === 1 ? 'protocol' : 'protocols'}`);
 	let averageYieldLabel = $derived(averageYield == null ? null : formatPercent(averageYield, 1));
 	// relative to the statsVaults count shown in the copy, so the two paragraphs
 	// stay arithmetically consistent (shown count − excluded = listed vaults)
-	let excludedVaultCount = $derived(statsVaults.length - eligibleVaults.length);
+	let excludedVaultCount = $derived(listingSummary ? 0 : statsVaults.length - eligibleVaults.length);
 </script>
 
 <div class="vault-group-description">
@@ -95,13 +101,12 @@ excluded vault count from the loaded vault data.
 			<p>{description}</p>
 		{/if}
 		<p>
-			{subject}
-			{verbPhrase}
+			{#if listingSummary}The current listing contains{:else}{subject} {verbPhrase}{/if}
 			<strong>{vaultCountLabel}</strong> with
-			<strong>{totalTvlLabel}</strong>{#if protocolCount > 0}
+			<strong>{totalTvlLabel}</strong>{#if !listingSummary && protocolCount > 0}
 				{' '}
 				across <strong>{protocolCountLabel}</strong>{/if}.
-			{#if largestVaults.length}
+			{#if !listingSummary && largestVaults.length}
 				The largest {largestVaults.length === 1 ? 'vault is' : 'vaults are'}
 				{#each largestVaults as vault, index (vault.vault_slug)}{index > 0 ? ', ' : ''}<a
 						href={resolveVaultDetails(vault)}>{vault.name}</a

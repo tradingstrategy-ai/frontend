@@ -13,10 +13,12 @@ import {
 import { sortOptions } from '$lib/top-vaults/VaultGroupTable.svelte';
 import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
 import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
+import { getCachedXerberusProtocolScoreIndex, resolveXerberusProtocolScore } from '$lib/xerberus/protocol-scores';
 import type { MarketShareChartItem } from '../market-share-pie';
 
 export async function load({ fetch, url: { searchParams } }) {
 	const { vaults, core3_protocols } = await getCachedTopVaults(fetch);
+	const xerberusScoreIndex = await getCachedXerberusProtocolScoreIndex(fetch).catch(() => null);
 
 	const eligibleVaults = vaults.filter((v) => !isBlacklisted(v) && meetsMinTvl(v));
 
@@ -45,6 +47,13 @@ export async function load({ fetch, url: { searchParams } }) {
 
 		return acc;
 	}, {});
+
+	for (const protocol of Object.values(protocols)) {
+		const xerberusScore = xerberusScoreIndex ? resolveXerberusProtocolScore(xerberusScoreIndex, protocol) : null;
+		protocol.xerberus_score = xerberusScore?.score ?? null;
+		protocol.xerberus_id = xerberusScore?.id ?? null;
+		protocol.xerberus_url = xerberusScore?.url ?? null;
+	}
 
 	// Calculate TVL-weighted average APY for each protocol
 	const protocolGroups: VaultGroup[] = Object.values(protocols).map((group) => ({

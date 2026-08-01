@@ -1,3 +1,6 @@
+<!--
+Vault detail page with performance metrics, protocol information, and third-party risk ratings.
+-->
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { discordUrl } from '$lib/config';
@@ -20,6 +23,7 @@
 	import VaultProtocolInfo from './VaultProtocolInfo.svelte';
 	import VaultRankings from './VaultRankings.svelte';
 	import Core3Ratings from '$lib/top-vaults/Core3Ratings.svelte';
+	import XerberusRisk from '$lib/top-vaults/XerberusRisk.svelte';
 	import IconDiscord from '~icons/local/discord';
 	import {
 		getMorphoFlags,
@@ -139,6 +143,10 @@
 		{/if}
 
 		<VaultPeriodicMetrics {vault} {chain} />
+
+		{#if vault.xerberus}
+			<XerberusRisk xerberus={vault.xerberus} />
+		{/if}
 
 		{#if core3}
 			<Core3Ratings

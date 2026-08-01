@@ -3,8 +3,6 @@ Vault listing for a single curator — all vaults managed by the curator,
 with an "about" panel and a TVL/return mini chart.
 -->
 <script lang="ts">
-	import type { TopVaults } from '$lib/top-vaults/schemas';
-	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { JsonLd } from 'svelte-meta-tags';
@@ -16,30 +14,9 @@ with an "about" panel and a TVL/return mini chart.
 	let { data } = $props();
 	let { curatorSlug, curatorName, curator, vaultCount, tvl, averageApy, initialTopVaults } = $derived(data);
 
-	let fetchedTopVaults = $state<TopVaults>();
-	let fetchedTotalVaultCount = $state<number>();
-	let fetchSettled = $state(false);
-	let topVaults = $derived(initialTopVaults ?? fetchedTopVaults);
-	let totalVaultCount = $derived(initialTopVaults ? data.totalVaultCount : fetchedTotalVaultCount);
-	let loading = $derived(!initialTopVaults && !fetchSettled && !hasVaultCache(page.data.generatedAt));
-
-	$effect(() => {
-		if (initialTopVaults) {
-			return;
-		}
-
-		fetchSettled = false;
-		fetchAllVaultData(page.data.generatedAt)
-			.then((allData) => {
-				fetchedTotalVaultCount = allData.vaults.length;
-				fetchedTopVaults = {
-					...allData,
-					vaults: allData.vaults.filter((v) => v.curator_slug === curatorSlug)
-				};
-			})
-			.catch((e) => console.error('Failed to load vault data:', e))
-			.finally(() => (fetchSettled = true));
-	});
+	let topVaults = $derived(initialTopVaults);
+	let totalVaultCount = $derived(data.totalVaultCount);
+	let loading = false;
 
 	/** Google truncates search snippets around this length; keep the meta description within it */
 	const META_DESCRIPTION_MAX_LENGTH = 160;
@@ -116,7 +93,7 @@ with an "about" panel and a TVL/return mini chart.
 		},
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: vaultCount
+			numberOfItems: data.listingSummary.matchingCount
 		}
 	}}
 />
@@ -125,6 +102,10 @@ with an "about" panel and a TVL/return mini chart.
 	{topVaults}
 	{totalVaultCount}
 	{loading}
+	progressive={data.initialVaultListingHasMore}
+	listingKey={data.listingKey}
+	listingScope={data.listingScope}
+	listingSummary={data.listingSummary}
 	curatorMetadata={curator}
 	title="{curatorName} curated stablecoin vaults"
 	showFilters

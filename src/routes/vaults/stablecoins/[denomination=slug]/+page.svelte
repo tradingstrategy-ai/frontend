@@ -1,11 +1,9 @@
 <script lang="ts">
-	import type { TopVaults } from '$lib/top-vaults/schemas';
 	import {
 		formatStablecoinDisplayName,
 		getStablecoinCoingeckoLink,
 		getStablecoinLogoUrl
 	} from '$lib/stablecoin-metadata/helpers';
-	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { JsonLd } from 'svelte-meta-tags';
@@ -23,27 +21,8 @@
 		initialTopVaults
 	} = $derived(data);
 
-	let fetchedTopVaults = $state<TopVaults>();
-	let fetchSettled = $state(false);
-	let topVaults = $derived(initialTopVaults ?? fetchedTopVaults);
-	let loading = $derived(!initialTopVaults && !fetchSettled && !hasVaultCache(page.data.generatedAt));
-
-	$effect(() => {
-		if (initialTopVaults) {
-			return;
-		}
-
-		fetchSettled = false;
-		fetchAllVaultData(page.data.generatedAt)
-			.then((allData) => {
-				fetchedTopVaults = {
-					...allData,
-					vaults: allData.vaults.filter((v) => v.denomination_slug === denominationSlug)
-				};
-			})
-			.catch((e) => console.error('Failed to load vault data:', e))
-			.finally(() => (fetchSettled = true));
-	});
+	let topVaults = $derived(initialTopVaults);
+	let loading = false;
 
 	let title = $derived(`${denominationName} stablecoin vaults | Trading Strategy`);
 	let description = $derived(shortDescription ?? `Top ${denominationName} DeFi vaults ranked by performance.`);
@@ -101,7 +80,7 @@
 			: undefined,
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: topVaults?.vaults.length ?? 0
+			numberOfItems: data.listingSummary.matchingCount
 		}
 	}}
 />
@@ -109,6 +88,10 @@
 <TopVaultsPage
 	{topVaults}
 	{loading}
+	progressive={data.initialVaultListingHasMore}
+	listingKey={data.listingKey}
+	listingScope={data.listingScope}
+	listingSummary={data.listingSummary}
 	{stablecoinMetadata}
 	stablecoinLogoSlug={denominationSlug}
 	title="{denominationName} stablecoin vaults"
@@ -123,6 +106,7 @@
 				subject={denominationName}
 				verbPhrase="is used in"
 				vaults={topVaults.vaults}
+				listingSummary={data.initialVaultListingHasMore ? data.listingSummary : undefined}
 			/>
 		{/if}
 	{/snippet}

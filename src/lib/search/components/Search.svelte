@@ -1,264 +1,539 @@
 <!--
 @component
-Display site-wide search box for use in top-nav.
-- used for limited inline results; advanced search available through `/search` page
-- uses (tradingstrategy/search)[https://github.com/tradingstrategy-ai/search] backend
+Site-wide vault search with desktop typeahead and a full-screen compact-navigation dialog.
 
-@example
-
-```svelte
-<Search />
-```
+The component fetches only public search suggestions; the server keeps the
+underlying vault JSON index private.
 -->
 <script lang="ts">
-	import tradingEntities from '../trading-entities';
-	import SearchHit from './SearchHit.svelte';
-	import { Button, Spinner, TextInput } from '$lib/components';
-	import IconSearch from '~icons/local/search';
+	import { tick } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { disableScroll } from '$lib/actions/scroll';
+	import { removeOnError } from '$lib/actions/image';
+	import { formatDollar, formatPercent, notFilledMarker } from '$lib/helpers/formatters';
+	import {
+		formatVaultAddressPrefix,
+		searchEntityColours,
+		searchEntityLabels,
+		type SearchResponse,
+		type SearchResult
+	} from '$lib/search/entities';
+	import IconCancel from '~icons/local/cancel';
+	import IconSearch from '~icons/local/search';
+	import VaultSparkline from '$lib/top-vaults/VaultSparkline.svelte';
 
-	let q = '';
-	let hasFocus = false;
+	interface Props {
+		menu?: boolean;
+		onNavigate?: () => void;
+	}
 
-	$: hasQuery = q.trim() !== '';
+	let { menu = false, onNavigate }: Props = $props();
 
-	$: tradingEntities.search(fetch, {
-		q,
-		sort_by: ['type_rank:asc', 'tvl:desc', 'liquidity:desc'],
-		group_by: ['type']
+	const listboxId = 'site-search-suggestions';
+	const TYPEAHEAD_DEBOUNCE_MS = 200;
+	const TYPEAHEAD_LIMIT = 10;
+	let query = $state('');
+	let open = $state(false);
+	let loading = $state(false);
+	let errorMessage = $state<string | null>(null);
+	let results = $state<SearchResult[]>([]);
+	let selectedIndex = $state(-1);
+	let mobileDialogOpen = $state(false);
+	let requestSequence = 0;
+	let mobileSearchInput = $state<HTMLInputElement>();
+	let searchTrigger = $state<HTMLButtonElement>();
+	let searchRoot: HTMLDivElement;
+
+	let hasQuery = $derived(query.trim().length > 0);
+	let activeOptionId = $derived(selectedIndex >= 0 ? `${listboxId}-${selectedIndex}` : undefined);
+
+	$effect(() => {
+		const searchQuery = query.trim();
+		const sequence = ++requestSequence;
+		selectedIndex = -1;
+
+		if (!searchQuery) {
+			loading = false;
+			errorMessage = null;
+			results = [];
+			return;
+		}
+
+		const controller = new AbortController();
+		const timeout = setTimeout(async () => {
+			loading = true;
+			errorMessage = null;
+			try {
+				const response = await fetch(
+					`/search/suggestions?q=${encodeURIComponent(searchQuery)}&limit=${TYPEAHEAD_LIMIT}`,
+					{
+						signal: controller.signal
+					}
+				);
+				if (!response.ok) throw new Error('Search is temporarily unavailable.');
+				const data = (await response.json()) as SearchResponse;
+				if (sequence === requestSequence) results = data.results;
+			} catch (error) {
+				if ((error as Error).name !== 'AbortError' && sequence === requestSequence) {
+					errorMessage = 'Search is temporarily unavailable.';
+					results = [];
+				}
+			} finally {
+				if (sequence === requestSequence) loading = false;
+			}
+		}, TYPEAHEAD_DEBOUNCE_MS);
+
+		return () => {
+			clearTimeout(timeout);
+			controller.abort();
+		};
 	});
 
-	$: loading = $tradingEntities.loading;
-	$: hits = hasQuery ? $tradingEntities.hits : [];
+	$effect(() => {
+		if (!open || mobileDialogOpen) return;
+
+		function closeOnOutsidePointerDown(event: PointerEvent) {
+			if (event.target instanceof Node && !searchRoot.contains(event.target)) closeSearch();
+		}
+
+		document.addEventListener('pointerdown', closeOnOutsidePointerDown);
+		return () => document.removeEventListener('pointerdown', closeOnOutsidePointerDown);
+	});
+
+	function formatApy(value: number | null) {
+		return value === null ? notFilledMarker : formatPercent(value, 1, 1);
+	}
+
+	function formatTvl(value: number | null) {
+		return value === null ? notFilledMarker : formatDollar(value, 1, 1);
+	}
+
+	function openSearch() {
+		mobileDialogOpen = true;
+		open = true;
+		tick().then(() => mobileSearchInput?.focus());
+	}
+
+	function closeSearch({ restoreFocus = false } = {}) {
+		mobileDialogOpen = false;
+		open = false;
+		selectedIndex = -1;
+		if (restoreFocus) tick().then(() => searchTrigger?.focus());
+	}
+
+	/** Close the quick-search UI before navigating to a search or entity page. */
+	function closeSearchForNavigation() {
+		closeSearch();
+		onNavigate?.();
+	}
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'Escape') {
+			event.preventDefault();
+			closeSearch({ restoreFocus: true });
+			return;
+		}
+
+		if (!results.length) return;
+		if (event.key === 'ArrowDown') {
+			event.preventDefault();
+			selectedIndex = (selectedIndex + 1) % results.length;
+		}
+		if (event.key === 'ArrowUp') {
+			event.preventDefault();
+			selectedIndex = selectedIndex <= 0 ? results.length - 1 : selectedIndex - 1;
+		}
+		if (event.key === 'Enter' && selectedIndex >= 0) {
+			event.preventDefault();
+			goto(results[selectedIndex].href);
+			closeSearchForNavigation();
+		}
+	}
+
+	function handleSubmit(event: SubmitEvent) {
+		if (selectedIndex >= 0) {
+			event.preventDefault();
+			goto(results[selectedIndex].href);
+		}
+		closeSearchForNavigation();
+	}
 </script>
 
-<svelte:body use:disableScroll={hasFocus} />
+<svelte:body use:disableScroll={mobileDialogOpen} />
 
 <div
+	bind:this={searchRoot}
 	class="search"
-	class:hasQuery
-	data-testid="nav-search"
-	on:focus|capture={() => (hasFocus = true)}
-	on:blur|capture={() => (hasFocus = false)}
+	class:menu-search={menu}
+	data-testid={menu ? 'mobile-menu-search' : 'nav-search'}
 >
-	<label class="mobile-only" for="search-input-mobile" aria-label="search-mobile">
-		<IconSearch />
-	</label>
-
-	<form class="desktop-only" action="/search" role="search">
-		<TextInput
-			bind:value={q}
-			aria-label="search-desktop"
+	<form class="desktop-search" action="/search" role="search" onsubmit={handleSubmit}>
+		<input
+			bind:value={query}
+			aria-activedescendant={activeOptionId}
+			aria-autocomplete="list"
+			aria-controls={listboxId}
+			aria-expanded={open}
+			aria-label="Search vaults and DeFi entities"
+			role="combobox"
 			name="q"
 			type="search"
-			placeholder="Search"
+			placeholder="Search vaults"
 			autocomplete="off"
 			autocapitalize="none"
 			spellcheck="false"
+			onfocus={() => {
+				mobileDialogOpen = false;
+				open = true;
+			}}
+			oninput={() => {
+				mobileDialogOpen = false;
+				open = true;
+			}}
+			onkeydown={handleKeydown}
 		/>
 	</form>
 
-	<div class="dialog">
-		<div class="inner">
-			<form class="mobile-only" action="/search" role="search">
-				<TextInput
-					bind:value={q}
-					id="search-input-mobile"
-					name="q"
-					size="lg"
-					type="search"
-					placeholder="Search"
-					autocomplete="off"
-					autocapitalize="none"
-					spellcheck="false"
-				/>
-			</form>
+	<button
+		bind:this={searchTrigger}
+		class="search-trigger"
+		type="button"
+		aria-label={menu ? 'Search vaults' : 'Open search'}
+		aria-expanded={open}
+		onclick={openSearch}
+	>
+		<IconSearch />
+		{#if menu}<span>Search vaults</span>{/if}
+	</button>
 
-			<div class="results" class:loading>
-				{#if hasQuery && hits.length}
-					<ul>
-						{#each hits as { document } (document.id)}
-							<SearchHit {document} />
-						{/each}
-					</ul>
-				{:else if hasQuery && loading}
-					<ul>
-						{#each Array(3) as _}
-							<SearchHit />
+	{#if open}
+		<div class="dialog" role="dialog" aria-modal="true" aria-label="Search">
+			<div class="mobile-search-row">
+				<form action="/search" role="search" onsubmit={handleSubmit}>
+					<input
+						bind:this={mobileSearchInput}
+						bind:value={query}
+						aria-activedescendant={activeOptionId}
+						aria-autocomplete="list"
+						aria-controls={listboxId}
+						aria-expanded={open}
+						aria-label="Search vaults and DeFi entities"
+						role="combobox"
+						name="q"
+						type="search"
+						placeholder="Search vaults, curators, protocols and chains"
+						autocomplete="off"
+						autocapitalize="none"
+						spellcheck="false"
+						onkeydown={handleKeydown}
+					/>
+				</form>
+				<button
+					class="close-button"
+					type="button"
+					aria-label="Close search"
+					onclick={() => closeSearch({ restoreFocus: true })}
+				>
+					<IconCancel />
+				</button>
+			</div>
+
+			<div class="results" aria-live="polite">
+				{#if loading}
+					<p>Searching…</p>
+				{:else if errorMessage}
+					<p>{errorMessage}</p>
+				{:else if hasQuery && results.length}
+					<p class="result-count">{results.length} suggestion{results.length === 1 ? '' : 's'}</p>
+					<ul id={listboxId} role="listbox" aria-label="Search suggestions">
+						{#each results as result, index (result.id)}
+							{@const address = formatVaultAddressPrefix(result.address)}
+							<li>
+								<a
+									id={`${listboxId}-${index}`}
+									class:active={selectedIndex === index}
+									data-entity-type={result.entityType}
+									href={result.href}
+									role="option"
+									aria-selected={selectedIndex === index}
+									onpointerdown={(event) => event.preventDefault()}
+									onclick={closeSearchForNavigation}
+								>
+									<span class="logo-slot">
+										{#if result.logoUrl}<img src={result.logoUrl} alt="" use:removeOnError />{/if}
+									</span>
+									<span class="result-main">
+										<strong class:blacklisted={result.entityType === 'blacklisted-vault'}>{result.name}</strong>
+										<span class="type">
+											<span class="entity-type" style:--entity-colour={searchEntityColours[result.entityType]}>
+												<span class="entity-type-marker" aria-hidden="true"></span>
+												{searchEntityLabels[result.entityType]}
+											</span>
+											{#if address}<span>· {address}</span>{/if}
+										</span>
+									</span>
+									<span class="result-sparkline">
+										{#if result.vaultId}
+											<VaultSparkline vault={{ id: result.vaultId, name: result.name }} hideUnavailable />
+										{/if}
+									</span>
+									<span class="metrics"
+										><span>{formatApy(result.averageApy1m)}</span><span>{formatTvl(result.latestTvl)}</span></span
+									>
+								</a>
+							</li>
 						{/each}
 					</ul>
 				{:else if hasQuery}
-					<div class="prompt">
-						No results found.<br />
-						Modify your query or try advanced search.
-					</div>
+					<p>No results found. Try another name or symbol.</p>
 				{:else}
-					<div class="prompt">
-						Search exchanges, tokens<br />
-						trading pairs and lending reserves.
-					</div>
+					<p>Search vaults, curators, protocols, stablecoins and chains.</p>
 				{/if}
-
-				<div class="spinner">
-					<Spinner size="60" />
-				</div>
 			</div>
 
-			<div class="ctas">
-				{#if hasQuery}
-					<Button size="sm" label="Show all results" href="/search?q={q}" tabindex={0} />
-				{/if}
-				<Button size="sm" label="Advanced search" href="/search?q={q}" tabindex={0} />
-			</div>
+			{#if hasQuery}
+				<a class="show-all" href={`/search?q=${encodeURIComponent(query.trim())}`} onclick={closeSearchForNavigation}
+					>Show all results</a
+				>
+			{/if}
 		</div>
-	</div>
+	{/if}
 </div>
 
 <style>
-	@custom-media --search-layout-mobile (width < 576px);
-	@custom-media --search-layout-desktop (width >= 576px);
-
-	@media (--search-layout-mobile) {
-		.desktop-only {
-			display: none;
-		}
-	}
-
-	@media (--search-layout-desktop) {
-		.mobile-only {
-			display: none;
-		}
-	}
-
 	.search {
-		--text-input-width: 100%;
-
-		@media (--search-layout-mobile) {
-			display: grid;
-			justify-items: end;
-		}
-
-		@media (--search-layout-desktop) {
-			position: relative;
-		}
+		position: relative;
+		width: 100%;
 	}
-
-	label {
-		display: grid;
-		align-items: center;
-		height: 100%;
-		margin-right: -var(--space-ss);
-		font-size: 20px;
+	.desktop-search input,
+	.mobile-search-row input {
+		box-sizing: border-box;
+		width: 100%;
+		height: 2.625rem;
+		padding: 0 var(--space-md) 0 2.25rem;
+		border: 1px solid var(--c-input-border);
+		border-radius: var(--radius-sm);
+		background: var(--c-input-background);
+		color: var(--c-text);
+		font: var(--f-ui-md-medium);
 	}
-
-	.dialog {
-		--text-input-height: 2.875rem;
+	.desktop-search {
+		position: relative;
+	}
+	.desktop-search::before {
+		content: '';
 		position: absolute;
+		z-index: 1;
+		top: 50%;
+		left: 0.75rem;
+		width: 1rem;
+		height: 1rem;
+		transform: translateY(-50%);
+		background: currentColor;
+		mask: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"%3E%3Cpath d="m21 21-4.35-4.35M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" fill="none" stroke="black" stroke-width="2"/%3E%3C/svg%3E')
+			center / contain no-repeat;
+		opacity: 0.65;
+	}
+	.search-trigger {
+		display: none;
+		border: 0;
+		background: transparent;
+		color: var(--c-text);
+		cursor: pointer;
+	}
+	.dialog {
+		position: absolute;
+		z-index: 1000;
+		top: calc(100% + var(--space-xs));
 		right: 0;
-		z-index: 999;
+		width: min(46rem, calc(100vw - var(--space-md) * 2));
+		border: 1px solid var(--c-box-3);
+		border-radius: var(--radius-md);
 		background: var(--c-body);
 		box-shadow: var(--shadow-3);
-		overflow: hidden;
-		transition: opacity var(--time-md);
-
-		/* hide dialog and disable pointer events when not focused */
-		:not(:focus-within) & {
-			opacity: 0;
-			pointer-events: none;
-		}
-
-		/* desktop layout - floating dialog, fixed width, max height within viewport */
-		@media (--search-layout-desktop) {
-			top: var(--space-4xl);
-			border: 1px var(--c-box-3) solid;
-			border-radius: var(--radius-md);
-			margin-top: var(--space-xxs);
-			width: 450px;
-			max-height: calc(var(--viewport-height) - var(--space-xl) - var(--header-height, 5rem) / 2);
-		}
-
-		/* mobile layout - fixed, full width, full height when active search (hasQuery) */
-		@media (--search-layout-mobile) {
-			left: 0;
-			top: 0;
-			border-bottom: 1px var(--c-box-3) solid;
-
-			.hasQuery & {
-				height: var(--viewport-height);
-				border: none;
-			}
-		}
-
-		.inner {
-			display: flex;
-			flex-direction: column;
-			gap: var(--space-md);
-			height: inherit;
-			max-height: inherit;
-			padding: var(--space-md);
-			background: var(--c-box-1);
-		}
+		padding: var(--space-md);
 	}
-
+	.mobile-search-row {
+		display: none;
+	}
 	.results {
-		flex: 1;
-		position: relative;
+		max-height: min(26rem, calc(100dvh - var(--header-height) - var(--space-xl)));
 		overflow: auto;
-
-		> * {
-			transition: all var(--time-xxs) allow-discrete;
-		}
 	}
-
-	ul {
-		padding: 0;
-		display: grid;
-		gap: var(--space-sm);
-		align-content: start;
-		overflow-y: auto;
-		overscroll-behavior: contain;
-
-		.loading & {
-			opacity: 0.75;
-			pointer-events: none;
-		}
-	}
-
-	.spinner {
-		position: absolute;
-		top: 0;
-		left: 50%;
-		transform: translate(-50%, 4em);
-		pointer-events: none;
-
-		:not(.loading) > & {
-			display: none;
-			opacity: 0;
-		}
-	}
-
-	.prompt {
-		font: var(--f-ui-md-medium);
-		letter-spacing: var(--f-ui-md-spacing, normal);
+	.results p {
+		margin: var(--space-md) 0;
 		color: var(--c-text-extra-light);
+		font: var(--f-ui-sm-medium);
+	}
+	.result-count {
+		margin-bottom: var(--space-xs) !important;
+	}
+	ul {
+		display: grid;
+		gap: var(--space-xxs);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	li a {
+		display: grid;
+		grid-template-columns: 2rem minmax(0, 1fr) auto;
+		gap: var(--space-sm);
+		align-items: center;
+		padding: var(--space-sm);
+		border-radius: var(--radius-sm);
+		color: inherit;
+		text-decoration: none;
+	}
+	li a:is(:hover, :focus-visible, .active) {
+		outline: none;
+		background: var(--background-hover);
+	}
+	.logo-slot {
+		display: grid;
+		width: 2rem;
+		height: 2rem;
+		place-items: center;
+		border-radius: 50%;
+		background: var(--c-box-2);
+		overflow: hidden;
+	}
+	.logo-slot img {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+	.result-main {
+		display: grid;
+		min-width: 0;
+		gap: 0.125rem;
+	}
+	.result-main strong {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.result-main strong.blacklisted {
+		color: var(--c-text-extra-light);
+		text-decoration: line-through;
+	}
+	.type {
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		color: var(--c-text-extra-light);
+		font: var(--f-ui-xs-medium);
+		text-transform: capitalize;
+	}
+	.entity-type {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		color: var(--entity-colour);
+	}
+	.entity-type-marker {
+		flex: 0 0 auto;
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 0.125rem;
+		background: var(--entity-colour);
+	}
+	.metrics {
+		display: grid;
+		justify-items: end;
+		gap: 0.125rem;
+		color: var(--c-text-extra-light);
+		font: var(--f-ui-xs-medium);
+		white-space: nowrap;
+	}
+	.result-sparkline {
+		display: none;
+	}
+	.show-all {
+		display: block;
+		margin-top: var(--space-md);
+		color: var(--c-link);
+		font: var(--f-ui-sm-medium);
 		text-align: center;
+	}
 
-		@media (--search-layout-mobile) {
-			font: var(--f-ui-sm-medium);
+	@media (--nav-collapsed) {
+		.desktop-search {
+			display: none;
+		}
+		.search-trigger {
+			display: grid;
+			width: 2.5rem;
+			height: 2.5rem;
+			place-items: center;
+			padding: 0;
+		}
+		.menu-search .search-trigger {
+			display: flex;
+			width: 100%;
+			height: 3rem;
+			justify-content: flex-start;
+			gap: var(--space-sm);
+			padding: 0 var(--space-md);
+			border: 1px solid var(--c-input-border);
+			border-radius: var(--radius-sm);
+			background: var(--c-input-background);
+			font: var(--f-ui-md-medium);
+		}
+		.search-trigger:focus-visible,
+		.close-button:focus-visible {
+			outline: 2px solid var(--c-input-border-focus);
+			outline-offset: 2px;
+		}
+		.dialog {
+			position: fixed;
+			inset: 0;
+			display: grid;
+			grid-template-rows: auto minmax(0, 1fr) auto;
+			width: auto;
+			height: 100dvh;
+			border: 0;
+			border-radius: 0;
+			padding: max(var(--space-md), env(safe-area-inset-top)) max(var(--space-md), env(safe-area-inset-right))
+				max(var(--space-md), env(safe-area-inset-bottom)) max(var(--space-md), env(safe-area-inset-left));
+		}
+		.mobile-search-row {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) auto;
+			gap: var(--space-sm);
+			align-items: center;
+		}
+		.close-button {
+			display: grid;
+			width: 2.625rem;
+			height: 2.625rem;
+			place-items: center;
+			border: 0;
+			border-radius: var(--radius-sm);
+			background: var(--c-box-2);
+			color: var(--c-text);
+			cursor: pointer;
+		}
+		.results {
+			max-height: none;
+			margin-top: var(--space-md);
 		}
 	}
 
-	.ctas {
-		display: grid;
-		grid-auto-flow: column;
-		grid-auto-columns: 1fr;
-		gap: var(--space-sm);
+	@media (--nav-expanded) {
+		.result-sparkline {
+			display: block;
+			width: 7rem;
 
-		@media (--search-layout-mobile) {
-			:global([data-css-props]) {
-				--button-font: var(--f-ui-sm-medium);
-				--button-letter-spacing: var(--ls-ui-sm, var(--f-ui-sm-spacing));
+			:global(.vault-sparkline) {
+				--sparkline-width: 7rem;
 			}
+		}
+		li a {
+			grid-template-columns: 2rem minmax(0, 1fr) 7rem auto;
+		}
+		.mobile-search-row {
+			display: none;
 		}
 	}
 </style>

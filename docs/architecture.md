@@ -31,7 +31,7 @@ This project uses Svelte 5 with experimental features enabled in `svelte.config.
   - `helpers/` - Utility functions (formatters, date, financial calculations, etc.)
   - `schemas/` - Zod validation schemas
   - `explorer/` - Market data exploration features
-  - `search/` - Search functionality
+  - `search/` - Server-side vault search
   - `blog/` - Blog/Ghost CMS integration
   - Other feature-specific directories (wizard, breadcrumb, header, etc.)
 - `src/params/` - SvelteKit parameter matchers for routes

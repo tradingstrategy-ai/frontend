@@ -1,20 +1,11 @@
 <script lang="ts">
-	import type { TopVaults } from '$lib/top-vaults/schemas';
-	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { JsonLd } from 'svelte-meta-tags';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
-	let topVaults = $state<TopVaults>();
-	let loading = $state(!hasVaultCache(page.data.generatedAt));
-
-	$effect(() => {
-		fetchAllVaultData(page.data.generatedAt)
-			.then((data) => (topVaults = data))
-			.catch((e) => console.error('Failed to load vault data:', e))
-			.finally(() => (loading = false));
-	});
+	let { data } = $props();
+	let topVaults = $derived(data.initialTopVaults);
 
 	const title = 'New DeFi stablecoin vaults';
 	const description = 'The best performing new DeFi stablecoin vaults.';
@@ -39,14 +30,18 @@
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: topVaults?.vaults.length ?? 0
+			numberOfItems: data.listingSummary.matchingCount
 		}
 	}}
 />
 
 <TopVaultsPage
 	{topVaults}
-	{loading}
+	loading={false}
+	progressive={data.initialVaultListingHasMore}
+	listingKey={data.listingKey}
+	listingSummary={data.listingSummary}
+	totalVaultCount={data.totalVaultCount}
 	title="New DeFi stablecoin vaults"
 	subtitle="The best performing new DeFi stablecoin vaults"
 	showFilters

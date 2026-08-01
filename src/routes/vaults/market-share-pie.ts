@@ -10,6 +10,8 @@ export interface MarketShareChartItem {
 	avgApy: number | null;
 	logoUrl?: string;
 	href?: string;
+	/** Optional semantic tone used by charts that need domain-specific colours. */
+	tone?: string;
 }
 
 export interface MarketSharePieSlice {
@@ -22,6 +24,9 @@ export interface MarketSharePieSlice {
 	logoUrl?: string;
 	url?: string;
 	slug?: string;
+	tone?: string;
+	/** Resolved chart and label colour, set client-side when needed. */
+	colour?: string;
 	isOther: boolean;
 	memberCount?: number;
 	itemStyle?: {
@@ -97,6 +102,7 @@ export function buildMarketSharePieSlices(
 			logoUrl: item.logoUrl,
 			url: item.href,
 			slug: item.slug,
+			tone: item.tone,
 			isOther: false
 		});
 	}

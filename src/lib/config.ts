@@ -83,20 +83,6 @@ export const ghostConfig = config(
 );
 
 /**
- * Load Typesense search API credentials and warn if not available.
- */
-export const typesenseConfig = config(
-	(apiKey: string, apiUrl: string) => {
-		if (!apiKey || !apiUrl) {
-			console.warn('You need to configure Typesense options to enable search');
-		}
-		return { apiKey, apiUrl };
-	},
-	'TYPESENSE_API_KEY',
-	'TYPESENSE_API_URL'
-);
-
-/**
  * Load Discord invite URL and warn if not available.
  */
 export const discordUrl = config((url: string) => {

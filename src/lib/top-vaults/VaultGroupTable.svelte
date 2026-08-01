@@ -1,6 +1,13 @@
+<!--
+@component
+Reusable entity listing table for vault groups and search results.
+
+Supports configurable metric labels, optional count and secondary-name columns,
+logos, target links, sorting, pagination and the shared responsive card layout.
+-->
 <script module lang="ts">
 	export const sortOptions = {
-		keys: ['tvl', 'avg_apy', 'vault_count', 'name', 'risk', 'core3_risk'],
+		keys: ['tvl', 'avg_apy', 'vault_count', 'name', 'full_name', 'risk', 'core3_risk'],
 		directions: ['desc', 'asc']
 	} as const;
 
@@ -20,8 +27,9 @@
 	import { UNKNOWN_VAULT_PROTOCOL_SLUG } from '$lib/top-vaults/helpers';
 	import AvgApyHeader from './AvgApyHeader.svelte';
 	import VaultGroupNameCell from './VaultGroupNameCell.svelte';
-	import RiskCell from './RiskCell.svelte';
+	import VaultSparkline from './VaultSparkline.svelte';
 	import Core3RiskCell from './Core3RiskCell.svelte';
+	import XerberusRiskCell from './XerberusRiskCell.svelte';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 
 	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
@@ -32,11 +40,24 @@
 		includeRisk?: boolean;
 		includeCore3Risk?: boolean;
 		includeFullName?: boolean;
+		includeVaultCount?: boolean;
+		/** Display a 90-day price sparkline for rows that resolve to a vault. */
+		includeSparkline?: boolean;
 		/** Widen the name column for groups with long display names (e.g. curators) */
 		wideName?: boolean;
+		fullNameLabel?: string;
+		averageApyLabel?: string;
+		tvlLabel?: string;
+		ctaLabel?: string;
 		getLogoHref?: (slug: string) => string | undefined;
+		getNameDetail?: (row: VaultGroup) => string | undefined;
+		getNameStrikethrough?: (row: VaultGroup) => boolean;
+		getFullNameMarkerColour?: (row: VaultGroup) => string | undefined;
+		getSparklineVault?: (row: VaultGroup) => { id: string; name: string } | undefined;
+		getTvlSortValue?: (row: VaultGroup) => string | number | (string | number)[];
 		page?: number;
-		sort?: SortOptions['keys'][number];
+		/** Set to `null` to preserve the supplied relevance order initially. */
+		sort?: SortOptions['keys'][number] | null;
 		direction?: SortOptions['directions'][number];
 		getHref?: (slug: string) => string | undefined;
 		getWarningLabel?: (row: VaultGroup) => string | undefined;
@@ -48,8 +69,19 @@
 		includeRisk = false,
 		includeCore3Risk = false,
 		includeFullName = false,
+		includeVaultCount = true,
+		includeSparkline = false,
 		wideName = false,
+		fullNameLabel = 'Name',
+		averageApyLabel = 'Avg. APY%',
+		tvlLabel = 'TVL',
+		ctaLabel = 'View vaults',
 		getLogoHref,
+		getNameDetail,
+		getNameStrikethrough,
+		getFullNameMarkerColour,
+		getSparklineVault,
+		getTvlSortValue,
 		page: pageIndex = 0,
 		sort = sortOptions.keys[0],
 		direction = sortOptions.directions[0],
@@ -75,14 +107,16 @@
 	const hiddenColumns = [
 		...(includeRisk ? [] : ['risk']),
 		...(includeCore3Risk ? [] : ['core3_risk']),
-		...(includeFullName ? [] : ['full_name'])
+		...(includeFullName ? [] : ['full_name']),
+		...(includeVaultCount ? [] : ['vault_count']),
+		...(includeSparkline ? [] : ['sparkline'])
 	];
 
 	// svelte-ignore state_referenced_locally
 	const table = createTable(tableRowsStore, {
 		hide: addHiddenColumns({ initialHiddenColumnIds: hiddenColumns.length ? hiddenColumns : [''] }),
 		sort: addSortBy({
-			initialSortKeys: [{ id: sort, order: direction }],
+			initialSortKeys: sort ? [{ id: sort, order: direction }] : [],
 			toggleOrder: ['desc', 'asc']
 		}),
 		page: addPagination({
@@ -94,29 +128,47 @@
 	// svelte-ignore state_referenced_locally
 	const columns = table.createColumns([
 		table.column({
+			id: 'index',
+			header: '',
+			accessor: () => '',
+			plugins: { sort: { disable: true } }
+		}),
+		table.column({
 			id: 'name',
 			header: groupLabel,
-			accessor: (row) => ({ name: row.name, slug: row.slug }),
+			accessor: (row) => ({
+				name: row.name,
+				slug: row.slug,
+				detail: getNameDetail?.(row),
+				strikethrough: getNameStrikethrough?.(row)
+			}),
 			cell: ({ value }) =>
 				createRender(VaultGroupNameCell, {
 					label: value.name,
 					logoUrl: getLogoHref?.(value.slug),
+					detail: value.detail,
+					strikethrough: value.strikethrough,
 					showPlaceholder: value.slug === UNKNOWN_VAULT_PROTOCOL_SLUG && !getLogoHref?.(value.slug)
 				}),
 			plugins: { sort: { getSortValue: (v) => v.name, invert: true } }
 		}),
 		table.column({
 			id: 'full_name',
-			header: 'Name',
-			accessor: (row) => ({ fullName: row.fullName, warningLabel: getWarningLabel?.(row) }),
+			header: fullNameLabel,
+			accessor: (row) => ({
+				fullName: row.fullName,
+				markerColour: getFullNameMarkerColour?.(row),
+				warningLabel: getWarningLabel?.(row)
+			}),
 			cell: ({ value }) =>
 				value.fullName || value.warningLabel
 					? createRender(VaultGroupNameCell, {
 							label: value.fullName ?? '',
+							markerColour: value.markerColour,
 							warningLabel: value.warningLabel
 						})
 					: '',
-			plugins: { sort: { disable: true } }
+			plugins: { sort: { getSortValue: (value) => value.fullName ?? '' } }
 		}),
 		table.column({
 			id: 'core3_risk',
@@ -133,13 +185,12 @@
 		}),
 		table.column({
 			id: 'risk',
-			header: 'Technical Risk',
-			accessor: (row) => ({ risk: row.risk, risk_numeric: row.risk_numeric }),
-			cell: ({ value }) => createRender(RiskCell, { risk: value.risk }),
+			header: 'Xerberus',
+			accessor: (row) => ({ score: row.xerberus_score ?? null, url: row.xerberus_url ?? null }),
+			cell: ({ value }) => createRender(XerberusRiskCell, { score: value.score, url: value.url }),
 			plugins: {
 				sort: {
-					getSortValue: (v) => v.risk_numeric ?? Infinity,
-					invert: true
+					getSortValue: (v) => v.score ?? -Infinity
 				}
 			}
 		}),
@@ -150,20 +201,28 @@
 		}),
 		table.column({
 			accessor: 'avg_apy',
-			header: createRender(AvgApyHeader, { label: 'Avg. APY%' }),
+			header: createRender(AvgApyHeader, { label: averageApyLabel }),
 			cell: ({ value }) => formatPercent(value)
 		}),
 		table.column({
-			accessor: 'tvl',
-			header: 'TVL',
-			cell: ({ value }) => formatDollar(value, 2)
+			id: 'tvl',
+			accessor: (row) => ({ value: row.tvl, sortValue: getTvlSortValue?.(row) ?? row.tvl }),
+			header: tvlLabel,
+			cell: ({ value }) => formatDollar(value.value, 2),
+			plugins: { sort: { getSortValue: (value) => value.sortValue } }
+		}),
+		table.column({
+			id: 'sparkline',
+			header: 'History 3M',
+			accessor: (row) => getSparklineVault?.(row),
+			cell: ({ value }) => (value ? createRender(VaultSparkline, { vault: value, hideUnavailable: true }) : ''),
+			plugins: { sort: { disable: true } }
 		}),
 		table.column({
 			id: 'cta',
 			header: '',
 			accessor: (row) => getHref(row.slug),
-			cell: ({ value }) =>
-				value ? createRender(TableRowTarget, { size: 'sm', label: 'View vaults', href: value }) : '',
+			cell: ({ value }) => (value ? createRender(TableRowTarget, { size: 'sm', label: ctaLabel, href: value }) : ''),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -171,7 +230,13 @@
 	const tableViewModel = table.createViewModel(columns);
 </script>
 
-<div class="vault-protocol-table" class:wide-name={wideName}>
+<div
+	class="vault-protocol-table"
+	class:wide-name={wideName}
+	class:withoutVaultCount={!includeVaultCount}
+	class:with-sparkline={includeSparkline}
+	style:--rank-offset={pageIndex * 150}
+>
 	<DataTable
 		isResponsive
 		hasPagination
@@ -186,13 +251,13 @@
 <style>
 	.vault-protocol-table {
 		/* flip the sort indicator on columns that use inverted sort */
-		:global(:is(th.name, th.risk, th.core3_risk) .icon) {
+		:global(:is(th.name, th.core3_risk) .icon) {
 			rotate: 180deg;
 		}
 
-		/* hide full_name column on mobile */
-		:global(:is(th.full_name, td.full_name)) {
-			@media (--viewport-sm-down) {
+		/* Hide secondary entity and sparkline columns in the compact mobile card layout. */
+		@media (--viewport-sm-down) {
+			:global(table.datatable.responsive :is(th.full_name, td.full_name, th.sparkline, td.sparkline)) {
 				display: none;
 			}
 		}
@@ -208,14 +273,49 @@
 		@media (--viewport-md-up) {
 			:global(table) {
 				table-layout: fixed;
+				counter-reset: group-rank var(--rank-offset);
 			}
 
 			:global(:is(th, td)) {
-				width: 20%;
+				width: 16%;
 
-				&:not(:is(.name, .risk, .core3_risk, .full_name)) {
+				&:not(:is(.index, .name, .risk, .core3_risk, .full_name)) {
 					text-align: right;
 				}
+			}
+
+			:global(.index) {
+				box-sizing: border-box;
+				width: 2.75rem;
+				min-width: 2.75rem;
+				max-width: 2.75rem;
+				padding-inline: var(--space-xs);
+				text-align: center;
+			}
+
+			:global(td.index) {
+				counter-increment: group-rank;
+				color: #6b7280;
+
+				&::before {
+					content: '#' counter(group-rank);
+				}
+			}
+
+			:global(tr[data-row-index='1'] td.index) {
+				color: #d4af37;
+			}
+
+			:global(tr[data-row-index='2'] td.index) {
+				color: #c0c0c0;
+			}
+
+			:global(tr[data-row-index='3'] td.index) {
+				color: #cd7f32;
+			}
+
+			:global(.name) {
+				width: 32%;
 			}
 
 			:global(.full_name) {
@@ -227,15 +327,23 @@
 				width: max(calc(20vw), 12rem);
 			}
 
-			/* layout with a leading rating column (technical risk and/or CORE3); the
-			   percentage widths must sum to 100% so the cells fill the table edge-to-edge */
+			/* layout with leading rating columns; keep third-party risk ratings compact
+			   so the numeric columns stay scannable on protocol listings */
 			:global(:has(:is(.risk, .core3_risk))) {
-				:global(:is(th, td)) {
-					width: 16%;
+				:global(:is(th, td):not(.index)) {
+					width: 15%;
 				}
 
 				:global(.name) {
-					width: 36%;
+					width: 24%;
+				}
+
+				:global(.core3_risk) {
+					width: 8%;
+				}
+
+				:global(.risk) {
+					width: 12%;
 				}
 
 				:global(.cta) {
@@ -244,17 +352,21 @@
 			}
 
 			&.wide-name {
-				:global(:is(th, td):not(.name, .cta)) {
-					width: 16%;
+				:global(:is(th, td):not(.index, .name, .cta)) {
+					width: 15%;
 				}
 
 				:global(.name) {
-					width: 36%;
+					width: 35%;
 				}
 			}
 		}
 
 		@media (--viewport-sm-down) {
+			:global(table.datatable.responsive :is(th.index, td.index)) {
+				display: none;
+			}
+
 			:global(table.datatable.responsive) {
 				--border-spacing: 0;
 				gap: 0.375rem;
@@ -266,7 +378,7 @@
 			}
 
 			:global(table.datatable.responsive tbody tr) {
-				grid-template-columns: max-content max-content minmax(0, 1fr);
+				grid-template-columns: calc(2.5rem + 0.5rem + 2.5rem + 1rem) max-content max-content minmax(0, 1fr);
 				gap: 0 0.5rem;
 				padding: 0.75rem 0.875rem;
 				border-radius: 0.75rem;
@@ -285,18 +397,20 @@
 
 			:global(table.datatable.responsive tbody tr[data-row-index]::before) {
 				top: 0.75rem;
-				left: calc(0.875rem + 2.5rem + 0.5rem);
+				left: calc(0.875rem + 1.25rem);
+				transform: translateX(-50%);
 				font: var(--f-ui-md-bold);
 				line-height: 2.5rem;
-				color: var(--c-text-light);
+				color: var(--c-text);
 				pointer-events: none;
 			}
 
 			:global(table.datatable.responsive tbody tr td.name) {
 				grid-column: 1 / -1;
 				align-items: center;
+				box-sizing: border-box;
 				min-height: 2.5rem;
-				padding-inline: calc(2.5rem + 0.5rem + 2.75rem) 1.5rem;
+				padding-inline: calc(2.5rem + 0.5rem + 2.5rem + 1.5rem) 2.25rem;
 				font: var(--f-ui-lg-bold);
 				line-height: 1.1;
 			}
@@ -307,18 +421,23 @@
 				gap: var(--space-xxs);
 				min-width: 0;
 				padding: 0;
-				font: var(--f-ui-sm-roman);
+				font: var(--f-ui-xs-roman);
 				line-height: 1.2;
-				color: var(--c-text-light);
+				color: var(--c-text);
 				white-space: nowrap;
 				word-break: normal;
+			}
+
+			:global(table.datatable.responsive tbody tr td:not(.name)::before),
+			:global(table.datatable.responsive tbody tr td:not(.name)::after) {
+				color: var(--c-text-light);
 			}
 
 			:global(table.datatable.responsive tbody tr td.name .entity-symbol .logo),
 			:global(table.datatable.responsive tbody tr td.name .entity-symbol .placeholder-logo) {
 				position: absolute;
-				top: 0.75rem;
-				left: 0.875rem;
+				top: calc(0.75rem + 0.625rem);
+				left: calc(0.875rem + 2.5rem + 0.5rem);
 				width: 2.5rem;
 				height: 2.5rem;
 				object-fit: contain;
@@ -328,9 +447,16 @@
 			:global(table.datatable.responsive tbody tr td.name .entity-symbol .label),
 			:global(table.datatable.responsive tbody tr td.name .group-name) {
 				min-width: 0;
+				max-width: 100%;
+			}
+
+			:global(table.datatable.responsive tbody tr td.name .entity-symbol) {
+				width: 100%;
 			}
 
 			:global(table.datatable.responsive tbody tr td.name .group-name > span:last-child) {
+				display: block;
+				min-width: 0;
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
@@ -340,7 +466,12 @@
 				display: none;
 			}
 
-			:global(table.datatable.responsive tbody tr td.core3_risk) {
+			:global(table.datatable.responsive tbody tr td.core3_risk),
+			:global(table.datatable.responsive tbody tr td.risk) {
+				display: none;
+			}
+
+			:global(table.datatable.responsive tbody tr td.full_name) {
 				display: none;
 			}
 
@@ -351,7 +482,26 @@
 			}
 
 			:global(table.datatable.responsive tbody tr td.vault_count) {
+				grid-column: 2;
+				grid-row: 2;
+			}
+
+			:global(table.datatable.responsive tbody tr td.avg_apy) {
+				grid-column: 3;
+				grid-row: 2;
+			}
+
+			:global(table.datatable.responsive tbody tr td.tvl) {
+				grid-column: 2 / -1;
+				grid-row: 3;
+			}
+
+			&.withoutVaultCount :global(table.datatable.responsive tbody tr td.avg_apy) {
 				margin-inline-start: calc(2.5rem + 0.5rem + 2.75rem);
+			}
+
+			&.withoutVaultCount :global(table.datatable.responsive tbody tr td.avg_apy::before) {
+				display: none;
 			}
 
 			:global(table.datatable.responsive tbody tr td.vault_count::before) {
@@ -362,6 +512,10 @@
 			:global(table.datatable.responsive tbody tr td.avg_apy::before),
 			:global(table.datatable.responsive tbody tr td.tvl::before) {
 				content: '·';
+			}
+
+			:global(table.datatable.responsive tbody tr td.tvl::before) {
+				content: none;
 			}
 
 			:global(table.datatable.responsive tbody tr td.avg_apy::after) {
@@ -378,6 +532,77 @@
 
 			:global(table.datatable.responsive tbody tr td .row-link) {
 				display: none;
+			}
+
+			@media (width < 480px) {
+				:global(table.datatable.responsive tbody tr) {
+					grid-template-columns: calc(2.5rem + 0.5rem + 2.5rem + 1rem) max-content minmax(0, 1fr);
+				}
+
+				:global(table.datatable.responsive tbody tr td.avg_apy) {
+					grid-column: 3;
+				}
+
+				:global(table.datatable.responsive tbody tr td.tvl) {
+					grid-column: 2 / -1;
+				}
+
+				:global(table.datatable.responsive tbody tr td.tvl::before) {
+					display: none;
+				}
+			}
+
+			@media (width < 360px) {
+				:global(table.datatable.responsive tbody tr td.avg_apy) {
+					grid-column: 2 / -1;
+					grid-row: 3;
+				}
+
+				:global(table.datatable.responsive tbody tr td.avg_apy::before) {
+					content: none;
+				}
+
+				:global(table.datatable.responsive tbody tr td.tvl) {
+					grid-column: 2 / -1;
+					grid-row: 4;
+				}
+			}
+		}
+
+		@media (--viewport-md-up) {
+			&.with-sparkline {
+				:global(:is(th, td)) {
+					width: auto;
+				}
+
+				:global(.name) {
+					width: 30%;
+				}
+
+				:global(.full_name) {
+					width: 17%;
+				}
+
+				:global(.avg_apy),
+				:global(.tvl) {
+					width: 13%;
+				}
+
+				:global(.sparkline) {
+					width: 15%;
+					text-align: center;
+					vertical-align: middle;
+
+					:global(.vault-sparkline) {
+						margin-inline: auto;
+						--sparkline-width: 7rem;
+					}
+				}
+
+				:global(.cta) {
+					--button-width: 100%;
+					width: 12%;
+				}
 			}
 		}
 	}

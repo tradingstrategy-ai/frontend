@@ -91,6 +91,7 @@
 							items={chartStablecoins}
 							groupLabel="Stablecoin"
 							groupLabelPlural="stablecoins"
+							showLabelLogos
 							testId="stablecoin-tvl-pie-chart"
 						/>
 					</MarketShareWidgetBox>
