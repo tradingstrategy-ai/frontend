@@ -6,7 +6,8 @@
 	} from '$lib/stablecoin-metadata/helpers';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
-	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import { JsonLd } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
 	import VaultGroupDescription from '../../VaultGroupDescription.svelte';
 
@@ -27,7 +28,9 @@
 	let description = $derived(shortDescription ?? `Top ${denominationName} DeFi vaults ranked by performance.`);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived.by(() => {
-		const logoPath = denominationSlug ? getStablecoinLogoUrl(denominationSlug) : undefined;
+		const logoPath = stablecoinMetadata?.logos.light
+			? getStablecoinLogoUrl(stablecoinMetadata.slug, { format: 'original' })
+			: undefined;
 		return logoPath ? new URL(logoPath, page.url.origin).href : undefined;
 	});
 	let aboutName = $derived(formatStablecoinDisplayName(stablecoinMetadata?.name, stablecoinMetadata?.symbol));
@@ -38,20 +41,20 @@
 	{title}
 	{description}
 	canonical={pageUrl}
+	image={logoUrl}
+	imageAlt={`${denominationName} logo`}
 	openGraph={{
 		siteName: 'Trading Strategy',
 		url: pageUrl,
 		title,
 		description,
-		images: logoUrl ? [{ url: logoUrl }] : [],
 		type: 'website'
 	}}
 	twitter={{
 		site: '@TradingProtocol',
 		cardType: logoUrl ? 'summary_large_image' : 'summary',
 		title,
-		description,
-		image: logoUrl ?? undefined
+		description
 	}}
 />
 

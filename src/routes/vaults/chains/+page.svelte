@@ -9,7 +9,8 @@
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatDollar } from '$lib/helpers/formatters';
-	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import { JsonLd } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import MarketSharePieChart from '../MarketSharePieChart.svelte';
 	import MarketShareWidgetBox from '../MarketShareWidgetBox.svelte';
 

@@ -31,6 +31,7 @@ Vault detail page with performance metrics, protocol information, and third-part
 		hasSupportedProtocol,
 		isBlacklisted
 	} from '$lib/top-vaults/helpers';
+	import { getCuratorSocialLogoUrl } from '$lib/social-card/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 
 	let { data } = $props();
@@ -56,14 +57,12 @@ Vault detail page with performance metrics, protocol information, and third-part
 					: undefined
 	);
 	let chartLogoUrl = $derived(
-		curatorMetadata?.logos.generic ??
-			curatorMetadata?.logos.light ??
-			curatorMetadata?.logos.dark ??
+		getCuratorSocialLogoUrl(curatorMetadata) ??
 			(protocolMetadata ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined)
 	);
 </script>
 
-<SocialMediaTags {vault} {chain} {protocolMetadata} />
+<SocialMediaTags {vault} {chain} {protocolMetadata} {curatorMetadata} {stablecoinMetadata} />
 
 <main class="vault-details ds-3">
 	<Section tag="header" padding="xs">

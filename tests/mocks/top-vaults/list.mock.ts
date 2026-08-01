@@ -501,7 +501,11 @@ const curators = {
 		rss: null,
 		protocol_curator: false,
 		canonical_feeder_id: null,
-		logos: { generic: null, dark: null, light: null },
+		logos: {
+			generic: 'http://localhost:4173/api/curators/steakhouse-financial/light.png',
+			dark: null,
+			light: null
+		},
 		recent_posts: [
 			{
 				title: 'Latest market update',

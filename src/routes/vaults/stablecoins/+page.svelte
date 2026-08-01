@@ -13,7 +13,8 @@
 		getStablecoinLogoUrl,
 		isStablecoinDepegged
 	} from '$lib/stablecoin-metadata/helpers.js';
-	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import { JsonLd } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import MarketSharePieChart from '../MarketSharePieChart.svelte';
 	import MarketShareWidgetBox from '../MarketShareWidgetBox.svelte';
 

@@ -10,7 +10,8 @@ Scatter plot page showing vault current TVL versus historical peak TVL, coloured
 	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 	import ScatterPlotSelector from '$lib/scatter-plot/ScatterPlotSelector.svelte';
 	import TvlScatterPlot from './TvlScatterPlot.svelte';
-	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import { JsonLd } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';

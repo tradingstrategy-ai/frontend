@@ -11,7 +11,7 @@ Displays blockchain information for a strategy vault.
 	import SummaryBox from '$lib/components/SummaryBox.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { getExplorerUrl } from '$lib/helpers/chain';
-	import { MetaTags } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import IconArrowRightUp from '~icons/local/arrow-right-up';
 
 	let { data } = $props();

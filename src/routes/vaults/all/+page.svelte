@@ -4,7 +4,8 @@ All vaults listing including problematic/blacklisted vaults
 <script lang="ts">
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
-	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import { JsonLd } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
 	let { data } = $props();
 	let topVaults = $derived(data.initialTopVaults);

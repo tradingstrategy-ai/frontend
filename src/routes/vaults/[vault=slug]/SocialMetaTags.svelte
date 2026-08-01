@@ -2,20 +2,31 @@
 	import { page } from '$app/state';
 	import type { Chain } from '$lib/helpers/chain';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
-	import { getVaultProtocolDisplayName, getVaultSparklineUrl } from '$lib/top-vaults/helpers';
+	import {
+		getBlockchainSocialLogoUrl,
+		getCuratorSocialLogoUrl,
+		getVaultSocialCardImageUrl,
+		selectSocialCardImage
+	} from '$lib/social-card/helpers';
+	import { getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers';
+	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
+	import { getVaultProtocolDisplayName } from '$lib/top-vaults/helpers';
 	import { getChainDisplayName } from '$lib/helpers/chain';
-	import type { VaultInfo } from '$lib/top-vaults/schemas';
+	import type { CuratorInfo, VaultInfo } from '$lib/top-vaults/schemas';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 	import type { VaultProtocolMetadata } from '$lib/vault-protocol/schemas';
-	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import { JsonLd } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
 	interface Props {
 		vault: VaultInfo;
 		chain: Chain;
 		protocolMetadata?: VaultProtocolMetadata;
+		curatorMetadata?: CuratorInfo | null;
+		stablecoinMetadata?: StablecoinMetadata;
 	}
 
-	let { vault, chain, protocolMetadata }: Props = $props();
+	let { vault, chain, protocolMetadata, curatorMetadata, stablecoinMetadata }: Props = $props();
 
 	let generatedDescription = $derived.by(() => {
 		const parts = [`${vault.name} on ${getVaultProtocolDisplayName(vault)} on ${getChainDisplayName(vault.chain_id)}`];
@@ -34,11 +45,27 @@
 	let description = $derived(vault.short_description ?? generatedDescription);
 
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
-	let imageUrl = $derived(getVaultSparklineUrl(vault, 'png') ?? '');
 	let protocolLogoUrl = $derived.by(() => {
-		const logoPath = protocolMetadata?.logos.light ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined;
+		const logoPath = protocolMetadata?.logos.light
+			? getVaultProtocolLogoUrl(protocolMetadata.slug, { format: 'original' })
+			: protocolMetadata?.logos.dark;
 		return logoPath ? new URL(logoPath, page.url.origin).href : undefined;
 	});
+	let stablecoinLogoUrl = $derived.by(() => {
+		const logoPath = stablecoinMetadata?.logos.light
+			? getStablecoinLogoUrl(stablecoinMetadata.slug, { format: 'original' })
+			: undefined;
+		return logoPath ? new URL(logoPath, page.url.origin).href : undefined;
+	});
+	let fallbackImageUrl = $derived(
+		selectSocialCardImage({
+			curatorLogoUrl: getCuratorSocialLogoUrl(curatorMetadata),
+			protocolLogoUrl,
+			blockchainLogoUrl: getBlockchainSocialLogoUrl(chain.slug),
+			stablecoinLogoUrl
+		})
+	);
+	let imageUrl = $derived(getVaultSocialCardImageUrl(vault, fallbackImageUrl));
 
 	let additionalProperty = $derived.by(() => {
 		const props: Array<Record<string, unknown>> = [];
@@ -117,20 +144,20 @@
 	title={`${vault.name} | DeFi Vault | Trading Strategy`}
 	{description}
 	canonical={pageUrl}
+	image={imageUrl}
+	imageAlt={`${vault.name} preview image`}
 	openGraph={{
 		siteName: 'Trading Strategy',
 		url: pageUrl,
 		title: vault.name,
 		description,
-		images: [{ url: imageUrl }],
 		type: 'website'
 	}}
 	twitter={{
 		site: '@TradingProtocol',
 		cardType: 'summary_large_image',
 		title: vault.name,
-		description,
-		image: imageUrl
+		description
 	}}
 />
 

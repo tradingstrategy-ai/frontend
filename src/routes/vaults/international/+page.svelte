@@ -3,7 +3,8 @@ International vault listing for non-USD-denominated vaults.
 -->
 <script lang="ts">
 	import { page } from '$app/state';
-	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import { JsonLd } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { formatDollar } from '$lib/helpers/formatters';
 

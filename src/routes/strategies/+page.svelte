@@ -6,7 +6,7 @@
 	import { slide } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { cubicOut } from 'svelte/easing';
-	import { MetaTags } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import PageHeading from '$lib/components/PageHeading.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
