@@ -1,5 +1,5 @@
 /** Rows included directly in the server-rendered page response. */
-export const INITIAL_VAULT_LISTING_LIMIT = 150;
+export const INITIAL_VAULT_LISTING_LIMIT = 75;
 
 /** Rows returned by each browser continuation request. */
 export const VAULT_LISTING_PAGE_SIZE = 50;

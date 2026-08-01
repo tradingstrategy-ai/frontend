@@ -1,6 +1,6 @@
 # Vault listing pagination
 
-Vault table pages render their first 150 matching rows in the SvelteKit server
+Vault table pages render their first 75 matching rows in the SvelteKit server
 load. This makes the initial listing visible without downloading the complete
 vault export in the browser.
 
@@ -40,5 +40,5 @@ the complete export. Vault table pages must not use it after hydration.
 
 The server sends compact full-result aggregates with the first row batch.
 Listing counts, TVL, weighted returns, and SEO item counts must use those
-aggregates, not the initial 150 rows. Charts that need every member receive a
+aggregates, not the initial 75 rows. Charts that need every member receive a
 separate, purpose-built payload rather than reusing table rows.
