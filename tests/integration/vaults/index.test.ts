@@ -205,11 +205,11 @@ test.describe('vault index page', () => {
 		await expect(meta).toContainText('254 vaults');
 	});
 
-	test('renders initial batch of 150 rows', async ({ page }) => {
+	test('renders initial batch of 75 rows', async ({ page }) => {
 		const rows = page.locator('tbody tr.targetable');
 		// Wait for rows to be visible
 		await expect(rows.first()).toBeVisible();
-		await expect(rows).toHaveCount(150);
+		await expect(rows).toHaveCount(75);
 	});
 
 	test('shows load-more sentinel when more rows available', async ({ page }) => {
@@ -221,14 +221,14 @@ test.describe('vault index page', () => {
 	test('loads 50 more rows when scrolling to sentinel', async ({ page }) => {
 		// Check initial row count
 		const rows = page.locator('tbody tr.targetable');
-		await expect(rows).toHaveCount(150);
+		await expect(rows).toHaveCount(75);
 
 		// Scroll the sentinel into view
 		const sentinel = page.getByTestId('load-more-sentinel');
 		await sentinel.scrollIntoViewIfNeeded();
 
 		// Confirm additional rows
-		await expect(rows).toHaveCount(200);
+		await expect(rows).toHaveCount(125);
 	});
 
 	test('loads 500 vaults through progressive scrolling', async ({ page }) => {
@@ -236,12 +236,14 @@ test.describe('vault index page', () => {
 
 		const rows = page.locator('tbody tr.targetable');
 		const sentinel = page.getByTestId('load-more-sentinel');
-		await expect(rows).toHaveCount(150);
+		await expect(rows).toHaveCount(75);
 
-		for (let expectedCount = 200; expectedCount <= 500; expectedCount += 50) {
+		for (let expectedCount = 125; expectedCount < 500; expectedCount += 50) {
 			await sentinel.scrollIntoViewIfNeeded();
 			await expect(rows).toHaveCount(expectedCount);
 		}
+		await sentinel.scrollIntoViewIfNeeded();
+		await expect(rows).toHaveCount(500);
 
 		await expect(sentinel).not.toBeVisible();
 	});
@@ -252,17 +254,20 @@ test.describe('vault index page', () => {
 
 		// scroll once - loads additional 50
 		await sentinel.scrollIntoViewIfNeeded();
-		await expect(rows).toHaveCount(200);
+		await expect(rows).toHaveCount(125);
 
 		// scroll again - loads another 50
 		await sentinel.scrollIntoViewIfNeeded();
-		await expect(rows).toHaveCount(250);
+		await expect(rows).toHaveCount(175);
 
-		// scroll a third time - loads the final 4
+		// Scroll twice more: a full batch, then the final 29 rows.
+		await sentinel.scrollIntoViewIfNeeded();
+		await expect(rows).toHaveCount(225);
+
 		await sentinel.scrollIntoViewIfNeeded();
 		await expect(rows).toHaveCount(254);
 
-		// all rows loaded - no more sentinel
+		// All rows loaded - no more sentinel.
 		await expect(sentinel).not.toBeVisible();
 	});
 
