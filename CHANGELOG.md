@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Consolidate vault listing controls into a persistent Filters disclosure (2026-08-01)
 - Add Xerberus protocol scores and tooltips to the vault protocol listing, and fix curator description spacing (2026-08-01)
 - Add TVL distribution charts for CORE3 and Xerberus risk-rated vaults (2026-07-30)
 - Restore site-wide vault search with server-side vault JSON indexing, typeahead and responsive result listings, replacing the retired external integration (2026-07-30)

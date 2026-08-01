@@ -5,18 +5,20 @@ function urlParamsMatch(expected: Record<string, string>) {
 	return (url: URL) => Object.entries(expected).every(([key, value]) => url.searchParams.get(key) === value);
 }
 
-async function openAdvancedSettings(page: import('@playwright/test').Page) {
+async function openFilters(page: import('@playwright/test').Page) {
 	await expect(page.locator('tbody tr.targetable').first()).toBeVisible();
-	const advancedFilters = page.getByTestId('advanced-filters');
-	await page.getByTestId('advanced-filters-summary').click();
-	await expect(advancedFilters).toHaveJSProperty('open', true);
-	await expect(page.locator('.advanced-filters-content')).toBeVisible();
+	const filters = page.getByTestId('vault-filters');
+	if (!(await filters.evaluate((details: HTMLDetailsElement) => details.open))) {
+		await page.getByTestId('filters-summary').click();
+	}
+	await expect(filters).toHaveJSProperty('open', true);
+	await expect(page.locator('.filters-content')).toBeVisible();
 }
 
-async function closeAdvancedSettings(page: import('@playwright/test').Page) {
-	const advancedFilters = page.getByTestId('advanced-filters');
-	await page.getByTestId('advanced-filters-summary').click();
-	await expect(advancedFilters).toHaveJSProperty('open', false);
+async function closeFilters(page: import('@playwright/test').Page) {
+	const filters = page.getByTestId('vault-filters');
+	await page.getByTestId('filters-summary').click();
+	await expect(filters).toHaveJSProperty('open', false);
 }
 
 /** Load additional listing rows until a named vault is rendered. */
@@ -39,7 +41,7 @@ async function toggleReturnOption(page: import('@playwright/test').Page, label: 
 }
 
 function returnColumnsTrigger(page: import('@playwright/test').Page) {
-	return page.locator('.advanced-filters-content').getByTestId('return-columns-trigger');
+	return page.locator('.filters-content').getByTestId('return-columns-trigger');
 }
 
 async function expectLimitedDataTooltip(
@@ -94,34 +96,62 @@ test.describe('vault index page', () => {
 		);
 	});
 
-	test('shows only primary filters by default and toggles advanced settings', async ({ page }) => {
+	test('groups all controls in a collapsed Filters disclosure', async ({ page }) => {
 		const primaryFilters = page.locator('.primary-filters');
+		await expect(primaryFilters).not.toBeVisible();
+
+		const filters = page.getByTestId('vault-filters');
+		await expect(filters).not.toHaveAttribute('open', '');
+		await expect(page.getByTestId('filters-summary')).toHaveText('Filters');
+		await expect(page.getByTestId('return-columns-trigger')).not.toBeVisible();
+		await expect(page.locator('.filters-content').getByText('Min TVL')).not.toBeVisible();
+
+		await openFilters(page);
+
 		await expect(primaryFilters.getByText('Technical risk', { exact: true })).toBeVisible();
 		await expect(primaryFilters.getByText('Hide undepositable', { exact: true })).toBeVisible();
-
-		const advanced = page.getByTestId('advanced-filters');
-		await expect(advanced).not.toHaveAttribute('open', '');
-		await expect(page.getByTestId('advanced-filters-summary')).toBeVisible();
-		await expect(page.getByTestId('return-columns-trigger')).not.toBeVisible();
-		await expect(page.locator('.advanced-filters-content').getByText('Min TVL')).not.toBeVisible();
-
-		await openAdvancedSettings(page);
-
-		await expect(page.locator('.advanced-filters-content').getByText('Min TVL')).toBeVisible();
-		await expect(page.locator('.advanced-filters-content').getByText('Age', { exact: true })).toBeVisible();
-		await expect(page.locator('.advanced-filters-content').getByText('Max drawdown')).toBeVisible();
+		await expect(primaryFilters.getByTestId('vault-search')).toBeVisible();
+		await expect(page.locator('.filters-content').getByText('Min TVL')).toBeVisible();
+		await expect(page.locator('.filters-content').getByText('Age', { exact: true })).toBeVisible();
+		await expect(page.locator('.filters-content').getByText('Max drawdown')).toBeVisible();
 		await expect(returnColumnsTrigger(page)).toBeVisible();
-		await expect(page.getByTestId('advanced-filters-note')).toBeVisible();
-		await expect(page.getByTestId('advanced-filters-note')).toContainText(
-			'The filtering is for the current vault category list. For everything, you can filter on All vaults page.'
+		await expect(page.getByTestId('filters-note')).toBeVisible();
+		await expect(page.getByTestId('filters-note')).toContainText(
+			'All vaults page allows you to filter over everything. The vaults on this page are limited to the current category.'
 		);
-		await expect(
-			page.getByTestId('advanced-filters-note').getByRole('link', { name: 'All vaults page' })
-		).toHaveAttribute('href', '/vaults/all');
+		await expect(page.getByTestId('filters-note').getByRole('link', { name: 'All vaults page' })).toHaveAttribute(
+			'href',
+			'/vaults/all'
+		);
 
-		await closeAdvancedSettings(page);
-		await expect(advanced).not.toHaveAttribute('open', '');
+		await closeFilters(page);
+		await expect(filters).not.toHaveAttribute('open', '');
 		await expect(returnColumnsTrigger(page)).not.toBeVisible();
+	});
+
+	test('keeps Filters open while moving between vault listings', async ({ page }) => {
+		await openFilters(page);
+
+		await page.goto('/vaults/all');
+		await expect(page.getByTestId('vault-filters')).toHaveAttribute('open', '');
+	});
+
+	test('opens Filters for URLs with filter parameters', async ({ page }) => {
+		await page.goto('/vaults?risk=2');
+
+		await expect(page.getByTestId('vault-filters')).toHaveAttribute('open', '');
+		await expect(page.locator('.primary-filters').getByText('Technical risk', { exact: true })).toBeVisible();
+	});
+
+	test('keeps Filters closed after updating a filtered listing', async ({ page }) => {
+		await page.goto('/vaults?risk=2');
+		await closeFilters(page);
+
+		await page.locator('th.vault button').click();
+		await expect(page.getByTestId('vault-filters')).not.toHaveAttribute('open', '');
+
+		await page.goto('/vaults/all');
+		await expect(page.getByTestId('vault-filters')).not.toHaveAttribute('open', '');
 	});
 
 	test('groups all filters under a mobile Filters disclosure', async ({ page }) => {
@@ -130,19 +160,20 @@ test.describe('vault index page', () => {
 
 		const mobileFiltersTrigger = page.getByTestId('mobile-filters-trigger');
 		const primaryFilters = page.locator('.primary-filters');
-		const advancedFilters = page.getByTestId('advanced-filters');
+		const filters = page.getByTestId('vault-filters');
 
 		await expect(mobileFiltersTrigger).toBeVisible();
 		await expect(mobileFiltersTrigger).toHaveAttribute('aria-expanded', 'false');
 		await expect(primaryFilters).not.toBeVisible();
-		await expect(advancedFilters).not.toBeVisible();
+		await expect(filters).not.toBeVisible();
 
 		await mobileFiltersTrigger.click();
 
 		await expect(mobileFiltersTrigger).toHaveAttribute('aria-expanded', 'true');
 		await expect(primaryFilters.getByText('Technical risk', { exact: true })).toBeVisible();
-		await expect(page.locator('.advanced-filters-content').getByText('Min TVL')).toBeVisible();
-		await expect(page.getByTestId('advanced-filters-summary')).not.toBeVisible();
+		await expect(primaryFilters.getByTestId('vault-search')).toBeVisible();
+		await expect(page.locator('.filters-content').getByText('Min TVL')).toBeVisible();
+		await expect(page.getByTestId('filters-summary')).not.toBeVisible();
 	});
 
 	test('closes the mobile Filters disclosure', async ({ page }) => {
@@ -156,6 +187,15 @@ test.describe('vault index page', () => {
 		await mobileFiltersTrigger.click();
 		await expect(mobileFiltersTrigger).toHaveAttribute('aria-expanded', 'false');
 		await expect(page.locator('.primary-filters')).not.toBeVisible();
+	});
+
+	test('opens mobile Filters from the saved preference', async ({ page }) => {
+		await page.evaluate(() => window.localStorage.setItem('top-vaults-filters-open', 'true'));
+		await page.setViewportSize({ width: 375, height: 667 });
+		await page.goto('/vaults');
+
+		await expect(page.getByTestId('mobile-filters-trigger')).toHaveAttribute('aria-expanded', 'true');
+		await expect(page.locator('.primary-filters')).toBeVisible();
 	});
 
 	test('constrains and wraps vault labels on mobile', async ({ page }) => {
@@ -172,8 +212,8 @@ test.describe('vault index page', () => {
 
 	test('hides the all-vaults note on the all vaults page', async ({ page }) => {
 		await page.goto('/vaults/all');
-		await openAdvancedSettings(page);
-		await expect(page.getByTestId('advanced-filters-note')).toHaveCount(0);
+		await openFilters(page);
+		await expect(page.getByTestId('filters-note')).toHaveCount(0);
 	});
 
 	test('shows blacklisted-only vaults sorted by TVL by default', async ({ page }) => {
@@ -271,12 +311,16 @@ test.describe('vault index page', () => {
 		await expect(sentinel).not.toBeVisible();
 	});
 
-	test('does not show a search widget inside the vault listing', async ({ page }) => {
-		await expect(page.getByTestId('vault-search')).toHaveCount(0);
+	test('search filters displayed vaults', async ({ page }) => {
+		await openFilters(page);
+		const vaultSearch = page.getByTestId('vault-search');
+		const rows = page.locator('tbody tr.targetable');
+		await vaultSearch.pressSequentially('Above TVL 042');
+		await expect(rows).toHaveCount(1);
 	});
 
 	test('selecting a fourth return column evicts the current third selection', async ({ page }) => {
-		await openAdvancedSettings(page);
+		await openFilters(page);
 		await returnColumnsTrigger(page).click();
 		await toggleReturnOption(page, 'Six months annualised');
 
@@ -289,7 +333,7 @@ test.describe('vault index page', () => {
 		await page.goto('/vaults?returns=1m-ann,6m-ann,lifetime-abs&sort=6m-ann&direction=asc');
 		await expect(page).toHaveURL(/sort=6m-ann/);
 
-		await openAdvancedSettings(page);
+		await openFilters(page);
 		await returnColumnsTrigger(page).click();
 		await toggleReturnOption(page, 'Six months annualised');
 
@@ -300,7 +344,7 @@ test.describe('vault index page', () => {
 
 	test('supports sorting by 6M annualised return', async ({ page }) => {
 		await page.goto('/vaults?returns=1m-ann,3m-ann,6m-ann');
-		await openAdvancedSettings(page);
+		await openFilters(page);
 		await page.getByRole('button', { name: /6M return ann\./ }).click();
 
 		await expect(page).toHaveURL(/sort=6m-ann/);
@@ -308,8 +352,8 @@ test.describe('vault index page', () => {
 		await expect(page.locator('tbody tr.targetable').first()).toContainText('Return leader alpha');
 	});
 
-	test('advanced settings controls still update URL state', async ({ page }) => {
-		await openAdvancedSettings(page);
+	test('Filters controls update URL state', async ({ page }) => {
+		await openFilters(page);
 		await returnColumnsTrigger(page).click();
 		await toggleReturnOption(page, 'Six months annualised');
 

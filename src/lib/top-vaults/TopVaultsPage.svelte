@@ -46,7 +46,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		/** Stablecoin slug used for a logo when no metadata record exists. */
 		stablecoinLogoSlug?: string;
 		curatorMetadata?: CuratorInfo;
-		/** Show interactive filter dropdowns (Min TVL, Min age, Max risk) */
+		/** Show the vault-table Filters disclosure. */
 		showFilters?: boolean;
 		/** Default TVL filter key (used to initialise the dropdown when showFilters is true) */
 		defaultTvlKey?: string;
