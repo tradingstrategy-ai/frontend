@@ -4,7 +4,8 @@ ECharts heatmap page showing current vault TVL by stablecoin and chain.
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { JsonLd, MetaTags } from 'svelte-meta-tags';
+	import { JsonLd } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';

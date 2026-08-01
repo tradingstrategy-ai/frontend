@@ -59,7 +59,7 @@
 	);
 </script>
 
-<SocialMediaTags {vault} {chain} {protocolMetadata} />
+<SocialMediaTags {vault} {chain} {protocolMetadata} {curatorMetadata} {stablecoinMetadata} />
 
 <main class="vault-details ds-3">
 	<Section tag="header" padding="xs">

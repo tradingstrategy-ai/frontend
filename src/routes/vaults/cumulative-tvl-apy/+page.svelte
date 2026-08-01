@@ -11,7 +11,8 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 	import ScatterPlotSelector from '$lib/scatter-plot/ScatterPlotSelector.svelte';
 	import CumulativeTvlApyChart from './CumulativeTvlApyChart.svelte';
-	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import { JsonLd } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { resolve } from '$app/paths';
 
 	import type { VaultInfo } from '$lib/top-vaults/schemas';

@@ -470,7 +470,11 @@ const curators = {
 		rss: null,
 		protocol_curator: false,
 		canonical_feeder_id: null,
-		logos: { generic: null, dark: null, light: null },
+		logos: {
+			generic: 'http://localhost:4173/social-card/trading-strategy?source=steakhouse-financial',
+			dark: null,
+			light: null
+		},
 		recent_posts: [
 			{
 				title: 'Latest market update',

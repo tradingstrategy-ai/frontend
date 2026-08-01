@@ -6,7 +6,8 @@ All vaults listing including problematic/blacklisted vaults
 	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
-	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import { JsonLd } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
 	let topVaults = $state<TopVaults>();
 	let loading = $state(!hasVaultCache(page.data.generatedAt));

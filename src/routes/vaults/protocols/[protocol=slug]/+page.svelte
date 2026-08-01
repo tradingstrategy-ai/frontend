@@ -16,7 +16,8 @@
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import Core3Ratings from '$lib/top-vaults/Core3Ratings.svelte';
-	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import { JsonLd } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
 
 	let { data } = $props();
@@ -69,7 +70,9 @@
 	);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived.by(() => {
-		const logoPath = protocolMetadata?.logos.light ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined;
+		const logoPath = protocolMetadata?.logos.light
+			? getVaultProtocolLogoUrl(protocolMetadata.slug, { format: 'original' })
+			: protocolMetadata?.logos.dark;
 		return logoPath ? new URL(logoPath, page.url.origin).href : undefined;
 	});
 	let statsVaults = $derived(
@@ -110,20 +113,20 @@
 	{title}
 	{description}
 	canonical={pageUrl}
+	image={logoUrl}
+	imageAlt={`${protocolName} logo`}
 	openGraph={{
 		siteName: 'Trading Strategy',
 		url: pageUrl,
 		title,
 		description,
-		images: logoUrl ? [{ url: logoUrl }] : [],
 		type: 'website'
 	}}
 	twitter={{
 		site: '@TradingProtocol',
 		cardType: logoUrl ? 'summary_large_image' : 'summary',
 		title,
-		description,
-		image: logoUrl ?? undefined
+		description
 	}}
 />
 
