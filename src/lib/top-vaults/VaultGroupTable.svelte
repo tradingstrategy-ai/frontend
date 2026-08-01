@@ -28,8 +28,8 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 	import AvgApyHeader from './AvgApyHeader.svelte';
 	import VaultGroupNameCell from './VaultGroupNameCell.svelte';
 	import VaultSparkline from './VaultSparkline.svelte';
-	import RiskCell from './RiskCell.svelte';
 	import Core3RiskCell from './Core3RiskCell.svelte';
+	import XerberusRiskCell from './XerberusRiskCell.svelte';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 
 	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
@@ -185,13 +185,12 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 		}),
 		table.column({
 			id: 'risk',
-			header: 'Technical Risk',
-			accessor: (row) => ({ risk: row.risk, risk_numeric: row.risk_numeric }),
-			cell: ({ value }) => createRender(RiskCell, { risk: value.risk }),
+			header: 'Xerberus',
+			accessor: (row) => ({ score: row.xerberus_score ?? null, url: row.xerberus_url ?? null }),
+			cell: ({ value }) => createRender(XerberusRiskCell, { score: value.score, url: value.url }),
 			plugins: {
 				sort: {
-					getSortValue: (v) => v.risk_numeric ?? Infinity,
-					invert: true
+					getSortValue: (v) => v.score ?? -Infinity
 				}
 			}
 		}),
@@ -252,7 +251,7 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 <style>
 	.vault-protocol-table {
 		/* flip the sort indicator on columns that use inverted sort */
-		:global(:is(th.name, th.risk, th.core3_risk) .icon) {
+		:global(:is(th.name, th.core3_risk) .icon) {
 			rotate: 180deg;
 		}
 
@@ -328,15 +327,23 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 				width: max(calc(20vw), 12rem);
 			}
 
-			/* layout with a leading rating column (technical risk and/or CORE3); the
-			   percentage widths must sum to 100% so the cells fill the table edge-to-edge */
+			/* layout with leading rating columns; keep third-party risk ratings compact
+			   so the numeric columns stay scannable on protocol listings */
 			:global(:has(:is(.risk, .core3_risk))) {
 				:global(:is(th, td):not(.index)) {
 					width: 15%;
 				}
 
 				:global(.name) {
-					width: 29%;
+					width: 24%;
+				}
+
+				:global(.core3_risk) {
+					width: 8%;
+				}
+
+				:global(.risk) {
+					width: 12%;
 				}
 
 				:global(.cta) {
@@ -448,6 +455,7 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 			}
 
 			:global(table.datatable.responsive tbody tr td.name .group-name > span:last-child) {
+				display: block;
 				min-width: 0;
 				overflow: hidden;
 				text-overflow: ellipsis;
@@ -458,7 +466,8 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 				display: none;
 			}
 
-			:global(table.datatable.responsive tbody tr td.core3_risk) {
+			:global(table.datatable.responsive tbody tr td.core3_risk),
+			:global(table.datatable.responsive tbody tr td.risk) {
 				display: none;
 			}
 

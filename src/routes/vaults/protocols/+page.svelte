@@ -102,6 +102,7 @@
 	<Section padding="sm">
 		<VaultGroupTable
 			groupLabel="Protocol"
+			includeRisk
 			includeCore3Risk
 			getLogoHref={getVaultProtocolLogoUrl}
 			rows={protocols}

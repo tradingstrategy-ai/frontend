@@ -119,6 +119,34 @@ export const riskFilterOptions = [
 	{ label: 'Negligible', optionLabel: 'Negligible only', minValue: 0, maxValue: 1 }
 ];
 
+export const XERBERUS_SCORE_COLOURS = {
+	lowRisk: '#34d399',
+	moderate: '#fbbf24',
+	elevated: '#f87171'
+} as const;
+
+export type XerberusScoreBand = 'Low risk' | 'Moderate' | 'Elevated';
+
+export function getXerberusScoreBand(score: number | null | undefined): XerberusScoreBand | null {
+	if (score == null || !Number.isFinite(score)) return null;
+	if (score >= 0.7) return 'Low risk';
+	if (score >= 0.4) return 'Moderate';
+	return 'Elevated';
+}
+
+export function getXerberusScoreColour(score: number | null | undefined): string | null {
+	const band = getXerberusScoreBand(score);
+	if (band === 'Low risk') return XERBERUS_SCORE_COLOURS.lowRisk;
+	if (band === 'Moderate') return XERBERUS_SCORE_COLOURS.moderate;
+	if (band === 'Elevated') return XERBERUS_SCORE_COLOURS.elevated;
+	return null;
+}
+
+export function formatXerberusScore(score: number | null | undefined): string {
+	if (score == null || !Number.isFinite(score)) return '–';
+	return Math.round(score * 100).toString();
+}
+
 export interface DdFilterOption {
 	key: string;
 	label: string;

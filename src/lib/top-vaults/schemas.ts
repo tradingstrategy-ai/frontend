@@ -632,6 +632,12 @@ export interface VaultGroup {
 	risk?: string | null;
 	/** Numeric risk score — only present on protocol groups */
 	risk_numeric?: number | null;
+	/** Xerberus Dendrogram composite protocol score, stored as 0..1 where higher means lower risk */
+	xerberus_score?: number | null;
+	/** Xerberus Dendrogram protocol identifier */
+	xerberus_id?: string | null;
+	/** Xerberus Dendrogram protocol scorecard URL */
+	xerberus_url?: string | null;
 	/** CORE3 protocol risk rating letter (e.g. "AA", "BB") — only present on protocol groups with a CORE3 rating */
 	core3_rating?: string | null;
 	/** CORE3 numeric risk score (lower = better) — used to sort the CORE3 rating column */
