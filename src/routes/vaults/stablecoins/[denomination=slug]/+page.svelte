@@ -49,7 +49,9 @@
 	let description = $derived(shortDescription ?? `Top ${denominationName} DeFi vaults ranked by performance.`);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived.by(() => {
-		const logoPath = denominationSlug ? getStablecoinLogoUrl(denominationSlug, { format: 'original' }) : undefined;
+		const logoPath = stablecoinMetadata?.logos.light
+			? getStablecoinLogoUrl(stablecoinMetadata.slug, { format: 'original' })
+			: undefined;
 		return logoPath ? new URL(logoPath, page.url.origin).href : undefined;
 	});
 	let aboutName = $derived(formatStablecoinDisplayName(stablecoinMetadata?.name, stablecoinMetadata?.symbol));

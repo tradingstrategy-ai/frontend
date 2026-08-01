@@ -40,26 +40,23 @@ Facebook, LinkedIn, Telegram, and other Open Graph consumers.
 	let selectedImageAlt = $derived(
 		imageAlt ?? suppliedOpenGraphImage?.alt ?? twitter?.imageAlt ?? metaTags.title ?? 'Trading Strategy'
 	);
-	let isGeneratedSocialCard = $derived(new URL(selectedImageUrl).pathname.startsWith('/social-card/'));
-	let openGraphImages = $derived([
-		{
-			...suppliedOpenGraphImage,
-			url: selectedImageUrl,
-			alt: selectedImageAlt,
-			...(isGeneratedSocialCard ? { type: 'image/png', width: 1200, height: 630 } : {})
-		},
-		...(openGraph?.images ?? [])
-			.filter((candidate) => candidate !== suppliedOpenGraphImage && Boolean(candidate.url?.trim()))
-			.map((candidate) => ({ ...candidate, url: getAbsoluteImageUrl(candidate.url) }))
-	]);
+	let isGeneratedSocialCard = $derived(
+		/^\/social-card\/(trading-strategy|blockchain)(?:\/|$)/.test(new URL(selectedImageUrl).pathname)
+	);
+	let openGraphImage = $derived({
+		...suppliedOpenGraphImage,
+		url: selectedImageUrl,
+		alt: selectedImageAlt,
+		...(isGeneratedSocialCard ? { type: 'image/png', width: 1200, height: 630 } : {})
+	});
 </script>
 
 <MetaTags
 	{...metaTags}
-	openGraph={{ ...openGraph, images: openGraphImages }}
+	openGraph={{ ...openGraph, images: [openGraphImage] }}
 	twitter={{
 		...twitter,
-		cardType: twitter?.cardType ?? 'summary_large_image',
+		cardType: isGeneratedSocialCard ? 'summary_large_image' : (twitter?.cardType ?? 'summary_large_image'),
 		image: selectedImageUrl,
 		imageAlt: selectedImageAlt
 	}}

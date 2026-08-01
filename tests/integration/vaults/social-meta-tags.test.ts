@@ -63,7 +63,7 @@ test.describe('vault social meta tags', () => {
 		});
 
 		test('has twitter card meta tags', async ({ page }) => {
-			await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary');
+			await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
 			await expect(page.locator('meta[name="twitter:site"]')).toHaveAttribute('content', '@TradingProtocol');
 			await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute('content', /.+/);
 			await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute('content', /.+/);
@@ -82,7 +82,7 @@ test.describe('vault social meta tags', () => {
 		});
 
 		test('has twitter card meta tags', async ({ page }) => {
-			await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary');
+			await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
 			await expect(page.locator('meta[name="twitter:site"]')).toHaveAttribute('content', '@TradingProtocol');
 		});
 
@@ -103,7 +103,7 @@ test.describe('vault social meta tags', () => {
 		});
 
 		test('has twitter card meta tags', async ({ page }) => {
-			await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary');
+			await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
 			await expect(page.locator('meta[name="twitter:site"]')).toHaveAttribute('content', '@TradingProtocol');
 		});
 
@@ -125,7 +125,7 @@ test.describe('vault social meta tags', () => {
 		});
 
 		test('has twitter card meta tags', async ({ page }) => {
-			await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary');
+			await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
 			await expect(page.locator('meta[name="twitter:site"]')).toHaveAttribute('content', '@TradingProtocol');
 		});
 
@@ -161,6 +161,12 @@ test.describe('vault social meta tags', () => {
 			await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', stablecoinLogoUrlPattern);
 		});
 
+		test('uses the Trading Strategy image when no stablecoin logo is available', async ({ page }) => {
+			await page.goto('/vaults/stablecoins/usd-offchain');
+
+			await expectSocialCardImage(page, /\/social-card\/trading-strategy$/);
+		});
+
 		test('has JSON-LD structured data with FinancialProduct about block', async ({ page }) => {
 			const jsonLd = page.locator('script[type="application/ld+json"]');
 			const content = await jsonLd.textContent();
@@ -184,34 +190,29 @@ test.describe('vault social meta tags', () => {
 	});
 
 	test.describe('social card image priority', () => {
-		test('uses a curator logo before protocol, blockchain and stablecoin logos on a vault', async ({ page }) => {
+		test('uses a sparkline before every logo fallback on a vault', async ({ page }) => {
 			await page.goto('/vaults/return-leader-alpha');
 
-			await expectSocialCardImage(page, /\/social-card\/trading-strategy\?source=steakhouse-financial$/);
+			await expectSocialCardImage(page, /\/social-card\/vault\/.+\?fallback=.+$/);
+		});
+
+		test('uses the contextual fallback when a sparkline is unavailable', async ({ page }) => {
+			const response = await page.goto('/social-card/vault/missing?fallback=/social-card/trading-strategy');
+
+			expect(page.url()).toMatch(/\/social-card\/trading-strategy$/);
+			expect(response?.headers()['content-type']).toMatch(/^image\/png/);
 		});
 
 		test('uses a curator logo on a curator listing', async ({ page }) => {
 			await page.goto('/vaults/curators/steakhouse-financial');
 
-			await expectSocialCardImage(page, /\/social-card\/trading-strategy\?source=steakhouse-financial$/);
-		});
-
-		test('uses a protocol logo when no curator logo is available', async ({ page }) => {
-			await page.goto('/vaults/limited-coverage-vault');
-
-			await expectSocialCardImage(page, /\/metadata-logo\/protocol\/yearn\?format=original$/);
+			await expectSocialCardImage(page, /\/api\/curators\/steakhouse-financial\/light\.png$/);
 		});
 
 		test('uses a protocol logo on a protocol listing', async ({ page }) => {
 			await page.goto('/vaults/protocols/yearn');
 
 			await expectSocialCardImage(page, /\/metadata-logo\/protocol\/yearn\?format=original$/);
-		});
-
-		test('uses a blockchain logo when curator and protocol logos are unavailable', async ({ page }) => {
-			await page.goto('/vaults/above-tvl-001');
-
-			await expectSocialCardImage(page, /\/social-card\/blockchain\/polygon$/);
 		});
 
 		test('uses a blockchain logo on a blockchain listing', async ({ page }) => {

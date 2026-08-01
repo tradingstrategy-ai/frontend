@@ -471,7 +471,7 @@ const curators = {
 		protocol_curator: false,
 		canonical_feeder_id: null,
 		logos: {
-			generic: 'http://localhost:4173/social-card/trading-strategy?source=steakhouse-financial',
+			generic: 'http://localhost:4173/api/curators/steakhouse-financial/light.png',
 			dark: null,
 			light: null
 		},

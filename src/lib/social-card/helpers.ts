@@ -1,4 +1,5 @@
-import type { CuratorInfo } from '$lib/top-vaults/schemas';
+import { getVaultSparklineUrl } from '$lib/top-vaults/helpers';
+import type { CuratorInfo, VaultInfo } from '$lib/top-vaults/schemas';
 
 export const TRADING_STRATEGY_SOCIAL_IMAGE_PATH = '/social-card/trading-strategy';
 
@@ -12,7 +13,7 @@ interface SocialCardImageContext {
 /**
  * Return the best available social-card image using the site-wide priority.
  *
- * @param context Contextual logo URLs ordered from the most to least specific
+ * @param context Contextual image URLs ordered from the most to least specific
  */
 export function selectSocialCardImage(context: SocialCardImageContext): string {
 	return (
@@ -20,6 +21,21 @@ export function selectSocialCardImage(context: SocialCardImageContext): string {
 			(url): url is string => Boolean(url?.trim())
 		) ?? TRADING_STRATEGY_SOCIAL_IMAGE_PATH
 	);
+}
+
+/**
+ * Return the vault social-card endpoint when a sparkline CDN is configured.
+ * The endpoint serves the sparkline when it exists and otherwise redirects to
+ * the supplied contextual fallback image.
+ *
+ * @param vault Vault whose sparkline should be used
+ * @param fallbackImage Image to use when the sparkline is unavailable
+ */
+export function getVaultSocialCardImageUrl(vault: Pick<VaultInfo, 'id'>, fallbackImage: string): string {
+	if (!getVaultSparklineUrl(vault, 'png')) return fallbackImage;
+
+	const query = new URLSearchParams({ fallback: fallbackImage });
+	return `/social-card/vault/${encodeURIComponent(vault.id)}?${query}`;
 }
 
 /**

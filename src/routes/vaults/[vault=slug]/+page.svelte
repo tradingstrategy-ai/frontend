@@ -27,6 +27,7 @@
 		hasSupportedProtocol,
 		isBlacklisted
 	} from '$lib/top-vaults/helpers';
+	import { getCuratorSocialLogoUrl } from '$lib/social-card/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 
 	let { data } = $props();
@@ -52,9 +53,7 @@
 					: undefined
 	);
 	let chartLogoUrl = $derived(
-		curatorMetadata?.logos.generic ??
-			curatorMetadata?.logos.light ??
-			curatorMetadata?.logos.dark ??
+		getCuratorSocialLogoUrl(curatorMetadata) ??
 			(protocolMetadata ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined)
 	);
 </script>

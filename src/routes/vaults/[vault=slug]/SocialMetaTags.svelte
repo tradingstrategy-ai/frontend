@@ -2,7 +2,12 @@
 	import { page } from '$app/state';
 	import type { Chain } from '$lib/helpers/chain';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
-	import { getBlockchainSocialLogoUrl, getCuratorSocialLogoUrl, selectSocialCardImage } from '$lib/social-card/helpers';
+	import {
+		getBlockchainSocialLogoUrl,
+		getCuratorSocialLogoUrl,
+		getVaultSocialCardImageUrl,
+		selectSocialCardImage
+	} from '$lib/social-card/helpers';
 	import { getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers';
 	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
 	import { getVaultProtocolDisplayName } from '$lib/top-vaults/helpers';
@@ -52,7 +57,7 @@
 			: undefined;
 		return logoPath ? new URL(logoPath, page.url.origin).href : undefined;
 	});
-	let imageUrl = $derived(
+	let fallbackImageUrl = $derived(
 		selectSocialCardImage({
 			curatorLogoUrl: getCuratorSocialLogoUrl(curatorMetadata),
 			protocolLogoUrl,
@@ -60,6 +65,7 @@
 			stablecoinLogoUrl
 		})
 	);
+	let imageUrl = $derived(getVaultSocialCardImageUrl(vault, fallbackImageUrl));
 
 	let additionalProperty = $derived.by(() => {
 		const props: Array<Record<string, unknown>> = [];

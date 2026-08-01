@@ -15,6 +15,7 @@ function sendPng(_req: IncomingMessage, res: ServerResponse) {
 }
 
 export default defineMock([
+	{ url: '/api/curators/:slug/light.png', response: sendPng },
 	{ url: '/api/vault-protocols/:slug/light.png', response: sendPng },
 	{ url: '/api/stablecoin-metadata/:slug/light.png', response: sendPng }
 ]);
