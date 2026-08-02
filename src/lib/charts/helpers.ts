@@ -130,6 +130,16 @@ export function resampleTimeSeries(
 }
 
 /**
+ * Downsample a time series to daily timestamp/value pairs.
+ *
+ * @param data Raw timestamp/value pairs
+ * @returns Daily points, including a carry-in point when required
+ */
+export function downsampleDailySeries(data: [UnixTimestamp, number][]): [UnixTimestamp, number][] {
+	return resampleTimeSeries(data, utcDay).map(({ time, value }) => [time, value]);
+}
+
+/**
  * Get the date range for given chart data and time span (ending at the last date in the data)
  *
  * @param data chart data array

@@ -3,6 +3,7 @@
  * for use in strategy tile chart thumbnails.
  */
 import swrCache from '$lib/swrCache';
+import { downsampleDailySeries } from '$lib/charts/helpers';
 
 const NINETY_DAYS_SECONDS = 90 * 24 * 60 * 60;
 
@@ -27,7 +28,9 @@ async function fetchSharePriceReturns90d(fetch: Fetch, vaultId: string): Promise
 		const firstPrice = clipped[0][1];
 		if (firstPrice === 0) return undefined;
 
-		return clipped.map(([ts, price]) => [ts, (price - firstPrice) / firstPrice]);
+		const returns = clipped.map(([ts, price]) => [ts, (price - firstPrice) / firstPrice] as [number, number]);
+
+		return downsampleDailySeries(returns);
 	} catch {
 		return undefined;
 	}

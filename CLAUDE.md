@@ -11,14 +11,14 @@ SvelteKit-based frontend for the Trading Strategy protocol, featuring automated 
 Topic deep-dives live under `.claude/docs/`. Consult the relevant one before
 working on that area:
 
-| Doc                                                | Description                                                                                                |
-| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `.claude/docs/agent-tricks-and-troubleshooting.md` | **MANDATORY read before ANY Claude CLI or Codex CLI invocation** (reviews, sanity checks, or one-off runs) |
-| `.claude/docs/worktree.md`                         | Required local env and data symlinks when running dev servers or private-data checks from git worktrees    |
+| Doc                                     | Description                                                                                                             |
+| --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `.claude/docs/agent-tips-and-tricks.md` | **MANDATORY read before any Grok, Claude or Codex CLI cross-agent operation** (reviews, sanity checks, or one-off runs) |
+| `.claude/docs/worktree.md`              | Required local env and data symlinks when running dev servers or private-data checks from git worktrees                 |
 
 ## Agent review workflows
 
-- **BLOCKING REQUIREMENT: before running ANY `codex` / `codex exec` or `claude` CLI command — reviews, sanity checks, or one-off runs — you MUST first read `.claude/docs/agent-tricks-and-troubleshooting.md`.** Do not invoke either CLI until you have read it in the current session. This is not optional and applies even when the call "looks trivial".
+- **BLOCKING REQUIREMENT: before running ANY Grok, Claude or Codex CLI cross-agent operation — reviews, sanity checks, or one-off runs — you MUST first read `.claude/docs/agent-tips-and-tricks.md`.** Do not invoke one of these CLIs until you have read it in the current session. This is not optional and applies even when the call "looks trivial".
 - Follow its recommended invocation patterns for plan reviews, code reviews, PR reviews, tool restrictions, timeouts, and handling silent or hanging agent runs. Review requests must allow at least 15 minutes before being treated as timed out.
 - Always run non-interactive Codex reviews in **streaming mode** (`codex exec --json`) written to a raw file — never plain text mode piped through `tail`/`head`, which buffers output until completion and makes the run look hung.
 - `codex exec` selects the sandbox directly (`--sandbox read-only` for reviews) and does **not** accept `--ask-for-approval` (that flag is interactive-only).

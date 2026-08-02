@@ -13,9 +13,11 @@ import {
 	slimVault
 } from '$lib/top-vaults/helpers';
 import { getCachedSharePriceReturns } from '$lib/strategies/yaml/share-price';
+import { compactStrategyTileChartData } from 'trade-executor/helpers/chart';
 import { fetchLatestFredValue, fetchLatestTreasuryRate } from '$lib/reference-rates';
 
 const HOME_PAGE_EDGE_CACHE_TTL_SECONDS = 30 * 60;
+const FRONT_PAGE_VAULT_COUNT = 5;
 
 function getAgeSeconds(dateValue: Date | string | null | undefined) {
 	if (!dateValue) return null;
@@ -36,7 +38,7 @@ export async function load({ fetch }) {
 		Promise.all([fetchLatestFredValue('SNDR'), fetchLatestTreasuryRate()])
 	]);
 
-	const frontpageStrategies = strategies.filter((s) => s.frontpage);
+	const frontpageStrategies = strategies.filter((s) => s.frontpage).map(compactStrategyTileChartData);
 	const yamlTileFreshness: {
 		strategyId: string;
 		vaultId: string | null;
@@ -101,7 +103,9 @@ export async function load({ fetch }) {
 
 		topVaults = {
 			generated_at: topVaultsResult.generated_at,
-			vaults: rankedVaults.slice(0, 30),
+			// TopVaults renders five cards. Avoid serialising the unused 25 vaults
+			// into the initial HTML response.
+			vaults: rankedVaults.slice(0, FRONT_PAGE_VAULT_COUNT),
 			aggregates: {
 				totalTvl,
 				weightedAvgApy,
