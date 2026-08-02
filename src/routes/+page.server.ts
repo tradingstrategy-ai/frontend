@@ -12,10 +12,12 @@ import {
 	rankVaultsBy,
 	slimVault
 } from '$lib/top-vaults/helpers';
-import { getCachedSharePriceReturns } from '$lib/strategies/yaml/share-price';
+import { downsampleSharePriceReturns, getCachedSharePriceReturns } from '$lib/strategies/yaml/share-price';
+import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 import { fetchLatestFredValue, fetchLatestTreasuryRate } from '$lib/reference-rates';
 
 const HOME_PAGE_EDGE_CACHE_TTL_SECONDS = 30 * 60;
+const FRONT_PAGE_VAULT_COUNT = 5;
 
 function getAgeSeconds(dateValue: Date | string | null | undefined) {
 	if (!dateValue) return null;
@@ -24,6 +26,46 @@ function getAgeSeconds(dateValue: Date | string | null | undefined) {
 	if (Number.isNaN(parsed.valueOf())) return null;
 
 	return Math.max(0, Math.floor((Date.now() - parsed.valueOf()) / 1000));
+}
+
+/**
+ * Compact chart samples before the strategy is serialised into the page data.
+ *
+ * Strategy tile charts render daily values, so retaining intra-day samples only
+ * increases the initial HTML response and hydration work.
+ *
+ * @param strategy Strategy listing data returned by the API
+ * @returns The same strategy shape with daily chart data
+ */
+function compactStrategyChartData(strategy: StrategyInfo): StrategyInfo {
+	const summary = strategy.summary_statistics;
+	if (!summary) return strategy;
+
+	if (strategy.useSharePrice) {
+		return {
+			...strategy,
+			summary_statistics: {
+				...summary,
+				// A tile only reads one chart type. Discard the alternative raw
+				// series instead of serialising it alongside the selected chart.
+				compounding_unrealised_trading_profitability: undefined,
+				share_price_returns_90_days: summary.share_price_returns_90_days
+					? downsampleSharePriceReturns(summary.share_price_returns_90_days)
+					: undefined
+			}
+		};
+	}
+
+	return {
+		...strategy,
+		summary_statistics: {
+			...summary,
+			share_price_returns_90_days: undefined,
+			compounding_unrealised_trading_profitability: summary.compounding_unrealised_trading_profitability
+				? downsampleSharePriceReturns(summary.compounding_unrealised_trading_profitability)
+				: undefined
+		}
+	};
 }
 
 export async function load({ fetch }) {
@@ -36,7 +78,7 @@ export async function load({ fetch }) {
 		Promise.all([fetchLatestFredValue('SNDR'), fetchLatestTreasuryRate()])
 	]);
 
-	const frontpageStrategies = strategies.filter((s) => s.frontpage);
+	const frontpageStrategies = strategies.filter((s) => s.frontpage).map(compactStrategyChartData);
 	const yamlTileFreshness: {
 		strategyId: string;
 		vaultId: string | null;
@@ -101,7 +143,9 @@ export async function load({ fetch }) {
 
 		topVaults = {
 			generated_at: topVaultsResult.generated_at,
-			vaults: rankedVaults.slice(0, 30),
+			// TopVaults renders five cards. Avoid serialising the unused 25 vaults
+			// into the initial HTML response.
+			vaults: rankedVaults.slice(0, FRONT_PAGE_VAULT_COUNT),
 			aggregates: {
 				totalTvl,
 				weightedAvgApy,

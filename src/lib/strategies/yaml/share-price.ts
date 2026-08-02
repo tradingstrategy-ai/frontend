@@ -3,8 +3,26 @@
  * for use in strategy tile chart thumbnails.
  */
 import swrCache from '$lib/swrCache';
+import { resampleTimeSeries } from '$lib/charts/helpers';
+import { utcDay } from 'd3-time';
+import type { PerformanceData } from 'trade-executor/schemas/utility-types';
 
 const NINETY_DAYS_SECONDS = 90 * 24 * 60 * 60;
+
+/**
+ * Reduce a price-return series to the daily resolution used by strategy tile charts.
+ *
+ * The metrics endpoint exposes hourly (and sometimes more frequent) samples, while
+ * the tile renderer already displays one value per UTC day. Compacting before the
+ * page data is serialised avoids sending thousands of samples that cannot affect
+ * the rendered chart.
+ *
+ * @param returns Relative price returns as timestamp/value pairs
+ * @returns The latest return for each UTC day, with an initial carry-in sample
+ */
+export function downsampleSharePriceReturns(returns: PerformanceData): PerformanceData {
+	return resampleTimeSeries(returns, utcDay).map(({ time, value }) => [time, value]);
+}
 
 /**
  * Fetch share price data for a vault and convert to 90-day relative returns.
@@ -27,7 +45,9 @@ async function fetchSharePriceReturns90d(fetch: Fetch, vaultId: string): Promise
 		const firstPrice = clipped[0][1];
 		if (firstPrice === 0) return undefined;
 
-		return clipped.map(([ts, price]) => [ts, (price - firstPrice) / firstPrice]);
+		const returns = clipped.map(([ts, price]) => [ts, (price - firstPrice) / firstPrice] as [number, number]);
+
+		return downsampleSharePriceReturns(returns);
 	} catch {
 		return undefined;
 	}
