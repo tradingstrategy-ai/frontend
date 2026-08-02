@@ -12,8 +12,8 @@ import {
 	rankVaultsBy,
 	slimVault
 } from '$lib/top-vaults/helpers';
-import { downsampleSharePriceReturns, getCachedSharePriceReturns } from '$lib/strategies/yaml/share-price';
-import type { StrategyInfo } from 'trade-executor/models/strategy-info';
+import { getCachedSharePriceReturns } from '$lib/strategies/yaml/share-price';
+import { compactStrategyTileChartData } from 'trade-executor/helpers/chart';
 import { fetchLatestFredValue, fetchLatestTreasuryRate } from '$lib/reference-rates';
 
 const HOME_PAGE_EDGE_CACHE_TTL_SECONDS = 30 * 60;
@@ -28,46 +28,6 @@ function getAgeSeconds(dateValue: Date | string | null | undefined) {
 	return Math.max(0, Math.floor((Date.now() - parsed.valueOf()) / 1000));
 }
 
-/**
- * Compact chart samples before the strategy is serialised into the page data.
- *
- * Strategy tile charts render daily values, so retaining intra-day samples only
- * increases the initial HTML response and hydration work.
- *
- * @param strategy Strategy listing data returned by the API
- * @returns The same strategy shape with daily chart data
- */
-function compactStrategyChartData(strategy: StrategyInfo): StrategyInfo {
-	const summary = strategy.summary_statistics;
-	if (!summary) return strategy;
-
-	if (strategy.useSharePrice) {
-		return {
-			...strategy,
-			summary_statistics: {
-				...summary,
-				// A tile only reads one chart type. Discard the alternative raw
-				// series instead of serialising it alongside the selected chart.
-				compounding_unrealised_trading_profitability: undefined,
-				share_price_returns_90_days: summary.share_price_returns_90_days
-					? downsampleSharePriceReturns(summary.share_price_returns_90_days)
-					: undefined
-			}
-		};
-	}
-
-	return {
-		...strategy,
-		summary_statistics: {
-			...summary,
-			share_price_returns_90_days: undefined,
-			compounding_unrealised_trading_profitability: summary.compounding_unrealised_trading_profitability
-				? downsampleSharePriceReturns(summary.compounding_unrealised_trading_profitability)
-				: undefined
-		}
-	};
-}
-
 export async function load({ fetch }) {
 	const [strategies, topVaultsResult, ratesResult] = await Promise.all([
 		getCachedStrategies(fetch),
@@ -78,7 +38,7 @@ export async function load({ fetch }) {
 		Promise.all([fetchLatestFredValue('SNDR'), fetchLatestTreasuryRate()])
 	]);
 
-	const frontpageStrategies = strategies.filter((s) => s.frontpage).map(compactStrategyChartData);
+	const frontpageStrategies = strategies.filter((s) => s.frontpage).map(compactStrategyTileChartData);
 	const yamlTileFreshness: {
 		strategyId: string;
 		vaultId: string | null;
