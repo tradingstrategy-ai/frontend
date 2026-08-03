@@ -13,13 +13,15 @@ test.describe('funds page', () => {
 		await expect(
 			page.getByRole('link', { name: 'Read more about the differences between vaults and tokenised funds here.' })
 		).toHaveAttribute('href', '/glossary/tokenised-fund');
-		await expect(page.getByText('Tracking $20.00K net asset value across 1 fund.')).toBeVisible();
-		await expect(page.getByText('Total $20.00K tokenised fund NAV')).toBeVisible();
+		await expect(page.getByText('Tracking $40.00K net asset value across 2 funds.')).toBeVisible();
+		await expect(page.getByText('Total $40.00K tokenised fund NAV')).toBeVisible();
 		await expect(page.getByTestId('tokenised-fund-nav-pie-chart').locator('canvas')).toBeVisible({
 			timeout: 15000
 		});
-		await expect(page.locator('tbody tr.targetable')).toHaveCount(1);
-		await expect(page.locator('tbody tr.targetable')).toContainText('Deposit disabled vault');
+		const rows = page.locator('tbody tr.targetable');
+		await expect(rows).toHaveCount(2);
+		await expect(rows.filter({ hasText: 'Private tokenised fund' })).toHaveCount(1);
+		await expect(rows.filter({ hasText: 'Deposit disabled vault' })).toHaveCount(1);
 	});
 
 	test('permanently redirects the legacy tokenised funds URL', async ({ request }) => {
