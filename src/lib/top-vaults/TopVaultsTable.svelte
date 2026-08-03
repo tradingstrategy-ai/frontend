@@ -1314,7 +1314,6 @@ Whitelisted vaults are marked as Private because they do not accept public depos
 									<svelte:fragment slot="trigger">
 										<span class="status-wrapper">
 											<IconStop />Private
-											{#if badStatus}<IconHourglass />{/if}{getFormattedLockup(vault)}
 										</span>
 									</svelte:fragment>
 									<svelte:fragment slot="popup">

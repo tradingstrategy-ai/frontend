@@ -245,11 +245,11 @@ test.describe('vault index page', () => {
 		await expect(meta).toContainText('254 vaults');
 	});
 
-	test('renders initial batch of 75 rows', async ({ page }) => {
+	test('renders an initial batch of more than 100 rows', async ({ page }) => {
 		const rows = page.locator('tbody tr.targetable');
 		// Wait for rows to be visible
 		await expect(rows.first()).toBeVisible();
-		await expect(rows).toHaveCount(75);
+		await expect(rows).toHaveCount(125);
 	});
 
 	test('shows load-more sentinel when more rows available', async ({ page }) => {
@@ -262,7 +262,7 @@ test.describe('vault index page', () => {
 		await page.goto('/vaults?tvl=any&q=Summary%20regression&unknown=0');
 
 		const rows = page.locator('tbody tr.targetable');
-		await expect(rows).toHaveCount(75);
+		await expect(rows).toHaveCount(125);
 		await expect(page.getByTestId('top-vaults-meta')).toContainText('151 vaults');
 		await expect(page.getByTestId('top-vaults-meta')).toContainText('Avg. return 76.61%');
 	});
@@ -270,14 +270,14 @@ test.describe('vault index page', () => {
 	test('loads 50 more rows when scrolling to sentinel', async ({ page }) => {
 		// Check initial row count
 		const rows = page.locator('tbody tr.targetable');
-		await expect(rows).toHaveCount(75);
+		await expect(rows).toHaveCount(125);
 
 		// Scroll the sentinel into view
 		const sentinel = page.getByTestId('load-more-sentinel');
 		await sentinel.scrollIntoViewIfNeeded();
 
 		// Confirm additional rows
-		await expect(rows).toHaveCount(125);
+		await expect(rows).toHaveCount(175);
 	});
 
 	test('loads 500 vaults through progressive scrolling', async ({ page }) => {
@@ -285,9 +285,9 @@ test.describe('vault index page', () => {
 
 		const rows = page.locator('tbody tr.targetable');
 		const sentinel = page.getByTestId('load-more-sentinel');
-		await expect(rows).toHaveCount(75);
+		await expect(rows).toHaveCount(125);
 
-		for (let expectedCount = 125; expectedCount < 500; expectedCount += 50) {
+		for (let expectedCount = 175; expectedCount < 500; expectedCount += 50) {
 			await sentinel.scrollIntoViewIfNeeded();
 			await expect(rows).toHaveCount(expectedCount);
 		}
@@ -303,16 +303,13 @@ test.describe('vault index page', () => {
 
 		// scroll once - loads additional 50
 		await sentinel.scrollIntoViewIfNeeded();
-		await expect(rows).toHaveCount(125);
-
-		// scroll again - loads another 50
-		await sentinel.scrollIntoViewIfNeeded();
 		await expect(rows).toHaveCount(175);
 
-		// Scroll twice more: a full batch, then the final 29 rows.
+		// Scroll again - loads another full batch.
 		await sentinel.scrollIntoViewIfNeeded();
 		await expect(rows).toHaveCount(225);
 
+		// The final continuation contains the remaining 29 rows.
 		await sentinel.scrollIntoViewIfNeeded();
 		await expect(rows).toHaveCount(254);
 
@@ -485,6 +482,7 @@ test.describe('vault index page', () => {
 
 		const cell = page.locator('tbody tr.targetable').filter({ hasText: 'Private vault' }).locator('td.lockup');
 		await expect(cell).toContainText('Private');
+		await expect(cell).not.toContainText('Unknown');
 		const tooltip = cell.locator('.tooltip');
 		await tooltip.hover();
 		await expect(tooltip.locator('.popup')).toContainText('This vault does not accept public deposits.');
