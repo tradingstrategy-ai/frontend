@@ -95,6 +95,33 @@ const aboveTvl = generateMockVaults('Above TVL', 246, {
 	}
 });
 
+// Keep these below the normal $10k threshold so existing vault-index fixtures
+// retain their counts. The progressive-scroll test opts into TVL "Any".
+const progressiveScrollVaults = generateMockVaults('Progressive scroll vault', 500, {
+	protocol: 'Progressive test protocol',
+	current_nav: 1_000,
+	peak_nav: 1_000,
+	one_month_cagr: 0.05,
+	three_months_cagr: 0.08
+});
+
+// These rows exercise the headline statistics used with progressive listings.
+// Keep them below the normal $50k threshold so they do not affect other vault
+// index fixtures. The regression test opts into TVL "Any".
+const summaryRegressionHighReturnVaults = generateMockVaults('Summary regression high return vault', 150, {
+	protocol: '<Summary regression protocol>',
+	current_nav: 1_000,
+	peak_nav: 1_000,
+	one_month_cagr: 1
+});
+
+const summaryRegressionAnchorVault = createTestVault('Summary regression large low return vault', {
+	protocol: '<Summary regression protocol>',
+	current_nav: 49_000,
+	peak_nav: 49_000,
+	one_month_cagr: 0.05
+});
+
 const returnLeaders = [
 	createTestVault('Return leader alpha', {
 		chain: 'ethereum',
@@ -241,6 +268,27 @@ const limitedCoverageVault = createTestVault('Limited coverage vault', {
 		}
 	]
 });
+
+const apexVaults = [
+	createTestVault('ApeX high TVL vault', {
+		address: '0x1000000000000000000000000000000000000001',
+		chain: 'apex',
+		protocol: 'ApeX',
+		current_nav: 9_000,
+		peak_nav: 10_000,
+		one_month_cagr: 0.01,
+		three_months_cagr: 0.01
+	}),
+	createTestVault('ApeX high return vault', {
+		address: '0x1000000000000000000000000000000000000002',
+		chain: 'apex',
+		protocol: 'ApeX',
+		current_nav: 1_000,
+		peak_nav: 1_500,
+		one_month_cagr: 0.5,
+		three_months_cagr: 0.5
+	})
+];
 
 // Named vault for YAML strategy integration tests
 const yamlStrategyVault = createTestVault('Trading Strategy ICHIv3 LS 2', {
@@ -483,7 +531,11 @@ const curators = {
 		rss: null,
 		protocol_curator: false,
 		canonical_feeder_id: null,
-		logos: { generic: null, dark: null, light: null },
+		logos: {
+			generic: 'http://localhost:4173/api/curators/steakhouse-financial/light.png',
+			dark: null,
+			light: null
+		},
 		recent_posts: [
 			{
 				title: 'Latest market update',
@@ -535,10 +587,14 @@ export default defineMock({
 			privateVault,
 			privateTokenisedFund,
 			limitedCoverageVault,
+			...apexVaults,
 			...parquetMatchedVaults,
 			...returnLeaders,
 			...belowTvl,
-			...aboveTvl
+			...aboveTvl,
+			...progressiveScrollVaults,
+			...summaryRegressionHighReturnVaults,
+			summaryRegressionAnchorVault
 		]
 	}
 });

@@ -8,7 +8,8 @@
 <script lang="ts">
 	import { getBlogImageUrl } from '$lib/blog/images';
 	import type { BlogPostDetails } from '$lib/blog/schemas';
-	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import { JsonLd } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
 	interface Props {
 		post: BlogPostDetails;

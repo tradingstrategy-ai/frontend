@@ -40,11 +40,11 @@ export function serializePost(postData: Post) {
 }
 
 /**
- * Sitelinks Search Box – for including an embedded search box in search results:
- * https://developers.google.com/search/docs/advanced/structured-data/sitelinks-searchbox
+ * WebSite SearchAction structured data for the site's query URL.
  *
- * The generated <script> tag should included in the <head> of the home page
- * (only) as raw @html
+ * Google retired the visual sitelinks search box, but this remains accurate
+ * WebSite metadata for consumers that support SearchAction.
+ * The generated <script> tag belongs in the home-page head as raw @html.
  */
 export function sitelinksSearchBox() {
 	const url = 'https://tradingstrategy.ai/';

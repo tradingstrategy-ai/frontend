@@ -22,11 +22,14 @@ import {
 	getCore3ScoreTone,
 	getCore3CategoryScores,
 	getCurrencyUsdRates,
+	formatXerberusScore,
 	getVaultCurrentTvlUsd,
 	getVaultDenominationCurrency,
 	getVaultDenominationUsdRate,
 	getVaultPeakTvlUsd,
 	getVaultTvlNative,
+	getXerberusScoreBand,
+	getXerberusScoreColour,
 	isNonUsdDenominatedVault,
 	normaliseKinexysVaultDenomination,
 	normaliseVaultProtocolDisplayName,
@@ -93,6 +96,22 @@ describe('isBlacklisted', () => {
 		const vault = createTestVault('Test vault');
 		expect(vault.risk_numeric).toBeNull();
 		expect(isBlacklisted(vault)).toBe(false);
+	});
+});
+
+describe('Xerberus protocol score helpers', () => {
+	test('maps scores to Xerberus risk bands and colours', () => {
+		expect(getXerberusScoreBand(0.7)).toBe('Low risk');
+		expect(getXerberusScoreColour(0.7)).toBe('#34d399');
+		expect(getXerberusScoreBand(0.4)).toBe('Moderate');
+		expect(getXerberusScoreColour(0.4)).toBe('#fbbf24');
+		expect(getXerberusScoreBand(0.399)).toBe('Elevated');
+		expect(getXerberusScoreColour(0.399)).toBe('#f87171');
+	});
+
+	test('formats real Xerberus scores and missing values as a dash', () => {
+		expect(formatXerberusScore(0.7843137254901961)).toBe('78');
+		expect(formatXerberusScore(null)).toBe('–');
 	});
 });
 

@@ -13,7 +13,8 @@ CORE3 stablecoin vault risk chart page.
 	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
 	import { CORE3_METHODOLOGY_URL } from '$lib/top-vaults/helpers';
-	import { JsonLd, MetaTags } from 'svelte-meta-tags';
+	import { JsonLd } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { onMount } from 'svelte';
 	import Core3RiskCharts from './Core3RiskCharts.svelte';
 

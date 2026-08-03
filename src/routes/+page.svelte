@@ -14,7 +14,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import { sitelinksSearchBox } from '$lib/helpers/google-meta';
-	import { MetaTags } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
 	let { data } = $props();
 

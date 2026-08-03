@@ -1,12 +1,25 @@
+import type { IncomingMessage, ServerResponse } from 'node:http';
 import { defineMock } from 'vite-plugin-mock-dev-server';
 
-// SVG placeholder for sparklines - a simple upward-trending line
-const sparklineSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="30" viewBox="0 0 100 30">
-  <polyline points="0,25 20,20 40,22 60,15 80,10 100,12" stroke="#4ade80" fill="none" stroke-width="2"/>
-</svg>`;
+const png = Buffer.from(
+	'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+	'base64'
+);
+
+function sendSparkline(req: IncomingMessage, res: ServerResponse) {
+	if (req.url?.includes('sparkline-90d-missing.png')) {
+		res.statusCode = 404;
+		res.end();
+		return;
+	}
+
+	res.statusCode = 200;
+	res.setHeader('content-type', 'image/png');
+	res.setHeader('content-length', String(png.byteLength));
+	res.end(png);
+}
 
 export default defineMock({
 	url: '/api/top-vaults/sparklines/:filename',
-	type: 'image/svg+xml',
-	body: sparklineSvg
+	response: sendSparkline
 });

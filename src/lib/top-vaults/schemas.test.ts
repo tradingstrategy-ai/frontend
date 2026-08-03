@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { curatorInfoSchema, topVaultsSchema, vaultWhitelistSchema } from './schemas';
+import { createTestVault } from './test-utils';
 
 const validCurator = {
 	slug: 'steakhouse-financial',
@@ -61,5 +62,29 @@ describe('topVaultsSchema resilience', () => {
 
 	it('defaults absent whitelist notes to null', () => {
 		expect(vaultWhitelistSchema.parse({ status: 'whitelisted' }).notes).toBeNull();
+	});
+
+	it('preserves valid Xerberus per-vault assessments and drops malformed ones', () => {
+		const xerberus = {
+			score: 78,
+			score_scale: '0_100_higher_is_better',
+			entity_type: 'pool',
+			entity_id: 'lagoon-example-vault',
+			name: 'Example vault',
+			protocol_slug: null,
+			report_url: 'https://app.xerberus.io/pool/dendrogram/lagoon-example-vault',
+			fetched_at: '2026-07-27T16:01:01.992171'
+		};
+		const malformedVault = {
+			...createTestVault('Malformed Xerberus vault'),
+			xerberus: { ...xerberus, report_url: 'not a URL' }
+		};
+		const result = topVaultsSchema.parse({
+			...basePayload,
+			vaults: [createTestVault('Example vault', { xerberus }), malformedVault]
+		});
+
+		expect(result.vaults[0].xerberus).toEqual(xerberus);
+		expect(result.vaults[1].xerberus).toBeNull();
 	});
 });

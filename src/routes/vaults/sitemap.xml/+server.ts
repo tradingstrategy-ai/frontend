@@ -23,7 +23,9 @@ const staticSubPages = [
 	'cumulative-tvl-apy',
 	'yield-chain',
 	'yield-protocol',
-	'yield-risk'
+	'yield-risk',
+	'core3-ratings',
+	'xerberus-ratings'
 ];
 
 export async function GET({ fetch, setHeaders, url }) {

@@ -1,5 +1,5 @@
 <!--
-Vault detail page with operational, private-deposit, and risk notices.
+Vault detail page with performance, protocol, private-deposit, and third-party risk information.
 -->
 <script lang="ts">
 	import { resolve } from '$app/paths';
@@ -23,6 +23,7 @@ Vault detail page with operational, private-deposit, and risk notices.
 	import VaultProtocolInfo from './VaultProtocolInfo.svelte';
 	import VaultRankings from './VaultRankings.svelte';
 	import Core3Ratings from '$lib/top-vaults/Core3Ratings.svelte';
+	import XerberusRisk from '$lib/top-vaults/XerberusRisk.svelte';
 	import IconDiscord from '~icons/local/discord';
 	import {
 		getMorphoFlags,
@@ -30,6 +31,7 @@ Vault detail page with operational, private-deposit, and risk notices.
 		hasSupportedProtocol,
 		isBlacklisted
 	} from '$lib/top-vaults/helpers';
+	import { getCuratorSocialLogoUrl } from '$lib/social-card/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 
 	let { data } = $props();
@@ -56,14 +58,12 @@ Vault detail page with operational, private-deposit, and risk notices.
 					: undefined
 	);
 	let chartLogoUrl = $derived(
-		curatorMetadata?.logos.generic ??
-			curatorMetadata?.logos.light ??
-			curatorMetadata?.logos.dark ??
+		getCuratorSocialLogoUrl(curatorMetadata) ??
 			(protocolMetadata ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined)
 	);
 </script>
 
-<SocialMediaTags {vault} {chain} {protocolMetadata} />
+<SocialMediaTags {vault} {chain} {protocolMetadata} {curatorMetadata} {stablecoinMetadata} />
 
 <main class="vault-details ds-3">
 	<Section tag="header" padding="xs">
@@ -150,6 +150,10 @@ Vault detail page with operational, private-deposit, and risk notices.
 		{/if}
 
 		<VaultPeriodicMetrics {vault} {chain} />
+
+		{#if vault.xerberus}
+			<XerberusRisk xerberus={vault.xerberus} />
+		{/if}
 
 		{#if core3}
 			<Core3Ratings

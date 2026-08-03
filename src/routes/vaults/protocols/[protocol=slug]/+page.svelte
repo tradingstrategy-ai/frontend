@@ -1,22 +1,13 @@
 <script lang="ts">
-	import type { TopVaults } from '$lib/top-vaults/schemas';
-	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
-	import {
-		calculateTotalTvl,
-		calculateTvlWeightedApy,
-		isBlacklisted,
-		isEligibleVaultGroupMiniChartVault,
-		isUnknownVaultProtocol,
-		UNKNOWN_VAULT_PROTOCOL_SLUG
-	} from '$lib/top-vaults/helpers';
+	import { UNKNOWN_VAULT_PROTOCOL_SLUG } from '$lib/top-vaults/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
-	import { VAULT_TVL_OUTLIER_THRESHOLD } from '$lib/echarts/tvl-outliers';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import Core3Ratings from '$lib/top-vaults/Core3Ratings.svelte';
-	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import { JsonLd } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
 
 	let { data } = $props();
@@ -29,32 +20,9 @@
 	// threshold. Default the Min TVL filter to "Any" so they are not hidden.
 	let defaultTvlKey = $derived(isApexProtocolGroup ? 'any' : '10k');
 
-	let fetchedTopVaults = $state<TopVaults>();
-	let fetchedTotalVaultCount = $state<number>();
-	let fetchSettled = $state(false);
-	let topVaults = $derived(initialTopVaults ?? fetchedTopVaults);
-	let totalVaultCount = $derived(initialTopVaults ? data.totalVaultCount : fetchedTotalVaultCount);
-	let loading = $derived(!initialTopVaults && !fetchSettled && !hasVaultCache(page.data.generatedAt));
-
-	$effect(() => {
-		if (initialTopVaults) {
-			return;
-		}
-
-		fetchSettled = false;
-		fetchAllVaultData(page.data.generatedAt)
-			.then((allData) => {
-				fetchedTotalVaultCount = allData.vaults.length;
-				fetchedTopVaults = {
-					...allData,
-					vaults: allData.vaults.filter((vault) =>
-						isUnknownVaultProtocolGroup ? isUnknownVaultProtocol(vault) : vault.protocol_slug === protocolSlug
-					)
-				};
-			})
-			.catch((e) => console.error('Failed to load vault data:', e))
-			.finally(() => (fetchSettled = true));
-	});
+	let topVaults = $derived(initialTopVaults);
+	let totalVaultCount = $derived(data.totalVaultCount);
+	let loading = false;
 
 	const unknownVaultDescription = 'These vaults are not yet mapped out. Contact us to have your vaults listed.';
 
@@ -69,16 +37,12 @@
 	);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived.by(() => {
-		const logoPath = protocolMetadata?.logos.light ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined;
+		const logoPath = protocolMetadata?.logos.light
+			? getVaultProtocolLogoUrl(protocolMetadata.slug, { format: 'original' })
+			: protocolMetadata?.logos.dark;
 		return logoPath ? new URL(logoPath, page.url.origin).href : undefined;
 	});
-	let statsVaults = $derived(
-		(topVaults?.vaults ?? []).filter(
-			(vault) => !isBlacklisted(vault) && (vault.current_nav ?? 0) <= VAULT_TVL_OUTLIER_THRESHOLD
-		)
-	);
-	let totalTvl = $derived(calculateTotalTvl(statsVaults));
-	let averageMonthlyReturn = $derived(calculateTvlWeightedApy(statsVaults.filter(isEligibleVaultGroupMiniChartVault)));
+	let averageMonthlyReturn = $derived(data.listingSummary.avgTvlWeightedApy1M);
 </script>
 
 {#snippet unknownVaultSubtitle()}
@@ -96,9 +60,10 @@
 {#snippet protocolDescriptionExtra()}
 	{#if averageMonthlyReturn != null}
 		<p>
-			{protocolName} has <strong>{formatDollar(totalTvl, 1)}</strong> TVL in
-			<strong>{statsVaults.length} {statsVaults.length === 1 ? 'vault' : 'vaults'}</strong> with the TVL-weighted
-			average monthly returns of <strong>{formatPercent(averageMonthlyReturn, 1)}</strong>.
+			The current listing contains <strong>{formatDollar(data.listingSummary.totalTvl, 1)}</strong> TVL in
+			<strong>{data.listingSummary.matchingCount} {data.listingSummary.matchingCount === 1 ? 'vault' : 'vaults'}</strong
+			>
+			with the TVL-weighted average monthly returns of <strong>{formatPercent(averageMonthlyReturn, 1)}</strong>.
 		</p>
 	{/if}
 	{#if isHyperliquidProtocolGroup}
@@ -110,20 +75,20 @@
 	{title}
 	{description}
 	canonical={pageUrl}
+	image={logoUrl}
+	imageAlt={`${protocolName} logo`}
 	openGraph={{
 		siteName: 'Trading Strategy',
 		url: pageUrl,
 		title,
 		description,
-		images: logoUrl ? [{ url: logoUrl }] : [],
 		type: 'website'
 	}}
 	twitter={{
 		site: '@TradingProtocol',
 		cardType: logoUrl ? 'summary_large_image' : 'summary',
 		title,
-		description,
-		image: logoUrl ?? undefined
+		description
 	}}
 />
 
@@ -138,7 +103,7 @@
 		image: logoUrl ?? undefined,
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: topVaults?.vaults.length ?? 0
+			numberOfItems: data.listingSummary.matchingCount
 		}
 	}}
 />
@@ -147,6 +112,10 @@
 	{topVaults}
 	{totalVaultCount}
 	{loading}
+	progressive={data.initialVaultListingHasMore}
+	listingKey={data.listingKey}
+	listingScope={data.listingScope}
+	listingSummary={data.listingSummary}
 	{protocolMetadata}
 	protocolDescriptionExtra={averageMonthlyReturn != null || isHyperliquidProtocolGroup
 		? protocolDescriptionExtra
@@ -156,6 +125,8 @@
 	showFilters
 	showUnknownFilter={false}
 	{defaultTvlKey}
+	defaultSort={data.protocolSlug === 'apex' ? 'tvl' : undefined}
+	defaultDirection={data.protocolSlug === 'apex' ? 'desc' : undefined}
 	defaultHideUnknown={isUnknownVaultProtocolGroup ? 0 : 1}
 >
 	{#snippet detailAside()}

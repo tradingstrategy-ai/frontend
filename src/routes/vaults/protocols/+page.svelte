@@ -9,7 +9,8 @@
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
-	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import { JsonLd } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import MarketSharePieChart from '../MarketSharePieChart.svelte';
 	import MarketShareWidgetBox from '../MarketShareWidgetBox.svelte';
 
@@ -28,8 +29,6 @@
 	const description =
 		'DeFi stablecoin vaults grouped by protocol. Vaults are built on different digital asset management protocols, and this listing shows the relative popularity of each. TVL represents stablecoin deposits in a protocol’s vaults. APY represents the yield of the last thirty days.';
 	const glossaryLinks = {
-		vault: resolve('/glossary/vault'),
-		protocol: resolve('/glossary/protocol'),
 		stablecoin: resolve('/glossary/stablecoin'),
 		tvl: resolve('/glossary/total-value-locked-tvl'),
 		apy: resolve('/glossary/apy')
@@ -73,10 +72,7 @@
 						{/snippet}
 						{#snippet subtitle()}
 							<p>
-								<a class="body-link" href={glossaryLinks.vault}>Vaults</a>
-								grouped by
-								<a class="body-link" href={glossaryLinks.protocol}>protocol</a>. Vaults are built on different digital
-								asset management protocols, and this listing shows the relative popularity of each.
+								Vault protocols ranking for DeFi stablecoin vaults.
 								<a class="body-link" href={glossaryLinks.tvl}>TVL</a>
 								represents
 								<a class="body-link" href={glossaryLinks.stablecoin}>stablecoin</a>
@@ -107,6 +103,7 @@
 	<Section padding="sm">
 		<VaultGroupTable
 			groupLabel="Protocol"
+			includeRisk
 			includeCore3Risk
 			getLogoHref={getVaultProtocolLogoUrl}
 			rows={protocols}

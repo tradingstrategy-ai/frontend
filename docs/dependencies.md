@@ -21,7 +21,6 @@ This document lists key dependencies used in the Trading Strategy frontend appli
 | Service                      | Purpose                          |
 | ---------------------------- | -------------------------------- |
 | Ghost CMS                    | Blog content                     |
-| Typesense                    | Search functionality             |
 | Trading Strategy backend API | Core data and trading operations |
 
 ## Build and dev tools

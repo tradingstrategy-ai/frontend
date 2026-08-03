@@ -7,6 +7,21 @@ Page speed utilities to see First Contentful Paint (FCP) and Largest Contentful 
 - https://www.webpagetest.org/
   - Example: https://www.webpagetest.org/result/211230_BiDc5M_0b72ec65b0eb6523fddb06496ab832d4/1/details/#waterfall_view_step1
 
+## Homepage payloads
+
+The homepage is server-rendered and its `load` result is serialised into the
+initial HTML. Keep that payload limited to data that the route renders:
+
+- Return only the vault cards displayed by `TopVaults`.
+- For strategy tiles, retain only the selected chart series. Downsample it to
+  daily points before serialisation because the tile renderer uses daily data.
+- Do not add a server-side fetch for data that no homepage component consumes.
+
+For a local before/after comparison, open a fresh Playwright browser context
+against the Vite development server and compare the navigation entry's
+`transferSize`. Development-server timing includes variable upstream data fetches,
+so treat document transfer size as the reliable signal for frontend-only changes.
+
 ## Enabling early hint testing
 
 https://blog.cloudflare.com/early-hints/#testing-early-hints-with-web-page-test

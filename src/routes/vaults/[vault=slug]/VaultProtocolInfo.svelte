@@ -30,7 +30,7 @@
 			{/if}
 		{/if}
 		<div class="content">
-			<h2>About {protocolMetadata.name}</h2>
+			<h2>Running on {protocolMetadata.name} protocol</h2>
 			<p class="description">
 				This {assetType} is running on <a href={protocolPageUrl}>{protocolMetadata.name}</a>:
 			</p>

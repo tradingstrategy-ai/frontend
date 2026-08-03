@@ -35,7 +35,7 @@ curator.
 			<img src={curatorLogoUrl} alt={curator.name} class="curator-logo" />
 		{/if}
 		<div class="content">
-			<h2>About {curator.name}</h2>
+			<h2>Curated by {curator.name}</h2>
 			<p class="description">
 				This {assetType} is curated by <a href={curatorPageUrl}>{curator.name}</a>.
 			</p>

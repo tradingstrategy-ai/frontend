@@ -1,10 +1,35 @@
 # Agent tricks and troubleshooting
 
-Read this document before invoking Claude CLI or Codex CLI from another agent.
+Read this document before invoking Grok CLI, Claude CLI or Codex CLI from another agent.
 It contains local invocation details that are easy to get wrong, especially for
 non-interactive Claude review runs.
 
-This note covers practical ways to use Codex CLI and Claude CLI as local engineering agents, especially when one agent is used to review or debug the other agent's work.
+This note covers practical ways to use Grok CLI, Codex CLI and Claude CLI as local engineering agents, especially when one agent is used to review or debug the other agent's work.
+
+## Cross-agent requirement
+
+Before any Grok, Claude or Codex CLI cross-agent operation — including reviews,
+sanity checks and one-off prompts — read `.claude/docs/agent-tips-and-tricks.md`
+in the current session. The same requirement applies when one CLI is used to
+review or debug work produced by another.
+
+## Grok CLI
+
+Use Grok as an independent reviewer with a single, read-only prompt. Prefer
+headless `grok -p` invocations with `--permission-mode dontAsk`, explicitly
+allow only read-only tools, disable subagents, and use a 15-minute timeout for
+non-trivial reviews. Do not ask Grok to edit the worktree during a review.
+
+```shell
+timeout 900 grok -p "Review the current PR diff for correctness bugs only. Do not edit files or run tests. Return findings first with file:line references." \
+  --cwd . \
+  --permission-mode dontAsk \
+  --allow "Read,Grep,Glob,Bash(git status:*),Bash(git diff:*),Bash(sed:*),Bash(rg:*)" \
+  --no-subagents \
+  --no-memory \
+  --output-format streaming-json \
+  < /dev/null > /tmp/grok-review.jsonl
+```
 
 ## Codex CLI
 

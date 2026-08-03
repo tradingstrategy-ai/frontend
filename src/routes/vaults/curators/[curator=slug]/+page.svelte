@@ -3,41 +3,20 @@ Vault listing for a single curator — all vaults managed by the curator,
 with an "about" panel and a TVL/return mini chart.
 -->
 <script lang="ts">
-	import type { TopVaults } from '$lib/top-vaults/schemas';
-	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
-	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import { JsonLd } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
+	import { getCuratorSocialLogoUrl } from '$lib/social-card/helpers';
 
 	let { data } = $props();
 	let { curatorSlug, curatorName, curator, vaultCount, tvl, averageApy, initialTopVaults } = $derived(data);
 
-	let fetchedTopVaults = $state<TopVaults>();
-	let fetchedTotalVaultCount = $state<number>();
-	let fetchSettled = $state(false);
-	let topVaults = $derived(initialTopVaults ?? fetchedTopVaults);
-	let totalVaultCount = $derived(initialTopVaults ? data.totalVaultCount : fetchedTotalVaultCount);
-	let loading = $derived(!initialTopVaults && !fetchSettled && !hasVaultCache(page.data.generatedAt));
-
-	$effect(() => {
-		if (initialTopVaults) {
-			return;
-		}
-
-		fetchSettled = false;
-		fetchAllVaultData(page.data.generatedAt)
-			.then((allData) => {
-				fetchedTotalVaultCount = allData.vaults.length;
-				fetchedTopVaults = {
-					...allData,
-					vaults: allData.vaults.filter((v) => v.curator_slug === curatorSlug)
-				};
-			})
-			.catch((e) => console.error('Failed to load vault data:', e))
-			.finally(() => (fetchSettled = true));
-	});
+	let topVaults = $derived(initialTopVaults);
+	let totalVaultCount = $derived(data.totalVaultCount);
+	let loading = false;
 
 	/** Google truncates search snippets around this length; keep the meta description within it */
 	const META_DESCRIPTION_MAX_LENGTH = 160;
@@ -71,7 +50,7 @@ with an "about" panel and a TVL/return mini chart.
 	// and JSON-LD carry the full curator blurb
 	let metaDescription = $derived(clipAtWord(fullDescription, META_DESCRIPTION_MAX_LENGTH));
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
-	let logoUrl = $derived(curator.logos.generic ? new URL(curator.logos.generic, page.url.origin).href : undefined);
+	let logoUrl = $derived(getCuratorSocialLogoUrl(curator));
 	let socialProfileUrls = $derived([curator.twitter, curator.linkedin].filter((url) => url != null));
 </script>
 
@@ -79,20 +58,20 @@ with an "about" panel and a TVL/return mini chart.
 	{title}
 	description={metaDescription}
 	canonical={pageUrl}
+	image={logoUrl}
+	imageAlt={`${curatorName} logo`}
 	openGraph={{
 		siteName: 'Trading Strategy',
 		url: pageUrl,
 		title,
 		description: fullDescription,
-		images: logoUrl ? [{ url: logoUrl, alt: `${curatorName} logo` }] : [],
 		type: 'website'
 	}}
 	twitter={{
 		site: '@TradingProtocol',
 		cardType: logoUrl ? 'summary_large_image' : 'summary',
 		title,
-		description: fullDescription,
-		image: logoUrl ?? undefined
+		description: fullDescription
 	}}
 />
 
@@ -114,7 +93,7 @@ with an "about" panel and a TVL/return mini chart.
 		},
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: vaultCount
+			numberOfItems: data.listingSummary.matchingCount
 		}
 	}}
 />
@@ -123,6 +102,10 @@ with an "about" panel and a TVL/return mini chart.
 	{topVaults}
 	{totalVaultCount}
 	{loading}
+	progressive={data.initialVaultListingHasMore}
+	listingKey={data.listingKey}
+	listingScope={data.listingScope}
+	listingSummary={data.listingSummary}
 	curatorMetadata={curator}
 	title="{curatorName} curated stablecoin vaults"
 	showFilters

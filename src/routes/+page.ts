@@ -1,5 +1,5 @@
-import { fetchPublicApi, optionalDataError } from '$lib/helpers/public-api';
 import { getPosts } from '$lib/blog/client';
+import { optionalDataError } from '$lib/helpers/public-api';
 
 export async function load({ fetch, setHeaders, data }) {
 	// Cache the landing page at Cloudflare edge for 30 minutes.
@@ -15,7 +15,6 @@ export async function load({ fetch, setHeaders, data }) {
 		savingsRate: data.savingsRate,
 		treasuryRate: data.treasuryRate,
 		topVaults: data.topVaults,
-		impressiveNumbers: await fetchPublicApi(fetch, 'impressive-numbers').catch(optionalDataError('impressive-numbers')),
 		posts: await getPosts(fetch, { limit: 4 })
 			.then((r) => r.posts)
 			.catch(optionalDataError('blog posts'))
