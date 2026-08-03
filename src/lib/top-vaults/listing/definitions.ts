@@ -17,6 +17,7 @@ export const vaultListingKeys = [
 	'new-vaults',
 	'negative',
 	'blacklisted',
+	'whitelisted',
 	'chain',
 	'protocol',
 	'stablecoin',
@@ -69,6 +70,16 @@ export const vaultListingDefinitions: Record<VaultListingKey, VaultListingDefini
 		},
 		requiresScope: false
 	},
+	whitelisted: {
+		key: 'whitelisted',
+		defaults: { tvl: 'any', risk: 0, unknown: false, sort: 'tvl', direction: 'desc' },
+		options: {
+			...commonOptions,
+			includeBlacklisted: true,
+			includeBlacklistedInStats: true
+		},
+		requiresScope: false
+	},
 	chain: { key: 'chain', defaults: { tvl: '10k' }, options: commonOptions, requiresScope: true },
 	protocol: { key: 'protocol', defaults: { tvl: '10k', unknown: false }, options: commonOptions, requiresScope: true },
 	stablecoin: {
@@ -117,6 +128,8 @@ export function filterVaultListingScope(vaults: VaultInfo[], key: VaultListingKe
 	switch (key) {
 		case 'blacklisted':
 			return vaults.filter(isBlacklisted);
+		case 'whitelisted':
+			return vaults.filter((vault) => vault.whitelist?.status === 'whitelisted');
 		case 'chain': {
 			if (!scope) return [];
 			const chainIds = new Set(getChainsBySlug(scope).map((chain) => chain.id));

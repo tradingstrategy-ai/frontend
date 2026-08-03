@@ -18,6 +18,7 @@ const staticSubPages = [
 	'high-tvl',
 	'international',
 	'new-vaults',
+	'whitelisted',
 	'funds',
 	'current-peak-tvl',
 	'cumulative-tvl-apy',
