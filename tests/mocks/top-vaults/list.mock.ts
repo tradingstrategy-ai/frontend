@@ -448,6 +448,13 @@ const depositDisabledVault = createTestVault('Deposit disabled vault', {
 	period_results: [closedVaultPeriodResult]
 });
 
+const cappedVault = createTestVault('Deposit cap reached vault', {
+	chain: 'base',
+	current_nav: 20_000,
+	deposit_closed_reason: 'Max deposit cap reached (maxDeposit=0)',
+	period_results: [closedVaultPeriodResult]
+});
+
 const redemptionDisabledVault = createTestVault('Withdrawal disabled vault', {
 	chain: 'base',
 	current_nav: 20_000,
@@ -459,6 +466,14 @@ const depositAndRedemptionDisabledVault = createTestVault('Deposit and withdrawa
 	chain: 'base',
 	current_nav: 20_000,
 	deposit_closed_reason: 'Deposits paused',
+	redemption_closed_reason: 'Withdrawals paused',
+	period_results: [closedVaultPeriodResult]
+});
+
+const cappedAndRedemptionDisabledVault = createTestVault('Capped and withdrawal disabled vault', {
+	chain: 'base',
+	current_nav: 20_000,
+	deposit_closed_reason: 'Max deposit cap reached (maxDeposit=0)',
 	redemption_closed_reason: 'Withdrawals paused',
 	period_results: [closedVaultPeriodResult]
 });
@@ -582,8 +597,10 @@ export default defineMock({
 			abnormalTvlBlacklistedVault,
 			morphoFlaggedBlacklistedVault,
 			depositDisabledVault,
+			cappedVault,
 			redemptionDisabledVault,
 			depositAndRedemptionDisabledVault,
+			cappedAndRedemptionDisabledVault,
 			privateVault,
 			privateTokenisedFund,
 			limitedCoverageVault,

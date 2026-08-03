@@ -63,6 +63,29 @@ test.describe('stablecoins index page', () => {
 		await expect(page.getByText(/Fetched 2026.*ago/)).toHaveCount(2);
 	});
 
+	test('warns when a stablecoin is likely depegged', async ({ page }) => {
+		await page.goto('/vaults/stablecoins/frax');
+
+		const warning = page.getByTestId('stablecoin-depeg-warning');
+		await expect(warning).toBeVisible();
+		await expect(warning).toContainText('This stablecoin is likely depegged.');
+		await expect(warning).toContainText('The current rate is 1.21951 FRAX / 1 USD');
+		await expect(warning).toContainText('fetched at 2026-06-26 12:16');
+	});
+
+	test('shows a price-feed availability warning when the rate source is missing', async ({ page }) => {
+		await page.goto('/vaults/stablecoins/ausd');
+
+		const warning = page.getByTestId('stablecoin-price-feed-warning');
+		await expect(warning).toBeVisible();
+		await expect(warning).toHaveClass(/stablecoin-depeg-warning/);
+		await expect(warning).toContainText(
+			'This stablecoin does not have a price feed available at the moment and we are unable to display peg/depeg rates.'
+		);
+		await expect(warning.locator('.alert-list')).toHaveClass(/warning/);
+		await expect(page.getByTestId('stablecoin-depeg-warning')).toHaveCount(0);
+	});
+
 	test('uses the updated metadata title and description', async ({ page }) => {
 		await page.goto('/vaults/stablecoins');
 

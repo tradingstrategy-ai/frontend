@@ -49,3 +49,9 @@ blacklisted listing explicitly includes its matching vaults in its own summary.
 This keeps headline TVL and returns aligned with the established listing rules.
 The server resolves the cached US Treasury rate when that monthly-return filter
 is selected, so the initial batch and continuation requests apply the same rule.
+
+## Stablecoin safety notices
+
+Stablecoin detail pages show a red notice when stablecoin metadata identifies a likely depeg. When a native peg rate is available, the notice shows the inverse rate as token units per one unit of the peg currency and its fetch time.
+
+If metadata reports `rate_fetch_failed_reason: missing_coingecko_id`, the page instead shows a yellow notice explaining that a price feed is unavailable. It does not present a peg or depeg rate in that state.
