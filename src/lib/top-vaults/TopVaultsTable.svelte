@@ -3,7 +3,7 @@
 Interactive vault listing with filters, sorting, and progressive row loading.
 
 Use `ratingProvider` to add its risk-rating column beside the vault name.
-Whitelisted vaults are marked as Private because they do not accept public deposits.
+Whitelisted vaults are marked as Private, except tokenised funds, which are marked as Fund.
 -->
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
@@ -1244,6 +1244,8 @@ Whitelisted vaults are marked as Private because they do not accept public depos
 					{@const blacklisted = isBlacklisted(vault)}
 					{@const badStatus = !isGoodVaultStatus(vault)}
 					{@const isPrivate = vault.whitelist?.status === 'whitelisted'}
+					{@const isTokenisedFund = vault.flags.includes('tokenised_fund')}
+					{@const depositStatusLabel = isTokenisedFund ? 'Fund' : 'Private'}
 					{@const protocolName = getVaultProtocolDisplayName(vault)}
 					{@const statusReason = [vault.deposit_closed_reason, vault.redemption_closed_reason]
 						.filter(Boolean)
@@ -1313,7 +1315,7 @@ Whitelisted vaults are marked as Private because they do not accept public depos
 								<Tooltip>
 									<svelte:fragment slot="trigger">
 										<span class="status-wrapper">
-											<IconStop />Private
+											<IconStop />{depositStatusLabel}
 										</span>
 									</svelte:fragment>
 									<svelte:fragment slot="popup">

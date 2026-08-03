@@ -216,6 +216,12 @@ test.describe('vault index page', () => {
 		await expect(page.getByTestId('filters-note')).toHaveCount(0);
 	});
 
+	test('defaults the all-vaults listing to Dangerous technical risk', async ({ page }) => {
+		await page.goto('/vaults/all');
+		await openFilters(page);
+		await expect(page.locator('.filter-group:has-text("Technical risk") .tvl-trigger')).toHaveText('Dangerous');
+	});
+
 	test('shows blacklisted-only vaults sorted by TVL by default', async ({ page }) => {
 		await page.goto('/vaults/blacklisted');
 
@@ -245,7 +251,8 @@ test.describe('vault index page', () => {
 		const rows = page.locator('tbody tr.targetable');
 		await expect(rows).toHaveCount(2);
 		await expect(rows.first()).toContainText('Private vault');
-		await expect(rows.locator('td.lockup').filter({ hasText: 'Private' })).toHaveCount(2);
+		await expect(rows.locator('td.lockup').filter({ hasText: 'Private' })).toHaveCount(1);
+		await expect(rows.locator('td.lockup').filter({ hasText: 'Fund' })).toHaveCount(1);
 		await expect(page.locator('h1')).toHaveText('Whitelisted stablecoin vaults');
 		await expect(page.locator('meta[name="description"]')).toHaveAttribute(
 			'content',
@@ -510,6 +517,17 @@ test.describe('vault index page', () => {
 		await expect(page.getByText('Whitelist notes', { exact: true }).locator('..')).toContainText(
 			'Whitelist checks are handled by the vault'
 		);
+
+		await page.goto('/vaults/all');
+		await openFilters(page);
+		await page.getByTestId('vault-search').fill('Private tokenised fund');
+		const fundCell = page
+			.locator('tbody tr.targetable')
+			.filter({ hasText: 'Private tokenised fund' })
+			.locator('td.lockup');
+		await expect(fundCell).toContainText('Fund');
+		await expect(fundCell).not.toContainText('Private');
+		await expect(fundCell).not.toContainText('Unknown');
 	});
 
 	test('shows the tokenised-fund disclaimer instead of the permissioned warning', async ({ page }) => {
