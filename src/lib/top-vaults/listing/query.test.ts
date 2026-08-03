@@ -96,6 +96,18 @@ describe('vault listing query', () => {
 		]);
 	});
 
+	it('keeps a whitelisted definition scoped to permissioned vaults', () => {
+		const permissionless = createTestVault('Permissionless', { current_nav: 100_000 });
+		const whitelisted = createTestVault('Whitelisted', {
+			current_nav: 100_000,
+			whitelist: { status: 'whitelisted', notes: null }
+		});
+
+		expect(filterVaultListingScope([permissionless, whitelisted], 'whitelisted').map((vault) => vault.name)).toEqual([
+			'Whitelisted'
+		]);
+	});
+
 	it('keeps the unknown-vault defaults aligned with detail listing routes', () => {
 		expect(getVaultListingDefaults('protocol', 'unknown').unknown).toBe(false);
 		expect(getVaultListingDefaults('stablecoin', 'usdc').unknown).toBe(false);

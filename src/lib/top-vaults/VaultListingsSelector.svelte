@@ -21,6 +21,7 @@ Renders navigation links for vault listing and chart pages.
 		{ href: '/vaults/high-tvl', label: 'Top with $2M TVL' },
 		{ href: '/vaults/new-vaults', label: 'New' },
 		{ href: '/vaults/negative', label: 'Negative' },
+		{ href: '/vaults/whitelisted', label: 'Whitelisted' },
 		{ href: '/vaults/blacklisted', label: 'Blacklisted' },
 		{ href: '/vaults/all', label: 'All' },
 		{ href: '/vaults/core3-ratings', label: 'CORE3 ratings' },

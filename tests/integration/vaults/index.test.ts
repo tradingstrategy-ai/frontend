@@ -239,6 +239,20 @@ test.describe('vault index page', () => {
 		await expect(page.getByTestId('top-vaults-meta')).toContainText('Avg. return 20.00%');
 	});
 
+	test('shows only whitelisted vaults', async ({ page }) => {
+		await page.goto('/vaults/whitelisted');
+
+		const rows = page.locator('tbody tr.targetable');
+		await expect(rows).toHaveCount(2);
+		await expect(rows.first()).toContainText('Private vault');
+		await expect(rows.locator('td.lockup').filter({ hasText: 'Private' })).toHaveCount(2);
+		await expect(page.locator('h1')).toHaveText('Whitelisted stablecoin vaults');
+		await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+			'content',
+			'This ranking contains only vaults that are not open to public and have some sort of permissioned deposits.'
+		);
+	});
+
 	test('displays vault count in table meta', async ({ page }) => {
 		const meta = page.getByTestId('top-vaults-meta');
 		// Should show 254 vaults (those above TVL threshold)
