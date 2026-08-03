@@ -1,3 +1,9 @@
+<!--
+@component
+Displays a vault's technical metadata in a two-column table.
+
+Includes the source whitelist status and any source-provided whitelist notes.
+-->
 <script lang="ts">
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import type { Chain } from '$lib/helpers/chain';
@@ -166,6 +172,13 @@
 		{ label: 'Fees internalised', value: vault.fee_internalised, type: 'boolean' as const },
 		{ label: 'Features', value: vault.features, type: 'array' as const },
 		{ label: 'Flags', value: vault.flags, type: 'array' as const },
+		{
+			label: 'Whitelist status',
+			value: formatWhitelistStatus(vault.whitelist?.status)
+		},
+		...(vault.whitelist?.notes
+			? [{ label: 'Whitelist notes', value: vault.whitelist.notes, type: 'string' as const }]
+			: []),
 		{ label: 'Deposit status', value: vault.deposit_closed_reason, type: 'closedReason' as const },
 		{ label: 'Redemption status', value: vault.redemption_closed_reason, type: 'closedReason' as const },
 		// The API uses 0 to mean deposit/redemption event counts are not tracked for this vault.
@@ -194,6 +207,11 @@
 	function formatExchangeRate(usdRate: number | null | undefined, symbol: string): string {
 		if (usdRate == null) return notFilledMarker;
 		return `1 ${symbol} = ${formatDollar(usdRate, 4, 6)}`;
+	}
+
+	function formatWhitelistStatus(status: string | null | undefined): string {
+		if (!status) return notFilledMarker;
+		return status.charAt(0).toUpperCase() + status.slice(1);
 	}
 </script>
 

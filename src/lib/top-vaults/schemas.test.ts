@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { curatorInfoSchema, topVaultsSchema } from './schemas';
+import { curatorInfoSchema, topVaultsSchema, vaultWhitelistSchema } from './schemas';
 import { createTestVault } from './test-utils';
 
 const validCurator = {
@@ -54,6 +54,14 @@ describe('topVaultsSchema resilience', () => {
 		const result = curatorInfoSchema.parse(curator);
 		expect(result.recent_posts).toEqual([]);
 		expect(result.name).toBe('Steakhouse Financial');
+	});
+
+	it('falls back to an unknown whitelist status for unexpected source values', () => {
+		expect(vaultWhitelistSchema.parse({ status: 'restricted', notes: null }).status).toBe('unknown');
+	});
+
+	it('defaults absent whitelist notes to null', () => {
+		expect(vaultWhitelistSchema.parse({ status: 'whitelisted' }).notes).toBeNull();
 	});
 
 	it('preserves valid Xerberus per-vault assessments and drops malformed ones', () => {

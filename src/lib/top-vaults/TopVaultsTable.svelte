@@ -3,6 +3,7 @@
 Interactive vault listing with filters, sorting, and progressive row loading.
 
 Use `ratingProvider` to add its risk-rating column beside the vault name.
+Whitelisted vaults are marked as Private because they do not accept public deposits.
 -->
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
@@ -29,7 +30,8 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 	import VaultSparkline from './VaultSparkline.svelte';
 	import IconChevronUp from '~icons/local/chevron-up';
 	import IconChevronDown from '~icons/local/chevron-down';
-	import IconLock from '~icons/local/lock';
+	import IconHourglass from '~icons/local/hourglass';
+	import IconStop from '~icons/local/stop';
 	import { getChain, getChainDisplayName } from '$lib/helpers/chain';
 	import {
 		formatDollar,
@@ -48,6 +50,7 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 		calculateTotalTvl,
 		calculateTvlWeightedApy,
 		ddFilterOptions,
+		getLockupDescription,
 		getFormattedLockup,
 		getCore3PolForVault,
 		getLockupTooltip,
@@ -1240,6 +1243,7 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 					{@const chain = getChain(vault.chain_id)}
 					{@const blacklisted = isBlacklisted(vault)}
 					{@const badStatus = !isGoodVaultStatus(vault)}
+					{@const isPrivate = vault.whitelist?.status === 'whitelisted'}
 					{@const protocolName = getVaultProtocolDisplayName(vault)}
 					{@const statusReason = [vault.deposit_closed_reason, vault.redemption_closed_reason]
 						.filter(Boolean)
@@ -1304,16 +1308,35 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 						<td class="fees right">
 							<FeesCell mgmt_fee={vault.mgmt_fee} perf_fee={vault.perf_fee} />
 						</td>
-						<td class={['lockup', vault.lockup === null && 'unknown']}>
-							{#if badStatus}
+						<td class={['lockup', vault.lockup === null && 'unknown', isPrivate && 'private']}>
+							{#if isPrivate}
 								<Tooltip>
 									<svelte:fragment slot="trigger">
 										<span class="status-wrapper">
-											{#if vault.deposit_closed_reason != null}<IconLock />{/if}{getFormattedLockup(vault)}
+											<IconStop />Private
+											{#if badStatus}<IconHourglass />{/if}{getFormattedLockup(vault)}
+										</span>
+									</svelte:fragment>
+									<svelte:fragment slot="popup">
+										This vault does not accept public deposits.
+										{#if badStatus}
+											The vault deposit or redemption may be currently closed: {statusReason}. {getLockupDescription(
+												vault
+											)}
+										{:else}
+											{getLockupDescription(vault)}
+										{/if}
+									</svelte:fragment>
+								</Tooltip>
+							{:else if badStatus}
+								<Tooltip>
+									<svelte:fragment slot="trigger">
+										<span class="status-wrapper">
+											{#if vault.deposit_closed_reason != null}<IconHourglass />{/if}{getFormattedLockup(vault)}
 										</span>
 									</svelte:fragment>
 									<svelte:fragment slot="popup"
-										>The vault deposit or redemption may be currently closed: {statusReason}. {getLockupTooltip(
+										>The vault deposit or redemption may be currently closed: {statusReason}. {getLockupDescription(
 											vault
 										)}</svelte:fragment
 									>
@@ -1322,7 +1345,7 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 								<Tooltip>
 									<svelte:fragment slot="trigger">
 										<span class="status-wrapper">
-											{#if vault.deposit_closed_reason != null}<IconLock />{/if}{getFormattedLockup(vault)}
+											{#if vault.deposit_closed_reason != null}<IconHourglass />{/if}{getFormattedLockup(vault)}
 										</span>
 									</svelte:fragment>
 									<svelte:fragment slot="popup">{getLockupTooltip(vault)}</svelte:fragment>
@@ -2050,6 +2073,10 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 
 				&:has(:global(.icon)) {
 					color: var(--c-warning);
+				}
+
+				&.private {
+					color: var(--c-bearish);
 				}
 
 				.status-wrapper {

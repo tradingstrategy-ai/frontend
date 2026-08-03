@@ -463,6 +463,19 @@ const depositAndRedemptionDisabledVault = createTestVault('Deposit and withdrawa
 	period_results: [closedVaultPeriodResult]
 });
 
+const privateVault = createTestVault('Private vault', {
+	chain: 'base',
+	current_nav: 20_000,
+	whitelist: { status: 'whitelisted', notes: 'Whitelist checks are handled by the vault' }
+});
+
+const privateTokenisedFund = createTestVault('Private tokenised fund', {
+	chain: 'base',
+	current_nav: 20_000,
+	flags: ['tokenised_fund'],
+	whitelist: { status: 'whitelisted', notes: null }
+});
+
 // Real Parquet-backed vault IDs used by the historical TVL by chain endpoint tests.
 // These IDs need to match the local Parquet dataset so blacklist filtering can be
 // exercised against real server-side aggregation.
@@ -571,6 +584,8 @@ export default defineMock({
 			depositDisabledVault,
 			redemptionDisabledVault,
 			depositAndRedemptionDisabledVault,
+			privateVault,
+			privateTokenisedFund,
 			limitedCoverageVault,
 			...apexVaults,
 			...parquetMatchedVaults,

@@ -32,6 +32,21 @@ export const vaultFeesSchema = z.object({
 });
 export type VaultFees = z.infer<typeof vaultFeesSchema>;
 
+/**
+ * Whether a vault accepts deposits from the public.
+ *
+ * `whitelisted` vaults require permission before a user can deposit.
+ */
+export const vaultWhitelistStatusSchema = z.enum(['unknown', 'whitelisted', 'permissionless']).catch('unknown');
+export type VaultWhitelistStatus = z.infer<typeof vaultWhitelistStatusSchema>;
+
+export const vaultWhitelistSchema = z.object({
+	status: vaultWhitelistStatusSchema,
+	/** Optional source context about the vault's deposit permission checks. */
+	notes: z.string().nullable().optional().default(null)
+});
+export type VaultWhitelist = z.infer<typeof vaultWhitelistSchema>;
+
 /** Tearsheet metrics for one period. */
 export const periodMetricsSchema = z.object({
 	period: z.string(),
@@ -385,6 +400,8 @@ export const vaultInfoSchema = z.object({
 	deposit_next_open: isoDateTime.nullable(),
 	/** When redemptions will next be open (if currently closed) */
 	redemption_next_open: isoDateTime.nullable(),
+	/** Whether public deposits are permitted for this vault */
+	whitelist: vaultWhitelistSchema.nullable().optional().default(null),
 
 	// --- Links ---
 	/** @deprecated Use deposit_ui_link and vault_page_link instead */

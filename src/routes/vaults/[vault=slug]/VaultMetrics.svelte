@@ -35,7 +35,15 @@ Displays supplementary vault information, including transaction status, performa
 
 	let chain = $derived(getChain(vault.chain_id));
 	let hasLimitedHistory = $derived(LIMITED_HISTORY_CHAINS.includes(vault.chain_id));
-	let showTransactionStatus = $derived(!isGoodVaultStatus(vault));
+	let isPrivate = $derived(vault.whitelist?.status === 'whitelisted');
+	let depositStatus = $derived(
+		isPrivate
+			? vault.deposit_closed_reason
+				? `Private — ${vault.deposit_closed_reason}`
+				: 'Private'
+			: vault.deposit_closed_reason
+	);
+	let showTransactionStatus = $derived(isPrivate || !isGoodVaultStatus(vault));
 	let hasNetFeeInformation = $derived(vault.net_fees?.fee_mode != null);
 	let hasInternalisedFees = $derived(
 		vault.fee_internalised === true ||
@@ -170,8 +178,8 @@ Displays supplementary vault information, including transaction status, performa
 			<div class="status-grid">
 				<div class="status-item">
 					<span class="status-label">Deposits</span>
-					{#if vault.deposit_closed_reason}
-						<span class="status-value closed">{vault.deposit_closed_reason}</span>
+					{#if depositStatus}
+						<span class={['status-value', isPrivate ? 'private' : 'closed']}>{depositStatus}</span>
 						{#if depositDaysLeft !== null && depositDaysLeft >= 0}
 							<span class="status-next-open">Opens in {depositDaysLeft} {depositDaysLeft === 1 ? 'day' : 'days'}</span>
 						{/if}
@@ -433,6 +441,10 @@ Displays supplementary vault information, including transaction status, performa
 
 			&.closed {
 				color: var(--c-error);
+			}
+
+			&.private {
+				color: var(--c-bearish);
 			}
 		}
 

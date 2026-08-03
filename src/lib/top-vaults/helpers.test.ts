@@ -9,7 +9,9 @@ import {
 	isUnknownVaultProtocol,
 	isUnsupportedProtocolSlug,
 	meetsMinTvl,
+	getLockupDescription,
 	getFormattedLockup,
+	getLockupTooltip,
 	getFormattedFeeMode,
 	getFeeModeLabel,
 	getFeeModeDescription,
@@ -564,6 +566,18 @@ describe('getFormattedLockup', () => {
 	test('uses abbreviated unit for 1 unit', () => {
 		const vault = createTestVault('Test vault', { lockup: 60 }); // 1 minute
 		expect(getFormattedLockup(vault)).toBe('1m');
+	});
+});
+
+describe('lockup tooltips', () => {
+	test('keeps deposit availability out of the lockup-only description', () => {
+		const vault = createTestVault('Test vault', { lockup: 0 });
+		expect(getLockupDescription(vault)).toBe('This vault should allow instant redemptions under normal conditions.');
+	});
+
+	test('adds public deposit availability only to the standard tooltip', () => {
+		const vault = createTestVault('Test vault', { lockup: 86_400 });
+		expect(getLockupTooltip(vault)).toBe('This vault currently accepts deposits. Deposits have 1 day lockup.');
 	});
 });
 
