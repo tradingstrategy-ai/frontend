@@ -50,5 +50,5 @@ All vaults listing including problematic/blacklisted vaults
 	subtitle="All stablecoin vaults, including ones with stuck funds and oracle problems"
 	showFilters
 	defaultTvlKey="10k"
-	defaultRiskIndex={0}
+	defaultRiskIndex={1}
 />

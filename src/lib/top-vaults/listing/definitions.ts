@@ -47,7 +47,7 @@ export const vaultListingDefinitions: Record<VaultListingKey, VaultListingDefini
 	top: { key: 'top', defaults: { tvl: DEFAULT_TVL_KEY }, options: commonOptions, requiresScope: false },
 	all: {
 		key: 'all',
-		defaults: { tvl: '10k', risk: 0 },
+		defaults: { tvl: '10k', risk: 1 },
 		options: { ...commonOptions, includeBlacklisted: true },
 		requiresScope: false
 	},
