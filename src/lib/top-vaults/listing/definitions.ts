@@ -72,7 +72,7 @@ export const vaultListingDefinitions: Record<VaultListingKey, VaultListingDefini
 	},
 	whitelisted: {
 		key: 'whitelisted',
-		defaults: { tvl: 'any', risk: 0, unknown: false, sort: 'tvl', direction: 'desc' },
+		defaults: { tvl: 'any', risk: 1, unknown: false, sort: 'tvl', direction: 'desc' },
 		options: {
 			...commonOptions,
 			includeBlacklisted: true,

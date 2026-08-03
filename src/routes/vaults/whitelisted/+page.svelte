@@ -52,7 +52,7 @@ Whitelisted vault listing for permissioned deposits.
 	subtitle={description}
 	showFilters
 	defaultTvlKey="any"
-	defaultRiskIndex={0}
+	defaultRiskIndex={1}
 	defaultHideUnknown={0}
 	defaultSort="tvl"
 	defaultDirection="desc"

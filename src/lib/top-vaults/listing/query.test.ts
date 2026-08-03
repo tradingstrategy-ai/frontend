@@ -108,6 +108,10 @@ describe('vault listing query', () => {
 		]);
 	});
 
+	it('defaults the whitelisted listing to Dangerous risk or safer', () => {
+		expect(getVaultListingDefaults('whitelisted').risk).toBe(1);
+	});
+
 	it('keeps the unknown-vault defaults aligned with detail listing routes', () => {
 		expect(getVaultListingDefaults('protocol', 'unknown').unknown).toBe(false);
 		expect(getVaultListingDefaults('stablecoin', 'usdc').unknown).toBe(false);
