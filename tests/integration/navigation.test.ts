@@ -2,17 +2,72 @@ import { expect, test } from '@playwright/test';
 
 const searchName = 'Search vaults and DeFi entities';
 
+test('opens compact navigation on the first tap after page load', async ({ page }) => {
+	await page.setViewportSize({ width: 1024, height: 768 });
+	await page.goto('/pricing', { waitUntil: 'commit' });
+	const toggle = page.getByTestId('navigation-toggle');
+	const checkbox = page.getByRole('checkbox');
+	await toggle.click();
+
+	const navigation = page.getByRole('navigation', { name: 'Mobile navigation' });
+	await expect(checkbox).toHaveAttribute('data-navigation-hydrated', 'true');
+	await expect(page.getByRole('checkbox', { name: 'Hide navigation panel' })).toBeChecked();
+	await expect(page.locator('body')).toHaveCSS('position', 'fixed');
+	const bounds = await navigation.boundingBox();
+	expect(bounds).not.toBeNull();
+	expect(bounds!.x).toBeCloseTo(0, 0);
+	expect(bounds!.width).toBeCloseTo(1024, 0);
+});
+
+test('keeps the first tablet search tap focused through hydration', async ({ page }) => {
+	await page.setViewportSize({ width: 1024, height: 768 });
+	await page.goto('/pricing', { waitUntil: 'commit' });
+	const toggle = page.getByTestId('navigation-toggle');
+	const checkbox = page.getByRole('checkbox');
+	await toggle.click();
+	const search = page.getByTestId('mobile-menu-search').getByRole('combobox', { name: searchName });
+	await search.click();
+	await expect(checkbox).toHaveAttribute('data-navigation-hydrated', 'true');
+	await expect(search).toBeFocused();
+});
+
+test('tablet navigation closes after navigating to pricing', async ({ page }) => {
+	await page.setViewportSize({ width: 1024, height: 768 });
+	await page.goto('/vaults');
+	await page.getByTestId('navigation-toggle').click();
+
+	const navigation = page.getByRole('navigation', { name: 'Mobile navigation' });
+	await expect(navigation.getByRole('link', { name: 'Pricing' })).toBeVisible();
+	await navigation.getByRole('link', { name: 'Pricing' }).click();
+
+	await page.waitForURL('**/pricing');
+	await expect(page.getByRole('heading', { name: 'Professional vault data analytics' })).toBeVisible();
+	await expect(page.getByRole('checkbox', { name: 'Show navigation panel' })).not.toBeChecked();
+	const bounds = await navigation.boundingBox();
+	expect(bounds).not.toBeNull();
+	expect(bounds!.x).toBeGreaterThanOrEqual(1024);
+});
+
 async function searchFromNavigation(page: import('@playwright/test').Page, query: string) {
-	const navToggle = page.getByRole('button', { name: 'Show navigation panel' });
+	const navToggle = page.getByTestId('navigation-toggle');
 	let search = page.getByTestId('nav-search').getByRole('combobox', { name: searchName });
 	if (await navToggle.isVisible()) {
 		await navToggle.click();
-		const menuSearch = page
-			.getByRole('navigation', { name: 'Mobile navigation' })
-			.getByRole('button', { name: 'Search vaults' });
-		await expect(menuSearch).toBeVisible();
-		await menuSearch.click();
-		search = page.getByRole('dialog', { name: 'Search' }).getByRole('combobox', { name: searchName });
+		const navigation = page.getByRole('navigation', { name: 'Mobile navigation' });
+		const navigationBounds = await navigation.boundingBox();
+		expect(navigationBounds).not.toBeNull();
+		expect(navigationBounds!.x).toBeCloseTo(0, 0);
+		expect(navigationBounds!.width).toBeCloseTo(await page.evaluate(() => window.innerWidth), 0);
+		const menuSearch = navigation.getByRole('button', { name: 'Search vaults' });
+		if ((await page.evaluate(() => window.innerWidth)) >= 768) {
+			search = page.getByTestId('mobile-menu-search').getByRole('combobox', { name: searchName });
+			await expect(search).toBeVisible();
+			await expect(navigation.getByRole('link', { name: 'Top vaults' })).toBeVisible();
+		} else {
+			await expect(menuSearch).toBeVisible();
+			await menuSearch.click();
+			search = page.getByRole('dialog', { name: 'Search' }).getByRole('combobox', { name: searchName });
+		}
 	}
 	await search.fill(query);
 	const results = page.getByTestId('entity-search-results');
@@ -34,7 +89,7 @@ test('renders equivalent, colour-coded protocol and vault typeahead results on d
 		await page.setViewportSize(viewport);
 		await page.goto('/pricing');
 		if (name === 'tablet') {
-			const bounds = await page.getByRole('button', { name: 'Show navigation panel' }).boundingBox();
+			const bounds = await page.getByTestId('navigation-toggle').boundingBox();
 			expect(bounds).not.toBeNull();
 			expect(1024 - (bounds!.x + bounds!.width)).toBeLessThanOrEqual(32);
 		}
@@ -74,7 +129,9 @@ test('renders equivalent, colour-coded protocol and vault typeahead results on d
 		}
 
 		if (viewport.width < 1170) {
-			await page.getByRole('button', { name: 'Close search' }).click();
+			if (viewport.width < 768) {
+				await page.getByRole('button', { name: 'Close search' }).click();
+			}
 			await page.getByRole('button', { name: 'Close navigation panel' }).click();
 		}
 	}

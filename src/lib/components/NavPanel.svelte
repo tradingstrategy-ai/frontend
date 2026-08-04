@@ -4,28 +4,41 @@ Responsive navigation drawer with optional search entry, primary links and site 
 -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { disableScroll } from '$lib/actions/scroll';
 	import { Logo, Menu, Footer } from '$lib/components';
 	import IconCancel from '~icons/local/cancel';
 	// NOTE: un-comment below line to bring back color mode picker
 	// import ColorModePicker from '$lib/header/ColorModePicker.svelte';
-	import { disableScroll } from '$lib/actions/scroll';
 
 	interface Props {
 		open?: boolean;
 		children?: Snippet;
 		panelSearch?: Snippet;
+		onClose?: () => void;
 	}
 
-	let { open = $bindable(false), children, panelSearch }: Props = $props();
+	let { open = $bindable(false), children, panelSearch, onClose }: Props = $props();
 
-	const close = () => (open = false);
+	function close() {
+		open = false;
+		onClose?.();
+	}
+
+	function closeOnNavigation(node: HTMLElement) {
+		function handleClick(event: MouseEvent) {
+			if (event.target instanceof Element && event.target.closest('a[href]')) close();
+		}
+
+		node.addEventListener('click', handleClick);
+		return { destroy: () => node.removeEventListener('click', handleClick) };
+	}
 </script>
 
 <svelte:body use:disableScroll={open} />
 
-<nav class:open aria-label="Mobile navigation">
+<nav class:open aria-label="Mobile navigation" use:closeOnNavigation>
 	<header>
-		<a href="/" aria-label="Home" onclick={close}><Logo /></a>
+		<a href="/" aria-label="Home"><Logo /></a>
 		<button aria-label="Close navigation panel" onclick={close}>
 			<IconCancel />
 		</button>
@@ -35,7 +48,7 @@ Responsive navigation drawer with optional search entry, primary links and site 
 			{@render panelSearch()}
 		</div>
 	{/if}
-	<Menu align="center" onclick={close}>
+	<Menu align="center">
 		{@render children?.()}
 	</Menu>
 	<!-- NOTE: un-comment below section to bring back color mode picker -->
@@ -70,16 +83,6 @@ Responsive navigation drawer with optional search entry, primary links and site 
 		&.open {
 			transform: translateX(0);
 		}
-
-		&:has(:global(.dialog)) {
-			box-sizing: border-box;
-			width: 100%;
-			max-width: none;
-			height: 100dvh;
-			padding: 0;
-			overflow: hidden;
-			transform: none;
-		}
 	}
 
 	header {
@@ -94,6 +97,49 @@ Responsive navigation drawer with optional search entry, primary links and site 
 		width: min(100%, 22rem);
 		justify-self: center;
 		padding-inline: var(--space-md);
+	}
+
+	@media (--nav-collapsed) {
+		nav {
+			max-width: none;
+			transition: none;
+		}
+	}
+
+	@media (--nav-collapsed) and (--viewport-sm-up) {
+		.panel-search {
+			width: 31.25rem;
+			padding-inline: 0;
+		}
+	}
+
+	@media (--viewport-xs) {
+		nav:has(:global(.dialog)) {
+			box-sizing: border-box;
+			width: 100%;
+			max-width: none;
+			height: 100dvh;
+			padding: 0;
+			overflow: hidden;
+			transform: none;
+
+			/* Keep the established navigation identity visible above full-screen search. */
+			header {
+				position: relative;
+				z-index: 1001;
+				padding: var(--space-md);
+			}
+
+			header a,
+			header button {
+				position: relative;
+				z-index: 1;
+			}
+		}
+
+		nav:has(:global(.dialog)) :global(.dialog) {
+			padding-top: max(calc(var(--header-height) + var(--space-md)), env(safe-area-inset-top));
+		}
 	}
 
 	button {

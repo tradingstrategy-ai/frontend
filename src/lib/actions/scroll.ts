@@ -3,23 +3,29 @@
  *
  * see: https://css-tricks.com/prevent-page-scrolling-when-a-modal-is-open/
  *
+ * @param body - document body element supplied by Svelte
  * @param disableScroll - whether to prevent scrolling; typically a prop or stateful variable
  *
  * @usage
- *   <svelte:body use:preventBodyScroll={isDisabled} />
+ *   <svelte:body use:disableScroll={isDisabled} />
  */
 export function disableScroll({ style }: HTMLBodyElement, disableScroll: boolean) {
+	let locked = false;
+	let scrollY = 0;
+
 	function update(disable: boolean) {
-		if (disable) {
-			style.top = `-${window.scrollY}px`;
+		if (disable && !locked) {
+			scrollY = window.scrollY;
+			style.top = `-${scrollY}px`;
 			style.position = 'fixed';
 			style.width = '100%';
-		} else {
-			const scrollY = style.top;
+			locked = true;
+		} else if (!disable && locked) {
 			style.top = '';
 			style.position = '';
 			style.width = '';
-			window.scrollTo(0, parseInt(scrollY || '0') * -1);
+			window.scrollTo(0, scrollY);
+			locked = false;
 		}
 	}
 
