@@ -120,11 +120,7 @@ Responsive site header with menu, search and compact-navigation controls.
 
 	@media (--nav-collapsed) {
 		.header-bar {
-			grid-template-columns:
-				[logo-start] 10.5rem
-				[logo-end search-start] minmax(0, 1fr)
-				[search-end menu-start] auto
-				[menu-end];
+			grid-template-columns: minmax(0, 1fr) min-content;
 		}
 
 		.desktop-only {
@@ -132,17 +128,17 @@ Responsive site header with menu, search and compact-navigation controls.
 		}
 
 		.logo {
-			grid-column: logo-start / logo-end;
+			grid-column: 1;
 			--logo-height: 32px;
 		}
 
 		.search {
-			grid-column: search-start / search-end;
-			max-width: none;
+			display: none;
 		}
 
 		.show-nav-panel {
-			grid-column: menu-start / menu-end;
+			grid-column: 2;
+			justify-self: end;
 		}
 	}
 
