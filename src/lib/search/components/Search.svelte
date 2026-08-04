@@ -541,6 +541,17 @@ underlying vault JSON index private.
 	}
 
 	@media (--nav-collapsed) and (--viewport-sm-up) {
+		.menu-search:has(.dialog) .search-trigger {
+			display: none;
+		}
+		.menu-search .dialog {
+			position: absolute;
+			inset: 0 auto auto 0;
+			width: 100%;
+			height: auto;
+			max-height: calc(100dvh - var(--header-height) - var(--space-lg));
+			padding: 0;
+		}
 		.mobile-search-row {
 			position: relative;
 			width: 31.25rem;

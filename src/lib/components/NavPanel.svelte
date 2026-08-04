@@ -87,8 +87,15 @@ Responsive navigation drawer with optional search entry, primary links and site 
 				padding: var(--space-md);
 			}
 
-			:global(.dialog) {
-				padding-top: max(calc(var(--header-height) + var(--space-md)), env(safe-area-inset-top));
+			header a,
+			header button {
+				position: relative;
+				z-index: 1;
+			}
+
+			> :global(menu),
+			> :global(footer) {
+				display: none;
 			}
 		}
 	}
@@ -110,6 +117,19 @@ Responsive navigation drawer with optional search entry, primary links and site 
 	@media (--nav-collapsed) {
 		nav {
 			max-width: none;
+		}
+	}
+
+	@media (--nav-collapsed) and (--viewport-sm-up) {
+		.panel-search {
+			width: 31.25rem;
+			padding-inline: 0;
+		}
+	}
+
+	@media (--viewport-xs) {
+		nav:has(:global(.dialog)) :global(.dialog) {
+			padding-top: max(calc(var(--header-height) + var(--space-md)), env(safe-area-inset-top));
 		}
 	}
 
