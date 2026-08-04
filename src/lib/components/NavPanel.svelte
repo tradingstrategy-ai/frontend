@@ -54,6 +54,7 @@ Responsive navigation drawer with optional search entry, primary links and site 
 		top: 0;
 		right: 0;
 		bottom: 0;
+		box-sizing: border-box;
 		width: 100%;
 		max-width: 420px;
 		padding: var(--space-md);
@@ -68,6 +69,16 @@ Responsive navigation drawer with optional search entry, primary links and site 
 
 		&.open {
 			transform: translateX(0);
+		}
+
+		&:has(:global(.dialog)) {
+			box-sizing: border-box;
+			width: 100%;
+			max-width: none;
+			height: 100dvh;
+			padding: 0;
+			overflow: hidden;
+			transform: none;
 		}
 	}
 

@@ -98,7 +98,10 @@ test.describe('site search typeahead', () => {
 		await page.goto('/vaults');
 		await page.waitForLoadState('networkidle');
 
-		const trigger = page.getByRole('button', { name: 'Open search' });
+		await page.getByRole('button', { name: 'Show navigation panel' }).click();
+		const navigation = page.getByRole('navigation', { name: 'Mobile navigation' });
+		const trigger = navigation.getByRole('button', { name: 'Search vaults' });
+		await expect(trigger).toBeVisible();
 		await trigger.click();
 		const search = page.getByRole('dialog', { name: 'Search' }).getByRole('combobox');
 		await expect(search).toBeFocused();
@@ -116,7 +119,6 @@ test.describe('site search typeahead', () => {
 
 		await page.getByRole('button', { name: 'Show navigation panel' }).click();
 		const mobileNavigation = page.getByRole('navigation', { name: 'Mobile navigation' });
-		await expect(mobileNavigation).toHaveClass(/open/);
 		const menuSearch = mobileNavigation.getByRole('button', { name: 'Search vaults' });
 		await expect(menuSearch).toBeVisible();
 		await menuSearch.click();

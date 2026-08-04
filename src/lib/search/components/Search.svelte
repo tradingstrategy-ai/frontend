@@ -57,6 +57,7 @@ underlying vault JSON index private.
 			results = [];
 			return;
 		}
+		open = true;
 
 		const controller = new AbortController();
 		const timeout = setTimeout(async () => {
@@ -69,7 +70,6 @@ underlying vault JSON index private.
 					}
 				);
 				if (!response.ok) throw new Error('Search is temporarily unavailable.');
-<<<<<<< HEAD
 				const data = (await response.json()) as Partial<SearchResponse>;
 				if (sequence === requestSequence) results = Array.isArray(data.results) ? data.results : [];
 			} catch (error) {
@@ -259,7 +259,9 @@ underlying vault JSON index private.
 									onpointerdown={(event) => event.preventDefault()}
 									onclick={closeSearchForNavigation}
 								>
-									<span class="logo-slot">{#if result.logoUrl}<img src={result.logoUrl} alt="" use:removeOnError />{/if}</span>
+									<span class="logo-slot"
+										>{#if result.logoUrl}<img src={result.logoUrl} alt="" use:removeOnError />{/if}</span
+									>
 									<span class="result-main">
 										<strong class:blacklisted={result.entityType === 'blacklisted-vault'}>{result.name}</strong>
 										<span class="type">
@@ -501,6 +503,7 @@ underlying vault JSON index private.
 		.dialog {
 			position: fixed;
 			inset: 0;
+			box-sizing: border-box;
 			display: grid;
 			grid-template-rows: auto minmax(0, 1fr) auto;
 			width: auto;
@@ -551,6 +554,13 @@ underlying vault JSON index private.
 			bottom: 0;
 			left: calc(100% + var(--space-md));
 		}
+		.dialog li a {
+			grid-template-columns: 2rem minmax(0, 1fr) 6rem auto;
+		}
+		.dialog .result-sparkline {
+			display: grid;
+			justify-content: end;
+		}
 	}
 
 	@media (--viewport-xs) {
@@ -576,6 +586,8 @@ underlying vault JSON index private.
 		}
 		.dialog .result-sparkline {
 			grid-area: sparkline;
+			display: flex;
+			justify-content: end;
 		}
 		.dialog .metrics {
 			grid-area: metrics;
