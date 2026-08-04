@@ -4,6 +4,7 @@ Responsive navigation drawer with optional search entry, primary links and site 
 -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { disableScroll } from '$lib/actions/scroll';
 	import { Logo, Menu, Footer } from '$lib/components';
 	import IconCancel from '~icons/local/cancel';
 	// NOTE: un-comment below line to bring back color mode picker
@@ -32,6 +33,8 @@ Responsive navigation drawer with optional search entry, primary links and site 
 		return { destroy: () => node.removeEventListener('click', handleClick) };
 	}
 </script>
+
+<svelte:body use:disableScroll={open} />
 
 <nav class:open aria-label="Mobile navigation" use:closeOnNavigation>
 	<header>

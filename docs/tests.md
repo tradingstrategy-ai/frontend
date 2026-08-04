@@ -68,8 +68,9 @@ pnpm run test:integration
 #### Responsive navigation coverage
 
 `tests/integration/navigation.test.ts` covers the shared header at desktop, tablet and narrow-mobile
-viewports. It verifies the first compact-menu tap, the first tablet search-field focus through
-hydration, menu closure after navigation to Pricing, and equivalent protocol/vault typeahead results.
+viewports. It verifies that the first compact-menu tap remains open after hydration, that the first
+tablet search-field focus survives hydration, menu closure after navigation to Pricing, and equivalent
+protocol/vault typeahead results.
 
 #### Local secrets and `.env.local`
 

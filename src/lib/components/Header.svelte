@@ -3,6 +3,7 @@
 Responsive site header with menu, search and compact-navigation controls.
 -->
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import type { Snippet } from 'svelte';
 	import Logo from '$lib/components/Logo.svelte';
 	import Menu from '$lib/components/Menu.svelte';
@@ -17,7 +18,14 @@ Responsive site header with menu, search and compact-navigation controls.
 	let { menu, search }: Props = $props();
 	let panelOpen = $state(false);
 	let navPanelToggle = $state<HTMLInputElement>();
+	let navigationHydrated = $state(false);
 	const noop = () => {};
+
+	onMount(() => {
+		// Preserve a checkbox toggle made before Svelte attaches its event handlers.
+		panelOpen = navPanelToggle?.checked ?? false;
+		navigationHydrated = true;
+	});
 
 	function closePanel() {
 		panelOpen = false;
@@ -47,8 +55,9 @@ Responsive site header with menu, search and compact-navigation controls.
 		id="navigation-panel-toggle"
 		class="nav-panel-toggle mobile-only"
 		type="checkbox"
-		aria-label="Show navigation panel"
-		bind:checked={panelOpen}
+		aria-label={panelOpen ? 'Hide navigation panel' : 'Show navigation panel'}
+		aria-expanded={panelOpen}
+		data-navigation-hydrated={navigationHydrated ? 'true' : undefined}
 		onchange={() => (panelOpen = navPanelToggle?.checked ?? false)}
 	/>
 	<label
@@ -149,7 +158,7 @@ Responsive site header with menu, search and compact-navigation controls.
 	}
 
 	@media (--nav-collapsed) {
-		/* The native control handles the first touch before Svelte or chat loads. */
+		/* The native control handles the first touch before Svelte hydrates. */
 		.header-bar:has(.nav-panel-toggle:checked) + .nav-panel :global(nav:not(:has(.dialog))) {
 			transform: translateX(0);
 		}

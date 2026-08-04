@@ -5,9 +5,14 @@ const searchName = 'Search vaults and DeFi entities';
 test('opens compact navigation on the first tap after page load', async ({ page }) => {
 	await page.setViewportSize({ width: 1024, height: 768 });
 	await page.goto('/pricing', { waitUntil: 'commit' });
-	await page.getByTestId('navigation-toggle').click();
+	const toggle = page.getByTestId('navigation-toggle');
+	const checkbox = page.getByRole('checkbox');
+	await toggle.click();
 
 	const navigation = page.getByRole('navigation', { name: 'Mobile navigation' });
+	await expect(checkbox).toHaveAttribute('data-navigation-hydrated', 'true');
+	await expect(page.getByRole('checkbox', { name: 'Hide navigation panel' })).toBeChecked();
+	await expect(page.locator('body')).toHaveCSS('position', 'fixed');
 	const bounds = await navigation.boundingBox();
 	expect(bounds).not.toBeNull();
 	expect(bounds!.x).toBeCloseTo(0, 0);
@@ -17,10 +22,12 @@ test('opens compact navigation on the first tap after page load', async ({ page 
 test('keeps the first tablet search tap focused through hydration', async ({ page }) => {
 	await page.setViewportSize({ width: 1024, height: 768 });
 	await page.goto('/pricing', { waitUntil: 'commit' });
-	await page.getByTestId('navigation-toggle').click();
+	const toggle = page.getByTestId('navigation-toggle');
+	const checkbox = page.getByRole('checkbox');
+	await toggle.click();
 	const search = page.getByTestId('mobile-menu-search').getByRole('combobox', { name: searchName });
 	await search.click();
-	await page.waitForTimeout(1200);
+	await expect(checkbox).toHaveAttribute('data-navigation-hydrated', 'true');
 	await expect(search).toBeFocused();
 });
 
