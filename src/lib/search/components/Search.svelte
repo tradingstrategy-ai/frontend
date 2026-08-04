@@ -386,7 +386,6 @@ underlying vault JSON index private.
 		color: inherit;
 		text-decoration: none;
 	}
-<<<<<<< HEAD
 	li a:is(.no-logo, :has(.logo-slot:not(:has(img)))) {
 		grid-template-columns: minmax(0, 1fr) auto;
 	}
@@ -564,7 +563,6 @@ underlying vault JSON index private.
 			align-items: start;
 			row-gap: var(--space-xs);
 		}
-<<<<<<< HEAD
 		.dialog li a:is(.no-logo, :has(.logo-slot:not(:has(img)))) {
 			grid-template-columns: minmax(0, 1fr) max-content;
 			grid-template-areas:

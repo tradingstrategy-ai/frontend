@@ -83,7 +83,7 @@ test.describe('navigation entity search', () => {
 			await expect(protocolResults.getByRole('option').first()).toHaveAttribute('data-entity-type', 'protocol');
 			await expect(protocolResults.getByRole('option').first()).toContainText('Yearn');
 			if (name === 'iPad landscape') {
-				await expect(protocolResults.getByRole('option').first()).toHaveClass(/no-logo/);
+				await expect(protocolResults.getByRole('option').first().locator('.logo-slot img')).toHaveCount(0);
 			}
 
 			const search = page.getByRole('combobox', { name: searchName });
@@ -98,7 +98,7 @@ test.describe('navigation entity search', () => {
 			await expect(vaultResult).not.toHaveClass(/no-logo/);
 			const logo = vaultResult.locator('.logo-slot img');
 			await expect(logo).toBeVisible();
-			await expect(logo).toHaveAttribute('src', '/logos/tokens/aave');
+			await expect(logo).toHaveAttribute('src', '/brand-mark-100x100.png');
 
 			if (name === 'iPad landscape') {
 				const resultListBounds = await protocolResults.getByRole('listbox').boundingBox();

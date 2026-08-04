@@ -508,8 +508,8 @@ const parquetMatchedVaults = [
 		address: '0xa3931d71877c0e7a3148cb7eb4463524fec27fbd',
 		chain: 'ethereum',
 		protocol: 'Trading Strategy',
-		curator_slug: 'sample-project',
-		curator_name: 'Sample project',
+		curator_slug: 'trading-strategy',
+		curator_name: 'Trading Strategy',
 		current_nav: 2_400_000,
 		peak_nav: 2_700_000,
 		one_month_cagr: 0.09,
@@ -539,16 +539,16 @@ const parquetMatchedVaults = [
 // Curator metadata for the by-curator pages; keyed by slug and referenced
 // from the curated returnLeaders vaults above.
 const curators = {
-	'sample-project': {
-		slug: 'sample-project',
-		name: 'Sample project',
+	'trading-strategy': {
+		slug: 'trading-strategy',
+		name: 'Trading Strategy',
 		website: null,
 		twitter: null,
 		linkedin: null,
 		rss: null,
 		protocol_curator: false,
 		canonical_feeder_id: null,
-		logos: { generic: '/logos/tokens/aave', dark: null, light: null },
+		logos: { generic: '/brand-mark-100x100.png', dark: null, light: null },
 		recent_posts: []
 	},
 	'steakhouse-financial': {
