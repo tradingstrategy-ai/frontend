@@ -95,6 +95,10 @@ test.describe('navigation entity search', () => {
 				.first();
 			await expect(vaultResult).toBeVisible();
 			await expect(vaultResult).not.toContainText('3M price');
+			await expect(vaultResult).not.toHaveClass(/no-logo/);
+			const logo = vaultResult.locator('.logo-slot img');
+			await expect(logo).toBeVisible();
+			await expect(logo).toHaveAttribute('src', '/logos/tokens/aave');
 
 			if (name === 'iPad landscape') {
 				const resultListBounds = await protocolResults.getByRole('listbox').boundingBox();
