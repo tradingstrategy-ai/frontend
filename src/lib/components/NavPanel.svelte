@@ -70,29 +70,6 @@ Responsive navigation drawer with optional search entry, primary links and site 
 		&.open {
 			transform: translateX(0);
 		}
-
-		&:has(:global(.dialog)) {
-			box-sizing: border-box;
-			width: 100%;
-			max-width: none;
-			height: 100dvh;
-			padding: 0;
-			overflow: hidden;
-			transform: none;
-
-			/* Keep the established navigation identity visible above full-screen search. */
-			header {
-				position: relative;
-				z-index: 1001;
-				padding: var(--space-md);
-			}
-
-			header a,
-			header button {
-				position: relative;
-				z-index: 1;
-			}
-		}
 	}
 
 	header {
@@ -117,10 +94,6 @@ Responsive navigation drawer with optional search entry, primary links and site 
 	}
 
 	@media (--nav-collapsed) and (--viewport-sm-up) {
-		nav:has(:global(.dialog)) {
-			overflow-y: auto;
-		}
-
 		.panel-search {
 			width: 31.25rem;
 			padding-inline: 0;
@@ -128,6 +101,29 @@ Responsive navigation drawer with optional search entry, primary links and site 
 	}
 
 	@media (--viewport-xs) {
+		nav:has(:global(.dialog)) {
+			box-sizing: border-box;
+			width: 100%;
+			max-width: none;
+			height: 100dvh;
+			padding: 0;
+			overflow: hidden;
+			transform: none;
+
+			/* Keep the established navigation identity visible above full-screen search. */
+			header {
+				position: relative;
+				z-index: 1001;
+				padding: var(--space-md);
+			}
+
+			header a,
+			header button {
+				position: relative;
+				z-index: 1;
+			}
+		}
+
 		nav:has(:global(.dialog)) :global(.dialog) {
 			padding-top: max(calc(var(--header-height) + var(--space-md)), env(safe-area-inset-top));
 		}

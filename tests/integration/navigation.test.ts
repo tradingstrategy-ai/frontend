@@ -25,11 +25,14 @@ async function searchFromNavigation(page: import('@playwright/test').Page, query
 		expect(navigationBounds!.x).toBeCloseTo(0, 0);
 		expect(navigationBounds!.width).toBeCloseTo(await page.evaluate(() => window.innerWidth), 0);
 		const menuSearch = navigation.getByRole('button', { name: 'Search vaults' });
-		await expect(menuSearch).toBeVisible();
-		await menuSearch.click();
-		search = page.getByRole('dialog', { name: 'Search' }).getByRole('combobox', { name: searchName });
 		if ((await page.evaluate(() => window.innerWidth)) >= 768) {
+			search = page.getByTestId('mobile-menu-search').getByRole('combobox', { name: searchName });
+			await expect(search).toBeVisible();
 			await expect(navigation.getByRole('link', { name: 'Top vaults' })).toBeVisible();
+		} else {
+			await expect(menuSearch).toBeVisible();
+			await menuSearch.click();
+			search = page.getByRole('dialog', { name: 'Search' }).getByRole('combobox', { name: searchName });
 		}
 	}
 	await search.fill(query);
@@ -92,7 +95,9 @@ test('renders equivalent, colour-coded protocol and vault typeahead results on d
 		}
 
 		if (viewport.width < 1170) {
-			await page.getByRole('button', { name: 'Close search' }).click();
+			if (viewport.width < 768) {
+				await page.getByRole('button', { name: 'Close search' }).click();
+			}
 			await page.getByRole('button', { name: 'Close navigation panel' }).click();
 		}
 	}

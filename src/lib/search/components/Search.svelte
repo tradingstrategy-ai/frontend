@@ -1,6 +1,6 @@
 <!--
 @component
-Site-wide vault search with desktop typeahead and a full-screen compact-navigation dialog.
+Site-wide vault search with a desktop/tablet typeahead and full-screen mobile dialog.
 
 The component fetches only public search suggestions; the server keeps the
 underlying vault JSON index private.
@@ -206,7 +206,7 @@ underlying vault JSON index private.
 	</button>
 
 	{#if open}
-		<div class="dialog" role="dialog" aria-modal="true" aria-label="Search">
+		<div class="dialog" role="dialog" aria-modal={mobileDialogOpen} aria-label="Search">
 			<div class="mobile-search-row">
 				<form action="/search" role="search" onsubmit={handleSubmit}>
 					<input
@@ -541,7 +541,11 @@ underlying vault JSON index private.
 	}
 
 	@media (--nav-collapsed) and (--viewport-sm-up) {
-		.menu-search:has(.dialog) .search-trigger {
+		/* Tablet uses the same persistent input as desktop: no trigger-to-dialog swap. */
+		.menu-search .desktop-search {
+			display: block;
+		}
+		.menu-search .search-trigger {
 			display: none;
 		}
 		.menu-search .dialog {
@@ -554,17 +558,7 @@ underlying vault JSON index private.
 			box-shadow: none;
 		}
 		.mobile-search-row {
-			position: relative;
-			width: 31.25rem;
-			grid-template-columns: minmax(0, 1fr);
-			gap: 0;
-			margin-inline: auto;
-		}
-		.close-button {
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: calc(100% + var(--space-md));
+			display: none;
 		}
 		.dialog li a {
 			grid-template-columns: 2rem minmax(0, 1fr) 6rem auto;
