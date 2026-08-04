@@ -94,9 +94,12 @@ test.describe('navigation entity search', () => {
 			await expect(vaultResult).not.toContainText('3M price');
 
 			if (name === 'iPad landscape') {
+				const resultListBounds = await protocolResults.getByRole('listbox').boundingBox();
 				const vaultNameBounds = await vaultResult.locator('.result-main').boundingBox();
 				const vaultSparklineBounds = await vaultResult.locator('.result-sparkline').boundingBox();
 				const vaultMetricsBounds = await vaultResult.locator('.metrics').boundingBox();
+				expect(resultListBounds).not.toBeNull();
+				expect(resultListBounds!.width).toBeLessThanOrEqual(400);
 				expect(vaultNameBounds).not.toBeNull();
 				expect(vaultSparklineBounds).not.toBeNull();
 				expect(vaultMetricsBounds).not.toBeNull();
@@ -120,7 +123,8 @@ test.describe('navigation entity search', () => {
 				expect(vaultSparklineBounds).not.toBeNull();
 				expect(vaultMetricsBounds).not.toBeNull();
 				expect(vaultSparklineBounds!.y).toBeGreaterThan(vaultNameBounds!.y);
-				expect(vaultMetricsBounds!.y).toBeGreaterThan(vaultNameBounds!.y);
+				expect(vaultMetricsBounds!.y - vaultNameBounds!.y).toBeLessThan(32);
+				expect(vaultSparklineBounds!.y).toBeGreaterThan(vaultMetricsBounds!.y);
 				expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
 			}
 

@@ -525,14 +525,18 @@ underlying vault JSON index private.
 			max-height: none;
 			margin-top: var(--space-md);
 		}
+		.results ul {
+			max-width: 25rem;
+			margin-inline: auto;
+		}
 	}
 
 	@media (--viewport-xs) {
 		.dialog li a {
 			grid-template-columns: 2rem minmax(0, 1fr) max-content;
 			grid-template-areas:
-				'logo main main'
-				'. sparkline metrics';
+				'logo main metrics'
+				'. . sparkline';
 			align-items: start;
 			row-gap: var(--space-xs);
 		}
