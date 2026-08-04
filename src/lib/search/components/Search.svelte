@@ -6,7 +6,7 @@ The component fetches only public search suggestions; the server keeps the
 underlying vault JSON index private.
 -->
 <script lang="ts">
-	import { tick } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { disableScroll } from '$lib/actions/scroll';
 	import { removeOnError } from '$lib/actions/image';
@@ -40,12 +40,22 @@ underlying vault JSON index private.
 	let selectedIndex = $state(-1);
 	let mobileDialogOpen = $state(false);
 	let requestSequence = 0;
+	let desktopSearchInput = $state<HTMLInputElement>();
 	let mobileSearchInput = $state<HTMLInputElement>();
 	let searchTrigger = $state<HTMLButtonElement>();
 	let searchRoot: HTMLDivElement;
 
 	let hasQuery = $derived(query.trim().length > 0);
 	let activeOptionId = $derived(selectedIndex >= 0 ? `${listboxId}-${selectedIndex}` : undefined);
+
+	onMount(() => {
+		const inputWasFocusedBeforeHydration = desktopSearchInput?.dataset.prehydrationFocus === 'true';
+		delete desktopSearchInput?.dataset.prehydrationFocus;
+		if (!inputWasFocusedBeforeHydration) return;
+
+		// Svelte hydration can blur an input that was tapped before its handlers loaded.
+		requestAnimationFrame(() => desktopSearchInput?.focus({ preventScroll: true }));
+	});
 
 	$effect(() => {
 		const searchQuery = query.trim();
@@ -168,7 +178,9 @@ underlying vault JSON index private.
 >
 	<form class="desktop-search" action="/search" role="search" onsubmit={handleSubmit}>
 		<input
+			bind:this={desktopSearchInput}
 			bind:value={query}
+			data-preserve-hydration-focus
 			aria-activedescendant={activeOptionId}
 			aria-autocomplete="list"
 			aria-controls={listboxId}

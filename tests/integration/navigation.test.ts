@@ -14,6 +14,16 @@ test('opens compact navigation on the first tap after page load', async ({ page 
 	expect(bounds!.width).toBeCloseTo(1024, 0);
 });
 
+test('keeps the first tablet search tap focused through hydration', async ({ page }) => {
+	await page.setViewportSize({ width: 1024, height: 768 });
+	await page.goto('/pricing', { waitUntil: 'commit' });
+	await page.getByTestId('navigation-toggle').click();
+	const search = page.getByTestId('mobile-menu-search').getByRole('combobox', { name: searchName });
+	await search.click();
+	await page.waitForTimeout(1200);
+	await expect(search).toBeFocused();
+});
+
 test('tablet navigation closes after navigating to pricing', async ({ page }) => {
 	await page.setViewportSize({ width: 1024, height: 768 });
 	await page.goto('/vaults');

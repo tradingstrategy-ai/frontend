@@ -16,7 +16,13 @@ Responsive site header with menu, search and compact-navigation controls.
 
 	let { menu, search }: Props = $props();
 	let panelOpen = $state(false);
+	let navPanelToggle = $state<HTMLInputElement>();
 	const noop = () => {};
+
+	function closePanel() {
+		panelOpen = false;
+		if (navPanelToggle) navPanelToggle.checked = false;
+	}
 </script>
 
 <div class="header-bar">
@@ -37,11 +43,13 @@ Responsive site header with menu, search and compact-navigation controls.
 	</div>
 
 	<input
+		bind:this={navPanelToggle}
 		id="navigation-panel-toggle"
 		class="nav-panel-toggle mobile-only"
 		type="checkbox"
 		aria-label="Show navigation panel"
 		bind:checked={panelOpen}
+		onchange={() => (panelOpen = navPanelToggle?.checked ?? false)}
 	/>
 	<label
 		class="show-nav-panel mobile-only"
@@ -54,9 +62,9 @@ Responsive site header with menu, search and compact-navigation controls.
 </div>
 
 <div class="nav-panel mobile-only">
-	<NavPanel bind:open={panelOpen}>
+	<NavPanel bind:open={panelOpen} onClose={closePanel}>
 		{#snippet panelSearch()}
-			{@render search?.(true, () => (panelOpen = false))}
+			{@render search?.(true, closePanel)}
 		{/snippet}
 		{@render menu?.()}
 	</NavPanel>

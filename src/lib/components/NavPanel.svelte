@@ -8,20 +8,21 @@ Responsive navigation drawer with optional search entry, primary links and site 
 	import IconCancel from '~icons/local/cancel';
 	// NOTE: un-comment below line to bring back color mode picker
 	// import ColorModePicker from '$lib/header/ColorModePicker.svelte';
-	import { disableScroll } from '$lib/actions/scroll';
 
 	interface Props {
 		open?: boolean;
 		children?: Snippet;
 		panelSearch?: Snippet;
+		onClose?: () => void;
 	}
 
-	let { open = $bindable(false), children, panelSearch }: Props = $props();
+	let { open = $bindable(false), children, panelSearch, onClose }: Props = $props();
 
-	const close = () => (open = false);
+	function close() {
+		open = false;
+		onClose?.();
+	}
 </script>
-
-<svelte:body use:disableScroll={open} />
 
 <nav class:open aria-label="Mobile navigation">
 	<header>
