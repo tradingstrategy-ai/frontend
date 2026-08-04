@@ -545,12 +545,13 @@ underlying vault JSON index private.
 			display: none;
 		}
 		.menu-search .dialog {
-			position: absolute;
-			inset: 0 auto auto 0;
+			position: static;
 			width: 100%;
 			height: auto;
-			max-height: calc(100dvh - var(--header-height) - var(--space-lg));
+			max-height: none;
 			padding: 0;
+			border: 0;
+			box-shadow: none;
 		}
 		.mobile-search-row {
 			position: relative;

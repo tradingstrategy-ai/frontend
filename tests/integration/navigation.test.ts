@@ -18,6 +18,9 @@ async function searchFromNavigation(page: import('@playwright/test').Page, query
 		await expect(menuSearch).toBeVisible();
 		await menuSearch.click();
 		search = page.getByRole('dialog', { name: 'Search' }).getByRole('combobox', { name: searchName });
+		if ((await page.evaluate(() => window.innerWidth)) >= 768) {
+			await expect(navigation.getByRole('link', { name: 'Top vaults' })).toBeVisible();
+		}
 	}
 	await search.fill(query);
 	const results = page.getByTestId('entity-search-results');

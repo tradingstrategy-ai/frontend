@@ -92,11 +92,6 @@ Responsive navigation drawer with optional search entry, primary links and site 
 				position: relative;
 				z-index: 1;
 			}
-
-			> :global(menu),
-			> :global(footer) {
-				display: none;
-			}
 		}
 	}
 
@@ -122,6 +117,10 @@ Responsive navigation drawer with optional search entry, primary links and site 
 	}
 
 	@media (--nav-collapsed) and (--viewport-sm-up) {
+		nav:has(:global(.dialog)) {
+			overflow-y: auto;
+		}
+
 		.panel-search {
 			width: 31.25rem;
 			padding-inline: 0;
