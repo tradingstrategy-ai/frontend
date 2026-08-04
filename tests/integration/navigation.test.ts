@@ -91,6 +91,18 @@ test.describe('navigation entity search', () => {
 				})
 				.first();
 			await expect(vaultResult).toBeVisible();
+			await expect(vaultResult).not.toContainText('3M price');
+
+			if (name === 'iPad landscape') {
+				const vaultNameBounds = await vaultResult.locator('.result-main').boundingBox();
+				const vaultSparklineBounds = await vaultResult.locator('.result-sparkline').boundingBox();
+				const vaultMetricsBounds = await vaultResult.locator('.metrics').boundingBox();
+				expect(vaultNameBounds).not.toBeNull();
+				expect(vaultSparklineBounds).not.toBeNull();
+				expect(vaultMetricsBounds).not.toBeNull();
+				expect(vaultSparklineBounds!.y - vaultNameBounds!.y).toBeLessThan(32);
+				expect(vaultMetricsBounds!.y - vaultNameBounds!.y).toBeLessThan(32);
+			}
 
 			if (name === 'iPhone') {
 				const dialog = page.getByRole('dialog', { name: 'Search' });

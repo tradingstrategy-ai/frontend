@@ -436,7 +436,14 @@ underlying vault JSON index private.
 		width: 0.5rem;
 		height: 0.5rem;
 		border-radius: 0.125rem;
-		background: var(--entity-colour);
+		background: currentColor;
+	}
+	.result-sparkline {
+		justify-items: end;
+		color: var(--c-text-extra-light);
+	}
+	.result-sparkline :global(.vault-sparkline) {
+		--sparkline-width: 6rem;
 	}
 	.metrics {
 		display: grid;
@@ -518,7 +525,10 @@ underlying vault JSON index private.
 			max-height: none;
 			margin-top: var(--space-md);
 		}
-		li a {
+	}
+
+	@media (--viewport-xs) {
+		.dialog li a {
 			grid-template-columns: 2rem minmax(0, 1fr) max-content;
 			grid-template-areas:
 				'logo main main'
@@ -526,19 +536,16 @@ underlying vault JSON index private.
 			align-items: start;
 			row-gap: var(--space-xs);
 		}
-		.logo-slot {
+		.dialog .logo-slot {
 			grid-area: logo;
 		}
-		.result-main {
+		.dialog .result-main {
 			grid-area: main;
 		}
-		.result-sparkline {
+		.dialog .result-sparkline {
 			grid-area: sparkline;
-			display: flex;
-			align-items: center;
-			gap: var(--space-xs);
 		}
-		.metrics {
+		.dialog .metrics {
 			grid-area: metrics;
 		}
 	}
