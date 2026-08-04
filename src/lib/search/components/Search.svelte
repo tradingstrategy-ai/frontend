@@ -518,6 +518,29 @@ underlying vault JSON index private.
 			max-height: none;
 			margin-top: var(--space-md);
 		}
+		li a {
+			grid-template-columns: 2rem minmax(0, 1fr) max-content;
+			grid-template-areas:
+				'logo main main'
+				'. sparkline metrics';
+			align-items: start;
+			row-gap: var(--space-xs);
+		}
+		.logo-slot {
+			grid-area: logo;
+		}
+		.result-main {
+			grid-area: main;
+		}
+		.result-sparkline {
+			grid-area: sparkline;
+			display: flex;
+			align-items: center;
+			gap: var(--space-xs);
+		}
+		.metrics {
+			grid-area: metrics;
+		}
 	}
 
 	@media (--nav-expanded) {
@@ -531,9 +554,6 @@ underlying vault JSON index private.
 		}
 		li a {
 			grid-template-columns: 2rem minmax(0, 1fr) 7rem auto;
-		}
-		.mobile-search-row {
-			display: none;
 		}
 	}
 </style>
