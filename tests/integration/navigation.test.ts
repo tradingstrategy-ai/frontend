@@ -14,6 +14,23 @@ test('opens compact navigation on the first tap after page load', async ({ page 
 	expect(bounds!.width).toBeCloseTo(1024, 0);
 });
 
+test('tablet navigation closes after navigating to pricing', async ({ page }) => {
+	await page.setViewportSize({ width: 1024, height: 768 });
+	await page.goto('/vaults');
+	await page.getByTestId('navigation-toggle').click();
+
+	const navigation = page.getByRole('navigation', { name: 'Mobile navigation' });
+	await expect(navigation.getByRole('link', { name: 'Pricing' })).toBeVisible();
+	await navigation.getByRole('link', { name: 'Pricing' }).click();
+
+	await page.waitForURL('**/pricing');
+	await expect(page.getByRole('heading', { name: 'Professional vault data analytics' })).toBeVisible();
+	await expect(page.getByRole('checkbox', { name: 'Show navigation panel' })).not.toBeChecked();
+	const bounds = await navigation.boundingBox();
+	expect(bounds).not.toBeNull();
+	expect(bounds!.x).toBeGreaterThanOrEqual(1024);
+});
+
 async function searchFromNavigation(page: import('@playwright/test').Page, query: string) {
 	const navToggle = page.getByTestId('navigation-toggle');
 	let search = page.getByTestId('nav-search').getByRole('combobox', { name: searchName });

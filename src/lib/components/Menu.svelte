@@ -1,16 +1,23 @@
 <script lang="ts">
-	export let horizontal = false;
+	import type { Snippet } from 'svelte';
 
 	type Alignment = 'left' | 'center' | 'right';
-	export let align: Alignment = 'left';
 
-	$: direction = horizontal ? 'horizontal' : 'vertical';
+	interface Props {
+		horizontal?: boolean;
+		align?: Alignment;
+		children?: Snippet;
+		onclick?: (event: MouseEvent) => void;
+	}
+
+	let { horizontal = false, align = 'left', children, onclick }: Props = $props();
+	let direction = $derived(horizontal ? 'horizontal' : 'vertical');
 </script>
 
-<!-- silence ally warnings (on:click is being forwarded from interactive child elements) -->
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
-<menu class="dir--{direction} align--{align}" on:click>
-	<slot />
+<!-- Clicks originate from interactive child navigation links. -->
+<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
+<menu class="dir--{direction} align--{align}" {onclick}>
+	{@render children?.()}
 </menu>
 
 <style>
