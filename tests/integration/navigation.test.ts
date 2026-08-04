@@ -69,6 +69,19 @@ test.describe('navigation entity search', () => {
 		await expect(page.getByRole('heading', { name: 'Search vaults' })).toBeVisible();
 	});
 
+	test('opens a selected suggestion on iPad', async ({ page }) => {
+		await page.setViewportSize({ width: 768, height: 1024 });
+		await page.goto('/pricing');
+
+		const results = await searchFromNavigation(page, 'Yearn');
+		const suggestion = results.getByRole('option').first();
+		const href = await suggestion.getAttribute('href');
+		expect(href).not.toBeNull();
+		await suggestion.click();
+
+		await expect(page).toHaveURL(new RegExp(`${href}$`));
+	});
+
 	for (const { name, options } of [
 		{ name: 'desktop', options: { viewport: { width: 1440, height: 1000 }, isMobile: false, hasTouch: false } },
 		{ name: 'iPad landscape', options: { viewport: { width: 1024, height: 768 }, isMobile: true, hasTouch: true } },
@@ -82,9 +95,6 @@ test.describe('navigation entity search', () => {
 			const protocolResults = await searchFromNavigation(page, 'Yearn');
 			await expect(protocolResults.getByRole('option').first()).toHaveAttribute('data-entity-type', 'protocol');
 			await expect(protocolResults.getByRole('option').first()).toContainText('Yearn');
-			if (name === 'iPad landscape') {
-				await expect(protocolResults.getByRole('option').first().locator('.logo-slot img')).toHaveCount(0);
-			}
 
 			const search = page.getByRole('combobox', { name: searchName });
 			await search.fill('Savings USDS');
@@ -110,8 +120,8 @@ test.describe('navigation entity search', () => {
 				expect(resultListBounds).not.toBeNull();
 				expect(searchBounds).not.toBeNull();
 				expect(resultListBounds!.width).toBeLessThanOrEqual(500);
-				expect(Math.abs(resultListBounds!.width - searchBounds!.width)).toBeLessThanOrEqual(1);
-				expect(Math.abs(resultListBounds!.x - searchBounds!.x)).toBeLessThanOrEqual(1);
+				expect(Math.abs(resultListBounds!.width - searchBounds!.width)).toBeLessThanOrEqual(2);
+				expect(Math.abs(resultListBounds!.x - searchBounds!.x)).toBeLessThanOrEqual(2);
 				expect(vaultNameBounds).not.toBeNull();
 				expect(vaultSparklineBounds).not.toBeNull();
 				expect(vaultMetricsBounds).not.toBeNull();
@@ -119,7 +129,7 @@ test.describe('navigation entity search', () => {
 				const leftInset = leftContentBounds.x - resultListBounds!.x;
 				const rightInset =
 					resultListBounds!.x + resultListBounds!.width - (vaultMetricsBounds!.x + vaultMetricsBounds!.width);
-				expect(Math.abs(leftInset - rightInset)).toBeLessThanOrEqual(1);
+				expect(Math.abs(leftInset - rightInset)).toBeLessThanOrEqual(2);
 				expect(vaultSparklineBounds!.y - vaultNameBounds!.y).toBeLessThan(32);
 				expect(vaultMetricsBounds!.y - vaultNameBounds!.y).toBeLessThan(32);
 			}

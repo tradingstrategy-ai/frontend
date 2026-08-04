@@ -51,10 +51,9 @@ underlying vault JSON index private.
 		const searchQuery = query.trim();
 		const sequence = ++requestSequence;
 		selectedIndex = -1;
-
+		errorMessage = null;
 		if (!searchQuery) {
 			loading = false;
-			errorMessage = null;
 			results = [];
 			return;
 		}
@@ -62,7 +61,6 @@ underlying vault JSON index private.
 		const controller = new AbortController();
 		const timeout = setTimeout(async () => {
 			loading = true;
-			errorMessage = null;
 			try {
 				const response = await fetch(
 					`/search/suggestions?q=${encodeURIComponent(searchQuery)}&limit=${TYPEAHEAD_LIMIT}`,
@@ -71,8 +69,9 @@ underlying vault JSON index private.
 					}
 				);
 				if (!response.ok) throw new Error('Search is temporarily unavailable.');
-				const data = (await response.json()) as SearchResponse;
-				if (sequence === requestSequence) results = data.results;
+<<<<<<< HEAD
+				const data = (await response.json()) as Partial<SearchResponse>;
+				if (sequence === requestSequence) results = Array.isArray(data.results) ? data.results : [];
 			} catch (error) {
 				if ((error as Error).name !== 'AbortError' && sequence === requestSequence) {
 					errorMessage = 'Search is temporarily unavailable.';
