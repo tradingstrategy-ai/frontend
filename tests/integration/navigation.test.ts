@@ -95,11 +95,15 @@ test.describe('navigation entity search', () => {
 
 			if (name === 'iPad landscape') {
 				const resultListBounds = await protocolResults.getByRole('listbox').boundingBox();
+				const searchBounds = await search.boundingBox();
 				const vaultNameBounds = await vaultResult.locator('.result-main').boundingBox();
 				const vaultSparklineBounds = await vaultResult.locator('.result-sparkline').boundingBox();
 				const vaultMetricsBounds = await vaultResult.locator('.metrics').boundingBox();
 				expect(resultListBounds).not.toBeNull();
-				expect(resultListBounds!.width).toBeLessThanOrEqual(400);
+				expect(searchBounds).not.toBeNull();
+				expect(resultListBounds!.width).toBeLessThanOrEqual(500);
+				expect(Math.abs(resultListBounds!.width - searchBounds!.width)).toBeLessThanOrEqual(1);
+				expect(Math.abs(resultListBounds!.x - searchBounds!.x)).toBeLessThanOrEqual(1);
 				expect(vaultNameBounds).not.toBeNull();
 				expect(vaultSparklineBounds).not.toBeNull();
 				expect(vaultMetricsBounds).not.toBeNull();

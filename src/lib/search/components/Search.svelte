@@ -526,8 +526,24 @@ underlying vault JSON index private.
 			margin-top: var(--space-md);
 		}
 		.results ul {
-			max-width: 25rem;
+			max-width: 31.25rem;
 			margin-inline: auto;
+		}
+	}
+
+	@media (--nav-collapsed) and (--viewport-sm-up) {
+		.mobile-search-row {
+			position: relative;
+			width: 31.25rem;
+			grid-template-columns: minmax(0, 1fr);
+			gap: 0;
+			margin-inline: auto;
+		}
+		.close-button {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: calc(100% + var(--space-md));
 		}
 	}
 
