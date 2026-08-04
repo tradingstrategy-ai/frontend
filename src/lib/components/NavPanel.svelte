@@ -117,6 +117,7 @@ Responsive navigation drawer with optional search entry, primary links and site 
 	@media (--nav-collapsed) {
 		nav {
 			max-width: none;
+			transition: none;
 		}
 	}
 
