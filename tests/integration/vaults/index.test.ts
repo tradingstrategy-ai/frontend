@@ -544,6 +544,16 @@ test.describe('vault index page', () => {
 		await expect(fundCell).toContainText('Fund');
 		await expect(fundCell).not.toContainText('Private');
 		await expect(fundCell).not.toContainText('Unknown');
+
+		await page.getByTestId('vault-search').fill('Deposit disabled vault');
+		const unclassifiedFundCell = page
+			.locator('tbody tr.targetable')
+			.filter({ hasText: 'Deposit disabled vault' })
+			.locator('td.lockup');
+		await expect(unclassifiedFundCell).toContainText('Fund');
+		const unclassifiedFundTooltip = unclassifiedFundCell.locator('.tooltip');
+		await unclassifiedFundTooltip.hover();
+		await expect(unclassifiedFundTooltip.locator('.popup')).toContainText('This is a tokenised fund.');
 	});
 
 	test('shows capped instead of an unknown deposit delay when a vault has reached its cap', async ({ page }) => {
