@@ -82,6 +82,9 @@ test.describe('navigation entity search', () => {
 			const protocolResults = await searchFromNavigation(page, 'Yearn');
 			await expect(protocolResults.getByRole('option').first()).toHaveAttribute('data-entity-type', 'protocol');
 			await expect(protocolResults.getByRole('option').first()).toContainText('Yearn');
+			if (name === 'iPad landscape') {
+				await expect(protocolResults.getByRole('option').first()).toHaveClass(/no-logo/);
+			}
 
 			const search = page.getByRole('combobox', { name: searchName });
 			await search.fill('Savings USDS');
@@ -96,6 +99,7 @@ test.describe('navigation entity search', () => {
 			if (name === 'iPad landscape') {
 				const resultListBounds = await protocolResults.getByRole('listbox').boundingBox();
 				const searchBounds = await search.boundingBox();
+				const logoBounds = await vaultResult.locator('.logo-slot').boundingBox();
 				const vaultNameBounds = await vaultResult.locator('.result-main').boundingBox();
 				const vaultSparklineBounds = await vaultResult.locator('.result-sparkline').boundingBox();
 				const vaultMetricsBounds = await vaultResult.locator('.metrics').boundingBox();
@@ -107,6 +111,11 @@ test.describe('navigation entity search', () => {
 				expect(vaultNameBounds).not.toBeNull();
 				expect(vaultSparklineBounds).not.toBeNull();
 				expect(vaultMetricsBounds).not.toBeNull();
+				const leftContentBounds = logoBounds ?? vaultNameBounds!;
+				const leftInset = leftContentBounds.x - resultListBounds!.x;
+				const rightInset =
+					resultListBounds!.x + resultListBounds!.width - (vaultMetricsBounds!.x + vaultMetricsBounds!.width);
+				expect(Math.abs(leftInset - rightInset)).toBeLessThanOrEqual(1);
 				expect(vaultSparklineBounds!.y - vaultNameBounds!.y).toBeLessThan(32);
 				expect(vaultMetricsBounds!.y - vaultNameBounds!.y).toBeLessThan(32);
 			}

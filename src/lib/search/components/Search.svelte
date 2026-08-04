@@ -238,7 +238,7 @@ underlying vault JSON index private.
 				</button>
 			</div>
 
-			<div class="results" aria-live="polite">
+			<div class="results" aria-live="polite" data-testid="entity-search-results">
 				{#if loading}
 					<p>Searching…</p>
 				{:else if errorMessage}
@@ -252,6 +252,7 @@ underlying vault JSON index private.
 								<a
 									id={`${listboxId}-${index}`}
 									class:active={selectedIndex === index}
+									class:no-logo={!result.logoUrl}
 									data-entity-type={result.entityType}
 									href={result.href}
 									role="option"
@@ -259,9 +260,7 @@ underlying vault JSON index private.
 									onpointerdown={(event) => event.preventDefault()}
 									onclick={closeSearchForNavigation}
 								>
-									<span class="logo-slot">
-										{#if result.logoUrl}<img src={result.logoUrl} alt="" use:removeOnError />{/if}
-									</span>
+									<span class="logo-slot">{#if result.logoUrl}<img src={result.logoUrl} alt="" use:removeOnError />{/if}</span>
 									<span class="result-main">
 										<strong class:blacklisted={result.entityType === 'blacklisted-vault'}>{result.name}</strong>
 										<span class="type">
@@ -278,7 +277,9 @@ underlying vault JSON index private.
 										{/if}
 									</span>
 									<span class="metrics"
-										><span>{formatApy(result.averageApy1m)}</span><span>{formatTvl(result.latestTvl)}</span></span
+										><span aria-label="1 month APY">{formatApy(result.averageApy1m)}</span><span aria-label="Latest TVL"
+											>{formatTvl(result.latestTvl)}</span
+										></span
 									>
 								</a>
 							</li>
@@ -384,6 +385,13 @@ underlying vault JSON index private.
 		border-radius: var(--radius-sm);
 		color: inherit;
 		text-decoration: none;
+	}
+<<<<<<< HEAD
+	li a:is(.no-logo, :has(.logo-slot:not(:has(img)))) {
+		grid-template-columns: minmax(0, 1fr) auto;
+	}
+	li a:is(.no-logo, :has(.logo-slot:not(:has(img)))) .logo-slot {
+		display: none;
 	}
 	li a:is(:hover, :focus-visible, .active) {
 		outline: none;
@@ -555,6 +563,13 @@ underlying vault JSON index private.
 				'. . sparkline';
 			align-items: start;
 			row-gap: var(--space-xs);
+		}
+<<<<<<< HEAD
+		.dialog li a:is(.no-logo, :has(.logo-slot:not(:has(img)))) {
+			grid-template-columns: minmax(0, 1fr) max-content;
+			grid-template-areas:
+				'main metrics'
+				'. sparkline';
 		}
 		.dialog .logo-slot {
 			grid-area: logo;
