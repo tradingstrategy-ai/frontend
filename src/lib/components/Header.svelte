@@ -36,7 +36,12 @@ Responsive site header with menu, search and compact-navigation controls.
 		{@render search?.(false, noop)}
 	</div>
 
-	<button class="show-nav-panel mobile-only" aria-label="Show navigation panel" onclick={() => (panelOpen = true)}>
+	<button
+		class="show-nav-panel mobile-only"
+		aria-label="Show navigation panel"
+		aria-expanded={panelOpen}
+		onclick={() => (panelOpen = true)}
+	>
 		<IconMenu />
 	</button>
 </div>
@@ -119,6 +124,17 @@ Responsive site header with menu, search and compact-navigation controls.
 	}
 
 	@media (--nav-collapsed) {
+		/*
+		 * Make the first tap work before Svelte hydrates. Focus keeps the menu
+		 * visible while the user moves from the trigger into its controls.
+		 */
+		.header-bar:has(.show-nav-panel:focus) + .nav-panel :global(nav:not(:has(.dialog))),
+		.header-bar
+			+ .nav-panel
+			:global(nav:not(:has(.dialog)):focus-within:not(:has(button[aria-label='Close navigation panel']:focus))) {
+			transform: translateX(0);
+		}
+
 		.header-bar {
 			grid-template-columns: minmax(0, 1fr) min-content;
 		}

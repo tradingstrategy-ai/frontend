@@ -2,14 +2,24 @@ import { expect, test } from '@playwright/test';
 
 const searchName = 'Search vaults and DeFi entities';
 
+test('opens compact navigation on the first tap after page load', async ({ page }) => {
+	await page.setViewportSize({ width: 1024, height: 768 });
+	await page.goto('/pricing', { waitUntil: 'commit' });
+	await page.getByRole('button', { name: 'Show navigation panel' }).click();
+
+	const navigation = page.getByRole('navigation', { name: 'Mobile navigation' });
+	const bounds = await navigation.boundingBox();
+	expect(bounds).not.toBeNull();
+	expect(bounds!.x).toBeCloseTo(0, 0);
+	expect(bounds!.width).toBeCloseTo(1024, 0);
+});
+
 async function searchFromNavigation(page: import('@playwright/test').Page, query: string) {
 	const navToggle = page.getByRole('button', { name: 'Show navigation panel' });
 	let search = page.getByTestId('nav-search').getByRole('combobox', { name: searchName });
 	if (await navToggle.isVisible()) {
 		await navToggle.click();
 		const navigation = page.getByRole('navigation', { name: 'Mobile navigation' });
-		await expect(navigation).toHaveClass(/open/);
-		await page.waitForTimeout(300);
 		const navigationBounds = await navigation.boundingBox();
 		expect(navigationBounds).not.toBeNull();
 		expect(navigationBounds!.x).toBeCloseTo(0, 0);
