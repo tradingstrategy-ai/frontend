@@ -35,6 +35,7 @@ so relative performance is comparable on a single axis.
 	} from '$lib/helpers/formatters';
 	import { annualizedReturn } from '$lib/helpers/financial';
 	import { formatDate, resampleTimeSeries } from '$lib/charts/helpers';
+	import type { TimeSpanKey } from '$lib/charts/time-span';
 	const TRAILING_RETURN_DAYS = 30;
 	const TRAILING_RETURN_SECONDS = TRAILING_RETURN_DAYS * 86_400;
 
@@ -52,11 +53,14 @@ so relative performance is comparable on a single axis.
 		vault: VaultInfo;
 		/** Optional logo URL for the vault legend item, preferring curator over protocol logos. */
 		chartLogoUrl?: string;
+		/** Called when the chart range selector changes. */
+		onTimeSpanChange?: (timeSpan: TimeSpanKey) => void;
 	}
 
-	let { vault, chartLogoUrl }: Props = $props();
+	let { vault, chartLogoUrl, onTimeSpanChange }: Props = $props();
 
 	let showCryptoBenchmarks = $derived(isPerpetualFuturesVault(vault));
+	let assetType = $derived(vault.flags.includes('tokenised_fund') ? 'tokenised fund' : 'vault');
 
 	let loading = $state(true);
 	let priceData = $state<[number, number][]>();
@@ -170,8 +174,8 @@ so relative performance is comparable on a single axis.
 
 <div class={['vault-price-chart', showCryptoBenchmarks && 'has-drawdown']}>
 	<ChartContainer
-		title="Share token price"
 		timeSpanOptions={['1M', '3M', 'Max']}
+		{onTimeSpanChange}
 		{loading}
 		data={priceData}
 		{formatValue}
@@ -183,6 +187,20 @@ so relative performance is comparable on a single axis.
 			})
 		}}
 	>
+		{#snippet title()}
+			<h2 class="chart-title">
+				<Tooltip>
+					<span slot="trigger" class="underline">Share token price</span>
+					<svelte:fragment slot="popup">
+						Share token represents a single fungible unit of this {assetType}, which depositors receive in exchange for
+						their money. This chart tracks the onchain reported value of a single share token, which reflects the
+						{assetType}'s performance. Different smart contracts have different methods to report share token price, and
+						sometimes the information may be incorrect.
+					</svelte:fragment>
+				</Tooltip>
+			</h2>
+		{/snippet}
+
 		{#snippet series({ data, timeSpan, range })}
 			{@const vaultSeriesData = withChartSeriesKind(data, 'vault-price')}
 			{@const tvlSeriesData = withChartSeriesKind(resampleTimeSeries(tvlData ?? [], timeSpan.interval), 'tvl')}
@@ -374,6 +392,11 @@ so relative performance is comparable on a single axis.
 <style>
 	.vault-price-chart {
 		margin-bottom: -0.25rem;
+
+		.chart-title {
+			font: var(--f-heading-md-medium);
+			letter-spacing: var(--f-heading-md-spacing, normal);
+		}
 
 		:global([data-css-props]) {
 			--chart-aspect-ratio: auto;
