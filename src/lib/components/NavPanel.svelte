@@ -22,11 +22,20 @@ Responsive navigation drawer with optional search entry, primary links and site 
 		open = false;
 		onClose?.();
 	}
+
+	function closeOnNavigation(node: HTMLElement) {
+		function handleClick(event: MouseEvent) {
+			if (event.target instanceof Element && event.target.closest('a[href]')) close();
+		}
+
+		node.addEventListener('click', handleClick);
+		return { destroy: () => node.removeEventListener('click', handleClick) };
+	}
 </script>
 
-<nav class:open aria-label="Mobile navigation">
+<nav class:open aria-label="Mobile navigation" use:closeOnNavigation>
 	<header>
-		<a href="/" aria-label="Home" onclick={close}><Logo /></a>
+		<a href="/" aria-label="Home"><Logo /></a>
 		<button aria-label="Close navigation panel" onclick={close}>
 			<IconCancel />
 		</button>
@@ -36,7 +45,7 @@ Responsive navigation drawer with optional search entry, primary links and site 
 			{@render panelSearch()}
 		</div>
 	{/if}
-	<Menu align="center" onclick={close}>
+	<Menu align="center">
 		{@render children?.()}
 	</Menu>
 	<!-- NOTE: un-comment below section to bring back color mode picker -->

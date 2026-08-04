@@ -15,6 +15,7 @@
 		%sveltekit.head%
 	</head>
 	<body>
+		<!-- Preserve a user tap on a search field while client hydration attaches handlers. -->
 		<script>
 			document.addEventListener(
 				'focusin',

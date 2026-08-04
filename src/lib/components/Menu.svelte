@@ -1,3 +1,9 @@
+<!--
+@component
+Reusable horizontal or vertical list for navigation items.
+
+Use `align` to position the items within the available space.
+-->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 
@@ -7,16 +13,13 @@
 		horizontal?: boolean;
 		align?: Alignment;
 		children?: Snippet;
-		onclick?: (event: MouseEvent) => void;
 	}
 
-	let { horizontal = false, align = 'left', children, onclick }: Props = $props();
+	let { horizontal = false, align = 'left', children }: Props = $props();
 	let direction = $derived(horizontal ? 'horizontal' : 'vertical');
 </script>
 
-<!-- Clicks originate from interactive child navigation links. -->
-<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_noninteractive_element_interactions -->
-<menu class="dir--{direction} align--{align}" {onclick}>
+<menu class="dir--{direction} align--{align}">
 	{@render children?.()}
 </menu>
 
