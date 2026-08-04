@@ -7,9 +7,14 @@ async function searchFromNavigation(page: import('@playwright/test').Page, query
 	let search = page.getByTestId('nav-search').getByRole('combobox', { name: searchName });
 	if (await navToggle.isVisible()) {
 		await navToggle.click();
-		const menuSearch = page
-			.getByRole('navigation', { name: 'Mobile navigation' })
-			.getByRole('button', { name: 'Search vaults' });
+		const navigation = page.getByRole('navigation', { name: 'Mobile navigation' });
+		await expect(navigation).toHaveClass(/open/);
+		await page.waitForTimeout(300);
+		const navigationBounds = await navigation.boundingBox();
+		expect(navigationBounds).not.toBeNull();
+		expect(navigationBounds!.x).toBeCloseTo(0, 0);
+		expect(navigationBounds!.width).toBeCloseTo(await page.evaluate(() => window.innerWidth), 0);
+		const menuSearch = navigation.getByRole('button', { name: 'Search vaults' });
 		await expect(menuSearch).toBeVisible();
 		await menuSearch.click();
 		search = page.getByRole('dialog', { name: 'Search' }).getByRole('combobox', { name: searchName });

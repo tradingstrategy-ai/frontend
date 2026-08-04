@@ -79,6 +79,17 @@ Responsive navigation drawer with optional search entry, primary links and site 
 			padding: 0;
 			overflow: hidden;
 			transform: none;
+
+			/* Keep the established navigation identity visible above full-screen search. */
+			header {
+				position: relative;
+				z-index: 1001;
+				padding: var(--space-md);
+			}
+
+			:global(.dialog) {
+				padding-top: max(calc(var(--header-height) + var(--space-md)), env(safe-area-inset-top));
+			}
 		}
 	}
 
@@ -94,6 +105,12 @@ Responsive navigation drawer with optional search entry, primary links and site 
 		width: min(100%, 22rem);
 		justify-self: center;
 		padding-inline: var(--space-md);
+	}
+
+	@media (--nav-collapsed) {
+		nav {
+			max-width: none;
+		}
 	}
 
 	button {
