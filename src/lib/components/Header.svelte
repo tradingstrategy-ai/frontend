@@ -36,14 +36,21 @@ Responsive site header with menu, search and compact-navigation controls.
 		{@render search?.(false, noop)}
 	</div>
 
-	<button
-		class="show-nav-panel mobile-only"
+	<input
+		id="navigation-panel-toggle"
+		class="nav-panel-toggle mobile-only"
+		type="checkbox"
 		aria-label="Show navigation panel"
-		aria-expanded={panelOpen}
-		onclick={() => (panelOpen = true)}
+		bind:checked={panelOpen}
+	/>
+	<label
+		class="show-nav-panel mobile-only"
+		for="navigation-panel-toggle"
+		aria-hidden="true"
+		data-testid="navigation-toggle"
 	>
 		<IconMenu />
-	</button>
+	</label>
 </div>
 
 <div class="nav-panel mobile-only">
@@ -119,19 +126,23 @@ Responsive site header with menu, search and compact-navigation controls.
 		cursor: pointer;
 	}
 
+	.nav-panel-toggle {
+		position: absolute;
+		opacity: 0;
+	}
+
+	.nav-panel-toggle:focus-visible + .show-nav-panel {
+		outline: 2px solid var(--c-input-border-focus);
+		outline-offset: 2px;
+	}
+
 	.nav-panel {
 		display: contents;
 	}
 
 	@media (--nav-collapsed) {
-		/*
-		 * Make the first tap work before Svelte hydrates. Focus keeps the menu
-		 * visible while the user moves from the trigger into its controls.
-		 */
-		.header-bar:has(.show-nav-panel:focus) + .nav-panel :global(nav:not(:has(.dialog))),
-		.header-bar
-			+ .nav-panel
-			:global(nav:not(:has(.dialog)):focus-within:not(:has(button[aria-label='Close navigation panel']:focus))) {
+		/* The native control handles the first touch before Svelte or chat loads. */
+		.header-bar:has(.nav-panel-toggle:checked) + .nav-panel :global(nav:not(:has(.dialog))) {
 			transform: translateX(0);
 		}
 

@@ -5,7 +5,7 @@ const searchName = 'Search vaults and DeFi entities';
 test('opens compact navigation on the first tap after page load', async ({ page }) => {
 	await page.setViewportSize({ width: 1024, height: 768 });
 	await page.goto('/pricing', { waitUntil: 'commit' });
-	await page.getByRole('button', { name: 'Show navigation panel' }).click();
+	await page.getByTestId('navigation-toggle').click();
 
 	const navigation = page.getByRole('navigation', { name: 'Mobile navigation' });
 	const bounds = await navigation.boundingBox();
@@ -15,7 +15,7 @@ test('opens compact navigation on the first tap after page load', async ({ page 
 });
 
 async function searchFromNavigation(page: import('@playwright/test').Page, query: string) {
-	const navToggle = page.getByRole('button', { name: 'Show navigation panel' });
+	const navToggle = page.getByTestId('navigation-toggle');
 	let search = page.getByTestId('nav-search').getByRole('combobox', { name: searchName });
 	if (await navToggle.isVisible()) {
 		await navToggle.click();
@@ -52,7 +52,7 @@ test('renders equivalent, colour-coded protocol and vault typeahead results on d
 		await page.setViewportSize(viewport);
 		await page.goto('/pricing');
 		if (name === 'tablet') {
-			const bounds = await page.getByRole('button', { name: 'Show navigation panel' }).boundingBox();
+			const bounds = await page.getByTestId('navigation-toggle').boundingBox();
 			expect(bounds).not.toBeNull();
 			expect(1024 - (bounds!.x + bounds!.width)).toBeLessThanOrEqual(32);
 		}
