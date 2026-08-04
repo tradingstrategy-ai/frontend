@@ -22,6 +22,8 @@
 		formatValue: Formatter<number>;
 		boxed?: boolean;
 		timeSpanOptions?: TimeSpanKey[];
+		/** Called when the chart range selector changes. */
+		onTimeSpanChange?: (timeSpan: TimeSpanKey) => void;
 		title?: Snippet<[TimeSpan]> | string;
 		subtitle?: Snippet | string;
 		series: Snippet<[SeriesSnippetOptions]>;
@@ -34,6 +36,7 @@
 		formatValue,
 		boxed = false,
 		timeSpanOptions = TimeSpans.keys,
+		onTimeSpanChange,
 		options,
 		title,
 		subtitle,
@@ -69,7 +72,12 @@
 		{:else}
 			<div>{@render title?.(timeSpan)}</div>
 		{/if}
-		<SegmentedControl secondary options={timeSpans.options} bind:selected={timeSpans.selected} />
+		<SegmentedControl
+			secondary
+			options={timeSpans.options}
+			bind:selected={timeSpans.selected}
+			onchange={({ value }) => onTimeSpanChange?.(value as TimeSpanKey)}
+		/>
 		<p>
 			{#if typeof subtitle === 'string'}
 				{subtitle}
