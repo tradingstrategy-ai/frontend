@@ -9,9 +9,10 @@ Displays supplementary vault information, including transaction status, performa
 	import Risk from '$lib/top-vaults/Risk.svelte';
 	import Metric from './Metric.svelte';
 	import { resolve } from '$app/paths';
+	import IconWarningFilled from '~icons/local/warning-filled';
 	import { getFormattedLockup, isGoodVaultStatus } from '$lib/top-vaults/helpers';
 	import { formatNumber, formatPercent, formatPercentProfit } from '$lib/helpers/formatters';
-	import { getChain, getChainDisplayName } from '$lib/helpers/chain';
+	import { getChainDisplayName } from '$lib/helpers/chain';
 	import {
 		getStablecoinDetailsHref,
 		getVaultDenominationLogoUrl,
@@ -27,13 +28,14 @@ Displays supplementary vault information, including transaction status, performa
 	const LIMITED_HISTORY_CHAINS = [9999, 9998, 9997, 9995];
 	const NO_DATA_LABEL = 'No data';
 	const MISSING_FEE_TOOLTIP = 'The fee information is not available onchain. Net returns cannot be calculated.';
+	const SHORT_TERM_FEE_WARNING = 'Deposit and withdrawal fees may greatly affect short-term returns';
 	const INTERNALISED_FEE_TOOLTIP =
-		'Fees are internalised and already reduced from the gross profit and thus reflected in the share price.';
-	const INTERNALISED_FEE_DISCLAIMER = 'Fees are internalised for this vault and already removed from the gross profit.';
+		'Internalised fees are reflected in the share price before returns are shown. Deposit and withdrawal fees may still be applied separately to net returns.';
+	const INTERNALISED_FEE_DISCLAIMER =
+		'Internalised fees are reflected in the share price. One-time deposit and withdrawal fees may still affect net returns.';
 
 	let { vault, stablecoinMetadata = null }: Props = $props();
 
-	let chain = $derived(getChain(vault.chain_id));
 	let hasLimitedHistory = $derived(LIMITED_HISTORY_CHAINS.includes(vault.chain_id));
 	let isPrivate = $derived(vault.whitelist?.status === 'whitelisted');
 	let depositStatus = $derived(
@@ -125,25 +127,29 @@ Displays supplementary vault information, including transaction status, performa
 			label: 'Performance fee',
 			mobileLabel: 'Performance',
 			value: vault.gross_fees?.performance,
-			tooltip: '<strong>Performance fee</strong> is charged against investment profits.'
+			tooltip: '<strong>Performance fee</strong> is charged against investment profits.',
+			shortTermWarning: false
 		},
 		{
 			label: 'Management fee',
 			mobileLabel: 'Management',
 			value: vault.gross_fees?.management,
-			tooltip: '<strong>Management fee</strong> is charged annually for managing the vault.'
+			tooltip: '<strong>Management fee</strong> is charged annually for managing the vault.',
+			shortTermWarning: false
 		},
 		{
 			label: 'Deposit fee',
 			mobileLabel: 'Deposit',
 			value: vault.gross_fees?.deposit,
-			tooltip: '<strong>Deposit fee</strong> is a one-time fee applied when entering the vault.'
+			tooltip: '<strong>Deposit fee</strong> is a one-time fee applied when entering the vault.',
+			shortTermWarning: isPositiveFee(vault.gross_fees?.deposit)
 		},
 		{
 			label: 'Withdrawal fee',
 			mobileLabel: 'Withdrawal',
 			value: vault.gross_fees?.withdraw,
-			tooltip: '<strong>Withdrawal fee</strong> is a one-time fee applied when exiting the vault.'
+			tooltip: '<strong>Withdrawal fee</strong> is a one-time fee applied when exiting the vault.',
+			shortTermWarning: isPositiveFee(vault.gross_fees?.withdraw)
 		}
 	]);
 
@@ -156,6 +162,10 @@ Displays supplementary vault information, including transaction status, performa
 		if (!period.samplePeriod) return period.label;
 
 		return `${period.label}, ${formatDate(period.samplePeriod.period_start_at)} to ${formatDate(period.samplePeriod.period_end_at)}`;
+	}
+
+	function isPositiveFee(value: number | null | undefined): boolean {
+		return typeof value === 'number' && value > 0;
 	}
 
 	function isMissingFeeValue(value: number | null | undefined): boolean {
@@ -281,6 +291,7 @@ Displays supplementary vault information, including transaction status, performa
 				<thead>
 					<tr>
 						<th></th>
+						<th scope="col" class="warning-col" aria-label="Warnings"></th>
 						{#each returnPeriods as period (period.label)}
 							<th scope="col">{period.label}</th>
 						{/each}
@@ -309,13 +320,30 @@ Displays supplementary vault information, including transaction status, performa
 							</Tooltip>
 						</span>
 					{/snippet}
+					{#snippet shortTermFeeWarningCell(showWarning: boolean)}
+						<td class="warning-col">
+							{#if showWarning}
+								<span class="short-term-fee-warning-tooltip">
+									<Tooltip>
+										<span slot="trigger" class="short-term-fee-warning" role="img" aria-label={SHORT_TERM_FEE_WARNING}>
+											<IconWarningFilled --icon-size="1rem" aria-hidden="true" />
+										</span>
+										<svelte:fragment slot="popup">{SHORT_TERM_FEE_WARNING}</svelte:fragment>
+									</Tooltip>
+								</span>
+							{/if}
+						</td>
+					{/snippet}
 					<tr>
 						<td>
 							{@render metricLabel(
-								'<strong>Gross returns</strong> are annualised. They reflect the change in the vault share price before investor-facing fees are deducted.',
+								withInternalisedFeeTooltip(
+									'<strong>Gross returns</strong> are annualised share-price returns before investor-facing fees are deducted.'
+								),
 								'Gross'
 							)}
 						</td>
+						{@render shortTermFeeWarningCell(false)}
 						{#each returnPeriods as period (period.label)}
 							<td>
 								<Tooltip>
@@ -343,6 +371,7 @@ Displays supplementary vault information, including transaction status, performa
 					{#each feeRows as fee (fee.label)}
 						<tr class="fee-row">
 							<td>{@render metricLabel(withInternalisedFeeTooltip(fee.tooltip), fee.label, fee.mobileLabel)}</td>
+							{@render shortTermFeeWarningCell(fee.shortTermWarning)}
 							{#each returnPeriods as period (period.label)}
 								<td aria-label={`${fee.label} for ${period.label}`}>
 									{#if isMissingFeeValue(fee.value)}
@@ -358,11 +387,12 @@ Displays supplementary vault information, including transaction status, performa
 						<td>
 							{@render metricLabel(
 								withInternalisedFeeTooltip(
-									'<strong>Net returns</strong> are annualised. They are the gross returns after all investor-facing fees have been deducted.'
+									'<strong>Net returns</strong> are annualised returns after known investor-facing fees are deducted. One-time deposit and withdrawal fees are included when reported and can dominate short periods.'
 								),
 								'Net'
 							)}
 						</td>
+						{@render shortTermFeeWarningCell(false)}
 						{#each returnPeriods as period (period.label)}
 							<td>
 								{#if isNetReturnUnavailable(period)}
@@ -463,7 +493,7 @@ Displays supplementary vault information, including transaction status, performa
 
 		.vault-metrics-table {
 			width: 100%;
-			min-width: 44rem;
+			min-width: 46rem;
 			border-collapse: collapse;
 			font: var(--f-ui-md-roman);
 			--cell-padding: 0.5rem;
@@ -497,6 +527,13 @@ Displays supplementary vault information, including transaction status, performa
 				&:not(:first-child) {
 					text-align: right;
 				}
+			}
+
+			:is(th, td).warning-col {
+				width: 2rem;
+				min-width: 2rem;
+				padding-inline: 0.125rem;
+				text-align: center;
 			}
 
 			@media (--viewport-sm-down) {
@@ -544,6 +581,18 @@ Displays supplementary vault information, including transaction status, performa
 
 		.no-data-tooltip :global(.popup) {
 			max-width: 200px;
+		}
+
+		.short-term-fee-warning-tooltip :global(.popup) {
+			max-width: 200px;
+		}
+
+		.short-term-fee-warning {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			color: var(--c-warning);
+			line-height: 1;
 		}
 
 		.return-tooltip {
