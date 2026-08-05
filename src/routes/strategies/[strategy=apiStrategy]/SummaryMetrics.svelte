@@ -1,4 +1,9 @@
+<!--
+@component
+Strategy performance and risk dashboard metrics.
+-->
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import type { SummaryKeyMetrics } from 'trade-executor/schemas/summary';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import Profitability from '$lib/components/Profitability.svelte';
@@ -11,9 +16,10 @@
 		keyMetrics: SummaryKeyMetrics;
 		backtestLink: string;
 		hideTimeframes?: boolean;
+		children?: Snippet;
 	};
 
-	let { keyMetrics, backtestLink, hideTimeframes = false }: Props = $props();
+	let { keyMetrics, backtestLink, hideTimeframes = false, children }: Props = $props();
 </script>
 
 <div class="summary-metrics">
@@ -109,6 +115,10 @@
 			/>
 		</div>
 	</MetricsBox>
+
+	{#if children}
+		{@render children()}
+	{/if}
 </div>
 
 <style>

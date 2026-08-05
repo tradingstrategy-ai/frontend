@@ -13,6 +13,7 @@ import { z } from 'zod';
 import {
 	chainId,
 	count,
+	decimal,
 	duration,
 	hexString,
 	percent,
@@ -41,13 +42,20 @@ export const velvetSmartContractSchema = z.object({
 });
 export type VelvetSmartContracts = z.infer<typeof velvetSmartContractSchema>;
 
+const lagoonGuardV0Schema = z.object({
+	daily_automatic_settlement_limit_enabled: z.boolean(),
+	daily_automatic_settlement_limit: decimal.nullish(),
+	settlement_cooldown_seconds: duration.positive()
+});
+
 export const lagoonSmartContractSchema = z.object({
 	address: hexString,
 	feeReceiver: hexString,
 	feeRegistry: hexString,
 	valuationManager: hexString,
 	safe: hexString,
-	asset: hexString
+	asset: hexString,
+	lagoon_guard_v0: lagoonGuardV0Schema.nullish()
 });
 export type LagoonSmartContracts = z.infer<typeof lagoonSmartContractSchema>;
 
