@@ -13,6 +13,7 @@ amounts in the denomination's native currency.
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import Metric from './Metric.svelte';
 	import { formatDollar, formatNumber, formatPercent, formatTokenAmount } from '$lib/helpers/formatters';
+	import type { TimeSpanKey } from '$lib/charts/time-span';
 	import {
 		getVaultCurrentTvlUsd,
 		getVaultDenominationCurrency,
@@ -26,6 +27,31 @@ amounts in the denomination's native currency.
 	}
 
 	let { vault, chartLogoUrl }: Props = $props();
+	let selectedReturnPeriod = $state<'1M' | '3M' | 'Max'>('3M');
+	let oneMonthMetrics = $derived(vault.period_results.find((period) => period.period.toLowerCase() === '1m'));
+	let lifetimeMetrics = $derived(vault.period_results.find((period) => period.period.toLowerCase() === 'lifetime'));
+	let featuredPerformance = $derived(
+		selectedReturnPeriod === '1M'
+			? {
+					label: '1M',
+					return: { gross: vault.one_month_cagr, net: vault.one_month_cagr_net },
+					sharpe: oneMonthMetrics?.sharpe,
+					volatility: oneMonthMetrics?.volatility
+				}
+			: selectedReturnPeriod === '3M'
+				? {
+						label: '3M',
+						return: { gross: vault.three_months_cagr, net: vault.three_months_cagr_net },
+						sharpe: vault.three_months_sharpe,
+						volatility: vault.three_months_volatility
+					}
+				: {
+						label: 'Lifetime',
+						return: { gross: vault.cagr, net: vault.cagr_net },
+						sharpe: lifetimeMetrics?.sharpe,
+						volatility: lifetimeMetrics?.volatility
+					}
+	);
 
 	let denominationCurrency = $derived(getVaultDenominationCurrency(vault));
 	let showNativeTvl = $derived(denominationCurrency != null && denominationCurrency !== 'usd');
@@ -49,22 +75,26 @@ amounts in the denomination's native currency.
 	function formatNativeTvlAmount(value: number | null): string {
 		return value == null ? '' : formatTokenAmount(value, 2);
 	}
+
+	function handleTimeSpanChange(timeSpan: TimeSpanKey): void {
+		selectedReturnPeriod = timeSpan === '1M' || timeSpan === '3M' ? timeSpan : 'Max';
+	}
 </script>
 
 <MetricsBox>
 	<div class="chart-area">
-		<VaultPriceChart {vault} {chartLogoUrl} />
+		<VaultPriceChart {vault} {chartLogoUrl} onTimeSpanChange={handleTimeSpanChange} />
 
 		<div class="divider"></div>
 
 		<div class="featured-metrics">
-			<Metric size="xl" label="1M return (ann)">
-				{#if vault.one_month_cagr_net}
-					<Profitability of={vault.one_month_cagr_net} />
+			<Metric size="xl" label={`${featuredPerformance.label} return (ann)`}>
+				{#if featuredPerformance.return.net != null}
+					<Profitability of={featuredPerformance.return.net} />
 				{:else}
 					<Tooltip>
 						<span slot="trigger" style:white-space="nowrap">
-							<Profitability of={vault.one_month_cagr} /><span class="gross-indicator">*</span>
+							<Profitability of={featuredPerformance.return.gross} /><span class="gross-indicator">*</span>
 						</span>
 						<svelte:fragment slot="popup">
 							Fee information for this protocol is not yet available. The calculation is based on gross profit and fees
@@ -106,11 +136,11 @@ amounts in the denomination's native currency.
 				{/if}
 			</Metric>
 			<div class="desktop">
-				<Metric size="lg" label="3M Sharpe">
-					{formatNumber(vault.three_months_sharpe, 1)}
+				<Metric size="lg" label={`${featuredPerformance.label} Sharpe`}>
+					{formatNumber(featuredPerformance.sharpe, 1)}
 				</Metric>
-				<Metric size="lg" label="3M volatility">
-					{formatPercent(vault.three_months_volatility, 1)}
+				<Metric size="lg" label={`${featuredPerformance.label} volatility`}>
+					{formatPercent(featuredPerformance.volatility, 1)}
 				</Metric>
 			</div>
 		</div>

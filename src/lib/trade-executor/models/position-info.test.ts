@@ -133,6 +133,28 @@ describe('open position with stats entries', () => {
 	});
 });
 
+describe('rebalance count', () => {
+	test('counts only completed adjustments after the position has opened', () => {
+		const position = tradingPositionSchema.parse({
+			...rawPosition,
+			trades: {
+				1: { ...rawTrade, trade_id: 1, executed_at: POSITION_OPEN_TS, flags: ['open'] },
+				2: { ...rawTrade, trade_id: 2, executed_at: POSITION_OPEN_TS + HOUR, flags: ['increase'] },
+				3: { ...rawTrade, trade_id: 3, executed_at: POSITION_OPEN_TS + 2 * HOUR, flags: ['close'] },
+				4: {
+					...rawTrade,
+					trade_id: 4,
+					executed_at: POSITION_OPEN_TS + 3 * HOUR,
+					failed_at: POSITION_OPEN_TS + 3 * HOUR,
+					flags: ['increase']
+				}
+			}
+		});
+
+		expect(createTradingPositionInfo(position).rebalanceCount).toBe(1);
+	});
+});
+
 describe('closed position with stats entries', () => {
 	const position = tradingPositionSchema.parse({
 		...rawPosition,

@@ -1,3 +1,6 @@
+<!--
+Strategy position listing page.
+-->
 <script lang="ts">
 	import type { ComponentEvents, ComponentProps } from 'svelte';
 	import { page } from '$app/state';
@@ -12,7 +15,7 @@
 	import { capitalize } from '$lib/helpers/formatters';
 
 	let { data } = $props();
-	let { admin, positions, status, strategy, reserves } = $derived(data);
+	let { admin, positions, status, strategy, reserves, positionVaultSparklines } = $derived(data);
 
 	let exchangeAccount = $derived.by(() => {
 		// Try tag-based detection first
@@ -81,6 +84,7 @@
 			hasSearch={positions.length > 5}
 			hiddenPositions={strategy.hiddenPositions}
 			{exchangeAccount}
+			{positionVaultSparklines}
 			{reserves}
 			{onChange}
 		/>

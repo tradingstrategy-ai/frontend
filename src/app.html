@@ -15,6 +15,18 @@
 		%sveltekit.head%
 	</head>
 	<body>
+		<!-- Preserve a user tap on a search field while client hydration attaches handlers. -->
+		<script>
+			document.addEventListener(
+				'focusin',
+				(event) => {
+					if (event.target instanceof HTMLInputElement && event.target.matches('[data-preserve-hydration-focus]')) {
+						event.target.dataset.prehydrationFocus = 'true';
+					}
+				},
+				true
+			);
+		</script>
 		<div>%sveltekit.body%</div>
 	</body>
 </html>

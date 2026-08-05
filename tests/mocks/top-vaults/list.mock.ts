@@ -448,6 +448,13 @@ const depositDisabledVault = createTestVault('Deposit disabled vault', {
 	period_results: [closedVaultPeriodResult]
 });
 
+const cappedVault = createTestVault('Deposit cap reached vault', {
+	chain: 'base',
+	current_nav: 20_000,
+	deposit_closed_reason: 'Max deposit cap reached (maxDeposit=0)',
+	period_results: [closedVaultPeriodResult]
+});
+
 const redemptionDisabledVault = createTestVault('Withdrawal disabled vault', {
 	chain: 'base',
 	current_nav: 20_000,
@@ -459,6 +466,14 @@ const depositAndRedemptionDisabledVault = createTestVault('Deposit and withdrawa
 	chain: 'base',
 	current_nav: 20_000,
 	deposit_closed_reason: 'Deposits paused',
+	redemption_closed_reason: 'Withdrawals paused',
+	period_results: [closedVaultPeriodResult]
+});
+
+const cappedAndRedemptionDisabledVault = createTestVault('Capped and withdrawal disabled vault', {
+	chain: 'base',
+	current_nav: 20_000,
+	deposit_closed_reason: 'Max deposit cap reached (maxDeposit=0)',
 	redemption_closed_reason: 'Withdrawals paused',
 	period_results: [closedVaultPeriodResult]
 });
@@ -493,6 +508,8 @@ const parquetMatchedVaults = [
 		address: '0xa3931d71877c0e7a3148cb7eb4463524fec27fbd',
 		chain: 'ethereum',
 		protocol: 'Trading Strategy',
+		curator_slug: 'trading-strategy',
+		curator_name: 'Trading Strategy',
 		current_nav: 2_400_000,
 		peak_nav: 2_700_000,
 		one_month_cagr: 0.09,
@@ -522,6 +539,18 @@ const parquetMatchedVaults = [
 // Curator metadata for the by-curator pages; keyed by slug and referenced
 // from the curated returnLeaders vaults above.
 const curators = {
+	'trading-strategy': {
+		slug: 'trading-strategy',
+		name: 'Trading Strategy',
+		website: null,
+		twitter: null,
+		linkedin: null,
+		rss: null,
+		protocol_curator: false,
+		canonical_feeder_id: null,
+		logos: { generic: '/brand-mark-100x100.png', dark: null, light: null },
+		recent_posts: []
+	},
 	'steakhouse-financial': {
 		slug: 'steakhouse-financial',
 		name: 'Steakhouse Financial',
@@ -582,8 +611,10 @@ export default defineMock({
 			abnormalTvlBlacklistedVault,
 			morphoFlaggedBlacklistedVault,
 			depositDisabledVault,
+			cappedVault,
 			redemptionDisabledVault,
 			depositAndRedemptionDisabledVault,
+			cappedAndRedemptionDisabledVault,
 			privateVault,
 			privateTokenisedFund,
 			limitedCoverageVault,

@@ -29,7 +29,8 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 		getMorphoFlags,
 		getVaultProtocolDisplayName,
 		hasSupportedProtocol,
-		isBlacklisted
+		isBlacklisted,
+		isVaultDepositCapped
 	} from '$lib/top-vaults/helpers';
 	import { getCuratorSocialLogoUrl } from '$lib/social-card/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
@@ -46,16 +47,21 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	let showNotes = $derived(vault.notes != null && !notesDuplicateMorphoFlags);
 	let isTokenisedFund = $derived(vault.flags.includes('tokenised_fund'));
 	let isPrivate = $derived(vault.whitelist?.status === 'whitelisted');
+	let isCapped = $derived(isVaultDepositCapped(vault));
 	let depositMayBeDisabled = $derived(vault.deposit_closed_reason != null);
 	let redemptionMayBeDisabled = $derived(vault.redemption_closed_reason != null);
 	let operationWarning = $derived(
-		depositMayBeDisabled && redemptionMayBeDisabled
-			? 'Deposits and withdrawals may be disabled for this vault'
-			: depositMayBeDisabled
-				? 'Deposits may be disabled for this vault'
-				: redemptionMayBeDisabled
-					? 'Withdrawals may be disabled for this vault'
-					: undefined
+		isCapped
+			? redemptionMayBeDisabled
+				? 'Deposits are capped and withdrawals may be disabled for this vault'
+				: 'Deposits are capped for this vault'
+			: depositMayBeDisabled && redemptionMayBeDisabled
+				? 'Deposits and withdrawals may be disabled for this vault'
+				: depositMayBeDisabled
+					? 'Deposits may be disabled for this vault'
+					: redemptionMayBeDisabled
+						? 'Withdrawals may be disabled for this vault'
+						: undefined
 	);
 	let chartLogoUrl = $derived(
 		getCuratorSocialLogoUrl(curatorMetadata) ??

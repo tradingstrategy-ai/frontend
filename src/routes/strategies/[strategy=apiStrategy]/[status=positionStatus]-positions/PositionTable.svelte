@@ -1,3 +1,7 @@
+<!--
+@component
+Table of strategy positions with vault-specific details.
+-->
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
 	import type { PositionStatus } from 'trade-executor/schemas/position';
@@ -13,8 +17,10 @@
 	import TableRowTarget from '$lib/components/datatable/TableRowTarget.svelte';
 	import TradingDescription from 'trade-executor/components/TradingDescription.svelte';
 	import RemarksCell from './RemarksCell.svelte';
+	import PositionVaultSparklineCell from './PositionVaultSparklineCell.svelte';
 	import ReservesRow from './ReservesRow.svelte';
 	import { formatDollar } from '$lib/helpers/formatters';
+	import type { PositionVaultSparkline } from './vault-sparklines';
 
 	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
 
@@ -28,6 +34,7 @@
 		hiddenPositions?: number[];
 		reserves: ReservePosition;
 		exchangeAccount?: { url: string; name: string };
+		positionVaultSparklines?: Record<number, PositionVaultSparkline>;
 	}
 
 	let {
@@ -40,6 +47,7 @@
 		hiddenPositions = [],
 		reserves,
 		exchangeAccount,
+		positionVaultSparklines = {},
 		...restProps
 	}: Props = $props();
 
@@ -52,10 +60,30 @@
 		frozen: ['description', 'flags', 'frozen_on', 'frozen_value', 'frozen_at', 'cta']
 	};
 
+	function getStatusColumns(status: PositionStatus, showVaultSparklineColumn: boolean) {
+		return showVaultSparklineColumn ? [...statusColumns[status], 'vault_sparkline'] : statusColumns[status];
+	}
+
+	let showVaultSparklineColumn = $derived(positions.some((position) => position.pair.isVault));
+	let columnOrder = $derived(getStatusColumns(status, showVaultSparklineColumn));
+
+	function getPositionTarget(positionId: number) {
+		const href = exchangeAccount ? exchangeAccount.url : `./${status}-positions/${positionId}`;
+		return {
+			href,
+			...(exchangeAccount
+				? { label: `View on ${exchangeAccount.name}`, target: '_blank', rel: 'noreferrer' }
+				: { label: 'Details' })
+		};
+	}
+
 	// svelte-ignore state_referenced_locally
 	const table = createTable(positionsStore, {
 		colOrder: addColumnOrder({
-			initialColumnIdOrder: statusColumns[status],
+			initialColumnIdOrder: getStatusColumns(
+				status,
+				positions.some((position) => position.pair.isVault)
+			),
 			hideUnspecifiedColumns: true
 		}),
 		tableFilter: addTableFilter({
@@ -149,12 +177,23 @@
 		table.column({
 			header: '',
 			id: 'cta',
-			accessor: ({ position_id }) => (exchangeAccount ? exchangeAccount.url : `./${status}-positions/${position_id}`),
+			accessor: ({ position_id }) => getPositionTarget(position_id),
 			cell: ({ value }) =>
 				createRender(TableRowTarget, {
-					href: value,
-					...(exchangeAccount ? { label: `View on ${exchangeAccount.name}`, target: '_blank', rel: 'noreferrer' } : {})
+					...value,
+					targetable: !showVaultSparklineColumn
 				}),
+			plugins: { sort: { disable: true } }
+		}),
+		table.column({
+			header: '3M price',
+			id: 'vault_sparkline',
+			accessor: (position) => ({
+				vault: positionVaultSparklines[position.position_id],
+				isVault: position.pair.isVault,
+				...getPositionTarget(position.position_id)
+			}),
+			cell: ({ value }) => createRender(PositionVaultSparklineCell, value),
 			plugins: { sort: { disable: true } }
 		})
 	]);
@@ -166,7 +205,7 @@
 
 	$effect(() => {
 		$positionsStore = positions;
-		$columnIdOrder = statusColumns[status];
+		$columnIdOrder = columnOrder;
 		$sortKeys = [{ id: sort, order: direction }];
 	});
 </script>
@@ -174,7 +213,7 @@
 <div class="position-table">
 	<DataTable {tableViewModel} targetableRows size="sm" {...restProps}>
 		{#if status === 'open'}
-			<ReservesRow {reserves} />
+			<ReservesRow {reserves} {showVaultSparklineColumn} />
 		{/if}
 	</DataTable>
 </div>
@@ -215,6 +254,23 @@
 
 		:global(:is(.profit, .current_value, .value_at_open, .frozen_value, .opened_at, .closed_at, .frozen_at)) {
 			text-align: right;
+		}
+
+		:global(.vault_sparkline) {
+			width: 7rem;
+			text-align: center;
+			vertical-align: middle;
+
+			@media (--viewport-sm-down) {
+				width: 4.5rem;
+				padding-inline: 0.125rem;
+
+				:global(.position-vault-sparkline-cell) {
+					min-width: 4rem;
+
+					--sparkline-width: 4rem;
+				}
+			}
 		}
 	}
 </style>

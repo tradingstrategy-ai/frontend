@@ -24,6 +24,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 	import CuratorDescription from '$lib/curator/CuratorDescription.svelte';
 	import CuratorRecentPosts from '$lib/curator/CuratorRecentPosts.svelte';
 	import StablecoinDescription from '$lib/stablecoin-metadata/StablecoinDescription.svelte';
+	import StablecoinDepegWarning from '$lib/stablecoin-metadata/StablecoinDepegWarning.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers.js';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
@@ -181,6 +182,9 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 						</span>
 					{/snippet}
 				</HeroBanner>
+				{#if stablecoinMetadata}
+					<StablecoinDepegWarning metadata={stablecoinMetadata} />
+				{/if}
 
 				{#if heroAside}
 					<aside class="hero-aside">

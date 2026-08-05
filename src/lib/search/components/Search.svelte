@@ -1,12 +1,12 @@
 <!--
 @component
-Site-wide vault search with desktop typeahead and a full-screen compact-navigation dialog.
+Site-wide vault search with a desktop/tablet typeahead and full-screen mobile dialog.
 
 The component fetches only public search suggestions; the server keeps the
 underlying vault JSON index private.
 -->
 <script lang="ts">
-	import { tick } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { disableScroll } from '$lib/actions/scroll';
 	import { removeOnError } from '$lib/actions/image';
@@ -40,6 +40,7 @@ underlying vault JSON index private.
 	let selectedIndex = $state(-1);
 	let mobileDialogOpen = $state(false);
 	let requestSequence = 0;
+	let desktopSearchInput = $state<HTMLInputElement>();
 	let mobileSearchInput = $state<HTMLInputElement>();
 	let searchTrigger = $state<HTMLButtonElement>();
 	let searchRoot: HTMLDivElement;
@@ -47,22 +48,30 @@ underlying vault JSON index private.
 	let hasQuery = $derived(query.trim().length > 0);
 	let activeOptionId = $derived(selectedIndex >= 0 ? `${listboxId}-${selectedIndex}` : undefined);
 
+	onMount(() => {
+		const inputWasFocusedBeforeHydration = desktopSearchInput?.dataset.prehydrationFocus === 'true';
+		delete desktopSearchInput?.dataset.prehydrationFocus;
+		if (!inputWasFocusedBeforeHydration) return;
+
+		// Svelte hydration can blur an input that was tapped before its handlers loaded.
+		requestAnimationFrame(() => desktopSearchInput?.focus({ preventScroll: true }));
+	});
+
 	$effect(() => {
 		const searchQuery = query.trim();
 		const sequence = ++requestSequence;
 		selectedIndex = -1;
-
+		errorMessage = null;
 		if (!searchQuery) {
 			loading = false;
-			errorMessage = null;
 			results = [];
 			return;
 		}
+		open = true;
 
 		const controller = new AbortController();
 		const timeout = setTimeout(async () => {
 			loading = true;
-			errorMessage = null;
 			try {
 				const response = await fetch(
 					`/search/suggestions?q=${encodeURIComponent(searchQuery)}&limit=${TYPEAHEAD_LIMIT}`,
@@ -71,8 +80,8 @@ underlying vault JSON index private.
 					}
 				);
 				if (!response.ok) throw new Error('Search is temporarily unavailable.');
-				const data = (await response.json()) as SearchResponse;
-				if (sequence === requestSequence) results = data.results;
+				const data = (await response.json()) as Partial<SearchResponse>;
+				if (sequence === requestSequence) results = Array.isArray(data.results) ? data.results : [];
 			} catch (error) {
 				if ((error as Error).name !== 'AbortError' && sequence === requestSequence) {
 					errorMessage = 'Search is temporarily unavailable.';
@@ -169,7 +178,9 @@ underlying vault JSON index private.
 >
 	<form class="desktop-search" action="/search" role="search" onsubmit={handleSubmit}>
 		<input
+			bind:this={desktopSearchInput}
 			bind:value={query}
+			data-preserve-hydration-focus
 			aria-activedescendant={activeOptionId}
 			aria-autocomplete="list"
 			aria-controls={listboxId}
@@ -207,7 +218,7 @@ underlying vault JSON index private.
 	</button>
 
 	{#if open}
-		<div class="dialog" role="dialog" aria-modal="true" aria-label="Search">
+		<div class="dialog" role="dialog" aria-modal={mobileDialogOpen} aria-label="Search">
 			<div class="mobile-search-row">
 				<form action="/search" role="search" onsubmit={handleSubmit}>
 					<input
@@ -238,7 +249,7 @@ underlying vault JSON index private.
 				</button>
 			</div>
 
-			<div class="results" aria-live="polite">
+			<div class="results" aria-live="polite" data-testid="entity-search-results">
 				{#if loading}
 					<p>Searching…</p>
 				{:else if errorMessage}
@@ -252,6 +263,7 @@ underlying vault JSON index private.
 								<a
 									id={`${listboxId}-${index}`}
 									class:active={selectedIndex === index}
+									class:no-logo={!result.logoUrl}
 									data-entity-type={result.entityType}
 									href={result.href}
 									role="option"
@@ -259,9 +271,9 @@ underlying vault JSON index private.
 									onpointerdown={(event) => event.preventDefault()}
 									onclick={closeSearchForNavigation}
 								>
-									<span class="logo-slot">
-										{#if result.logoUrl}<img src={result.logoUrl} alt="" use:removeOnError />{/if}
-									</span>
+									<span class="logo-slot"
+										>{#if result.logoUrl}<img src={result.logoUrl} alt="" use:removeOnError />{/if}</span
+									>
 									<span class="result-main">
 										<strong class:blacklisted={result.entityType === 'blacklisted-vault'}>{result.name}</strong>
 										<span class="type">
@@ -278,7 +290,9 @@ underlying vault JSON index private.
 										{/if}
 									</span>
 									<span class="metrics"
-										><span>{formatApy(result.averageApy1m)}</span><span>{formatTvl(result.latestTvl)}</span></span
+										><span aria-label="1 month APY">{formatApy(result.averageApy1m)}</span><span aria-label="Latest TVL"
+											>{formatTvl(result.latestTvl)}</span
+										></span
 									>
 								</a>
 							</li>
@@ -385,6 +399,12 @@ underlying vault JSON index private.
 		color: inherit;
 		text-decoration: none;
 	}
+	li a:is(.no-logo, :has(.logo-slot:not(:has(img)))) {
+		grid-template-columns: minmax(0, 1fr) auto;
+	}
+	li a:is(.no-logo, :has(.logo-slot:not(:has(img)))) .logo-slot {
+		display: none;
+	}
 	li a:is(:hover, :focus-visible, .active) {
 		outline: none;
 		background: var(--background-hover);
@@ -436,7 +456,14 @@ underlying vault JSON index private.
 		width: 0.5rem;
 		height: 0.5rem;
 		border-radius: 0.125rem;
-		background: var(--entity-colour);
+		background: currentColor;
+	}
+	.result-sparkline {
+		justify-items: end;
+		color: var(--c-text-extra-light);
+	}
+	.result-sparkline :global(.vault-sparkline) {
+		--sparkline-width: 6rem;
 	}
 	.metrics {
 		display: grid;
@@ -488,6 +515,7 @@ underlying vault JSON index private.
 		.dialog {
 			position: fixed;
 			inset: 0;
+			box-sizing: border-box;
 			display: grid;
 			grid-template-rows: auto minmax(0, 1fr) auto;
 			width: auto;
@@ -518,6 +546,70 @@ underlying vault JSON index private.
 			max-height: none;
 			margin-top: var(--space-md);
 		}
+		.results ul {
+			max-width: 31.25rem;
+			margin-inline: auto;
+		}
+	}
+
+	@media (--nav-collapsed) and (--viewport-sm-up) {
+		/* Tablet uses the same persistent input as desktop: no trigger-to-dialog swap. */
+		.menu-search .desktop-search {
+			display: block;
+		}
+		.menu-search .search-trigger {
+			display: none;
+		}
+		.menu-search .dialog {
+			position: static;
+			width: 100%;
+			height: auto;
+			max-height: none;
+			padding: 0;
+			border: 0;
+			box-shadow: none;
+		}
+		.mobile-search-row {
+			display: none;
+		}
+		.dialog li a {
+			grid-template-columns: 2rem minmax(0, 1fr) 6rem auto;
+		}
+		.dialog .result-sparkline {
+			display: grid;
+			justify-content: end;
+		}
+	}
+
+	@media (--viewport-xs) {
+		.dialog li a {
+			grid-template-columns: 2rem minmax(0, 1fr) max-content;
+			grid-template-areas:
+				'logo main metrics'
+				'. . sparkline';
+			align-items: start;
+			row-gap: var(--space-xs);
+		}
+		.dialog li a:is(.no-logo, :has(.logo-slot:not(:has(img)))) {
+			grid-template-columns: minmax(0, 1fr) max-content;
+			grid-template-areas:
+				'main metrics'
+				'. sparkline';
+		}
+		.dialog .logo-slot {
+			grid-area: logo;
+		}
+		.dialog .result-main {
+			grid-area: main;
+		}
+		.dialog .result-sparkline {
+			grid-area: sparkline;
+			display: flex;
+			justify-content: end;
+		}
+		.dialog .metrics {
+			grid-area: metrics;
+		}
 	}
 
 	@media (--nav-expanded) {
@@ -531,9 +623,6 @@ underlying vault JSON index private.
 		}
 		li a {
 			grid-template-columns: 2rem minmax(0, 1fr) 7rem auto;
-		}
-		.mobile-search-row {
-			display: none;
 		}
 	}
 </style>

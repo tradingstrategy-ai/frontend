@@ -3,6 +3,7 @@
 Responsive site header with menu, search and compact-navigation controls.
 -->
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import type { Snippet } from 'svelte';
 	import Logo from '$lib/components/Logo.svelte';
 	import Menu from '$lib/components/Menu.svelte';
@@ -16,7 +17,20 @@ Responsive site header with menu, search and compact-navigation controls.
 
 	let { menu, search }: Props = $props();
 	let panelOpen = $state(false);
+	let navPanelToggle = $state<HTMLInputElement>();
+	let navigationHydrated = $state(false);
 	const noop = () => {};
+
+	onMount(() => {
+		// Preserve a checkbox toggle made before Svelte attaches its event handlers.
+		panelOpen = navPanelToggle?.checked ?? false;
+		navigationHydrated = true;
+	});
+
+	function closePanel() {
+		panelOpen = false;
+		if (navPanelToggle) navPanelToggle.checked = false;
+	}
 </script>
 
 <div class="header-bar">
@@ -36,15 +50,30 @@ Responsive site header with menu, search and compact-navigation controls.
 		{@render search?.(false, noop)}
 	</div>
 
-	<button class="show-nav-panel mobile-only" aria-label="Show navigation panel" onclick={() => (panelOpen = true)}>
+	<input
+		bind:this={navPanelToggle}
+		id="navigation-panel-toggle"
+		class="nav-panel-toggle mobile-only"
+		type="checkbox"
+		aria-label={panelOpen ? 'Hide navigation panel' : 'Show navigation panel'}
+		aria-expanded={panelOpen}
+		data-navigation-hydrated={navigationHydrated ? 'true' : undefined}
+		onchange={() => (panelOpen = navPanelToggle?.checked ?? false)}
+	/>
+	<label
+		class="show-nav-panel mobile-only"
+		for="navigation-panel-toggle"
+		aria-hidden="true"
+		data-testid="navigation-toggle"
+	>
 		<IconMenu />
-	</button>
+	</label>
 </div>
 
 <div class="nav-panel mobile-only">
-	<NavPanel bind:open={panelOpen}>
+	<NavPanel bind:open={panelOpen} onClose={closePanel}>
 		{#snippet panelSearch()}
-			{@render search?.(true, () => (panelOpen = false))}
+			{@render search?.(true, closePanel)}
 		{/snippet}
 		{@render menu?.()}
 	</NavPanel>
@@ -114,17 +143,28 @@ Responsive site header with menu, search and compact-navigation controls.
 		cursor: pointer;
 	}
 
+	.nav-panel-toggle {
+		position: absolute;
+		opacity: 0;
+	}
+
+	.nav-panel-toggle:focus-visible + .show-nav-panel {
+		outline: 2px solid var(--c-input-border-focus);
+		outline-offset: 2px;
+	}
+
 	.nav-panel {
 		display: contents;
 	}
 
 	@media (--nav-collapsed) {
+		/* The native control handles the first touch before Svelte hydrates. */
+		.header-bar:has(.nav-panel-toggle:checked) + .nav-panel :global(nav:not(:has(.dialog))) {
+			transform: translateX(0);
+		}
+
 		.header-bar {
-			grid-template-columns:
-				[logo-start] 10.5rem
-				[logo-end search-start] minmax(0, 1fr)
-				[search-end menu-start] auto
-				[menu-end];
+			grid-template-columns: minmax(0, 1fr) min-content;
 		}
 
 		.desktop-only {
@@ -132,17 +172,17 @@ Responsive site header with menu, search and compact-navigation controls.
 		}
 
 		.logo {
-			grid-column: logo-start / logo-end;
+			grid-column: 1;
 			--logo-height: 32px;
 		}
 
 		.search {
-			grid-column: search-start / search-end;
-			max-width: none;
+			display: none;
 		}
 
 		.show-nav-panel {
-			grid-column: menu-start / menu-end;
+			grid-column: 2;
+			justify-self: end;
 		}
 	}
 

@@ -65,6 +65,13 @@ pnpm run test:integration
 - uses mock API data found in `tests/mocks`
 - loads `.env.test` for deterministic test configuration
 
+#### Responsive navigation coverage
+
+`tests/integration/navigation.test.ts` covers the shared header at desktop, tablet and narrow-mobile
+viewports. It verifies that the first compact-menu tap remains open after hydration, that the first
+tablet search-field focus survives hydration, menu closure after navigation to Pricing, and equivalent
+protocol/vault typeahead results.
+
 #### Local secrets and `.env.local`
 
 For normal development, keep checked-in defaults in `.env` and place local-only secrets in

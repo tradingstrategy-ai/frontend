@@ -10,7 +10,7 @@ Displays supplementary vault information, including transaction status, performa
 	import Metric from './Metric.svelte';
 	import { resolve } from '$app/paths';
 	import IconWarningFilled from '~icons/local/warning-filled';
-	import { getFormattedLockup, isGoodVaultStatus } from '$lib/top-vaults/helpers';
+	import { getFormattedLockup, isGoodVaultStatus, isVaultDepositCapped } from '$lib/top-vaults/helpers';
 	import { formatNumber, formatPercent, formatPercentProfit } from '$lib/helpers/formatters';
 	import { getChainDisplayName } from '$lib/helpers/chain';
 	import {
@@ -38,12 +38,17 @@ Displays supplementary vault information, including transaction status, performa
 
 	let hasLimitedHistory = $derived(LIMITED_HISTORY_CHAINS.includes(vault.chain_id));
 	let isPrivate = $derived(vault.whitelist?.status === 'whitelisted');
+	let isCapped = $derived(isVaultDepositCapped(vault));
 	let depositStatus = $derived(
 		isPrivate
-			? vault.deposit_closed_reason
-				? `Private — ${vault.deposit_closed_reason}`
-				: 'Private'
-			: vault.deposit_closed_reason
+			? isCapped
+				? 'Private — Capped'
+				: vault.deposit_closed_reason
+					? `Private — ${vault.deposit_closed_reason}`
+					: 'Private'
+			: isCapped
+				? 'Capped'
+				: vault.deposit_closed_reason
 	);
 	let showTransactionStatus = $derived(isPrivate || !isGoodVaultStatus(vault));
 	let hasNetFeeInformation = $derived(vault.net_fees?.fee_mode != null);
