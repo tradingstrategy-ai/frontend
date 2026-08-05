@@ -30,6 +30,7 @@ export const positionTooltips = {
 	quantityAtOpen: 'The position size in tokens when the position was opened.',
 	quantityAtClose: 'The position size in tokens when the position was closed.',
 	currentQuantity: 'The latest recorded position size in tokens.',
+	rebalanceCount: 'The number of successfully executed position adjustments, excluding the opening and closing trades.',
 	estimatedMaximumRisk: 'How much % of the portfolio is at the risk if this position is completely lost.',
 	stopLossPercentOpen:
 		'Stop loss % for this position, relative to the opening price. Stop loss may be dynamic and trailing stop loss may increase over time. BETA WARNING: Currently calculated relative to the open price, not the current price.',

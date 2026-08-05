@@ -83,6 +83,18 @@ export const createTradingPositionInfo = <T extends TradingPosition>(base: T, st
 		return this.closed ? tradeCount > 2 : tradeCount > 1;
 	},
 
+	get rebalanceCount() {
+		return this.trades.filter(
+			(trade) =>
+				trade.trade_type === 'rebalance' &&
+				trade.executed_at != null &&
+				!trade.didFail &&
+				!trade.isRepair &&
+				!trade.flags?.includes('open') &&
+				!trade.flags?.includes('close')
+		).length;
+	},
+
 	get openPrice() {
 		return this.firstTrade.executed_price;
 	},

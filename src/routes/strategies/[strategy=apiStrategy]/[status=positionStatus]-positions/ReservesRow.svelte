@@ -1,3 +1,7 @@
+<!--
+@component
+Summary row for strategy reserve balances.
+-->
 <script lang="ts">
 	import type { ReservePosition } from 'trade-executor/schemas/reserve';
 	import TradingDescription from 'trade-executor/components/TradingDescription.svelte';
@@ -7,9 +11,10 @@
 
 	type Props = {
 		reserves: ReservePosition;
+		showVaultSparklineColumn?: boolean;
 	};
 
-	let { reserves }: Props = $props();
+	let { reserves, showVaultSparklineColumn = false }: Props = $props();
 </script>
 
 <tr class="reserves">
@@ -28,6 +33,9 @@
 	</td>
 	<td class="opened_at">always open</td>
 	<td class="cta"></td>
+	{#if showVaultSparklineColumn}
+		<td class="vault_sparkline"></td>
+	{/if}
 </tr>
 
 <style>
