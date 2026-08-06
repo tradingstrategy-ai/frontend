@@ -6,7 +6,7 @@ Vault datasets download page
 	import type { PageData } from './$types';
 	import { vaultApiUrl } from '$lib/config';
 	import { formatByteUnits } from '$lib/helpers/formatters';
-	import { Alert, Button, HeroBanner, Section, Spinner, TextInput, Timestamp } from '$lib/components';
+	import { Alert, Button, DataBadge, HeroBanner, Section, Spinner, TextInput, Timestamp } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -97,10 +97,18 @@ Vault datasets download page
 		<HeroBanner title="Vault datasets">
 			{#snippet subtitle()}
 				<p>
-					DeFi vault data download. For more information and purchasing a licence, see <a
+					Here you can find the vault information and historical performance datasets for analysis. The data can be read
+					in LLM, Python, Microsoft Excel and other applications. See the <a
 						class="body-link"
 						href={resolve('/pricing')}>pricing page</a
-					>.
+					> for information on how to purchase an API key to unlock professional datasets.
+				</p>
+				<p>
+					Find the <a
+						class="body-link"
+						href="https://tradingstrategy.ai/docs/overview/defi-vault-data.html"
+						rel="external">file and data description here</a
+					>. The page will also have instructions and examples for LLM agents on how to read and process this data.
 				</p>
 			{/snippet}
 		</HeroBanner>
@@ -159,7 +167,9 @@ Vault datasets download page
 				<tbody>
 					{#each data.datasets as row (row.id)}
 						<tr>
-							<td class="plan">{row.free ? 'Free' : 'PRO'}</td>
+							<td class="plan">
+								<DataBadge status={row.free ? 'success' : 'warning'}>{row.free ? 'Free' : 'Pro'}</DataBadge>
+							</td>
 							<td class="name">
 								<strong>{row.name}</strong>
 								<p class="filename">{row.filename}</p>

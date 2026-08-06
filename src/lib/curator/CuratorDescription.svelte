@@ -81,7 +81,7 @@ the vault protocol description widget. Sourced from the top-vaults dataset
 						{#if vaultCount}
 							{#if listingSummary}The current listing contains
 							{:else}{curator.name} has
-							{/if}<strong>{vaultCountLabel}</strong> with
+							{/if}{' '}<strong>{vaultCountLabel}</strong> with
 							<strong>{totalTvlLabel}</strong>{#if averageApyLabel}
 								{' '}and a <strong>{averageApyLabel}</strong> over the last 30 days{/if}.
 						{/if}
