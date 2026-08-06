@@ -1,6 +1,6 @@
 <!--
 @component
-Displays the third-party Xerberus risk assessment for an individual vault.
+Displays the third-party Xerberus risk assessment for a vault or protocol.
 
 Xerberus may rate a vault pool directly or fall back to an assessment of its
 underlying protocol. This distinction is stated in the card so users do not
@@ -18,14 +18,18 @@ mistake protocol coverage for a vault-specific assessment.
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { riskRatingProviders } from './risk-rating-providers';
 	import type { XerberusVault } from './schemas';
+	import type { XerberusProtocolScore } from '$lib/xerberus/protocol-scores';
 	import IconQuestionCircle from '~icons/local/question-circle';
 
 	interface Props {
-		xerberus: XerberusVault;
+		xerberus: XerberusVault | XerberusProtocolScore;
+		context?: 'protocol' | 'vault';
 	}
 
-	let { xerberus }: Props = $props();
-	let isPoolAssessment = $derived(xerberus.entity_type === 'pool');
+	let { xerberus, context = 'vault' }: Props = $props();
+	let score = $derived('entity_type' in xerberus ? xerberus.score : xerberus.score * 100);
+	let reportUrl = $derived('entity_type' in xerberus ? xerberus.report_url : xerberus.url);
+	let isPoolAssessment = $derived('entity_type' in xerberus && xerberus.entity_type === 'pool');
 	let assessmentLabel = $derived(isPoolAssessment ? 'Pool-level' : 'Protocol-level');
 	let assessmentDescription = $derived(
 		isPoolAssessment
@@ -38,11 +42,13 @@ mistake protocol coverage for a vault-specific assessment.
 	<div class="content">
 		<header class="box-header">
 			<img class="xerberus-icon" src={riskRatingProviders.xerberus.logoUrl} alt={riskRatingProviders.xerberus.name} />
-			<div class="score">{formatNumber(xerberus.score, 0, 0)}</div>
+			{#if context !== 'protocol'}
+				<div class="score">{formatNumber(score, 0, 0)}</div>
+			{/if}
 			<h2>Xerberus risk rating</h2>
 		</header>
 
-		<table class="data">
+		<table class="data" class:protocol={context === 'protocol'}>
 			<tbody>
 				<tr>
 					<th>
@@ -56,26 +62,34 @@ mistake protocol coverage for a vault-specific assessment.
 							</svelte:fragment>
 						</Tooltip>
 					</th>
-					<td>{formatNumber(xerberus.score, 0, 0)} / 100</td>
+					<td>{formatNumber(score, 0, 0)} / 100</td>
 				</tr>
-				<tr>
-					<th>Assessment level</th>
-					<td>{assessmentLabel}</td>
-				</tr>
-				<tr>
-					<th>Rated entity</th>
-					<td>{xerberus.name}</td>
-				</tr>
+				{#if context !== 'protocol'}
+					<tr>
+						<th>Assessment level</th>
+						<td>{assessmentLabel}</td>
+					</tr>
+					<tr>
+						<th>Rated entity</th>
+						<td>{xerberus.name}</td>
+					</tr>
+				{/if}
 			</tbody>
 		</table>
 
 		<footer class="footer">
-			<p>{assessmentDescription} Higher is better.</p>
-			{#if xerberus.report_url}
+			{#if context !== 'protocol'}
+				<p>{assessmentDescription}</p>
+			{/if}
+			{#if reportUrl}
 				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-				<a href={xerberus.report_url} target="_blank" rel="noreferrer"
-					>View this {isPoolAssessment ? 'vault' : 'protocol'} rating on Xerberus</a
-				>
+				<a href={reportUrl} target="_blank" rel="noreferrer" class:protocol-link={context === 'protocol'}>
+					{#if context === 'protocol'}
+						<span>View this protocol on Xerberus</span> to understand the protocol risk score.
+					{:else}
+						View this {isPoolAssessment ? 'vault' : 'protocol'} rating on Xerberus
+					{/if}
+				</a>
 			{/if}
 		</footer>
 	</div>
@@ -150,11 +164,33 @@ mistake protocol coverage for a vault-specific assessment.
 		text-decoration: underline;
 		font-weight: 500;
 		color: var(--c-text-light);
+
+		&.protocol-link {
+			text-decoration: none;
+
+			span {
+				text-decoration: underline;
+			}
+		}
 	}
 
 	table.data {
 		width: 100%;
 		border-collapse: collapse;
+
+		&.protocol {
+			width: auto;
+			justify-self: start;
+
+			th,
+			td {
+				text-align: left;
+			}
+
+			th {
+				padding-right: 1rem;
+			}
+		}
 
 		tr {
 			border-top: 1px solid var(--c-box-3);

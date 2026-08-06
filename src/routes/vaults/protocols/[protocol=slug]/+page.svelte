@@ -6,12 +6,13 @@
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import Core3Ratings from '$lib/top-vaults/Core3Ratings.svelte';
+	import XerberusRisk from '$lib/top-vaults/XerberusRisk.svelte';
 	import { JsonLd } from 'svelte-meta-tags';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
 
 	let { data } = $props();
-	let { protocolSlug, protocolName, protocolMetadata, core3, initialTopVaults } = $derived(data);
+	let { protocolSlug, protocolName, protocolMetadata, core3, xerberus, initialTopVaults } = $derived(data);
 	let isUnknownVaultProtocolGroup = $derived(protocolSlug === UNKNOWN_VAULT_PROTOCOL_SLUG);
 	let isHyperliquidProtocolGroup = $derived(protocolSlug === 'hyperliquid');
 	let isApexProtocolGroup = $derived(protocolSlug === 'apex');
@@ -144,6 +145,9 @@
 	{#snippet beforeTable()}
 		{#if core3}
 			<Core3Ratings {core3} {protocolName} collapsible />
+		{/if}
+		{#if xerberus}
+			<XerberusRisk {xerberus} context="protocol" />
 		{/if}
 	{/snippet}
 </TopVaultsPage>

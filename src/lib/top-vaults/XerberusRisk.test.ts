@@ -29,7 +29,7 @@ describe('XerberusRisk', () => {
 		expect(screen.getByAltText('Xerberus')).toHaveAttribute('src', 'https://app.xerberus.io/favicon.ico');
 		expect(screen.getByText('78 / 100')).toBeInTheDocument();
 		expect(screen.getByText('Pool-level')).toBeInTheDocument();
-		expect(screen.getByText('This is a Xerberus risk rating for this vault. Higher is better.')).toBeInTheDocument();
+		expect(screen.getByText('This is a Xerberus risk rating for this vault.')).toBeInTheDocument();
 		expect(screen.getByRole('link', { name: 'View this vault rating on Xerberus' })).toHaveAttribute(
 			'href',
 			'https://app.xerberus.io/pool/dendrogram/example-vault'
@@ -51,7 +51,7 @@ describe('XerberusRisk', () => {
 
 		expect(screen.getByText('Protocol-level')).toBeInTheDocument();
 		expect(
-			screen.getByText('This is a Xerberus risk rating for this vault’s underlying protocol. Higher is better.')
+			screen.getByText('This is a Xerberus risk rating for this vault’s underlying protocol.')
 		).toBeInTheDocument();
 		expect(screen.getByRole('link', { name: 'View this protocol rating on Xerberus' })).toHaveAttribute(
 			'href',
@@ -71,5 +71,31 @@ describe('XerberusRisk', () => {
 		});
 
 		expect(screen.queryByRole('link', { name: /Xerberus/ })).not.toBeInTheDocument();
+	});
+
+	it('renders a protocol score on the 0–100 scale', () => {
+		render(XerberusRisk, {
+			props: {
+				xerberus: {
+					id: 'example-protocol',
+					name: 'Example protocol',
+					score: 0.78,
+					url: 'https://app.xerberus.io/protocol/dendrogram/example-protocol'
+				},
+				context: 'protocol'
+			}
+		});
+
+		expect(screen.getByText('78 / 100')).toBeInTheDocument();
+		expect(
+			screen.queryByText('This is a Xerberus risk rating for this protocol. It applies to all vaults on the protocol.')
+		).not.toBeInTheDocument();
+		expect(screen.queryByText('Higher is better.', { exact: false })).not.toBeInTheDocument();
+		expect(screen.queryByText('Assessment level')).not.toBeInTheDocument();
+		expect(screen.queryByText('Rated entity')).not.toBeInTheDocument();
+		expect(screen.queryByText('78', { exact: true })).not.toBeInTheDocument();
+		expect(
+			screen.getByRole('link', { name: 'View this protocol on Xerberus to understand the protocol risk score.' })
+		).toHaveAttribute('href', 'https://app.xerberus.io/protocol/dendrogram/example-protocol');
 	});
 });
