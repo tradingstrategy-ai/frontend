@@ -8,7 +8,7 @@
 	let topVaults = $derived(data.initialTopVaults);
 
 	const title = 'Top DeFi stablecoin vaults';
-	const description = 'The best DeFi vaults for all blockchains.';
+	const description = 'Vaults rankings with the highest yield and the lowest risk.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
