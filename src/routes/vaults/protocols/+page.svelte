@@ -7,6 +7,7 @@
 	import Section from '$lib/components/Section.svelte';
 	import VaultGroupTable from '$lib/top-vaults/VaultGroupTable.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
+	import { riskRatingProviders } from '$lib/top-vaults/risk-rating-providers';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 	import { JsonLd } from 'svelte-meta-tags';
@@ -80,6 +81,19 @@
 								<a class="body-link" href={glossaryLinks.apy}>APY</a>
 								represents the yield of the last thirty days.
 							</p>
+							<p>
+								Risk ratings from
+								<a class="risk-rating-link" href={resolve('/vaults/core3-ratings')}>
+									<img src={riskRatingProviders.core3.logoUrl} alt="" />
+									<span>CORE3</span>
+								</a>
+								and
+								<a class="risk-rating-link" href={resolve('/vaults/xerberus-ratings')}>
+									<img src={riskRatingProviders.xerberus.logoUrl} alt="" />
+									<span>Xerberus</span>
+								</a>
+								are provided.
+							</p>
 							<p>{totalTvlLabel} TVL tracked across {protocols.length} protocols.</p>
 						{/snippet}
 					</HeroBanner>
@@ -142,6 +156,23 @@
 
 		.chart-column :global(.market-share-pie-chart) {
 			align-self: stretch;
+		}
+
+		.risk-rating-link {
+			text-decoration: none;
+
+			span {
+				text-decoration: underline;
+			}
+
+			img {
+				display: inline-block;
+				width: 1em;
+				height: 1em;
+				margin-right: 0.25em;
+				object-fit: contain;
+				vertical-align: -0.1em;
+			}
 		}
 
 		@media (--viewport-sm-down) {
