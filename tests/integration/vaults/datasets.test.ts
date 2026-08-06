@@ -19,6 +19,13 @@ test.describe('vault datasets page', () => {
 		await expect(page).toHaveTitle('Vault data');
 	});
 
+	test('links to the vault file and data description', async ({ page }) => {
+		await expect(page.getByRole('link', { name: 'file and data description here' })).toHaveAttribute(
+			'href',
+			'https://tradingstrategy.ai/docs/overview/defi-vault-data.html'
+		);
+	});
+
 	test('shows dataset catalogue table with all expected columns', async ({ page }) => {
 		for (const col of ['Plan', 'Name', 'Description', 'Format', 'Size', 'Last updated', 'Links']) {
 			await expect(page.getByRole('columnheader', { name: col })).toBeVisible();
@@ -33,6 +40,11 @@ test.describe('vault datasets page', () => {
 	test('lists free sample datasets', async ({ page }) => {
 		await expect(page.getByText('Vault metadata (sample)', { exact: true })).toBeVisible();
 		await expect(page.getByText('Vault prices (sample)', { exact: true })).toBeVisible();
+	});
+
+	test('marks Free and Pro datasets with coloured badges', async ({ page }) => {
+		await expect(page.locator('td.plan .data-badge.success').first()).toHaveText('Free');
+		await expect(page.locator('td.plan .data-badge.warning').first()).toHaveText('Pro');
 	});
 
 	test('shows expected filenames in dataset table', async ({ page }) => {

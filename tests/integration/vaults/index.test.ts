@@ -110,7 +110,7 @@ test.describe('vault index page', () => {
 
 		await expect(primaryFilters.getByText('Technical risk', { exact: true })).toBeVisible();
 		await expect(primaryFilters.getByText('Hide undepositable', { exact: true })).toBeVisible();
-		await expect(primaryFilters.getByTestId('vault-search')).toBeVisible();
+		await expect(primaryFilters.getByTestId('vault-search')).toHaveCount(0);
 		await expect(page.locator('.filters-content').getByText('Min TVL')).toBeVisible();
 		await expect(page.locator('.filters-content').getByText('Age', { exact: true })).toBeVisible();
 		await expect(page.locator('.filters-content').getByText('Max drawdown')).toBeVisible();
@@ -171,7 +171,7 @@ test.describe('vault index page', () => {
 
 		await expect(mobileFiltersTrigger).toHaveAttribute('aria-expanded', 'true');
 		await expect(primaryFilters.getByText('Technical risk', { exact: true })).toBeVisible();
-		await expect(primaryFilters.getByTestId('vault-search')).toBeVisible();
+		await expect(primaryFilters.getByTestId('vault-search')).toHaveCount(0);
 		await expect(page.locator('.filters-content').getByText('Min TVL')).toBeVisible();
 		await expect(page.getByTestId('filters-summary')).not.toBeVisible();
 	});
@@ -338,11 +338,9 @@ test.describe('vault index page', () => {
 		await expect(sentinel).not.toBeVisible();
 	});
 
-	test('search filters displayed vaults', async ({ page }) => {
-		await openFilters(page);
-		const vaultSearch = page.getByTestId('vault-search');
+	test('applies text searches from the URL', async ({ page }) => {
+		await page.goto('/vaults?q=Above%20TVL%20042');
 		const rows = page.locator('tbody tr.targetable');
-		await vaultSearch.pressSequentially('Above TVL 042');
 		await expect(rows).toHaveCount(1);
 	});
 
@@ -513,9 +511,7 @@ test.describe('vault index page', () => {
 	});
 
 	test('marks private vaults and explains their whitelist status', async ({ page }) => {
-		await page.goto('/vaults/all');
-		await openFilters(page);
-		await page.getByTestId('vault-search').fill('Private vault');
+		await page.goto('/vaults/all?q=Private%20vault');
 
 		const cell = page.locator('tbody tr.targetable').filter({ hasText: 'Private vault' }).locator('td.lockup');
 		await expect(cell).toContainText('Private');
@@ -534,9 +530,7 @@ test.describe('vault index page', () => {
 			'Whitelist checks are handled by the vault'
 		);
 
-		await page.goto('/vaults/all');
-		await openFilters(page);
-		await page.getByTestId('vault-search').fill('Private tokenised fund');
+		await page.goto('/vaults/all?q=Private%20tokenised%20fund');
 		const fundCell = page
 			.locator('tbody tr.targetable')
 			.filter({ hasText: 'Private tokenised fund' })
@@ -547,9 +541,7 @@ test.describe('vault index page', () => {
 	});
 
 	test('shows capped instead of an unknown deposit delay when a vault has reached its cap', async ({ page }) => {
-		await page.goto('/vaults/all');
-		await openFilters(page);
-		await page.getByTestId('vault-search').fill('Deposit cap reached vault');
+		await page.goto('/vaults/all?q=Deposit%20cap%20reached%20vault');
 
 		const cell = page
 			.locator('tbody tr.targetable')
