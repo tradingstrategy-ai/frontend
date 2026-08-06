@@ -43,6 +43,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		notFilledMarker
 	} from '$lib/helpers/formatters';
 	import { isStablecoinDepegged } from '$lib/stablecoin-metadata/helpers';
+	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers';
 	import {
 		DEFAULT_TVL_KEY,
 		DEFAULT_TVL_THRESHOLD,
@@ -1249,6 +1250,9 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 					{@const isCapped = isVaultDepositCapped(vault)}
 					{@const depositStatusLabel = isTokenisedFund ? 'Fund' : 'Private'}
 					{@const protocolName = getVaultProtocolDisplayName(vault)}
+					{@const curatorLogos = vault.curator_slug ? topVaults.curators[vault.curator_slug]?.logos : undefined}
+					{@const curatorLogoUrl = curatorLogos?.generic ?? curatorLogos?.light ?? curatorLogos?.dark}
+					{@const vaultLogoUrl = curatorLogoUrl ?? getVaultProtocolLogoUrl(vault.protocol_slug)}
 					{@const statusReason = [vault.deposit_closed_reason, vault.redemption_closed_reason]
 						.filter(Boolean)
 						.join('; ')}
@@ -1261,11 +1265,16 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 							</td>
 						{/if}
 						<td class="vault">
-							<div class="multiline">
-								<strong>{vault.name}</strong>
-								{#if protocolName}
-									<span class="secondary">{protocolName}</span>
+							<div class="vault-identity">
+								{#if !showChainCol && vaultLogoUrl}
+									<img class="vault-logo" src={vaultLogoUrl} alt="" />
 								{/if}
+								<div class="multiline">
+									<strong>{vault.name}</strong>
+									{#if protocolName}
+										<span class="secondary">{protocolName}</span>
+									{/if}
+								</div>
 							</div>
 						</td>
 						{#if showProviderRiskRating}
@@ -1928,6 +1937,19 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 				@media (--viewport-sm-down) {
 					width: 10rem;
 					max-width: 10rem;
+				}
+
+				.vault-identity {
+					display: flex;
+					align-items: center;
+					gap: 0.5rem;
+				}
+
+				.vault-logo {
+					width: 1.5rem;
+					height: 1.5rem;
+					flex: none;
+					object-fit: contain;
 				}
 			}
 

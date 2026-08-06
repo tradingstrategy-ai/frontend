@@ -1,5 +1,6 @@
 import { cleanup, render, screen } from '@testing-library/svelte';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { getChain } from '$lib/helpers/chain';
 import TopVaultsTable from './TopVaultsTable.svelte';
 import { createTestVault } from './test-utils';
 
@@ -13,6 +14,10 @@ vi.stubGlobal(
 		disconnect() {}
 	}
 );
+
+vi.mock('$lib/vault-protocol/helpers', () => ({
+	getVaultProtocolLogoUrl: (slug: string) => `https://example.com/protocol/${slug}.svg`
+}));
 
 function getRenderedVaultNames() {
 	return Array.from(document.querySelectorAll('tbody tr td.vault strong')).map((element) => element.textContent);
@@ -101,5 +106,48 @@ describe('TopVaultsTable risk rating column', () => {
 		expect(getRenderedVaultNames()).toEqual(['Safer Xerberus vault', 'Riskier Xerberus vault']);
 		expect(screen.getByText('91')).toBeInTheDocument();
 		expect(screen.getAllByText(/Xerberus scored this vault directly/)).toHaveLength(2);
+	});
+
+	it('uses curator logos before protocol logos when a chain column is hidden', () => {
+		const curatorVault = createTestVault('Curated vault', {
+			chain: 'arbitrum',
+			protocol: 'Aave',
+			curator_slug: 'curator'
+		});
+		const protocolVault = createTestVault('Protocol vault', { chain: 'arbitrum', protocol: 'Aave' });
+
+		render(TopVaultsTable, {
+			props: {
+				topVaults: {
+					generated_at: '2026-07-30T11:30:40Z',
+					vaults: [curatorVault, protocolVault],
+					core3_protocols: {},
+					curators: {
+						curator: {
+							slug: 'curator',
+							name: 'Example curator',
+							website: null,
+							twitter: null,
+							linkedin: null,
+							rss: null,
+							protocol_curator: false,
+							canonical_feeder_id: null,
+							logos: { generic: 'https://example.com/curator-logo.svg', light: null, dark: null },
+							recent_posts: []
+						}
+					}
+				},
+				chain: getChain('arbitrum')!
+			}
+		});
+
+		const curatorLogo = screen.getByText('Curated vault').closest('td')?.querySelector<HTMLImageElement>('.vault-logo');
+		const protocolLogo = screen
+			.getByText('Protocol vault')
+			.closest('td')
+			?.querySelector<HTMLImageElement>('.vault-logo');
+
+		expect(curatorLogo?.src).toBe('https://example.com/curator-logo.svg');
+		expect(protocolLogo?.src).toBe('https://example.com/protocol/aave.svg');
 	});
 });
