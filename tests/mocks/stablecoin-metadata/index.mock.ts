@@ -154,6 +154,35 @@ export const mockStablecoins: StablecoinMetadata[] = [
 		rate_fetch_failed_at: null,
 		rate_fetch_failed_reason: null,
 		depegged_at: '2026-06-26T12:15:26'
+	},
+	{
+		symbol: 'AUSD',
+		slug: 'ausd',
+		name: 'Acala Dollar',
+		short_description: 'Acala Dollar is a decentralised stablecoin.',
+		description: 'Acala Dollar is a decentralised stablecoin.',
+		category: 'stablecoin',
+		links: {
+			homepage: 'https://acala.network/',
+			coingecko: null,
+			defillama: 'https://defillama.com/stablecoin/acala-dollar',
+			twitter: null
+		},
+		logos: {
+			light: 'http://localhost:4173/api/stablecoin-metadata/ausd/light.png'
+		},
+		coingecko_id: null,
+		coingecko_link: null,
+		coingecko_id_source: null,
+		coingecko_id_verified_at: null,
+		usd_rate: null,
+		usd_rate_fetched_at: null,
+		usd_rate_updated_at: null,
+		peg_rate: null,
+		peg_rate_currency: null,
+		rate_fetch_failed_at: '2026-06-26T12:16:16',
+		rate_fetch_failed_reason: 'missing_coingecko_id',
+		depegged_at: '2026-06-26T12:15:26'
 	}
 ];
 

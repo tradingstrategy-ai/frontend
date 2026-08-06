@@ -12,6 +12,7 @@ import {
 	getLockupDescription,
 	getFormattedLockup,
 	getLockupTooltip,
+	isVaultDepositCapped,
 	getFormattedFeeMode,
 	getFeeModeLabel,
 	getFeeModeDescription,
@@ -587,6 +588,30 @@ describe('getFormattedLockup', () => {
 	test('uses abbreviated unit for 1 unit', () => {
 		const vault = createTestVault('Test vault', { lockup: 60 }); // 1 minute
 		expect(getFormattedLockup(vault)).toBe('1m');
+	});
+});
+
+describe('isVaultDepositCapped', () => {
+	test('does not infer a cap from a Royco tranche feature', () => {
+		const vault = createTestVault('Royco tranche', { features: ['royco_tranche_like'] });
+		expect(isVaultDepositCapped(vault)).toBe(false);
+	});
+
+	test('recognises the standard cap-reached deposit reason as capped', () => {
+		const vault = createTestVault('Capacity reached', {
+			deposit_closed_reason: 'Max deposit cap reached (maxDeposit=0)'
+		});
+		expect(isVaultDepositCapped(vault)).toBe(true);
+	});
+
+	test('recognises the equivalent Upshift depositCap reason as capped', () => {
+		const vault = createTestVault('Upshift capped', { deposit_closed_reason: 'Upshift depositCap() has been reached' });
+		expect(isVaultDepositCapped(vault)).toBe(true);
+	});
+
+	test('does not treat a general deposit pause as a capacity cap', () => {
+		const vault = createTestVault('Paused deposits', { deposit_closed_reason: 'Deposits paused' });
+		expect(isVaultDepositCapped(vault)).toBe(false);
 	});
 });
 

@@ -305,6 +305,19 @@ export function isGoodVaultStatus(vault: VaultInfo): boolean {
 }
 
 /**
+ * Whether a vault is no longer accepting deposits because its capacity is full.
+ *
+ * The upstream export expresses this through the human-readable deposit-closed
+ * reason. Accept both its standard wording and the equivalent camel-case
+ * `depositCap()` form emitted by Upshift.
+ *
+ * @param vault vault operational metadata
+ */
+export function isVaultDepositCapped(vault: Pick<VaultInfo, 'deposit_closed_reason'>): boolean {
+	return /deposit\s*cap(?:\(\))?\s+(?:has\s+been\s+)?reached/i.test(vault.deposit_closed_reason ?? '');
+}
+
+/**
  * Check if vault meets minimum TVL threshold
  */
 export function meetsMinTvl(vault: Pick<VaultInfo, 'current_nav'>, threshold = MIN_TVL_THRESHOLD) {

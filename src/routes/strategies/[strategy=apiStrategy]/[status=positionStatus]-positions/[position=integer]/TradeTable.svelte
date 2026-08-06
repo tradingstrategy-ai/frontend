@@ -71,7 +71,7 @@
 </script>
 
 <section class="trade-table">
-	<h2>Rebalances</h2>
+	<h2>Trades</h2>
 	<DataTable {tableViewModel} targetableRows size="sm" />
 </section>
 

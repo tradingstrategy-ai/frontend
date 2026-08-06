@@ -1,3 +1,7 @@
+<!--
+@component
+Displays a vault's heading, external link, update action, and important operational warnings.
+-->
 <script lang="ts">
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import Alert from '$lib/components/Alert.svelte';
@@ -51,6 +55,15 @@
 	</div>
 {/if}
 
+{#if vault.flags.includes('long_duration')}
+	<div class="long-duration-warning ds-container">
+		<Alert size="md" status="error">
+			This vault may have especially long duration redemption periods. Make sure you check the redemptions before
+			depositing.
+		</Alert>
+	</div>
+{/if}
+
 {#if vault.short_description}
 	<p class="vault-description ds-container">{vault.short_description}</p>
 {/if}
@@ -80,7 +93,11 @@
 	}
 
 	.vault-tvl-warning {
-		margin-top: 1rem;
+		margin-top: var(--space-md);
+	}
+
+	.long-duration-warning {
+		margin-top: var(--space-md);
 	}
 
 	.page-title {

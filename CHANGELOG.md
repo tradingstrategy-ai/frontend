@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Show HyperAI's GuardV0 automated deposit and redemption settlement limit (2026-08-05)
 - Add a whitelisted vault ranking for permissioned deposits (2026-08-03)
 - Consolidate vault listing controls into a persistent Filters disclosure (2026-08-01)
 - Add Xerberus protocol scores and tooltips to the vault protocol listing, and fix curator description spacing (2026-08-01)

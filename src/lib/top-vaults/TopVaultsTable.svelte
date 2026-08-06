@@ -64,6 +64,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		getVaultTvlNative,
 		hasSupportedProtocol,
 		isBlacklisted,
+		isVaultDepositCapped,
 		isGoodVaultStatus,
 		monthlyReturnFilterOptions,
 		rankVaultsBy,
@@ -1245,6 +1246,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 					{@const badStatus = !isGoodVaultStatus(vault)}
 					{@const isPrivate = vault.whitelist?.status === 'whitelisted'}
 					{@const isTokenisedFund = vault.flags.includes('tokenised_fund')}
+					{@const isCapped = isVaultDepositCapped(vault)}
 					{@const depositStatusLabel = isTokenisedFund ? 'Fund' : 'Private'}
 					{@const protocolName = getVaultProtocolDisplayName(vault)}
 					{@const statusReason = [vault.deposit_closed_reason, vault.redemption_closed_reason]
@@ -1311,7 +1313,18 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 							<FeesCell mgmt_fee={vault.mgmt_fee} perf_fee={vault.perf_fee} />
 						</td>
 						<td class={['lockup', vault.lockup === null && 'unknown', isPrivate && 'private']}>
-							{#if isPrivate}
+							{#if isCapped}
+								<Tooltip>
+									<svelte:fragment slot="trigger">
+										<span class="status-wrapper">
+											<IconStop />Capped
+										</span>
+									</svelte:fragment>
+									<svelte:fragment slot="popup"
+										>This vault has reached its deposit cap. {getLockupDescription(vault)}</svelte:fragment
+									>
+								</Tooltip>
+							{:else if isPrivate}
 								<Tooltip>
 									<svelte:fragment slot="trigger">
 										<span class="status-wrapper">

@@ -250,7 +250,7 @@ test.describe('vault index page', () => {
 
 		const rows = page.locator('tbody tr.targetable');
 		await expect(rows).toHaveCount(2);
-		await expect(rows.first()).toContainText('Private vault');
+		await expect(rows.filter({ hasText: 'Private vault' })).toHaveCount(1);
 		await expect(rows.locator('td.lockup').filter({ hasText: 'Private' })).toHaveCount(1);
 		await expect(rows.locator('td.lockup').filter({ hasText: 'Fund' })).toHaveCount(1);
 		await expect(page.locator('h1')).toHaveText('Whitelisted stablecoin vaults');
@@ -480,6 +480,14 @@ test.describe('vault index page', () => {
 		await expect(alert).toContainText('Deposit disabled vault is a tokenised fund');
 	});
 
+	test('does not show deposits as open when a vault capacity is reached', async ({ page }) => {
+		await page.goto('/vaults/deposit-cap-reached-vault');
+
+		const transactionStatus = page.locator('.transaction-status');
+		await expect(transactionStatus).toContainText('Deposits Capped');
+		await expect(transactionStatus).not.toContainText('Deposits Open');
+	});
+
 	test('warns when withdrawals may be disabled on a vault detail page', async ({ page }) => {
 		await page.goto('/vaults/withdrawal-disabled-vault');
 
@@ -494,6 +502,14 @@ test.describe('vault index page', () => {
 		const alert = page.locator('.alert-list.warning').first();
 		await expect(alert).toBeVisible();
 		await expect(alert).toContainText('Deposits and withdrawals may be disabled for this vault');
+	});
+
+	test('retains a withdrawal warning when a vault deposit cap is reached', async ({ page }) => {
+		await page.goto('/vaults/capped-and-withdrawal-disabled-vault');
+
+		const alert = page.locator('.alert-list.warning').first();
+		await expect(alert).toBeVisible();
+		await expect(alert).toContainText('Deposits are capped and withdrawals may be disabled for this vault');
 	});
 
 	test('marks private vaults and explains their whitelist status', async ({ page }) => {
@@ -528,6 +544,19 @@ test.describe('vault index page', () => {
 		await expect(fundCell).toContainText('Fund');
 		await expect(fundCell).not.toContainText('Private');
 		await expect(fundCell).not.toContainText('Unknown');
+	});
+
+	test('shows capped instead of an unknown deposit delay when a vault has reached its cap', async ({ page }) => {
+		await page.goto('/vaults/all');
+		await openFilters(page);
+		await page.getByTestId('vault-search').fill('Deposit cap reached vault');
+
+		const cell = page
+			.locator('tbody tr.targetable')
+			.filter({ hasText: 'Deposit cap reached vault' })
+			.locator('td.lockup');
+		await expect(cell).toContainText('Capped');
+		await expect(cell).not.toContainText('Unknown');
 	});
 
 	test('shows the tokenised-fund disclaimer instead of the permissioned warning', async ({ page }) => {

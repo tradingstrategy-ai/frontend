@@ -58,6 +58,15 @@ Each vault may include a `whitelist` object that records whether deposits are pu
 
 The frontend treats unrecognised source values as `unknown`, and preserves optional `whitelist.notes` in the vault's Technical details table.
 
+#### Deposit availability and capacity
+
+`deposit_closed_reason` is the source of truth for whether deposits may be unavailable. The listing and vault detail page show the source message in Technical details. For a compact status label, the frontend displays **Capped** only when the reason contains a case-insensitive `deposit cap ... reached` confirmation. This recognises the current standard and Upshift forms:
+
+- `Max deposit cap reached (maxDeposit=0)`; or
+- the equivalent Upshift wording, `depositCap() has been reached`.
+
+Other reasons, including high utilisation or permissioning, remain their source-provided status rather than being inferred as a cap.
+
 ### Vault prices parquet
 
 **Code:** `src/lib/top-vaults/vault-prices-parquet.ts` → `ensureVaultPricesParquet()`

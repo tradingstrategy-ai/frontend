@@ -1,3 +1,7 @@
+<!--
+@component
+Summary metrics for an individual strategy position.
+-->
 <script lang="ts">
 	import type { TradingPositionInfo } from 'trade-executor/models/position-info';
 	import { positionTooltips } from 'trade-executor/models/position-tooltips';
@@ -6,6 +10,7 @@
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import {
 		formatDuration,
+		formatNumber,
 		formatPercent,
 		formatPrice,
 		formatTokenAmount,
@@ -27,6 +32,7 @@
 	let currentPrice = $derived(position.stillOpen ? position.currentPrice : position.closePrice);
 	let currentQuantity = $derived(position.stillOpen ? position.currentQuantity : position.quantityAtClose);
 	let currentValue = $derived(position.stillOpen ? position.currentValue : position.valueAtClose);
+	let rebalanceCount = $derived(position.rebalanceCount);
 
 	const changeOptions: Intl.NumberFormatOptions = { signDisplay: 'exceptZero' };
 </script>
@@ -262,6 +268,18 @@
 						{notFilledMarker}
 					{/if}
 				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<Tooltip>
+						<span slot="trigger" class="underline">Number of rebalances</span>
+						<span slot="popup">{positionTooltips.rebalanceCount}</span>
+					</Tooltip>
+				</td>
+				<td></td>
+				<td></td>
+				<td>{formatNumber(rebalanceCount, 0)}</td>
 			</tr>
 		</tbody>
 	</table>

@@ -1,8 +1,12 @@
+<!--
+Strategy overview dashboard.
+-->
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
 	import MyDeposits from '$lib/wallet/MyDeposits.svelte';
 	import SummaryMetrics from './SummaryMetrics.svelte';
 	import StrategyPerformanceChart from './StrategyPerformanceChart.svelte';
+	import LagoonGuardV0Flow from 'trade-executor/components/LagoonGuardV0Flow.svelte';
 	import { getMetricsWithAltCAGR } from 'trade-executor/helpers/metrics';
 	import { getExchangeAccountInfo } from 'trade-executor/helpers/exchange-account';
 
@@ -40,7 +44,11 @@
 		{/if}
 	</div>
 	<StrategyPerformanceChart {strategy} />
-	<SummaryMetrics {keyMetrics} {backtestLink} hideTimeframes={strategy.hiddenElements.timeframes} />
+	<SummaryMetrics {keyMetrics} {backtestLink} hideTimeframes={strategy.hiddenElements.timeframes}>
+		{#if strategy.on_chain_data.asset_management_mode === 'lagoon'}
+			<LagoonGuardV0Flow guard={strategy.on_chain_data.smart_contracts.lagoon_guard_v0} />
+		{/if}
+	</SummaryMetrics>
 </div>
 
 <style>
@@ -65,6 +73,11 @@
 				margin: 0;
 			}
 
+			p {
+				color: var(--c-text-extra-light);
+				font: var(--f-ui-md-medium);
+				letter-spacing: var(--ls-ui-md);
+			}
 			h2 {
 				display: flex;
 				gap: 0.75rem;
@@ -77,12 +90,6 @@
 					border-radius: 999px;
 					flex: 0 0 auto;
 				}
-			}
-
-			p {
-				color: var(--c-text-extra-light);
-				font: var(--f-ui-md-medium);
-				letter-spacing: var(--ls-ui-md);
 			}
 
 			:global(.button) {
