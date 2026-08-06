@@ -29,6 +29,7 @@ import {
 	getVaultDenominationUsdRate,
 	getVaultPeakTvlUsd,
 	getVaultTvlNative,
+	isVaultTvlDownMoreThan95Percent,
 	getXerberusScoreBand,
 	getXerberusScoreColour,
 	isNonUsdDenominatedVault,
@@ -530,6 +531,26 @@ describe('denomination TVL conversion', () => {
 		expect(enrichedVault.denomination_token_rate?.usd_rate).toBe(1.14);
 		expect(getVaultCurrentTvlUsd(enrichedVault)).toBeCloseTo(114_000);
 		expect(getVaultPeakTvlUsd(enrichedVault)).toBeCloseTo(136_800);
+	});
+});
+
+describe('isVaultTvlDownMoreThan95Percent', () => {
+	test('returns true when current TVL is more than 95% below the historical peak', () => {
+		const vault = createTestVault('Collapsed vault', { current_nav: 4_999, peak_nav: 100_000 });
+
+		expect(isVaultTvlDownMoreThan95Percent(vault)).toBe(true);
+	});
+
+	test('does not return true at the 95% boundary or when TVL data is unusable', () => {
+		expect(
+			isVaultTvlDownMoreThan95Percent(createTestVault('Boundary vault', { current_nav: 5_000, peak_nav: 100_000 }))
+		).toBe(false);
+		expect(
+			isVaultTvlDownMoreThan95Percent(createTestVault('No peak vault', { current_nav: 1_000, peak_nav: null }))
+		).toBe(false);
+		expect(isVaultTvlDownMoreThan95Percent(createTestVault('Zero peak vault', { current_nav: 0, peak_nav: 0 }))).toBe(
+			false
+		);
 	});
 });
 

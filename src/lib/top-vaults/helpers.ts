@@ -553,6 +553,23 @@ export function getVaultPeakTvlUsd(vault: VaultWithPeakNavAndRate): number | nul
 	return usdRate == null ? null : vault.peak_nav * usdRate;
 }
 
+/**
+ * Whether the current TVL is more than 95% below the vault's historical peak.
+ */
+export function isVaultTvlDownMoreThan95Percent(vault: Pick<VaultInfo, 'current_nav' | 'peak_nav'>): boolean {
+	const { current_nav: currentNav, peak_nav: peakNav } = vault;
+
+	return (
+		currentNav != null &&
+		peakNav != null &&
+		Number.isFinite(currentNav) &&
+		Number.isFinite(peakNav) &&
+		currentNav >= 0 &&
+		peakNav > 0 &&
+		currentNav / peakNav < 0.05
+	);
+}
+
 const DEFAULT_DETAIL_RISK_FILTER = riskFilterOptions[1];
 
 /**

@@ -8,7 +8,11 @@ Displays a vault's heading, external link, update action, and important operatio
 	import Button from '$lib/components/Button.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import UpdateInfoButton from '$lib/top-vaults/UpdateInfoButton.svelte';
-	import { getVaultProtocolDisplayName, hasSupportedProtocol } from '$lib/top-vaults/helpers';
+	import {
+		getVaultProtocolDisplayName,
+		hasSupportedProtocol,
+		isVaultTvlDownMoreThan95Percent
+	} from '$lib/top-vaults/helpers';
 
 	interface Props {
 		vault: VaultInfo;
@@ -21,6 +25,7 @@ Displays a vault's heading, external link, update action, and important operatio
 		if (vault.link) return new URL(vault.link).host;
 	});
 	let hideCtaOnMobile = $derived(externalSiteName === 'Ostium');
+	let showTvlWarning = $derived(isVaultTvlDownMoreThan95Percent(vault));
 </script>
 
 <PageHeader>
@@ -41,6 +46,14 @@ Displays a vault's heading, external link, update action, and important operatio
 		</span>
 	{/snippet}
 </PageHeader>
+
+{#if showTvlWarning}
+	<div class="vault-tvl-warning ds-container">
+		<Alert size="md" status="warning">
+			The value in this vault is down more than 95% of its peak. The vault is likely abandoned or facing issues.
+		</Alert>
+	</div>
+{/if}
 
 {#if vault.flags.includes('long_duration')}
 	<div class="long-duration-warning ds-container">
@@ -77,6 +90,10 @@ Displays a vault's heading, external link, update action, and important operatio
 		@media (--viewport-md-up) {
 			margin-top: 1rem;
 		}
+	}
+
+	.vault-tvl-warning {
+		margin-top: var(--space-md);
 	}
 
 	.long-duration-warning {
