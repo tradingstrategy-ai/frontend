@@ -4,7 +4,6 @@ Conversion-focused pricing page for professional DeFi vault market data.
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Button, Tooltip } from '$lib/components';
-	import { pricingCheckoutUrl, creemCheckoutUrl } from '$lib/config';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import IconCheck from '~icons/local/check-circle-gradient';
 
@@ -33,7 +32,7 @@ Conversion-focused pricing page for professional DeFi vault market data.
 	});
 
 	const docsUrl = 'https://tradingstrategy.ai/docs/overview/defi-vault-data.html';
-	const checkoutUrl = pricingCheckoutUrl || creemCheckoutUrl;
+	const checkoutUrl = 'https://www.creem.io/payment/prod_53PolewYVyya9lOWDQME1k';
 
 	const audiences = [
 		{
