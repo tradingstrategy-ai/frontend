@@ -6,7 +6,7 @@
  *
  */
 import { z } from 'zod';
-import { count, unixTimestamp } from './utility-types';
+import { count, unixTimestamp, usDollarAmount } from './utility-types';
 import { portfolioSchema } from './portfolio';
 import { statisticsSchema } from './statistics';
 
@@ -16,6 +16,21 @@ export const backtestDataSchema = z.object({
 	decision_cycle_duration: z.string()
 });
 
+export const treasurySyncSchema = z
+	.object({
+		pending_deposits: usDollarAmount.nullish(),
+		pending_redemptions: usDollarAmount.nullish()
+	})
+	.passthrough();
+export type TreasurySync = z.infer<typeof treasurySyncSchema>;
+
+export const syncSchema = z
+	.object({
+		treasury: treasurySyncSchema.nullish()
+	})
+	.passthrough();
+export type Sync = z.infer<typeof syncSchema>;
+
 export const stateSchema = z.object({
 	created_at: unixTimestamp,
 	last_updated_at: unixTimestamp.nullish(),
@@ -24,10 +39,10 @@ export const stateSchema = z.object({
 	portfolio: portfolioSchema,
 	stats: statisticsSchema,
 	asset_blacklist: z.string().array(),
-	// skipping visualisation, uptime and sync types for now
+	sync: syncSchema.nullish(),
+	// skipping visualisation and uptime types for now
 	// visualisation: visualisation,
 	// uptime: uptime,
-	// sync: sync
 	backtest_data: backtestDataSchema.nullish()
 });
 export type State = z.infer<typeof stateSchema>;

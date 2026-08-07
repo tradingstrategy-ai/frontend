@@ -46,7 +46,10 @@ Strategy overview dashboard.
 	<StrategyPerformanceChart {strategy} />
 	<SummaryMetrics {keyMetrics} {backtestLink} hideTimeframes={strategy.hiddenElements.timeframes}>
 		{#if strategy.on_chain_data.asset_management_mode === 'lagoon'}
-			<LagoonGuardV0Flow guard={strategy.on_chain_data.smart_contracts.lagoon_guard_v0} />
+			<LagoonGuardV0Flow
+				guard={strategy.on_chain_data.smart_contracts.lagoon_guard_v0}
+				treasuryPromise={data.deferred.state.then((state) => state?.sync?.treasury)}
+			/>
 		{/if}
 	</SummaryMetrics>
 </div>
