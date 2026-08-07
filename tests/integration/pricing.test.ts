@@ -6,43 +6,44 @@ test.describe('pricing page', () => {
 	});
 
 	test('renders with correct title', async ({ page }) => {
-		await expect(page).toHaveTitle('DeFi vault API and datasets');
+		await expect(page).toHaveTitle('DeFi vault market data pricing | Trading Strategy');
 	});
 
 	test('renders with correct meta description', async ({ page }) => {
 		await expect(page.locator('meta[name="description"]')).toHaveAttribute(
 			'content',
-			'Download datasets for vault analysis'
+			'Normalised historical returns, TVL, liquidity, fees and risk metrics for DeFi vault research, backtesting and automated data workflows.'
 		);
 	});
 
 	test('renders with correct in-page title', async ({ page }) => {
-		await expect(page.getByRole('heading', { name: 'Professional vault data analytics' })).toBeVisible();
+		await expect(page.getByRole('heading', { name: 'Build better DeFi vault allocation strategies' })).toBeVisible();
 	});
 
 	test('shows Free and Pro tier cards', async ({ page }) => {
-		await expect(page.getByRole('heading', { name: 'Free' })).toBeVisible();
-		await expect(page.getByRole('heading', { name: 'Pro', exact: true })).toBeVisible();
+		const plans = page.locator('#plans');
+		await expect(plans.getByText('Free', { exact: true })).toBeVisible();
+		await expect(plans.getByText('Pro', { exact: true })).toBeVisible();
 	});
 
 	test('Pro tier shows $199/month price', async ({ page }) => {
-		await expect(page.getByText('$199/month')).toBeVisible();
+		await expect(page.locator('#plans').getByRole('heading', { name: /\$199\s*\/\s*month/ })).toBeVisible();
 	});
 
-	test('Subscribe button links to pricing checkout', async ({ page }) => {
-		const btn = page.getByRole('link', { name: 'Subscribe' });
+	test('Start Pro button links to pricing checkout', async ({ page }) => {
+		const btn = page.locator('#plans').getByRole('link', { name: 'Start Pro — $199/month' });
 		await expect(btn).toBeVisible();
 		const href = await btn.getAttribute('href');
 		expect(href).toContain('https://www.marketsoftware.co/');
 	});
 
-	test('Download button navigates to vault datasets page', async ({ page }) => {
-		await page.getByRole('link', { name: 'Download' }).click();
+	test('Download free sample button navigates to vault datasets page', async ({ page }) => {
+		await page.locator('.hero-actions').getByRole('link', { name: 'Download free sample' }).click();
 		await expect(page).toHaveURL('/vaults/datasets');
 	});
 
-	test('shows feature comparison table', async ({ page }) => {
-		await expect(page.getByRole('heading', { name: 'Feature comparison' })).toBeVisible();
+	test('shows plan comparison table', async ({ page }) => {
+		await expect(page.getByRole('heading', { name: 'What changes when you move to Pro' })).toBeVisible();
 	});
 
 	test('lists DEX price data row linking to backtesting', async ({ page }) => {
