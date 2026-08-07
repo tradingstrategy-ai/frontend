@@ -1,53 +1,50 @@
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import { dirname } from 'node:path';
+import { dev } from '$app/environment';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
+import { calculateTotalTvl, isEligibleFrontpageVault, meetsMinTvl } from '$lib/top-vaults/helpers';
+import { topVaultsSchema, type TopVaults } from '$lib/top-vaults/schemas';
 
-const STATS_CACHE_PATH = 'data/pricing-stats.json';
-const CACHE_TTL_MS = 7 * 7 * 24 * 60 * 60 * 1000; // 7 weeks
+const LIVE_TOP_VAULTS_URL = 'https://tradingstrategy.ai/top-vaults/all-data';
 
 interface PricingStats {
 	chains: number;
 	protocols: number;
 	stablecoinVaults: number;
-	cachedAt: number;
+	trackedTvl: number;
 }
 
-async function readDiskCache(): Promise<Omit<PricingStats, 'cachedAt'> | null> {
-	try {
-		const text = await readFile(STATS_CACHE_PATH, 'utf8');
-		const stats: PricingStats = JSON.parse(text);
-		if (Date.now() < stats.cachedAt + CACHE_TTL_MS) {
-			const { cachedAt: _, ...rest } = stats;
-			return rest;
-		}
-		return null;
-	} catch {
-		return null;
-	}
-}
+/**
+ * Calculate pricing-page coverage figures from the canonical top-vaults dataset.
+ *
+ * @param topVaults Validated top-vaults dataset
+ */
+function calculateStats(topVaults: TopVaults): PricingStats {
+	const tvlVaults = topVaults.vaults.filter((vault) => isEligibleFrontpageVault(vault) && meetsMinTvl(vault));
 
-async function writeDiskCache(stats: Omit<PricingStats, 'cachedAt'>): Promise<void> {
-	try {
-		await mkdir(dirname(STATS_CACHE_PATH), { recursive: true });
-		await writeFile(STATS_CACHE_PATH, JSON.stringify({ ...stats, cachedAt: Date.now() }));
-	} catch {
-		// Non-critical — page still renders without disk cache
-	}
+	return {
+		chains: new Set(topVaults.vaults.map((vault) => vault.chain)).size,
+		protocols: new Set(topVaults.vaults.map((vault) => vault.protocol)).size,
+		stablecoinVaults: topVaults.vaults.filter((vault) => vault.stablecoinish).length,
+		trackedTvl: calculateTotalTvl(tvlVaults)
+	};
 }
 
 export async function load({ fetch }) {
-	const cached = await readDiskCache();
-	if (cached) return { stats: cached };
-
 	try {
-		const topVaults = await getCachedTopVaults(fetch);
-		const chains = new Set(topVaults.vaults.map((v) => v.chain)).size;
-		const protocols = new Set(topVaults.vaults.map((v) => v.protocol)).size;
-		const stablecoinVaults = topVaults.vaults.filter((v) => v.stablecoinish).length;
-		const stats = { chains, protocols, stablecoinVaults };
-		await writeDiskCache(stats);
-		return { stats };
+		return { stats: calculateStats(await getCachedTopVaults(fetch)) };
 	} catch {
+		// Local development does not normally have production R2 credentials.
+		// Use the live site's public response so local pricing figures match production.
+		if (dev) {
+			try {
+				const response = await fetch(LIVE_TOP_VAULTS_URL);
+				if (!response.ok) return { stats: null };
+				const topVaults = topVaultsSchema.parse(await response.json());
+				return { stats: calculateStats(topVaults) };
+			} catch {
+				return { stats: null };
+			}
+		}
+
 		return { stats: null };
 	}
 }
