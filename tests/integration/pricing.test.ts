@@ -34,7 +34,7 @@ test.describe('pricing page', () => {
 		const btn = page.locator('#plans').getByRole('link', { name: 'Start Pro — $199/month' });
 		await expect(btn).toBeVisible();
 		const href = await btn.getAttribute('href');
-		expect(href).toContain('https://www.marketsoftware.co/');
+		expect(href).toBe('https://www.creem.io/payment/prod_53PolewYVyya9lOWDQME1k');
 	});
 
 	test('Download free sample button navigates to vault datasets page', async ({ page }) => {
