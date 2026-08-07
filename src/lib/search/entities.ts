@@ -41,6 +41,10 @@ export interface SearchResult {
 	vaultId: string | null;
 	/** Full vault contract address; null for non-vault entities. */
 	address: string | null;
+	/** Human-readable vault protocol name; null for non-vault entities. */
+	protocolName: string | null;
+	/** Human-readable vault chain name; null for non-vault entities. */
+	chainName: string | null;
 	averageApy1m: number | null;
 	latestTvl: number | null;
 	href: string;

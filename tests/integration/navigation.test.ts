@@ -41,7 +41,7 @@ test('tablet navigation closes after navigating to pricing', async ({ page }) =>
 	await navigation.getByRole('link', { name: 'Pricing' }).click();
 
 	await page.waitForURL('**/pricing');
-	await expect(page.getByRole('heading', { name: 'Professional vault data analytics' })).toBeVisible();
+	await expect(page.getByRole('heading', { name: 'Build better DeFi vault allocation strategies' })).toBeVisible();
 	await expect(page.getByRole('checkbox', { name: 'Show navigation panel' })).not.toBeChecked();
 	const bounds = await navigation.boundingBox();
 	expect(bounds).not.toBeNull();
@@ -116,6 +116,12 @@ test('renders equivalent, colour-coded protocol and vault typeahead results on d
 		await expect(vault).toBeVisible();
 		await expect(vault).not.toContainText('3M price');
 		await expect(vault.locator('.logo-slot img')).toHaveAttribute('src', '/brand-mark-100x100.png');
+		const vaultContext = vault.locator('.vault-context');
+		if (name === 'desktop') {
+			await expect(vaultContext).toHaveAttribute('title', /.+ · .+/);
+		} else {
+			await expect(vaultContext).not.toBeVisible();
+		}
 
 		if (name === 'mobile') {
 			const dialog = await page.getByRole('dialog', { name: 'Search' }).boundingBox();

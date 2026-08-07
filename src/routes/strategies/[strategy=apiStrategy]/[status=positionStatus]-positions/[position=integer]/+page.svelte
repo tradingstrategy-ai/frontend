@@ -1,3 +1,6 @@
+<!--
+Individual strategy position page.
+-->
 <script lang="ts">
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { Alert, Button, HashAddress, PageHeading, Section } from '$lib/components';
@@ -11,13 +14,17 @@
 	import PositionSummary from './PositionSummary.svelte';
 	import OtherMetrics from './OtherMetrics.svelte';
 	import PositionCharts from './PositionCharts.svelte';
+	import PositionVaultAbout from './PositionVaultAbout.svelte';
+	import { resolve } from '$app/paths';
 
 	export let data;
-	const { position, chain, strategy, status } = data;
+	const { position, positionVault, chain, strategy, status } = data;
 
 	const isVaultPosition = position.pair.isVault;
 	const assetUrl = isVaultPosition
-		? `https://tradingstrategy.ai/vaults/address/${position.pair.pool_address}`
+		? position.pair.pool_address
+			? resolve(`/vaults/address/${position.pair.pool_address}`)
+			: undefined
 		: position.pricingPair.info_url;
 	const hyperliquidVaultUrl =
 		isVaultPosition && strategy.on_chain_data.chain_id === 9999
@@ -75,6 +82,12 @@
 		{/if}
 	</Section>
 
+	{#if positionVault}
+		<Section>
+			<PositionVaultAbout vault={positionVault} />
+		</Section>
+	{/if}
+
 	<Section class={position.failedOpen || position.frozen ? 'has-error' : ''}>
 		{#if position.failedOpen}
 			<Alert size="sm" status="error" title="Failed entry">
@@ -104,21 +117,23 @@
 		{/if}
 	</Section>
 
+	<Section class="position-info-section">
+		<div class="position-info">
+			<PositionProfitability {position} {exchangeUrl} {exchangeName} />
+			<PositionSummary {position} />
+			{#if !isExchangeAccountPosition}
+				<div class="position-side-info">
+					<OtherMetrics {position} />
+				</div>
+			{/if}
+		</div>
+	</Section>
+
 	{#if status !== 'frozen'}
 		<Section padding="sm">
 			<PositionCharts executorUrl={strategy.url} positionId={position.position_id} {tradePathBase} />
 		</Section>
 	{/if}
-
-	<Section>
-		<div class="position-info">
-			<PositionProfitability {position} {exchangeUrl} {exchangeName} />
-			<PositionSummary {position} />
-			{#if !isExchangeAccountPosition}
-				<OtherMetrics {position} />
-			{/if}
-		</div>
-	</Section>
 
 	{#if !isExchangeAccountPosition}
 		<Section padding="sm">
@@ -133,6 +148,18 @@
 
 <style>
 	.position-page {
+		:global(.position-info-section) {
+			margin-top: var(--space-3xl);
+
+			@media (--viewport-md-down) {
+				margin-top: var(--space-lg);
+			}
+
+			@media (--viewport-sm-down) {
+				margin-top: var(--space-ml);
+			}
+		}
+
 		:global(.has-error) {
 			margin-bottom: 1.5rem;
 		}
@@ -157,11 +184,17 @@
 				grid-template-rows: auto 1fr;
 				row-gap: 1.5rem;
 
-				/* position OtherMetrics in 2nd column, spanning 2 rows */
-				> :global(:last-child) {
+				/* position side info in 2nd column, spanning 2 rows */
+				.position-side-info {
 					grid-column: 2;
 					grid-row: 1 / span 2;
 				}
+			}
+
+			.position-side-info {
+				display: grid;
+				gap: 1.5rem;
+				align-content: start;
 			}
 		}
 

@@ -19,7 +19,6 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 	import { deserialiseSearchParams, serialiseSearchParams } from '$lib/helpers/url-search-state';
 	import Select from '$lib/components/Select.svelte';
 	import TargetableLink from '$lib/components/TargetableLink.svelte';
-	import TextInput from '$lib/components/TextInput.svelte';
 	import Timestamp from '$lib/components/Timestamp.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
@@ -43,6 +42,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		notFilledMarker
 	} from '$lib/helpers/formatters';
 	import { isStablecoinDepegged } from '$lib/stablecoin-metadata/helpers';
+	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers';
 	import {
 		DEFAULT_TVL_KEY,
 		DEFAULT_TVL_THRESHOLD,
@@ -381,26 +381,8 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		hasLoadedFilterPreference = true;
 	});
 
-	// Text search: local state for responsive typing, synced to/from URL.
-	let filterValue = $state('');
-
-	$effect(() => {
-		const urlQ = urlState.q;
-		const current = untrack(() => filterValue);
-		if (urlQ !== current) {
-			filterValue = urlQ;
-		}
-	});
-
-	$effect(() => {
-		const value = filterValue;
-		const timer = setTimeout(() => {
-			if (value !== untrack(() => urlState.q)) {
-				updateSearchParams({ q: value });
-			}
-		}, 300);
-		return () => clearTimeout(timer);
-	});
+	// Preserve support for existing URL text-search links without exposing a listing-page search field.
+	let filterValue = $derived(urlState.q);
 
 	// --- Sort state (derived from URL) ---
 
@@ -1008,15 +990,6 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 									</Tooltip>
 								</div>
 							{/if}
-
-							<div class="filter">
-								<TextInput
-									bind:value={filterValue}
-									type="search"
-									placeholder="Search by name, protocol, chain, denomination, risk or address"
-									data-testid="vault-search"
-								/>
-							</div>
 						</div>
 
 						<div class="secondary-filters">
@@ -1169,15 +1142,6 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 					</div>
 				</details>
 			</div>
-		{:else}
-			<div class="filter">
-				<TextInput
-					bind:value={filterValue}
-					type="search"
-					placeholder="Search by name, protocol, chain, denomination, risk or address"
-					data-testid="vault-search"
-				/>
-			</div>
 		{/if}
 	</div>
 
@@ -1249,6 +1213,9 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 					{@const isCapped = isVaultDepositCapped(vault)}
 					{@const depositStatusLabel = isTokenisedFund ? 'Fund' : 'Private'}
 					{@const protocolName = getVaultProtocolDisplayName(vault)}
+					{@const curatorLogos = vault.curator_slug ? topVaults.curators[vault.curator_slug]?.logos : undefined}
+					{@const curatorLogoUrl = curatorLogos?.generic ?? curatorLogos?.light ?? curatorLogos?.dark}
+					{@const vaultLogoUrl = curatorLogoUrl ?? getVaultProtocolLogoUrl(vault.protocol_slug)}
 					{@const statusReason = [vault.deposit_closed_reason, vault.redemption_closed_reason]
 						.filter(Boolean)
 						.join('; ')}
@@ -1261,11 +1228,16 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 							</td>
 						{/if}
 						<td class="vault">
-							<div class="multiline">
-								<strong>{vault.name}</strong>
-								{#if protocolName}
-									<span class="secondary">{protocolName}</span>
+							<div class="vault-identity">
+								{#if !showChainCol && vaultLogoUrl}
+									<img class="vault-logo" src={vaultLogoUrl} alt="" />
 								{/if}
+								<div class="multiline">
+									<strong>{vault.name}</strong>
+									{#if protocolName}
+										<span class="secondary">{protocolName}</span>
+									{/if}
+								</div>
 							</div>
 						</td>
 						{#if showProviderRiskRating}
@@ -1447,10 +1419,6 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 			align-items: center;
 		}
 
-		.primary-filters > .filter {
-			flex: 1 12rem;
-		}
-
 		.filter-group {
 			display: flex;
 			align-items: center;
@@ -1583,10 +1551,6 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 
 		.filter-group :global(.select) {
 			font: inherit;
-		}
-
-		.filter {
-			flex: 1 24rem;
 		}
 
 		.vault-filters {
@@ -1928,6 +1892,19 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 				@media (--viewport-sm-down) {
 					width: 10rem;
 					max-width: 10rem;
+				}
+
+				.vault-identity {
+					display: flex;
+					align-items: center;
+					gap: 0.5rem;
+				}
+
+				.vault-logo {
+					width: 1.5rem;
+					height: 1.5rem;
+					flex: none;
+					object-fit: contain;
 				}
 			}
 

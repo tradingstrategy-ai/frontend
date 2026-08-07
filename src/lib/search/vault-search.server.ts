@@ -1,5 +1,5 @@
 import { getLogoUrl } from '$lib/helpers/assets';
-import { getChain } from '$lib/helpers/chain';
+import { getChain, getChainDisplayName } from '$lib/helpers/chain';
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
 import {
 	buildStablecoinMetadataLookup,
@@ -13,6 +13,7 @@ import {
 	getCurrencyUsdRates,
 	getMonthlyReturn,
 	getProtocolDisplayName,
+	getVaultProtocolDisplayName,
 	getVaultCurrentTvlUsd,
 	isBlacklisted,
 	isUnknownVaultProtocol,
@@ -127,6 +128,8 @@ function buildIndex(topVaults: TopVaults, stablecoins: StablecoinMetadata[]): In
 						: 'vault',
 				vaultId: vault.id,
 				address: vault.address,
+				protocolName: getVaultProtocolDisplayName(vault),
+				chainName: getChainDisplayName(vault.chain_id),
 				averageApy1m: getMonthlyReturn(vault),
 				latestTvl: getVaultCurrentTvlUsd(vault),
 				href: `/vaults/${vault.vault_slug}`,
@@ -182,6 +185,8 @@ function buildIndex(topVaults: TopVaults, stablecoins: StablecoinMetadata[]): In
 				entityType: 'curator',
 				vaultId: null,
 				address: null,
+				protocolName: null,
+				chainName: null,
 				...getGroupMetrics(groupVaults),
 				href: `/vaults/curators/${slug}`,
 				logoUrl: logos?.generic ?? logos?.light ?? logos?.dark ?? null
@@ -201,6 +206,8 @@ function buildIndex(topVaults: TopVaults, stablecoins: StablecoinMetadata[]): In
 				entityType: 'protocol',
 				vaultId: null,
 				address: null,
+				protocolName: null,
+				chainName: null,
 				...getGroupMetrics(groupVaults),
 				href: `/vaults/protocols/${slug}`,
 				logoUrl: getVaultProtocolLogoUrl(slug) ?? null
@@ -224,6 +231,8 @@ function buildIndex(topVaults: TopVaults, stablecoins: StablecoinMetadata[]): In
 				entityType: 'stablecoin',
 				vaultId: null,
 				address: null,
+				protocolName: null,
+				chainName: null,
 				...getGroupMetrics(groupVaults),
 				href: `/vaults/stablecoins/${slug}`,
 				logoUrl: getStablecoinLogoUrl(slug) ?? null
@@ -243,6 +252,8 @@ function buildIndex(topVaults: TopVaults, stablecoins: StablecoinMetadata[]): In
 				entityType: 'chain',
 				vaultId: null,
 				address: null,
+				protocolName: null,
+				chainName: null,
 				...getGroupMetrics(groupVaults),
 				href: `/vaults/chains/${slug}`,
 				logoUrl: getLogoUrl('blockchain', slug) ?? null

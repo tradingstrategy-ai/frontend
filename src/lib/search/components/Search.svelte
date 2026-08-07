@@ -8,6 +8,7 @@ underlying vault JSON index private.
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { disableScroll } from '$lib/actions/scroll';
 	import { removeOnError } from '$lib/actions/image';
 	import { formatDollar, formatPercent, notFilledMarker } from '$lib/helpers/formatters';
@@ -154,7 +155,7 @@ underlying vault JSON index private.
 		}
 		if (event.key === 'Enter' && selectedIndex >= 0) {
 			event.preventDefault();
-			goto(results[selectedIndex].href);
+			goto(resolve(results[selectedIndex].href as `/vaults/${string}`));
 			closeSearchForNavigation();
 		}
 	}
@@ -162,7 +163,7 @@ underlying vault JSON index private.
 	function handleSubmit(event: SubmitEvent) {
 		if (selectedIndex >= 0) {
 			event.preventDefault();
-			goto(results[selectedIndex].href);
+			goto(resolve(results[selectedIndex].href as `/vaults/${string}`));
 		}
 		closeSearchForNavigation();
 	}
@@ -265,7 +266,7 @@ underlying vault JSON index private.
 									class:active={selectedIndex === index}
 									class:no-logo={!result.logoUrl}
 									data-entity-type={result.entityType}
-									href={result.href}
+									href={resolve(result.href as `/vaults/${string}`)}
 									role="option"
 									aria-selected={selectedIndex === index}
 									onpointerdown={(event) => event.preventDefault()}
@@ -281,6 +282,13 @@ underlying vault JSON index private.
 												<span class="entity-type-marker" aria-hidden="true"></span>
 												{searchEntityLabels[result.entityType]}
 											</span>
+											{#if result.protocolName && result.chainName}
+												<span class="vault-context" title={`${result.protocolName} · ${result.chainName}`}>
+													<span>{result.protocolName}</span>
+													<span aria-hidden="true">·</span>
+													<span>{result.chainName}</span>
+												</span>
+											{/if}
 											{#if address}<span>· {address}</span>{/if}
 										</span>
 									</span>
@@ -306,8 +314,10 @@ underlying vault JSON index private.
 			</div>
 
 			{#if hasQuery}
-				<a class="show-all" href={`/search?q=${encodeURIComponent(query.trim())}`} onclick={closeSearchForNavigation}
-					>Show all results</a
+				<a
+					class="show-all"
+					href={resolve(`/search?q=${encodeURIComponent(query.trim())}` as '/search')}
+					onclick={closeSearchForNavigation}>Show all results</a
 				>
 			{/if}
 		</div>
@@ -427,6 +437,7 @@ underlying vault JSON index private.
 		display: grid;
 		min-width: 0;
 		gap: 0.125rem;
+		container-type: inline-size;
 	}
 	.result-main strong {
 		overflow: hidden;
@@ -441,12 +452,16 @@ underlying vault JSON index private.
 		display: flex;
 		align-items: center;
 		gap: 0.35rem;
+		min-width: 0;
+		overflow: hidden;
 		color: var(--c-text-extra-light);
 		font: var(--f-ui-xs-medium);
 		text-transform: capitalize;
+		white-space: nowrap;
 	}
 	.entity-type {
 		display: inline-flex;
+		flex: 0 0 auto;
 		align-items: center;
 		gap: 0.35rem;
 		color: var(--entity-colour);
@@ -457,6 +472,16 @@ underlying vault JSON index private.
 		height: 0.5rem;
 		border-radius: 0.125rem;
 		background: currentColor;
+	}
+	.vault-context {
+		display: none;
+		min-width: 0;
+		overflow: hidden;
+	}
+	.vault-context span:not([aria-hidden]) {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 	.result-sparkline {
 		justify-items: end;
@@ -613,6 +638,13 @@ underlying vault JSON index private.
 	}
 
 	@media (--nav-expanded) {
+		@container (min-width: 18rem) {
+			.vault-context {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.35rem;
+			}
+		}
 		.result-sparkline {
 			display: block;
 			width: 7rem;

@@ -1,13 +1,18 @@
-import { cleanup, render, screen } from '@testing-library/svelte';
+import { cleanup, render, screen, within } from '@testing-library/svelte';
 import { afterEach, describe, expect, test } from 'vitest';
 import { createTestVault } from '$lib/top-vaults/test-utils';
 import type { PeriodMetrics } from '$lib/top-vaults/schemas';
 import VaultMetrics from './VaultMetrics.svelte';
 
 const MISSING_FEE_TOOLTIP = 'The fee information is not available onchain. Net returns cannot be calculated.';
+const SHORT_TERM_FEE_WARNING = 'Deposit and withdrawal fees may greatly affect short-term returns';
+const GROSS_RETURNS_TOOLTIP = 'are annualised share-price returns before investor-facing fees are deducted.';
+const NET_RETURNS_TOOLTIP =
+	'are annualised returns after known investor-facing fees are deducted. One-time deposit and withdrawal fees are included when reported and can dominate short periods.';
 const INTERNALISED_FEE_TOOLTIP =
-	'Fees are internalised and already reduced from the gross profit and thus reflected in the share price.';
-const INTERNALISED_FEE_DISCLAIMER = 'Fees are internalised for this vault and already removed from the gross profit.';
+	'Internalised fees are reflected in the share price before returns are shown. Deposit and withdrawal fees may still be applied separately to net returns.';
+const INTERNALISED_FEE_DISCLAIMER =
+	'Internalised fees are reflected in the share price. One-time deposit and withdrawal fees may still affect net returns.';
 
 afterEach(cleanup);
 
@@ -104,6 +109,58 @@ describe('VaultMetrics', () => {
 		expect(screen.getAllByText('2.0%').length).toBeGreaterThan(0);
 		expect(screen.getAllByText('0.0%').length).toBeGreaterThan(0);
 		expect(screen.getAllByText('10.0%').length).toBeGreaterThan(0);
+		expect(screen.queryByText(SHORT_TERM_FEE_WARNING)).not.toBeInTheDocument();
+		expect(screen.getByText(GROSS_RETURNS_TOOLTIP, { exact: false })).toBeInTheDocument();
+		expect(screen.getByText(NET_RETURNS_TOOLTIP, { exact: false })).toBeInTheDocument();
+	});
+
+	test('warns on non-zero deposit or withdrawal fee rows', () => {
+		const vault = createTestVault('Deposit and withdrawal fee vault', {
+			one_month_cagr: 0.12,
+			one_month_returns: 0.01,
+			one_month_cagr_net: 0.05,
+			one_month_returns_net: 0.004,
+			three_months_cagr: 0.14,
+			three_months_returns: 0.03,
+			three_months_cagr_net: 0.1,
+			three_months_returns_net: 0.025,
+			gross_fees: {
+				fee_mode: 'externalised',
+				performance: 0.2,
+				management: 0,
+				deposit: 0.01,
+				withdraw: 0.005
+			},
+			net_fees: {
+				fee_mode: 'externalised',
+				performance: 0.2,
+				management: 0,
+				deposit: 0.01,
+				withdraw: 0.005
+			},
+			period_results: [createPeriodMetrics('6m', 0.05, 0.1, 0.04), createPeriodMetrics('1y', 0.08, 0.08, 0.07)]
+		});
+
+		render(VaultMetrics, { props: { vault } });
+
+		const getRow = (label: string) => {
+			const row = screen
+				.getAllByText(label)
+				.find((element) => element.classList.contains('label-desktop'))
+				?.closest('tr');
+			expect(row).toBeTruthy();
+			return row as HTMLElement;
+		};
+
+		expect(within(getRow('Deposit fee')).getByRole('img', { name: SHORT_TERM_FEE_WARNING })).toBeInTheDocument();
+		expect(within(getRow('Withdrawal fee')).getByRole('img', { name: SHORT_TERM_FEE_WARNING })).toBeInTheDocument();
+		expect(
+			within(getRow('Performance fee')).queryByRole('img', { name: SHORT_TERM_FEE_WARNING })
+		).not.toBeInTheDocument();
+		expect(
+			within(getRow('Management fee')).queryByRole('img', { name: SHORT_TERM_FEE_WARNING })
+		).not.toBeInTheDocument();
+		expect(screen.getAllByText(SHORT_TERM_FEE_WARNING)).toHaveLength(2);
 	});
 
 	test('explains internalised fees in fee and net return tooltips', () => {
@@ -140,7 +197,7 @@ describe('VaultMetrics', () => {
 
 		render(VaultMetrics, { props: { vault } });
 
-		expect(screen.getAllByText(INTERNALISED_FEE_TOOLTIP)).toHaveLength(5);
+		expect(screen.getAllByText(INTERNALISED_FEE_TOOLTIP)).toHaveLength(6);
 		expect(screen.getByText(INTERNALISED_FEE_DISCLAIMER)).toBeInTheDocument();
 	});
 
