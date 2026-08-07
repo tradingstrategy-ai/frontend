@@ -1,6 +1,7 @@
 # Weblog of stuff
 
 - Show pending treasury deposits and redemptions in the GuardV0 deposit flow tooltip (2026-08-07)
+- Show vault protocol and chain names in desktop search suggestions (2026-08-07)
 - Show curator or protocol logos in chain-specific vault listings (2026-08-06)
 - Show HyperAI's GuardV0 automated deposit and redemption settlement limit (2026-08-05)
 - Add a whitelisted vault ranking for permissioned deposits (2026-08-03)
