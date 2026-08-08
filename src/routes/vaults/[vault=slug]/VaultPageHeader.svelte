@@ -20,8 +20,18 @@ Displays a vault's heading, external link, update action, and important operatio
 
 	let { vault }: Props = $props();
 
+	const FIRA_HOSTNAME = 'app.fira.money';
+
 	let externalSiteName = $derived.by(() => {
+		// Fira hosts the live market UI for a migrated Euler vault.
+		// The vault must remain categorised as Euler, so do not change its protocol metadata.
+		// This presentation-only exception makes the call to action describe where it actually goes.
+		if (vault.link && new URL(vault.link).hostname === FIRA_HOSTNAME) return 'Fira';
+
+		// Other supported vaults continue to use their protocol name in the call to action.
 		if (hasSupportedProtocol(vault)) return getVaultProtocolDisplayName(vault);
+
+		// Unknown-protocol vaults fall back to the hostname of their external destination.
 		if (vault.link) return new URL(vault.link).host;
 	});
 	let hideCtaOnMobile = $derived(externalSiteName === 'Ostium');
