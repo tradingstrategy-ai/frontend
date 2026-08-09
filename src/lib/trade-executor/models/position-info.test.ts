@@ -184,11 +184,11 @@ describe('dust position warning', () => {
 		expect(createTradingPositionInfo(position).isDustPositionWarning).toBe(true);
 	});
 
-	test('detects a tiny residual quantity in final stats', () => {
+	test('detects a residual position valued at the $5 dust threshold', () => {
 		const position = tradingPositionSchema.parse({
 			...rawPosition,
 			closed_at: POSITION_OPEN_TS + 3 * HOUR,
-			last_token_price: 0.95
+			last_token_price: 5
 		});
 		const residualStats = [
 			positionStat({
@@ -200,8 +200,8 @@ describe('dust position warning', () => {
 			positionStat({
 				calculated_at: POSITION_OPEN_TS + 4 * HOUR,
 				last_valuation_at: POSITION_OPEN_TS + 4 * HOUR,
-				quantity: 1.0023875,
-				value: 0
+				quantity: 1,
+				value: 5
 			})
 		];
 

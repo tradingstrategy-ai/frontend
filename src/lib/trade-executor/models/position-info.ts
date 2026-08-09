@@ -13,7 +13,7 @@ import type { TimeBucket } from '$lib/schemas/utility';
 import { type TradeDirection, TradeDirections } from './trade-info';
 import { isNumber } from '$lib/helpers/formatters';
 
-const DUST_POSITION_VALUE_THRESHOLD_USD = 2;
+const DUST_POSITION_VALUE_THRESHOLD_USD = 5;
 const MIN_RESIDUAL_QUANTITY = 1e-12;
 
 export const createTradingPositionInfo = <T extends TradingPosition>(base: T, stats: PositionStatistics[] = []) => ({
