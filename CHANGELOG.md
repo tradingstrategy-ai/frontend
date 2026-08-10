@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Improve vault detail card layouts and disclosure controls (2026-08-10)
 - Show curator or protocol logos in chain-specific vault listings (2026-08-06)
 - Show HyperAI's GuardV0 automated deposit and redemption settlement limit (2026-08-05)
 - Add a whitelisted vault ranking for permissioned deposits (2026-08-03)

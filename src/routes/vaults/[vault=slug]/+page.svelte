@@ -135,27 +135,21 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 
 		<VaultMetrics {vault} {stablecoinMetadata} />
 
-		{#if vault.description}
-			<MetricsBox class="description" title="About the vault">
-				<Markdown content={vault.description} />
-			</MetricsBox>
-		{/if}
+		<div class="vault-information">
+			{#if vault.description}
+				<MetricsBox class="description" title="About the vault">
+					<Markdown content={vault.description} />
+				</MetricsBox>
+			{/if}
 
-		{#if showNotes && vault.notes}
-			<MetricsBox class="notes" title="Notes">
-				<Markdown content={vault.notes} />
-			</MetricsBox>
-		{/if}
+			{#if curatorMetadata}
+				<VaultCuratorInfo {vault} curator={curatorMetadata} />
+			{/if}
 
-		{#if curatorMetadata}
-			<VaultCuratorInfo {vault} curator={curatorMetadata} />
-		{/if}
-
-		{#if protocolMetadata}
-			<VaultProtocolInfo {vault} {protocolMetadata} />
-		{/if}
-
-		<VaultPeriodicMetrics {vault} {chain} />
+			{#if protocolMetadata}
+				<VaultProtocolInfo {vault} {protocolMetadata} />
+			{/if}
+		</div>
 
 		{#if vault.xerberus}
 			<XerberusRisk xerberus={vault.xerberus} />
@@ -169,6 +163,14 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 				context="vault"
 			/>
 		{/if}
+
+		{#if showNotes && vault.notes}
+			<MetricsBox class="notes" title="Notes">
+				<Markdown content={vault.notes} />
+			</MetricsBox>
+		{/if}
+
+		<VaultPeriodicMetrics {vault} {chain} />
 
 		<VaultTechnicalDetailsTable {vault} {chain} {stablecoinMetadata} {generated_at} />
 	</Section>
@@ -206,6 +208,15 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	.notification-stack {
 		display: grid;
 		gap: var(--space-md);
+	}
+
+	.vault-information {
+		display: grid;
+		gap: var(--gap);
+
+		@media (--viewport-lg-up) {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
 	}
 
 	:global(:is(.description, .notes)) {
