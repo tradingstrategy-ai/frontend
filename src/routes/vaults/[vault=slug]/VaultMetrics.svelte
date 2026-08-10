@@ -1,16 +1,17 @@
 <!--
 @component
-Displays supplementary vault information, including transaction status, performance, fees, and risk metrics.
+Displays supplementary vault information, performance, fees, and risk metrics.
 -->
 <script lang="ts">
-	import type { VaultInfo } from '$lib/top-vaults/schemas';
+	import type { Core3Protocol, VaultInfo } from '$lib/top-vaults/schemas';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
+	import Core3RiskCell from '$lib/top-vaults/Core3RiskCell.svelte';
 	import Risk from '$lib/top-vaults/Risk.svelte';
 	import Metric from './Metric.svelte';
 	import { resolve } from '$app/paths';
 	import IconWarningFilled from '~icons/local/warning-filled';
-	import { getFormattedLockup, isGoodVaultStatus, isVaultDepositCapped } from '$lib/top-vaults/helpers';
+	import { getFormattedLockup } from '$lib/top-vaults/helpers';
 	import { formatNumber, formatPercent, formatPercentProfit } from '$lib/helpers/formatters';
 	import { getChainDisplayName } from '$lib/helpers/chain';
 	import {
@@ -23,6 +24,7 @@ Displays supplementary vault information, including transaction status, performa
 	interface Props {
 		vault: VaultInfo;
 		stablecoinMetadata?: StablecoinMetadata | null;
+		core3?: Core3Protocol | null;
 	}
 
 	const LIMITED_HISTORY_CHAINS = [9999, 9998, 9997, 9995];
@@ -34,23 +36,9 @@ Displays supplementary vault information, including transaction status, performa
 	const INTERNALISED_FEE_DISCLAIMER =
 		'Internalised fees are reflected in the share price. One-time deposit and withdrawal fees may still affect net returns.';
 
-	let { vault, stablecoinMetadata = null }: Props = $props();
+	let { vault, stablecoinMetadata = null, core3 = null }: Props = $props();
 
 	let hasLimitedHistory = $derived(LIMITED_HISTORY_CHAINS.includes(vault.chain_id));
-	let isPrivate = $derived(vault.whitelist?.status === 'whitelisted');
-	let isCapped = $derived(isVaultDepositCapped(vault));
-	let depositStatus = $derived(
-		isPrivate
-			? isCapped
-				? 'Private — Capped'
-				: vault.deposit_closed_reason
-					? `Private — ${vault.deposit_closed_reason}`
-					: 'Private'
-			: isCapped
-				? 'Capped'
-				: vault.deposit_closed_reason
-	);
-	let showTransactionStatus = $derived(isPrivate || !isGoodVaultStatus(vault));
 	let hasNetFeeInformation = $derived(vault.net_fees?.fee_mode != null);
 	let hasInternalisedFees = $derived(
 		vault.fee_internalised === true ||
@@ -66,18 +54,6 @@ Displays supplementary vault information, including transaction status, performa
 	);
 	let denominationLogoUrl = $derived(getVaultDenominationLogoUrl(vault, denominationSlug));
 	let denominationHref = $derived(stablecoinMetadata ? getStablecoinDetailsHref(denominationSlug) : undefined);
-
-	function getDaysUntil(dateString: string | null): number | null {
-		if (!dateString) return null;
-		const targetDate = new Date(dateString);
-		const now = new Date();
-		const diffMs = targetDate.getTime() - now.getTime();
-		const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-		return diffDays;
-	}
-
-	let depositDaysLeft = $derived(getDaysUntil(vault.deposit_next_open));
-	let redemptionDaysLeft = $derived(getDaysUntil(vault.redemption_next_open));
 
 	let lifetimeMaxDrawdown = $derived(
 		vault.period_results?.find((p) => p.period.toLowerCase() === 'lifetime')?.max_drawdown ?? null
@@ -188,36 +164,6 @@ Displays supplementary vault information, including transaction status, performa
 </script>
 
 <div class="additional-metrics">
-	{#if showTransactionStatus}
-		<MetricsBox class="transaction-status" title="Transaction status">
-			<div class="status-grid">
-				<div class="status-item">
-					<span class="status-label">Deposits</span>
-					{#if depositStatus}
-						<span class={['status-value', isPrivate ? 'private' : 'closed']}>{depositStatus}</span>
-						{#if depositDaysLeft !== null && depositDaysLeft >= 0}
-							<span class="status-next-open">Opens in {depositDaysLeft} {depositDaysLeft === 1 ? 'day' : 'days'}</span>
-						{/if}
-					{:else}
-						<span class="status-value open">Open</span>
-					{/if}
-				</div>
-				<div class="status-item">
-					<span class="status-label">Redemptions</span>
-					{#if vault.redemption_closed_reason}
-						<span class="status-value closed">{vault.redemption_closed_reason}</span>
-						{#if redemptionDaysLeft !== null && redemptionDaysLeft >= 0}
-							<span class="status-next-open"
-								>Opens in {redemptionDaysLeft} {redemptionDaysLeft === 1 ? 'day' : 'days'}</span
-							>
-						{/if}
-					{:else}
-						<span class="status-value open">Open</span>
-					{/if}
-				</div>
-			</div>
-		</MetricsBox>
-	{/if}
 	<MetricsBox class="other-metrics" title="Other metrics">
 		<div class="metrics-inner">
 			<div class="mobile">
@@ -259,11 +205,28 @@ Displays supplementary vault information, including transaction status, performa
 				{formatPercent(lifetimeMaxDrawdown)}
 			</Metric>
 
-			<Metric label="Protocol Technical Risk">
-				<a class="risk-link" href={resolve('/blog/announcing-vault-technical-risk-framework-beta')}>
-					<Risk risk={vault.risk} />
-				</a>
-			</Metric>
+			{#if vault.xerberus}
+				<Metric label="Xerberus risk">
+					<Tooltip>
+						<span slot="trigger" class="xerberus-score">{formatNumber(vault.xerberus.score, 0)} / 100</span>
+						<svelte:fragment slot="popup">
+							Xerberus scored this {vault.xerberus.entity_type === 'pool'
+								? 'vault directly'
+								: 'vault’s underlying protocol'} on a 0–100 scale. Higher scores indicate lower estimated risk.
+						</svelte:fragment>
+					</Tooltip>
+				</Metric>
+			{:else if core3?.pol?.rating}
+				<Metric label="CORE3 risk">
+					<Core3RiskCell rating={core3.pol.rating} />
+				</Metric>
+			{:else}
+				<Metric label="Protocol Technical Risk">
+					<a class="risk-link" href={resolve('/blog/announcing-vault-technical-risk-framework-beta')}>
+						<Risk risk={vault.risk} />
+					</a>
+				</Metric>
+			{/if}
 
 			<Metric label="Lockup period">
 				{getFormattedLockup(vault)}
@@ -445,55 +408,21 @@ Displays supplementary vault information, including transaction status, performa
 		@media (--viewport-lg-up) {
 			grid-template-columns: 1fr 1fr;
 
-			:global(:is(.other-metrics, .transaction-status, .performance)) {
+			:global(:is(.other-metrics, .performance)) {
 				grid-column: span 2;
 			}
 		}
 
-		.status-grid {
-			display: flex;
-			flex-wrap: wrap;
-			gap: var(--gap);
-		}
-
-		.status-item {
-			display: flex;
-			flex-direction: column;
-			gap: 0.25rem;
-		}
-
-		.status-label {
-			font: var(--f-ui-sm-medium);
-			color: var(--c-text-light);
-		}
-
-		.status-value {
-			font: var(--f-ui-md-medium);
-
-			&.open {
-				color: var(--c-success);
-			}
-
-			&.closed {
-				color: var(--c-error);
-			}
-
-			&.private {
-				color: var(--c-bearish);
-			}
-		}
-
-		.status-next-open {
-			font: var(--f-ui-sm-roman);
-			color: var(--c-text-light);
-			margin-top: 0.25rem;
-		}
-
 		.metrics-inner {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: space-between;
-			gap: var(--gap);
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 1.5rem 1rem;
+
+			@media (--viewport-md-up) {
+				grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+				column-gap: 2rem;
+				max-width: 80rem;
+			}
 		}
 
 		.vault-metrics-table {
@@ -637,6 +566,7 @@ Displays supplementary vault information, including transaction status, performa
 		}
 
 		.risk-link,
+		.xerberus-score,
 		a.denomination-link,
 		.glossary-link {
 			text-decoration: underline;

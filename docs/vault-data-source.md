@@ -67,6 +67,14 @@ The frontend treats unrecognised source values as `unknown`, and preserves optio
 
 Other reasons, including high utilisation or permissioning, remain their source-provided status rather than being inferred as a cap.
 
+#### Detail-page risk summaries
+
+The vault detail page's **Other metrics** card shows one third-party provider result when it is available. A vault-level or protocol-level Xerberus assessment takes precedence and is shown as **Xerberus risk**. Its score is displayed as `score / 100`; higher scores indicate a stronger rating (lower estimated risk), so it is not a Probability of Loss percentage. The score tooltip states whether Xerberus assessed the vault directly or its underlying protocol.
+
+When no Xerberus assessment is available, the card uses the resolved CORE3 protocol rating as **CORE3 risk**. CORE3 uses credit-style labels from AA (lowest Probability of Loss) to D (highest). If neither provider has data, the card falls back to the frontend's protocol technical-risk classification.
+
+The full Xerberus and CORE3 cards remain below the vault-information cards. Transaction availability is shown after those provider cards so restrictions and their corresponding risk context remain together.
+
 ### Vault prices parquet
 
 **Code:** `src/lib/top-vaults/vault-prices-parquet.ts` → `ensureVaultPricesParquet()`
