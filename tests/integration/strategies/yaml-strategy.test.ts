@@ -60,7 +60,7 @@ test.describe('YAML-configured strategy', () => {
 		const response = await page.goto(`${BASE}/performance`);
 		expect(response?.status()).toBe(200);
 
-		await expect(page.getByText('Performance metrics')).toBeVisible();
+		await expect(page.getByText('Returns and period details')).toBeVisible();
 		await expect(page.getByRole('columnheader', { name: 'Month', exact: true })).toBeVisible();
 		await expect(page.getByRole('columnheader', { name: '3 months' })).toBeVisible();
 		const periodTable = page.locator('.period-table');
