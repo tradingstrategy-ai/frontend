@@ -88,3 +88,10 @@ for (const pageConfig of pages) {
 		});
 	});
 }
+
+test('protocols index links to CORE3 and Xerberus risk-rated vault listings', async ({ page }) => {
+	await page.goto('/vaults/protocols');
+
+	await expect(page.getByRole('link', { name: 'CORE3' })).toHaveAttribute('href', '/vaults/core3-ratings');
+	await expect(page.getByRole('link', { name: 'Xerberus' })).toHaveAttribute('href', '/vaults/xerberus-ratings');
+});
