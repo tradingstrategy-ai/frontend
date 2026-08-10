@@ -215,7 +215,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 		gap: var(--gap);
 
 		@media (--viewport-lg-up) {
-			grid-template-columns: repeat(3, minmax(0, 1fr));
+			grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
 		}
 	}
 

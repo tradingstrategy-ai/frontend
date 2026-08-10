@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Let vault information cards fill the available desktop row space (2026-08-10)
 - Improve vault detail card layouts and disclosure controls (2026-08-10)
 - Show pending treasury deposits and redemptions in the GuardV0 deposit flow tooltip (2026-08-07)
 - Show vault protocol and chain names in desktop search suggestions (2026-08-07)
