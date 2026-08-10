@@ -90,7 +90,7 @@ curator.
 		}
 
 		:global(.view-all-btn) {
-			--button-width: 100%;
+			align-self: center;
 			margin-top: auto;
 		}
 

@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Centre content-sized vault information card actions (2026-08-10)
 - Consolidate vault notifications beneath the page heading (2026-08-10)
 - Let vault information cards fill the available desktop row space (2026-08-10)
 - Add a details disclosure to Xerberus risk rating cards (2026-08-10)
