@@ -20,6 +20,7 @@ mistake protocol coverage for a vault-specific assessment.
 	import type { XerberusVault } from './schemas';
 	import type { XerberusProtocolScore } from '$lib/xerberus/protocol-scores';
 	import IconQuestionCircle from '~icons/local/question-circle';
+	import IconChevronDown from '~icons/local/chevron-down';
 
 	interface Props {
 		xerberus: XerberusVault | XerberusProtocolScore;
@@ -48,50 +49,58 @@ mistake protocol coverage for a vault-specific assessment.
 			<h2>Xerberus risk rating</h2>
 		</header>
 
-		<table class="data" class:protocol={context === 'protocol'}>
-			<tbody>
-				<tr>
-					<th>
-						<Tooltip>
-							<span slot="trigger" class="metric-label">
-								Xerberus score
-								<IconQuestionCircle />
-							</span>
-							<svelte:fragment slot="popup">
-								The Xerberus assessment uses a 0–100 scale. Higher scores represent a stronger rating.
-							</svelte:fragment>
-						</Tooltip>
-					</th>
-					<td>{formatNumber(score, 0, 0)} / 100</td>
-				</tr>
-				{#if context !== 'protocol'}
-					<tr>
-						<th>Assessment level</th>
-						<td>{assessmentLabel}</td>
-					</tr>
-					<tr>
-						<th>Rated entity</th>
-						<td>{xerberus.name}</td>
-					</tr>
-				{/if}
-			</tbody>
-		</table>
+		{#if context !== 'protocol'}
+			<p class="intro">{assessmentDescription}</p>
+		{/if}
 
-		<footer class="footer">
-			{#if context !== 'protocol'}
-				<p>{assessmentDescription}</p>
-			{/if}
-			{#if reportUrl}
-				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-				<a href={reportUrl} target="_blank" rel="noreferrer" class:protocol-link={context === 'protocol'}>
-					{#if context === 'protocol'}
-						<span>View this protocol on Xerberus</span> to understand the protocol risk score.
-					{:else}
-						View this {isPoolAssessment ? 'vault' : 'protocol'} rating on Xerberus
-					{/if}
-				</a>
-			{/if}
-		</footer>
+		<details class="rating-details">
+			<summary>
+				View details
+				<IconChevronDown />
+			</summary>
+
+			<div class="rating-details-content">
+				<table class="data" class:protocol={context === 'protocol'}>
+					<tbody>
+						<tr>
+							<th>
+								<Tooltip>
+									<span slot="trigger" class="metric-label">
+										Xerberus score
+										<IconQuestionCircle />
+									</span>
+									<svelte:fragment slot="popup">
+										The Xerberus assessment uses a 0–100 scale. Higher scores represent a stronger rating.
+									</svelte:fragment>
+								</Tooltip>
+							</th>
+							<td>{formatNumber(score, 0, 0)} / 100</td>
+						</tr>
+						{#if context !== 'protocol'}
+							<tr>
+								<th>Assessment level</th>
+								<td>{assessmentLabel}</td>
+							</tr>
+							<tr>
+								<th>Rated entity</th>
+								<td>{xerberus.name}</td>
+							</tr>
+						{/if}
+					</tbody>
+				</table>
+
+				{#if reportUrl}
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+					<a href={reportUrl} target="_blank" rel="noreferrer" class:protocol-link={context === 'protocol'}>
+						{#if context === 'protocol'}
+							<span>View this protocol on Xerberus</span> to understand the protocol risk score.
+						{:else}
+							View this {isPoolAssessment ? 'vault' : 'protocol'} rating on Xerberus
+						{/if}
+					</a>
+				{/if}
+			</div>
+		</details>
 	</div>
 </MetricsBox>
 
@@ -139,28 +148,18 @@ mistake protocol coverage for a vault-specific assessment.
 		color: color-mix(in srgb, var(--c-text), var(--c-link) 80%);
 	}
 
-	.footer {
-		border-top: 1px solid var(--c-box-3);
-		padding-top: 1.25rem;
-		display: grid;
-		gap: 0.5rem;
-
-		p {
-			margin: 0;
-		}
-
-		a {
-			justify-self: start;
-		}
-	}
-
-	.footer p,
-	.footer a {
+	.intro,
+	.rating-details a {
 		font: var(--f-ui-md-roman);
 		color: var(--c-text-extra-light);
 	}
 
-	.footer a {
+	.intro {
+		margin: 0;
+	}
+
+	.rating-details a {
+		justify-self: start;
 		text-decoration: underline;
 		font-weight: 500;
 		color: var(--c-text-light);
@@ -172,6 +171,41 @@ mistake protocol coverage for a vault-specific assessment.
 				text-decoration: underline;
 			}
 		}
+	}
+
+	.rating-details {
+		border-top: 1px solid var(--c-box-3);
+		padding-top: 1.25rem;
+
+		summary {
+			display: flex;
+			align-items: center;
+			gap: 0.25rem;
+			width: fit-content;
+			cursor: pointer;
+			list-style: none;
+			font: var(--f-ui-md-medium);
+			color: var(--c-text-light);
+			text-decoration: underline;
+
+			&::-webkit-details-marker {
+				display: none;
+			}
+
+			:global(.icon) {
+				transition: rotate 0.15s ease;
+			}
+		}
+
+		&[open] summary :global(.icon) {
+			rotate: 180deg;
+		}
+	}
+
+	.rating-details-content {
+		display: grid;
+		gap: 1.25rem;
+		padding-top: 1.25rem;
 	}
 
 	table.data {
