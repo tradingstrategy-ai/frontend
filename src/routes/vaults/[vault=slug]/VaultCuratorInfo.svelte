@@ -29,13 +29,15 @@ curator.
 	let assetType = $derived(vault.flags.includes('tokenised_fund') ? 'tokenised fund' : 'vault');
 </script>
 
-<MetricsBox>
+<MetricsBox fill>
 	<div class="curator-info">
-		{#if curatorLogoUrl}
-			<img src={curatorLogoUrl} alt={curator.name} class="curator-logo" />
-		{/if}
 		<div class="content">
-			<h2>Curated by {curator.name}</h2>
+			<div class="heading">
+				{#if curatorLogoUrl}
+					<img src={curatorLogoUrl} alt={curator.name} class="curator-logo" />
+				{/if}
+				<h2>Curated by {curator.name}</h2>
+			</div>
 			<p class="description">
 				This {assetType} is curated by <a href={curatorPageUrl}>{curator.name}</a>.
 			</p>
@@ -51,24 +53,10 @@ curator.
 
 <style>
 	.curator-info {
-		display: grid;
-		grid-template-columns: 1fr auto;
+		display: flex;
+		flex-direction: column;
 		gap: 1rem;
-		align-items: center;
-
-		&:has(.curator-logo) {
-			grid-template-columns: auto 1fr auto;
-		}
-
-		@media (--viewport-sm-down) {
-			.content {
-				grid-column: span 2;
-			}
-
-			:global(.view-all-btn) {
-				grid-area: 2 / span 3;
-			}
-		}
+		height: 100%;
 
 		.curator-logo {
 			max-width: 9rem;
@@ -80,6 +68,12 @@ curator.
 			display: grid;
 			gap: 0.625rem;
 			min-width: 0;
+
+			.heading {
+				display: flex;
+				gap: 1rem;
+				align-items: start;
+			}
 
 			h2 {
 				margin: 0;
@@ -93,6 +87,11 @@ curator.
 					font-size: 0.875rem;
 				}
 			}
+		}
+
+		:global(.view-all-btn) {
+			--button-width: 100%;
+			margin-top: auto;
 		}
 
 		.description {

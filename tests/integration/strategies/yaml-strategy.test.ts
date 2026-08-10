@@ -60,10 +60,12 @@ test.describe('YAML-configured strategy', () => {
 		const response = await page.goto(`${BASE}/performance`);
 		expect(response?.status()).toBe(200);
 
-		await expect(page.getByText('Performance metrics')).toBeVisible();
+		await expect(page.getByText('Returns and period details')).toBeVisible();
 		await expect(page.getByRole('columnheader', { name: 'Month', exact: true })).toBeVisible();
 		await expect(page.getByRole('columnheader', { name: '3 months' })).toBeVisible();
-		const periodTable = page.locator('.period-table');
+		const periodicMetrics = page.locator('.periodic-metrics');
+		await periodicMetrics.getByRole('button', { name: 'View all' }).click();
+		const periodTable = periodicMetrics.locator('.period-table');
 		await expect(periodTable).toContainText('Period data availability');
 		await expect(periodTable).toContainText('30 days');
 		await expect(periodTable).toContainText('90 days');

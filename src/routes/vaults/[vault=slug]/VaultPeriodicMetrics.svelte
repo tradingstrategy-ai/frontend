@@ -71,7 +71,7 @@ Performance metrics table for a vault across multiple lookback periods.
 		label: string | (() => string);
 		field: keyof PeriodMetrics;
 		formatter: (value: unknown) => string;
-		hidden?: boolean; // hidden until expanded (double-click)
+		hidden?: boolean; // hidden until expanded
 		excluded?: boolean; // permanently excluded from display
 	};
 
@@ -79,7 +79,7 @@ Performance metrics table for a vault across multiple lookback periods.
 		return typeof row.label === 'function' ? row.label() : row.label;
 	}
 
-	// Expanded state - toggled on double-click
+	// Expanded state - toggled by the View all control
 	let expanded = $state(false);
 
 	// Row definitions in display order
@@ -131,35 +131,41 @@ Performance metrics table for a vault across multiple lookback periods.
 		{
 			label: '<a href="/glossary/volatility">Volatility</a>',
 			field: 'volatility',
-			formatter: (v) => formatPercent(v as number | null)
+			formatter: (v) => formatPercent(v as number | null),
+			hidden: true
 		},
 		{
 			label: '<a href="/glossary/total-value-locked-tvl">TVL</a> low',
 			field: 'tvl_low',
-			formatter: (v) => formatDollar(v as number | null)
+			formatter: (v) => formatDollar(v as number | null),
+			hidden: true
 		},
 		{
 			label: '<a href="/glossary/total-value-locked-tvl">TVL</a> high',
 			field: 'tvl_high',
-			formatter: (v) => formatDollar(v as number | null)
+			formatter: (v) => formatDollar(v as number | null),
+			hidden: true
 		},
 		{
 			label: () => `Share price start (${vault.denomination})`,
 			field: 'share_price_start',
-			formatter: (v) => formatNumber(v as number | null, 4, 6)
+			formatter: (v) => formatNumber(v as number | null, 4, 6),
+			hidden: true
 		},
 		{
 			label: () => `Share price end (${vault.denomination})`,
 			field: 'share_price_end',
-			formatter: (v) => formatNumber(v as number | null, 4, 6)
+			formatter: (v) => formatNumber(v as number | null, 4, 6),
+			hidden: true
 		},
 		{
 			label: 'Period data availability',
 			field: 'daily_samples',
-			formatter: formatDays
+			formatter: formatDays,
+			hidden: true
 		},
-		{ label: 'Period start', field: 'period_start_at', formatter: formatDate },
-		{ label: 'Period end', field: 'period_end_at', formatter: formatDate },
+		{ label: 'Period start', field: 'period_start_at', formatter: formatDate, hidden: true },
+		{ label: 'Period end', field: 'period_end_at', formatter: formatDate, hidden: true },
 		{
 			label: 'Raw samples',
 			field: 'raw_samples',
@@ -197,9 +203,8 @@ Performance metrics table for a vault across multiple lookback periods.
 </script>
 
 {#if vault.period_results?.length}
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="periodic-metrics" ondblclick={() => (expanded = !expanded)}>
-		<MetricsBox title="Performance metrics">
+	<div class="periodic-metrics">
+		<MetricsBox title="Returns and period details">
 			<div class="table-wrapper">
 				<table class="period-table">
 					<thead>
@@ -241,6 +246,9 @@ Performance metrics table for a vault across multiple lookback periods.
 					</tbody>
 				</table>
 			</div>
+			<button class="view-all" type="button" onclick={() => (expanded = !expanded)} aria-expanded={expanded}>
+				{expanded ? 'View less' : 'View all'}
+			</button>
 		</MetricsBox>
 	</div>
 {/if}
@@ -248,6 +256,21 @@ Performance metrics table for a vault across multiple lookback periods.
 <style>
 	.table-wrapper {
 		overflow-x: auto;
+	}
+
+	.view-all {
+		margin-top: 1rem;
+		padding: 0;
+		border: 0;
+		background: none;
+		color: var(--c-text-light);
+		font: var(--f-ui-md-medium);
+		text-decoration: underline;
+		cursor: pointer;
+
+		&:hover {
+			color: var(--c-text);
+		}
 	}
 
 	.period-table {

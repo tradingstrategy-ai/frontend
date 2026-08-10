@@ -116,133 +116,151 @@ page); omit it on the protocol page itself to render the name as plain text.
 				{:else}
 					The rating applies to all vaults on this protocol.
 				{/if}
-				{#if reportUrl}
-					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-					<a href={reportUrl} target="_blank" rel="noreferrer">View full rating on the CORE3 website</a>.
-				{/if}
 			</p>
 
-			<div class="columns">
-				<table class="data">
-					<tbody>
-						{#if core3.pol?.score != null}
-							<tr>
-								<th>
-									<Tooltip>
-										<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-										<a slot="trigger" class="metric-link" href={CORE3_METHODOLOGY_URL} target="_blank" rel="noreferrer">
-											Probability of Loss
-											<IconQuestionCircle />
-										</a>
-										<svelte:fragment slot="popup">
-											<p>
-												CORE3's Probability of Loss (PoL) estimates how likely users or token holders are to suffer a
-												financially material loss, excluding market price moves.
-											</p>
-											<p>
-												The scale runs 0–100 — lower is better — and maps to a letter grade from AA (lowest risk) down
-												to D.
-											</p>
-											<p>
-												It is a weighted aggregate of risk categories
-												{#if categoryScores.length}(this protocol's sub-scores in brackets){/if}:
-											</p>
-											<ul>
-												{#each methodologyWeights as { key, label, weight } (key)}
-													<li>{label} — {weight}%{categoryScoreSuffix(key)}</li>
-												{/each}
-												<li>Dependency — 15% (coming soon)</li>
-											</ul>
-											<p>
-												The total is then scaled by 1.0–1.3× for factors such as protocol longevity, past incidents and
-												category leadership.
+			<details class="rating-details">
+				<summary>
+					View details
+					<IconChevronDown />
+				</summary>
+
+				<div class="rating-details-content">
+					<div class="columns">
+						<table class="data">
+							<tbody>
+								{#if core3.pol?.score != null}
+									<tr>
+										<th>
+											<Tooltip>
 												<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-												<a href={CORE3_METHODOLOGY_URL} target="_blank" rel="noreferrer">Read CORE3 methodology</a>.
-											</p>
-										</svelte:fragment>
-									</Tooltip>
-								</th>
-								<td>{formatNumber(core3.pol.score, 2, 2)}</td>
-							</tr>
-						{/if}
-						{#if core3.pol?.confidence}
-							<tr>
-								<th>Confidence</th>
-								<td>{core3.pol.confidence}</td>
-							</tr>
-						{/if}
-						{#if core3.rank != null}
-							<tr>
-								<th>
-									<Tooltip>
-										<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-										<a slot="trigger" class="metric-link" href={rankingUrl} target="_blank" rel="noreferrer">
-											CORE3 rank
-											<IconQuestionCircle />
-										</a>
-										<svelte:fragment slot="popup">
-											Where this protocol ranks among all DeFi protocols rated by CORE3, ordered by risk (1 = best).
-											Opens the CORE3 ranking page.
-										</svelte:fragment>
-									</Tooltip>
-								</th>
-								<td>#{core3.rank}</td>
-							</tr>
-						{/if}
-					</tbody>
-				</table>
+												<a
+													slot="trigger"
+													class="metric-link"
+													href={CORE3_METHODOLOGY_URL}
+													target="_blank"
+													rel="noreferrer"
+												>
+													Probability of Loss
+													<IconQuestionCircle />
+												</a>
+												<svelte:fragment slot="popup">
+													<p>
+														CORE3's Probability of Loss (PoL) estimates how likely users or token holders are to suffer
+														a financially material loss, excluding market price moves.
+													</p>
+													<p>
+														The scale runs 0–100 — lower is better — and maps to a letter grade from AA (lowest risk)
+														down to D.
+													</p>
+													<p>
+														It is a weighted aggregate of risk categories
+														{#if categoryScores.length}(this protocol's sub-scores in brackets){/if}:
+													</p>
+													<ul>
+														{#each methodologyWeights as { key, label, weight } (key)}
+															<li>{label} — {weight}%{categoryScoreSuffix(key)}</li>
+														{/each}
+														<li>Dependency — 15% (coming soon)</li>
+													</ul>
+													<p>
+														The total is then scaled by 1.0–1.3× for factors such as protocol longevity, past incidents
+														and category leadership.
+														<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+														<a href={CORE3_METHODOLOGY_URL} target="_blank" rel="noreferrer">Read CORE3 methodology</a>.
+													</p>
+												</svelte:fragment>
+											</Tooltip>
+										</th>
+										<td>{formatNumber(core3.pol.score, 2, 2)}</td>
+									</tr>
+								{/if}
+								{#if core3.pol?.confidence}
+									<tr>
+										<th>Confidence</th>
+										<td>{core3.pol.confidence}</td>
+									</tr>
+								{/if}
+								{#if core3.rank != null}
+									<tr>
+										<th>
+											<Tooltip>
+												<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+												<a slot="trigger" class="metric-link" href={rankingUrl} target="_blank" rel="noreferrer">
+													CORE3 rank
+													<IconQuestionCircle />
+												</a>
+												<svelte:fragment slot="popup">
+													Where this protocol ranks among all DeFi protocols rated by CORE3, ordered by risk (1 = best).
+													Opens the CORE3 ranking page.
+												</svelte:fragment>
+											</Tooltip>
+										</th>
+										<td>#{core3.rank}</td>
+									</tr>
+								{/if}
+							</tbody>
+						</table>
 
-				<table class="data">
-					<tbody>
-						{#if dataCoverage != null}
-							<tr>
-								<th>Data coverage</th>
-								<td>{formatNumber(dataCoverage, 1, 1)}%</td>
-							</tr>
-						{/if}
-						{#if core3.category?.name}
-							<tr>
-								<th>Category</th>
-								<td>{core3.category.name}</td>
-							</tr>
-						{/if}
-						{#if marketCap}
-							<tr>
-								<th>Market cap</th>
-								<td>{formatDollar(marketCap, 1, 1, { notation: 'compact' })}</td>
-							</tr>
-						{/if}
-					</tbody>
-				</table>
-			</div>
+						<table class="data">
+							<tbody>
+								{#if dataCoverage != null}
+									<tr>
+										<th>Data coverage</th>
+										<td>{formatNumber(dataCoverage, 1, 1)}%</td>
+									</tr>
+								{/if}
+								{#if core3.category?.name}
+									<tr>
+										<th>Category</th>
+										<td>{core3.category.name}</td>
+									</tr>
+								{/if}
+								{#if marketCap}
+									<tr>
+										<th>Market cap</th>
+										<td>{formatDollar(marketCap, 1, 1, { notation: 'compact' })}</td>
+									</tr>
+								{/if}
+							</tbody>
+						</table>
+					</div>
 
-			{#if categoryScores.length}
-				<section class="scorecard">
-					<h3>Risk score by category</h3>
-					<p class="scorecard-note">Sub-scores run 0–100 — lower is better.</p>
-					<ul class="scores">
-						{#each categoryScores as cat (cat.key)}
-							<li>
-								<span class="label">{cat.label}</span>
-								<span class="value">{formatNumber(cat.score, 0, 0)}</span>
-								<span
-									class="meter"
-									data-tone={cat.tone}
-									role="meter"
-									aria-valuemin="0"
-									aria-valuemax="100"
-									aria-valuenow={cat.score}
-									aria-label="{cat.label} risk score {formatNumber(cat.score, 0, 0)} out of 100"
-								>
-									{#each meterDotIndices as i (i)}
-										<span class="dot" style="--frac: {Math.min(Math.max(cat.score / 10 - i, 0), 1)}"></span>
-									{/each}
-								</span>
-							</li>
-						{/each}
-					</ul>
-				</section>
-			{/if}
+					{#if categoryScores.length}
+						<section class="scorecard">
+							<h3>Risk score by category</h3>
+							<p class="scorecard-note">Sub-scores run 0–100 — lower is better.</p>
+							<ul class="scores">
+								{#each categoryScores as cat (cat.key)}
+									<li>
+										<span class="label">{cat.label}</span>
+										<span class="value">{formatNumber(cat.score, 0, 0)}</span>
+										<span
+											class="meter"
+											data-tone={cat.tone}
+											role="meter"
+											aria-valuemin="0"
+											aria-valuemax="100"
+											aria-valuenow={cat.score}
+											aria-label="{cat.label} risk score {formatNumber(cat.score, 0, 0)} out of 100"
+										>
+											{#each meterDotIndices as i (i)}
+												<span class="dot" style="--frac: {Math.min(Math.max(cat.score / 10 - i, 0), 1)}"></span>
+											{/each}
+										</span>
+									</li>
+								{/each}
+							</ul>
+						</section>
+					{/if}
+
+					{#if reportUrl}
+						<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+						<a class="full-rating-link" href={reportUrl} target="_blank" rel="noreferrer"
+							>View full rating on the CORE3 website</a
+						>
+					{/if}
+				</div>
+			</details>
 		</div>
 	{/if}
 </MetricsBox>
@@ -357,6 +375,45 @@ page); omit it on the protocol page itself to render the name as plain text.
 			font-weight: 500;
 			color: var(--c-text-light);
 		}
+	}
+
+	.full-rating-link,
+	.rating-details summary {
+		width: fit-content;
+		font: var(--f-ui-md-medium);
+		color: var(--c-text-light);
+		text-decoration: underline;
+	}
+
+	.rating-details {
+		border-top: 1px solid var(--c-box-3);
+		padding-top: 1.25rem;
+
+		summary {
+			display: flex;
+			align-items: center;
+			gap: 0.25rem;
+			cursor: pointer;
+			list-style: none;
+
+			&::-webkit-details-marker {
+				display: none;
+			}
+
+			:global(.icon) {
+				transition: rotate 0.15s ease;
+			}
+		}
+
+		&[open] summary :global(.icon) {
+			rotate: 180deg;
+		}
+	}
+
+	.rating-details-content {
+		display: grid;
+		gap: 1.25rem;
+		padding-top: 1.25rem;
 	}
 
 	.columns {

@@ -290,7 +290,7 @@ Displays supplementary vault information, including transaction status, performa
 		</div>
 	</MetricsBox>
 
-	<MetricsBox class="performance" title="Returns and fees">
+	<MetricsBox class="performance" title="Performance and fees">
 		<div class="table-scroll">
 			<table class="vault-metrics-table">
 				<thead>

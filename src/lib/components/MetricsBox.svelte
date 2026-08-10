@@ -4,13 +4,14 @@
 	interface Props {
 		title?: string;
 		class?: string;
+		fill?: boolean;
 		children: Snippet;
 	}
 
-	let { title, class: classes, children }: Props = $props();
+	let { title, class: classes, fill = false, children }: Props = $props();
 </script>
 
-<div class={['metrics-box', classes]}>
+<div class={['metrics-box', fill && 'fill', classes]}>
 	{#if title}
 		<h2>{title}</h2>
 	{/if}
@@ -37,6 +38,10 @@
 			@media (--viewport-sm-down) {
 				font-size: 0.875rem;
 			}
+		}
+
+		&.fill {
+			grid-template-rows: 1fr;
 		}
 	}
 </style>
