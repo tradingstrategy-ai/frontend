@@ -22,6 +22,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	import VaultCuratorInfo from './VaultCuratorInfo.svelte';
 	import VaultProtocolInfo from './VaultProtocolInfo.svelte';
 	import VaultRankings from './VaultRankings.svelte';
+	import VaultTransactionStatus from './VaultTransactionStatus.svelte';
 	import Core3Ratings from '$lib/top-vaults/Core3Ratings.svelte';
 	import XerberusRisk from '$lib/top-vaults/XerberusRisk.svelte';
 	import IconDiscord from '~icons/local/discord';
@@ -30,7 +31,8 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 		getVaultProtocolDisplayName,
 		hasSupportedProtocol,
 		isBlacklisted,
-		isVaultDepositCapped
+		isVaultDepositCapped,
+		isVaultTvlDownMoreThan95Percent
 	} from '$lib/top-vaults/helpers';
 	import { getCuratorSocialLogoUrl } from '$lib/social-card/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
@@ -48,6 +50,9 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	let isTokenisedFund = $derived(vault.flags.includes('tokenised_fund'));
 	let isPrivate = $derived(vault.whitelist?.status === 'whitelisted');
 	let isCapped = $derived(isVaultDepositCapped(vault));
+	let showTvlWarning = $derived(isVaultTvlDownMoreThan95Percent(vault));
+	let showLongDurationWarning = $derived(vault.flags.includes('long_duration'));
+	let hasUnsupportedProtocol = $derived(!hasSupportedProtocol(vault));
 	let depositMayBeDisabled = $derived(vault.deposit_closed_reason != null);
 	let redemptionMayBeDisabled = $derived(vault.redemption_closed_reason != null);
 	let operationWarning = $derived(
@@ -63,6 +68,15 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 						? 'Withdrawals may be disabled for this vault'
 						: undefined
 	);
+	let hasNotifications = $derived(
+		operationWarning != null ||
+			isPrivate ||
+			morphoFlags.length > 0 ||
+			showTvlWarning ||
+			showLongDurationWarning ||
+			showBlacklistedAlert ||
+			hasUnsupportedProtocol
+	);
 	let chartLogoUrl = $derived(
 		getCuratorSocialLogoUrl(curatorMetadata) ??
 			(protocolMetadata ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined)
@@ -76,8 +90,10 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 		<VaultListingsSelector />
 	</Section>
 
-	{#if operationWarning || isPrivate || morphoFlags.length > 0}
-		<Section padding="md">
+	<VaultPageHeader {vault} />
+
+	<Section padding="md" --section-gap="var(--gap)">
+		{#if hasNotifications}
 			<div class="notification-stack">
 				{#if isTokenisedFund && (operationWarning || isPrivate)}
 					<Alert size="md" status="info">
@@ -96,33 +112,43 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 					>
 				{/if}
 
+				{#if showTvlWarning}
+					<Alert size="md" status="warning">
+						The value in this vault is down more than 95% of its peak. The vault is likely abandoned or facing issues.
+					</Alert>
+				{/if}
+
+				{#if showLongDurationWarning}
+					<Alert size="md" status="error">
+						This vault may have especially long duration redemption periods. Make sure you check the redemptions before
+						depositing.
+					</Alert>
+				{/if}
+
 				{#if morphoFlags.length > 0}
 					<Alert size="md" status={morphoAlertStatus} title="Morpho has flagged this vault">
 						{morphoFlags.join(', ')}
 					</Alert>
 				{/if}
+
+				{#if showBlacklistedAlert}
+					<Alert size="md" title="Blacklisted">
+						{vault.notes ?? 'Unknown reason'}
+					</Alert>
+				{/if}
+
+				{#if hasUnsupportedProtocol}
+					<Alert size="md" status="warning" title="Protocol not supported">
+						<div>
+							This protocol is not supported yet. Contact us on Discord for information about how to include new
+							protocols.
+						</div>
+						<Button slot="cta" size="sm" label="Join Discord" href={discordUrl} target="_blank" rel="noreferrer">
+							<IconDiscord slot="icon" />
+						</Button>
+					</Alert>
+				{/if}
 			</div>
-		</Section>
-	{/if}
-
-	<VaultPageHeader {vault} />
-
-	<Section padding="md" --section-gap="var(--gap)">
-		{#if showBlacklistedAlert}
-			<Alert size="md" title="Blacklisted">
-				{vault.notes ?? 'Unknown reason'}
-			</Alert>
-		{/if}
-
-		{#if !hasSupportedProtocol(vault)}
-			<Alert size="md" status="warning" title="Protocol not supported">
-				<div>
-					This protocol is not supported yet. Contact us on Discord for information about how to include new protocols.
-				</div>
-				<Button slot="cta" size="sm" label="Join Discord" href={discordUrl} target="_blank" rel="noreferrer">
-					<IconDiscord slot="icon" />
-				</Button>
-			</Alert>
 		{/if}
 
 		<VaultRankings {vault} {chain} {protocolMetadata} />
@@ -133,7 +159,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 		<VaultUtilisationChart {vault} />
 		-->
 
-		<VaultMetrics {vault} {stablecoinMetadata} />
+		<VaultMetrics {vault} {stablecoinMetadata} {core3} />
 
 		<div class="vault-information">
 			{#if vault.description}
@@ -163,6 +189,8 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 				context="vault"
 			/>
 		{/if}
+
+		<VaultTransactionStatus {vault} />
 
 		{#if showNotes && vault.notes}
 			<MetricsBox class="notes" title="Notes">
@@ -215,7 +243,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 		gap: var(--gap);
 
 		@media (--viewport-lg-up) {
-			grid-template-columns: repeat(3, minmax(0, 1fr));
+			grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
 		}
 	}
 

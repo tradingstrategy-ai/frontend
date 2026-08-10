@@ -1,7 +1,7 @@
 import { cleanup, render, screen, within } from '@testing-library/svelte';
 import { afterEach, describe, expect, test } from 'vitest';
 import { createTestVault } from '$lib/top-vaults/test-utils';
-import type { PeriodMetrics } from '$lib/top-vaults/schemas';
+import type { Core3Protocol, PeriodMetrics } from '$lib/top-vaults/schemas';
 import VaultMetrics from './VaultMetrics.svelte';
 
 const MISSING_FEE_TOOLTIP = 'The fee information is not available onchain. Net returns cannot be calculated.';
@@ -51,6 +51,59 @@ function createPeriodMetrics(
 }
 
 describe('VaultMetrics', () => {
+	test('shows a Xerberus score in preference to a CORE3 rating', () => {
+		const vault = createTestVault('Xerberus-rated vault', {
+			xerberus: {
+				score: 81,
+				score_scale: '0–100',
+				entity_type: 'protocol',
+				entity_id: 'xerberus-protocol',
+				name: 'Xerberus protocol',
+				protocol_slug: 'xerberus-protocol',
+				report_url: 'https://app.xerberus.io/protocol/dendrogram/xerberus-protocol',
+				fetched_at: '2026-08-10T00:00:00Z'
+			}
+		});
+		const core3: Core3Protocol = {
+			slug: 'xerberus-protocol',
+			name: 'Xerberus protocol',
+			pol: { score: 20, rating: 'BB', confidence: null }
+		};
+
+		render(VaultMetrics, { props: { vault, core3 } });
+
+		expect(screen.getByText('Xerberus risk')).toBeInTheDocument();
+		expect(screen.getByText('81 / 100')).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				'Xerberus scored this vault’s underlying protocol on a 0–100 scale. Higher scores indicate lower estimated risk.'
+			)
+		).toBeInTheDocument();
+		expect(screen.queryByText('CORE3 risk')).not.toBeInTheDocument();
+	});
+
+	test('shows the CORE3 rating when Xerberus is unavailable', () => {
+		const core3: Core3Protocol = {
+			slug: 'core3-protocol',
+			name: 'CORE3 protocol',
+			pol: { score: 20, rating: 'BB', confidence: null }
+		};
+
+		render(VaultMetrics, { props: { vault: createTestVault('CORE3-rated vault'), core3 } });
+
+		expect(screen.getByText('CORE3 risk')).toBeInTheDocument();
+		expect(screen.getByText('BB')).toBeInTheDocument();
+		expect(screen.queryByText('Protocol Technical Risk')).not.toBeInTheDocument();
+		expect(screen.queryByText('View more')).not.toBeInTheDocument();
+	});
+
+	test('falls back to the protocol technical risk when no provider rating is available', () => {
+		render(VaultMetrics, { props: { vault: createTestVault('Unrated vault', { risk: 'Low' }) } });
+
+		expect(screen.getByText('Protocol Technical Risk')).toBeInTheDocument();
+		expect(screen.getByText('Low')).toBeInTheDocument();
+	});
+
 	test('shows no data tooltips when fee information and net returns are missing', () => {
 		const vault = createTestVault('No fee data vault', {
 			one_month_cagr: 0.12,
@@ -199,18 +252,5 @@ describe('VaultMetrics', () => {
 
 		expect(screen.getAllByText(INTERNALISED_FEE_TOOLTIP)).toHaveLength(6);
 		expect(screen.getByText(INTERNALISED_FEE_DISCLAIMER)).toBeInTheDocument();
-	});
-
-	test('shows private instead of open for deposits that need whitelisting', () => {
-		const vault = createTestVault('Private vault', {
-			whitelist: { status: 'whitelisted', notes: null }
-		});
-
-		render(VaultMetrics, { props: { vault } });
-
-		expect(screen.getByText('Transaction status')).toBeInTheDocument();
-		const deposits = screen.getByText('Deposits').parentElement;
-		expect(deposits).toContainElement(screen.getByText('Private'));
-		expect(deposits).not.toHaveTextContent('Open');
 	});
 });

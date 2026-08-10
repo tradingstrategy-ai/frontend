@@ -1,5 +1,10 @@
 # Weblog of stuff
 
+- Refine vault risk summaries and transaction-status placement (2026-08-10)
+- Centre content-sized vault information card actions (2026-08-10)
+- Consolidate vault notifications beneath the page heading (2026-08-10)
+- Let vault information cards fill the available desktop row space (2026-08-10)
+- Add a details disclosure to Xerberus risk rating cards (2026-08-10)
 - Improve vault detail card layouts and disclosure controls (2026-08-10)
 - Show pending treasury deposits and redemptions in the GuardV0 deposit flow tooltip (2026-08-07)
 - Show vault protocol and chain names in desktop search suggestions (2026-08-07)
