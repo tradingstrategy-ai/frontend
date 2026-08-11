@@ -3,15 +3,20 @@
  *
  * The glossary data is cached on CloudFlare is frequently accessed.
  */
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
+import { getGlossaryEntry } from '../glossary';
 
 export async function load({ params, parent }) {
 	const { glossary } = await parent();
 
-	const entry = glossary[params.slug];
+	const entry = getGlossaryEntry(glossary, params.slug);
 
 	if (!entry) {
 		error(404, `Glossary entry not found: ${params.slug}`);
+	}
+
+	if (params.slug !== entry.slug) {
+		redirect(301, `/glossary/${entry.slug}`);
 	}
 
 	return { entry };
