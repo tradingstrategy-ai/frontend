@@ -10,6 +10,7 @@
  *    restarts and transient API failures (e.g. FRED rate-limiting)
  */
 import swrCache from '$lib/swrCache';
+import { diagnose } from '$lib/diagnostics/server';
 import {
 	FRED_CSV_BASE,
 	FRED_TIMEOUT,
@@ -33,10 +34,12 @@ const TWO_DAYS = 2 * ONE_DAY_S;
 async function fetchFredCsvLatest(seriesId: string): Promise<number | null> {
 	const cacheKey = `fred-${seriesId}`;
 	try {
-		const resp = await fetch(`${FRED_CSV_BASE}?id=${encodeURIComponent(seriesId)}`, {
-			signal: AbortSignal.timeout(FRED_TIMEOUT),
-			headers: { 'User-Agent': randomUserAgent() }
-		});
+		const resp = await diagnose(`FRED ${seriesId}`, () =>
+			fetch(`${FRED_CSV_BASE}?id=${encodeURIComponent(seriesId)}`, {
+				signal: AbortSignal.timeout(FRED_TIMEOUT),
+				headers: { 'User-Agent': randomUserAgent() }
+			})
+		);
 		if (!resp.ok) return readJsonFileCache<number>(cacheKey);
 		const text = await resp.text();
 		const lines = text.trim().split('\n');
@@ -68,10 +71,12 @@ const TREASURY_RATES_URL =
 async function fetchTreasuryNoteRate(): Promise<number | null> {
 	const cacheKey = 'treasury-note-rate';
 	try {
-		const resp = await fetch(TREASURY_RATES_URL, {
-			signal: AbortSignal.timeout(FRED_TIMEOUT),
-			headers: { 'User-Agent': randomUserAgent() }
-		});
+		const resp = await diagnose('US Treasury reference rate', () =>
+			fetch(TREASURY_RATES_URL, {
+				signal: AbortSignal.timeout(FRED_TIMEOUT),
+				headers: { 'User-Agent': randomUserAgent() }
+			})
+		);
 		if (!resp.ok) return readJsonFileCache<number>(cacheKey);
 		const json = await resp.json();
 		const rate = parseFloat(json.data?.[0]?.avg_interest_rate_amt);

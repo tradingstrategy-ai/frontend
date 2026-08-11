@@ -121,6 +121,58 @@ docker-compose logs
 
 Then visit the [diagnostics page](https://tradingstrategy.ai/diagnostics) to see the version tag has been updated.
 
+### Checking production connectivity
+
+Before restarting the service, or when the front page fails to render, run the
+connectivity checker in the same Compose service and with the same environment:
+
+```shell
+docker compose run --rm frontend node scripts/check-connectivity.mjs
+```
+
+The command probes every configured upstream without printing credentials. It
+checks the frontend's required configuration, backend and strategy executors,
+the top-vaults source, reference-rate feeds, and configured optional services
+such as Ghost, R2-backed metadata, MailerLite, Sentry, RPC endpoints and
+Datadog. It exits with status 1 when a configured probe fails; `SKIP` means an
+optional feature has deliberately not been configured.
+
+Run it after loading the production secrets and before restarting the service:
+
+```shell
+source ~/secrets.env
+docker compose run --rm frontend node scripts/check-connectivity.mjs
+```
+
+### Diagnosing a hanging page request
+
+To log each server-side upstream request with its start, completion, failure and
+duration, temporarily enable the `DIAGNOSE` environment variable and recreate
+the frontend:
+
+```shell
+export DIAGNOSE=1
+docker compose up -d --force-recreate frontend
+docker compose logs -f frontend
+```
+
+The logs are prefixed with `[DIAGNOSE]` and redact query strings and URL
+credentials. A `start` line without a later `done` or `failed` line identifies
+the upstream request that is hanging. Request the affected page while following
+the logs, for example:
+
+```shell
+curl --fail --silent --show-error http://127.0.0.1:${FRONTEND_PORT:-3000}/ > /dev/null
+```
+
+Disable tracing and recreate the service after investigation, as this mode logs
+every server-side upstream request:
+
+```shell
+unset DIAGNOSE
+docker compose up -d --force-recreate frontend
+```
+
 ## Local containers
 
 ### Creating PAT to access Github container registry

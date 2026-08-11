@@ -5,6 +5,8 @@
 version: '3.9'
 services:
   frontend:
+    # Check every configured dependency without starting the web server:
+    # docker compose run --rm frontend node scripts/check-connectivity.mjs
     image: 'ghcr.io/tradingstrategy-ai/frontend:${TS_PUBLIC_FRONTEND_VERSION_TAG}'
     ports:
       # The production server has :80 port bind by Caddy.
@@ -42,6 +44,7 @@ services:
       - TS_PUBLIC_VAULT_SPARKLINES_URL
       - TS_PUBLIC_VAULT_API_URL
       - TS_PUBLIC_STABLECOIN_METADATA_URL
+      - TS_PUBLIC_SAMPLE_DATA_URL
       - TS_PUBLIC_CREEM_CHECKOUT_URL
       # Private (secret) SvelteKit env vars
       - TS_PRIVATE_ADMIN_PW
@@ -50,6 +53,7 @@ services:
       - TS_PRIVATE_R2_SECRET_ACCESS_KEY
       - TS_PRIVATE_R2_BUCKET_NAME
       - TS_PRIVATE_TOP_VAULTS_URL
+      - TS_PRIVATE_VAULT_PRICES_PARQUET_URL
       - TS_PRIVATE_MAILERLITE_URL
       - TS_PRIVATE_MAILERLITE_API_KEY
       - TS_PRIVATE_MAILERLITE_GROUPS
@@ -65,3 +69,6 @@ services:
       - DD_VERSION=${TS_PUBLIC_FRONTEND_VERSION_TAG}
       - DD_TRACE_AGENT_URL
       - DD_DOGSTATSD_URL
+      # Temporarily set DIAGNOSE=1, recreate the service, then inspect its logs:
+      # docker compose up -d --force-recreate frontend && docker compose logs -f frontend
+      - DIAGNOSE

@@ -15,6 +15,7 @@ import {
 import { getCachedSharePriceReturns } from '$lib/strategies/yaml/share-price';
 import { compactStrategyTileChartData } from 'trade-executor/helpers/chart';
 import { fetchLatestFredValue, fetchLatestTreasuryRate } from '$lib/reference-rates';
+import { diagnose } from '$lib/diagnostics/server';
 
 const HOME_PAGE_EDGE_CACHE_TTL_SECONDS = 30 * 60;
 const FRONT_PAGE_VAULT_COUNT = 5;
@@ -29,113 +30,115 @@ function getAgeSeconds(dateValue: Date | string | null | undefined) {
 }
 
 export async function load({ fetch }) {
-	const [strategies, topVaultsResult, ratesResult] = await Promise.all([
-		getCachedStrategies(fetch),
-		fetchTopVaults(fetch).catch((e) => {
-			console.error('Failed to fetch top vaults:', e);
-			return undefined;
-		}),
-		Promise.all([fetchLatestFredValue('SNDR'), fetchLatestTreasuryRate()])
-	]);
+	return diagnose('Front page SSR load', async () => {
+		const [strategies, topVaultsResult, ratesResult] = await Promise.all([
+			getCachedStrategies(fetch),
+			fetchTopVaults(fetch).catch((e) => {
+				console.error('Failed to fetch top vaults:', e);
+				return undefined;
+			}),
+			Promise.all([fetchLatestFredValue('SNDR'), fetchLatestTreasuryRate()])
+		]);
 
-	const frontpageStrategies = strategies.filter((s) => s.frontpage).map(compactStrategyTileChartData);
-	const yamlTileFreshness: {
-		strategyId: string;
-		vaultId: string | null;
-		sharePriceCacheAgeSeconds: number | null;
-		sharePriceCacheTtlSeconds: number;
-		sharePriceSeriesEndAt: string | null;
-	}[] = [];
+		const frontpageStrategies = strategies.filter((s) => s.frontpage).map(compactStrategyTileChartData);
+		const yamlTileFreshness: {
+			strategyId: string;
+			vaultId: string | null;
+			sharePriceCacheAgeSeconds: number | null;
+			sharePriceCacheTtlSeconds: number;
+			sharePriceSeriesEndAt: string | null;
+		}[] = [];
 
-	// Add YAML strategies with frontpage flag
-	const yamlFrontpage = [...yamlStrategies.values()].filter((c) => c.frontpage);
-	if (yamlFrontpage.length > 0 && topVaultsResult) {
-		try {
-			for (const config of yamlFrontpage) {
-				const vault = topVaultsResult.vaults.find((v) => v.address === config.vault_address);
-				const sharePriceReturns = vault ? await getCachedSharePriceReturns(fetch, vault.id) : undefined;
-				yamlTileFreshness.push({
-					strategyId: config.slug,
-					vaultId: vault?.id ?? null,
-					sharePriceCacheAgeSeconds: vault ? getCachedSharePriceReturns.getAge(fetch, vault.id) : null,
-					sharePriceCacheTtlSeconds: getCachedSharePriceReturns.ttl,
-					sharePriceSeriesEndAt: sharePriceReturns?.length
-						? new Date(sharePriceReturns.at(-1)![0] * 1000).toISOString()
-						: null
-				});
-				frontpageStrategies.push(toListingStrategy(config, vault, sharePriceReturns));
+		// Add YAML strategies with frontpage flag
+		const yamlFrontpage = [...yamlStrategies.values()].filter((c) => c.frontpage);
+		if (yamlFrontpage.length > 0 && topVaultsResult) {
+			try {
+				for (const config of yamlFrontpage) {
+					const vault = topVaultsResult.vaults.find((v) => v.address === config.vault_address);
+					const sharePriceReturns = vault ? await getCachedSharePriceReturns(fetch, vault.id) : undefined;
+					yamlTileFreshness.push({
+						strategyId: config.slug,
+						vaultId: vault?.id ?? null,
+						sharePriceCacheAgeSeconds: vault ? getCachedSharePriceReturns.getAge(fetch, vault.id) : null,
+						sharePriceCacheTtlSeconds: getCachedSharePriceReturns.ttl,
+						sharePriceSeriesEndAt: sharePriceReturns?.length
+							? new Date(sharePriceReturns.at(-1)![0] * 1000).toISOString()
+							: null
+					});
+					frontpageStrategies.push(toListingStrategy(config, vault, sharePriceReturns));
+				}
+			} catch (e) {
+				console.error('Failed to fetch vault data for frontpage YAML strategies:', e);
+				for (const config of yamlFrontpage) {
+					frontpageStrategies.push(toListingStrategy(config));
+				}
 			}
-		} catch (e) {
-			console.error('Failed to fetch vault data for frontpage YAML strategies:', e);
+		} else if (yamlFrontpage.length > 0) {
 			for (const config of yamlFrontpage) {
 				frontpageStrategies.push(toListingStrategy(config));
 			}
 		}
-	} else if (yamlFrontpage.length > 0) {
-		for (const config of yamlFrontpage) {
-			frontpageStrategies.push(toListingStrategy(config));
+
+		frontpageStrategies.sort(compareStrategiesForFrontpage);
+
+		const [savingsRate, treasuryRate] = ratesResult;
+
+		let topVaults: { generated_at: Date | string; vaults: SlimVaultInfo[]; aggregates: VaultAggregates } | undefined;
+
+		if (topVaultsResult) {
+			const allSlim = topVaultsResult.vaults.map(slimVault);
+			const baseVaults = allSlim.filter((v) => isEligibleFrontpageVault(v) && meetsMinTvl(v));
+			const rankedVaults = baseVaults
+				.filter(meetsDefaultTvl)
+				.sort(rankVaultsBy(['three_months_cagr', 'three_months_cagr_net']))
+				.reverse();
+
+			const totalTvl = calculateTotalTvl(baseVaults);
+			const rankedTvl = calculateTotalTvl(rankedVaults);
+			const weightedAvgApy =
+				rankedTvl > 0
+					? rankedVaults.reduce((acc, v) => {
+							const weight = (v.current_nav ?? 0) / rankedTvl;
+							return acc + weight * (v.three_months_cagr_net ?? v.three_months_cagr ?? 0);
+						}, 0)
+					: 0;
+
+			topVaults = {
+				generated_at: topVaultsResult.generated_at,
+				// TopVaults renders five cards. Avoid serialising the unused 25 vaults
+				// into the initial HTML response.
+				vaults: rankedVaults.slice(0, FRONT_PAGE_VAULT_COUNT),
+				aggregates: {
+					totalTvl,
+					weightedAvgApy,
+					rankedVaultCount: rankedVaults.length
+				}
+			};
 		}
-	}
 
-	frontpageStrategies.sort(compareStrategiesForFrontpage);
-
-	const [savingsRate, treasuryRate] = ratesResult;
-
-	let topVaults: { generated_at: Date | string; vaults: SlimVaultInfo[]; aggregates: VaultAggregates } | undefined;
-
-	if (topVaultsResult) {
-		const allSlim = topVaultsResult.vaults.map(slimVault);
-		const baseVaults = allSlim.filter((v) => isEligibleFrontpageVault(v) && meetsMinTvl(v));
-		const rankedVaults = baseVaults
-			.filter(meetsDefaultTvl)
-			.sort(rankVaultsBy(['three_months_cagr', 'three_months_cagr_net']))
-			.reverse();
-
-		const totalTvl = calculateTotalTvl(baseVaults);
-		const rankedTvl = calculateTotalTvl(rankedVaults);
-		const weightedAvgApy =
-			rankedTvl > 0
-				? rankedVaults.reduce((acc, v) => {
-						const weight = (v.current_nav ?? 0) / rankedTvl;
-						return acc + weight * (v.three_months_cagr_net ?? v.three_months_cagr ?? 0);
-					}, 0)
-				: 0;
-
-		topVaults = {
-			generated_at: topVaultsResult.generated_at,
-			// TopVaults renders five cards. Avoid serialising the unused 25 vaults
-			// into the initial HTML response.
-			vaults: rankedVaults.slice(0, FRONT_PAGE_VAULT_COUNT),
-			aggregates: {
-				totalTvl,
-				weightedAvgApy,
-				rankedVaultCount: rankedVaults.length
-			}
-		};
-	}
-
-	return {
-		debugFreshness: {
-			renderedAt: new Date().toISOString(),
-			httpEdgeCacheTtlSeconds: HOME_PAGE_EDGE_CACHE_TTL_SECONDS,
-			apiStrategiesCache: {
-				ttlSeconds: getCachedStrategies.ttl,
-				ageSeconds: getCachedStrategies.getAge(fetch)
+		return {
+			debugFreshness: {
+				renderedAt: new Date().toISOString(),
+				httpEdgeCacheTtlSeconds: HOME_PAGE_EDGE_CACHE_TTL_SECONDS,
+				apiStrategiesCache: {
+					ttlSeconds: getCachedStrategies.ttl,
+					ageSeconds: getCachedStrategies.getAge(fetch)
+				},
+				topVaultsFeed: topVaultsResult
+					? {
+							generatedAt: new Date(topVaultsResult.generated_at).toISOString(),
+							ageSeconds: getAgeSeconds(topVaultsResult.generated_at)
+						}
+					: null,
+				yamlTileSharePriceCache: {
+					ttlSeconds: getCachedSharePriceReturns.ttl,
+					strategies: yamlTileFreshness
+				}
 			},
-			topVaultsFeed: topVaultsResult
-				? {
-						generatedAt: new Date(topVaultsResult.generated_at).toISOString(),
-						ageSeconds: getAgeSeconds(topVaultsResult.generated_at)
-					}
-				: null,
-			yamlTileSharePriceCache: {
-				ttlSeconds: getCachedSharePriceReturns.ttl,
-				strategies: yamlTileFreshness
-			}
-		},
-		strategies: frontpageStrategies,
-		savingsRate,
-		treasuryRate,
-		topVaults
-	};
+			strategies: frontpageStrategies,
+			savingsRate,
+			treasuryRate,
+			topVaults
+		};
+	});
 }
