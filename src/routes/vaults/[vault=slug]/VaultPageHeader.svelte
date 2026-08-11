@@ -16,18 +16,25 @@ Displays a vault's heading, external link, update action, and description.
 	let { vault }: Props = $props();
 
 	const FIRA_HOSTNAME = 'app.fira.money';
+	const FIRA_VAULT_SLUG = 'vi-usdc-qa-g';
+	const FIRA_VAULT_URL = 'https://app.fira.money/market/busd0-usd0?type=variable';
+
+	// The public top-vaults feed temporarily still provides the retired Euler Earn URL for this vault.
+	// Keep this override local to the outbound CTA, rather than changing the vault's Euler protocol classification.
+	// Remove it when the feed permanently serves FIRA_VAULT_URL for FIRA_VAULT_SLUG.
+	let externalVaultUrl = $derived(vault.vault_slug === FIRA_VAULT_SLUG ? FIRA_VAULT_URL : vault.link);
 
 	let externalSiteName = $derived.by(() => {
 		// Fira hosts the live market UI for a migrated Euler vault.
 		// The vault must remain categorised as Euler, so do not change its protocol metadata.
 		// This presentation-only exception makes the call to action describe where it actually goes.
-		if (vault.link && new URL(vault.link).hostname === FIRA_HOSTNAME) return 'Fira';
+		if (externalVaultUrl && new URL(externalVaultUrl).hostname === FIRA_HOSTNAME) return 'Fira';
 
 		// Other supported vaults continue to use their protocol name in the call to action.
 		if (hasSupportedProtocol(vault)) return getVaultProtocolDisplayName(vault);
 
 		// Unknown-protocol vaults fall back to the hostname of their external destination.
-		if (vault.link) return new URL(vault.link).host;
+		if (externalVaultUrl) return new URL(externalVaultUrl).host;
 	});
 	let hideCtaOnMobile = $derived(externalSiteName === 'Ostium');
 </script>
@@ -41,8 +48,8 @@ Displays a vault's heading, external link, update action, and description.
 
 	{#snippet cta()}
 		<span class="cta-actions" class:mobile-hidden={hideCtaOnMobile}>
-			{#if vault.link}
-				<Button href={vault.link} target="_blank" rel="noreferrer">
+			{#if externalVaultUrl}
+				<Button href={externalVaultUrl} target="_blank" rel="noreferrer">
 					{externalSiteName === 'Ostium' ? 'Open vault on Ostium' : `View on ${externalSiteName}`}
 				</Button>
 			{/if}
