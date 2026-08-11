@@ -22,6 +22,33 @@ export type GlossaryEntry = {
 export type GlossaryMap = Record<string, GlossaryEntry>;
 
 /**
+ * Convert Sphinx term IDs or legacy glossary URL segments to canonical app slugs.
+ *
+ * @param source Glossary source ID, URL slug, or URL fragment
+ */
+export function getGlossarySlug(source: string) {
+	let value = source;
+
+	try {
+		value = decodeURIComponent(value);
+	} catch {
+		// Use the raw value when a malformed URL segment cannot be decoded.
+	}
+
+	return slugify(value.replace(/^#?term-/i, ''));
+}
+
+/**
+ * Find a glossary entry by canonical slug or a legacy/source slug variant.
+ *
+ * @param glossary Glossary entry map
+ * @param slug URL slug to resolve
+ */
+export function getGlossaryEntry(glossary: GlossaryMap, slug: string) {
+	return glossary[slug] ?? glossary[getGlossarySlug(slug)];
+}
+
+/**
  * Could not scrape glossary entries correctly
  */
 export class GlossaryParseError extends Error {
@@ -39,7 +66,7 @@ export class GlossaryParseError extends Error {
 function rewriteInternalLinks(node: HTMLElement) {
 	node.querySelectorAll('a[href^="#term-"]').forEach((a) => {
 		const href = a.getAttribute('href')!;
-		const newHref = href.replace('#term-', '').toLowerCase();
+		const newHref = getGlossarySlug(href);
 		a.setAttribute('href', newHref);
 	});
 }
@@ -95,7 +122,7 @@ export async function fetchAndParseGlossary(fetch: Fetch) {
 				)
 			);
 
-			const slug = slugify(name);
+			const slug = getGlossarySlug(name);
 			assert(!glossary[slug], new GlossaryParseError(`Duplicate glossary slug: ${slug}`));
 
 			const dd = getDefinitionElem(dt);
