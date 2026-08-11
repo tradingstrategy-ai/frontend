@@ -5,6 +5,7 @@ import { env } from '$env/dynamic/private';
 import { backendUrl, backendInternalUrl, sentryDsn, siteMode, strategyMicrosite, version } from '$lib/config';
 import { countryCodeSchema } from '$lib/helpers/geo';
 import { parseDate } from '$lib/helpers/date';
+import { diagnoseFetch } from '$lib/diagnostics/server';
 
 const defaultColorMode = 'dark';
 
@@ -26,7 +27,7 @@ export async function handleFetch({ request, fetch }) {
 	if (backendInternalUrl && request.url.startsWith(backendUrl)) {
 		request = new Request(request.url.replace(backendUrl, backendInternalUrl), request);
 	}
-	return fetch(request);
+	return diagnoseFetch(request, fetch);
 }
 
 export const handleError = Sentry.handleErrorWithSentry((async ({ error }) => {
@@ -137,7 +138,7 @@ const handleIpCountry: Handle = async ({ event, resolve }) => {
 	if (ipCountry) {
 		try {
 			event.locals.ipCountry = countryCodeSchema.parse(ipCountry);
-		} catch (e) {
+		} catch {
 			console.warn(`Invalid CF-IPCountry: ${ipCountry}`);
 		}
 	}

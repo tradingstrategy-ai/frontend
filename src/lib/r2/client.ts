@@ -9,6 +9,7 @@
  */
 import { env } from '$env/dynamic/private';
 import { S3Client, GetObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
+import { diagnose } from '$lib/diagnostics/server';
 
 function createClient(): S3Client | undefined {
 	const accountId = env.TS_PRIVATE_R2_ACCOUNT_ID;
@@ -60,7 +61,7 @@ export async function getR2Object(key: string) {
 	if (!client || !bucket) return null;
 
 	const command = new GetObjectCommand({ Bucket: bucket, Key: key });
-	const response = await client.send(command);
+	const response = await diagnose(`R2 GET ${key}`, () => client.send(command));
 
 	return {
 		body: response.Body,
@@ -84,7 +85,7 @@ export async function headR2Object(key: string) {
 	if (!client || !bucket) return null;
 
 	const command = new HeadObjectCommand({ Bucket: bucket, Key: key });
-	const response = await client.send(command);
+	const response = await diagnose(`R2 HEAD ${key}`, () => client.send(command));
 
 	return {
 		contentLength: response.ContentLength ?? null,

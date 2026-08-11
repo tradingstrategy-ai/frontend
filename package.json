@@ -6,6 +6,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "build:test": "vite build --mode test",
+    "check:connectivity": "node scripts/check-connectivity.mjs",
     "preview": "vite preview",
     "benchmark:historical-tvl-chain": "node scripts/benchmark-historical-tvl-chain.mjs",
     "prepare": "svelte-kit sync || echo ''",
