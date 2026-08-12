@@ -18,19 +18,18 @@ mistake protocol coverage for a vault-specific assessment.
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { riskRatingProviders } from './risk-rating-providers';
 	import type { XerberusVault } from './schemas';
-	import type { XerberusProtocolScore } from '$lib/xerberus/protocol-scores';
 	import IconQuestionCircle from '~icons/local/question-circle';
 	import IconChevronDown from '~icons/local/chevron-down';
 
 	interface Props {
-		xerberus: XerberusVault | XerberusProtocolScore;
+		xerberus: XerberusVault;
 		context?: 'protocol' | 'vault';
 	}
 
 	let { xerberus, context = 'vault' }: Props = $props();
-	let score = $derived('entity_type' in xerberus ? xerberus.score : xerberus.score * 100);
-	let reportUrl = $derived('entity_type' in xerberus ? xerberus.report_url : xerberus.url);
-	let isPoolAssessment = $derived('entity_type' in xerberus && xerberus.entity_type === 'pool');
+	let score = $derived(xerberus.score);
+	let reportUrl = $derived(xerberus.report_url);
+	let isPoolAssessment = $derived(xerberus.entity_type === 'pool');
 	let assessmentLabel = $derived(isPoolAssessment ? 'Pool-level' : 'Protocol-level');
 	let assessmentDescription = $derived(
 		isPoolAssessment

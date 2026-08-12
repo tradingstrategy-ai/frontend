@@ -73,14 +73,17 @@ describe('XerberusRisk', () => {
 		expect(screen.queryByRole('link', { name: /Xerberus/ })).not.toBeInTheDocument();
 	});
 
-	it('renders a protocol score on the 0–100 scale', () => {
+	it('renders a protocol assessment from the vault dataset on the 0–100 scale', () => {
 		render(XerberusRisk, {
 			props: {
 				xerberus: {
-					id: 'example-protocol',
+					...baseAssessment,
+					entity_type: 'protocol',
+					entity_id: 'example-protocol',
 					name: 'Example protocol',
-					score: 0.78,
-					url: 'https://app.xerberus.io/protocol/dendrogram/example-protocol'
+					protocol_slug: 'example-protocol',
+					score: 78,
+					report_url: 'https://app.xerberus.io/protocol/dendrogram/example-protocol'
 				},
 				context: 'protocol'
 			}
