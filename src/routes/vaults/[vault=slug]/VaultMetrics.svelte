@@ -16,7 +16,7 @@ Displays supplementary vault information, performance, fees, and risk metrics.
 	import { getChainDisplayName } from '$lib/helpers/chain';
 	import {
 		getStablecoinDetailsHref,
-		getVaultDenominationLogoUrl,
+		getStablecoinLogoUrl,
 		resolveStablecoinSlug
 	} from '$lib/stablecoin-metadata/helpers';
 	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
@@ -52,7 +52,7 @@ Displays supplementary vault information, performance, fees, and risk metrics.
 			name: vault.normalised_denomination
 		})
 	);
-	let denominationLogoUrl = $derived(getVaultDenominationLogoUrl(vault, denominationSlug));
+	let denominationLogoUrl = $derived(denominationSlug ? getStablecoinLogoUrl(denominationSlug) : undefined);
 	let denominationHref = $derived(stablecoinMetadata ? getStablecoinDetailsHref(denominationSlug) : undefined);
 
 	let lifetimeMaxDrawdown = $derived(

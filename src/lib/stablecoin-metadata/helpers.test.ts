@@ -7,9 +7,7 @@ import {
 	getStablecoinDetailsHref,
 	getStablecoinLogoUrl,
 	getStablecoinNativeRate,
-	getVaultDenominationLogoUrl,
 	isStablecoinDepegged,
-	isMidasRawUsdVault,
 	OFFCHAIN_USD_SHORT_DESCRIPTION,
 	resolveStablecoinSlug
 } from './helpers';
@@ -80,18 +78,6 @@ describe('stablecoin metadata helpers', () => {
 		expect(getStablecoinDetailsHref('usd-offchain')).toBeUndefined();
 		expect(getStablecoinDetailsHref('usdc')).toBe('/vaults/stablecoins/usdc');
 		expect(OFFCHAIN_USD_SHORT_DESCRIPTION).toBe('U.S. Dollars in the banking system without onchain transparency');
-	});
-
-	test('uses the US flag only for Midas vaults denominated in raw USD', () => {
-		expect(isMidasRawUsdVault({ protocol_slug: 'midas', denomination: 'USD' })).toBe(true);
-		expect(isMidasRawUsdVault({ protocol_slug: 'midas', denomination: 'USDT' })).toBe(false);
-		expect(getVaultDenominationLogoUrl({ protocol_slug: 'midas', denomination: 'USD' }, 'usd')).toBe('/flags/us.svg');
-		expect(getVaultDenominationLogoUrl({ protocol_slug: 'midas', denomination: 'USDT' }, 'usdt')).not.toBe(
-			'/flags/us.svg'
-		);
-		expect(getVaultDenominationLogoUrl({ protocol_slug: 'morpho', denomination: 'USD' }, 'usd')).not.toBe(
-			'/flags/us.svg'
-		);
 	});
 
 	test('appends symbol to display name when missing', () => {
