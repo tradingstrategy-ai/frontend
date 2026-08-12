@@ -6,6 +6,7 @@ import { backendUrl, backendInternalUrl, sentryDsn, siteMode, strategyMicrosite,
 import { countryCodeSchema } from '$lib/helpers/geo';
 import { parseDate } from '$lib/helpers/date';
 import { diagnoseFetch } from '$lib/diagnostics/server';
+import { signozSentryOptions, installConsoleLogBridge } from '$lib/server/signoz-telemetry';
 
 const defaultColorMode = 'dark';
 
@@ -16,8 +17,13 @@ Sentry.init({
 	sendDefaultPii: true,
 	environment: siteMode,
 	release: `frontend@${version}`,
-	tracesSampleRate: 0.1
+	tracesSampleRate: 0.1,
+	// SigNoz OTLP trace export (no-op unless OTEL_EXPORTER_OTLP_ENDPOINT is set);
+	// overrides tracesSampleRate when enabled — see $lib/server/signoz-telemetry
+	...signozSentryOptions()
 });
+
+installConsoleLogBridge();
 
 /**
  * Use internal network for server-side fetch() requests; see:
