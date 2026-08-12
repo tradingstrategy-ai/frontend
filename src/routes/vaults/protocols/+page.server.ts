@@ -13,12 +13,11 @@ import {
 import { sortOptions } from '$lib/top-vaults/VaultGroupTable.svelte';
 import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
 import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
-import { getCachedXerberusProtocolScoreIndex, resolveXerberusProtocolScore } from '$lib/xerberus/protocol-scores';
+import { getXerberusProtocolAssessment } from '$lib/server/top-vaults/xerberus';
 import type { MarketShareChartItem } from '../market-share-pie';
 
 export async function load({ fetch, url: { searchParams } }) {
 	const { vaults, core3_protocols } = await getCachedTopVaults(fetch);
-	const xerberusScoreIndex = await getCachedXerberusProtocolScoreIndex(fetch).catch(() => null);
 
 	const eligibleVaults = vaults.filter((v) => !isBlacklisted(v) && meetsMinTvl(v));
 
@@ -49,10 +48,10 @@ export async function load({ fetch, url: { searchParams } }) {
 	}, {});
 
 	for (const protocol of Object.values(protocols)) {
-		const xerberusScore = xerberusScoreIndex ? resolveXerberusProtocolScore(xerberusScoreIndex, protocol) : null;
-		protocol.xerberus_score = xerberusScore?.score ?? null;
-		protocol.xerberus_id = xerberusScore?.id ?? null;
-		protocol.xerberus_url = xerberusScore?.url ?? null;
+		const xerberus = getXerberusProtocolAssessment(eligibleVaults, protocol.slug);
+		protocol.xerberus_score = xerberus ? xerberus.score / 100 : null;
+		protocol.xerberus_id = xerberus?.entity_id ?? null;
+		protocol.xerberus_url = xerberus?.report_url ?? null;
 	}
 
 	// Calculate TVL-weighted average APY for each protocol

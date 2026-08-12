@@ -75,6 +75,8 @@ When no Xerberus assessment is available, the card uses the resolved CORE3 proto
 
 The full Xerberus and CORE3 cards remain below the vault-information cards. Transaction availability is shown after those provider cards so restrictions and their corresponding risk context remain together.
 
+Protocol pages and the protocol listing also resolve Xerberus scores from these embedded vault assessments. They do not make requests to Xerberus APIs.
+
 ### Vault prices parquet
 
 **Code:** `src/lib/top-vaults/vault-prices-parquet.ts` → `ensureVaultPricesParquet()`

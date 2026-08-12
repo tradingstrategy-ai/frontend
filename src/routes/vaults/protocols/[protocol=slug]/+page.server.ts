@@ -9,7 +9,7 @@ import {
 	UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME,
 	UNKNOWN_VAULT_PROTOCOL_SLUG
 } from '$lib/top-vaults/helpers.js';
-import { getCachedXerberusProtocolScoreIndex, resolveXerberusProtocolScore } from '$lib/xerberus/protocol-scores';
+import { getXerberusProtocolAssessment } from '$lib/server/top-vaults/xerberus';
 
 export async function load({ params, fetch, url }) {
 	const { protocol } = params;
@@ -32,10 +32,7 @@ export async function load({ params, fetch, url }) {
 	const protocolName = isUnknownGroup
 		? UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME
 		: getProtocolDisplayName(protocolVault.protocol, protocolVault.protocol_slug);
-	const xerberusScoreIndex = await getCachedXerberusProtocolScoreIndex(fetch).catch(() => null);
-	const xerberus = xerberusScoreIndex
-		? resolveXerberusProtocolScore(xerberusScoreIndex, { slug: protocol, name: protocolName })
-		: null;
+	const xerberus = getXerberusProtocolAssessment(protocolVaults, protocol);
 
 	return {
 		protocolSlug: protocol,
