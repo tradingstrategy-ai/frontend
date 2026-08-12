@@ -72,3 +72,7 @@ services:
       # Temporarily set DIAGNOSE=1, recreate the service, then inspect its logs:
       # docker compose up -d --force-recreate frontend && docker compose logs -f frontend
       - DIAGNOSE
+      # SigNoz OTLP endpoint (optional — unset disables SigNoz export entirely);
+      # headers only needed if the collector requires an ingestion key. See docs/monitoring.md
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_HEADERS
