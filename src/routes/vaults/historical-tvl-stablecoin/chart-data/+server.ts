@@ -16,7 +16,7 @@ import { getCachedTopVaults } from '$lib/top-vaults/cache';
 const compress = promisify(brotliCompress);
 
 const CACHE_TTL_MS = HISTORICAL_TVL_CACHE_TTL_SECONDS * 1000;
-const CACHE_VERSION = 'historical-tvl-stablecoin-daily-short-history-v1';
+const CACHE_VERSION = 'historical-tvl-stablecoin-offchain-usd-v2';
 
 let cache: { json: string; br: Uint8Array; expires: number; version: string } | null = null;
 

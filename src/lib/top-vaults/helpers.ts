@@ -6,6 +6,7 @@ import { vaultSparklinesUrl } from '$lib/config';
 import { capitalize, isNumber } from '$lib/helpers/formatters';
 import { getChain } from '$lib/helpers/chain';
 import { slugify } from '$lib/helpers/slugify';
+import { OFFCHAIN_USD_DENOMINATION, OFFCHAIN_USD_STABLECOIN_SLUG } from '$lib/stablecoin-metadata/helpers';
 
 /**
  * Strip a full vault object to only the fields needed for listing/summary views.
@@ -20,25 +21,29 @@ export function slimVault(vault: Record<string, unknown>): SlimVaultInfo {
 
 const HYPERCORE_CHAIN_ID = 9999;
 const KINEXYS_PROTOCOL_SLUG = 'kinexys';
-const KINEXYS_DENOMINATION = 'USD (offchain)';
-const KINEXYS_DENOMINATION_SLUG = 'usd-offchain';
 export const UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME = 'Unknown vault protocol';
 /** Canonical group used for vaults whose underlying protocol is unidentified or unsupported. */
 export const UNKNOWN_VAULT_PROTOCOL_SLUG = 'unknown';
 const UNKNOWN_VAULT_PROTOCOL_SLUGS = new Set(['erc-4626']);
 
 /**
- * Kinexys vault balances are denominated in off-chain USD dollars, even when
- * the scanner reports the settlement token address as USDC.
+ * Raw USD and Kinexys vault balances are denominated in off-chain USD dollars,
+ * not in an on-chain stablecoin. Normalise them to one shared denomination so
+ * they are presented consistently in every vault view and chart.
+ *
+ * @param vault vault whose denomination may need normalising
  */
-export function normaliseKinexysVaultDenomination(vault: VaultInfo): VaultInfo {
-	if (vault.protocol_slug !== KINEXYS_PROTOCOL_SLUG) return vault;
+export function normaliseOffchainUsdVaultDenomination(vault: VaultInfo): VaultInfo {
+	// All off-chain USD accounting denominations must use this one shared presentation.
+	const isOffchainUsd =
+		vault.protocol_slug === KINEXYS_PROTOCOL_SLUG || vault.denomination.trim().toLowerCase() === 'usd';
+	if (!isOffchainUsd) return vault;
 
 	return {
 		...vault,
-		denomination: KINEXYS_DENOMINATION,
-		normalised_denomination: KINEXYS_DENOMINATION,
-		denomination_slug: KINEXYS_DENOMINATION_SLUG,
+		denomination: OFFCHAIN_USD_DENOMINATION,
+		normalised_denomination: OFFCHAIN_USD_DENOMINATION,
+		denomination_slug: OFFCHAIN_USD_STABLECOIN_SLUG,
 		denomination_token_address: null,
 		denomination_token_rate: null
 	};

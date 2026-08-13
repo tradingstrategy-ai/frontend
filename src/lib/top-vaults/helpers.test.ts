@@ -33,7 +33,7 @@ import {
 	getXerberusScoreBand,
 	getXerberusScoreColour,
 	isNonUsdDenominatedVault,
-	normaliseKinexysVaultDenomination,
+	normaliseOffchainUsdVaultDenomination,
 	normaliseVaultProtocolDisplayName,
 	withVaultCurrentTvlUsd,
 	withVaultDenominationTokenRate,
@@ -117,7 +117,7 @@ describe('Xerberus protocol score helpers', () => {
 	});
 });
 
-describe('normaliseKinexysVaultDenomination', () => {
+describe('normaliseOffchainUsdVaultDenomination', () => {
 	test('uses off-chain USD dollars for Kinexys vault denomination', () => {
 		const vault = createTestVault('JPMorgan OnChain Liquidity-Token Money Market Fund', {
 			protocol: 'Kinexys',
@@ -128,7 +128,7 @@ describe('normaliseKinexysVaultDenomination', () => {
 			denomination_token_rate: createDenominationTokenRate({ usd_rate: 0.999897 })
 		});
 
-		const normalised = normaliseKinexysVaultDenomination(vault);
+		const normalised = normaliseOffchainUsdVaultDenomination(vault);
 
 		expect(normalised.denomination).toBe('USD (offchain)');
 		expect(normalised.normalised_denomination).toBe('USD (offchain)');
@@ -137,10 +137,25 @@ describe('normaliseKinexysVaultDenomination', () => {
 		expect(normalised.denomination_token_rate).toBeNull();
 	});
 
-	test('does not change non-Kinexys vaults', () => {
-		const vault = createTestVault('Aave USDC', { protocol: 'Aave V3' });
+	test('uses the same denomination for all raw USD vaults', () => {
+		const vault = createTestVault('USD-denominated money market fund', {
+			protocol: 'Securitize',
+			denomination: 'USD',
+			normalised_denomination: 'USD',
+			denomination_slug: 'usd'
+		});
 
-		expect(normaliseKinexysVaultDenomination(vault)).toBe(vault);
+		const normalised = normaliseOffchainUsdVaultDenomination(vault);
+
+		expect(normalised.denomination).toBe('USD (offchain)');
+		expect(normalised.normalised_denomination).toBe('USD (offchain)');
+		expect(normalised.denomination_slug).toBe('usd-offchain');
+	});
+
+	test('does not change tokenised USD denominations', () => {
+		const vault = createTestVault('Aave USDC', { protocol: 'Aave V3', denomination: 'USDC' });
+
+		expect(normaliseOffchainUsdVaultDenomination(vault)).toBe(vault);
 	});
 });
 

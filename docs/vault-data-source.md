@@ -6,7 +6,7 @@ The frontend consumes two server-side vault datasets and one external reference 
 
 | Dataset              | Source                                | Local cache path                        | Used by                                                  |
 | -------------------- | ------------------------------------- | --------------------------------------- | -------------------------------------------------------- |
-| Top vaults JSON      | R2: `top_vaults_by_chain.json`        | In-memory (SWR cache)                   | Vault listings, landing page, vault detail pages         |
+| Top vaults JSON      | R2: `top_vaults_by_chain.json`        | In-memory (1-hour TTL)                  | Vault listings, landing page, vault detail pages         |
 | Vault prices parquet | R2: `cleaned-vault-prices-1h.parquet` | `data/cleaned-vault-prices-1h.parquet`  | Share price chart, TVL charts, historical TVL aggregates |
 | Treasury benchmark   | FRED CSV: `DTB3` series               | `~/.cache/ts-frontend/fred-DTB3-*.json` | US 3M T-bill benchmark line on non-perp vault charts     |
 
@@ -44,7 +44,11 @@ If R2 credentials are unavailable, each dataset can be configured with a direct 
 2. If R2 fails or is not configured → fall back to `TS_PRIVATE_TOP_VAULTS_URL`
 3. If neither is available → throws error
 
-The response is parsed, validated against the Zod schema, and cached in memory with SWR (stale-while-revalidate) via `src/lib/top-vaults/cache.ts`.
+The response is parsed, validated against the Zod schema, normalised for frontend presentation, and cached in memory for one hour via `src/lib/top-vaults/cache.ts`. When the cache expires, the next request waits for a fresh export; there is no stale-while-revalidate behaviour.
+
+#### Off-chain USD denomination
+
+The frontend presents every raw `USD` accounting denomination as `USD (offchain)` with the `usd-offchain` slug. This includes Kinexys vaults, whose source data can instead expose a USDC settlement-token address. The normalisation happens in `src/lib/top-vaults/client.ts` before any page, listing, or chart consumes the dataset. It groups all off-chain USD accounting balances together and prevents them from being presented as an on-chain stablecoin token.
 
 #### Whitelist status
 
@@ -74,6 +78,8 @@ The vault detail page's **Other metrics** card shows one third-party provider re
 When no Xerberus assessment is available, the card uses the resolved CORE3 protocol rating as **CORE3 risk**. CORE3 uses credit-style labels from AA (lowest Probability of Loss) to D (highest). If neither provider has data, the card falls back to the frontend's protocol technical-risk classification.
 
 The full Xerberus and CORE3 cards remain below the vault-information cards. Transaction availability is shown after those provider cards so restrictions and their corresponding risk context remain together.
+
+Protocol pages and the protocol listing also resolve Xerberus scores from these embedded vault assessments. They do not make requests to Xerberus APIs.
 
 ### Vault prices parquet
 
@@ -137,7 +143,7 @@ The datasets listing page (`src/routes/vaults/datasets/+page.server.ts`) require
 R2 bucket (vaults-pro-data)
 ├── top_vaults_by_chain.json
 │   └─→ server-config.ts (R2 SDK, URL fallback)
-│       ─→ cache.ts (SWR in-memory) ─→ page loaders
+│       ─→ client.ts (presentation normalisation) ─→ cache.ts (1-hour in-memory) ─→ page loaders
 │
 └── cleaned-vault-prices-1h.parquet
     └─→ vault-prices-parquet.ts (URL if set, else R2 SDK)

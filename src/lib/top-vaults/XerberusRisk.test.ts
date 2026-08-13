@@ -74,14 +74,17 @@ describe('XerberusRisk', () => {
 		);
 	});
 
-	it('formats protocol scores on the shared 0–100 score badge', () => {
+	it('renders a protocol assessment from the vault dataset on the 0–100 scale', () => {
 		render(XerberusRisk, {
 			props: {
 				xerberus: {
-					id: 'example-protocol',
+					...baseAssessment,
+					entity_type: 'protocol',
+					entity_id: 'example-protocol',
 					name: 'Example protocol',
-					score: 0.78,
-					url: 'https://app.xerberus.io/protocol/dendrogram/example-protocol'
+					protocol_slug: 'example-protocol',
+					score: 78,
+					report_url: 'https://app.xerberus.io/protocol/dendrogram/example-protocol'
 				}
 			}
 		});

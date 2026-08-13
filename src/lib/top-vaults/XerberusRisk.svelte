@@ -16,17 +16,16 @@ to Xerberus for the full assessment rather than duplicating the report here.
 	import { formatNumber } from '$lib/helpers/formatters';
 	import { riskRatingProviders } from './risk-rating-providers';
 	import type { XerberusVault } from './schemas';
-	import type { XerberusProtocolScore } from '$lib/xerberus/protocol-scores';
 	import IconChevronDown from '~icons/local/chevron-down';
 
 	interface Props {
-		xerberus: XerberusVault | XerberusProtocolScore;
+		xerberus: XerberusVault;
 	}
 
 	let { xerberus }: Props = $props();
-	let score = $derived('entity_type' in xerberus ? xerberus.score : xerberus.score * 100);
-	let reportUrl = $derived('entity_type' in xerberus ? xerberus.report_url : xerberus.url);
-	let assessmentType = $derived('entity_type' in xerberus && xerberus.entity_type === 'pool' ? 'vault' : 'protocol');
+	let score = $derived(xerberus.score);
+	let reportUrl = $derived(xerberus.report_url);
+	let assessmentType = $derived(xerberus.entity_type === 'pool' ? 'vault' : 'protocol');
 </script>
 
 <MetricsBox class="xerberus-risk">
