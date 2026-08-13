@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Unify CORE3 and Xerberus risk-rating card disclosures (2026-08-13)
 - Refine vault risk summaries and transaction-status placement (2026-08-10)
 - Centre content-sized vault information card actions (2026-08-10)
 - Consolidate vault notifications beneath the page heading (2026-08-10)
