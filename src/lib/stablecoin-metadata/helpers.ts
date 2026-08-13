@@ -4,6 +4,7 @@ import { slugify } from '$lib/helpers/slugify';
 import type { StablecoinMetadata } from './schemas';
 
 export const STABLECOIN_DEPEG_RATE_THRESHOLD = 0.9;
+export const OFFCHAIN_USD_DENOMINATION = 'USD (offchain)';
 export const OFFCHAIN_USD_STABLECOIN_SLUG = 'usd-offchain';
 export const OFFCHAIN_USD_SHORT_DESCRIPTION = 'U.S. Dollars in the banking system without onchain transparency';
 const OFFCHAIN_USD_LOGO_URL = '/flags/us.svg';
@@ -144,38 +145,6 @@ export function getStablecoinDetailsHref(slug: string | null | undefined): strin
 	if (!trimmedSlug || trimmedSlug === OFFCHAIN_USD_STABLECOIN_SLUG) return undefined;
 
 	return `/vaults/stablecoins/${trimmedSlug}`;
-}
-
-/**
- * Whether a vault is denominated in Midas' raw USD accounting currency.
- *
- * This is distinct from tokenised stablecoins such as USDT, even though their
- * metadata can expose a USD symbol alias.
- *
- * @param vault vault denomination fields
- */
-export function isMidasRawUsdVault(vault: { protocol_slug?: string | null; denomination?: string | null }): boolean {
-	return vault.protocol_slug === 'midas' && vault.denomination?.trim().toLowerCase() === 'usd';
-}
-
-/**
- * Return the denomination logo for a vault.
- *
- * Midas reports certain vaults as raw USD rather than an on-chain token. These
- * use the US flag; tokenised denominations such as USDT retain their own logos.
- *
- * @param vault vault denomination fields
- * @param slug resolved stablecoin denomination slug
- */
-export function getVaultDenominationLogoUrl(
-	vault: { protocol_slug?: string | null; denomination?: string | null },
-	slug: string | null | undefined
-): string | undefined {
-	if (isMidasRawUsdVault(vault)) {
-		return OFFCHAIN_USD_LOGO_URL;
-	}
-
-	return slug ? getStablecoinLogoUrl(slug) : undefined;
 }
 
 /**

@@ -23,7 +23,7 @@ Includes the source whitelist status and any source-provided whitelist notes.
 	} from '$lib/top-vaults/helpers';
 	import {
 		getStablecoinDetailsHref,
-		getVaultDenominationLogoUrl,
+		getStablecoinLogoUrl,
 		resolveStablecoinSlug
 	} from '$lib/stablecoin-metadata/helpers';
 	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
@@ -61,7 +61,7 @@ Includes the source whitelist status and any source-provided whitelist notes.
 	let showNativeTvlRows = $derived(denominationCurrency != null && denominationCurrency !== 'usd');
 	let lifetimePeriod = $derived(vault.period_results?.find((p) => p.period.toLowerCase() === 'lifetime') ?? null);
 	let denominationPageSlug = $derived(denominationSlug ?? vault.denomination_slug);
-	let denominationLogoUrl = $derived(getVaultDenominationLogoUrl(vault, denominationSlug));
+	let denominationLogoUrl = $derived(denominationSlug ? getStablecoinLogoUrl(denominationSlug) : undefined);
 	let denominationHref = $derived(stablecoinMetadata ? getStablecoinDetailsHref(denominationSlug) : undefined);
 	let showExchangeRateRow = $derived(vault.protocol_slug !== 'kinexys');
 	let mobileOstiumHref = $derived(

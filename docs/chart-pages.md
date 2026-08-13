@@ -38,6 +38,8 @@ The common data sources are:
 - `+page.server.ts` for pages that can prepare their data during server rendering.
 - Vault detail metrics endpoints such as `/vaults/[vault]/metrics` for time-series data.
 
+Before this dataset reaches chart payload builders, raw USD and Kinexys accounting denominations are normalised to the single `USD (offchain)` / `usd-offchain` group. Charts must use this normalised metadata and must not add provider-specific off-chain USD series.
+
 Current cached chart-data endpoints include:
 
 - `core3-risk/chart-data/+server.ts`

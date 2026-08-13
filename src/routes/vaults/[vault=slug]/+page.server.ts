@@ -3,7 +3,7 @@ import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
 import {
 	buildStablecoinMetadataLookup,
 	findStablecoinMetadata,
-	isMidasRawUsdVault
+	OFFCHAIN_USD_STABLECOIN_SLUG
 } from '$lib/stablecoin-metadata/helpers';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import {
@@ -39,14 +39,15 @@ export async function load({ params, fetch }) {
 		fetchStablecoinMetadataIndex(fetch)
 	]);
 	const stablecoinMetadataLookup = buildStablecoinMetadataLookup(stablecoinMetadataIndex);
-	const stablecoinMetadata = isMidasRawUsdVault(vault)
-		? undefined
-		: findStablecoinMetadata(
-				stablecoinMetadataLookup,
-				vault.denomination_slug,
-				vault.denomination,
-				vault.normalised_denomination
-			);
+	const stablecoinMetadata =
+		vault.denomination_slug === OFFCHAIN_USD_STABLECOIN_SLUG
+			? undefined
+			: findStablecoinMetadata(
+					stablecoinMetadataLookup,
+					vault.denomination_slug,
+					vault.denomination,
+					vault.normalised_denomination
+				);
 	const vaultWithRates = withVaultDenominationTokenRate(
 		vault,
 		stablecoinMetadata,

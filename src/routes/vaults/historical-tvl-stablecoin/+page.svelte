@@ -22,7 +22,7 @@ Historical vault TVL by stablecoin page with a server-side aggregated weekly sta
 
 	const title = 'Historical vault TVL by stablecoin';
 	const description = 'Explore how stablecoin vault TVL has evolved across different stablecoins over time.';
-	const chartDataVersion = 'daily-short-history-v1';
+	const chartDataVersion = 'offchain-usd-v2';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 
 	onMount(() => {
