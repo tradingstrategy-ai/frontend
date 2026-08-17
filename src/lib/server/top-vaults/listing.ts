@@ -16,9 +16,9 @@ import {
 	type VaultListingKey
 } from '$lib/top-vaults/listing/definitions';
 import { queryVaultListing } from '$lib/top-vaults/listing/query';
-import type { VaultListingOptions, VaultListingQuery } from '$lib/top-vaults/listing/query';
+import type { VaultListingOptions, VaultListingQuery, VaultListingResult } from '$lib/top-vaults/listing/query';
 import { parseVaultListingQuery } from '$lib/top-vaults/listing/state';
-import { INITIAL_VAULT_LISTING_LIMIT } from '$lib/top-vaults/listing/types';
+import { INITIAL_VAULT_LISTING_LIMIT, type VaultListingSummary } from '$lib/top-vaults/listing/types';
 import type { VaultInfo } from '$lib/top-vaults/schemas';
 
 async function resolveListingVaults(fetchFn: typeof fetch, vaults: VaultInfo[], key: VaultListingKey, scope?: string) {
@@ -42,6 +42,18 @@ async function resolveListingVaults(fetchFn: typeof fetch, vaults: VaultInfo[], 
 async function getListingOptions(options: VaultListingOptions, query: VaultListingQuery): Promise<VaultListingOptions> {
 	if (query.mr !== 'treasury') return options;
 	return { ...options, treasuryRate: await fetchLatestTreasuryRate().catch(() => null) };
+}
+
+/** Convert a complete query result into the compact listing metadata sent to the browser. */
+export function createVaultListingSummary(listing: VaultListingResult): VaultListingSummary {
+	return {
+		matchingCount: listing.vaults.length,
+		hiddenByTvl: listing.hiddenByTvl,
+		hiddenBlacklistedCount: listing.hiddenBlacklistedCount,
+		hiddenVaultNames: listing.hiddenVaults.slice(0, 2).map((vault) => vault.name),
+		totalTvl: listing.totalTvl,
+		avgTvlWeightedApy1M: listing.avgTvlWeightedApy1M
+	};
 }
 
 /**
@@ -69,14 +81,7 @@ export async function loadVaultListing(fetchFn: typeof fetch, url: URL, key: Vau
 			curators: {}
 		},
 		initialVaultListingHasMore: initialVaults.length < listing.vaults.length,
-		listingSummary: {
-			matchingCount: listing.vaults.length,
-			hiddenByTvl: listing.hiddenByTvl,
-			hiddenBlacklistedCount: listing.hiddenBlacklistedCount,
-			hiddenVaultNames: listing.hiddenVaults.slice(0, 2).map((vault) => vault.name),
-			totalTvl: listing.totalTvl,
-			avgTvlWeightedApy1M: listing.avgTvlWeightedApy1M
-		},
+		listingSummary: createVaultListingSummary(listing),
 		listingCurrencies:
 			key === 'international'
 				? [

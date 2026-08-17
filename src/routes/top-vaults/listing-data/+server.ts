@@ -1,10 +1,10 @@
 import { json, error } from '@sveltejs/kit';
 import { getVaultListingDefinition, isVaultListingKey } from '$lib/top-vaults/listing/definitions';
-import { loadVaultListingContinuation } from '$lib/server/top-vaults/listing';
+import { createVaultListingSummary, loadVaultListingContinuation } from '$lib/server/top-vaults/listing';
 import { VAULT_LISTING_PAGE_SIZE } from '$lib/top-vaults/listing/types';
 import { isBlacklisted } from '$lib/top-vaults/helpers';
 
-/** Return one globally sorted vault-listing continuation page. */
+/** Return one globally sorted vault-listing continuation or blacklisted-reveal page. */
 export async function GET({ fetch, url }) {
 	const offset = Number(url.searchParams.get('offset') ?? '0');
 	if (!Number.isInteger(offset) || offset < 0) error(400, 'Invalid vault listing offset');
@@ -30,14 +30,7 @@ export async function GET({ fetch, url }) {
 			nextOffset: offset + vaults.length,
 			hasMore: offset + vaults.length < matchingVaults.length,
 			generatedAt,
-			listingSummary: {
-				matchingCount: listing.vaults.length,
-				hiddenByTvl: listing.hiddenByTvl,
-				hiddenBlacklistedCount: listing.hiddenBlacklistedCount,
-				hiddenVaultNames: listing.hiddenVaults.slice(0, 2).map((vault) => vault.name),
-				totalTvl: listing.totalTvl,
-				avgTvlWeightedApy1M: listing.avgTvlWeightedApy1M
-			}
+			listingSummary: createVaultListingSummary(listing)
 		},
 		{ headers: { 'Cache-Control': 'private, no-store' } }
 	);

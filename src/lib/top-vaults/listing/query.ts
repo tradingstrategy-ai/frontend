@@ -128,17 +128,18 @@ export function queryVaultListing(
 	);
 	const blacklistedVaultsAreHidden =
 		!options.includeBlacklisted && !query.q.startsWith('blacklist') && risk.maxValue < 999;
+	const blacklistedRisk = riskFilterOptions.find((item) => item.label === 'Blacklisted') ?? risk;
 	const threshold = (vault: VaultInfo) =>
 		options.showFilters ? (tvl.chainOverrides?.[vault.chain_id] ?? tvl.value) : options.tvlThreshold;
-	const matchesWithoutTvl = base.filter((vault) => {
+	const matchesFilters = (vault: VaultInfo, riskFilter = risk) => {
 		const years = vault.years ?? 0;
 		if (options.showFilters && ((age.value > 0 && years < age.value) || (age.maxAge < Infinity && years >= age.maxAge)))
 			return false;
-		if (options.showFilters && (risk.minValue > 0 || risk.maxValue < Infinity)) {
+		if (options.showFilters && (riskFilter.minValue > 0 || riskFilter.maxValue < Infinity)) {
 			if (
 				vault.risk_numeric != null
-					? vault.risk_numeric < risk.minValue || vault.risk_numeric > risk.maxValue
-					: !(risk.minValue === 0 && risk.maxValue >= 50)
+					? vault.risk_numeric < riskFilter.minValue || vault.risk_numeric > riskFilter.maxValue
+					: !(riskFilter.minValue === 0 && riskFilter.maxValue >= 50)
 			)
 				return false;
 		}
@@ -173,21 +174,23 @@ export function queryVaultListing(
 			.join(' ')
 			.toLowerCase();
 		return search.includes(query.q.trim().toLowerCase());
-	});
-	const hiddenVaults =
-		options.filterTvl || options.showFilters
-			? matchesWithoutTvl.filter((vault) => (getVaultCurrentTvlUsd(vault) ?? 0) < threshold(vault))
-			: [];
-	const matches =
-		options.filterTvl || options.showFilters
-			? matchesWithoutTvl.filter((vault) => (getVaultCurrentTvlUsd(vault) ?? 0) >= threshold(vault))
-			: matchesWithoutTvl;
+	};
+	const hasTvlFilter = options.filterTvl || options.showFilters;
+	const passesTvlFilter = (vault: VaultInfo) =>
+		!hasTvlFilter || (getVaultCurrentTvlUsd(vault) ?? 0) >= threshold(vault);
+	const matchesWithoutTvl = base.filter((vault) => matchesFilters(vault));
+	const hiddenVaults = hasTvlFilter ? matchesWithoutTvl.filter((vault) => !passesTvlFilter(vault)) : [];
+	const matches = matchesWithoutTvl.filter(passesTvlFilter);
+	const hiddenBlacklistedCount = blacklistedVaultsAreHidden
+		? vaults.filter((vault) => isBlacklisted(vault) && matchesFilters(vault, blacklistedRisk) && passesTvlFilter(vault))
+				.length
+		: 0;
 	const stats = options.includeBlacklistedInStats ? matches : matches.filter((vault) => !isBlacklisted(vault));
 	const statsWithUsdTvl = stats.map(withVaultCurrentTvlUsd);
 	return {
 		vaults: sortVaults(matches, query.sort, query.direction),
 		hiddenByTvl: hiddenVaults.length,
-		hiddenBlacklistedCount: blacklistedVaultsAreHidden ? vaults.filter(isBlacklisted).length : 0,
+		hiddenBlacklistedCount,
 		hiddenVaults,
 		totalTvl: calculateTotalTvl(statsWithUsdTvl, { maxTvlUsd: options.maxSummaryTvlUsd }),
 		avgTvlWeightedApy1M: calculateTvlWeightedApy(statsWithUsdTvl, {

@@ -200,14 +200,15 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 	let remoteLoading = $state(false);
 	let remoteOffset = $state(topVaults.vaults.length);
 	let revealedBlacklistedVaults = $state<VaultInfo[]>([]);
-	let currentListingSummary = $state<VaultListingSummary | undefined>(listingSummary);
+	let revealedListingSummary = $state<VaultListingSummary>();
 	$effect(() => {
 		accumulatedVaults = topVaults.vaults;
 		remoteOffset = topVaults.vaults.length;
 		remoteHasMore = progressive;
 	});
 	$effect(() => {
-		currentListingSummary = listingSummary;
+		listingSummary;
+		revealedListingSummary = undefined;
 	});
 
 	// --- Sort column registry (key → compareFn + default direction) ---
@@ -356,7 +357,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 			const seen = new Set(accumulatedVaults.map((vault) => vault.id));
 			revealedBlacklistedVaults = next.vaults.filter((vault) => !seen.has(vault.id));
 			remoteHasMore = next.hasMore;
-			currentListingSummary = next.listingSummary;
+			revealedListingSummary = next.listingSummary;
 			riskOverride = blacklistedRiskIndex;
 			replaceState(targetUrl, {});
 		} finally {
@@ -555,7 +556,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 	});
 	// The server summary also provides the hidden-blacklisted count when the
 	// unfiltered result fits in the initial batch (and is therefore not progressive).
-	let serverListingSummary = $derived(currentListingSummary);
+	let serverListingSummary = $derived(revealedListingSummary ?? listingSummary);
 	let blacklistedVaultsAreHidden = $derived(
 		!includeBlacklisted && !filterValue.startsWith('blacklist') && selectedRisk.maxValue < 999
 	);

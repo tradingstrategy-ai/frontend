@@ -47,6 +47,17 @@ describe('vault listing query', () => {
 		expect(result.hiddenBlacklistedCount).toBe(1);
 	});
 
+	it('counts only blacklisted vaults that the reveal action can display', () => {
+		const belowTvl = createTestVault('Below TVL', { current_nav: 9_999, risk: 'Blacklisted' });
+		const hiddenByAge = createTestVault('Too old', { current_nav: 100_000, years: 2, risk: 'Blacklisted' });
+		const revealable = createTestVault('Revealable', { current_nav: 100_000, years: 0.5, risk: 'Blacklisted' });
+		const query = parseVaultListingQuery(new URLSearchParams('age=2'), { tvl: '10k' });
+
+		const result = queryVaultListing([belowTvl, hiddenByAge, revealable], query, options);
+
+		expect(result.hiddenBlacklistedCount).toBe(1);
+	});
+
 	it('does not report blacklisted vaults as hidden once the Blacklisted risk filter is active', () => {
 		const blacklisted = createTestVault('Blacklisted', { current_nav: 100_000, risk: 'Blacklisted' });
 		const query = parseVaultListingQuery(new URLSearchParams('risk=0'), { tvl: '10k' });

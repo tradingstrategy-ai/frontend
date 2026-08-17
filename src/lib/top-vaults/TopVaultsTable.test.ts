@@ -24,7 +24,7 @@ function getRenderedVaultNames() {
 }
 
 describe('TopVaultsTable risk rating column', () => {
-	it('offers to reveal blacklisted vaults through the Blacklisted risk filter', () => {
+	it('shows the blacklisted-vault reveal control when the server summary reports hidden vaults', () => {
 		const safeVault = createTestVault('Safe vault', { risk: 'Low' });
 		const blacklistedVault = createTestVault('Blacklisted vault', { risk: 'Blacklisted' });
 
