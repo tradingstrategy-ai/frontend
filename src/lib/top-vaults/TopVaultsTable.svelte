@@ -11,8 +11,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 	import type { RiskRatingProvider } from './risk-rating-providers';
 	import type { ParamSchema } from '$lib/helpers/url-search-state';
 	import { onMount, untrack } from 'svelte';
-	import { SvelteURLSearchParams } from 'svelte/reactivity';
-	import { goto } from '$app/navigation';
+	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/state';
 	import { inview } from 'svelte-inview';
 	import { resolve } from '$app/paths';
@@ -152,6 +151,13 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		listingSummary?: VaultListingSummary;
 	}
 
+	interface ListingDataResponse {
+		vaults: VaultInfo[];
+		nextOffset: number;
+		hasMore: boolean;
+		listingSummary: VaultListingSummary;
+	}
+
 	const emptyTopVaults: TopVaults = {
 		generated_at: new Date().toISOString(),
 		vaults: [],
@@ -193,10 +199,16 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 	let remoteHasMore = $state(progressive);
 	let remoteLoading = $state(false);
 	let remoteOffset = $state(topVaults.vaults.length);
+	let revealedBlacklistedVaults = $state<VaultInfo[]>([]);
+	let revealedListingSummary = $state<VaultListingSummary>();
 	$effect(() => {
 		accumulatedVaults = topVaults.vaults;
 		remoteOffset = topVaults.vaults.length;
 		remoteHasMore = progressive;
+	});
+	$effect(() => {
+		listingSummary;
+		revealedListingSummary = undefined;
 	});
 
 	// --- Sort column registry (key → compareFn + default direction) ---
@@ -307,13 +319,50 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 	} as const satisfies ParamSchema;
 
 	let urlState = $derived(deserialiseSearchParams(page.url.searchParams, searchParamsSchema));
+	/** URL state changes shallowly while revealing hidden rows, without a page navigation. */
+	let riskOverride = $state<number | null>(null);
 
 	/** Update URL search params, merging overrides with current state */
-	function updateSearchParams(overrides: Partial<typeof urlState>) {
+	function getSearchUrl(overrides: Partial<typeof urlState>) {
 		const current = deserialiseSearchParams(page.url.searchParams, searchParamsSchema);
-		const updated = { ...current, ...overrides };
+		const updated = { ...current, ...(riskOverride == null ? {} : { risk: riskOverride }), ...overrides };
 		const queryString = serialiseSearchParams(updated, searchParamsSchema);
-		goto(resolve(`${page.url.pathname}?${queryString}`), { replaceState: true, noScroll: true, keepFocus: true });
+		return resolve(`${page.url.pathname}?${queryString}`);
+	}
+
+	function updateSearchParams(overrides: Partial<typeof urlState>) {
+		if ('risk' in overrides) riskOverride = null;
+		return goto(getSearchUrl(overrides), {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		});
+	}
+
+	/** Reveal the hidden rows without reloading the listing page. */
+	async function showBlacklistedVaults() {
+		if (remoteLoading) return;
+
+		const targetUrl = getSearchUrl({ risk: blacklistedRiskIndex });
+		const targetSearchParams = new URL(targetUrl, page.url.origin).searchParams;
+		remoteLoading = true;
+		try {
+			const next = await fetchListingData(targetSearchParams, 0, true);
+			if (next == null) {
+				riskOverride = null;
+				await goto(targetUrl, { invalidateAll: true, replaceState: true, noScroll: true, keepFocus: true });
+				return;
+			}
+
+			const seen = new Set(accumulatedVaults.map((vault) => vault.id));
+			revealedBlacklistedVaults = next.vaults.filter((vault) => !seen.has(vault.id));
+			remoteHasMore = next.hasMore;
+			revealedListingSummary = next.listingSummary;
+			riskOverride = blacklistedRiskIndex;
+			replaceState(targetUrl, {});
+		} finally {
+			remoteLoading = false;
+		}
 	}
 
 	// --- Filter state (derived from URL) ---
@@ -325,10 +374,10 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 	let selectedAgeIndex = $derived(urlState.age);
 	let selectedAge = $derived(ageFilterOptions[selectedAgeIndex]);
 
-	let selectedRiskIndex = $derived(urlState.risk);
+	let selectedRiskIndex = $derived(riskOverride ?? urlState.risk);
 	let selectedRisk = $derived(riskFilterOptions[selectedRiskIndex]);
+	const blacklistedRiskIndex = riskFilterOptions.findIndex((option) => option.label === 'Blacklisted');
 	let riskDropdownOpen = $state(false);
-
 	let selectedDdKey = $derived(urlState.dd);
 	let selectedDdOption = $derived(ddFilterOptions.find((o) => o.key === selectedDdKey)!);
 	let ddDropdownOpen = $state(false);
@@ -479,7 +528,9 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 
 	// Filter out blacklisted vaults unless explicitly included, searched for, or selected by risk level.
 	let baseVaults = $derived.by(() => {
-		const sourceVaults = progressive ? accumulatedVaults : topVaults.vaults;
+		const sourceVaults = progressive
+			? [...accumulatedVaults, ...revealedBlacklistedVaults]
+			: [...topVaults.vaults, ...revealedBlacklistedVaults];
 		if (includeBlacklisted || filterValue.startsWith('blacklist') || selectedRisk.maxValue >= 999) {
 			return sourceVaults;
 		}
@@ -503,7 +554,18 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		if (!filterTvl && !showFilters) return [];
 		return baseVaults.filter((v) => getVaultCurrentTvl(v) < getVaultTvlThreshold(v));
 	});
-	let serverListingSummary = $derived(progressive ? listingSummary : undefined);
+	// The server summary also provides the hidden-blacklisted count when the
+	// unfiltered result fits in the initial batch (and is therefore not progressive).
+	let serverListingSummary = $derived(revealedListingSummary ?? listingSummary);
+	let blacklistedVaultsAreHidden = $derived(
+		!includeBlacklisted && !filterValue.startsWith('blacklist') && selectedRisk.maxValue < 999
+	);
+	let hiddenBlacklistedCount = $derived(
+		serverListingSummary?.hiddenBlacklistedCount ??
+			(blacklistedVaultsAreHidden
+				? (progressive ? accumulatedVaults : topVaults.vaults).filter(isBlacklisted).length
+				: 0)
+	);
 	let hiddenVaultNames = $derived(
 		serverListingSummary?.hiddenVaultNames ?? hiddenVaults.slice(0, 2).map((vault) => vault.name)
 	);
@@ -632,6 +694,24 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 	let visibleVaults = $derived(progressive ? sortedVaults : sortedVaults.slice(0, maxVisibleRows));
 	let hasMoreRows = $derived(progressive ? remoteHasMore : maxVisibleRows < sortedVaults.length);
 
+	async function fetchListingData(
+		searchParams: URLSearchParams,
+		offset: number,
+		onlyBlacklisted = false
+	): Promise<ListingDataResponse | null> {
+		const params = new URLSearchParams(searchParams);
+		params.set('listing', listingKey);
+		if (listingScope) params.set('scope', listingScope);
+		params.set('offset', String(offset));
+		params.set('version', new Date(topVaults.generated_at).toISOString());
+		if (onlyBlacklisted) params.set('blacklisted', '1');
+
+		const response = await fetch(`/top-vaults/listing-data?${params}`);
+		if (response.status === 409) return null;
+		if (!response.ok) throw new Error(`Vault listing continuation failed: ${response.status}`);
+		return (await response.json()) as ListingDataResponse;
+	}
+
 	async function loadMore() {
 		if (!progressive) {
 			maxVisibleRows += VAULT_LISTING_PAGE_SIZE;
@@ -640,14 +720,14 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		if (remoteLoading || !remoteHasMore) return;
 		remoteLoading = true;
 		try {
-			const params = new SvelteURLSearchParams(page.url.searchParams);
-			params.set('listing', listingKey);
-			if (listingScope) params.set('scope', listingScope);
-			params.set('offset', String(remoteOffset));
-			params.set('version', new Date(topVaults.generated_at).toISOString());
-			const response = await fetch(`/top-vaults/listing-data?${params}`);
-			if (response.status === 409) {
-				await goto(resolve(`${page.url.pathname}${page.url.search}`), {
+			const loadingRevealedBlacklisted = riskOverride === blacklistedRiskIndex;
+			const searchParams = loadingRevealedBlacklisted
+				? new URL(getSearchUrl({}), page.url.origin).searchParams
+				: page.url.searchParams;
+			const offset = loadingRevealedBlacklisted ? revealedBlacklistedVaults.length : remoteOffset;
+			const next = await fetchListingData(searchParams, offset, loadingRevealedBlacklisted);
+			if (next == null) {
+				await goto(getSearchUrl({}), {
 					invalidateAll: true,
 					replaceState: true,
 					noScroll: true,
@@ -655,8 +735,15 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 				});
 				return;
 			}
-			if (!response.ok) throw new Error(`Vault listing continuation failed: ${response.status}`);
-			const next = (await response.json()) as { vaults: VaultInfo[]; nextOffset: number; hasMore: boolean };
+			if (loadingRevealedBlacklisted) {
+				const seen = new Set([...accumulatedVaults, ...revealedBlacklistedVaults].map((vault) => vault.id));
+				revealedBlacklistedVaults = [
+					...revealedBlacklistedVaults,
+					...next.vaults.filter((vault) => !seen.has(vault.id))
+				];
+				remoteHasMore = next.hasMore;
+				return;
+			}
 			const seen = new Set(accumulatedVaults.map((vault) => vault.id));
 			accumulatedVaults = [...accumulatedVaults, ...next.vaults.filter((vault) => !seen.has(vault.id))];
 			remoteOffset = next.nextOffset;
@@ -1362,6 +1449,18 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 			</tbody>
 		</table>
 	</div>
+
+	{#if hiddenBlacklistedCount > 0 && !remoteHasMore}
+		<button
+			class="show-blacklisted-vaults"
+			data-testid="show-blacklisted-vaults"
+			disabled={remoteLoading}
+			type="button"
+			onclick={showBlacklistedVaults}
+		>
+			Show {hiddenBlacklistedCount} blacklisted {hiddenBlacklistedCount === 1 ? 'vault' : 'vaults'}
+		</button>
+	{/if}
 </div>
 
 <style>
@@ -1669,6 +1768,18 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 			@media (--viewport-xl-down) {
 				overflow-x: auto;
 			}
+		}
+
+		.show-blacklisted-vaults {
+			justify-self: center;
+			padding: 0;
+			border: 0;
+			background: transparent;
+			color: var(--c-text-extra-light);
+			font: var(--f-ui-sm-medium);
+			text-decoration: underline;
+			text-underline-offset: 0.15em;
+			cursor: pointer;
 		}
 
 		table {
