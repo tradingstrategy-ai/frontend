@@ -72,6 +72,7 @@ export async function loadVaultListing(fetchFn: typeof fetch, url: URL, key: Vau
 		listingSummary: {
 			matchingCount: listing.vaults.length,
 			hiddenByTvl: listing.hiddenByTvl,
+			hiddenBlacklistedCount: listing.hiddenBlacklistedCount,
 			hiddenVaultNames: listing.hiddenVaults.slice(0, 2).map((vault) => vault.name),
 			totalTvl: listing.totalTvl,
 			avgTvlWeightedApy1M: listing.avgTvlWeightedApy1M

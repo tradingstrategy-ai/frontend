@@ -54,6 +54,7 @@ export interface VaultListingOptions {
 export interface VaultListingResult {
 	vaults: VaultInfo[];
 	hiddenByTvl: number;
+	hiddenBlacklistedCount: number;
 	hiddenVaults: VaultInfo[];
 	totalTvl: number;
 	avgTvlWeightedApy1M: number | null;
@@ -125,6 +126,8 @@ export function queryVaultListing(
 		(vault) =>
 			options.includeBlacklisted || query.q.startsWith('blacklist') || risk.maxValue >= 999 || !isBlacklisted(vault)
 	);
+	const blacklistedVaultsAreHidden =
+		!options.includeBlacklisted && !query.q.startsWith('blacklist') && risk.maxValue < 999;
 	const threshold = (vault: VaultInfo) =>
 		options.showFilters ? (tvl.chainOverrides?.[vault.chain_id] ?? tvl.value) : options.tvlThreshold;
 	const matchesWithoutTvl = base.filter((vault) => {
@@ -184,6 +187,7 @@ export function queryVaultListing(
 	return {
 		vaults: sortVaults(matches, query.sort, query.direction),
 		hiddenByTvl: hiddenVaults.length,
+		hiddenBlacklistedCount: blacklistedVaultsAreHidden ? vaults.filter(isBlacklisted).length : 0,
 		hiddenVaults,
 		totalTvl: calculateTotalTvl(statsWithUsdTvl, { maxTvlUsd: options.maxSummaryTvlUsd }),
 		avgTvlWeightedApy1M: calculateTvlWeightedApy(statsWithUsdTvl, {

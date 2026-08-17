@@ -8,6 +8,8 @@ export const VAULT_LISTING_PAGE_SIZE = 50;
 export interface VaultListingSummary {
 	matchingCount: number;
 	hiddenByTvl: number;
+	/** Blacklisted vaults omitted from the default safety filter. */
+	hiddenBlacklistedCount: number;
 	hiddenVaultNames: string[];
 	totalTvl: number;
 	avgTvlWeightedApy1M: number | null;

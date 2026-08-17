@@ -44,6 +44,17 @@ describe('vault listing query', () => {
 
 		expect(result.vaults.map((vault) => vault.name)).toEqual(['Accepted']);
 		expect(result.hiddenByTvl).toBe(1);
+		expect(result.hiddenBlacklistedCount).toBe(1);
+	});
+
+	it('does not report blacklisted vaults as hidden once the Blacklisted risk filter is active', () => {
+		const blacklisted = createTestVault('Blacklisted', { current_nav: 100_000, risk: 'Blacklisted' });
+		const query = parseVaultListingQuery(new URLSearchParams('risk=0'), { tvl: '10k' });
+
+		const result = queryVaultListing([blacklisted], query, options);
+
+		expect(result.vaults.map((vault) => vault.name)).toEqual(['Blacklisted']);
+		expect(result.hiddenBlacklistedCount).toBe(0);
 	});
 
 	it('excludes blacklisted vaults from the listing summary by default', () => {

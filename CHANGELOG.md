@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add a blacklisted-vault reveal control to vault listings (2026-08-17)
 - Unify CORE3 and Xerberus risk-rating card disclosures (2026-08-13)
 - Optionally export server-side APM traces and logs to SigNoz via OpenTelemetry (2026-08-12)
 - Refine vault risk summaries and transaction-status placement (2026-08-10)

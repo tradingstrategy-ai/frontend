@@ -2,6 +2,7 @@ import { json, error } from '@sveltejs/kit';
 import { getVaultListingDefinition, isVaultListingKey } from '$lib/top-vaults/listing/definitions';
 import { loadVaultListingContinuation } from '$lib/server/top-vaults/listing';
 import { VAULT_LISTING_PAGE_SIZE } from '$lib/top-vaults/listing/types';
+import { isBlacklisted } from '$lib/top-vaults/helpers';
 
 /** Return one globally sorted vault-listing continuation page. */
 export async function GET({ fetch, url }) {
@@ -20,13 +21,23 @@ export async function GET({ fetch, url }) {
 			{ status: 409, headers: { 'Cache-Control': 'private, no-store' } }
 		);
 	}
-	const vaults = listing.vaults.slice(offset, offset + VAULT_LISTING_PAGE_SIZE);
+	const onlyBlacklisted = url.searchParams.get('blacklisted') === '1';
+	const matchingVaults = onlyBlacklisted ? listing.vaults.filter(isBlacklisted) : listing.vaults;
+	const vaults = matchingVaults.slice(offset, offset + VAULT_LISTING_PAGE_SIZE);
 	return json(
 		{
 			vaults,
 			nextOffset: offset + vaults.length,
-			hasMore: offset + vaults.length < listing.vaults.length,
-			generatedAt
+			hasMore: offset + vaults.length < matchingVaults.length,
+			generatedAt,
+			listingSummary: {
+				matchingCount: listing.vaults.length,
+				hiddenByTvl: listing.hiddenByTvl,
+				hiddenBlacklistedCount: listing.hiddenBlacklistedCount,
+				hiddenVaultNames: listing.hiddenVaults.slice(0, 2).map((vault) => vault.name),
+				totalTvl: listing.totalTvl,
+				avgTvlWeightedApy1M: listing.avgTvlWeightedApy1M
+			}
 		},
 		{ headers: { 'Cache-Control': 'private, no-store' } }
 	);

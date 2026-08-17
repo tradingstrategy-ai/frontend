@@ -24,6 +24,33 @@ function getRenderedVaultNames() {
 }
 
 describe('TopVaultsTable risk rating column', () => {
+	it('offers to reveal blacklisted vaults through the Blacklisted risk filter', () => {
+		const safeVault = createTestVault('Safe vault', { risk: 'Low' });
+		const blacklistedVault = createTestVault('Blacklisted vault', { risk: 'Blacklisted' });
+
+		render(TopVaultsTable, {
+			props: {
+				topVaults: {
+					generated_at: '2026-07-30T11:30:40Z',
+					vaults: [safeVault, blacklistedVault],
+					core3_protocols: {},
+					curators: {}
+				},
+				listingSummary: {
+					matchingCount: 1,
+					hiddenByTvl: 0,
+					hiddenBlacklistedCount: 1,
+					hiddenVaultNames: [],
+					totalTvl: 100_000,
+					avgTvlWeightedApy1M: 0.1
+				}
+			}
+		});
+
+		expect(screen.getByRole('button', { name: 'Show 1 blacklisted vault' })).toBeInTheDocument();
+		expect(getRenderedVaultNames()).toEqual(['Safe vault']);
+	});
+
 	it('shows and sorts CORE3 ratings from lowest Probability of Loss first', () => {
 		const saferVault = createTestVault('Safer CORE3 vault', { protocol: 'Safer CORE3' });
 		const riskierVault = createTestVault('Riskier CORE3 vault', { protocol: 'Riskier CORE3' });
