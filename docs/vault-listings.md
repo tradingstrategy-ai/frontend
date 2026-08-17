@@ -34,11 +34,11 @@ A successful response contains `vaults`, `nextOffset`, `hasMore`,
 private, no-store`. On `409`, the table refreshes the current URL through
 client navigation to obtain a fresh server-rendered first batch.
 
-After the default progressive rows have loaded, a listing with hidden
-blacklisted vaults shows a centred **Show X blacklisted vaults** control below
-the table. It fetches only the matching blacklisted rows, changes the displayed
-risk level to **Blacklisted**, and updates the URL without a document reload.
-Additional blacklisted rows continue loading in 50-row batches when needed.
+Once all default rows are visible, a listing with hidden blacklisted vaults
+shows a centred **Show X blacklisted vaults** control below the table. It fetches
+only the matching blacklisted rows, changes the displayed risk level to
+**Blacklisted**, and updates the URL without a document reload. Additional
+blacklisted rows continue loading in 50-row batches when needed.
 
 `/top-vaults/all-data` remains available for chart pages that genuinely need
 the complete export. Vault table pages must not use it after hydration.
