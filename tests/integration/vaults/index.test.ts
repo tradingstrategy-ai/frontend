@@ -94,7 +94,7 @@ test.describe('vault index page', () => {
 
 	test('shows the default return columns', async ({ page }) => {
 		const header = page.locator('thead');
-		await expect(header).toContainText(/30 days\s*return ann\./);
+		await expect(header).toContainText(/1M\s*return ann\./);
 		await expect(header).toContainText(/3M\s*return ann\./);
 		await expect(header).toContainText(/Lifetime\s*return abs\./);
 	});
