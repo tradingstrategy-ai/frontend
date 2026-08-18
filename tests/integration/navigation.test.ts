@@ -19,6 +19,27 @@ test('opens compact navigation on the first tap after page load', async ({ page 
 	expect(bounds!.width).toBeCloseTo(1024, 0);
 });
 
+test('keeps the mobile navigation within the viewport', async ({ page }) => {
+	await page.setViewportSize({ width: 375, height: 667 });
+	await page.goto('/pricing', { waitUntil: 'networkidle' });
+	await page.getByTestId('navigation-toggle').click();
+
+	const dimensions = await page.getByRole('navigation', { name: 'Mobile navigation' }).evaluate((navigation) => {
+		window.scrollTo({ left: document.documentElement.scrollWidth, top: 0 });
+
+		return {
+			viewportWidth: window.innerWidth,
+			navigationWidth: navigation.scrollWidth,
+			documentWidth: document.documentElement.scrollWidth,
+			horizontalOffset: window.scrollX
+		};
+	});
+
+	expect(dimensions.navigationWidth).toBeLessThanOrEqual(dimensions.viewportWidth);
+	expect(dimensions.documentWidth).toBeLessThanOrEqual(dimensions.viewportWidth);
+	expect(dimensions.horizontalOffset).toBe(0);
+});
+
 test('keeps the first tablet search tap focused through hydration', async ({ page }) => {
 	await page.setViewportSize({ width: 1024, height: 768 });
 	await page.goto('/pricing', { waitUntil: 'commit' });
