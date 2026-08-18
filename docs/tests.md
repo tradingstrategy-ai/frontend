@@ -68,14 +68,15 @@ pnpm run test:integration
 #### Responsive navigation coverage
 
 `tests/integration/navigation.test.ts` covers the shared header at desktop, tablet and narrow-mobile
-viewports. It verifies that the first compact-menu tap remains open after hydration, that the first
-tablet search-field focus survives hydration, menu closure after navigation to Pricing, and equivalent
-protocol/vault typeahead results.
+viewports. It verifies that the first compact-menu tap remains open after hydration, the open mobile
+drawer remains within the viewport, that the first tablet search-field focus survives hydration, menu
+closure after navigation to Pricing, and equivalent protocol/vault typeahead results.
 
 `tests/integration/mobile-layout.test.ts` verifies that the home page, vault listing, and a representative
 vault detail page cannot be horizontally panned at a 375px mobile viewport. It checks document width, body
 width, and the actual horizontal scroll offset, while allowing intentionally scrollable elements such as the
-vault table.
+vault table. It also verifies that the two home-hero actions share the same width and that all three
+hero differentiators remain on one line at that viewport.
 
 #### Local secrets and `.env.local`
 
