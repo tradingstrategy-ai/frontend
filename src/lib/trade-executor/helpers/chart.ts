@@ -26,9 +26,11 @@ export function getStrategyChartDateRange(strategies: StrategyInfo[]): [Date, Da
  * Keep only the chart series used by a strategy tile at daily resolution.
  *
  * @param strategy Strategy data that will be serialised for a tile
+ * @param startAt Optional visible chart start. One preceding sample is retained
+ *   to preserve the series value at the start of the range.
  * @returns Strategy data without the unused chart series
  */
-export function compactStrategyTileChartData(strategy: StrategyInfo): StrategyInfo {
+export function compactStrategyTileChartData(strategy: StrategyInfo, startAt?: Date): StrategyInfo {
 	const summary = strategy.summary_statistics;
 	if (!summary) return strategy;
 
@@ -39,13 +41,19 @@ export function compactStrategyTileChartData(strategy: StrategyInfo): StrategyIn
 		? 'compounding_unrealised_trading_profitability'
 		: 'share_price_returns_90_days';
 	const selectedSeries = summary[selectedKey];
+	const startAtTimestamp = startAt ? startAt.valueOf() / 1000 : undefined;
+	const firstVisibleIndex = startAtTimestamp
+		? selectedSeries?.findIndex(([timestamp]) => timestamp >= startAtTimestamp)
+		: undefined;
+	const visibleSeries =
+		firstVisibleIndex && firstVisibleIndex > 0 ? selectedSeries?.slice(firstVisibleIndex - 1) : selectedSeries;
 
 	return {
 		...strategy,
 		summary_statistics: {
 			...summary,
 			[discardedKey]: undefined,
-			[selectedKey]: selectedSeries ? downsampleDailySeries(selectedSeries) : undefined
+			[selectedKey]: visibleSeries ? downsampleDailySeries(visibleSeries) : undefined
 		}
 	};
 }
