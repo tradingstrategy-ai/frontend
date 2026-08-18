@@ -101,7 +101,16 @@ test.describe('vault index page', () => {
 
 	test('describes the default return ranking', async ({ page }) => {
 		await expect(page.locator('.hero-banner .subtitle')).toHaveText(
-			'The best-performing stablecoin vaults. Ranked by 30-day returns. Other ranking criteria available in Filters.'
+			'The best-performing stablecoin vaults. Ranked by 30-day returns. Table headers and filters offer more criteria.'
+		);
+	});
+
+	test('updates the ranking description when the table sort changes', async ({ page }) => {
+		await page.locator('th.tvl button').click();
+
+		await expect(page).toHaveURL(/sort=tvl/);
+		await expect(page.locator('.hero-banner .subtitle')).toHaveText(
+			'The best-performing stablecoin vaults. Ranked by total value locked. Table headers and filters offer more criteria.'
 		);
 	});
 
