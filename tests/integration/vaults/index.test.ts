@@ -93,6 +93,8 @@ test.describe('vault index page', () => {
 	});
 
 	test('shows the default return columns', async ({ page }) => {
+		await expect(page.getByRole('heading', { name: 'Top stablecoin vaults' })).toBeVisible();
+
 		const header = page.locator('thead');
 		await expect(header).toContainText(/1M\s*return ann\./);
 		await expect(header).toContainText(/3M\s*return ann\./);

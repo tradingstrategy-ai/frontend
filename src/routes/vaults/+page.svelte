@@ -11,7 +11,7 @@ Top stablecoin vault listing page.
 	let { data } = $props();
 	let topVaults = $derived(data.initialTopVaults);
 
-	const title = 'Top DeFi stablecoin vaults';
+	const title = 'Top stablecoin vaults';
 	const description = 'Vaults rankings with the highest yield and the lowest risk.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let rankingDescription = $derived(getVaultSortDescription(page.url.searchParams.get('sort')));
@@ -50,7 +50,7 @@ Top stablecoin vault listing page.
 	progressive={data.initialVaultListingHasMore}
 	listingKey={data.listingKey}
 	listingSummary={data.listingSummary}
-	title="Top DeFi stablecoin vaults"
+	{title}
 	{subtitle}
 	showFilters
 />
