@@ -24,7 +24,10 @@ test('keeps the mobile navigation within the viewport', async ({ page }) => {
 	await page.goto('/pricing', { waitUntil: 'networkidle' });
 	await page.getByTestId('navigation-toggle').click();
 
-	const dimensions = await page.getByRole('navigation', { name: 'Mobile navigation' }).evaluate((navigation) => {
+	const navigation = page.getByRole('navigation', { name: 'Mobile navigation' });
+	await expect(page.getByRole('checkbox', { name: 'Hide navigation panel' })).toBeChecked();
+
+	const dimensions = await navigation.evaluate((navigation) => {
 		window.scrollTo({ left: document.documentElement.scrollWidth, top: 0 });
 
 		return {

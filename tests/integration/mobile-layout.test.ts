@@ -52,16 +52,18 @@ test.describe('mobile layout', () => {
 		await page.goto('/', { waitUntil: 'networkidle' });
 
 		const differentiators = page.getByTestId('home-hero-banner').locator('.differentiators');
-		const bounds = await differentiators.locator('.tooltip').evaluateAll((items) =>
+		const bounds = await differentiators.locator('.tooltip .trigger').evaluateAll((items) =>
 			items.map((item) => {
-				const { top, right } = item.getBoundingClientRect();
-				return { top, right };
+				const { height, right, top } = item.getBoundingClientRect();
+				return { height, right, top };
 			})
 		);
 		const container = await differentiators.boundingBox();
 
 		expect(container).not.toBeNull();
+		expect(bounds).toHaveLength(3);
 		expect(new Set(bounds.map(({ top }) => Math.round(top))).size).toBe(1);
+		expect(bounds.every(({ height }) => height <= 16)).toBe(true);
 		expect(bounds.at(-1)!.right).toBeLessThanOrEqual(container!.x + container!.width);
 	});
 });

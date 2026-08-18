@@ -70,7 +70,6 @@ Responsive navigation drawer with optional search entry, primary links and site 
 		box-sizing: border-box;
 		width: 100%;
 		max-width: 420px;
-		min-width: 0;
 		padding: var(--space-md);
 		overflow-y: auto;
 		display: grid;

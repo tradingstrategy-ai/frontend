@@ -329,10 +329,8 @@ Promotes Trading Strategy vault discovery and managed strategies on the home pag
 		padding-top: 0.15rem;
 
 		@media (--viewport-sm-down) {
-			flex-wrap: nowrap;
-			gap: 0.25rem 0.5rem;
-			font: var(--f-ui-xxs-medium, 500 11px/16px var(--ff-ui));
-			letter-spacing: normal;
+			font: var(--f-ui-sm-medium);
+			letter-spacing: var(--f-ui-sm-spacing);
 		}
 	}
 
@@ -430,7 +428,15 @@ Promotes Trading Strategy vault discovery and managed strategies on the home pag
 		}
 
 		.differentiators {
-			gap: 0.5rem 0.875rem;
+			flex-wrap: nowrap;
+			gap: 0.25rem 0.5rem;
+			font: var(--f-ui-xs-medium);
+			font-size: 11px;
+			letter-spacing: normal;
+
+			:global(.trigger) {
+				white-space: nowrap;
+			}
 		}
 	}
 </style>
