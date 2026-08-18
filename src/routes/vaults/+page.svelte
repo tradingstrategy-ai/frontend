@@ -1,3 +1,6 @@
+<!--
+Top stablecoin vault listing page.
+-->
 <script lang="ts">
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
@@ -43,6 +46,6 @@
 	listingKey={data.listingKey}
 	listingSummary={data.listingSummary}
 	title="Top DeFi stablecoin vaults"
-	subtitle="The best performing DeFi stablecoin vaults across all blockchains"
+	subtitle="The best-performing stablecoin vaults. Ranked by 1M returns. Use filters for other criteria."
 	showFilters
 />

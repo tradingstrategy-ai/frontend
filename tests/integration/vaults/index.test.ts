@@ -99,6 +99,12 @@ test.describe('vault index page', () => {
 		await expect(header).toContainText(/Lifetime\s*return abs\./);
 	});
 
+	test('describes the default return ranking', async ({ page }) => {
+		await expect(page.locator('.hero-banner .subtitle')).toHaveText(
+			'The best-performing stablecoin vaults. Ranked by 1M returns. Use filters for other criteria.'
+		);
+	});
+
 	test('shows lifetime data tooltip on the lifetime return cell', async ({ page }) => {
 		const row = await getVaultRow(page, 'Trading Strategy ICHIv3 LS 2');
 
