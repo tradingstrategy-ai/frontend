@@ -21,18 +21,16 @@
 	let assetType = $derived(vault.flags.includes('tokenised_fund') ? 'tokenised fund' : 'vault');
 </script>
 
-<MetricsBox fill>
+<MetricsBox>
 	<div class="protocol-info">
+		{#if protocolMetadata.logos.light}
+			{@const protocolLogoUrl = getVaultProtocolLogoUrl(protocolMetadata.slug)}
+			{#if protocolLogoUrl}
+				<img src={protocolLogoUrl} alt={protocolMetadata.name} class="protocol-logo" />
+			{/if}
+		{/if}
 		<div class="content">
-			<div class="heading">
-				{#if protocolMetadata.logos.light}
-					{@const protocolLogoUrl = getVaultProtocolLogoUrl(protocolMetadata.slug)}
-					{#if protocolLogoUrl}
-						<img src={protocolLogoUrl} alt={protocolMetadata.name} class="protocol-logo" />
-					{/if}
-				{/if}
-				<h2>Running on {protocolMetadata.name} protocol</h2>
-			</div>
+			<h2>Running on {protocolMetadata.name} protocol</h2>
 			<p class="description">
 				This {assetType} is running on <a href={protocolPageUrl}>{protocolMetadata.name}</a>:
 			</p>
@@ -46,10 +44,24 @@
 
 <style>
 	.protocol-info {
-		display: flex;
-		flex-direction: column;
+		display: grid;
+		grid-template-columns: 1fr auto;
 		gap: 1rem;
-		height: 100%;
+		align-items: center;
+
+		&:has(.protocol-logo) {
+			grid-template-columns: auto 1fr auto;
+		}
+
+		@media (--viewport-sm-down) {
+			.content {
+				grid-column: span 2;
+			}
+
+			:global(.view-all-btn) {
+				grid-area: 2 / span 3;
+			}
+		}
 
 		.protocol-logo {
 			height: 3rem;
@@ -60,12 +72,6 @@
 			display: grid;
 			gap: 0.625rem;
 			min-width: 0;
-
-			.heading {
-				display: flex;
-				gap: 1rem;
-				align-items: start;
-			}
 
 			h2 {
 				margin: 0;
@@ -79,11 +85,6 @@
 					font-size: 0.875rem;
 				}
 			}
-		}
-
-		:global(.view-all-btn) {
-			--button-width: 100%;
-			margin-top: auto;
 		}
 
 		.description {
