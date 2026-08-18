@@ -46,6 +46,6 @@ Top stablecoin vault listing page.
 	listingKey={data.listingKey}
 	listingSummary={data.listingSummary}
 	title="Top DeFi stablecoin vaults"
-	subtitle="The best-performing stablecoin vaults. Ranked by 1M returns. Other ranking criteria available in Filters."
+	subtitle="The best-performing stablecoin vaults. Ranked by 30-day returns. Other ranking criteria available in Filters."
 	showFilters
 />

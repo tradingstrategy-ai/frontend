@@ -177,18 +177,18 @@ function getPeriodValues(vault: VaultInfo, period: '6m' | '1y', type: 'ann' | 'a
 export const returnColumnDefinitions = [
 	{
 		id: '1m-ann',
-		label: 'One month annualised',
-		shortLabel: '1M ann.',
-		headerLabel: '1M<br/>return ann.',
+		label: '30 days annualised',
+		shortLabel: '30 days ann.',
+		headerLabel: '30 days<br/>return ann.',
 		sortDirection: 'desc',
 		showAnnualisedTooltip: true,
 		getValues: (vault) => getTopLevelValues(vault, 'one_month_cagr_net', 'one_month_cagr')
 	},
 	{
 		id: '1m-abs',
-		label: 'One month absolute',
-		shortLabel: '1M abs',
-		headerLabel: '1M<br/>return abs.',
+		label: '30 days absolute',
+		shortLabel: '30 days abs',
+		headerLabel: '30 days<br/>return abs.',
 		sortDirection: 'desc',
 		showAnnualisedTooltip: false,
 		getValues: (vault) => getTopLevelValues(vault, 'one_month_returns_net', 'one_month_returns')

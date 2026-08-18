@@ -94,14 +94,14 @@ test.describe('vault index page', () => {
 
 	test('shows the default return columns', async ({ page }) => {
 		const header = page.locator('thead');
-		await expect(header).toContainText(/1M\s*return ann\./);
+		await expect(header).toContainText(/30 days\s*return ann\./);
 		await expect(header).toContainText(/3M\s*return ann\./);
 		await expect(header).toContainText(/Lifetime\s*return abs\./);
 	});
 
 	test('describes the default return ranking', async ({ page }) => {
 		await expect(page.locator('.hero-banner .subtitle')).toHaveText(
-			'The best-performing stablecoin vaults. Ranked by 1M returns. Other ranking criteria available in Filters.'
+			'The best-performing stablecoin vaults. Ranked by 30-day returns. Other ranking criteria available in Filters.'
 		);
 	});
 
