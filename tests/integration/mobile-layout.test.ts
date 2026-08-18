@@ -46,4 +46,22 @@ test.describe('mobile layout', () => {
 		expect(strategyAction!.x).toBeGreaterThanOrEqual(0);
 		expect(strategyAction!.x + strategyAction!.width).toBeLessThanOrEqual(mobileViewport.width);
 	});
+
+	test('home hero differentiators fit on one line', async ({ page }) => {
+		await page.setViewportSize(mobileViewport);
+		await page.goto('/', { waitUntil: 'networkidle' });
+
+		const differentiators = page.getByTestId('home-hero-banner').locator('.differentiators');
+		const bounds = await differentiators.locator('.tooltip').evaluateAll((items) =>
+			items.map((item) => {
+				const { top, right } = item.getBoundingClientRect();
+				return { top, right };
+			})
+		);
+		const container = await differentiators.boundingBox();
+
+		expect(container).not.toBeNull();
+		expect(new Set(bounds.map(({ top }) => Math.round(top))).size).toBe(1);
+		expect(bounds.at(-1)!.right).toBeLessThanOrEqual(container!.x + container!.width);
+	});
 });

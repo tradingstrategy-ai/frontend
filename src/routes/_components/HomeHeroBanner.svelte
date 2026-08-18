@@ -329,8 +329,10 @@ Promotes Trading Strategy vault discovery and managed strategies on the home pag
 		padding-top: 0.15rem;
 
 		@media (--viewport-sm-down) {
-			font: var(--f-ui-sm-medium);
-			letter-spacing: var(--f-ui-sm-spacing);
+			flex-wrap: nowrap;
+			gap: 0.25rem 0.5rem;
+			font: var(--f-ui-xxs-medium, 500 11px/16px var(--ff-ui));
+			letter-spacing: normal;
 		}
 	}
 
