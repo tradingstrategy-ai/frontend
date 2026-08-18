@@ -72,6 +72,11 @@ viewports. It verifies that the first compact-menu tap remains open after hydrat
 tablet search-field focus survives hydration, menu closure after navigation to Pricing, and equivalent
 protocol/vault typeahead results.
 
+`tests/integration/mobile-layout.test.ts` verifies that the home page, vault listing, and a representative
+vault detail page cannot be horizontally panned at a 375px mobile viewport. It checks document width, body
+width, and the actual horizontal scroll offset, while allowing intentionally scrollable elements such as the
+vault table.
+
 #### Local secrets and `.env.local`
 
 For normal development, keep checked-in defaults in `.env` and place local-only secrets in

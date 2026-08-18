@@ -128,6 +128,8 @@ Set `small` to use the compact spacing variant.
 
 		.link-group {
 			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
 			gap: inherit;
 		}
 

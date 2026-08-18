@@ -456,16 +456,11 @@ test.describe('vault index page', () => {
 		await expect(page.locator('.notes')).toHaveCount(0);
 	});
 
-	test('shows the external vault link in the mobile detail header', async ({ page }) => {
+	test('hides detail header actions on mobile', async ({ page }) => {
 		await page.setViewportSize({ width: 390, height: 844 });
 		await page.goto('/vaults/morpho-flagged-blacklisted-vault');
 
-		const externalVaultLink = page.getByRole('link', { name: 'View on Morpho' });
-		await expect(externalVaultLink).toBeVisible();
-		await expect(externalVaultLink).toHaveAttribute(
-			'href',
-			'https://app.euler.finance/earn/0xc3415c9231dad88f8146107372143f6dae042967?network=arbitrum'
-		);
+		await expect(page.locator('.cta-actions')).toBeHidden();
 	});
 
 	test('explains the tokenised fund structure when deposits may be disabled on a vault detail page', async ({

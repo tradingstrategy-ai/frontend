@@ -396,6 +396,16 @@ so relative performance is comparable on a single axis.
 		.chart-title {
 			font: var(--f-heading-md-medium);
 			letter-spacing: var(--f-heading-md-spacing, normal);
+
+			@media (--viewport-sm-down) {
+				font: var(--f-ui-sm-roman);
+				letter-spacing: 0.1em;
+				text-transform: uppercase;
+
+				:global(.underline) {
+					border-bottom: 0;
+				}
+			}
 		}
 
 		:global([data-css-props]) {
