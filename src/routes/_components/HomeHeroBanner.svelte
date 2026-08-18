@@ -1,3 +1,7 @@
+<!--
+@component
+Promotes Trading Strategy vault discovery and managed strategies on the home page.
+-->
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import Button from '$lib/components/Button.svelte';
@@ -22,7 +26,7 @@
 
 				<div class="ctas">
 					<Button primaryHeroBanner size="lg" label="Earn with our vaults" href={resolve('/strategies')} />
-					<Button secondary size="lg" label="Explore vault data" href={resolve('/vaults')} />
+					<Button secondary size="lg" label="See top vaults" href={resolve('/vaults')} />
 				</div>
 
 				<div class="differentiators">
@@ -396,8 +400,15 @@
 		}
 
 		.ctas {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr);
+			width: 100%;
 			margin-top: 0.5rem;
-			justify-content: flex-start;
+
+			:global(.button) {
+				width: 100%;
+				justify-content: center;
+			}
 		}
 	}
 

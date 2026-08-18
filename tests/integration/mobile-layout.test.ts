@@ -29,4 +29,21 @@ test.describe('mobile layout', () => {
 			await expectNoHorizontalPageScroll(page);
 		});
 	}
+
+	test('home hero actions have equal widths', async ({ page }) => {
+		await page.setViewportSize(mobileViewport);
+		await page.goto('/', { waitUntil: 'networkidle' });
+
+		const actions = page.getByTestId('home-hero-banner').getByRole('link');
+		const [strategyAction, vaultAction] = await Promise.all([
+			actions.nth(0).boundingBox(),
+			actions.nth(1).boundingBox()
+		]);
+
+		expect(strategyAction).not.toBeNull();
+		expect(vaultAction).not.toBeNull();
+		expect(strategyAction!.width).toBeCloseTo(vaultAction!.width, 0);
+		expect(strategyAction!.x).toBeGreaterThanOrEqual(0);
+		expect(strategyAction!.x + strategyAction!.width).toBeLessThanOrEqual(mobileViewport.width);
+	});
 });
