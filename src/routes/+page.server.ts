@@ -40,7 +40,9 @@ export async function load({ fetch }) {
 			Promise.all([fetchLatestFredValue('SNDR'), fetchLatestTreasuryRate()])
 		]);
 
-		const frontpageStrategies = strategies.filter((s) => s.frontpage).map(compactStrategyTileChartData);
+		const frontpageStrategies = strategies
+			.filter((s) => s.frontpage)
+			.map((strategy) => compactStrategyTileChartData(strategy));
 		const yamlTileFreshness: {
 			strategyId: string;
 			vaultId: string | null;

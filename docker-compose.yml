@@ -21,6 +21,7 @@ services:
       - 'host.docker.internal:host-gateway'
     volumes:
       - ./data:/app/data:ro
+      - strategies-cache:/app/cache
     environment:
       # Public SvelteKit env vars
       - TS_PUBLIC_SITE_MODE
@@ -58,6 +59,7 @@ services:
       - TS_PRIVATE_MAILERLITE_API_KEY
       - TS_PRIVATE_MAILERLITE_GROUPS
       - TS_PRIVATE_TURNSTILE_SECRET_KEY
+      - TS_PRIVATE_STRATEGIES_CACHE_DIR=/app/cache/strategies
       # Required for node adapter; see:
       # https://svelte.dev/docs/kit/adapter-node#Environment-variables-ORIGIN-PROTOCOL_HEADER-HOST_HEADER-and-PORT_HEADER
       - FRONTEND_PROTOCOL_HEADER
@@ -76,3 +78,7 @@ services:
       # headers only needed if the collector requires an ingestion key. See docs/monitoring.md
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_HEADERS
+
+volumes:
+  # Single-host persistent cache. `docker compose down -v` deliberately removes it.
+  strategies-cache:
