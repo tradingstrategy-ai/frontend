@@ -101,7 +101,7 @@ test.describe('vault index page', () => {
 
 	test('describes the default return ranking', async ({ page }) => {
 		await expect(page.locator('.hero-banner .subtitle')).toHaveText(
-			'The best-performing stablecoin vaults. Ranked by 1M returns. Use filters for other criteria.'
+			'The best-performing stablecoin vaults. Ranked by 1M returns. Other ranking criteria available in Filters.'
 		);
 	});
 
