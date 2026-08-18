@@ -75,7 +75,8 @@ closure after navigation to Pricing, and equivalent protocol/vault typeahead res
 `tests/integration/mobile-layout.test.ts` verifies that the home page, vault listing, and a representative
 vault detail page cannot be horizontally panned at a 375px mobile viewport. It checks document width, body
 width, and the actual horizontal scroll offset, while allowing intentionally scrollable elements such as the
-vault table. It also verifies that the two home-hero actions share the same width at that viewport.
+vault table. It also verifies that the two home-hero actions share the same width and that all three
+hero differentiators remain on one line at that viewport.
 
 #### Local secrets and `.env.local`
 
