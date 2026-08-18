@@ -22,7 +22,7 @@ Promotes Trading Strategy vault discovery and managed strategies on the home pag
 
 		<div class="content">
 			<div class="text">
-				<p>Compare and allocate across 3000+ risk-scored vaults using professional metrics and strategies.</p>
+				<p>Compare and allocate across 3000+ vaults using professional performance and risk metrics.</p>
 
 				<div class="ctas">
 					<Button primaryHeroBanner size="lg" label="Earn with our vaults" href={resolve('/strategies')} />
