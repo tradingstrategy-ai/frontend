@@ -36,6 +36,20 @@ async function getVaultRow(page: import('@playwright/test').Page, name: string) 
 	return row;
 }
 
+/** Load every progressive batch so a control below the table is reachable. */
+async function loadAllVaultRows(page: import('@playwright/test').Page) {
+	for (let attempt = 0; attempt < 10; attempt++) {
+		const sentinel = page.getByTestId('load-more-sentinel');
+		if ((await sentinel.count()) === 0) return;
+
+		const rowCount = await page.locator('tbody tr.targetable').count();
+		await sentinel.scrollIntoViewIfNeeded();
+		await expect.poll(() => page.locator('tbody tr.targetable').count()).toBeGreaterThan(rowCount);
+	}
+
+	await expect(page.getByTestId('load-more-sentinel')).toHaveCount(0);
+}
+
 async function toggleReturnOption(page: import('@playwright/test').Page, label: string) {
 	await page.getByTestId('return-columns-menu').getByText(label, { exact: true }).click();
 }
@@ -79,10 +93,27 @@ test.describe('vault index page', () => {
 	});
 
 	test('shows the default return columns', async ({ page }) => {
+		await expect(page.getByRole('heading', { name: 'Top stablecoin vaults' })).toBeVisible();
+
 		const header = page.locator('thead');
 		await expect(header).toContainText(/1M\s*return ann\./);
 		await expect(header).toContainText(/3M\s*return ann\./);
 		await expect(header).toContainText(/Lifetime\s*return abs\./);
+	});
+
+	test('describes the default return ranking', async ({ page }) => {
+		await expect(page.locator('.hero-banner .subtitle')).toHaveText(
+			'The best-performing stablecoin vaults. Ranked by 30-day returns. Table headers and filters offer more criteria.'
+		);
+	});
+
+	test('updates the ranking description when the table sort changes', async ({ page }) => {
+		await page.locator('th.tvl button').click();
+
+		await expect(page).toHaveURL(/sort=tvl/);
+		await expect(page.locator('.hero-banner .subtitle')).toHaveText(
+			'The best-performing stablecoin vaults. Ranked by total value locked. Table headers and filters offer more criteria.'
+		);
 	});
 
 	test('shows lifetime data tooltip on the lifetime return cell', async ({ page }) => {
@@ -243,6 +274,35 @@ test.describe('vault index page', () => {
 		await expect(page.getByTestId('top-vaults-meta')).toContainText('3 vaults out of');
 		await expect(page.getByTestId('top-vaults-meta')).toContainText('TVL $8M');
 		await expect(page.getByTestId('top-vaults-meta')).toContainText('Avg. return 20.00%');
+	});
+
+	test('reveals blacklisted vaults while preserving the scroll position', async ({ page }) => {
+		await page.setViewportSize({ width: 1280, height: 720 });
+		await page.goto('/vaults');
+		await loadAllVaultRows(page);
+
+		const revealButton = page.getByTestId('show-blacklisted-vaults');
+		await expect(revealButton).toHaveText(/Show \d+ blacklisted vaults?/);
+		await expect(page.getByTestId('top-vaults-meta')).toContainText('254 vaults');
+		await expect(page.locator('tbody tr.targetable')).toHaveCount(254);
+		await revealButton.scrollIntoViewIfNeeded();
+
+		const scrollBefore = await page.evaluate(() => window.scrollY);
+		expect(scrollBefore).toBeGreaterThan(0);
+		let documentNavigationUrl: string | undefined;
+		page.on('request', (request) => {
+			if (request.isNavigationRequest() && request.url().includes('risk=0')) {
+				documentNavigationUrl = request.url();
+			}
+		});
+		await revealButton.click();
+
+		await expect.poll(() => new URL(page.url()).searchParams.get('risk')).toBe('0');
+		await expect(page.getByTestId('show-blacklisted-vaults')).toHaveCount(0);
+		await expect(page.getByTestId('top-vaults-meta')).toContainText('255 vaults');
+		await expect(page.locator('tbody tr.targetable')).toHaveCount(255);
+		await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThanOrEqual(scrollBefore - 200);
+		expect(documentNavigationUrl).toBeUndefined();
 	});
 
 	test('shows only whitelisted vaults', async ({ page }) => {
@@ -456,16 +516,11 @@ test.describe('vault index page', () => {
 		await expect(page.locator('.notes')).toHaveCount(0);
 	});
 
-	test('shows the external vault link in the mobile detail header', async ({ page }) => {
+	test('hides detail header actions on mobile', async ({ page }) => {
 		await page.setViewportSize({ width: 390, height: 844 });
 		await page.goto('/vaults/morpho-flagged-blacklisted-vault');
 
-		const externalVaultLink = page.getByRole('link', { name: 'View on Morpho' });
-		await expect(externalVaultLink).toBeVisible();
-		await expect(externalVaultLink).toHaveAttribute(
-			'href',
-			'https://app.euler.finance/earn/0xc3415c9231dad88f8146107372143f6dae042967?network=arbitrum'
-		);
+		await expect(page.locator('.cta-actions')).toBeHidden();
 	});
 
 	test('explains the tokenised fund structure when deposits may be disabled on a vault detail page', async ({

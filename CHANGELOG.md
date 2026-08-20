@@ -1,6 +1,8 @@
 # Weblog of stuff
 
 - Show processed flow and reset time in the GuardV0 deposit tooltip (2026-08-20)
+- Add a blacklisted-vault reveal control to vault listings (2026-08-17)
+- Unify CORE3 and Xerberus risk-rating card disclosures (2026-08-13)
 - Optionally export server-side APM traces and logs to SigNoz via OpenTelemetry (2026-08-12)
 - Refine vault risk summaries and transaction-status placement (2026-08-10)
 - Centre content-sized vault information card actions (2026-08-10)

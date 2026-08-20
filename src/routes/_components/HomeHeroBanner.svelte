@@ -1,3 +1,7 @@
+<!--
+@component
+Promotes Trading Strategy vault discovery and managed strategies on the home page.
+-->
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import Button from '$lib/components/Button.svelte';
@@ -18,11 +22,11 @@
 
 		<div class="content">
 			<div class="text">
-				<p>Compare and allocate across 3000+ risk-scored vaults using professional metrics and strategies.</p>
+				<p>Compare and allocate across 3000+ vaults using professional performance and risk metrics.</p>
 
 				<div class="ctas">
 					<Button primaryHeroBanner size="lg" label="Earn with our vaults" href={resolve('/strategies')} />
-					<Button secondary size="lg" label="Explore vault data" href={resolve('/vaults')} />
+					<Button secondary size="lg" label="See top vaults" href={resolve('/vaults')} />
 				</div>
 
 				<div class="differentiators">
@@ -396,8 +400,15 @@
 		}
 
 		.ctas {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr);
+			width: 100%;
 			margin-top: 0.5rem;
-			justify-content: flex-start;
+
+			:global(.button) {
+				width: 100%;
+				justify-content: center;
+			}
 		}
 	}
 
@@ -417,7 +428,15 @@
 		}
 
 		.differentiators {
-			gap: 0.5rem 0.875rem;
+			flex-wrap: nowrap;
+			gap: 0.25rem 0.5rem;
+			font: var(--f-ui-xs-medium);
+			font-size: 11px;
+			letter-spacing: normal;
+
+			:global(.trigger) {
+				white-space: nowrap;
+			}
 		}
 	}
 </style>

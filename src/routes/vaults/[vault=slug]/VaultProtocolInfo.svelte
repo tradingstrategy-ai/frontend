@@ -51,11 +51,6 @@
 		gap: 1rem;
 		height: 100%;
 
-		.protocol-logo {
-			height: 3rem;
-			width: auto;
-		}
-
 		.content {
 			display: grid;
 			gap: 0.625rem;
@@ -65,6 +60,11 @@
 				display: flex;
 				gap: 1rem;
 				align-items: start;
+
+				.protocol-logo {
+					height: 3rem;
+					width: auto;
+				}
 			}
 
 			h2 {
@@ -81,11 +81,6 @@
 			}
 		}
 
-		:global(.view-all-btn) {
-			align-self: center;
-			margin-top: auto;
-		}
-
 		.description {
 			margin: 0;
 			font: var(--f-ui-md-roman);
@@ -95,6 +90,11 @@
 				text-decoration: underline;
 				font-weight: 500;
 			}
+		}
+
+		:global(.view-all-btn) {
+			--button-width: 100%;
+			margin-top: auto;
 		}
 	}
 </style>

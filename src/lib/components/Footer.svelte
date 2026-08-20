@@ -99,6 +99,8 @@ Set `small` to use the compact spacing variant.
 
 <style>
 	footer {
+		min-width: 0;
+		max-width: 100%;
 		margin-block: 3.5rem;
 		padding-inline: 1.5rem;
 	}
@@ -128,6 +130,9 @@ Set `small` to use the compact spacing variant.
 
 		.link-group {
 			display: flex;
+			width: 100%;
+			flex-wrap: wrap;
+			justify-content: center;
 			gap: inherit;
 		}
 
@@ -237,6 +242,7 @@ Set `small` to use the compact spacing variant.
 	}
 
 	.disclaimer {
+		overflow-wrap: anywhere;
 		text-align: center;
 		font: var(--f-ui-xs-roman);
 		letter-spacing: var(--f-ui-xs-spacing, normal);

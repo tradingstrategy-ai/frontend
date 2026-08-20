@@ -4,10 +4,12 @@ export const INITIAL_VAULT_LISTING_LIMIT = 125;
 /** Rows returned by each browser continuation request. */
 export const VAULT_LISTING_PAGE_SIZE = 50;
 
-/** Full-result values sent with the SSR batch, not repeated by continuations. */
+/** Full-result values sent with SSR batches and listing-data responses. */
 export interface VaultListingSummary {
 	matchingCount: number;
 	hiddenByTvl: number;
+	/** Blacklisted vaults omitted from the default safety filter. */
+	hiddenBlacklistedCount: number;
 	hiddenVaultNames: string[];
 	totalTvl: number;
 	avgTvlWeightedApy1M: number | null;

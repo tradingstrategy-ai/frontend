@@ -38,11 +38,15 @@ COPY --from=builder /app/build ./build
 COPY --from=builder /app/scripts/server.js ./scripts/server.js
 COPY --from=builder /app/scripts/check-connectivity.mjs ./scripts/check-connectivity.mjs
 
+# Named Compose volumes are mounted here at runtime. Keep it distinct from the
+# read-only /app/data dataset mount.
+RUN mkdir -p /app/cache/strategies
+
 EXPOSE 3000
 
 # See if increase libuv thread pool size makes performance better
 # The default value 4
 # http://docs.libuv.org/en/v1.x/threadpool.html
-ENV UV_THREADPOOL_SIZE=32
+ENV UV_THREADPOOL_SIZE=8
 
 CMD ["node", "scripts/server.js"]
