@@ -20,6 +20,16 @@ export const balanceUpdateCause = z.enum([
 
 export const balanceUpdatePositionType = z.enum(['reserve', 'open_position']);
 
+const lagoonSettlementDiagnosticsSchema = z
+	.object({
+		// Gross flow is the sum of these values. It is intentionally not inferred
+		// from the reserve balance delta, which nets deposits and redemptions.
+		deposited: decimal.nullish(),
+		redeemed: decimal.nullish(),
+		settlement_origin: z.string().nullish()
+	})
+	.passthrough();
+
 export const balanceUpdateSchema = z.object({
 	balance_update_id: primaryKey,
 	cause: balanceUpdateCause,
@@ -41,6 +51,7 @@ export const balanceUpdateSchema = z.object({
 	log_index: hexString.nullish(),
 	position_id: primaryKey.nullish(),
 	notes: z.string().nullish(),
-	block_number: blockNumber.nullish()
+	block_number: blockNumber.nullish(),
+	other_data: lagoonSettlementDiagnosticsSchema.nullish()
 });
 export type BalanceUpdate = z.infer<typeof balanceUpdateSchema>;
