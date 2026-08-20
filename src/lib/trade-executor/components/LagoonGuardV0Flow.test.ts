@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/svelte';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import type { State } from 'trade-executor/schemas/state';
 import LagoonGuardV0Flow from './LagoonGuardV0Flow.svelte';
 
 const guard = {
@@ -7,6 +8,8 @@ const guard = {
 	daily_automatic_settlement_limit: '5000',
 	settlement_cooldown_seconds: 86_400
 };
+
+afterEach(() => vi.useRealTimers());
 
 describe('LagoonGuardV0Flow', () => {
 	it('displays the daily automated settlement allowance', () => {
@@ -38,6 +41,74 @@ describe('LagoonGuardV0Flow', () => {
 
 		expect(await screen.findByText('$10,000')).toBeInTheDocument();
 		expect(await screen.findByText('$2,500')).toBeInTheDocument();
+	});
+
+	it('displays gross automated flow and the active window reset time from state', () => {
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date('2023-11-15T00:00:00Z'));
+		const state = {
+			portfolio: {
+				reserves: {
+					usdc: {
+						balance_updates: {
+							'1': {
+								cause: 'deposit_and_redemption',
+								block_mined_at: 1_700_000_000,
+								other_data: {
+									deposited: '1200',
+									redeemed: '300',
+									settlement_origin: 'executor_broadcast'
+								}
+							},
+							'2': {
+								cause: 'deposit_and_redemption',
+								block_mined_at: 1_700_020_000,
+								other_data: {
+									deposited: '900',
+									redeemed: '100',
+									settlement_origin: 'discovered_by_scan'
+								}
+							}
+						}
+					}
+				}
+			}
+		} as State;
+
+		render(LagoonGuardV0Flow, { guard, state });
+
+		expect(screen.getByText('Processed in 24h window so far')).toBeInTheDocument();
+		expect(screen.getByText('$1,500')).toBeInTheDocument();
+		expect(screen.getByText('Window resets')).toBeInTheDocument();
+		expect(screen.getByText('15/11/2023, 22:13:20 UTC')).toBeInTheDocument();
+	});
+
+	it('reports an expired settlement window as available', () => {
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date('2023-11-20T00:00:00Z'));
+
+		render(LagoonGuardV0Flow, {
+			guard,
+			state: {
+				portfolio: {
+					reserves: {
+						usdc: {
+							balance_updates: {
+								'1': {
+									cause: 'deposit_and_redemption',
+									block_mined_at: 1_700_000_000,
+									other_data: { settlement_origin: 'executor_broadcast' }
+								}
+							}
+						}
+					}
+				}
+			} as State
+		});
+
+		const processedMetric = screen.getByText('Processed in 24h window so far').parentElement;
+		expect(processedMetric).toHaveTextContent('$0');
+		expect(screen.getByText('Available now')).toBeInTheDocument();
 	});
 
 	it.each([
