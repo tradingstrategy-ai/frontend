@@ -61,6 +61,8 @@ so relative performance is comparable on a single axis.
 
 	let showCryptoBenchmarks = $derived(isPerpetualFuturesVault(vault));
 	let assetType = $derived(vault.flags.includes('tokenised_fund') ? 'tokenised fund' : 'vault');
+	let isSharePriceEquivalent = $derived(vault.features.includes('share_price_equivalence'));
+	let chartTitle = $derived(isSharePriceEquivalent ? 'Equity curve' : 'Share token price');
 
 	let loading = $state(true);
 	let priceData = $state<[number, number][]>();
@@ -190,12 +192,16 @@ so relative performance is comparable on a single axis.
 		{#snippet title()}
 			<h2 class="chart-title">
 				<Tooltip>
-					<span slot="trigger" class="underline">Share token price</span>
+					<span slot="trigger" class="underline">{chartTitle}</span>
 					<svelte:fragment slot="popup">
-						Share token represents a single fungible unit of this {assetType}, which depositors receive in exchange for
-						their money. This chart tracks the onchain reported value of a single share token, which reflects the
-						{assetType}'s performance. Different smart contracts have different methods to report share token price, and
-						sometimes the information may be incorrect.
+						{#if isSharePriceEquivalent}
+							The approximation value of one US Dollar deposited
+						{:else}
+							Share token represents a single fungible unit of this {assetType}, which depositors receive in exchange
+							for their money. This chart tracks the onchain reported value of a single share token, which reflects the
+							{assetType}'s performance. Different smart contracts have different methods to report share token price,
+							and sometimes the information may be incorrect.
+						{/if}
 					</svelte:fragment>
 				</Tooltip>
 			</h2>
