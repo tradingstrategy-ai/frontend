@@ -59,7 +59,7 @@
 			.heading {
 				display: flex;
 				gap: 1rem;
-				align-items: start;
+				align-items: center;
 
 				.protocol-logo {
 					height: 3rem;
