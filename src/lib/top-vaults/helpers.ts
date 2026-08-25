@@ -224,6 +224,11 @@ export function isBlacklisted(vault: Pick<VaultInfo, 'risk_numeric'> & Partial<P
 	return vault.risk_numeric === 999 || vault.risk?.toLowerCase() === 'blacklisted';
 }
 
+/** Whether the vault requires permission before deposits can be made. */
+export function isPermissionedVault(vault: Pick<VaultInfo, 'whitelist'>) {
+	return vault.whitelist?.status === 'whitelisted';
+}
+
 const unsupportedProtocolNames = ['<protocol not yet identified>', '<unknown erc-7450>'] as const;
 const unsupportedProtocolSlugs = new Set([
 	...unsupportedProtocolNames.map((protocol) => slugify(protocol)),

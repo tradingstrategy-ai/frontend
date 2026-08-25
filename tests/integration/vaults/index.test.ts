@@ -141,6 +141,8 @@ test.describe('vault index page', () => {
 
 		await expect(primaryFilters.getByText('Technical risk', { exact: true })).toBeVisible();
 		await expect(primaryFilters.getByText('Hide undepositable', { exact: true })).toBeVisible();
+		await expect(primaryFilters.getByText('Hide unknown protocols', { exact: true })).toBeVisible();
+		await expect(primaryFilters.getByText('Hide private', { exact: true })).toBeVisible();
 		await expect(primaryFilters.getByTestId('vault-search')).toHaveCount(0);
 		await expect(page.locator('.filters-content').getByText('Min TVL')).toBeVisible();
 		await expect(page.locator('.filters-content').getByText('Age', { exact: true })).toBeVisible();
@@ -443,6 +445,24 @@ test.describe('vault index page', () => {
 		await toggleReturnOption(page, 'Six months annualised');
 
 		await expect(page).toHaveURL(/returns=1m-ann%2C3m-ann%2C6m-ann/);
+	});
+
+	test('hides all permissioned vaults when the private filter is selected', async ({ page }) => {
+		await page.goto('/vaults/all?q=Private');
+		await openFilters(page);
+
+		const privateFilter = page.getByText('Hide private', { exact: true }).locator('..').locator('input');
+		await privateFilter.check();
+
+		await expect(page).toHaveURL(/private=1/);
+		await expect(page.locator('tbody tr.targetable')).toHaveCount(0);
+	});
+
+	test('does not offer the private filter on the whitelisted-vault listing', async ({ page }) => {
+		await page.goto('/vaults/whitelisted');
+		await openFilters(page);
+
+		await expect(page.getByText('Hide private', { exact: true })).toHaveCount(0);
 	});
 
 	test('shows limited data tooltips for partial 3M and 1Y returns', async ({ page }) => {

@@ -2,6 +2,7 @@ import { describe, test, expect } from 'vitest';
 import {
 	CORE3_METHODOLOGY_URL,
 	isBlacklisted,
+	isPermissionedVault,
 	isEligibleFrontpageVault,
 	hasSupportedProtocol,
 	getProtocolDisplayName,
@@ -98,6 +99,18 @@ describe('isBlacklisted', () => {
 		const vault = createTestVault('Test vault');
 		expect(vault.risk_numeric).toBeNull();
 		expect(isBlacklisted(vault)).toBe(false);
+	});
+});
+
+describe('isPermissionedVault', () => {
+	test('returns true only for vaults that require deposit permission', () => {
+		expect(
+			isPermissionedVault(createTestVault('Permissioned', { whitelist: { status: 'whitelisted', notes: null } }))
+		).toBe(true);
+		expect(
+			isPermissionedVault(createTestVault('Public', { whitelist: { status: 'permissionless', notes: null } }))
+		).toBe(false);
+		expect(isPermissionedVault(createTestVault('Unknown'))).toBe(false);
 	});
 });
 

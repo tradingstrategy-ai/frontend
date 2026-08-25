@@ -5,7 +5,13 @@
  * that a URL can only narrow its declared listing population.
  */
 import { getChainsBySlug } from '$lib/helpers/chain';
-import { DEFAULT_TVL_KEY, MAX_SUMMARY_TVL_USD, isBlacklisted, isUnknownVaultProtocol } from '../helpers';
+import {
+	DEFAULT_TVL_KEY,
+	MAX_SUMMARY_TVL_USD,
+	isBlacklisted,
+	isPermissionedVault,
+	isUnknownVaultProtocol
+} from '../helpers';
 import type { VaultInfo } from '../schemas';
 import type { VaultListingOptions } from './query';
 import type { VaultListingQueryDefaults } from './state';
@@ -129,7 +135,7 @@ export function filterVaultListingScope(vaults: VaultInfo[], key: VaultListingKe
 		case 'blacklisted':
 			return vaults.filter(isBlacklisted);
 		case 'whitelisted':
-			return vaults.filter((vault) => vault.whitelist?.status === 'whitelisted');
+			return vaults.filter(isPermissionedVault);
 		case 'chain': {
 			if (!scope) return [];
 			const chainIds = new Set(getChainsBySlug(scope).map((chain) => chain.id));

@@ -31,6 +31,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 		getVaultProtocolDisplayName,
 		hasSupportedProtocol,
 		isBlacklisted,
+		isPermissionedVault,
 		isVaultDepositCapped,
 		isVaultTvlDownMoreThan95Percent
 	} from '$lib/top-vaults/helpers';
@@ -48,7 +49,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	let showBlacklistedAlert = $derived(blacklisted && !notesDuplicateMorphoFlags);
 	let showNotes = $derived(vault.notes != null && !notesDuplicateMorphoFlags);
 	let isTokenisedFund = $derived(vault.flags.includes('tokenised_fund'));
-	let isPrivate = $derived(vault.whitelist?.status === 'whitelisted');
+	let isPrivate = $derived(isPermissionedVault(vault));
 	let isCapped = $derived(isVaultDepositCapped(vault));
 	let showTvlWarning = $derived(isVaultTvlDownMoreThan95Percent(vault));
 	let showLongDurationWarning = $derived(vault.flags.includes('long_duration'));
