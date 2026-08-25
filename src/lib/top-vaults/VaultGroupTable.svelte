@@ -75,7 +75,7 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 		fullNameLabel = 'Name',
 		averageApyLabel = 'Avg. APY%',
 		tvlLabel = 'TVL',
-		ctaLabel = 'View vaults',
+		ctaLabel = 'View',
 		getLogoHref,
 		getNameDetail,
 		getNameStrikethrough,
@@ -221,8 +221,16 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 		table.column({
 			id: 'cta',
 			header: '',
-			accessor: (row) => getHref(row.slug),
-			cell: ({ value }) => (value ? createRender(TableRowTarget, { size: 'sm', label: ctaLabel, href: value }) : ''),
+			accessor: (row) => ({ href: getHref(row.slug), targetLabel: `${ctaLabel} ${row.name}` }),
+			cell: ({ value }) =>
+				value.href
+					? createRender(TableRowTarget, {
+							size: 'sm',
+							label: ctaLabel,
+							targetLabel: value.targetLabel,
+							href: value.href
+						})
+					: '',
 			plugins: { sort: { disable: true } }
 		})
 	]);

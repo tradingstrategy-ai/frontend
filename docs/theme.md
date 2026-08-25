@@ -295,8 +295,8 @@ Defined in `src/lib/components/css/breakpoints.css`:
 
 Navigation-specific breakpoints:
 
-- `--nav-expanded`: `width >= 1050px`
-- `--nav-collapsed`: `width < 1050px`
+- `--nav-expanded`: `width >= 1170px`
+- `--nav-collapsed`: `width < 1170px`
 
 Guidance:
 

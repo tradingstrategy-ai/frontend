@@ -13,6 +13,7 @@ Tokenised fund listing for vaults with a regulated fund structure.
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
 	import { JsonLd } from 'svelte-meta-tags';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
+	import VaultGroupIndexHeader from '../VaultGroupIndexHeader.svelte';
 	import MarketSharePieChart from '../MarketSharePieChart.svelte';
 	import MarketShareWidgetBox from '../MarketShareWidgetBox.svelte';
 
@@ -58,7 +59,7 @@ Tokenised fund listing for vaults with a regulated fund structure.
 		<div class="header-stack">
 			<VaultListingsSelector />
 
-			<div class="tokenised-fund-index-header">
+			<VaultGroupIndexHeader>
 				<div class="intro-column">
 					<HeroBanner {title}>
 						{#snippet subtitle()}
@@ -98,7 +99,7 @@ Tokenised fund listing for vaults with a regulated fund structure.
 						{/if}
 					</MarketShareWidgetBox>
 				</div>
-			</div>
+			</VaultGroupIndexHeader>
 		</div>
 	</Section>
 
@@ -131,39 +132,9 @@ Tokenised fund listing for vaults with a regulated fund structure.
 			gap: 1rem;
 		}
 
-		.tokenised-fund-index-header {
-			display: grid;
-			grid-template-columns: minmax(0, 1fr) minmax(25rem, 40rem);
-			gap: 1.5rem;
-			align-items: stretch;
-		}
-
-		.intro-column,
-		.chart-column {
-			display: grid;
-		}
-
-		.intro-column {
-			align-content: start;
-		}
-
 		.intro-column :global(.subtitle a) {
 			text-decoration: underline;
 			text-underline-offset: 0.15em;
-		}
-
-		.chart-column :global(.metrics-box) {
-			height: 100%;
-		}
-
-		.chart-column :global(.market-share-pie-chart) {
-			align-self: stretch;
-		}
-
-		@media (--viewport-sm-down) {
-			.tokenised-fund-index-header {
-				grid-template-columns: 1fr;
-			}
 		}
 	}
 </style>
