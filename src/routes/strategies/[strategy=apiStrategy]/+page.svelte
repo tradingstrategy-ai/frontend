@@ -48,7 +48,7 @@ Strategy overview dashboard.
 		{#if strategy.on_chain_data.asset_management_mode === 'lagoon'}
 			<LagoonGuardV0Flow
 				guard={strategy.on_chain_data.smart_contracts.lagoon_guard_v0}
-				treasuryPromise={data.deferred.state.then((state) => state?.sync?.treasury)}
+				statePromise={data.deferred.state.then((state) => state ?? undefined)}
 			/>
 		{/if}
 	</SummaryMetrics>

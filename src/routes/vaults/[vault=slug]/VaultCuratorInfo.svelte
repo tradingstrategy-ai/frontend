@@ -58,12 +58,6 @@ curator.
 		gap: 1rem;
 		height: 100%;
 
-		.curator-logo {
-			max-width: 9rem;
-			height: 3rem;
-			object-fit: contain;
-		}
-
 		.content {
 			display: grid;
 			gap: 0.625rem;
@@ -73,6 +67,12 @@ curator.
 				display: flex;
 				gap: 1rem;
 				align-items: start;
+
+				.curator-logo {
+					max-width: 9rem;
+					height: 3rem;
+					object-fit: contain;
+				}
 			}
 
 			h2 {
@@ -89,11 +89,6 @@ curator.
 			}
 		}
 
-		:global(.view-all-btn) {
-			align-self: center;
-			margin-top: auto;
-		}
-
 		.description {
 			margin: 0;
 			font: var(--f-ui-md-roman);
@@ -103,6 +98,11 @@ curator.
 				text-decoration: underline;
 				font-weight: 500;
 			}
+		}
+
+		:global(.view-all-btn) {
+			--button-width: 100%;
+			margin-top: auto;
 		}
 	}
 </style>

@@ -11,7 +11,10 @@ const NINETY_DAYS_SECONDS = 90 * 24 * 60 * 60;
  * Fetch share price data for a vault and convert to 90-day relative returns.
  * Returns [timestamp, relativeReturn][] suitable for share_price_returns_90_days.
  */
-async function fetchSharePriceReturns90d(fetch: Fetch, vaultId: string): Promise<[number, number][] | undefined> {
+export async function fetchSharePriceReturns90d(
+	fetch: Fetch,
+	vaultId: string
+): Promise<[number, number][] | undefined> {
 	try {
 		const resp = await fetch(`/vaults/${vaultId}/metrics`);
 		if (!resp.ok) return undefined;

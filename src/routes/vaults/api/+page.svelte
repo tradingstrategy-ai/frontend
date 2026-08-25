@@ -71,7 +71,7 @@
 			<Button slot="cta" label="Download vault data" />
 		</ContentCard>
 
-		<ContentCard title="Backtesting" href="/trading-view/backtesting">
+		<ContentCard title="DEX spot data" href="/trading-view/backtesting">
 			<IconBacktesting slot="icon" />
 			<p>
 				Download historical OHLCV data for backtesting your trading algorithms. Liquidity information is available for

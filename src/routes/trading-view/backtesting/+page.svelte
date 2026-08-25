@@ -67,7 +67,7 @@
 </script>
 
 <svelte:head>
-	<title>Historical DEX trading data</title>
+	<title>DEX spot data</title>
 	<meta name="description" content="Download price, OHLCV and liquidity backtesting data" />
 </svelte:head>
 
@@ -75,7 +75,7 @@
 
 <main class="backtesting-page">
 	<Section tag="header">
-		<HeroBanner title="Historical DEX trading data">
+		<HeroBanner title="DEX spot data">
 			{#snippet subtitle()}
 				<p>
 					The following datasets are available for historical DEX trading data.
@@ -93,6 +93,13 @@
 				</p>
 			{/snippet}
 		</HeroBanner>
+	</Section>
+
+	<Section>
+		<Alert size="md" status="info" title="Looking for vaults data?">
+			Download vault metadata and historical vault price datasets for research and analysis.
+			<Button slot="cta" size="sm" label="View vault datasets" href="/vaults/datasets" />
+		</Alert>
 	</Section>
 
 	<Section>

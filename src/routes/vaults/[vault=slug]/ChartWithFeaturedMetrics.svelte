@@ -218,12 +218,27 @@ amounts in the denomination's native currency.
 				display: flex;
 				min-width: 0;
 				justify-content: space-between;
+
+				:global(.metric) {
+					flex: 1 1 0;
+					min-width: 0;
+				}
 			}
 		}
 
 		@media (--viewport-sm-down) {
 			.featured-metrics {
-				justify-content: space-evenly;
+				gap: 0.75rem;
+				padding-inline: 0;
+
+				:global(.metric.xl) {
+					--value-font: var(--f-heading-lg-medium);
+				}
+
+				:global(.metric .label),
+				:global(.metric .value) {
+					overflow-wrap: anywhere;
+				}
 			}
 		}
 	}

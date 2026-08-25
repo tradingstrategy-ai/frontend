@@ -144,10 +144,10 @@
 
 	{#snippet beforeTable()}
 		{#if core3}
-			<Core3Ratings {core3} {protocolName} collapsible />
+			<Core3Ratings {core3} {protocolName} />
 		{/if}
 		{#if xerberus}
-			<XerberusRisk {xerberus} context="protocol" />
+			<XerberusRisk {xerberus} />
 		{/if}
 	{/snippet}
 </TopVaultsPage>

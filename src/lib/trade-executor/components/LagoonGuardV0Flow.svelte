@@ -7,18 +7,20 @@ The card is hidden unless GuardV0 enables a positive limit with its expected
 -->
 <script lang="ts">
 	import type { LagoonSmartContracts } from 'trade-executor/schemas/summary';
-	import type { TreasurySync } from 'trade-executor/schemas/state';
+	import type { State, TreasurySync } from 'trade-executor/schemas/state';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
-	import { formatDollar } from '$lib/helpers/formatters';
+	import { formatDatetime, formatDollar } from '$lib/helpers/formatters';
 
 	type Props = {
 		guard: LagoonSmartContracts['lagoon_guard_v0'];
 		treasury?: TreasurySync | null;
 		treasuryPromise?: Promise<TreasurySync | null | undefined>;
+		state?: State;
+		statePromise?: Promise<State | undefined>;
 	};
 
-	let { guard, treasury, treasuryPromise }: Props = $props();
+	let { guard, treasury, treasuryPromise, state, statePromise }: Props = $props();
 
 	let automatedSettlementLimit = $derived(
 		guard?.daily_automatic_settlement_limit_enabled &&
@@ -35,9 +37,44 @@ The card is hidden unless GuardV0 enables a positive limit with its expected
 	function formatPendingFlow(value: number | null | undefined) {
 		return formatDollar(value ?? 0, 0, 2, { notation: 'standard' });
 	}
+
+	/**
+	 * Get the gross amount processed by automatic settlement in GuardV0's cooldown window.
+	 *
+	 * The state records the individual deposit and redemption amounts. Their sum matches the
+	 * Guard's gross-flow accounting, whereas the balance-update USD value is their net difference.
+	 */
+	function getSettlementWindow(strategyState: State | undefined) {
+		const cooldown = guard?.settlement_cooldown_seconds;
+		if (!strategyState || !cooldown) return undefined;
+
+		const settlements = Object.values(strategyState.portfolio.reserves)
+			.flatMap((reserve) => Object.values(reserve.balance_updates))
+			.filter(
+				(update) =>
+					update.cause === 'deposit_and_redemption' && update.other_data?.settlement_origin === 'executor_broadcast'
+			);
+		const lastSettlementAt = Math.max(...settlements.map((update) => update.block_mined_at));
+		if (!Number.isFinite(lastSettlementAt)) return undefined;
+
+		const resetAt = lastSettlementAt + cooldown;
+		if (resetAt <= Date.now() / 1000) return { processed: 0, resetAt };
+
+		return {
+			resetAt,
+			processed: settlements
+				.filter((update) => update.block_mined_at >= lastSettlementAt && update.block_mined_at <= resetAt)
+				.reduce(
+					(total, update) =>
+						total + Number(update.other_data?.deposited ?? 0) + Number(update.other_data?.redeemed ?? 0),
+					0
+				)
+		};
+	}
 </script>
 
-{#snippet pendingFlowTooltip(treasury: TreasurySync | null | undefined)}
+{#snippet pendingFlowTooltip(treasury: TreasurySync | null | undefined, strategyState?: State)}
+	{@const settlementWindow = getSettlementWindow(strategyState)}
 	<div class="pending-flow-tooltip">
 		<p>Pending deposit and redemption flow currently waiting in the treasury.</p>
 		<dl>
@@ -49,6 +86,20 @@ The card is hidden unless GuardV0 enables a positive limit with its expected
 				<dt>Pending redemptions</dt>
 				<dd>{formatPendingFlow(treasury?.pending_redemptions)}</dd>
 			</div>
+			{#if settlementWindow}
+				<div>
+					<dt>Processed in 24h window so far</dt>
+					<dd>{formatPendingFlow(settlementWindow.processed)}</dd>
+				</div>
+				<div>
+					<dt>Window resets</dt>
+					<dd>
+						{settlementWindow.resetAt > Date.now() / 1000
+							? formatDatetime(new Date(settlementWindow.resetAt * 1000))
+							: 'Available now'}
+					</dd>
+				</div>
+			{/if}
 		</dl>
 	</div>
 {/snippet}
@@ -61,7 +112,15 @@ The card is hidden unless GuardV0 enables a positive limit with its expected
 					>{formatDollar(automatedSettlementLimit, 0, 0, { notation: 'standard' })}</span
 				>
 				<svelte:fragment slot="popup">
-					{#if treasuryPromise}
+					{#if statePromise}
+						{#await statePromise}
+							Pending treasury flow is loading.
+						{:then resolvedState}
+							{@render pendingFlowTooltip(resolvedState?.sync?.treasury, resolvedState)}
+						{:catch}
+							Pending treasury flow is not available.
+						{/await}
+					{:else if treasuryPromise}
 						{#await treasuryPromise}
 							Pending treasury flow is loading.
 						{:then resolvedTreasury}
@@ -70,7 +129,7 @@ The card is hidden unless GuardV0 enables a positive limit with its expected
 							Pending treasury flow is not available.
 						{/await}
 					{:else}
-						{@render pendingFlowTooltip(treasury)}
+						{@render pendingFlowTooltip(treasury, state)}
 					{/if}
 				</svelte:fragment>
 			</Tooltip><span>/24h</span>

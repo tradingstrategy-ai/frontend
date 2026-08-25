@@ -1,3 +1,7 @@
+<!--
+@component
+Shows a vault's overall, chain, and protocol return rankings.
+-->
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
@@ -72,6 +76,12 @@
 			font: var(--f-ui-md-roman);
 		}
 
+		@media (--viewport-sm-down) {
+			grid-template-columns: auto minmax(0, 1fr);
+			gap: 0.5rem;
+			font: var(--f-ui-sm-roman);
+		}
+
 		ul {
 			display: flex;
 			flex-wrap: wrap;
@@ -79,10 +89,18 @@
 			list-style: none;
 			padding: 0;
 
+			@media (--viewport-sm-down) {
+				gap: 0.5rem 1rem;
+			}
+
 			li {
 				display: flex;
 				gap: 0.5ex;
 				color: var(--c-text-extra-light);
+
+				@media (--viewport-sm-down) {
+					gap: 0.25ex;
+				}
 			}
 
 			.rank {

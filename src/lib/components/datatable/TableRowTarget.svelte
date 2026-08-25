@@ -3,16 +3,18 @@
 
 	interface Props {
 		label?: string;
+		/** Accessible label for both links when the visible label is intentionally brief. */
+		targetLabel?: string;
 		href: string;
 		target?: string;
 		rel?: string;
 	}
 
-	let { label = 'Details', href, target, rel }: Props = $props();
+	let { label = 'Details', targetLabel = label, href, target, rel }: Props = $props();
 </script>
 
-<a class="row-link" {href} {target} {rel}>{label}</a>
-<TargetableLink {href} {label} {target} {rel} />
+<a class="row-link" aria-label={targetLabel} {href} {target} {rel}>{label}</a>
+<TargetableLink {href} label={targetLabel} {target} {rel} />
 
 <style>
 	.row-link {

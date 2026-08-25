@@ -3,6 +3,7 @@ node_modules
 /build
 /.svelte-kit
 /.svelte-kit-test
+/.cache
 /package
 /data
 *.local

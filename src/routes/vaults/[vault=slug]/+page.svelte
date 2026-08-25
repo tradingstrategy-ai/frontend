@@ -81,6 +81,9 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 		getCuratorSocialLogoUrl(curatorMetadata) ??
 			(protocolMetadata ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined)
 	);
+	let vaultInformationCardCount = $derived(
+		[vault.description, curatorMetadata, protocolMetadata].filter((item) => item != null).length
+	);
 </script>
 
 <SocialMediaTags {vault} {chain} {protocolMetadata} {curatorMetadata} {stablecoinMetadata} />
@@ -161,7 +164,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 
 		<VaultMetrics {vault} {stablecoinMetadata} {core3} />
 
-		<div class="vault-information">
+		<div class="vault-information" class:single-card={vaultInformationCardCount === 1}>
 			{#if vault.description}
 				<MetricsBox class="description" title="About the vault">
 					<Markdown content={vault.description} />
@@ -245,6 +248,17 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 		@media (--viewport-lg-up) {
 			grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
 		}
+	}
+
+	:global(.vault-information.single-card :is(.curator-info, .protocol-info)) {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+	}
+
+	:global(.vault-information.single-card .view-all-btn) {
+		--button-width: auto;
+		margin-top: 0;
 	}
 
 	:global(:is(.description, .notes)) {

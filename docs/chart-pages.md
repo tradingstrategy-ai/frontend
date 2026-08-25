@@ -82,6 +82,15 @@ Existing chart types include:
 - Mini line charts: group-level vault TVL history.
 - Candlestick, baseline, area, histogram, and benchmark overlays: lightweight-charts time-series components.
 
+### Vault group listing headers
+
+The stablecoin, chain, protocol, curator, and tokenised-fund listing pages use
+`src/routes/vaults/VaultGroupIndexHeader.svelte` for their introduction and
+summary pie chart. It uses a two-column layout only above the large breakpoint
+and stacks the chart below the introduction at `width <= 1024px`. This prevents
+the chart's 25rem minimum width from compressing the introduction on portrait
+iPads.
+
 ## Chart page navigation
 
 There are two separate vault chart navigation surfaces.
