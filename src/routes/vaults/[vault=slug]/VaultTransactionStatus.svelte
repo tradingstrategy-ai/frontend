@@ -10,7 +10,7 @@ Displays vault deposit and redemption availability when either operation is rest
 -->
 <script lang="ts">
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
-	import { isGoodVaultStatus, isVaultDepositCapped } from '$lib/top-vaults/helpers';
+	import { isGoodVaultStatus, isPermissionedVault, isVaultDepositCapped } from '$lib/top-vaults/helpers';
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 
 	interface Props {
@@ -19,7 +19,7 @@ Displays vault deposit and redemption availability when either operation is rest
 
 	let { vault }: Props = $props();
 
-	let isPrivate = $derived(vault.whitelist?.status === 'whitelisted');
+	let isPrivate = $derived(isPermissionedVault(vault));
 	let isCapped = $derived(isVaultDepositCapped(vault));
 	let depositStatus = $derived(
 		isPrivate

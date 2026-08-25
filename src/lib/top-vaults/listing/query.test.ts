@@ -109,6 +109,24 @@ describe('vault listing query', () => {
 		expect(query.tvl).toBe('10k');
 	});
 
+	it('hides permissioned vaults when requested', () => {
+		const publicVault = createTestVault('Public', { current_nav: 100_000 });
+		const privateVault = createTestVault('Private', {
+			current_nav: 100_000,
+			whitelist: { status: 'whitelisted', notes: null }
+		});
+		const privateFund = createTestVault('Private fund', {
+			current_nav: 100_000,
+			flags: ['tokenised_fund'],
+			whitelist: { status: 'whitelisted', notes: null }
+		});
+		const query = parseVaultListingQuery(new URLSearchParams('private=1'), { tvl: '10k' });
+
+		expect(
+			queryVaultListing([publicVault, privateVault, privateFund], query, options).vaults.map((vault) => vault.name)
+		).toEqual(['Public']);
+	});
+
 	it('keeps a blacklisted definition scoped to blacklisted vaults', () => {
 		const safe = createTestVault('Safe', { current_nav: 100_000 });
 		const blacklisted = createTestVault('Blacklisted', { current_nav: 100_000, risk: 'Blacklisted' });

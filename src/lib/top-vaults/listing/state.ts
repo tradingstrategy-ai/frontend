@@ -67,6 +67,7 @@ export function parseVaultListingQuery(
 		q: (params.get('q') ?? '').slice(0, 100),
 		closed: params.get('closed') === '1',
 		unknown: params.get('unknown') == null ? (defaults.unknown ?? true) : params.get('unknown') === '1',
+		private: params.get('private') === '1',
 		sort: sortKeys.has(sort) ? sort : (defaults.sort ?? DEFAULT_RETURN_COLUMN_IDS[0]),
 		direction: direction === 'asc' || direction === 'desc' ? direction : (defaults.direction ?? 'desc')
 	};

@@ -54,6 +54,7 @@ Whitelisted vault listing for permissioned deposits.
 	defaultTvlKey="any"
 	defaultRiskIndex={1}
 	defaultHideUnknown={0}
+	showPrivateFilter={false}
 	defaultSort="tvl"
 	defaultDirection="desc"
 />

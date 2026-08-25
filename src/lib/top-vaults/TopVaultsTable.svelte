@@ -3,7 +3,8 @@
 Interactive vault listing with filters, sorting, and progressive row loading.
 
 Use `ratingProvider` to add its risk-rating column beside the vault name.
-Whitelisted vaults are marked as Private, except tokenised funds, which are marked as Fund.
+Permissioned vaults are marked as Private, except tokenised funds, which are marked as Fund.
+The Hide private filter excludes all permissioned vaults.
 -->
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
@@ -63,6 +64,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		getVaultTvlNative,
 		hasSupportedProtocol,
 		isBlacklisted,
+		isPermissionedVault,
 		isVaultDepositCapped,
 		isGoodVaultStatus,
 		monthlyReturnFilterOptions,
@@ -93,7 +95,18 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 
 	const allVaultsPath = resolve('/vaults/all');
 	const filtersOpenStorageKey = 'top-vaults-filters-open';
-	const filterSearchParamKeys = ['tvl', 'age', 'risk', 'q', 'closed', 'unknown', 'dd', 'mr', 'returns'] as const;
+	const filterSearchParamKeys = [
+		'tvl',
+		'age',
+		'risk',
+		'q',
+		'closed',
+		'unknown',
+		'private',
+		'dd',
+		'mr',
+		'returns'
+	] as const;
 
 	/** Return whether the URL explicitly contains a vault-table filtering parameter. */
 	function hasFilterSearchParams(searchParams: URLSearchParams) {
@@ -122,10 +135,12 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		defaultAgeIndex?: number;
 		/** Default risk filter index (used to initialise the dropdown when showFilters is true) */
 		defaultRiskIndex?: number;
-		/** Default value for the "Hide unknown" filter (1 = hide, 0 = show) */
+		/** Default value for the "Hide unknown protocols" filter (1 = hide, 0 = show) */
 		defaultHideUnknown?: number;
-		/** Show the "Hide unknown" protocol filter checkbox */
+		/** Show the "Hide unknown protocols" filter checkbox */
 		showUnknownFilter?: boolean;
+		/** Show the "Hide private" permissioned-vault filter checkbox */
+		showPrivateFilter?: boolean;
 		/** Default monthly return filter key */
 		defaultMonthlyReturnKey?: string;
 		/** Default sort column key */
@@ -181,6 +196,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		defaultRiskIndex = 1,
 		defaultHideUnknown = 1,
 		showUnknownFilter = true,
+		showPrivateFilter = true,
 		defaultMonthlyReturnKey = 'any',
 		defaultSort,
 		defaultDirection,
@@ -309,6 +325,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		q: { type: 'string', defaultValue: '' },
 		closed: { type: 'number', defaultValue: 0 },
 		unknown: { type: 'number', defaultValue: defaultHideUnknown },
+		private: { type: 'number', defaultValue: 0 },
 		dd: { type: 'string', defaultValue: 'any', options: ddFilterOptions.map((o) => o.key) },
 		mr: {
 			type: 'string',
@@ -391,6 +408,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 
 	let hideClosed = $derived(urlState.closed === 1);
 	let hideUnknown = $derived(showUnknownFilter && urlState.unknown === 1);
+	let hidePrivate = $derived(urlState.private === 1);
 	let returnsDropdownOpen = $state(false);
 	let filtersOpen = $state(hasFilterSearchParams(page.url.searchParams));
 	let hasLoadedFilterPreference = false;
@@ -628,6 +646,9 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 
 			// Hide unknown protocol filter (checkbox-driven)
 			if (hideUnknown && !hasSupportedProtocol(v)) return false;
+
+			// Hide private vault filter (checkbox-driven)
+			if (hidePrivate && isPermissionedVault(v)) return false;
 
 			const vaultCompareStr = [
 				v.chain_id,
@@ -1064,7 +1085,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 								<div class="filter-group">
 									<Tooltip>
 										<label class="checkbox-filter" slot="trigger">
-											<span class="filter-label filter-label-hint">Hide unknown</span>
+											<span class="filter-label filter-label-hint">Hide unknown protocols</span>
 											<input
 												type="checkbox"
 												checked={hideUnknown}
@@ -1074,6 +1095,22 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 										<svelte:fragment slot="popup">
 											Don't show vaults whose protocol has not been identified yet
 										</svelte:fragment>
+									</Tooltip>
+								</div>
+							{/if}
+
+							{#if showPrivateFilter}
+								<div class="filter-group">
+									<Tooltip>
+										<label class="checkbox-filter" slot="trigger">
+											<span class="filter-label filter-label-hint">Hide private</span>
+											<input
+												type="checkbox"
+												checked={hidePrivate}
+												onchange={() => updateSearchParams({ private: hidePrivate ? 0 : 1 })}
+											/>
+										</label>
+										<svelte:fragment slot="popup">Hide vaults that require permission to deposit</svelte:fragment>
 									</Tooltip>
 								</div>
 							{/if}
@@ -1295,7 +1332,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 					{@const chain = getChain(vault.chain_id)}
 					{@const blacklisted = isBlacklisted(vault)}
 					{@const badStatus = !isGoodVaultStatus(vault)}
-					{@const isPrivate = vault.whitelist?.status === 'whitelisted'}
+					{@const isPrivate = isPermissionedVault(vault)}
 					{@const isTokenisedFund = vault.flags.includes('tokenised_fund')}
 					{@const isCapped = isVaultDepositCapped(vault)}
 					{@const depositStatusLabel = isTokenisedFund ? 'Fund' : 'Private'}
