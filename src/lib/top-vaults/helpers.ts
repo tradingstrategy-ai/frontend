@@ -575,6 +575,16 @@ export function isVaultTvlDownMoreThan95Percent(vault: Pick<VaultInfo, 'current_
 	);
 }
 
+/**
+ * Whether to show the historical TVL decline warning on a vault detail page.
+ * The warning does not apply to GMX vaults.
+ */
+export function shouldShowVaultTvlDownMoreThan95PercentWarning(
+	vault: Pick<VaultInfo, 'current_nav' | 'peak_nav' | 'protocol_slug'>
+): boolean {
+	return vault.protocol_slug !== 'gmx' && isVaultTvlDownMoreThan95Percent(vault);
+}
+
 const DEFAULT_DETAIL_RISK_FILTER = riskFilterOptions[1];
 
 /**
