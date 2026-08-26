@@ -140,7 +140,7 @@ test.describe('vault index page', () => {
 		await openFilters(page);
 
 		await expect(primaryFilters.getByText('Technical risk', { exact: true })).toBeVisible();
-		await expect(primaryFilters.getByText('Hide undepositable', { exact: true })).toBeVisible();
+		await expect(primaryFilters.getByText('Hide currently closed', { exact: true })).toBeVisible();
 		await expect(primaryFilters.getByText('Hide unknown protocols', { exact: true })).toBeVisible();
 		await expect(primaryFilters.getByText('Hide private', { exact: true })).toBeVisible();
 		await expect(primaryFilters.getByTestId('vault-search')).toHaveCount(0);

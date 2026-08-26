@@ -1068,7 +1068,7 @@ The Hide private filter excludes all permissioned vaults.
 							<div class="filter-group">
 								<Tooltip>
 									<label class="checkbox-filter" slot="trigger">
-										<span class="filter-label filter-label-hint">Hide undepositable</span>
+										<span class="filter-label filter-label-hint">Hide currently closed</span>
 										<input
 											type="checkbox"
 											checked={hideClosed}
