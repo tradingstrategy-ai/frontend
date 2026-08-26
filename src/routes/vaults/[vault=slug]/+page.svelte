@@ -33,7 +33,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 		isBlacklisted,
 		isPermissionedVault,
 		isVaultDepositCapped,
-		isVaultTvlDownMoreThan95Percent
+		shouldShowVaultTvlDownMoreThan95PercentWarning
 	} from '$lib/top-vaults/helpers';
 	import { getCuratorSocialLogoUrl } from '$lib/social-card/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
@@ -51,7 +51,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	let isTokenisedFund = $derived(vault.flags.includes('tokenised_fund'));
 	let isPrivate = $derived(isPermissionedVault(vault));
 	let isCapped = $derived(isVaultDepositCapped(vault));
-	let showTvlWarning = $derived(isVaultTvlDownMoreThan95Percent(vault));
+	let showTvlWarning = $derived(shouldShowVaultTvlDownMoreThan95PercentWarning(vault));
 	let showLongDurationWarning = $derived(vault.flags.includes('long_duration'));
 	let hasUnsupportedProtocol = $derived(!hasSupportedProtocol(vault));
 	let depositMayBeDisabled = $derived(vault.deposit_closed_reason != null);

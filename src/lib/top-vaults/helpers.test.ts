@@ -31,6 +31,7 @@ import {
 	getVaultPeakTvlUsd,
 	getVaultTvlNative,
 	isVaultTvlDownMoreThan95Percent,
+	shouldShowVaultTvlDownMoreThan95PercentWarning,
 	getXerberusScoreBand,
 	getXerberusScoreColour,
 	isNonUsdDenominatedVault,
@@ -579,6 +580,24 @@ describe('isVaultTvlDownMoreThan95Percent', () => {
 		expect(isVaultTvlDownMoreThan95Percent(createTestVault('Zero peak vault', { current_nav: 0, peak_nav: 0 }))).toBe(
 			false
 		);
+	});
+});
+
+describe('shouldShowVaultTvlDownMoreThan95PercentWarning', () => {
+	test('does not show the warning for GMX vaults', () => {
+		const vault = createTestVault('GMX vault', {
+			protocol: 'GMX',
+			current_nav: 4_999,
+			peak_nav: 100_000
+		});
+
+		expect(shouldShowVaultTvlDownMoreThan95PercentWarning(vault)).toBe(false);
+	});
+
+	test('shows the warning for other vaults with the same TVL decline', () => {
+		const vault = createTestVault('Collapsed vault', { current_nav: 4_999, peak_nav: 100_000 });
+
+		expect(shouldShowVaultTvlDownMoreThan95PercentWarning(vault)).toBe(true);
 	});
 });
 
