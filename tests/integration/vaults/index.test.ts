@@ -141,14 +141,14 @@ async function expectStackedFilterLayout(page: import('@playwright/test').Page) 
 	await expect(performanceGroup).toHaveCSS('border-left-width', '0px');
 }
 
-/** Assert that tablet performance controls use aligned label and dropdown columns. */
-async function expectTabletPerformanceGrid(page: import('@playwright/test').Page) {
+/** Read the rendered label and dropdown positions for every Performance control. */
+async function getPerformanceControlPositions(page: import('@playwright/test').Page) {
 	const performanceGroup = filterGroup(page, 'performance');
 	const controls = performanceGroup.locator(':scope > .filter-group');
 	await expect(performanceGroup).toHaveCSS('display', 'grid');
 	await expect(controls).toHaveCount(6);
 
-	const rows = await controls.evaluateAll((elements) =>
+	return controls.evaluateAll((elements) =>
 		elements.map((element) => {
 			const label = element.querySelector('.filter-label');
 			const dropdown = element.lastElementChild;
@@ -158,11 +158,29 @@ async function expectTabletPerformanceGrid(page: import('@playwright/test').Page
 			return { labelRight: labelBox.right, dropdownLeft: dropdownBox.left, y: dropdownBox.y };
 		})
 	);
+}
+
+/** Assert that tablet performance controls use aligned label and dropdown columns. */
+async function expectTabletPerformanceGrid(page: import('@playwright/test').Page) {
+	const rows = await getPerformanceControlPositions(page);
 
 	for (let index = 1; index < rows.length; index++) {
 		expect(rows[index].y).toBeGreaterThan(rows[index - 1].y);
 		expect(Math.abs(rows[index].labelRight - rows[0].labelRight)).toBeLessThan(1);
 		expect(Math.abs(rows[index].dropdownLeft - rows[0].dropdownLeft)).toBeLessThan(1);
+	}
+}
+
+/** Assert that desktop performance controls use three aligned label/dropdown pairs per row. */
+async function expectDesktopPerformanceGrid(page: import('@playwright/test').Page) {
+	const rows = await getPerformanceControlPositions(page);
+
+	for (let column = 0; column < 3; column++) {
+		expect(Math.abs(rows[column].y - rows[0].y)).toBeLessThan(1);
+		expect(Math.abs(rows[column + 3].y - rows[3].y)).toBeLessThan(1);
+		expect(rows[column + 3].y).toBeGreaterThan(rows[column].y);
+		expect(Math.abs(rows[column + 3].labelRight - rows[column].labelRight)).toBeLessThan(1);
+		expect(Math.abs(rows[column + 3].dropdownLeft - rows[column].dropdownLeft)).toBeLessThan(1);
 	}
 }
 
@@ -250,6 +268,7 @@ test.describe('vault index page', () => {
 
 		await expectFilterControls(page);
 		await expectHorizontalFilterLayout(page);
+		await expectDesktopPerformanceGrid(page);
 		await expect(page.getByText('Hide currently closed', { exact: true })).toHaveCount(0);
 		await expect(page.getByText('Hide unknown protocols', { exact: true })).toHaveCount(0);
 		await expect(page.getByText('Hide private', { exact: true })).toHaveCount(0);

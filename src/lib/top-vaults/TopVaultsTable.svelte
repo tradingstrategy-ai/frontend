@@ -1802,17 +1802,11 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 			}
 
 			.filter-section-performance {
-				border-left: 1px solid var(--c-input-border);
-				padding-left: 1.5rem;
-			}
-		}
-
-		@media (--viewport-md-up) and (--viewport-md-down) {
-			.filter-section-performance {
 				display: grid;
-				grid-template-columns: max-content minmax(0, 1fr);
 				align-items: center;
 				gap: 0.75rem 0.5rem;
+				border-left: 1px solid var(--c-input-border);
+				padding-left: 1.5rem;
 
 				.filter-section-heading {
 					grid-column: 1 / -1;
@@ -1830,8 +1824,27 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 
 					> :last-child {
 						justify-self: start;
+						max-width: 100%;
+					}
+
+					> :global(.select) {
+						min-width: 0;
+						width: 100%;
 					}
 				}
+			}
+		}
+
+		@media (--viewport-md-up) and (--viewport-lg-down) {
+			.filter-section-performance {
+				grid-template-columns: max-content minmax(0, 1fr);
+			}
+		}
+
+		@media (--viewport-xl-up) {
+			.filter-section-performance {
+				grid-template-columns: repeat(2, max-content max-content) max-content minmax(8rem, 1fr);
+				column-gap: 0.75rem;
 			}
 		}
 
