@@ -10,7 +10,8 @@ import {
 	ddFilterOptions,
 	monthlyReturnFilterOptions,
 	riskFilterOptions,
-	tvlFilterOptions
+	tvlFilterOptions,
+	volatilityFilterOptions
 } from '../helpers';
 
 const sortKeys = new Set([
@@ -61,6 +62,7 @@ export function parseVaultListingQuery(
 		age: boundedIndex(params.get('age'), defaults.age ?? 0, ageFilterOptions.length),
 		risk: boundedIndex(params.get('risk'), defaults.risk ?? 1, riskFilterOptions.length),
 		dd: ddFilterOptions.some((item) => item.key === params.get('dd')) ? params.get('dd')! : 'any',
+		vol: volatilityFilterOptions.some((item) => item.key === params.get('vol')) ? params.get('vol')! : 'any',
 		mr: monthlyReturnFilterOptions.some((item) => item.key === params.get('mr'))
 			? params.get('mr')!
 			: (defaults.mr ?? 'any'),

@@ -135,6 +135,7 @@ const returnLeaders = [
 		one_month_cagr: 0.32,
 		three_months_returns: 0.1,
 		three_months_cagr: 0.24,
+		three_months_volatility: 0.04,
 		cagr: 0.22,
 		lifetime_return: 0.35,
 		period_results: [createPeriodResult('6m', 0.16, 0.18, 0.42, 0.45), createPeriodResult('1y', 0.28, 0.3, 0.28, 0.3)]
@@ -151,6 +152,7 @@ const returnLeaders = [
 		one_month_cagr: 0.26,
 		three_months_returns: 0.085,
 		three_months_cagr: 0.21,
+		three_months_volatility: 0.1,
 		cagr: 0.19,
 		lifetime_return: 0.31,
 		period_results: [createPeriodResult('6m', 0.12, 0.14, 0.31, 0.34), createPeriodResult('1y', 0.2, 0.22, 0.2, 0.22)]
@@ -167,6 +169,7 @@ const returnLeaders = [
 		one_month_cagr: 0.22,
 		three_months_returns: 0.07,
 		three_months_cagr: 0.18,
+		three_months_volatility: 0.2,
 		cagr: 0.16,
 		lifetime_return: 0.27,
 		period_results: [createPeriodResult('6m', 0.08, 0.1, 0.22, 0.25), createPeriodResult('1y', 0.14, 0.16, 0.14, 0.16)]

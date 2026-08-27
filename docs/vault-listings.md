@@ -18,12 +18,21 @@ filters may narrow that definition but cannot change its base population.
 
 ### Permissioned vault filter
 
-The Filters panel labels the permissioned-vault control **Hide private**. It
-adds `private=1` to the URL and excludes every vault with a `whitelisted`
-deposit status. This includes tokenised funds: they are displayed as **Fund**
-in the table, but still require permission to deposit. The label refers to the
-deposit restriction, not the table's status text. It is not shown on the
-Whitelisted listing because every vault in that listing is permissioned.
+The Filters panel exposes the permissioned-vault control as **Private** inside
+the **Hide vaults** group. It adds `private=1` to the URL and excludes every
+vault with a `whitelisted` deposit status. This includes tokenised funds: they
+are displayed as **Fund** in the table, but still require permission to
+deposit. The label refers to the deposit restriction, not the table's status
+text. It is not shown on the Whitelisted listing because every vault in that
+listing is permissioned.
+
+### Volatility filter
+
+The **Volatility** control filters the annualised three-month volatility value.
+`vol=5`, `vol=10`, `vol=25`, and `vol=50` apply strict upper bounds, so a vault
+at exactly the selected percentage is excluded. Vaults without a volatility
+measurement are also excluded when a bound is active. **Any** is the default
+and leaves vaults with or without volatility data in the listing.
 
 ## Continuation API
 
