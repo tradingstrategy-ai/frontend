@@ -3,6 +3,7 @@ import {
 	CORE3_METHODOLOGY_URL,
 	isBlacklisted,
 	isPermissionedVault,
+	isPoolProtocol,
 	isEligibleFrontpageVault,
 	hasSupportedProtocol,
 	getProtocolDisplayName,
@@ -362,6 +363,16 @@ describe('isUnsupportedProtocolSlug', () => {
 
 	test('ignores supported protocol slugs', () => {
 		expect(isUnsupportedProtocolSlug('yearn')).toBe(false);
+	});
+});
+
+describe('isPoolProtocol', () => {
+	test('identifies GMX as a pool protocol', () => {
+		expect(isPoolProtocol('gmx')).toBe(true);
+	});
+
+	test('does not classify other protocols as pool protocols', () => {
+		expect(isPoolProtocol('yearn')).toBe(false);
 	});
 });
 

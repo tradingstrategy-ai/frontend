@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { UNKNOWN_VAULT_PROTOCOL_SLUG } from '$lib/top-vaults/helpers';
+	import { isPoolProtocol, UNKNOWN_VAULT_PROTOCOL_SLUG } from '$lib/top-vaults/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { resolve } from '$app/paths';
@@ -16,6 +16,7 @@
 	let isUnknownVaultProtocolGroup = $derived(protocolSlug === UNKNOWN_VAULT_PROTOCOL_SLUG);
 	let isHyperliquidProtocolGroup = $derived(protocolSlug === 'hyperliquid');
 	let isApexProtocolGroup = $derived(protocolSlug === 'apex');
+	let isPoolProtocolGroup = $derived(isPoolProtocol(protocolSlug));
 
 	// Apex does not have a track record yet, so its vaults sit below the usual TVL
 	// threshold. Default the Min TVL filter to "Any" so they are not hidden.
@@ -27,9 +28,19 @@
 
 	const unknownVaultDescription = 'These vaults are not yet mapped out. Contact us to have your vaults listed.';
 
-	let title = $derived(isUnknownVaultProtocolGroup ? 'Unknown vaults' : `${protocolName} vaults and yields`);
+	let title = $derived(
+		isUnknownVaultProtocolGroup
+			? 'Unknown vaults'
+			: isPoolProtocolGroup
+				? `${protocolName} pools and yields`
+				: `${protocolName} vaults and yields`
+	);
 	let heroTitle = $derived(
-		isUnknownVaultProtocolGroup ? 'Unknown vaults' : `${protocolName} powered stablecoin vaults`
+		isUnknownVaultProtocolGroup
+			? 'Unknown vaults'
+			: isPoolProtocolGroup
+				? `${protocolName} powered pools`
+				: `${protocolName} powered stablecoin vaults`
 	);
 	let description = $derived(
 		isUnknownVaultProtocolGroup

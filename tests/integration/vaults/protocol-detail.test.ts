@@ -11,6 +11,8 @@ test.describe('vault protocol detail pages', () => {
 	test('shows GMX AMM pools by default and identifies an AMM vault as a pool', async ({ page }) => {
 		await page.goto('/vaults/protocols/gmx');
 
+		await expect(page).toHaveTitle('GMX pools and yields');
+		await expect(page.getByRole('heading', { name: 'GMX powered pools', level: 1 })).toBeVisible();
 		const gmxPoolRows = page.locator('tbody tr.targetable').filter({ hasText: 'GMX USDC pool' });
 		await expect(gmxPoolRows).toHaveCount(1);
 		await openFilters(page);

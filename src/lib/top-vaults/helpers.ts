@@ -262,6 +262,11 @@ export function isUnsupportedProtocolSlug(protocolSlug: string | null | undefine
 	return protocolSlug != null && unsupportedProtocolSlugs.has(protocolSlug);
 }
 
+/** Return whether a protocol's vault listings should use pool terminology. */
+export function isPoolProtocol(protocolSlug: string | null | undefined): boolean {
+	return protocolSlug === 'gmx';
+}
+
 export function hasSupportedProtocol(vault: Pick<VaultInfo, 'protocol'> & Partial<Pick<VaultInfo, 'protocol_slug'>>) {
 	return !isUnsupportedProtocolName(vault.protocol) && !isUnsupportedProtocolSlug(vault.protocol_slug);
 }
