@@ -20,6 +20,7 @@
 
 	let protocolPageUrl = $derived(resolve(`/vaults/protocols/${vault.protocol_slug}`));
 	let assetType = $derived(getVaultAssetType(vault));
+	let assetTypePlural = $derived(`${assetType}s`);
 </script>
 
 <MetricsBox fill>
@@ -40,7 +41,8 @@
 			<p class="description">{protocolMetadata.short_description}</p>
 		</div>
 		<Button size="sm" class="view-all-btn" href={protocolPageUrl}>
-			View all {protocolMetadata.name} vaults
+			View all {protocolMetadata.name}
+			{assetTypePlural}
 		</Button>
 	</div>
 </MetricsBox>

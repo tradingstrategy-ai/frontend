@@ -19,7 +19,7 @@ Includes the source whitelist status and any source-provided whitelist notes.
 		getVaultDenominationUsdRate,
 		getVaultDenominationCurrency,
 		getVaultProtocolDisplayName,
-		isAmmPoolLikeVault,
+		getVaultAssetType,
 		getVaultTvlNative
 	} from '$lib/top-vaults/helpers';
 	import {
@@ -40,7 +40,7 @@ Includes the source whitelist status and any source-provided whitelist notes.
 	}
 
 	let { vault, chain, stablecoinMetadata = null, generated_at = null }: Props = $props();
-	let technicalAssetType = $derived(isAmmPoolLikeVault(vault) ? 'Pool' : 'Vault');
+	let technicalAssetType = $derived(getVaultAssetType(vault).replace(/^./, (character) => character.toUpperCase()));
 
 	let copyWidget = $state<CopyWidget>();
 	let denominationSlug = $derived(

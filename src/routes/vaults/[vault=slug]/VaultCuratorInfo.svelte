@@ -28,6 +28,7 @@ curator.
 	let curatorPageUrl = $derived(resolve(`/vaults/curators/${curator.slug}`));
 	let curatorLogoUrl = $derived(curator.logos.generic ?? curator.logos.light ?? curator.logos.dark);
 	let assetType = $derived(getVaultAssetType(vault));
+	let assetTypePlural = $derived(`${assetType}s`);
 </script>
 
 <MetricsBox fill>
@@ -47,7 +48,8 @@ curator.
 			{/if}
 		</div>
 		<Button size="sm" class="view-all-btn" href={curatorPageUrl}>
-			View all {curator.name} vaults
+			View all {curator.name}
+			{assetTypePlural}
 		</Button>
 	</div>
 </MetricsBox>

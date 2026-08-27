@@ -17,6 +17,8 @@
 	let isHyperliquidProtocolGroup = $derived(protocolSlug === 'hyperliquid');
 	let isApexProtocolGroup = $derived(protocolSlug === 'apex');
 	let isPoolProtocolGroup = $derived(isPoolProtocol(protocolSlug));
+	let listingAssetType = $derived(isPoolProtocolGroup ? 'pool' : 'vault');
+	let listingAssetTypePlural = $derived(`${listingAssetType}s`);
 
 	// Apex does not have a track record yet, so its vaults sit below the usual TVL
 	// threshold. Default the Min TVL filter to "Any" so they are not hidden.
@@ -45,7 +47,9 @@
 	let description = $derived(
 		isUnknownVaultProtocolGroup
 			? unknownVaultDescription
-			: (protocolMetadata?.short_description ?? `Top stablecoin vaults on ${protocolName}`)
+			: isPoolProtocolGroup
+				? `Explore ${protocolName} pools and yields, including TVL and performance metrics.`
+				: (protocolMetadata?.short_description ?? `Top stablecoin vaults on ${protocolName}`)
 	);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived.by(() => {
@@ -73,7 +77,9 @@
 	{#if averageMonthlyReturn != null}
 		<p>
 			The current listing contains <strong>{formatDollar(data.listingSummary.totalTvl, 1)}</strong> TVL in
-			<strong>{data.listingSummary.matchingCount} {data.listingSummary.matchingCount === 1 ? 'vault' : 'vaults'}</strong
+			<strong
+				>{data.listingSummary.matchingCount}
+				{data.listingSummary.matchingCount === 1 ? listingAssetType : listingAssetTypePlural}</strong
 			>
 			with the TVL-weighted average monthly returns of <strong>{formatPercent(averageMonthlyReturn, 1)}</strong>.
 		</p>
@@ -143,7 +149,7 @@
 >
 	{#snippet detailAside()}
 		<VaultGroupMiniChart
-			title="All {protocolName} vaults: TVL and TVL-weighted 3-month annualised return"
+			title="All {protocolName} {listingAssetTypePlural}: TVL and TVL-weighted 3-month annualised return"
 			dataUrl="/vaults/protocols/{protocolSlug}/chart-data"
 			compareLabel="Compare all protocols"
 			compareHref="/vaults/historical-tvl-protocol"

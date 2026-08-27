@@ -160,16 +160,6 @@ describe('vault listing query', () => {
 		expect(queryVaultListing([vault, pool], query, options).vaults.map((item) => item.name)).toEqual(['Vault']);
 	});
 
-	it('does not apply the AMM filter when a listing has no filter controls', () => {
-		const vault = createTestVault('Vault', { current_nav: 100_000 });
-		const pool = createTestVault('Pool', { current_nav: 100_000, features: ['amm_pool_like'] });
-		const query = parseVaultListingQuery(new URLSearchParams('amm=1'), { tvl: '10k' });
-
-		expect(
-			queryVaultListing([vault, pool], query, { ...options, showFilters: false }).vaults.map((item) => item.name)
-		).toEqual(expect.arrayContaining(['Vault', 'Pool']));
-	});
-
 	it('keeps a blacklisted definition scoped to blacklisted vaults', () => {
 		const safe = createTestVault('Safe', { current_nav: 100_000 });
 		const blacklisted = createTestVault('Blacklisted', { current_nav: 100_000, risk: 'Blacklisted' });

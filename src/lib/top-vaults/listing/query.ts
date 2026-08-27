@@ -169,7 +169,7 @@ export function queryVaultListing(
 		}
 		if (query.closed && vault.deposit_closed_reason != null) return false;
 		if (query.unknown && !hasSupportedProtocol(vault)) return false;
-		if (options.showFilters && query.amm && isAmmPoolLikeVault(vault)) return false;
+		if (query.amm && isAmmPoolLikeVault(vault)) return false;
 		if (query.private && isPermissionedVault(vault)) return false;
 		const search = [
 			vault.chain_id,

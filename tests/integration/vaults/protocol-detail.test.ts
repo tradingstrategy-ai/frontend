@@ -2,9 +2,11 @@ import { expect, test } from '@playwright/test';
 
 async function openFilters(page: import('@playwright/test').Page) {
 	const filters = page.getByTestId('vault-filters');
-	if (!(await filters.isVisible())) {
-		await page.getByRole('button', { name: 'Filters' }).click();
+	if (!(await filters.evaluate((details: HTMLDetailsElement) => details.open))) {
+		await page.getByTestId('filters-summary').click();
 	}
+	await expect(filters).toHaveJSProperty('open', true);
+	await expect(page.locator('.filters-content')).toBeVisible();
 }
 
 test.describe('vault protocol detail pages', () => {
@@ -20,9 +22,11 @@ test.describe('vault protocol detail pages', () => {
 
 		await page.goto('/vaults/gmx-usdc-pool');
 
+		await expect(page).toHaveTitle('GMX USDC pool | DeFi pool | Trading Strategy');
 		await expect(page.getByText('About the pool', { exact: true })).toBeVisible();
 		await expect(page.getByText('This pool is running on GMX:', { exact: true })).toBeVisible();
 		await expect(page.getByText('Pool name', { exact: true })).toBeVisible();
+		await expect(page.getByRole('link', { name: 'View all GMX pools' })).toBeVisible();
 	});
 
 	test('sorts ApeX vaults by TVL by default', async ({ page }) => {

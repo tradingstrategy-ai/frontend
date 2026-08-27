@@ -66,6 +66,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		hasSupportedProtocol,
 		isAmmPoolLikeVault,
 		isBlacklisted,
+		isPoolProtocol,
 		isPermissionedVault,
 		isVaultDepositCapped,
 		isGoodVaultStatus,
@@ -223,6 +224,8 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		listingSummary
 	}: Props = $props();
 	const defaultHideAmm = untrack(() => ((getVaultListingDefaults(listingKey, listingScope).amm ?? true) ? 1 : 0));
+	let listingAssetType = $derived(listingKey === 'protocol' && isPoolProtocol(listingScope) ? 'pool' : 'vault');
+	let listingAssetTypePlural = $derived(`${listingAssetType}s`);
 	let accumulatedVaults = $state<VaultInfo[]>(topVaults.vaults);
 	let remoteHasMore = $state(progressive);
 	let remoteLoading = $state(false);
@@ -979,7 +982,8 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		<div class="table-stats" class:hidden={loading} data-testid="top-vaults-meta">
 			<Tooltip>
 				<svelte:fragment slot="trigger"
-					>{matchingVaultCount} vaults{#if totalVaultCount > matchingVaultCount}
+					>{matchingVaultCount}
+					{listingAssetTypePlural}{#if totalVaultCount > matchingVaultCount}
 						<span>&nbsp;out of {totalVaultCount}</span>{/if}</svelte:fragment
 				>
 				<svelte:fragment slot="popup"
@@ -990,7 +994,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 						not meet the minimum TVL threshold:
 						{hiddenVaultNames.join(', ')}{#if hiddenByTvl > 2}, and {hiddenByTvl - 2} more{/if}.
 					{:else}
-						The number of vaults listed on this page.
+						The number of {listingAssetTypePlural} listed on this page.
 					{/if}</svelte:fragment
 				>
 			</Tooltip>
