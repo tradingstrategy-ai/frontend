@@ -139,6 +139,26 @@ async function expectStackedFilterLayout(page: import('@playwright/test').Page) 
 	await expect(performanceGroup).toHaveCSS('border-left-width', '0px');
 }
 
+/** Assert that tablet performance controls form one vertical column. */
+async function expectVerticalPerformanceControls(page: import('@playwright/test').Page) {
+	const performanceGroup = filterGroup(page, 'performance');
+	const controls = performanceGroup.locator(':scope > .filter-group');
+	await expect(performanceGroup).toHaveCSS('flex-direction', 'column');
+	await expect(controls).toHaveCount(6);
+
+	const boxes = await controls.evaluateAll((elements) =>
+		elements.map((element) => {
+			const { x, y } = element.getBoundingClientRect();
+			return { x, y };
+		})
+	);
+
+	for (let index = 1; index < boxes.length; index++) {
+		expect(boxes[index].y).toBeGreaterThan(boxes[index - 1].y);
+		expect(Math.abs(boxes[index].x - boxes[0].x)).toBeLessThan(1);
+	}
+}
+
 async function expectLimitedDataTooltip(
 	page: import('@playwright/test').Page,
 	cell: import('@playwright/test').Locator,
@@ -262,6 +282,7 @@ test.describe('vault index page', () => {
 
 		await expectFilterControls(page);
 		await expectHorizontalFilterLayout(page);
+		await expectVerticalPerformanceControls(page);
 	});
 
 	test('omits the Unknown protocols checkbox on protocol listings', async ({ page }) => {

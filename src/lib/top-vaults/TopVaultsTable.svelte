@@ -1798,6 +1798,19 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 			}
 		}
 
+		@media (--viewport-md-up) and (--viewport-md-down) {
+			.filter-section-performance {
+				flex-direction: column;
+				flex-wrap: nowrap;
+				align-items: flex-start;
+
+				.filter-section-heading {
+					flex-basis: auto;
+					width: 100%;
+				}
+			}
+		}
+
 		.vault-filters {
 			width: 100%;
 			border: 1px solid var(--c-input-border);
