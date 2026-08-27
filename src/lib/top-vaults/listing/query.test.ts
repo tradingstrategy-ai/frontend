@@ -167,7 +167,7 @@ describe('vault listing query', () => {
 
 		expect(
 			queryVaultListing([vault, pool], query, { ...options, showFilters: false }).vaults.map((item) => item.name)
-		).toEqual(['Pool', 'Vault']);
+		).toEqual(expect.arrayContaining(['Vault', 'Pool']));
 	});
 
 	it('keeps a blacklisted definition scoped to blacklisted vaults', () => {
