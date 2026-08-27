@@ -1800,13 +1800,26 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 
 		@media (--viewport-md-up) and (--viewport-md-down) {
 			.filter-section-performance {
-				flex-direction: column;
-				flex-wrap: nowrap;
-				align-items: flex-start;
+				display: grid;
+				grid-template-columns: max-content minmax(0, 1fr);
+				align-items: center;
+				gap: 0.75rem 0.5rem;
 
 				.filter-section-heading {
-					flex-basis: auto;
+					grid-column: 1 / -1;
 					width: 100%;
+				}
+
+				.filter-group {
+					display: contents;
+
+					> :first-child {
+						justify-self: end;
+					}
+
+					> :last-child {
+						justify-self: start;
+					}
 				}
 			}
 		}

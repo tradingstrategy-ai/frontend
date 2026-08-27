@@ -139,23 +139,26 @@ async function expectStackedFilterLayout(page: import('@playwright/test').Page) 
 	await expect(performanceGroup).toHaveCSS('border-left-width', '0px');
 }
 
-/** Assert that tablet performance controls form one vertical column. */
-async function expectVerticalPerformanceControls(page: import('@playwright/test').Page) {
+/** Assert that tablet performance controls use aligned label and dropdown columns. */
+async function expectTabletPerformanceGrid(page: import('@playwright/test').Page) {
 	const performanceGroup = filterGroup(page, 'performance');
 	const controls = performanceGroup.locator(':scope > .filter-group');
-	await expect(performanceGroup).toHaveCSS('flex-direction', 'column');
+	await expect(performanceGroup).toHaveCSS('display', 'grid');
 	await expect(controls).toHaveCount(6);
 
-	const boxes = await controls.evaluateAll((elements) =>
+	const rows = await controls.evaluateAll((elements) =>
 		elements.map((element) => {
-			const { x, y } = element.getBoundingClientRect();
-			return { x, y };
+			const [label, dropdown] = element.children;
+			const labelBox = label.getBoundingClientRect();
+			const dropdownBox = dropdown.getBoundingClientRect();
+			return { labelRight: labelBox.right, dropdownLeft: dropdownBox.left, y: dropdownBox.y };
 		})
 	);
 
-	for (let index = 1; index < boxes.length; index++) {
-		expect(boxes[index].y).toBeGreaterThan(boxes[index - 1].y);
-		expect(Math.abs(boxes[index].x - boxes[0].x)).toBeLessThan(1);
+	for (let index = 1; index < rows.length; index++) {
+		expect(rows[index].y).toBeGreaterThan(rows[index - 1].y);
+		expect(Math.abs(rows[index].labelRight - rows[0].labelRight)).toBeLessThan(1);
+		expect(Math.abs(rows[index].dropdownLeft - rows[0].dropdownLeft)).toBeLessThan(1);
 	}
 }
 
@@ -282,7 +285,7 @@ test.describe('vault index page', () => {
 
 		await expectFilterControls(page);
 		await expectHorizontalFilterLayout(page);
-		await expectVerticalPerformanceControls(page);
+		await expectTabletPerformanceGrid(page);
 	});
 
 	test('omits the Unknown protocols checkbox on protocol listings', async ({ page }) => {
