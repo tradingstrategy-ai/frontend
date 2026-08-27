@@ -1141,7 +1141,7 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 								role="group"
 								aria-labelledby="filter-group-performance-heading"
 							>
-								<h3 class="filter-section-heading" id="filter-group-performance-heading">Performance</h3>
+								<h3 class="filter-section-heading" id="filter-group-performance-heading">Performance and risk</h3>
 								<div class="filter-group">
 									<Tooltip>
 										<span class="filter-label filter-label-hint" slot="trigger">Technical risk</span>

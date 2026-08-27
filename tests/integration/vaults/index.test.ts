@@ -71,7 +71,7 @@ async function expectFilterControls(page: import('@playwright/test').Page) {
 	for (const [name, group] of [
 		['Display', displayGroup],
 		['Hide vaults', hideGroup],
-		['Performance', performanceGroup]
+		['Performance and risk', performanceGroup]
 	] as const) {
 		await expect(group).toHaveAccessibleName(name);
 		await expect(group.getByRole('heading', { name })).toBeVisible();
