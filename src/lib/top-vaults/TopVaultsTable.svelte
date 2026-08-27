@@ -1645,6 +1645,11 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 			flex-direction: column;
 			flex-wrap: nowrap;
 			align-items: flex-start;
+
+			.filter-section-heading {
+				flex-basis: auto;
+				width: 100%;
+			}
 		}
 
 		.filter-group {
@@ -1783,7 +1788,7 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 
 		@media (--viewport-md-up) {
 			.filters-groups {
-				grid-template-columns: auto auto minmax(0, 1fr);
+				grid-template-columns: minmax(16rem, 0.8fr) minmax(10rem, 0.45fr) minmax(0, 1.5fr);
 			}
 
 			.filter-section-hide,

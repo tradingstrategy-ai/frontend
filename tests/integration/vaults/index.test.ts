@@ -62,6 +62,83 @@ function filterGroup(page: import('@playwright/test').Page, name: 'display' | 'h
 	return page.getByTestId(`filter-group-${name}`);
 }
 
+/** Assert that every filter control is available in its intended group. */
+async function expectFilterControls(page: import('@playwright/test').Page) {
+	const displayGroup = filterGroup(page, 'display');
+	const hideGroup = filterGroup(page, 'hide');
+	const performanceGroup = filterGroup(page, 'performance');
+
+	await expect(displayGroup).toHaveAccessibleName('Display');
+	await expect(hideGroup).toHaveAccessibleName('Hide vaults');
+	await expect(performanceGroup).toHaveAccessibleName('Performance');
+	await expect(displayGroup.getByRole('heading', { name: 'Display' })).toBeVisible();
+	await expect(hideGroup.getByRole('heading', { name: 'Hide vaults' })).toBeVisible();
+	await expect(performanceGroup.getByRole('heading', { name: 'Performance' })).toBeVisible();
+	await expect(displayGroup.getByText('Columns', { exact: true })).toBeVisible();
+	await expect(returnColumnsTrigger(page)).toBeVisible();
+	await expect(hideGroup.getByLabel('Currently closed', { exact: true })).toBeVisible();
+	await expect(hideGroup.getByLabel('Unknown protocols', { exact: true })).toBeVisible();
+	await expect(hideGroup.getByLabel('Private', { exact: true })).toBeVisible();
+	await expect(performanceGroup.getByText('Technical risk', { exact: true })).toBeVisible();
+	await expect(performanceGroup.getByText('Min TVL', { exact: true })).toBeVisible();
+	await expect(performanceGroup.getByText('Age', { exact: true })).toBeVisible();
+	await expect(performanceGroup.getByText('Max drawdown', { exact: true })).toBeVisible();
+	await expect(performanceGroup.getByText('Monthly returns', { exact: true })).toBeVisible();
+	await expect(performanceGroup.getByText('Volatility', { exact: true })).toBeVisible();
+}
+
+/** Assert the desktop and tablet three-column filter layout. */
+async function expectHorizontalFilterLayout(page: import('@playwright/test').Page) {
+	const displayGroup = filterGroup(page, 'display');
+	const hideGroup = filterGroup(page, 'hide');
+	const performanceGroup = filterGroup(page, 'performance');
+	const [displayBox, hideBox, performanceBox] = await Promise.all([
+		displayGroup.boundingBox(),
+		hideGroup.boundingBox(),
+		performanceGroup.boundingBox()
+	]);
+
+	if (!displayBox || !hideBox || !performanceBox) throw new Error('Expected visible filter groups');
+
+	expect(Math.abs(displayBox.y - hideBox.y)).toBeLessThan(1);
+	expect(Math.abs(hideBox.y - performanceBox.y)).toBeLessThan(1);
+	expect(displayBox.x).toBeLessThan(hideBox.x);
+	expect(hideBox.x).toBeLessThan(performanceBox.x);
+	await expect(displayGroup).toHaveCSS('border-left-width', '0px');
+	await expect(hideGroup).toHaveCSS('border-left-width', '1px');
+	await expect(performanceGroup).toHaveCSS('border-left-width', '1px');
+	expect(await performanceGroup.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
+
+	const [closedBox, unknownBox, privateBox] = await Promise.all([
+		hideGroup.getByLabel('Currently closed', { exact: true }).boundingBox(),
+		hideGroup.getByLabel('Unknown protocols', { exact: true }).boundingBox(),
+		hideGroup.getByLabel('Private', { exact: true }).boundingBox()
+	]);
+	if (!closedBox || !unknownBox || !privateBox) throw new Error('Expected visible Hide checkboxes');
+	expect(closedBox.y).toBeLessThan(unknownBox.y);
+	expect(unknownBox.y).toBeLessThan(privateBox.y);
+	expect(closedBox.y).toBeLessThan(hideBox.y + hideBox.height / 2);
+}
+
+/** Assert the mobile stacked filter layout. */
+async function expectStackedFilterLayout(page: import('@playwright/test').Page) {
+	const displayGroup = filterGroup(page, 'display');
+	const hideGroup = filterGroup(page, 'hide');
+	const performanceGroup = filterGroup(page, 'performance');
+	const [displayBox, hideBox, performanceBox] = await Promise.all([
+		displayGroup.boundingBox(),
+		hideGroup.boundingBox(),
+		performanceGroup.boundingBox()
+	]);
+
+	if (!displayBox || !hideBox || !performanceBox) throw new Error('Expected visible filter groups');
+	expect(displayBox.y).toBeLessThan(hideBox.y);
+	expect(hideBox.y).toBeLessThan(performanceBox.y);
+	await expect(displayGroup).toHaveCSS('border-left-width', '0px');
+	await expect(hideGroup).toHaveCSS('border-left-width', '0px');
+	await expect(performanceGroup).toHaveCSS('border-left-width', '0px');
+}
+
 async function expectLimitedDataTooltip(
 	page: import('@playwright/test').Page,
 	cell: import('@playwright/test').Locator,
@@ -131,10 +208,9 @@ test.describe('vault index page', () => {
 		);
 	});
 
-	test('groups all controls in a collapsed Filters disclosure', async ({ page }) => {
+	test('groups all controls in a collapsed Filters disclosure on desktop', async ({ page }) => {
+		await page.setViewportSize({ width: 1440, height: 900 });
 		const displayGroup = filterGroup(page, 'display');
-		const hideGroup = filterGroup(page, 'hide');
-		const performanceGroup = filterGroup(page, 'performance');
 		await expect(displayGroup).not.toBeVisible();
 
 		const filters = page.getByTestId('vault-filters');
@@ -145,21 +221,8 @@ test.describe('vault index page', () => {
 
 		await openFilters(page);
 
-		await expect(displayGroup).toHaveAccessibleName('Display');
-		await expect(hideGroup).toHaveAccessibleName('Hide vaults');
-		await expect(performanceGroup).toHaveAccessibleName('Performance');
-		await expect(displayGroup.getByRole('heading', { name: 'Display' })).toBeVisible();
-		await expect(hideGroup.getByRole('heading', { name: 'Hide vaults' })).toBeVisible();
-		await expect(performanceGroup.getByRole('heading', { name: 'Performance' })).toBeVisible();
-		await expect(displayGroup.getByText('Columns', { exact: true })).toBeVisible();
-		await expect(hideGroup.getByLabel('Currently closed', { exact: true })).toBeVisible();
-		await expect(hideGroup.getByLabel('Unknown protocols', { exact: true })).toBeVisible();
-		await expect(hideGroup.getByLabel('Private', { exact: true })).toBeVisible();
-		await expect(performanceGroup.getByText('Technical risk', { exact: true })).toBeVisible();
-		await expect(performanceGroup.getByText('Min TVL')).toBeVisible();
-		await expect(performanceGroup.getByText('Age', { exact: true })).toBeVisible();
-		await expect(performanceGroup.getByText('Max drawdown')).toBeVisible();
-		await expect(performanceGroup.getByText('Volatility', { exact: true })).toBeVisible();
+		await expectFilterControls(page);
+		await expectHorizontalFilterLayout(page);
 		await expect(page.getByText('Hide currently closed', { exact: true })).toHaveCount(0);
 		await expect(page.getByText('Hide unknown protocols', { exact: true })).toHaveCount(0);
 		await expect(page.getByText('Hide private', { exact: true })).toHaveCount(0);
@@ -197,33 +260,8 @@ test.describe('vault index page', () => {
 		await page.goto('/vaults');
 		await openFilters(page);
 
-		const displayGroup = filterGroup(page, 'display');
-		const hideGroup = filterGroup(page, 'hide');
-		const performanceGroup = filterGroup(page, 'performance');
-		const [displayBox, hideBox, performanceBox] = await Promise.all([
-			displayGroup.boundingBox(),
-			hideGroup.boundingBox(),
-			performanceGroup.boundingBox()
-		]);
-
-		if (!displayBox || !hideBox || !performanceBox) throw new Error('Expected visible filter groups');
-
-		expect(Math.abs(displayBox.y - hideBox.y)).toBeLessThan(1);
-		expect(Math.abs(hideBox.y - performanceBox.y)).toBeLessThan(1);
-		expect(displayBox.x).toBeLessThan(hideBox.x);
-		expect(hideBox.x).toBeLessThan(performanceBox.x);
-		await expect(displayGroup).toHaveCSS('border-left-width', '0px');
-		await expect(hideGroup).toHaveCSS('border-left-width', '1px');
-		await expect(performanceGroup).toHaveCSS('border-left-width', '1px');
-
-		const [closedBox, unknownBox, privateBox] = await Promise.all([
-			hideGroup.getByLabel('Currently closed', { exact: true }).boundingBox(),
-			hideGroup.getByLabel('Unknown protocols', { exact: true }).boundingBox(),
-			hideGroup.getByLabel('Private', { exact: true }).boundingBox()
-		]);
-		if (!closedBox || !unknownBox || !privateBox) throw new Error('Expected visible Hide checkboxes');
-		expect(closedBox.y).toBeLessThan(unknownBox.y);
-		expect(unknownBox.y).toBeLessThan(privateBox.y);
+		await expectFilterControls(page);
+		await expectHorizontalFilterLayout(page);
 	});
 
 	test('omits the Unknown protocols checkbox on protocol listings', async ({ page }) => {
@@ -265,21 +303,9 @@ test.describe('vault index page', () => {
 		await expect(displayGroup).toBeVisible();
 		await expect(hideGroup).toBeVisible();
 		await expect(performanceGroup).toBeVisible();
-		await expect(performanceGroup.getByText('Technical risk', { exact: true })).toBeVisible();
-		await expect(performanceGroup.getByText('Min TVL')).toBeVisible();
+		await expectFilterControls(page);
 		await expect(page.getByTestId('filters-summary')).not.toBeVisible();
-
-		const [displayBox, hideBox, performanceBox] = await Promise.all([
-			displayGroup.boundingBox(),
-			hideGroup.boundingBox(),
-			performanceGroup.boundingBox()
-		]);
-		if (!displayBox || !hideBox || !performanceBox) throw new Error('Expected visible filter groups');
-		expect(displayBox.y).toBeLessThan(hideBox.y);
-		expect(hideBox.y).toBeLessThan(performanceBox.y);
-		await expect(displayGroup).toHaveCSS('border-left-width', '0px');
-		await expect(hideGroup).toHaveCSS('border-left-width', '0px');
-		await expect(performanceGroup).toHaveCSS('border-left-width', '0px');
+		await expectStackedFilterLayout(page);
 	});
 
 	test('closes the mobile Filters disclosure', async ({ page }) => {
