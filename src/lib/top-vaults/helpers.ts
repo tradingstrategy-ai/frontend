@@ -262,6 +262,11 @@ export function isUnsupportedProtocolSlug(protocolSlug: string | null | undefine
 	return protocolSlug != null && unsupportedProtocolSlugs.has(protocolSlug);
 }
 
+/** Return whether a protocol's vault listings should use pool terminology. */
+export function isPoolProtocol(protocolSlug: string | null | undefined): boolean {
+	return protocolSlug === 'gmx';
+}
+
 export function hasSupportedProtocol(vault: Pick<VaultInfo, 'protocol'> & Partial<Pick<VaultInfo, 'protocol_slug'>>) {
 	return !isUnsupportedProtocolName(vault.protocol) && !isUnsupportedProtocolSlug(vault.protocol_slug);
 }
@@ -314,6 +319,18 @@ export function getVaultProtocolDisplayName(vault: Pick<VaultInfo, 'protocol' | 
 		return 'Lighter Robinhood';
 	}
 	return displayName;
+}
+
+/** Return whether an asset is an AMM pool or AMM-like vault. */
+export function isAmmPoolLikeVault(vault: Pick<VaultInfo, 'features'>): boolean {
+	return vault.features.includes('amm_pool_like');
+}
+
+/** Return the user-facing type of a vault-like asset. */
+export function getVaultAssetType(vault: Pick<VaultInfo, 'flags' | 'features'>): 'vault' | 'pool' | 'tokenised fund' {
+	if (vault.flags.includes('tokenised_fund')) return 'tokenised fund';
+	if (isAmmPoolLikeVault(vault)) return 'pool';
+	return 'vault';
 }
 
 /**

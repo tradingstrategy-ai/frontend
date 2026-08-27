@@ -25,6 +25,7 @@ so relative performance is comparable on a single axis.
 	import { removeOnError } from '$lib/actions/image';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { isPerpetualFuturesVault } from './isPerpetualFuturesVault';
+	import { getVaultAssetType } from './helpers';
 	import type { PriceScaleCalculator, SimpleDataItem } from '$lib/charts/types';
 	import {
 		formatDollar,
@@ -60,7 +61,7 @@ so relative performance is comparable on a single axis.
 	let { vault, chartLogoUrl, onTimeSpanChange }: Props = $props();
 
 	let showCryptoBenchmarks = $derived(isPerpetualFuturesVault(vault));
-	let assetType = $derived(vault.flags.includes('tokenised_fund') ? 'tokenised fund' : 'vault');
+	let assetType = $derived(getVaultAssetType(vault));
 	let isSharePriceEquivalent = $derived(vault.features.includes('share_price_equivalence'));
 	let chartTitle = $derived(isSharePriceEquivalent ? 'Equity curve' : 'Share token price');
 

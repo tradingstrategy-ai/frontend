@@ -16,6 +16,7 @@ curator.
 	import Button from '$lib/components/Button.svelte';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import type { CuratorInfo, VaultInfo } from '$lib/top-vaults/schemas';
+	import { getVaultAssetType } from '$lib/top-vaults/helpers';
 
 	interface Props {
 		curator: CuratorInfo;
@@ -26,7 +27,8 @@ curator.
 
 	let curatorPageUrl = $derived(resolve(`/vaults/curators/${curator.slug}`));
 	let curatorLogoUrl = $derived(curator.logos.generic ?? curator.logos.light ?? curator.logos.dark);
-	let assetType = $derived(vault.flags.includes('tokenised_fund') ? 'tokenised fund' : 'vault');
+	let assetType = $derived(getVaultAssetType(vault));
+	let assetTypePlural = $derived(`${assetType}s`);
 </script>
 
 <MetricsBox fill>
@@ -46,7 +48,8 @@ curator.
 			{/if}
 		</div>
 		<Button size="sm" class="view-all-btn" href={curatorPageUrl}>
-			View all {curator.name} vaults
+			View all {curator.name}
+			{assetTypePlural}
 		</Button>
 	</div>
 </MetricsBox>

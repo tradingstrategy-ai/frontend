@@ -79,7 +79,7 @@ async function expectFilterControls(page: import('@playwright/test').Page) {
 
 	await expect(displayGroup.getByText('Columns', { exact: true })).toBeVisible();
 	await expect(returnColumnsTrigger(page)).toBeVisible();
-	for (const label of ['Currently closed', 'Unknown protocols', 'Private']) {
+	for (const label of ['Currently closed', 'Unknown protocols', 'AMM', 'Private']) {
 		await expect(hideGroup.getByLabel(label, { exact: true })).toBeVisible();
 	}
 	for (const label of ['Technical risk', 'Min TVL', 'Age', 'Max drawdown', 'Monthly returns', 'Volatility']) {
@@ -115,14 +115,16 @@ async function expectHorizontalFilterLayout(page: import('@playwright/test').Pag
 	expect(Number.parseFloat(hidePadding.left)).toBeGreaterThan(0);
 	expect(await performanceGroup.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
 
-	const [closedBox, unknownBox, privateBox] = await Promise.all([
+	const [closedBox, unknownBox, ammBox, privateBox] = await Promise.all([
 		hideGroup.getByLabel('Currently closed', { exact: true }).boundingBox(),
 		hideGroup.getByLabel('Unknown protocols', { exact: true }).boundingBox(),
+		hideGroup.getByLabel('AMM', { exact: true }).boundingBox(),
 		hideGroup.getByLabel('Private', { exact: true }).boundingBox()
 	]);
-	if (!closedBox || !unknownBox || !privateBox) throw new Error('Expected visible Hide checkboxes');
+	if (!closedBox || !unknownBox || !ammBox || !privateBox) throw new Error('Expected visible Hide checkboxes');
 	expect(closedBox.y).toBeLessThan(unknownBox.y);
-	expect(unknownBox.y).toBeLessThan(privateBox.y);
+	expect(unknownBox.y).toBeLessThan(ammBox.y);
+	expect(ammBox.y).toBeLessThan(privateBox.y);
 	expect(closedBox.y).toBeLessThan(hideBox.y + hideBox.height / 2);
 }
 
@@ -626,6 +628,27 @@ test.describe('vault index page', () => {
 
 		await expect(page).toHaveURL(/private=1/);
 		await expect(page.locator('tbody tr.targetable')).toHaveCount(0);
+	});
+
+	test('hides AMM-like vaults by default and explains the AMM filter', async ({ page }) => {
+		await page.goto('/vaults/all?q=GMX');
+		await expect(page.locator('tbody tr.targetable')).toHaveCount(0);
+
+		await page.goto('/vaults');
+		await openFilters(page);
+
+		const ammFilter = filterGroup(page, 'hide').getByLabel('AMM', { exact: true });
+		await expect(ammFilter).toBeChecked();
+		await ammFilter.hover();
+		await expect(
+			page.getByText('Hide AMM pools and AMM-like vaults with direct exposure to underlying assets.', { exact: true })
+		).toBeVisible();
+		await expect(page.getByRole('link', { name: 'What is AMM?' })).toHaveAttribute('href', '/glossary/amm');
+		await ammFilter.uncheck();
+		await expect(page).toHaveURL(/amm=0/);
+
+		await page.goto('/vaults/all?q=GMX&amm=0');
+		await expect(page.locator('tbody tr.targetable')).toContainText('GMX USDC pool');
 	});
 
 	test('does not offer the private filter on the whitelisted-vault listing', async ({ page }) => {

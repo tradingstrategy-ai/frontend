@@ -87,7 +87,12 @@ export const vaultListingDefinitions: Record<VaultListingKey, VaultListingDefini
 		requiresScope: false
 	},
 	chain: { key: 'chain', defaults: { tvl: '10k' }, options: commonOptions, requiresScope: true },
-	protocol: { key: 'protocol', defaults: { tvl: '10k', unknown: false }, options: commonOptions, requiresScope: true },
+	protocol: {
+		key: 'protocol',
+		defaults: { tvl: '10k', unknown: false, amm: false },
+		options: commonOptions,
+		requiresScope: true
+	},
 	stablecoin: {
 		key: 'stablecoin',
 		defaults: { tvl: '10k', unknown: false },

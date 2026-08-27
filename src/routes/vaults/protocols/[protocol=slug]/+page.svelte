@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { UNKNOWN_VAULT_PROTOCOL_SLUG } from '$lib/top-vaults/helpers';
+	import { isPoolProtocol, UNKNOWN_VAULT_PROTOCOL_SLUG } from '$lib/top-vaults/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { resolve } from '$app/paths';
@@ -16,6 +16,9 @@
 	let isUnknownVaultProtocolGroup = $derived(protocolSlug === UNKNOWN_VAULT_PROTOCOL_SLUG);
 	let isHyperliquidProtocolGroup = $derived(protocolSlug === 'hyperliquid');
 	let isApexProtocolGroup = $derived(protocolSlug === 'apex');
+	let isPoolProtocolGroup = $derived(isPoolProtocol(protocolSlug));
+	let listingAssetType = $derived(isPoolProtocolGroup ? 'pool' : 'vault');
+	let listingAssetTypePlural = $derived(`${listingAssetType}s`);
 
 	// Apex does not have a track record yet, so its vaults sit below the usual TVL
 	// threshold. Default the Min TVL filter to "Any" so they are not hidden.
@@ -27,14 +30,26 @@
 
 	const unknownVaultDescription = 'These vaults are not yet mapped out. Contact us to have your vaults listed.';
 
-	let title = $derived(isUnknownVaultProtocolGroup ? 'Unknown vaults' : `${protocolName} vaults and yields`);
+	let title = $derived(
+		isUnknownVaultProtocolGroup
+			? 'Unknown vaults'
+			: isPoolProtocolGroup
+				? `${protocolName} pools and yields`
+				: `${protocolName} vaults and yields`
+	);
 	let heroTitle = $derived(
-		isUnknownVaultProtocolGroup ? 'Unknown vaults' : `${protocolName} powered stablecoin vaults`
+		isUnknownVaultProtocolGroup
+			? 'Unknown vaults'
+			: isPoolProtocolGroup
+				? `${protocolName} powered pools`
+				: `${protocolName} powered stablecoin vaults`
 	);
 	let description = $derived(
 		isUnknownVaultProtocolGroup
 			? unknownVaultDescription
-			: (protocolMetadata?.short_description ?? `Top stablecoin vaults on ${protocolName}`)
+			: isPoolProtocolGroup
+				? `Explore ${protocolName} pools and yields, including TVL and performance metrics.`
+				: (protocolMetadata?.short_description ?? `Top stablecoin vaults on ${protocolName}`)
 	);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived.by(() => {
@@ -62,7 +77,9 @@
 	{#if averageMonthlyReturn != null}
 		<p>
 			The current listing contains <strong>{formatDollar(data.listingSummary.totalTvl, 1)}</strong> TVL in
-			<strong>{data.listingSummary.matchingCount} {data.listingSummary.matchingCount === 1 ? 'vault' : 'vaults'}</strong
+			<strong
+				>{data.listingSummary.matchingCount}
+				{data.listingSummary.matchingCount === 1 ? listingAssetType : listingAssetTypePlural}</strong
 			>
 			with the TVL-weighted average monthly returns of <strong>{formatPercent(averageMonthlyReturn, 1)}</strong>.
 		</p>
@@ -132,7 +149,7 @@
 >
 	{#snippet detailAside()}
 		<VaultGroupMiniChart
-			title="All {protocolName} vaults: TVL and TVL-weighted 3-month annualised return"
+			title="All {protocolName} {listingAssetTypePlural}: TVL and TVL-weighted 3-month annualised return"
 			dataUrl="/vaults/protocols/{protocolSlug}/chart-data"
 			compareLabel="Compare all protocols"
 			compareHref="/vaults/historical-tvl-protocol"

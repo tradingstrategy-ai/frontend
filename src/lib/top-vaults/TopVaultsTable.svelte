@@ -5,6 +5,7 @@ Interactive vault listing with filters, sorting, and progressive row loading.
 Use `ratingProvider` to add its risk-rating column beside the vault name.
 Permissioned vaults are marked as Private, except tokenised funds, which are marked as Fund.
 The Private checkbox in the Hide vaults group excludes all permissioned vaults.
+The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 -->
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
@@ -63,7 +64,9 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 		getVaultPeakTvlUsd,
 		getVaultTvlNative,
 		hasSupportedProtocol,
+		isAmmPoolLikeVault,
 		isBlacklisted,
+		isPoolProtocol,
 		isPermissionedVault,
 		isVaultDepositCapped,
 		isGoodVaultStatus,
@@ -93,6 +96,7 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 		type ReturnColumnId
 	} from './return-columns';
 	import { sortVaults } from './listing/query';
+	import { getVaultListingDefaults, type VaultListingKey } from './listing/definitions';
 	import { INITIAL_VAULT_LISTING_LIMIT, VAULT_LISTING_PAGE_SIZE, type VaultListingSummary } from './listing/types';
 
 	const allVaultsPath = resolve('/vaults/all');
@@ -104,6 +108,7 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 		'q',
 		'closed',
 		'unknown',
+		'amm',
 		'private',
 		'dd',
 		'vol',
@@ -168,7 +173,7 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 		ratingProvider?: RiskRatingProvider;
 		/** Whether rows are fetched in pages from the server. */
 		progressive?: boolean;
-		listingKey?: string;
+		listingKey?: VaultListingKey;
 		listingScope?: string;
 		listingSummary?: VaultListingSummary;
 	}
@@ -218,6 +223,9 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 		listingScope,
 		listingSummary
 	}: Props = $props();
+	const defaultHideAmm = untrack(() => ((getVaultListingDefaults(listingKey, listingScope).amm ?? true) ? 1 : 0));
+	let listingAssetType = $derived(listingKey === 'protocol' && isPoolProtocol(listingScope) ? 'pool' : 'vault');
+	let listingAssetTypePlural = $derived(`${listingAssetType}s`);
 	let accumulatedVaults = $state<VaultInfo[]>(topVaults.vaults);
 	let remoteHasMore = $state(progressive);
 	let remoteLoading = $state(false);
@@ -328,6 +336,7 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 		q: { type: 'string', defaultValue: '' },
 		closed: { type: 'number', defaultValue: 0 },
 		unknown: { type: 'number', defaultValue: defaultHideUnknown },
+		amm: { type: 'number', defaultValue: defaultHideAmm },
 		private: { type: 'number', defaultValue: 0 },
 		dd: { type: 'string', defaultValue: 'any', options: ddFilterOptions.map((o) => o.key) },
 		vol: { type: 'string', defaultValue: 'any', options: volatilityFilterOptions.map((o) => o.key) },
@@ -415,6 +424,7 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 
 	let hideClosed = $derived(urlState.closed === 1);
 	let hideUnknown = $derived(showUnknownFilter && urlState.unknown === 1);
+	let hideAmm = $derived(showFilters && urlState.amm === 1);
 	let hidePrivate = $derived(urlState.private === 1);
 	let returnsDropdownOpen = $state(false);
 	let filtersOpen = $state(hasFilterSearchParams(page.url.searchParams));
@@ -657,6 +667,9 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 
 			// Hide unknown protocol filter (checkbox-driven)
 			if (hideUnknown && !hasSupportedProtocol(v)) return false;
+
+			// Hide AMM pool filter (checkbox-driven)
+			if (hideAmm && isAmmPoolLikeVault(v)) return false;
 
 			// Hide private vault filter (checkbox-driven)
 			if (hidePrivate && isPermissionedVault(v)) return false;
@@ -969,7 +982,8 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 		<div class="table-stats" class:hidden={loading} data-testid="top-vaults-meta">
 			<Tooltip>
 				<svelte:fragment slot="trigger"
-					>{matchingVaultCount} vaults{#if totalVaultCount > matchingVaultCount}
+					>{matchingVaultCount}
+					{listingAssetTypePlural}{#if totalVaultCount > matchingVaultCount}
 						<span>&nbsp;out of {totalVaultCount}</span>{/if}</svelte:fragment
 				>
 				<svelte:fragment slot="popup"
@@ -980,7 +994,7 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 						not meet the minimum TVL threshold:
 						{hiddenVaultNames.join(', ')}{#if hiddenByTvl > 2}, and {hiddenByTvl - 2} more{/if}.
 					{:else}
-						The number of vaults listed on this page.
+						The number of {listingAssetTypePlural} listed on this page.
 					{/if}</svelte:fragment
 				>
 			</Tooltip>
@@ -1117,6 +1131,23 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 										</Tooltip>
 									</div>
 								{/if}
+
+								<div class="filter-group">
+									<Tooltip>
+										<label class="checkbox-filter" slot="trigger">
+											<input
+												type="checkbox"
+												checked={hideAmm}
+												onchange={() => updateSearchParams({ amm: hideAmm ? 0 : 1 })}
+											/>
+											<span class="filter-label filter-label-hint">AMM</span>
+										</label>
+										<svelte:fragment slot="popup">
+											<p>Hide AMM pools and AMM-like vaults with direct exposure to underlying assets.</p>
+											<a href={resolve('/glossary/amm')}>What is AMM?</a>
+										</svelte:fragment>
+									</Tooltip>
+								</div>
 
 								{#if showPrivateFilter}
 									<div class="filter-group">

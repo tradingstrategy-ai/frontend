@@ -152,6 +152,14 @@ describe('vault listing query', () => {
 		).toEqual(['Public']);
 	});
 
+	it('hides AMM-like vaults when requested', () => {
+		const vault = createTestVault('Vault', { current_nav: 100_000 });
+		const pool = createTestVault('Pool', { current_nav: 100_000, features: ['amm_pool_like'] });
+		const query = parseVaultListingQuery(new URLSearchParams('amm=1'), { tvl: '10k' });
+
+		expect(queryVaultListing([vault, pool], query, options).vaults.map((item) => item.name)).toEqual(['Vault']);
+	});
+
 	it('keeps a blacklisted definition scoped to blacklisted vaults', () => {
 		const safe = createTestVault('Safe', { current_nav: 100_000 });
 		const blacklisted = createTestVault('Blacklisted', { current_nav: 100_000, risk: 'Blacklisted' });
@@ -181,6 +189,11 @@ describe('vault listing query', () => {
 		expect(getVaultListingDefaults('protocol', 'unknown').unknown).toBe(false);
 		expect(getVaultListingDefaults('stablecoin', 'usdc').unknown).toBe(false);
 		expect(getVaultListingDefaults('curator', 'mev-capital').unknown).toBe(false);
+	});
+
+	it('shows AMM-like pools by default on protocol listings', () => {
+		expect(parseVaultListingQuery(new URLSearchParams(), getVaultListingDefaults('top')).amm).toBe(true);
+		expect(parseVaultListingQuery(new URLSearchParams(), getVaultListingDefaults('protocol', 'gmx')).amm).toBe(false);
 	});
 
 	it('does not expose the complete dataset through an international scope predicate', () => {

@@ -8,6 +8,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
+	import { getVaultAssetType } from '$lib/top-vaults/helpers';
 	import { resolve } from '$app/paths';
 
 	interface Props {
@@ -18,7 +19,8 @@
 	let { vault, protocolMetadata }: Props = $props();
 
 	let protocolPageUrl = $derived(resolve(`/vaults/protocols/${vault.protocol_slug}`));
-	let assetType = $derived(vault.flags.includes('tokenised_fund') ? 'tokenised fund' : 'vault');
+	let assetType = $derived(getVaultAssetType(vault));
+	let assetTypePlural = $derived(`${assetType}s`);
 </script>
 
 <MetricsBox fill>
@@ -39,7 +41,8 @@
 			<p class="description">{protocolMetadata.short_description}</p>
 		</div>
 		<Button size="sm" class="view-all-btn" href={protocolPageUrl}>
-			View all {protocolMetadata.name} vaults
+			View all {protocolMetadata.name}
+			{assetTypePlural}
 		</Button>
 	</div>
 </MetricsBox>
