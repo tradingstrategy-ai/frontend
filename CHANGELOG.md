@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Reorganise vault filters into responsive groups and add volatility filtering (2026-08-27)
 - Add a permissioned-vault filter to vault listings (2026-08-25)
 - Show processed flow and reset time in the GuardV0 deposit tooltip (2026-08-20)
 - Add a blacklisted-vault reveal control to vault listings (2026-08-17)

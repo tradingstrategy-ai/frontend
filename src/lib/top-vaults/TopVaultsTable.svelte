@@ -4,7 +4,7 @@ Interactive vault listing with filters, sorting, and progressive row loading.
 
 Use `ratingProvider` to add its risk-rating column beside the vault name.
 Permissioned vaults are marked as Private, except tokenised funds, which are marked as Fund.
-The Hide private filter excludes all permissioned vaults.
+The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 -->
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
@@ -67,11 +67,13 @@ The Hide private filter excludes all permissioned vaults.
 		isPermissionedVault,
 		isVaultDepositCapped,
 		isGoodVaultStatus,
+		matchesVolatilityFilter,
 		monthlyReturnFilterOptions,
 		rankVaultsBy,
 		resolveVaultDetails,
 		riskFilterOptions,
-		tvlFilterOptions
+		tvlFilterOptions,
+		volatilityFilterOptions
 	} from './helpers';
 	import {
 		DEFAULT_RETURN_COLUMN_IDS,
@@ -104,6 +106,7 @@ The Hide private filter excludes all permissioned vaults.
 		'unknown',
 		'private',
 		'dd',
+		'vol',
 		'mr',
 		'returns'
 	] as const;
@@ -118,6 +121,10 @@ The Hide private filter excludes all permissioned vaults.
 		direction: 'asc' | 'desc';
 		compareFn: (a: VaultInfo, b: VaultInfo) => number;
 	}
+	type SortColumnDefinition = {
+		defaultDirection: SortOptions['direction'];
+		compareFn: SortOptions['compareFn'];
+	};
 
 	interface Props {
 		topVaults?: TopVaults;
@@ -135,11 +142,11 @@ The Hide private filter excludes all permissioned vaults.
 		defaultAgeIndex?: number;
 		/** Default risk filter index (used to initialise the dropdown when showFilters is true) */
 		defaultRiskIndex?: number;
-		/** Default value for the "Hide unknown protocols" filter (1 = hide, 0 = show) */
+		/** Default value for the Unknown protocols checkbox in the Hide vaults group (1 = hide, 0 = show) */
 		defaultHideUnknown?: number;
-		/** Show the "Hide unknown protocols" filter checkbox */
+		/** Show the Unknown protocols checkbox in the Hide vaults group */
 		showUnknownFilter?: boolean;
-		/** Show the "Hide private" permissioned-vault filter checkbox */
+		/** Show the Private permissioned-vault checkbox in the Hide vaults group */
 		showPrivateFilter?: boolean;
 		/** Default monthly return filter key */
 		defaultMonthlyReturnKey?: string;
@@ -262,19 +269,15 @@ The Hide private filter excludes all permissioned vaults.
 				compareFn: compareVaultsByReturn(definition.id)
 			}
 		])
-	) as Record<ReturnColumnId, { defaultDirection: 'desc'; compareFn: SortOptions['compareFn'] }>;
+	) as Record<ReturnColumnId, SortColumnDefinition>;
 
 	// The provider is a page-level configuration and does not change after the table mounts.
-	const providerSortColumnMap: Record<
-		string,
-		{ defaultDirection: 'asc' | 'desc'; compareFn: SortOptions['compareFn'] }
-	> = untrack(() =>
-		ratingProvider
-			? { provider_risk_rating: { defaultDirection: 'asc' as const, compareFn: compareProviderRiskRatings } }
-			: {}
-	);
+	const providerSortColumnMap = untrack((): Record<string, SortColumnDefinition> => {
+		if (!ratingProvider) return {};
+		return { provider_risk_rating: { defaultDirection: 'asc', compareFn: compareProviderRiskRatings } };
+	});
 
-	const sortColumnMap: Record<string, { defaultDirection: 'asc' | 'desc'; compareFn: SortOptions['compareFn'] }> = {
+	const sortColumnMap: Record<string, SortColumnDefinition> = {
 		...returnSortColumnMap,
 		chain: {
 			defaultDirection: 'asc',
@@ -327,6 +330,7 @@ The Hide private filter excludes all permissioned vaults.
 		unknown: { type: 'number', defaultValue: defaultHideUnknown },
 		private: { type: 'number', defaultValue: 0 },
 		dd: { type: 'string', defaultValue: 'any', options: ddFilterOptions.map((o) => o.key) },
+		vol: { type: 'string', defaultValue: 'any', options: volatilityFilterOptions.map((o) => o.key) },
 		mr: {
 			type: 'string',
 			defaultValue: defaultMonthlyReturnKey,
@@ -344,7 +348,7 @@ The Hide private filter excludes all permissioned vaults.
 		const current = deserialiseSearchParams(page.url.searchParams, searchParamsSchema);
 		const updated = { ...current, ...(riskOverride == null ? {} : { risk: riskOverride }), ...overrides };
 		const queryString = serialiseSearchParams(updated, searchParamsSchema);
-		return resolve(`${page.url.pathname}?${queryString}`);
+		return `${page.url.pathname}?${queryString}`;
 	}
 
 	function updateSearchParams(overrides: Partial<typeof urlState>) {
@@ -398,6 +402,9 @@ The Hide private filter excludes all permissioned vaults.
 	let selectedDdKey = $derived(urlState.dd);
 	let selectedDdOption = $derived(ddFilterOptions.find((o) => o.key === selectedDdKey)!);
 	let ddDropdownOpen = $state(false);
+	let selectedVolatilityKey = $derived(urlState.vol);
+	let selectedVolatilityOption = $derived(volatilityFilterOptions.find((o) => o.key === selectedVolatilityKey)!);
+	let volatilityDropdownOpen = $state(false);
 
 	let selectedMrKey = $derived(urlState.mr);
 	let selectedMrOption = $derived(monthlyReturnFilterOptions.find((o) => o.key === selectedMrKey)!);
@@ -628,6 +635,10 @@ The Hide private filter excludes all permissioned vaults.
 				const dd = getLifetimeMaxDrawdown(v);
 				if (dd == null || Math.abs(dd) > selectedDdOption.value) return false;
 			}
+
+			// Three-month annualised volatility filter (dropdown-driven)
+			if (showFilters && !matchesVolatilityFilter(v.three_months_volatility, selectedVolatilityOption.value))
+				return false;
 
 			// Monthly returns filter (dropdown-driven)
 			if (showFilters && selectedMrOption.mode !== 'any') {
@@ -1027,242 +1038,298 @@ The Hide private filter excludes all permissioned vaults.
 					</summary>
 
 					<div class="filters-content">
-						<div class="primary-filters">
-							<div class="filter-group">
-								<Tooltip>
-									<span class="filter-label filter-label-hint" slot="trigger">Technical risk</span>
-									<svelte:fragment slot="popup">
-										The technical risk accounts for the software development best practices followed by the underlying
-										vault protocol, and is a proxy e.g. for cyber security incidents. The vault technical risk framework
-										is still in beta and we are expecting changes.
-										<a href={resolve('/blog/announcing-vault-technical-risk-framework-beta')} target="_blank"
-											>Read this blog post for more information.</a
+						<div class="filters-groups">
+							<section
+								class="filter-section filter-section-display"
+								data-testid="filter-group-display"
+								role="group"
+								aria-labelledby="filter-group-display-heading"
+							>
+								<h3 class="filter-section-heading" id="filter-group-display-heading">Display</h3>
+								<div class="filter-group">
+									<span class="filter-label">Columns</span>
+									<div class="tvl-dropdown" use:clickOutside={() => (returnsDropdownOpen = false)}>
+										<button
+											class="tvl-trigger"
+											data-testid="return-columns-trigger"
+											onclick={() => (returnsDropdownOpen = !returnsDropdownOpen)}
 										>
-									</svelte:fragment>
-								</Tooltip>
-								<div class="tvl-dropdown" use:clickOutside={() => (riskDropdownOpen = false)}>
-									<button class="tvl-trigger" onclick={() => (riskDropdownOpen = !riskDropdownOpen)}>
-										{selectedRisk.label}
-										<IconChevronDown />
-									</button>
-									{#if riskDropdownOpen}
-										<ul class="tvl-options">
-											{#each riskFilterOptions as option, i (option.label)}
-												<li>
-													<button
-														class:active={selectedRiskIndex === i}
-														onclick={() => {
-															updateSearchParams({ risk: i });
-															riskDropdownOpen = false;
-														}}
-													>
-														{option.optionLabel}
-													</button>
-												</li>
-											{/each}
-										</ul>
-									{/if}
+											{selectedReturnsLabel}
+											<IconChevronDown />
+										</button>
+										{#if returnsDropdownOpen}
+											<ul class="tvl-options returns-options" data-testid="return-columns-menu">
+												{#each returnColumnDefinitions as definition (definition.id)}
+													<li>
+														<label class:selected={selectedReturnColumnIds.includes(definition.id)}>
+															<input
+																type="checkbox"
+																checked={selectedReturnColumnIds.includes(definition.id)}
+																onchange={() => onReturnColumnToggle(definition.id)}
+															/>
+															<span>{definition.label}</span>
+														</label>
+													</li>
+												{/each}
+											</ul>
+										{/if}
+									</div>
 								</div>
-							</div>
+							</section>
 
-							<div class="filter-group">
-								<Tooltip>
-									<label class="checkbox-filter" slot="trigger">
-										<span class="filter-label filter-label-hint">Hide currently closed</span>
-										<input
-											type="checkbox"
-											checked={hideClosed}
-											onchange={() => updateSearchParams({ closed: hideClosed ? 0 : 1 })}
-										/>
-									</label>
-									<svelte:fragment slot="popup">
-										Don't show vaults that are not accepting new deposits currently
-									</svelte:fragment>
-								</Tooltip>
-							</div>
-
-							{#if showUnknownFilter}
+							<section
+								class="filter-section filter-section-hide"
+								data-testid="filter-group-hide"
+								role="group"
+								aria-labelledby="filter-group-hide-heading"
+							>
+								<h3 class="filter-section-heading" id="filter-group-hide-heading">Hide vaults</h3>
 								<div class="filter-group">
 									<Tooltip>
 										<label class="checkbox-filter" slot="trigger">
-											<span class="filter-label filter-label-hint">Hide unknown protocols</span>
 											<input
 												type="checkbox"
-												checked={hideUnknown}
-												onchange={() => updateSearchParams({ unknown: hideUnknown ? 0 : 1 })}
+												checked={hideClosed}
+												onchange={() => updateSearchParams({ closed: hideClosed ? 0 : 1 })}
 											/>
+											<span class="filter-label filter-label-hint">Currently closed</span>
 										</label>
 										<svelte:fragment slot="popup">
-											Don't show vaults whose protocol has not been identified yet
+											Don't show vaults that are not accepting new deposits currently
 										</svelte:fragment>
 									</Tooltip>
 								</div>
-							{/if}
 
-							{#if showPrivateFilter}
+								{#if showUnknownFilter}
+									<div class="filter-group">
+										<Tooltip>
+											<label class="checkbox-filter" slot="trigger">
+												<input
+													type="checkbox"
+													checked={hideUnknown}
+													onchange={() => updateSearchParams({ unknown: hideUnknown ? 0 : 1 })}
+												/>
+												<span class="filter-label filter-label-hint">Unknown protocols</span>
+											</label>
+											<svelte:fragment slot="popup">
+												Don't show vaults whose protocol has not been identified yet
+											</svelte:fragment>
+										</Tooltip>
+									</div>
+								{/if}
+
+								{#if showPrivateFilter}
+									<div class="filter-group">
+										<Tooltip>
+											<label class="checkbox-filter" slot="trigger">
+												<input
+													type="checkbox"
+													checked={hidePrivate}
+													onchange={() => updateSearchParams({ private: hidePrivate ? 0 : 1 })}
+												/>
+												<span class="filter-label filter-label-hint">Private</span>
+											</label>
+											<svelte:fragment slot="popup">Hide vaults that require permission to deposit</svelte:fragment>
+										</Tooltip>
+									</div>
+								{/if}
+							</section>
+
+							<section
+								class="filter-section filter-section-performance"
+								data-testid="filter-group-performance"
+								role="group"
+								aria-labelledby="filter-group-performance-heading"
+							>
+								<h3 class="filter-section-heading" id="filter-group-performance-heading">Performance</h3>
 								<div class="filter-group">
 									<Tooltip>
-										<label class="checkbox-filter" slot="trigger">
-											<span class="filter-label filter-label-hint">Hide private</span>
-											<input
-												type="checkbox"
-												checked={hidePrivate}
-												onchange={() => updateSearchParams({ private: hidePrivate ? 0 : 1 })}
-											/>
-										</label>
-										<svelte:fragment slot="popup">Hide vaults that require permission to deposit</svelte:fragment>
+										<span class="filter-label filter-label-hint" slot="trigger">Technical risk</span>
+										<svelte:fragment slot="popup">
+											The technical risk accounts for the software development best practices followed by the underlying
+											vault protocol, and is a proxy e.g. for cyber security incidents. The vault technical risk
+											framework is still in beta and we are expecting changes.
+											<a href={resolve('/blog/announcing-vault-technical-risk-framework-beta')} target="_blank"
+												>Read this blog post for more information.</a
+											>
+										</svelte:fragment>
 									</Tooltip>
+									<div class="tvl-dropdown" use:clickOutside={() => (riskDropdownOpen = false)}>
+										<button class="tvl-trigger" onclick={() => (riskDropdownOpen = !riskDropdownOpen)}>
+											{selectedRisk.label}
+											<IconChevronDown />
+										</button>
+										{#if riskDropdownOpen}
+											<ul class="tvl-options">
+												{#each riskFilterOptions as option, i (option.label)}
+													<li>
+														<button
+															class:active={selectedRiskIndex === i}
+															onclick={() => {
+																updateSearchParams({ risk: i });
+																riskDropdownOpen = false;
+															}}
+														>
+															{option.optionLabel}
+														</button>
+													</li>
+												{/each}
+											</ul>
+										{/if}
+									</div>
 								</div>
-							{/if}
-						</div>
 
-						<div class="secondary-filters">
-							<div class="filter-group">
-								<span class="filter-label">Min TVL</span>
-								<div class="tvl-dropdown" use:clickOutside={() => (tvlDropdownOpen = false)}>
-									<button class="tvl-trigger" onclick={() => (tvlDropdownOpen = !tvlDropdownOpen)}>
-										{selectedTvlOption.label}
-										<IconChevronDown />
-									</button>
-									{#if tvlDropdownOpen}
-										<ul class="tvl-options">
-											{#each tvlFilterOptions as option (option.key)}
-												<li>
-													<button
-														class:active={selectedTvlKey === option.key}
-														onclick={() => {
-															updateSearchParams({ tvl: option.key });
-															tvlDropdownOpen = false;
-														}}
-													>
-														{option.optionLabel}
-													</button>
-												</li>
-											{/each}
-										</ul>
-									{/if}
+								<div class="filter-group">
+									<span class="filter-label">Min TVL</span>
+									<div class="tvl-dropdown" use:clickOutside={() => (tvlDropdownOpen = false)}>
+										<button class="tvl-trigger" onclick={() => (tvlDropdownOpen = !tvlDropdownOpen)}>
+											{selectedTvlOption.label}
+											<IconChevronDown />
+										</button>
+										{#if tvlDropdownOpen}
+											<ul class="tvl-options">
+												{#each tvlFilterOptions as option (option.key)}
+													<li>
+														<button
+															class:active={selectedTvlKey === option.key}
+															onclick={() => {
+																updateSearchParams({ tvl: option.key });
+																tvlDropdownOpen = false;
+															}}
+														>
+															{option.optionLabel}
+														</button>
+													</li>
+												{/each}
+											</ul>
+										{/if}
+									</div>
 								</div>
-							</div>
 
-							<div class="filter-group">
-								<span class="filter-label">Age</span>
-								<Select
-									value={selectedAgeIndex}
-									onchange={(e: Event) => updateSearchParams({ age: Number((e.target as HTMLSelectElement).value) })}
-								>
-									{#each ageFilterOptions as option, i (option.label)}
-										<option value={i}>{option.label}</option>
-									{/each}
-								</Select>
-							</div>
-
-							<div class="filter-group">
-								<Tooltip>
-									<span class="filter-label filter-label-hint" slot="trigger">Max drawdown</span>
-									<svelte:fragment slot="popup">
-										Filter vaults by lifetime maximum drawdown.
-										<a href={resolve('/glossary/maximum-drawdown')} target="_blank"
-											>Learn more about maximum drawdown.</a
-										>
-									</svelte:fragment>
-								</Tooltip>
-								<div class="tvl-dropdown" use:clickOutside={() => (ddDropdownOpen = false)}>
-									<button class="tvl-trigger" onclick={() => (ddDropdownOpen = !ddDropdownOpen)}>
-										{selectedDdOption.label}
-										<IconChevronDown />
-									</button>
-									{#if ddDropdownOpen}
-										<ul class="tvl-options">
-											{#each ddFilterOptions as option (option.key)}
-												<li>
-													<button
-														class:active={selectedDdKey === option.key}
-														onclick={() => {
-															updateSearchParams({ dd: option.key });
-															ddDropdownOpen = false;
-														}}
-													>
-														{option.optionLabel}
-													</button>
-												</li>
-											{/each}
-										</ul>
-									{/if}
-								</div>
-							</div>
-
-							<div class="filter-group">
-								<Tooltip>
-									<span class="filter-label filter-label-hint" slot="trigger">Monthly returns</span>
-									<svelte:fragment slot="popup">
-										Filter vaults by annualised one-month return (net of fees when available).
-									</svelte:fragment>
-								</Tooltip>
-								<div class="tvl-dropdown" use:clickOutside={() => (mrDropdownOpen = false)}>
-									<button class="tvl-trigger" onclick={() => (mrDropdownOpen = !mrDropdownOpen)}>
-										{selectedMrOption.label}
-										<IconChevronDown />
-									</button>
-									{#if mrDropdownOpen}
-										<ul class="tvl-options">
-											{#each monthlyReturnFilterOptions as option (option.key)}
-												<li>
-													<button
-														class:active={selectedMrKey === option.key}
-														disabled={option.mode === 'gt-treasury' && treasuryRate == null}
-														onclick={() => {
-															updateSearchParams({ mr: option.key });
-															mrDropdownOpen = false;
-														}}
-													>
-														{option.optionLabel}{option.mode === 'gt-treasury' && treasuryRate != null
-															? ` (${formatPercent(treasuryRate / 100, 2)})`
-															: ''}
-													</button>
-												</li>
-											{/each}
-										</ul>
-									{/if}
-								</div>
-							</div>
-
-							<div class="filter-group">
-								<span class="filter-label">Returns columns displayed</span>
-								<div class="tvl-dropdown" use:clickOutside={() => (returnsDropdownOpen = false)}>
-									<button
-										class="tvl-trigger"
-										data-testid="return-columns-trigger"
-										onclick={() => (returnsDropdownOpen = !returnsDropdownOpen)}
+								<div class="filter-group">
+									<span class="filter-label">Age</span>
+									<Select
+										value={selectedAgeIndex}
+										onchange={(e: Event) => updateSearchParams({ age: Number((e.target as HTMLSelectElement).value) })}
 									>
-										{selectedReturnsLabel}
-										<IconChevronDown />
-									</button>
-									{#if returnsDropdownOpen}
-										<ul class="tvl-options returns-options" data-testid="return-columns-menu">
-											{#each returnColumnDefinitions as definition (definition.id)}
-												<li>
-													<label class:selected={selectedReturnColumnIds.includes(definition.id)}>
-														<input
-															type="checkbox"
-															checked={selectedReturnColumnIds.includes(definition.id)}
-															onchange={() => onReturnColumnToggle(definition.id)}
-														/>
-														<span>{definition.label}</span>
-													</label>
-												</li>
-											{/each}
-										</ul>
-									{/if}
+										{#each ageFilterOptions as option, i (option.label)}
+											<option value={i}>{option.label}</option>
+										{/each}
+									</Select>
 								</div>
-							</div>
 
-							{#if showAllVaultsFilterNote}
-								<p class="filters-note" data-testid="filters-note">
-									<a href={allVaultsPath}>All vaults page</a> allows you to filter over everything. The vaults on this page
-									are limited to the current category.
-								</p>
-							{/if}
+								<div class="filter-group">
+									<Tooltip>
+										<span class="filter-label filter-label-hint" slot="trigger">Max drawdown</span>
+										<svelte:fragment slot="popup">
+											Filter vaults by lifetime maximum drawdown.
+											<a href={resolve('/glossary/maximum-drawdown')} target="_blank"
+												>Learn more about maximum drawdown.</a
+											>
+										</svelte:fragment>
+									</Tooltip>
+									<div class="tvl-dropdown" use:clickOutside={() => (ddDropdownOpen = false)}>
+										<button class="tvl-trigger" onclick={() => (ddDropdownOpen = !ddDropdownOpen)}>
+											{selectedDdOption.label}
+											<IconChevronDown />
+										</button>
+										{#if ddDropdownOpen}
+											<ul class="tvl-options">
+												{#each ddFilterOptions as option (option.key)}
+													<li>
+														<button
+															class:active={selectedDdKey === option.key}
+															onclick={() => {
+																updateSearchParams({ dd: option.key });
+																ddDropdownOpen = false;
+															}}
+														>
+															{option.optionLabel}
+														</button>
+													</li>
+												{/each}
+											</ul>
+										{/if}
+									</div>
+								</div>
+
+								<div class="filter-group">
+									<Tooltip>
+										<span class="filter-label filter-label-hint" slot="trigger">Monthly returns</span>
+										<svelte:fragment slot="popup">
+											Filter vaults by annualised one-month return (net of fees when available).
+										</svelte:fragment>
+									</Tooltip>
+									<div class="tvl-dropdown" use:clickOutside={() => (mrDropdownOpen = false)}>
+										<button class="tvl-trigger" onclick={() => (mrDropdownOpen = !mrDropdownOpen)}>
+											{selectedMrOption.label}
+											<IconChevronDown />
+										</button>
+										{#if mrDropdownOpen}
+											<ul class="tvl-options">
+												{#each monthlyReturnFilterOptions as option (option.key)}
+													<li>
+														<button
+															class:active={selectedMrKey === option.key}
+															disabled={option.mode === 'gt-treasury' && treasuryRate == null}
+															onclick={() => {
+																updateSearchParams({ mr: option.key });
+																mrDropdownOpen = false;
+															}}
+														>
+															{option.optionLabel}{option.mode === 'gt-treasury' && treasuryRate != null
+																? ` (${formatPercent(treasuryRate / 100, 2)})`
+																: ''}
+														</button>
+													</li>
+												{/each}
+											</ul>
+										{/if}
+									</div>
+								</div>
+
+								<div class="filter-group">
+									<Tooltip>
+										<span class="filter-label filter-label-hint" slot="trigger">Volatility</span>
+										<svelte:fragment slot="popup">
+											Filter vaults by three-month annualised volatility.
+											<a href={resolve('/glossary/volatility')} target="_blank">Learn more about volatility.</a>
+										</svelte:fragment>
+									</Tooltip>
+									<div class="tvl-dropdown" use:clickOutside={() => (volatilityDropdownOpen = false)}>
+										<button class="tvl-trigger" onclick={() => (volatilityDropdownOpen = !volatilityDropdownOpen)}>
+											{selectedVolatilityOption.label}
+											<IconChevronDown />
+										</button>
+										{#if volatilityDropdownOpen}
+											<ul class="tvl-options">
+												{#each volatilityFilterOptions as option (option.key)}
+													<li>
+														<button
+															class:active={selectedVolatilityKey === option.key}
+															onclick={() => {
+																updateSearchParams({ vol: option.key });
+																volatilityDropdownOpen = false;
+															}}
+														>
+															{option.optionLabel}
+														</button>
+													</li>
+												{/each}
+											</ul>
+										{/if}
+									</div>
+								</div>
+							</section>
 						</div>
+
+						{#if showAllVaultsFilterNote}
+							<p class="filters-note" data-testid="filters-note">
+								The vaults on the listing are limited to the current category. <a href={allVaultsPath}
+									>See all vaults.</a
+								>
+							</p>
+						{/if}
 					</div>
 				</details>
 			</div>
@@ -1547,12 +1614,37 @@ The Hide private filter excludes all permissioned vaults.
 			display: none;
 		}
 
-		.primary-filters,
-		.secondary-filters {
+		.filters-groups {
+			display: grid;
+			gap: 1rem;
+		}
+
+		.filter-section {
 			display: flex;
 			flex-wrap: wrap;
+			align-content: start;
 			gap: 0.75rem 1.5rem;
-			align-items: center;
+			min-width: 0;
+		}
+
+		.filter-section-heading {
+			flex-basis: 100%;
+			margin: 0;
+			font: var(--f-ui-sm-bold);
+			font-size: 1rem;
+			letter-spacing: 0.06em;
+			text-transform: uppercase;
+			color: var(--c-text-light);
+
+			@media (--viewport-sm-down) {
+				font-size: 0.875rem;
+			}
+		}
+
+		.filter-section-hide {
+			flex-direction: column;
+			flex-wrap: nowrap;
+			align-items: flex-start;
 		}
 
 		.filter-group {
@@ -1689,6 +1781,18 @@ The Hide private filter excludes all permissioned vaults.
 			font: inherit;
 		}
 
+		@media (--viewport-md-up) {
+			.filters-groups {
+				grid-template-columns: auto auto minmax(0, 1fr);
+			}
+
+			.filter-section-hide,
+			.filter-section-performance {
+				border-left: 1px solid var(--c-input-border);
+				padding-left: 1.5rem;
+			}
+		}
+
 		.vault-filters {
 			width: 100%;
 			border: 1px solid var(--c-input-border);
@@ -1734,10 +1838,12 @@ The Hide private filter excludes all permissioned vaults.
 		.filters-note {
 			width: 100%;
 			margin: 0;
-			color: var(--c-text-extra-light);
+			color: var(--c-text-ultra-light);
+			font: var(--f-ui-xs-medium);
 			line-height: 1.4;
 
 			a {
+				color: inherit;
 				text-decoration: underline;
 				text-underline-offset: 0.15em;
 			}

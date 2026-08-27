@@ -102,11 +102,32 @@ describe('vault listing query', () => {
 		expect(result.vaults.map((vault) => vault.name)).toEqual(['Above Treasury']);
 	});
 
-	it('uses defaults when URL filter indexes are absent', () => {
+	it('filters vaults by strict three-month volatility brackets', () => {
+		const belowThreshold = createTestVault('Below threshold', {
+			current_nav: 100_000,
+			three_months_volatility: 0.09
+		});
+		const atThreshold = createTestVault('At threshold', {
+			current_nav: 100_000,
+			three_months_volatility: 0.1
+		});
+		const missingVolatility = createTestVault('Missing volatility', { current_nav: 100_000 });
+		const query = parseVaultListingQuery(new URLSearchParams('vol=10'), { tvl: '10k' });
+
+		expect(
+			queryVaultListing([belowThreshold, atThreshold, missingVolatility], query, options).vaults.map(
+				(vault) => vault.name
+			)
+		).toEqual(['Below threshold']);
+	});
+
+	it('uses defaults when URL filters are absent or invalid', () => {
 		const query = parseVaultListingQuery(new URLSearchParams(), { risk: 1, tvl: '10k' });
+		const invalidVolatility = parseVaultListingQuery(new URLSearchParams('vol=invalid'));
 
 		expect(query.risk).toBe(1);
 		expect(query.tvl).toBe('10k');
+		expect(invalidVolatility.vol).toBe('any');
 	});
 
 	it('hides permissioned vaults when requested', () => {

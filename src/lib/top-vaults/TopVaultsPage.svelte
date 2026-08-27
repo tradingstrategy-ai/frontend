@@ -55,11 +55,11 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		defaultAgeIndex?: number;
 		/** Default risk filter index (used to initialise the dropdown when showFilters is true) */
 		defaultRiskIndex?: number;
-		/** Default value for the "Hide unknown protocols" filter (1 = hide, 0 = show) */
+		/** Default value for the Unknown protocols checkbox in the Hide vaults group (1 = hide, 0 = show) */
 		defaultHideUnknown?: number;
-		/** Show the "Hide unknown protocols" filter checkbox */
+		/** Show the Unknown protocols checkbox in the Hide vaults group */
 		showUnknownFilter?: boolean;
-		/** Show the "Hide private" permissioned-vault filter checkbox */
+		/** Show the Private permissioned-vault checkbox in the Hide vaults group */
 		showPrivateFilter?: boolean;
 		/** Default monthly return filter key */
 		defaultMonthlyReturnKey?: string;

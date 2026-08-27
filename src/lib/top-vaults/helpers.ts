@@ -152,11 +152,11 @@ export function formatXerberusScore(score: number | null | undefined): string {
 	return Math.round(score * 100).toString();
 }
 
-export interface DdFilterOption {
+interface UpperBoundFilterOption {
 	key: string;
 	label: string;
 	optionLabel: string;
-	/** Maximum allowed |max_drawdown| as a decimal (e.g., 0.01 = 1%). Infinity = no filter */
+	/** Maximum allowed decimal value. Infinity disables the filter. */
 	value: number;
 }
 
@@ -191,7 +191,7 @@ export function getMonthlyReturn(vault: Pick<VaultInfo, 'one_month_cagr_net' | '
 	return vault.one_month_cagr_net ?? vault.one_month_cagr ?? null;
 }
 
-export const ddFilterOptions: DdFilterOption[] = [
+export const ddFilterOptions: UpperBoundFilterOption[] = [
 	{ key: '0.1', label: '0.1%', optionLabel: '0.1% or less', value: 0.001 },
 	{ key: '1', label: '1%', optionLabel: '1% or less', value: 0.01 },
 	{ key: '3', label: '3%', optionLabel: '3% or less', value: 0.03 },
@@ -200,6 +200,19 @@ export const ddFilterOptions: DdFilterOption[] = [
 	{ key: '20', label: '20%', optionLabel: '20% or less', value: 0.2 },
 	{ key: 'any', label: 'Any', optionLabel: 'Any', value: Infinity }
 ];
+
+export const volatilityFilterOptions: UpperBoundFilterOption[] = [
+	{ key: 'any', label: 'Any', optionLabel: 'Any', value: Infinity },
+	{ key: '5', label: 'Less than 5%', optionLabel: 'Less than 5%', value: 0.05 },
+	{ key: '10', label: 'Less than 10%', optionLabel: 'Less than 10%', value: 0.1 },
+	{ key: '25', label: 'Less than 25%', optionLabel: 'Less than 25%', value: 0.25 },
+	{ key: '50', label: 'Less than 50%', optionLabel: 'Less than 50%', value: 0.5 }
+];
+
+/** Return whether a vault's three-month annualised volatility passes the selected strict upper bound. */
+export function matchesVolatilityFilter(volatility: number | null | undefined, upperBound: number): boolean {
+	return upperBound === Infinity || (volatility != null && volatility < upperBound);
+}
 
 /**
  * Extract lifetime max drawdown from a vault's period_results.

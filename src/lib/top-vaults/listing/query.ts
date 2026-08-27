@@ -19,10 +19,12 @@ import {
 	hasSupportedProtocol,
 	isBlacklisted,
 	isPermissionedVault,
+	matchesVolatilityFilter,
 	monthlyReturnFilterOptions,
 	rankVaultsBy,
 	riskFilterOptions,
 	tvlFilterOptions,
+	volatilityFilterOptions,
 	withVaultCurrentTvlUsd
 } from '../helpers';
 import { compareVaultsByReturn, type ReturnColumnId } from '../return-columns';
@@ -34,6 +36,7 @@ export interface VaultListingQuery {
 	age: number;
 	risk: number;
 	dd: string;
+	vol: string;
 	mr: string;
 	q: string;
 	closed: boolean;
@@ -122,6 +125,7 @@ export function queryVaultListing(
 	const age = ageFilterOptions[query.age] ?? ageFilterOptions[0];
 	const risk = riskFilterOptions[query.risk] ?? riskFilterOptions[0];
 	const dd = ddFilterOptions.find((item) => item.key === query.dd) ?? ddFilterOptions[0];
+	const volatility = volatilityFilterOptions.find((item) => item.key === query.vol) ?? volatilityFilterOptions[0];
 	const monthlyReturn =
 		monthlyReturnFilterOptions.find((item) => item.key === query.mr) ?? monthlyReturnFilterOptions[0];
 	const base = vaults.filter(
@@ -151,6 +155,7 @@ export function queryVaultListing(
 			(getLifetimeMaxDrawdown(vault) == null || Math.abs(getLifetimeMaxDrawdown(vault)!) > dd.value)
 		)
 			return false;
+		if (options.showFilters && !matchesVolatilityFilter(vault.three_months_volatility, volatility.value)) return false;
 		if (options.showFilters && monthlyReturn.mode !== 'any') {
 			const value = getMonthlyReturn(vault);
 			if (
