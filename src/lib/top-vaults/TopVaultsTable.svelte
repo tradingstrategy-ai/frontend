@@ -1788,10 +1788,19 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 
 		@media (--viewport-md-up) {
 			.filters-groups {
-				grid-template-columns: minmax(16rem, 0.8fr) minmax(10rem, 0.45fr) minmax(0, 1.5fr);
+				column-gap: 0;
+				grid-template-columns: minmax(16rem, 0.8fr) minmax(12.5rem, 0.55fr) minmax(0, 1.5fr);
 			}
 
-			.filter-section-hide,
+			.filter-section-display {
+				padding-right: 1.5rem;
+			}
+
+			.filter-section-hide {
+				border-left: 1px solid var(--c-input-border);
+				padding-inline: 1.5rem;
+			}
+
 			.filter-section-performance {
 				border-left: 1px solid var(--c-input-border);
 				padding-left: 1.5rem;
@@ -1813,8 +1822,10 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 				.filter-group {
 					display: contents;
 
-					> :first-child {
-						justify-self: end;
+					> .filter-label,
+					> :global(.tooltip) {
+						width: 100%;
+						text-align: right;
 					}
 
 					> :last-child {

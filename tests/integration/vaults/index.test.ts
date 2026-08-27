@@ -107,6 +107,8 @@ async function expectHorizontalFilterLayout(page: import('@playwright/test').Pag
 	await expect(displayGroup).toHaveCSS('border-left-width', '0px');
 	await expect(hideGroup).toHaveCSS('border-left-width', '1px');
 	await expect(performanceGroup).toHaveCSS('border-left-width', '1px');
+	await expect(hideGroup).toHaveCSS('padding-left', '24px');
+	await expect(hideGroup).toHaveCSS('padding-right', '24px');
 	expect(await performanceGroup.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
 
 	const [closedBox, unknownBox, privateBox] = await Promise.all([
@@ -148,7 +150,9 @@ async function expectTabletPerformanceGrid(page: import('@playwright/test').Page
 
 	const rows = await controls.evaluateAll((elements) =>
 		elements.map((element) => {
-			const [label, dropdown] = element.children;
+			const label = element.querySelector('.filter-label');
+			const dropdown = element.lastElementChild;
+			if (!label || !dropdown) throw new Error('Expected a label and dropdown for every Performance control');
 			const labelBox = label.getBoundingClientRect();
 			const dropdownBox = dropdown.getBoundingClientRect();
 			return { labelRight: labelBox.right, dropdownLeft: dropdownBox.left, y: dropdownBox.y };
