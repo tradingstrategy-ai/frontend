@@ -293,6 +293,18 @@ const apexVaults = [
 	})
 ];
 
+const gmxPool = createTestVault('GMX USDC pool', {
+	address: '0x2000000000000000000000000000000000000001',
+	chain: 'arbitrum',
+	protocol: 'GMX',
+	current_nav: 750_000,
+	peak_nav: 900_000,
+	one_month_cagr: 0.08,
+	three_months_cagr: 0.12,
+	features: ['amm_pool_like', 'gmx_gm'],
+	description: 'A GMX liquidity pool with direct exposure to its underlying assets.'
+});
+
 // Named vault for YAML strategy integration tests
 const yamlStrategyVault = createTestVault('Trading Strategy ICHIv3 LS 2', {
 	address: '0x1234567890abcdef1234567890abcdef12345678',
@@ -621,6 +633,7 @@ export default defineMock({
 			privateVault,
 			privateTokenisedFund,
 			limitedCoverageVault,
+			gmxPool,
 			...apexVaults,
 			...parquetMatchedVaults,
 			...returnLeaders,

@@ -28,6 +28,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	import IconDiscord from '~icons/local/discord';
 	import {
 		getMorphoFlags,
+		getVaultAssetType,
 		getVaultProtocolDisplayName,
 		hasSupportedProtocol,
 		isBlacklisted,
@@ -49,6 +50,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	let showBlacklistedAlert = $derived(blacklisted && !notesDuplicateMorphoFlags);
 	let showNotes = $derived(vault.notes != null && !notesDuplicateMorphoFlags);
 	let isTokenisedFund = $derived(vault.flags.includes('tokenised_fund'));
+	let assetType = $derived(getVaultAssetType(vault));
 	let isPrivate = $derived(isPermissionedVault(vault));
 	let isCapped = $derived(isVaultDepositCapped(vault));
 	let showTvlWarning = $derived(shouldShowVaultTvlDownMoreThan95PercentWarning(vault));
@@ -59,14 +61,14 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	let operationWarning = $derived(
 		isCapped
 			? redemptionMayBeDisabled
-				? 'Deposits are capped and withdrawals may be disabled for this vault'
-				: 'Deposits are capped for this vault'
+				? `Deposits are capped and withdrawals may be disabled for this ${assetType}`
+				: `Deposits are capped for this ${assetType}`
 			: depositMayBeDisabled && redemptionMayBeDisabled
-				? 'Deposits and withdrawals may be disabled for this vault'
+				? `Deposits and withdrawals may be disabled for this ${assetType}`
 				: depositMayBeDisabled
-					? 'Deposits may be disabled for this vault'
+					? `Deposits may be disabled for this ${assetType}`
 					: redemptionMayBeDisabled
-						? 'Withdrawals may be disabled for this vault'
+						? `Withdrawals may be disabled for this ${assetType}`
 						: undefined
 	);
 	let hasNotifications = $derived(
@@ -112,25 +114,26 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 
 				{#if isPrivate && !isTokenisedFund}
 					<Alert size="md" status="warning"
-						>This is a permissioned vault and is not accepting deposits from outsiders</Alert
+						>This is a permissioned {assetType} and is not accepting deposits from outsiders</Alert
 					>
 				{/if}
 
 				{#if showTvlWarning}
 					<Alert size="md" status="warning">
-						The value in this vault is down more than 95% of its peak. The vault is likely abandoned or facing issues.
+						The value in this {assetType} is down more than 95% of its peak. The {assetType} is likely abandoned or facing
+						issues.
 					</Alert>
 				{/if}
 
 				{#if showLongDurationWarning}
 					<Alert size="md" status="error">
-						This vault may have especially long duration redemption periods. Make sure you check the redemptions before
+						This {assetType} may have especially long duration redemption periods. Make sure you check the redemptions before
 						depositing.
 					</Alert>
 				{/if}
 
 				{#if morphoFlags.length > 0}
-					<Alert size="md" status={morphoAlertStatus} title="Morpho has flagged this vault">
+					<Alert size="md" status={morphoAlertStatus} title={`Morpho has flagged this ${assetType}`}>
 						{morphoFlags.join(', ')}
 					</Alert>
 				{/if}
@@ -167,7 +170,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 
 		<div class="vault-information" class:single-card={vaultInformationCardCount === 1}>
 			{#if vault.description}
-				<MetricsBox class="description" title="About the vault">
+				<MetricsBox class="description" title={`About the ${assetType}`}>
 					<Markdown content={vault.description} />
 				</MetricsBox>
 			{/if}

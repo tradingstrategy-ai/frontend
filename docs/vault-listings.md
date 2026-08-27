@@ -26,6 +26,17 @@ deposit. The label refers to the deposit restriction, not the table's status
 text. It is not shown on the Whitelisted listing because every vault in that
 listing is permissioned.
 
+### AMM filter
+
+The **AMM** checkbox in the **Hide vaults** group excludes records with the
+`amm_pool_like` feature. These are AMM pools and AMM-like vaults with direct
+exposure to underlying assets. It is enabled by default on filterable listings,
+except protocol listings, where it is disabled so a protocol page includes all
+of that protocol's pools by default. The default does not need a URL parameter;
+unchecking the control adds `amm=0` to show AMM pools. `amm=1` makes the
+default hiding explicit. The filter uses the exported feature classification,
+not a protocol-name allowlist.
+
 ### Volatility filter
 
 The **Volatility** control filters the annualised three-month volatility value.

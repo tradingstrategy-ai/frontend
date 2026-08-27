@@ -13,6 +13,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
 	import type { CuratorInfo } from './schemas';
 	import type { VaultListingSummary } from './listing/types';
+	import type { VaultListingKey } from './listing/definitions';
 	import Alert from '$lib/components/Alert.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
@@ -92,7 +93,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		ratingProvider?: RiskRatingProvider;
 		/** Whether rows are fetched in pages from the server. */
 		progressive?: boolean;
-		listingKey?: string;
+		listingKey?: VaultListingKey;
 		listingScope?: string;
 		listingSummary?: VaultListingSummary;
 	}

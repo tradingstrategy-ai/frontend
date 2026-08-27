@@ -316,6 +316,18 @@ export function getVaultProtocolDisplayName(vault: Pick<VaultInfo, 'protocol' | 
 	return displayName;
 }
 
+/** Return whether an asset is an AMM pool or AMM-like vault. */
+export function isAmmPoolLikeVault(vault: Pick<VaultInfo, 'features'>): boolean {
+	return vault.features.includes('amm_pool_like');
+}
+
+/** Return the user-facing type of a vault-like asset. */
+export function getVaultAssetType(vault: Pick<VaultInfo, 'flags' | 'features'>): 'vault' | 'pool' | 'tokenised fund' {
+	if (vault.flags.includes('tokenised_fund')) return 'tokenised fund';
+	if (isAmmPoolLikeVault(vault)) return 'pool';
+	return 'vault';
+}
+
 /**
  * Get combined Morpho warning flags from vault other_data
  */
