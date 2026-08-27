@@ -68,23 +68,23 @@ async function expectFilterControls(page: import('@playwright/test').Page) {
 	const hideGroup = filterGroup(page, 'hide');
 	const performanceGroup = filterGroup(page, 'performance');
 
-	await expect(displayGroup).toHaveAccessibleName('Display');
-	await expect(hideGroup).toHaveAccessibleName('Hide vaults');
-	await expect(performanceGroup).toHaveAccessibleName('Performance');
-	await expect(displayGroup.getByRole('heading', { name: 'Display' })).toBeVisible();
-	await expect(hideGroup.getByRole('heading', { name: 'Hide vaults' })).toBeVisible();
-	await expect(performanceGroup.getByRole('heading', { name: 'Performance' })).toBeVisible();
+	for (const [name, group] of [
+		['Display', displayGroup],
+		['Hide vaults', hideGroup],
+		['Performance', performanceGroup]
+	] as const) {
+		await expect(group).toHaveAccessibleName(name);
+		await expect(group.getByRole('heading', { name })).toBeVisible();
+	}
+
 	await expect(displayGroup.getByText('Columns', { exact: true })).toBeVisible();
 	await expect(returnColumnsTrigger(page)).toBeVisible();
-	await expect(hideGroup.getByLabel('Currently closed', { exact: true })).toBeVisible();
-	await expect(hideGroup.getByLabel('Unknown protocols', { exact: true })).toBeVisible();
-	await expect(hideGroup.getByLabel('Private', { exact: true })).toBeVisible();
-	await expect(performanceGroup.getByText('Technical risk', { exact: true })).toBeVisible();
-	await expect(performanceGroup.getByText('Min TVL', { exact: true })).toBeVisible();
-	await expect(performanceGroup.getByText('Age', { exact: true })).toBeVisible();
-	await expect(performanceGroup.getByText('Max drawdown', { exact: true })).toBeVisible();
-	await expect(performanceGroup.getByText('Monthly returns', { exact: true })).toBeVisible();
-	await expect(performanceGroup.getByText('Volatility', { exact: true })).toBeVisible();
+	for (const label of ['Currently closed', 'Unknown protocols', 'Private']) {
+		await expect(hideGroup.getByLabel(label, { exact: true })).toBeVisible();
+	}
+	for (const label of ['Technical risk', 'Min TVL', 'Age', 'Max drawdown', 'Monthly returns', 'Volatility']) {
+		await expect(performanceGroup.getByText(label, { exact: true })).toBeVisible();
+	}
 }
 
 /** Assert the desktop and tablet three-column filter layout. */
@@ -107,8 +107,12 @@ async function expectHorizontalFilterLayout(page: import('@playwright/test').Pag
 	await expect(displayGroup).toHaveCSS('border-left-width', '0px');
 	await expect(hideGroup).toHaveCSS('border-left-width', '1px');
 	await expect(performanceGroup).toHaveCSS('border-left-width', '1px');
-	await expect(hideGroup).toHaveCSS('padding-left', '24px');
-	await expect(hideGroup).toHaveCSS('padding-right', '24px');
+	const hidePadding = await hideGroup.evaluate((element) => {
+		const style = getComputedStyle(element);
+		return { left: style.paddingLeft, right: style.paddingRight };
+	});
+	expect(hidePadding.left).toBe(hidePadding.right);
+	expect(Number.parseFloat(hidePadding.left)).toBeGreaterThan(0);
 	expect(await performanceGroup.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
 
 	const [closedBox, unknownBox, privateBox] = await Promise.all([

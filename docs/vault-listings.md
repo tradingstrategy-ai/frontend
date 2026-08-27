@@ -26,6 +26,14 @@ deposit. The label refers to the deposit restriction, not the table's status
 text. It is not shown on the Whitelisted listing because every vault in that
 listing is permissioned.
 
+### Volatility filter
+
+The **Volatility** control filters the annualised three-month volatility value.
+`vol=5`, `vol=10`, `vol=25`, and `vol=50` apply strict upper bounds, so a vault
+at exactly the selected percentage is excluded. Vaults without a volatility
+measurement are also excluded when a bound is active. **Any** is the default
+and leaves vaults with or without volatility data in the listing.
+
 ## Continuation API
 
 `GET /top-vaults/listing-data` returns the next 50 rows. It accepts the normal

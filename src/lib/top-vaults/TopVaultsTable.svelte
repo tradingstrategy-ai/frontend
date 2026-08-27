@@ -1628,7 +1628,7 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 		}
 
 		.filter-section-heading {
-			flex-basis: 100%;
+			width: 100%;
 			margin: 0;
 			font: var(--f-ui-sm-bold);
 			font-size: 1rem;
@@ -1645,11 +1645,6 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 			flex-direction: column;
 			flex-wrap: nowrap;
 			align-items: flex-start;
-
-			.filter-section-heading {
-				flex-basis: auto;
-				width: 100%;
-			}
 		}
 
 		.filter-group {
@@ -1810,7 +1805,6 @@ The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 
 				.filter-section-heading {
 					grid-column: 1 / -1;
-					width: 100%;
 				}
 
 				.filter-group {

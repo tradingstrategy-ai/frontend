@@ -156,7 +156,7 @@ interface UpperBoundFilterOption {
 	key: string;
 	label: string;
 	optionLabel: string;
-	/** Maximum allowed decimal value. Infinity disables the filter. */
+	/** Decimal threshold; each filter defines whether equality passes. Infinity disables filtering. */
 	value: number;
 }
 
@@ -209,7 +209,12 @@ export const volatilityFilterOptions: UpperBoundFilterOption[] = [
 	{ key: '50', label: 'Less than 50%', optionLabel: 'Less than 50%', value: 0.5 }
 ];
 
-/** Return whether a vault's three-month annualised volatility passes the selected strict upper bound. */
+/**
+ * Return whether a vault's three-month annualised volatility passes a strict upper bound.
+ *
+ * @param volatility - Annualised volatility as a decimal, or no measurement.
+ * @param upperBound - Exclusive decimal threshold; Infinity disables filtering.
+ */
 export function matchesVolatilityFilter(volatility: number | null | undefined, upperBound: number): boolean {
 	return upperBound === Infinity || (volatility != null && volatility < upperBound);
 }

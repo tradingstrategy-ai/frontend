@@ -149,12 +149,10 @@ export function queryVaultListing(
 			)
 				return false;
 		}
-		if (
-			options.showFilters &&
-			dd.value < Infinity &&
-			(getLifetimeMaxDrawdown(vault) == null || Math.abs(getLifetimeMaxDrawdown(vault)!) > dd.value)
-		)
-			return false;
+		if (options.showFilters && dd.value < Infinity) {
+			const maxDrawdown = getLifetimeMaxDrawdown(vault);
+			if (maxDrawdown == null || Math.abs(maxDrawdown) > dd.value) return false;
+		}
 		if (options.showFilters && !matchesVolatilityFilter(vault.three_months_volatility, volatility.value)) return false;
 		if (options.showFilters && monthlyReturn.mode !== 'any') {
 			const value = getMonthlyReturn(vault);

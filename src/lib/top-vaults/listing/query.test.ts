@@ -121,12 +121,16 @@ describe('vault listing query', () => {
 		).toEqual(['Below threshold']);
 	});
 
-	it('uses defaults when URL filters are absent or invalid', () => {
+	it('uses defaults when URL filters are absent', () => {
 		const query = parseVaultListingQuery(new URLSearchParams(), { risk: 1, tvl: '10k' });
-		const invalidVolatility = parseVaultListingQuery(new URLSearchParams('vol=invalid'));
 
 		expect(query.risk).toBe(1);
 		expect(query.tvl).toBe('10k');
+	});
+
+	it('falls back to Any for an unknown volatility key', () => {
+		const invalidVolatility = parseVaultListingQuery(new URLSearchParams('vol=invalid'));
+
 		expect(invalidVolatility.vol).toBe('any');
 	});
 

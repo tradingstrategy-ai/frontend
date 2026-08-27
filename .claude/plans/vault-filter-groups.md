@@ -39,12 +39,13 @@ Give the sections stable `filter-section-*` styling classes and `filter-group-di
 Refactor the component-scoped filter CSS in `TopVaultsTable.svelte`:
 
 - Use mobile-first styles: stack the sections at widths up to 768px, which this component already treats as mobile by switching to `mobile-filters-trigger`; use the three-column treatment at `--viewport-md-up` (greater than 768px). Treat 900px as the representative tablet test width so the breakpoint decision is explicit and matches the component's existing disclosure behaviour.
-- Size the columns as `auto auto minmax(0, 1fr)` rather than equal thirds: Display and Hide should take only the space they need, while Performance receives the remaining width. Allow the Performance controls to wrap within that column so narrower tablet widths do not force panel overflow.
-- Add a vertical divider between adjacent groups using a border on the second and third sections, with padding to keep headings and controls clear of the line.
+- Size the columns with explicit minimums for Display and Hide vaults, while Performance receives the remaining width. This keeps the return-column selector and Hide vaults labels inside their sections at tablet widths.
+- Add a vertical divider between adjacent groups using a border on the second and third sections. Give Hide vaults equal inline padding and give the surrounding sections matching divider clearance.
+- Lay out Performance as an aligned grid. At widths up to 1260px, use one shared label/control pair per row. Above 1260px, use three aligned label/control pairs across two rows, with the final control column allowed to shrink so the Age selector cannot overflow.
 - At `--viewport-sm-down`, switch the section layout to one column, remove the vertical borders and associated inline padding, and let each group's controls wrap naturally beneath its subheading.
 - Style the subheadings like the headings in vault information boxes and use spacing, rather than replacement horizontal rules, to separate the stacked mobile sections. Retain the current outer panel, desktop `<details>` summary, mobile trigger, dropdown positioning, and checkbox sizing.
 - Do not add overflow clipping or new stacking contexts to the section wrappers: the absolutely positioned return and Performance option menus must remain visible above adjacent groups and outside their own column.
-- Check that tooltip triggers and popups remain readable at desktop, tablet, and mobile widths, particularly for the compact Hide group and the wrapping Performance controls.
+- Check that tooltip triggers and popups remain readable at desktop, tablet, and mobile widths, particularly for the compact Hide group and the aligned Performance controls.
 
 ### 3. Update focused integration coverage
 
@@ -55,7 +56,8 @@ Revise `tests/integration/vaults/index.test.ts` to stop locating controls throug
 - Verify the groups' accessible names include their headings, so the shortened Hide vaults checkbox labels do not reverse or obscure their meaning for assistive technology.
 - Keep the existing checks for collapsed/open state, persisted disclosure state, URL-driven opening, category note, and return-column visibility.
 - Update the mobile disclosure tests to use the new group test IDs. At a 375px viewport, verify all three sections are stacked in document order (increasing bounding-box top positions), have no inline separator border, and their controls become visible only after opening the mobile Filters trigger.
-- Add a 900px tablet-width assertion that the standard disclosure is used, all three group bounding boxes share the same top position, Display has no leading border, and Hide and Performance have a visible leading border.
+- Add a 900px tablet-width assertion that the standard disclosure is used, all three group bounding boxes share the same top position, Display has no leading border, Hide and Performance have a visible leading border, Hide has equal inline padding, and Performance labels and controls share aligned columns.
+- At the representative 1440px desktop width, assert that Performance renders three aligned label/control pairs across two rows without horizontal overflow.
 - Extend the existing “Filters controls update URL state” coverage to toggle Currently closed and assert the `closed` parameter changes as expected. Retain the existing return-column toggle tests, which already prove the relocated Display control updates `returns` and renders the selected column.
 - Assert every Volatility option, the `vol` URL update, and strict threshold behaviour at 10% in integration coverage. Cover exclusion of vaults without volatility data and invalid-parameter fallback in the listing query unit tests.
 - Exercise the default positive conditional case on `/vaults`, where `showUnknownFilter` defaults to true, and a protocol listing where it is explicitly false, so both presence and absence of the Unknown checkbox are covered. Search all source and test files for the retired wrapper classes and labels so no selector, assertion, snapshot, or prop documentation is left stale.
