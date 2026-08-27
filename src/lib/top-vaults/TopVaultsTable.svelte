@@ -1139,7 +1139,8 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 											<span class="filter-label filter-label-hint">AMM</span>
 										</label>
 										<svelte:fragment slot="popup">
-											Hide AMM pools and AMM-like vaults with direct exposure to underlying assets
+											<p>Hide AMM pools and AMM-like vaults with direct exposure to underlying assets.</p>
+											<a href={resolve('/glossary/amm')}>What is AMM?</a>
 										</svelte:fragment>
 									</Tooltip>
 								</div>

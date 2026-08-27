@@ -641,8 +641,9 @@ test.describe('vault index page', () => {
 		await expect(ammFilter).toBeChecked();
 		await ammFilter.hover();
 		await expect(
-			page.getByText('Hide AMM pools and AMM-like vaults with direct exposure to underlying assets', { exact: true })
+			page.getByText('Hide AMM pools and AMM-like vaults with direct exposure to underlying assets.', { exact: true })
 		).toBeVisible();
+		await expect(page.getByRole('link', { name: 'What is AMM?' })).toHaveAttribute('href', '/glossary/amm');
 		await ammFilter.uncheck();
 		await expect(page).toHaveURL(/amm=0/);
 
