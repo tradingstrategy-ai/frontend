@@ -42,7 +42,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		formatValue,
 		notFilledMarker
 	} from '$lib/helpers/formatters';
-	import { isStablecoinDepegged } from '$lib/stablecoin-metadata/helpers';
+	import { isStablecoinDepegged, OFFCHAIN_USD_STABLECOIN_SLUG } from '$lib/stablecoin-metadata/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers';
 	import {
 		DEFAULT_TVL_KEY,
@@ -1478,7 +1478,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 							{getLifetimeMaxDrawdown(vault) != null ? formatPercent(getLifetimeMaxDrawdown(vault)) : notFilledMarker}
 						</td>
 						<td class="denomination center">
-							{formatValue(vault.denomination)}
+							{vault.denomination_slug === OFFCHAIN_USD_STABLECOIN_SLUG ? 'USD' : formatValue(vault.denomination)}
 						</td>
 						<td class="tvl right">
 							{#if shouldShowTvlBreakdown(vault)}
