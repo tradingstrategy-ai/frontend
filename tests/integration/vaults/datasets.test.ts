@@ -37,6 +37,12 @@ test.describe('vault datasets page', () => {
 		await expect(page.getByText('Vault prices', { exact: true })).toBeVisible();
 	});
 
+	test('lists Crypto and exchange-rate datasets', async ({ page }) => {
+		await expect(page.getByText('Crypto cleaned prices', { exact: true })).toBeVisible();
+		await expect(page.getByText('Crypto metadata', { exact: true })).toBeVisible();
+		await expect(page.getByText('Exchange rates', { exact: true })).toBeVisible();
+	});
+
 	test('lists free sample datasets', async ({ page }) => {
 		await expect(page.getByText('Vault metadata (sample)', { exact: true })).toBeVisible();
 		await expect(page.getByText('Vault prices (sample)', { exact: true })).toBeVisible();
@@ -50,6 +56,9 @@ test.describe('vault datasets page', () => {
 	test('shows expected filenames in dataset table', async ({ page }) => {
 		await expect(page.getByText('vault-metadata.json', { exact: true })).toBeVisible();
 		await expect(page.getByText('vault-historical.parquet', { exact: true })).toBeVisible();
+		await expect(page.getByText('crypto-cleaned-vault-prices-1d.parquet', { exact: true })).toBeVisible();
+		await expect(page.getByText('crypto-vault-metadata.json', { exact: true })).toBeVisible();
+		await expect(page.getByText('exchange-rates.parquet', { exact: true })).toBeVisible();
 	});
 
 	test('shows JSON and Parquet format labels', async ({ page }) => {
@@ -157,6 +166,28 @@ test.describe('vault dataset download endpoint', () => {
 		expect(res.headers()['content-disposition']).toContain('vault-historical.parquet');
 		expect(res.headers()['cache-control']).toBe('private, no-store');
 	});
+
+	for (const dataset of [
+		{
+			id: 'crypto-cleaned-prices',
+			contentType: 'application/vnd.apache.parquet',
+			filename: 'crypto-cleaned-vault-prices-1d.parquet'
+		},
+		{ id: 'crypto-metadata', contentType: 'application/json', filename: 'crypto-vault-metadata.json' },
+		{
+			id: 'exchange-rates',
+			contentType: 'application/vnd.apache.parquet',
+			filename: 'exchange-rates.parquet'
+		}
+	]) {
+		test(`returns ${dataset.id} with correct headers for valid key`, async ({ request }) => {
+			const res = await request.get(`/vaults/datasets/download/${dataset.id}?api-key=${VALID_API_KEY}`);
+			expect(res.status()).toBe(200);
+			expect(res.headers()['content-type']).toBe(dataset.contentType);
+			expect(res.headers()['content-disposition']).toContain(dataset.filename);
+			expect(res.headers()['cache-control']).toBe('private, no-store');
+		});
+	}
 
 	test('proxies content-length from upstream in download response', async ({ request }) => {
 		const res = await request.get(`/vaults/datasets/download/vault-metadata?api-key=${VALID_API_KEY}`);

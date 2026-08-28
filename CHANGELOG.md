@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add Vault Pro crypto price, metadata, and exchange-rate datasets (2026-08-28)
 - Add an AMM filter to vault listings and pool terminology on detail pages (2026-08-27)
 - Reorganise vault filters into responsive groups and add volatility filtering (2026-08-27)
 - Add a permissioned-vault filter to vault listings (2026-08-25)
