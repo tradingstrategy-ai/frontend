@@ -122,11 +122,13 @@ The US 3-month Treasury bill rate is used as a risk-free benchmark on non-perpet
 - `isValidDateString()` — strict YYYY-MM-DD validation with round-trip check
 - `readJsonFileCache()` / `writeJsonFileCache()` / `isCacheFresh()` — generic file cache with injectable `cacheDir` for testing
 
-**Vault classification** (`src/lib/top-vaults/isPerpetualFuturesVault.ts`):
+**Vault price-chart benchmark classification** (`src/lib/top-vaults/vault-price-benchmarks.ts`):
 
 - Perpetual futures vaults show BTC/ETH benchmarks (via Coinbase API)
-- All other vaults show the US 3M T-bill benchmark
-- Detection: `perp_dex_trading_vault` flag first, then chain_id fallback (9999 HyperCore, 325 GRVT, 9998 Lighter, 9997 Hibachi)
+- Crypto-exposed GMX pools show BTC/ETH benchmarks, except GM BTC and ETH pools, which show their respective market benchmark only
+- Stable-stable GMX GM swap pools show the US 3M T-bill benchmark
+- All remaining vaults show the US 3M T-bill benchmark
+- Perpetual futures detection: `perp_dex_trading_vault` flag first, then chain_id fallback (9999 HyperCore, 325 GRVT, 9998 Lighter, 9997 Hibachi)
 - HyperEVM (chain_id 999) is intentionally excluded — it hosts DeFi/lending vaults
 
 ### Datasets download endpoint
@@ -167,8 +169,8 @@ FRED (fred.stlouisfed.org)
 | Landing page (server load)         | Top vaults JSON      | `+page.server.ts` → `getCachedTopVaults()`                      |
 | Vault price chart (client fetch)   | Parquet              | `/vaults/[vault]/metrics` → `ensureVaultPricesParquet()`        |
 | Historical TVL charts (server)     | Parquet              | `historical-tvl-server.ts` → `ensureVaultPricesParquet()`       |
-| T-bill benchmark (non-perp vaults) | FRED DTB3            | `TreasuryBenchmarkSeries.svelte` → `/vaults/treasury-benchmark` |
-| BTC/ETH benchmark (perp vaults)    | Coinbase API         | `CoinbaseBenchmarkSeries.svelte` → `coinbase.ts`                |
+| T-bill benchmark (other vaults)    | FRED DTB3            | `TreasuryBenchmarkSeries.svelte` → `/vaults/treasury-benchmark` |
+| BTC/ETH benchmarks (perps and GMX) | Coinbase API         | `CoinbaseBenchmarkSeries.svelte` → `coinbase.ts`                |
 | Datasets listing page              | Both (metadata only) | `headTopVaults()` + `headVaultPrices()` via R2                  |
 | Datasets download                  | Both (proxied)       | `/datasets/download/[datasetId]` via Vault API                  |
 
