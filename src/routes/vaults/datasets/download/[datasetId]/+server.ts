@@ -3,6 +3,9 @@ import { vaultApiUrl } from '$lib/config';
 import { VAULT_PRICES_PARQUET } from '$lib/top-vaults/constants';
 
 const TOP_VAULTS_JSON = 'top_vaults_by_chain.json';
+const CRYPTO_CLEANED_PRICES_PARQUET = 'crypto-cleaned-vault-prices-1d.parquet';
+const CRYPTO_VAULT_METADATA_JSON = 'crypto-vault-metadata.json';
+const EXCHANGE_RATES_PARQUET = 'exchange-rates.parquet';
 
 /** Map public dataset IDs to their Worker file key and download metadata. */
 function resolveDataset(datasetId: string): { fileKey: string; filename: string; contentType: string } | null {
@@ -14,6 +17,24 @@ function resolveDataset(datasetId: string): { fileKey: string; filename: string;
 				fileKey: VAULT_PRICES_PARQUET,
 				filename: 'vault-historical.parquet',
 				contentType: 'application/octet-stream'
+			};
+		case 'crypto-cleaned-prices':
+			return {
+				fileKey: CRYPTO_CLEANED_PRICES_PARQUET,
+				filename: CRYPTO_CLEANED_PRICES_PARQUET,
+				contentType: 'application/vnd.apache.parquet'
+			};
+		case 'crypto-metadata':
+			return {
+				fileKey: CRYPTO_VAULT_METADATA_JSON,
+				filename: CRYPTO_VAULT_METADATA_JSON,
+				contentType: 'application/json'
+			};
+		case 'exchange-rates':
+			return {
+				fileKey: EXCHANGE_RATES_PARQUET,
+				filename: EXCHANGE_RATES_PARQUET,
+				contentType: 'application/vnd.apache.parquet'
 			};
 		default:
 			return null;
