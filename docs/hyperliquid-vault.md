@@ -22,7 +22,7 @@ The frontend fetches live data (positions, performance, trade history) from each
 
 ### YAML-configured strategies
 
-YAML strategies have no backend. They are defined by a YAML file in `strategies/` and pull live metrics (TVL, returns, fees) from the vault browsing API (`TS_PUBLIC_TOP_VAULTS_URL`). These strategies get a single overview page with vault metrics and a link to the full vault detail page.
+YAML strategies have no trade-executor backend. They are defined by a YAML file in `strategies/`; SvelteKit server loads match each strategy to the privately sourced, server-cached vault metadata. These strategies get a single overview page with vault metrics and a link to the full vault detail page.
 
 This is useful for vaults (e.g., Hyperliquid vaults) where there is no trade-executor instance but you still want the strategy to appear in the `/strategies` listing and optionally on the frontpage.
 
@@ -48,7 +48,7 @@ This separation ensures integration tests don't depend on production config cont
 
 ### Vault data
 
-The `vault_address` field in each YAML config links the strategy to a vault from the vault browsing API. At runtime, the frontend fetches vault data via `fetchTopVaults()` and matches by on-chain address to populate metrics like TVL, returns, and fees. Using the address rather than the vault slug ensures the binding remains stable even if the vault is renamed.
+The `vault_address` field in each YAML config links the strategy to a vault in the current top-vaults metadata. At runtime, server-only code calls `fetchTopVaults()` and matches by on-chain address to populate metrics such as TVL, returns, and fees. The browser receives the matched strategy data, not the complete vault export. Using the address rather than the vault slug ensures the binding remains stable if the vault is renamed.
 
 ## Configuration reference
 

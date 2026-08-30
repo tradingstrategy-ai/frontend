@@ -69,8 +69,8 @@ only the matching blacklisted rows, changes the displayed risk level to
 **Blacklisted**, and updates the URL without a document reload. Additional
 blacklisted rows continue loading in 50-row batches when needed.
 
-`/top-vaults/all-data` remains available for chart pages that genuinely need
-the complete export. Vault table pages must not use it after hydration.
+The legacy complete-export endpoint has been removed. Normal browser pages use
+paginated listings, matched-record lookups, or purpose-built chart payloads.
 
 ## Page metadata and overview panels
 

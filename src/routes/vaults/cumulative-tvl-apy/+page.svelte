@@ -15,21 +15,8 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { resolve } from '$app/paths';
 
-	import type { VaultInfo } from '$lib/top-vaults/schemas';
-	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
-
 	let { data } = $props();
 	let { savingsRate, treasuryRate } = $derived(data);
-
-	let vaults = $state<VaultInfo[]>([]);
-	let vaultsLoading = $state(!hasVaultCache(page.data.generatedAt));
-
-	$effect(() => {
-		fetchAllVaultData(page.data.generatedAt)
-			.then((allData) => (vaults = allData.vaults))
-			.catch((e) => console.error('Failed to load vault data:', e))
-			.finally(() => (vaultsLoading = false));
-	});
 
 	const title = 'Total vault earnings';
 	const description = 'Total stablecoin vault earnings across DeFi, shown against cumulative TVL.';
@@ -52,10 +39,7 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 		description,
 		url: pageUrl,
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
-		mainEntity: {
-			'@type': 'ItemList',
-			numberOfItems: vaults.length
-		}
+		mainEntity: { '@type': 'ItemList' }
 	}}
 />
 
@@ -79,7 +63,7 @@ cumulative TVL on Y-axis — showing how TVL accumulates across yield tiers.
 	</Section>
 
 	<Section padding="sm" class="chart-section">
-		<CumulativeTvlApyChart {vaults} {savingsRate} {treasuryRate} dataLoading={vaultsLoading} />
+		<CumulativeTvlApyChart {savingsRate} {treasuryRate} />
 		<ScatterPlotSelector />
 	</Section>
 

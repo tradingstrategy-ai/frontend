@@ -5,7 +5,7 @@
  * a page boundary can never sort a different prefix from the server.
  */
 import { getChainDisplayName } from '$lib/helpers/chain';
-import type { VaultInfo } from '../schemas';
+import type { Core3Protocol, VaultInfo } from '../schemas';
 import {
 	calculateTotalTvl,
 	calculateTvlWeightedApy,
@@ -15,6 +15,7 @@ import {
 	getMonthlyReturn,
 	getVaultCurrentTvlUsd,
 	getVaultPeakTvlUsd,
+	getCore3PolForVault,
 	getVaultProtocolDisplayName,
 	hasSupportedProtocol,
 	isAmmPoolLikeVault,
@@ -56,6 +57,8 @@ export interface VaultListingOptions {
 	includeBlacklistedInStats: boolean;
 	maxSummaryTvlUsd?: number;
 	treasuryRate?: number | null;
+	/** Provider whose risk score is used by the provider_risk_rating sort. */
+	ratingProvider?: 'core3' | 'xerberus';
 }
 
 export interface VaultListingResult {
@@ -76,7 +79,13 @@ function canonicalKey(vault: VaultInfo): string {
 }
 
 /** Sort the full matching population using a stable canonical tie-breaker. */
-export function sortVaults(vaults: VaultInfo[], sort: string, direction: VaultSortDirection): VaultInfo[] {
+export function sortVaults(
+	vaults: VaultInfo[],
+	sort: string,
+	direction: VaultSortDirection,
+	ratingProvider?: VaultListingOptions['ratingProvider'],
+	core3Protocols: Record<string, Core3Protocol> = {}
+): VaultInfo[] {
 	const comparator = (() => {
 		switch (sort) {
 			case 'chain':
@@ -106,6 +115,16 @@ export function sortVaults(vaults: VaultInfo[], sort: string, direction: VaultSo
 				return rankVaultsBy(['lockup'], Infinity);
 			case 'risk':
 				return rankVaultsBy(['risk_numeric'], Infinity);
+			case 'provider_risk_rating':
+				return (a: VaultInfo, b: VaultInfo) => {
+					const score = (vault: VaultInfo) =>
+						ratingProvider === 'xerberus'
+							? (vault.xerberus?.score ?? -Infinity)
+							: (getCore3PolForVault(vault, core3Protocols)?.score ?? Infinity);
+					const aScore = score(a);
+					const bScore = score(b);
+					return aScore - bScore;
+				};
 			default:
 				return compareVaultsByReturn(sort as ReturnColumnId);
 		}
@@ -197,7 +216,7 @@ export function queryVaultListing(
 	const stats = options.includeBlacklistedInStats ? matches : matches.filter((vault) => !isBlacklisted(vault));
 	const statsWithUsdTvl = stats.map(withVaultCurrentTvlUsd);
 	return {
-		vaults: sortVaults(matches, query.sort, query.direction),
+		vaults: sortVaults(matches, query.sort, query.direction, options.ratingProvider),
 		hiddenByTvl: hiddenVaults.length,
 		hiddenBlacklistedCount,
 		hiddenVaults,

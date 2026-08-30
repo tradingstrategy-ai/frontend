@@ -72,7 +72,6 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		isGoodVaultStatus,
 		matchesVolatilityFilter,
 		monthlyReturnFilterOptions,
-		rankVaultsBy,
 		resolveVaultDetails,
 		riskFilterOptions,
 		tvlFilterOptions,
@@ -82,7 +81,6 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		DEFAULT_RETURN_COLUMN_IDS,
 		LEGACY_RETURN_SORT_ALIASES,
 		canonicaliseReturnSortKey,
-		compareVaultsByReturn,
 		getReturnDataCoverage,
 		getReturnLifetimeData,
 		getReturnColumnValues,
@@ -124,12 +122,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 	interface SortOptions {
 		key: string;
 		direction: 'asc' | 'desc';
-		compareFn: (a: VaultInfo, b: VaultInfo) => number;
 	}
-	type SortColumnDefinition = {
-		defaultDirection: SortOptions['direction'];
-		compareFn: SortOptions['compareFn'];
-	};
 
 	interface Props {
 		topVaults?: TopVaults;
@@ -242,17 +235,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		revealedListingSummary = undefined;
 	});
 
-	// --- Sort column registry (key → compareFn + default direction) ---
-
-	function stringCompare(fn: (v: VaultInfo) => string) {
-		return (a: VaultInfo, b: VaultInfo) => fn(a).localeCompare(fn(b));
-	}
-
-	function getProviderRiskScore(vault: VaultInfo): number | null {
-		if (ratingProvider === 'xerberus') return vault.xerberus?.score ?? null;
-		if (ratingProvider === 'core3') return getCore3PolForVault(vault, topVaults.core3_protocols)?.score ?? null;
-		return null;
-	}
+	// --- Sort column registry (key → default direction) ---
 
 	function getXerberusRiskRating(vault: VaultInfo): string {
 		const score = vault.xerberus?.score;
@@ -260,64 +243,34 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		return formatNumber(score, 0, 0);
 	}
 
-	function compareProviderRiskRatings(a: VaultInfo, b: VaultInfo): number {
-		const aScore = getProviderRiskScore(a);
-		const bScore = getProviderRiskScore(b);
-		if (aScore == null && bScore == null) return 0;
-
-		const missingScore = ratingProvider === 'xerberus' ? -Infinity : Infinity;
-		return (aScore ?? missingScore) - (bScore ?? missingScore);
-	}
-
 	const returnSortColumnMap = Object.fromEntries(
-		returnColumnDefinitions.map((definition) => [
-			definition.id,
-			{
-				defaultDirection: definition.sortDirection,
-				compareFn: compareVaultsByReturn(definition.id)
-			}
-		])
-	) as Record<ReturnColumnId, SortColumnDefinition>;
+		returnColumnDefinitions.map((definition) => [definition.id, { defaultDirection: definition.sortDirection }])
+	) as Record<ReturnColumnId, { defaultDirection: 'desc' }>;
 
 	// The provider is a page-level configuration and does not change after the table mounts.
-	const providerSortColumnMap = untrack((): Record<string, SortColumnDefinition> => {
-		if (!ratingProvider) return {};
-		return { provider_risk_rating: { defaultDirection: 'asc', compareFn: compareProviderRiskRatings } };
-	});
+	const providerSortColumnMap: Record<string, { defaultDirection: 'asc' | 'desc' }> = untrack(() =>
+		ratingProvider
+			? {
+					provider_risk_rating: {
+						defaultDirection: ratingProvider === 'xerberus' ? ('desc' as const) : ('asc' as const)
+					}
+				}
+			: {}
+	);
 
-	const sortColumnMap: Record<string, SortColumnDefinition> = {
+	const sortColumnMap: Record<string, { defaultDirection: 'asc' | 'desc' }> = {
 		...returnSortColumnMap,
-		chain: {
-			defaultDirection: 'asc',
-			compareFn: stringCompare((v) => getChainDisplayName(v.chain_id))
-		},
-		vault: {
-			defaultDirection: 'asc',
-			compareFn: stringCompare((v) => `${v.name.trim()} ${getVaultProtocolDisplayName(v)}`)
-		},
-		three_months_sharpe: { defaultDirection: 'desc', compareFn: rankVaultsBy(['three_months_sharpe']) },
-		three_months_volatility: { defaultDirection: 'asc', compareFn: rankVaultsBy(['three_months_volatility']) },
-		max_dd: {
-			defaultDirection: 'desc',
-			compareFn: (a: VaultInfo, b: VaultInfo) => {
-				const aVal = getLifetimeMaxDrawdown(a) ?? -Infinity;
-				const bVal = getLifetimeMaxDrawdown(b) ?? -Infinity;
-				return aVal - bVal;
-			}
-		},
-		denomination: { defaultDirection: 'asc', compareFn: stringCompare((v) => v.denomination) },
-		tvl: {
-			defaultDirection: 'desc',
-			compareFn: (a: VaultInfo, b: VaultInfo) =>
-				rankVaultsBy(['current_tvl_usd', 'peak_tvl_usd'])(
-					{ current_tvl_usd: getVaultCurrentTvlUsd(a), peak_tvl_usd: getVaultPeakTvlUsd(a) },
-					{ current_tvl_usd: getVaultCurrentTvlUsd(b), peak_tvl_usd: getVaultPeakTvlUsd(b) }
-				)
-		},
-		age: { defaultDirection: 'desc', compareFn: rankVaultsBy(['years']) },
-		fees: { defaultDirection: 'asc', compareFn: rankVaultsBy(['mgmt_fee', 'perf_fee'], Infinity) },
-		lockup: { defaultDirection: 'asc', compareFn: rankVaultsBy(['lockup'], Infinity) },
-		risk: { defaultDirection: 'asc', compareFn: rankVaultsBy(['risk_numeric'], Infinity) },
+		chain: { defaultDirection: 'asc' },
+		vault: { defaultDirection: 'asc' },
+		three_months_sharpe: { defaultDirection: 'desc' },
+		three_months_volatility: { defaultDirection: 'asc' },
+		max_dd: { defaultDirection: 'desc' },
+		denomination: { defaultDirection: 'asc' },
+		tvl: { defaultDirection: 'desc' },
+		age: { defaultDirection: 'desc' },
+		fees: { defaultDirection: 'asc' },
+		lockup: { defaultDirection: 'asc' },
+		risk: { defaultDirection: 'asc' },
 		...providerSortColumnMap
 	};
 
@@ -495,11 +448,10 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		if (!column) {
 			return {
 				key: DEFAULT_RETURN_COLUMN_IDS[0],
-				direction: 'desc' as const,
-				compareFn: sortColumnMap[DEFAULT_RETURN_COLUMN_IDS[0]].compareFn
+				direction: 'desc' as const
 			};
 		}
-		return { key: sortKey, direction: urlState.direction as 'asc' | 'desc', compareFn: column.compareFn };
+		return { key: sortKey, direction: urlState.direction as 'asc' | 'desc' };
 	});
 
 	let showChainCol = $derived(!chain);
@@ -723,13 +675,9 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 	);
 
 	// sort vaults
-	let sortedVaults = $derived.by(() => {
-		if (progressive && sortOptions.key !== 'provider_risk_rating')
-			return sortVaults(filteredVaults, sortOptions.key, sortOptions.direction);
-		const sorted = filteredVaults.toSorted(sortOptions.compareFn);
-		if (sortOptions.direction === 'desc') sorted.reverse();
-		return sorted;
-	});
+	let sortedVaults = $derived(
+		sortVaults(filteredVaults, sortOptions.key, sortOptions.direction, ratingProvider, topVaults.core3_protocols)
+	);
 
 	// INFINITE SCROLL:
 	// - limit the displayed vaults during initial render

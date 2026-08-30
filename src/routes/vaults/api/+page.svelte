@@ -14,7 +14,7 @@
 	import { chains } from '$lib/helpers/chain';
 
 	let { data } = $props();
-	let { impressiveNumbers, topVaults } = $derived(data);
+	let { impressiveNumbers, topVaultCount } = $derived(data);
 
 	let chainCount = new Set(chains.map((chain) => chain.slug)).size;
 </script>
@@ -46,10 +46,10 @@
 				Explore top-performing vaults across supported chains. Compare TVL, returns, Sharpe ratio, and historical
 				performance metrics.
 			</p>
-			{#if topVaults?.vaults.length}
+			{#if topVaultCount}
 				<p>
 					Currently displaying
-					<strong>{formatAmount(topVaults.vaults.length)} vaults</strong> with minimum $50k USD TVL.
+					<strong>{formatAmount(topVaultCount)} vaults</strong> with minimum $50k USD TVL.
 				</p>
 			{/if}
 			<Button slot="cta" label="Compare vaults" />
@@ -63,9 +63,9 @@
 				Download vault metadata and hourly vault price history for offline research, notebooks, and vault analytics
 				workflows.
 			</p>
-			{#if topVaults?.vaults.length}
+			{#if topVaultCount}
 				<p>
-					Currently covering <strong>{formatAmount(topVaults.vaults.length)}</strong> vaults.
+					Currently covering <strong>{formatAmount(topVaultCount)}</strong> vaults.
 				</p>
 			{/if}
 			<Button slot="cta" label="Download vault data" />

@@ -9,6 +9,9 @@ Xerberus-rated DeFi stablecoin vaults
 
 <RiskRatingsPage
 	provider="xerberus"
+	initialTopVaults={data.initialTopVaults}
+	initialVaultListingHasMore={data.initialVaultListingHasMore}
+	listingSummary={data.listingSummary}
 	initialRatingStatistics={data.initialRatingStatistics}
 	initialRiskRatingTvlBands={data.initialRiskRatingTvlBands}
 />

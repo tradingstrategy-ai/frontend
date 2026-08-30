@@ -29,7 +29,9 @@ export const vaultListingKeys = [
 	'stablecoin',
 	'curator',
 	'tokenised-funds',
-	'international'
+	'international',
+	'core3-ratings',
+	'xerberus-ratings'
 ] as const;
 
 export type VaultListingKey = (typeof vaultListingKeys)[number];
@@ -116,6 +118,18 @@ export const vaultListingDefinitions: Record<VaultListingKey, VaultListingDefini
 		defaults: { tvl: '10k', unknown: false },
 		options: commonOptions,
 		requiresScope: false
+	},
+	'core3-ratings': {
+		key: 'core3-ratings',
+		defaults: { tvl: 'any', sort: 'provider_risk_rating', direction: 'asc' },
+		options: { ...commonOptions, showFilters: false, ratingProvider: 'core3' },
+		requiresScope: false
+	},
+	'xerberus-ratings': {
+		key: 'xerberus-ratings',
+		defaults: { tvl: 'any', sort: 'provider_risk_rating', direction: 'desc' },
+		options: { ...commonOptions, showFilters: false, ratingProvider: 'xerberus' },
+		requiresScope: false
 	}
 };
 
@@ -161,6 +175,8 @@ export function filterVaultListingScope(vaults: VaultInfo[], key: VaultListingKe
 			// International listings need denomination-rate enrichment, performed by
 			// the server resolver. Do not accidentally expose the unscoped dataset.
 			return [];
+		case 'xerberus-ratings':
+			return vaults.filter((vault) => vault.xerberus?.score != null);
 		default:
 			return vaults;
 	}

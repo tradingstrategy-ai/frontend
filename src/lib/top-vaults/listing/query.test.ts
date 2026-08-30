@@ -26,6 +26,39 @@ describe('vault listing query', () => {
 		expect(sortVaults([later, earlier], 'tvl', 'desc').map((vault) => vault.name)).toEqual(['Earlier', 'Later']);
 	});
 
+	it('sorts provider ratings by the selected provider before pagination', () => {
+		const core3Safer = createTestVault('CORE3 safer', {
+			core3: { risk_score: 10, risk_rating_label: 'AA' },
+			xerberus: {
+				score: 20,
+				score_scale: '0-100',
+				entity_type: 'protocol',
+				entity_id: 'core3-safer',
+				name: 'CORE3 safer',
+				protocol_slug: 'core3-safer',
+				report_url: null,
+				fetched_at: '2026-01-01T00:00:00Z'
+			}
+		});
+		const core3Riskier = createTestVault('CORE3 riskier', {
+			core3: { risk_score: 80, risk_rating_label: 'D' },
+			xerberus: {
+				score: 90,
+				score_scale: '0-100',
+				entity_type: 'protocol',
+				entity_id: 'core3-riskier',
+				name: 'CORE3 riskier',
+				protocol_slug: 'core3-riskier',
+				report_url: null,
+				fetched_at: '2026-01-01T00:00:00Z'
+			}
+		});
+
+		expect(
+			sortVaults([core3Riskier, core3Safer], 'provider_risk_rating', 'asc', 'core3').map((vault) => vault.name)
+		).toEqual(['CORE3 safer', 'CORE3 riskier']);
+	});
+
 	it('filters before it sorts and slices the matching population', () => {
 		const accepted = createTestVault('Accepted', {
 			current_nav: 100_000,
@@ -158,6 +191,13 @@ describe('vault listing query', () => {
 		const query = parseVaultListingQuery(new URLSearchParams('amm=1'), { tvl: '10k' });
 
 		expect(queryVaultListing([vault, pool], query, options).vaults.map((item) => item.name)).toEqual(['Vault']);
+	});
+
+	it('only accepts provider rating sorting on a provider listing', () => {
+		const params = new URLSearchParams('sort=provider_risk_rating');
+
+		expect(parseVaultListingQuery(params).sort).not.toBe('provider_risk_rating');
+		expect(parseVaultListingQuery(params, { sort: 'provider_risk_rating' }).sort).toBe('provider_risk_rating');
 	});
 
 	it('keeps a blacklisted definition scoped to blacklisted vaults', () => {

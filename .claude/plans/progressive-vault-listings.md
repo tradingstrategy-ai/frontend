@@ -1,10 +1,12 @@
 # Progressive vault listings
 
+> Implementation note: the final initial listing size is 125 rows. References to 150 rows later in this document describe the original design target; current behaviour is documented in `docs/vault-listings.md`.
+
 ## Implementation status (2026-07-31)
 
 Implemented the first delivery of this plan:
 
-- first 150 rows are filtered, sorted, and rendered by the page server load;
+- first 125 rows are filtered, sorted, and rendered by the page server load;
 - later rows are fetched in 50-row pages from `/top-vaults/listing-data`;
 - loaders, continuations, and the table use the same browser-safe query and
   sorting modules;
@@ -27,9 +29,8 @@ pure filtering and sorting implementation so they always agree on row order,
 including provider-specific or specialist rankings such as CORE3 and Xerberus.
 
 The first page must not trigger a hydration-time request for the complete vault
-export. The existing `/top-vaults/all-data` endpoint can remain for charts or
-other consumers that genuinely need the complete dataset, but vault listing
-pages must stop using it.
+export. The legacy `/top-vaults/all-data` endpoint was retained during this
+listing migration and removed after its remaining consumers were migrated.
 
 ## Current behaviour and constraints
 
@@ -369,8 +370,8 @@ the number downloaded.
 
 - Replace `fetchAllVaultData()` in every `TopVaultsPage`/`TopVaultsTable`
   listing route with page-load data plus continuation requests.
-- Keep `client-cache.ts` and `/top-vaults/all-data` temporarily for scatter
-  plots, charts, or other audited consumers that genuinely need every vault.
+- Keep `client-cache.ts` and `/top-vaults/all-data` temporarily while audited
+  consumers are migrated; both were removed in the later server-data cleanup.
 - Do not migrate chart-data endpoints to pagination; they already compute
   purpose-built aggregate payloads server-side.
 - Ensure detail-page metadata maps (`curators`, `core3_protocols`) are not sent

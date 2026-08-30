@@ -1,28 +1,30 @@
 <!--
 @component
-Renders the server-derived current versus peak TVL chart.
+Renders a server-derived yield scatter chart. Only chart points, groups, hover
+text, and detail links are fetched; complete vault records stay on the server.
 -->
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import type { VaultScatterChartData } from '$lib/vault-chart-data';
 	import {
 		buildChartConfig,
-		buildPlotlyChrome,
+		buildChartLayout,
 		buildMarker,
-		chartAxisBorder,
-		chartGridColor,
-		chartTextColor,
-		loadPlotly
-	} from '$lib/scatter-plot/helpers';
-	import ScatterPlotShell from '$lib/scatter-plot/ScatterPlotShell.svelte';
+		computeAxisRange,
+		loadPlotly,
+		minReturnLog
+	} from './helpers';
+	import ScatterPlotShell from './ScatterPlotShell.svelte';
 
-	let chartContainer = $state<HTMLDivElement>(undefined as unknown as HTMLDivElement);
-	let minTvl = $state(50_000);
-	let colourBy = $state<'chain' | 'protocol'>('chain');
-	let logAxes = $state(true);
-	let data = $state<VaultScatterChartData>();
-	let loading = $state(true);
-	let error = $state<string | null>(null);
+	interface Props {
+		endpoint: string;
+		legendTitle: string;
+		excludedLabel?: string;
+		/** Preserve the scatter pages' isolate-then-toggle legend interaction. */
+		isolateLegend?: boolean;
+	}
+
+	let { endpoint, legendTitle, excludedLabel, isolateLegend = false }: Props = $props();
 
 	function addIsolatingLegend(Plotly: any, traces: unknown[]) {
 		(chartContainer as any).on('plotly_legendclick', (event: any) => {
@@ -51,17 +53,22 @@ Renders the server-derived current versus peak TVL chart.
 			return false;
 		});
 	}
+	let chartContainer = $state<HTMLDivElement>(undefined as unknown as HTMLDivElement);
+	let minTvl = $state(50_000);
+	let logAxes = $state(true);
+	let data = $state<VaultScatterChartData>();
+	let loading = $state(true);
+	let error = $state<string | null>(null);
 
 	$effect(() => {
 		let cancelled = false;
 		loading = true;
 		error = null;
-		fetch(`/vaults/current-peak-tvl/chart-data?minTvl=${minTvl}&colourBy=${colourBy}`)
-			.then((response) =>
-				response.ok
-					? (response.json() as Promise<VaultScatterChartData>)
-					: Promise.reject(new Error(`Chart request failed (${response.status})`))
-			)
+		fetch(`${endpoint}?minTvl=${minTvl}`)
+			.then((response) => {
+				if (!response.ok) throw new Error(`Chart request failed (${response.status})`);
+				return response.json() as Promise<VaultScatterChartData>;
+			})
 			.then((payload) => {
 				if (!cancelled) data = payload;
 			})
@@ -82,67 +89,21 @@ Renders the server-derived current versus peak TVL chart.
 		let cancelled = false;
 		(async () => {
 			if (!payload.pointCount) {
-				error = 'No vaults with both current and peak TVL data available.';
+				error = 'No vaults with both TVL and three-month return data available.';
 				return;
 			}
 			const Plotly = await loadPlotly();
 			if (cancelled) return;
-			const values = payload.traces.flatMap((trace) => trace.points.flatMap((point) => [point.x, point.y]));
-			const min = Math.max(Math.min(...values), minTvl);
-			const max = Math.max(...values);
-			const axisType = logAxes ? 'log' : 'linear';
-			const rawRange = logAxes ? [Math.log10(min), Math.log10(max)] : [min, max];
-			const padding = (rawRange[1] - rawRange[0]) * 0.05;
-			const range: [number, number] = [rawRange[0] - padding, rawRange[1] + padding];
-			const diagonal = logAxes ? [10 ** range[0], 10 ** range[1]] : range;
-			const isMobile = window.innerWidth <= 768;
-			const chrome = buildPlotlyChrome();
-			const layout = {
-				xaxis: {
-					title: window.innerWidth <= 768 ? undefined : '<b>Peak TVL (USD)</b>',
-					type: axisType,
-					range,
-					gridcolor: chartGridColor,
-					color: chartTextColor,
-					...chartAxisBorder
-				},
-				yaxis: {
-					title: window.innerWidth <= 768 ? undefined : '<b>Current TVL (USD)</b>',
-					type: axisType,
-					range,
-					gridcolor: chartGridColor,
-					color: chartTextColor,
-					...chartAxisBorder
-				},
-				shapes: [
-					{
-						type: 'line',
-						x0: diagonal[0],
-						y0: diagonal[0],
-						x1: diagonal[1],
-						y1: diagonal[1],
-						line: { color: 'rgba(255,255,255,0.3)', width: 1, dash: 'dash' }
-					}
-				],
-				...chrome,
-				height: 600,
-				margin: isMobile ? { t: 10, r: 10, b: 100, l: 10 } : { t: 20, r: 20, b: 100, l: 80 },
-				legend: {
-					...(chrome.legend as Record<string, any>),
-					title: { text: colourBy === 'chain' ? 'Chain' : 'Protocol' },
-					orientation: 'h',
-					yanchor: 'top',
-					y: -0.15,
-					xanchor: 'center',
-					x: 0.5,
-					itemclick: false,
-					itemdoubleclick: false
-				},
-				dragmode: isMobile ? false : 'zoom',
-				autosize: true
-			};
+			const points = payload.traces.flatMap((trace) => trace.points);
+			const x = points.map((point) => Math.max(point.x, minReturnLog));
+			const y = points.map((point) => point.y);
+			const layout = buildChartLayout(legendTitle, computeAxisRange(x, logAxes), computeAxisRange(y, logAxes), logAxes);
+			if (isolateLegend) {
+				layout.legend.itemclick = false;
+				layout.legend.itemdoubleclick = false;
+			}
 			const traces = payload.traces.map((trace) => ({
-				x: trace.points.map((point) => point.x),
+				x: trace.points.map((point) => (logAxes ? Math.max(point.x, minReturnLog) : point.x)),
 				y: trace.points.map((point) => point.y),
 				text: trace.points.map((point) => point.hover),
 				customdata: trace.points.map((point) => point.url),
@@ -157,7 +118,7 @@ Renders the server-derived current versus peak TVL chart.
 				const url = event.points?.[0]?.customdata;
 				if (url) goto(url);
 			});
-			addIsolatingLegend(Plotly, traces);
+			if (isolateLegend) addIsolatingLegend(Plotly, traces);
 		})().catch((cause) => {
 			if (!cancelled) error = cause instanceof Error ? cause.message : 'Failed to render chart';
 		});
@@ -168,23 +129,19 @@ Renders the server-derived current versus peak TVL chart.
 	});
 </script>
 
-<ScatterPlotShell bind:chartContainer {loading} {error} bind:minTvl watermarkCorner="top-left">
+<ScatterPlotShell bind:chartContainer {loading} {error} bind:minTvl watermarkCorner="top-right">
 	{#snippet extraControls()}
-		<label
-			>Group by: <select
-				value={colourBy}
-				onchange={(event) => (colourBy = event.currentTarget.value as 'chain' | 'protocol')}
-				><option value="chain">Chain</option><option value="protocol">Protocol</option></select
-			></label
-		>
 		<label class="checkbox-label"
 			><input type="checkbox" checked={logAxes} onchange={() => (logAxes = !logAxes)} /> Logarithmic axes</label
 		>
 	{/snippet}
 	{#snippet belowChart()}
-		{#if data?.excludedCount}<p class="excluded-notice">
-				{data.excludedCount} vault{data.excludedCount === 1 ? '' : 's'} with unknown chain not included in this chart.
-			</p>{/if}
+		{#if data?.excludedCount && excludedLabel}
+			<p class="excluded-notice">
+				{data.excludedCount} vault{data.excludedCount === 1 ? '' : 's'} with unknown {excludedLabel} not included in this
+				chart.
+			</p>
+		{/if}
 	{/snippet}
 </ScatterPlotShell>
 

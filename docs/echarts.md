@@ -4,11 +4,14 @@ This document describes how ECharts is currently used in the frontend, why it is
 
 ## Current usage
 
-ECharts is currently used in three places:
+ECharts is used across the vault experience, including:
 
 - The front page vault ecosystem widget
 - The standalone cumulative TVL / APY page
+- Historical TVL, CORE3 risk, stablecoin heatmap, market-share, and group mini charts
 - A diagnostics page used for prototyping and visual tuning
+
+See [Chart pages](chart-pages.md) for the complete route and chart-library inventory.
 
 The shared charting core now lives in:
 
@@ -75,9 +78,10 @@ Its flow is:
 
 1. The page loads benchmark rates server-side
 2. The page adapter reads and updates URL search params for filters and axis mode
-3. The adapter filters the full vault dataset and maps it to shared cumulative TVL points
-4. `ScatterPlotShell.svelte` renders the existing controls and hosts the chart content
-5. `src/lib/echarts/CumulativeTvlApyChart.svelte` renders a larger standalone preset with larger fonts and layout spacing
+3. The adapter requests `/vaults/cumulative-tvl-apy/chart-data` with the active filters
+4. The endpoint filters the complete server-cached dataset and returns cumulative chart points and protocol options
+5. `ScatterPlotShell.svelte` renders the existing controls and hosts the chart content
+6. `src/lib/echarts/CumulativeTvlApyChart.svelte` renders a larger standalone preset with larger fonts and layout spacing
 
 This keeps the filter logic, selector UI, and URL persistence in the page layer while moving the actual chart runtime, axis maths, benchmark series, tooltip rendering, and click navigation into the shared renderer.
 

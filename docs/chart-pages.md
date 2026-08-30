@@ -48,7 +48,17 @@ Current cached chart-data endpoints include:
 - `historical-tvl-protocol/chart-data/+server.ts`
 - `stablecoin-chain-heatmap/chart-data/+server.ts`
 
-These endpoints usually:
+These endpoints cache their derived JSON in memory and may serve Brotli-compressed responses.
+
+The five migrated Plotly/cumulative pages have purpose-built route-local endpoints:
+
+- `yield-risk/chart-data/+server.ts`
+- `yield-chain/chart-data/+server.ts`
+- `yield-protocol/chart-data/+server.ts`
+- `current-peak-tvl/chart-data/+server.ts`
+- `cumulative-tvl-apy/chart-data/+server.ts`
+
+The cached endpoints usually:
 
 1. Read the top-vaults dataset.
 2. Filter or group vaults server-side.
@@ -56,7 +66,7 @@ These endpoints usually:
 4. Cache the JSON payload in process memory.
 5. Serve Brotli-compressed JSON when the client accepts `br`.
 
-The older Plotly scatter pages generally fetch or receive vault data directly in the page layer, then build Plotly traces in the client component.
+The four Plotly scatter pages and the cumulative TVL/APY ECharts page fetch small route-local payloads. Their server builders apply eligibility, grouping, ordering, and cumulative calculations from the shared top-vaults cache; the browser only renders the returned points and manages presentation controls. They do not fetch the complete top-vaults export.
 
 ## Charting libraries
 

@@ -1,4 +1,8 @@
+<!--
+Blockchain overview with market entities and a server-calculated vault summary.
+-->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import ChainHeader from './ChainHeader.svelte';
@@ -6,31 +10,19 @@
 	import BlockInfoTile from './BlockInfoTile.svelte';
 	import TradingEntities from './TradingEntities.svelte';
 	import { formatAmount } from '$lib/helpers/formatters';
-	import { max } from 'd3-array';
 
 	let { data } = $props();
-	let { chain, chainDetails, topVaults, entities } = $derived(data);
-
-	let lastIndexedBlock = $derived.by(() => {
-		if (chainDetails) {
-			return chainDetails.end_block;
-		} else if (topVaults) {
-			return max(topVaults.vaults, (d) => d.last_updated_block);
-		}
-	});
-
-	let lastUpdatedTimestamp = $derived.by(() => {
-		if (chainDetails) {
-			return chainDetails.last_swap_at;
-		} else if (topVaults) {
-			return max(topVaults.vaults, (d) => d.last_updated_at);
-		}
-	});
+	let { chain, chainDetails, vaultSummary, entities } = $derived(data);
+	let lastIndexedBlock = $derived(chainDetails?.end_block ?? vaultSummary?.lastUpdatedBlock);
+	let lastUpdatedTimestamp = $derived(chainDetails?.last_swap_at ?? vaultSummary?.lastUpdatedAt);
 </script>
 
 <svelte:head>
 	<title>{chain.name} decentralised exchanges and trading pairs</title>
-	<meta name="description" content={`Top ${chain.name} tokens and prices`} />
+	<meta
+		name="description"
+		content={`Explore exchanges, trading pairs, tokens, lending markets, and tracked DeFi vaults on ${chain.name}.`}
+	/>
 </svelte:head>
 
 <Breadcrumbs labels={{ [chain.slug]: chain.name }} />
@@ -48,7 +40,7 @@
 			count={chainDetails?.exchanges}
 			title="Exchanges"
 			buttonLabel="See exchanges"
-			href="{chain.slug}/exchanges"
+			href={resolve('/trading-view/[chain=slug]/exchanges', { chain: chain.slug })}
 		>
 			Decentralised exchanges with market data available on Trading Strategy.
 		</SummaryDataTile>
@@ -57,7 +49,7 @@
 			count={chainDetails?.pairs}
 			title="Trading pairs"
 			buttonLabel="See trading pairs"
-			href="{chain.slug}/trading-pairs"
+			href={resolve('/trading-view/[chain=slug]/trading-pairs', { chain: chain.slug })}
 		>
 			Total trading pairs available on Trading Strategy.
 			{formatAmount(chainDetails?.tracked_pairs ?? 0)}
@@ -72,12 +64,12 @@
 		</SummaryDataTile>
 
 		<SummaryDataTile
-			count={topVaults?.vaults.length}
-			title="Top vaults"
+			count={vaultSummary?.count}
+			title="Tracked vaults"
 			buttonLabel="See vaults"
-			href="{chain.slug}/vaults"
+			href={resolve('/trading-view/[chain=slug]/vaults', { chain: chain.slug })}
 		>
-			Top performing DeFi vaults on {chain.name} with a minimum TVL of $50k USD.
+			DeFi vaults tracked on {chain.name}.
 		</SummaryDataTile>
 	</section>
 
@@ -87,7 +79,9 @@
 		{:else}
 			<Alert status="info" title="Limited chain data">
 				We currently offer limited data for {chain.name} blockchain. View
-				<a href="./vaults">top {chain.name} DeFi vaults</a>.
+				<a href={resolve('/trading-view/[chain=slug]/vaults', { chain: chain.slug })}
+					>tracked {chain.name} DeFi vaults</a
+				>.
 			</Alert>
 		{/if}
 	</section>

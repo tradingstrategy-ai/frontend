@@ -10,6 +10,8 @@ export async function load({ fetch, setHeaders }) {
 		impressiveNumbers: await fetchPublicApi<Record<string, MaybeNumber>>(fetch, 'impressive-numbers').catch(
 			optionalDataError('impressive-numbers')
 		),
-		topVaults: await getCachedTopVaults(fetch).catch(optionalDataError('top-vaults'))
+		topVaultCount: await getCachedTopVaults(fetch)
+			.then((topVaults) => topVaults.vaults.length)
+			.catch(optionalDataError('top-vaults'))
 	};
 }
