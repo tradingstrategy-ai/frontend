@@ -226,6 +226,9 @@ page); omit it on the protocol page itself to render the name as plain text.
 	.content {
 		display: grid;
 		gap: 1.25rem;
+		/* The provider mark makes the disclosure header taller than text alone.
+		   Keep its opened copy at the same comfortable distance as Xerberus. */
+		margin-top: 1.25rem;
 	}
 
 	.box-header {
