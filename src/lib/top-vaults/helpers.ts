@@ -258,7 +258,7 @@ export function isPermissionedVault(vault: Pick<VaultInfo, 'whitelist'>) {
 
 /** Return whether a protocol's vault listings should use pool terminology. */
 export function isPoolProtocol(protocolSlug: string | null | undefined): boolean {
-	return protocolSlug === 'gmx';
+	return protocolSlug === 'gmx' || protocolSlug === 'yieldbasis';
 }
 
 type VaultProtocolIdentity =
