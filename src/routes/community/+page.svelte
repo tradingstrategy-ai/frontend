@@ -1,3 +1,6 @@
+<!--
+Community links for discussion, development, social media and publications.
+-->
 <script lang="ts">
 	import { discordUrl } from '$lib/config';
 	import heroImage from '$lib/assets/illustrations/communication-1.svg?raw';
@@ -7,6 +10,7 @@
 	import IconGithub from '~icons/local/github';
 	import IconReadGlasses from '~icons/local/read-glasses';
 	import IconReading from '~icons/local/reading';
+	import IconSpotify from '~icons/local/spotify';
 	import IconTwitter from '~icons/local/twitter';
 	import IconYoutube from '~icons/local/youtube';
 	import IconLinkedin from '~icons/local/linkedin';
@@ -19,7 +23,7 @@
 		slot="hero"
 		image={heroImage}
 		title="Community"
-		subtitle="Join our community of expert traders, strategy developers and quants.<br /> Learn more about the Trading Strategy protocol, algorithmic trading and DeFi markets."
+		subtitle="Join and follow the Trading Strategy community for insights in DeFi, vaults and onchain quant strategies."
 	/>
 
 	<ContentCardsSection cols={3} title="Discuss & develop">
@@ -45,16 +49,6 @@
 	</ContentCardsSection>
 
 	<ContentCardsSection cols={3} title="Follow us">
-		<ContentCard title="Blog" href="/blog">
-			<IconReading slot="icon" />
-			<p>Join our expert community of traders, developers, and analysts and DeFi specialists.</p>
-			<Button slot="cta" label="Read blog" />
-		</ContentCard>
-		<ContentCard title="Twitter" href="https://twitter.com/TradingProtocol" target="_blank" rel="noreferrer">
-			<IconTwitter slot="icon" />
-			<p>Follow us on Twitter for trading alerts, DeFi insight and protocol news.</p>
-			<Button slot="cta" label="Follow us" />
-		</ContentCard>
 		<ContentCard
 			title="YouTube"
 			href="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
@@ -62,8 +56,34 @@
 			rel="noreferrer"
 		>
 			<IconYoutube slot="icon" />
-			<p>Subscribe to our Youtube channel and watch the latest videos on DeFi and algorithmic trading.</p>
+			<p>
+				Find the latest and best strategies and vaults in the Trading Strategy Podcast as we interview quants and vault
+				curators.
+			</p>
 			<Button slot="cta" label="Subscribe to our channel" />
+		</ContentCard>
+		<ContentCard
+			title="Spotify"
+			href="https://open.spotify.com/show/0BXZEqA3uG5hYZiVYVRZP8"
+			target="_blank"
+			rel="noreferrer"
+		>
+			<IconSpotify slot="icon" />
+			<p>
+				Find the latest and best strategies and vaults in the Trading Strategy Podcast as we interview quants and vault
+				curators.
+			</p>
+			<Button slot="cta" label="Listen on Spotify" />
+		</ContentCard>
+		<ContentCard title="Blog" href="/blog">
+			<IconReading slot="icon" />
+			<p>Follow the insights we share from the world's largest vault data collection and analysis.</p>
+			<Button slot="cta" label="Read blog" />
+		</ContentCard>
+		<ContentCard title="Twitter" href="https://twitter.com/TradingProtocol" target="_blank" rel="noreferrer">
+			<IconTwitter slot="icon" />
+			<p>Follow us on Twitter for trading alerts, DeFi insight and protocol news.</p>
+			<Button slot="cta" label="Follow us" />
 		</ContentCard>
 		<ContentCard
 			title="LinkedIn"
