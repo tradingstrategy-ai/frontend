@@ -329,8 +329,8 @@ describe('normaliseVaultProtocol', () => {
 });
 
 describe('isPoolProtocol', () => {
-	test('identifies GMX as a pool protocol', () => {
-		expect(isPoolProtocol('gmx')).toBe(true);
+	test.each(['gmx', 'yieldbasis'])('identifies %s as a pool protocol', (protocolSlug) => {
+		expect(isPoolProtocol(protocolSlug)).toBe(true);
 	});
 
 	test('does not classify other protocols as pool protocols', () => {
