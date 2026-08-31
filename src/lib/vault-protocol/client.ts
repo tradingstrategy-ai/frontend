@@ -1,10 +1,6 @@
 // Client functions for fetching vault protocol metadata
 import { vaultProtocolMetadataUrl } from '$lib/config';
-import {
-	hasSupportedProtocol,
-	isManuallyMappedUnknownProtocolSlug,
-	isUnsupportedProtocolSlug
-} from '$lib/top-vaults/helpers';
+import { isUnknownVaultProtocol } from '$lib/top-vaults/helpers';
 import { type VaultProtocolMetadata, vaultProtocolMetadataSchema } from './schemas';
 
 const CLIENT_TIMEOUT = 5000;
@@ -14,6 +10,7 @@ const CLIENT_TIMEOUT = 5000;
  *
  * @param fetch SvelteKit's fetch function
  * @param protocolSlug the protocol slug (e.g., 'lagoon-finance')
+ * @param protocolName optional protocol display name used to recognise source placeholders
  * @returns parsed metadata or undefined on failure
  */
 export async function fetchVaultProtocolMetadata(
@@ -26,11 +23,7 @@ export async function fetchVaultProtocolMetadata(
 		return undefined;
 	}
 
-	if (
-		isManuallyMappedUnknownProtocolSlug(protocolSlug) ||
-		isUnsupportedProtocolSlug(protocolSlug) ||
-		(protocolName != null && !hasSupportedProtocol({ protocol: protocolName, protocol_slug: protocolSlug }))
-	) {
+	if (isUnknownVaultProtocol({ protocol: protocolName, protocol_slug: protocolSlug })) {
 		return undefined;
 	}
 

@@ -193,6 +193,22 @@ describe('vault listing query', () => {
 		expect(queryVaultListing([vault, pool], query, options).vaults.map((item) => item.name)).toEqual(['Vault']);
 	});
 
+	it('hides explicitly unknown protocols when sorting by three-month Sharpe', () => {
+		const known = createTestVault('Known', {
+			current_nav: 100_000,
+			three_months_sharpe: 1
+		});
+		const unknown = createTestVault('Unknown', {
+			current_nav: 100_000,
+			protocol: 'Unknown',
+			protocol_slug: 'unrelated-slug',
+			three_months_sharpe: 10
+		});
+		const query = parseVaultListingQuery(new URLSearchParams('sort=three_months_sharpe'), { tvl: '10k' });
+
+		expect(queryVaultListing([known, unknown], query, options).vaults.map((item) => item.name)).toEqual(['Known']);
+	});
+
 	it('only accepts provider rating sorting on a provider listing', () => {
 		const params = new URLSearchParams('sort=provider_risk_rating');
 

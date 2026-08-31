@@ -42,6 +42,12 @@ unchecking the control adds `amm=0` to show AMM pools. `amm=1` makes the
 default hiding explicit. The filter uses the exported feature classification,
 not a protocol-name allowlist.
 
+### Unknown protocol filter
+
+The **Unknown protocols** checkbox in the **Hide vaults** group excludes vault records whose underlying protocol was not identified by the source dataset. It does not mean that a known protocol is unsupported. Broad vault listings enable the filter by default; unchecking it adds `unknown=0` to the URL. Protocol, stablecoin, curator, fund, permissioned-vault, and provider-rating listings explicitly include unidentified records where required by their scope; the protocol detail page omits the control because hiding its own unknown-protocol group would contradict the page's purpose.
+
+Unknown-protocol classification is applied before sorting and pagination through the shared listing query. Consequently, changing the sort column—including **3M Sharpe**—cannot reintroduce unidentified records. The browser compatibility filter uses the same `isUnknownVaultProtocol()` predicate as the server query.
+
 ### Volatility filter
 
 The **Volatility** control filters the annualised three-month volatility value.

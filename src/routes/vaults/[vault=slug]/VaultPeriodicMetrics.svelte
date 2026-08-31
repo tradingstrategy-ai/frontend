@@ -14,6 +14,7 @@ Performance metrics table for a vault across multiple lookback periods.
 		formatNumber,
 		notFilledMarker
 	} from '$lib/helpers/formatters';
+	import { getVaultProtocolDisplayName, isUnknownVaultProtocol } from '$lib/top-vaults/helpers';
 	import { base } from '$app/paths';
 
 	interface Props {
@@ -69,6 +70,7 @@ Performance metrics table for a vault across multiple lookback periods.
 
 	type RowDefinition = {
 		label: string | (() => string);
+		href?: string;
 		field: keyof PeriodMetrics;
 		formatter: (value: unknown) => string;
 		hidden?: boolean; // hidden until expanded
@@ -85,30 +87,35 @@ Performance metrics table for a vault across multiple lookback periods.
 	// Row definitions in display order
 	let rows: RowDefinition[] = $derived([
 		{
-			label: `<a href="${base}/vaults">Ranking overall</a>`,
+			label: 'Ranking overall',
+			href: `${base}/vaults`,
 			field: 'ranking_overall',
 			formatter: (v) => (v != null ? `#${v}` : notFilledMarker),
 			excluded: !showRankings
 		},
 		{
-			label: `<a href="${base}/vaults/chains/${chain.slug}">Ranking on ${chain.name}</a>`,
+			label: `Ranking on ${chain.name}`,
+			href: `${base}/vaults/chains/${chain.slug}`,
 			field: 'ranking_chain',
 			formatter: (v) => (v != null ? `#${v}` : notFilledMarker),
 			excluded: !showRankings
 		},
 		{
-			label: `<a href="${base}/vaults/protocols/${vault.protocol_slug}">Ranking on ${vault.protocol}</a>`,
+			label: `Ranking on ${getVaultProtocolDisplayName(vault)}`,
+			href: `${base}/vaults/protocols/${vault.protocol_slug}`,
 			field: 'ranking_protocol',
 			formatter: (v) => (v != null ? `#${v}` : notFilledMarker),
-			excluded: !showRankings || vault.protocol?.includes('<')
+			excluded: !showRankings || isUnknownVaultProtocol(vault)
 		},
 		{
-			label: '<a href="/glossary/cagr">CAGR</a> (net)',
+			label: 'CAGR (net)',
+			href: `${base}/glossary/cagr`,
 			field: 'cagr_net',
 			formatter: (v) => (hasNetFees ? formatPercentProfit(v as number | null) : notFilledMarker)
 		},
 		{
-			label: '<a href="/glossary/cagr">CAGR</a> (gross)',
+			label: 'CAGR (gross)',
+			href: `${base}/glossary/cagr`,
 			field: 'cagr_gross',
 			formatter: (v) => formatPercentProfit(v as number | null)
 		},
@@ -119,29 +126,34 @@ Performance metrics table for a vault across multiple lookback periods.
 		},
 		{ label: 'Returns (gross)', field: 'returns_gross', formatter: (v) => formatPercentProfit(v as number | null) },
 		{
-			label: '<a href="/glossary/sharpe">Sharpe</a> ratio',
+			label: 'Sharpe ratio',
+			href: `${base}/glossary/sharpe`,
 			field: 'sharpe',
 			formatter: (v) => formatKeyMetricNumber(v as number | null)
 		},
 		{
-			label: '<a href="/glossary/maximum-drawdown">Max drawdown</a>',
+			label: 'Max drawdown',
+			href: `${base}/glossary/maximum-drawdown`,
 			field: 'max_drawdown',
 			formatter: (v) => formatPercent(v as number | null)
 		},
 		{
-			label: '<a href="/glossary/volatility">Volatility</a>',
+			label: 'Volatility',
+			href: `${base}/glossary/volatility`,
 			field: 'volatility',
 			formatter: (v) => formatPercent(v as number | null),
 			hidden: true
 		},
 		{
-			label: '<a href="/glossary/total-value-locked-tvl">TVL</a> low',
+			label: 'TVL low',
+			href: `${base}/glossary/total-value-locked-tvl`,
 			field: 'tvl_low',
 			formatter: (v) => formatDollar(v as number | null),
 			hidden: true
 		},
 		{
-			label: '<a href="/glossary/total-value-locked-tvl">TVL</a> high',
+			label: 'TVL high',
+			href: `${base}/glossary/total-value-locked-tvl`,
 			field: 'tvl_high',
 			formatter: (v) => formatDollar(v as number | null),
 			hidden: true
@@ -210,7 +222,7 @@ Performance metrics table for a vault across multiple lookback periods.
 					<thead>
 						<tr>
 							<th class="label-col">Metric</th>
-							{#each periodOrder as period}
+							{#each periodOrder as period (period)}
 								<th>{periodLabels[period]}</th>
 							{/each}
 						</tr>
@@ -219,15 +231,22 @@ Performance metrics table for a vault across multiple lookback periods.
 						{#if hasAnyError}
 							<tr class="error-row">
 								<td class="label">Error</td>
-								{#each periodOrder as period}
+								{#each periodOrder as period (period)}
 									<td class="error-value">{periodMap[period]?.error_reason ?? notFilledMarker}</td>
 								{/each}
 							</tr>
 						{/if}
-						{#each visibleRows as row}
+						{#each visibleRows as row (row.field)}
 							<tr>
-								<td class="label">{@html getLabel(row)}</td>
-								{#each periodOrder as period}
+								<td class="label">
+									{#if row.href}
+										<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- href includes the configured base path -->
+										<a href={row.href}>{getLabel(row)}</a>
+									{:else}
+										{getLabel(row)}
+									{/if}
+								</td>
+								{#each periodOrder as period (period)}
 									<td>
 										{#if hasNetTransactionFees && isNetReturn(row)}
 											<Tooltip>

@@ -10,6 +10,15 @@ async function openFilters(page: import('@playwright/test').Page) {
 }
 
 test.describe('vault protocol detail pages', () => {
+	test('redirects legacy unknown-protocol slugs to the canonical group', async ({ page }) => {
+		await page.goto('/vaults/protocols/protocol-not-yet-identified?sort=tvl');
+
+		await expect(page).toHaveURL('/vaults/protocols/unknown?sort=tvl');
+		await expect(page).toHaveTitle('Vaults with unidentified protocols');
+		await expect(page.getByRole('heading', { level: 1 })).toHaveText('Vaults with unidentified protocols');
+		await expect(page.getByText('No chart data available.')).not.toBeVisible();
+	});
+
 	test('shows GMX AMM pools by default and identifies an AMM vault as a pool', async ({ page }) => {
 		await page.goto('/vaults/protocols/gmx');
 

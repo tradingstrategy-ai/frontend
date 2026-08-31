@@ -7,7 +7,7 @@ Displays a vault's heading, external link, update action, and description.
 	import Button from '$lib/components/Button.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import UpdateInfoButton from '$lib/top-vaults/UpdateInfoButton.svelte';
-	import { getVaultProtocolDisplayName, hasSupportedProtocol } from '$lib/top-vaults/helpers';
+	import { getVaultProtocolDisplayName, isUnknownVaultProtocol } from '$lib/top-vaults/helpers';
 
 	interface Props {
 		vault: VaultInfo;
@@ -31,7 +31,7 @@ Displays a vault's heading, external link, update action, and description.
 		if (externalVaultUrl && new URL(externalVaultUrl).hostname === FIRA_HOSTNAME) return 'Fira';
 
 		// Other supported vaults continue to use their protocol name in the call to action.
-		if (hasSupportedProtocol(vault)) return getVaultProtocolDisplayName(vault);
+		if (!isUnknownVaultProtocol(vault)) return getVaultProtocolDisplayName(vault);
 
 		// Unknown-protocol vaults fall back to the hostname of their external destination.
 		if (externalVaultUrl) return new URL(externalVaultUrl).host;
