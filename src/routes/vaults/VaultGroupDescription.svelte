@@ -20,9 +20,9 @@ excluded vault count from the loaded vault data.
 	import {
 		calculateTotalTvl,
 		calculateTvlWeightedApy,
-		hasSupportedProtocol,
 		isBlacklisted,
 		isEligibleVaultGroupMiniChartVault,
+		isUnknownVaultProtocol,
 		getProtocolDisplayName,
 		resolveVaultDetails
 	} from '$lib/top-vaults/helpers';
@@ -53,7 +53,7 @@ excluded vault count from the loaded vault data.
 
 	let totalTvl = $derived(listingSummary?.totalTvl ?? calculateTotalTvl(statsVaults));
 	let protocolCount = $derived(
-		new SvelteSet(statsVaults.filter(hasSupportedProtocol).map((v) => v.protocol_slug)).size
+		new SvelteSet(statsVaults.filter((vault) => !isUnknownVaultProtocol(vault)).map((v) => v.protocol_slug)).size
 	);
 	// dedupe by name so the same fund deployed on multiple chains isn't repeated
 	let largestVaults = $derived.by(() => {
@@ -70,7 +70,7 @@ excluded vault count from the loaded vault data.
 	let topProtocols = $derived.by(() => {
 		const tvlByProtocol = new SvelteMap<string, { slug: string; name: string; tvl: number }>();
 		for (const vault of statsVaults) {
-			if (!hasSupportedProtocol(vault)) continue;
+			if (isUnknownVaultProtocol(vault)) continue;
 			const entry = tvlByProtocol.get(vault.protocol_slug) ?? {
 				slug: vault.protocol_slug,
 				name: getProtocolDisplayName(vault.protocol, vault.protocol_slug),

@@ -4,8 +4,8 @@ import { getChain, getChainDisplayName } from '$lib/helpers/chain';
 import {
 	getProtocolDisplayName,
 	getVaultProtocolDisplayName,
-	hasSupportedProtocol,
 	isBlacklisted,
+	isUnknownVaultProtocol,
 	resolveVaultDetails
 } from '$lib/top-vaults/helpers';
 import type { VaultInfo } from '$lib/top-vaults/schemas';
@@ -152,7 +152,7 @@ export function buildYieldChartData(
 			excludedCount: base.length - included.length
 		};
 	}
-	const included = base.filter(hasSupportedProtocol);
+	const included = base.filter((vault) => !isUnknownVaultProtocol(vault));
 	return {
 		traces: groupedTraces(
 			included,
@@ -194,7 +194,7 @@ export function buildTvlChartData(
 			`3M return (ann.): ${returnLabel(vault.three_months_cagr)}`
 		].join('<br>')
 	});
-	const chartVaults = colourBy === 'chain' ? included : included.filter(hasSupportedProtocol);
+	const chartVaults = colourBy === 'chain' ? included : included.filter((vault) => !isUnknownVaultProtocol(vault));
 	const nameFor =
 		colourBy === 'chain'
 			? (vault: VaultInfo) => getChain(vault.chain_id)!.name

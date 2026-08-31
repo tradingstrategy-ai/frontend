@@ -17,10 +17,10 @@ import {
 	getVaultPeakTvlUsd,
 	getCore3PolForVault,
 	getVaultProtocolDisplayName,
-	hasSupportedProtocol,
 	isAmmPoolLikeVault,
 	isBlacklisted,
 	isPermissionedVault,
+	isUnknownVaultProtocol,
 	matchesVolatilityFilter,
 	monthlyReturnFilterOptions,
 	rankVaultsBy,
@@ -198,7 +198,7 @@ export function queryVaultListing(
 				return false;
 		}
 		if (query.closed && vault.deposit_closed_reason != null) return false;
-		if (query.unknown && !hasSupportedProtocol(vault)) return false;
+		if (query.unknown && isUnknownVaultProtocol(vault)) return false;
 		if (query.amm && isAmmPoolLikeVault(vault)) return false;
 		if (query.private && isPermissionedVault(vault)) return false;
 		const search = [

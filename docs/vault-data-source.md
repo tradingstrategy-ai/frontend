@@ -72,6 +72,12 @@ The public `/top-vaults/chart-data` endpoint remains for the landing-page chart,
 
 The frontend presents every raw `USD` accounting denomination as `USD (offchain)` with the `usd-offchain` slug. This includes Kinexys vaults, whose source data can instead expose a USDC settlement-token address. The normalisation happens in `src/lib/top-vaults/client.ts` before any server page, listing, or chart builder consumes the dataset. Despite the historical filename, this module is server-only because its dependency chain reads private runtime configuration. It groups all off-chain USD accounting balances together and prevents them from being presented as an on-chain stablecoin token.
 
+#### Unknown protocol identity
+
+The source export has used several values when it cannot identify a vault's underlying protocol: empty fields, angle-bracket placeholders, the literal `Unknown`, and generic or legacy slugs such as `erc-4626`. The frontend does not interpret these as evidence that a known protocol is unsupported. It classifies them as unidentified source records.
+
+`isUnknownVaultProtocol()` is the single classification path for both full vault records and slug-only consumers such as protocol-logo lookup. An explicit unknown value in either source field takes precedence, while a blank slug does not erase a recognised protocol name. During `fetchTopVaults()`, `normaliseVaultProtocol()` rewrites every recognised variant to the display name `Unknown vault protocol` and the canonical slug `unknown`. All page loaders, filters, charts, search results, metadata requests, and detail-page links therefore consume the same identity. Previously published routes using a recognised legacy placeholder slug permanently redirect to `/vaults/protocols/unknown`.
+
 #### Whitelist status
 
 Each vault may include a `whitelist` object that records whether deposits are publicly available:

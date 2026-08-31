@@ -30,9 +30,9 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 		getMorphoFlags,
 		getVaultAssetType,
 		getVaultProtocolDisplayName,
-		hasSupportedProtocol,
 		isBlacklisted,
 		isPermissionedVault,
+		isUnknownVaultProtocol,
 		isVaultDepositCapped,
 		shouldShowVaultTvlDownMoreThan95PercentWarning
 	} from '$lib/top-vaults/helpers';
@@ -55,7 +55,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	let isCapped = $derived(isVaultDepositCapped(vault));
 	let showTvlWarning = $derived(shouldShowVaultTvlDownMoreThan95PercentWarning(vault));
 	let showLongDurationWarning = $derived(vault.flags.includes('long_duration'));
-	let hasUnsupportedProtocol = $derived(!hasSupportedProtocol(vault));
+	let hasUnknownProtocol = $derived(isUnknownVaultProtocol(vault));
 	let depositMayBeDisabled = $derived(vault.deposit_closed_reason != null);
 	let redemptionMayBeDisabled = $derived(vault.redemption_closed_reason != null);
 	let operationWarning = $derived(
@@ -78,7 +78,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 			showTvlWarning ||
 			showLongDurationWarning ||
 			showBlacklistedAlert ||
-			hasUnsupportedProtocol
+			hasUnknownProtocol
 	);
 	let chartLogoUrl = $derived(
 		getCuratorSocialLogoUrl(curatorMetadata) ??
@@ -144,11 +144,11 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 					</Alert>
 				{/if}
 
-				{#if hasUnsupportedProtocol}
-					<Alert size="md" status="warning" title="Protocol not supported">
+				{#if hasUnknownProtocol}
+					<Alert size="md" status="warning" title="Protocol not identified">
 						<div>
-							This protocol is not supported yet. Contact us on Discord for information about how to include new
-							protocols.
+							The underlying protocol has not been identified in the vault dataset yet. Contact us on Discord if you can
+							help identify it.
 						</div>
 						<Button slot="cta" size="sm" label="Join Discord" href={discordUrl} target="_blank" rel="noreferrer">
 							<IconDiscord slot="icon" />

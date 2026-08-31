@@ -70,9 +70,9 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		getVaultDenominationCurrency,
 		getVaultPeakTvlUsd,
 		getVaultTvlNative,
-		hasSupportedProtocol,
 		isAmmPoolLikeVault,
 		isBlacklisted,
+		isUnknownVaultProtocol,
 		isPoolProtocol,
 		isPermissionedVault,
 		isVaultDepositCapped,
@@ -668,7 +668,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 			if (hideClosed && v.deposit_closed_reason != null) return false;
 
 			// Hide unknown protocol filter (checkbox-driven)
-			if (hideUnknown && !hasSupportedProtocol(v)) return false;
+			if (hideUnknown && isUnknownVaultProtocol(v)) return false;
 
 			// Hide AMM pool filter (checkbox-driven)
 			if (hideAmm && isAmmPoolLikeVault(v)) return false;

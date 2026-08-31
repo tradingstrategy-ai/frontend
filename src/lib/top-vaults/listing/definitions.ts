@@ -8,6 +8,7 @@ import { getChainsBySlug } from '$lib/helpers/chain';
 import {
 	DEFAULT_TVL_KEY,
 	MAX_SUMMARY_TVL_USD,
+	UNKNOWN_VAULT_PROTOCOL_SLUG,
 	isBlacklisted,
 	isPermissionedVault,
 	isUnknownVaultProtocol
@@ -165,7 +166,7 @@ export function filterVaultListingScope(vaults: VaultInfo[], key: VaultListingKe
 		case 'protocol':
 			if (!scope) return [];
 			return vaults.filter((vault) =>
-				scope === 'unknown' ? isUnknownVaultProtocol(vault) : vault.protocol_slug === scope
+				scope === UNKNOWN_VAULT_PROTOCOL_SLUG ? isUnknownVaultProtocol(vault) : vault.protocol_slug === scope
 			);
 		case 'stablecoin':
 			return scope ? vaults.filter((vault) => vault.denomination_slug === scope) : [];
