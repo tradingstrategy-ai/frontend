@@ -80,6 +80,8 @@ This project uses Svelte 5 with experimental features enabled in `svelte.config.
 - Backend API communication via configured `backendUrl`
 - Server-side fetch uses `backendInternalUrl` when available (internal network optimisation)
 - SWR-style caching utilities in `src/lib/swrCache.ts`
+- Complete vault metadata is read only by server code from private R2 or `TS_PRIVATE_TOP_VAULTS_URL` and cached in memory
+- Page loaders and JSON endpoints project that metadata into bounded records, matched records, aggregates, or chart payloads before returning it to the browser
 
 ### Theming
 

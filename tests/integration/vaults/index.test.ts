@@ -36,18 +36,40 @@ async function getVaultRow(page: import('@playwright/test').Page, name: string) 
 	return row;
 }
 
-/** Load every progressive batch so a control below the table is reachable. */
+/** Load every server continuation batch so a control below the table is reachable. */
 async function loadAllVaultRows(page: import('@playwright/test').Page) {
-	for (let attempt = 0; attempt < 10; attempt++) {
-		const sentinel = page.getByTestId('load-more-sentinel');
-		if ((await sentinel.count()) === 0) return;
+	const meta = await page.getByTestId('top-vaults-meta').textContent();
+	const expectedRowCount = Number(
+		meta
+			?.trim()
+			.match(/^([\d,]+)/)?.[1]
+			.replaceAll(',', '')
+	);
+	if (!Number.isFinite(expectedRowCount)) throw new Error(`Could not read the vault count from: ${meta}`);
 
+	for (let attempt = 0; attempt < 20; attempt++) {
 		const rowCount = await page.locator('tbody tr.targetable').count();
-		await sentinel.scrollIntoViewIfNeeded();
-		await expect.poll(() => page.locator('tbody tr.targetable').count()).toBeGreaterThan(rowCount);
+		if (rowCount === expectedRowCount) return;
+		await expect
+			.poll(async () => {
+				await page.evaluate(
+					() =>
+						new Promise<void>((resolve) => {
+							window.scrollTo(0, 0);
+							requestAnimationFrame(() =>
+								requestAnimationFrame(() => {
+									document.querySelector('[data-testid="load-more-sentinel"]')?.scrollIntoView();
+									resolve();
+								})
+							);
+						})
+				);
+				return page.locator('tbody tr.targetable').count();
+			})
+			.toBeGreaterThan(rowCount);
 	}
 
-	await expect(page.getByTestId('load-more-sentinel')).toHaveCount(0);
+	await expect(page.locator('tbody tr.targetable')).toHaveCount(expectedRowCount);
 }
 
 async function toggleReturnOption(page: import('@playwright/test').Page, label: string) {
@@ -459,6 +481,132 @@ test.describe('vault index page', () => {
 		expect(documentNavigationUrl).toBeUndefined();
 	});
 
+	test('clears revealed blacklisted rows after a server-loaded sort navigation', async ({ page }) => {
+		await page.setViewportSize({ width: 1280, height: 720 });
+		await loadAllVaultRows(page);
+
+		await page.getByTestId('show-blacklisted-vaults').click();
+		await expect(page.locator('tbody tr.targetable')).toHaveCount(255);
+
+		await page.locator('th.vault button').click();
+		await expect(page).toHaveURL(/sort=vault/);
+		await loadAllVaultRows(page);
+
+		const rows = page.locator('tbody tr.targetable');
+		await expect(rows).toHaveCount(255);
+		await expect(rows.filter({ hasText: 'atvPTmax' })).toHaveCount(1);
+	});
+
+	test('ignores a continuation response from the listing before navigation', async ({ page }) => {
+		let releaseResponse!: () => void;
+		let markRequestStarted!: () => void;
+		const responseReleased = new Promise<void>((resolve) => (releaseResponse = resolve));
+		const requestStarted = new Promise<void>((resolve) => (markRequestStarted = resolve));
+
+		await page.route('**/top-vaults/listing-data?**', async (route) => {
+			const requestUrl = new URL(route.request().url());
+			if (requestUrl.searchParams.get('offset') !== '125' || requestUrl.searchParams.has('sort')) {
+				await route.continue();
+				return;
+			}
+
+			const upstream = await route.fetch();
+			const payload = await upstream.json();
+			markRequestStarted();
+			await responseReleased;
+			await route.fulfill({
+				response: upstream,
+				headers: { ...upstream.headers(), 'x-stale-continuation': '1' },
+				json: {
+					...payload,
+					vaults: payload.vaults.map((vault: Record<string, unknown>, index: number) => ({
+						...vault,
+						name: `Stale continuation ${index}`
+					}))
+				}
+			});
+		});
+
+		await page.getByTestId('load-more-sentinel').scrollIntoViewIfNeeded();
+		await requestStarted;
+		await page.locator('th.vault button').click();
+		await expect(page).toHaveURL(/sort=vault/);
+
+		const staleResponse = page.waitForResponse((response) => response.headers()['x-stale-continuation'] === '1');
+		releaseResponse();
+		await staleResponse;
+		await page.evaluate(
+			() => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
+		);
+		await expect(page.locator('tbody tr.targetable').filter({ hasText: 'Stale continuation' })).toHaveCount(0);
+	});
+
+	test('reveals the complete broader risk population from a narrower filter', async ({ page }) => {
+		await page.goto('/vaults?risk=5');
+		await loadAllVaultRows(page);
+		await expect(page.locator('tbody tr.targetable').filter({ hasText: 'Above TVL 009' })).toHaveCount(0);
+
+		await page.getByTestId('show-blacklisted-vaults').click();
+		await expect(page.getByTestId('top-vaults-meta')).toContainText('255 vaults');
+		await loadAllVaultRows(page);
+
+		await expect(page.locator('tbody tr.targetable').filter({ hasText: 'Above TVL 009' })).toHaveCount(1);
+		await expect(page.locator('tbody tr.targetable')).toHaveCount(255, { timeout: 15_000 });
+	});
+
+	test('continues a blacklisted reveal when the original listing fits in one server page', async ({ page }) => {
+		let templateVault: Record<string, unknown> | undefined;
+		let revealRequestCount = 0;
+
+		await page.route('**/top-vaults/listing-data?**', async (route) => {
+			const requestUrl = new URL(route.request().url());
+			if (requestUrl.searchParams.get('risk') !== '0') {
+				await route.continue();
+				return;
+			}
+
+			const upstream = await route.fetch();
+			const payload = await upstream.json();
+			templateVault ??= payload.vaults[0];
+			if (!templateVault) throw new Error('Expected a blacklisted high-TVL fixture');
+
+			const offset = Number(requestUrl.searchParams.get('offset') ?? '0');
+			const batchSize = offset === 0 ? 50 : 1;
+			const vaults = Array.from({ length: batchSize }, (_, index) => ({
+				...templateVault,
+				id: `pagination-blacklisted-${offset + index}`,
+				name: `Pagination blacklisted ${String(offset + index).padStart(2, '0')}`,
+				vault_slug: `pagination-blacklisted-${offset + index}`,
+				risk: 'Blacklisted',
+				risk_numeric: 999
+			}));
+			revealRequestCount++;
+
+			await route.fulfill({
+				response: upstream,
+				json: {
+					...payload,
+					vaults,
+					nextOffset: offset + vaults.length,
+					hasMore: offset + vaults.length < 51,
+					listingSummary: payload.listingSummary
+				}
+			});
+		});
+
+		await page.goto('/vaults/high-tvl');
+		await page.getByTestId('show-blacklisted-vaults').click();
+
+		const paginationRows = page.locator('tbody tr.targetable').filter({ hasText: 'Pagination blacklisted' });
+		await expect(paginationRows).toHaveCount(50);
+		const sentinel = page.getByTestId('load-more-sentinel');
+		await expect(sentinel).toBeVisible();
+		await sentinel.scrollIntoViewIfNeeded();
+		await expect(paginationRows).toHaveCount(51);
+		await expect(sentinel).toHaveCount(0);
+		expect(revealRequestCount).toBe(2);
+	});
+
 	test('shows only whitelisted vaults', async ({ page }) => {
 		await page.goto('/vaults/whitelisted');
 
@@ -470,7 +618,7 @@ test.describe('vault index page', () => {
 		await expect(page.locator('h1')).toHaveText('Whitelisted stablecoin vaults');
 		await expect(page.locator('meta[name="description"]')).toHaveAttribute(
 			'content',
-			'This ranking contains only vaults that are not open to public and have some sort of permissioned deposits.'
+			'This ranking contains vaults whose deposits are permissioned or restricted by an allowlist.'
 		);
 	});
 
@@ -515,8 +663,8 @@ test.describe('vault index page', () => {
 		await expect(rows).toHaveCount(175);
 	});
 
-	test('loads 500 vaults through progressive scrolling', async ({ page }) => {
-		await page.goto('/vaults?tvl=any&q=Progressive%20scroll%20vault');
+	test('loads 500 vaults through server continuation requests', async ({ page }) => {
+		await page.goto('/vaults?tvl=any&q=Continuation%20vault');
 
 		const rows = page.locator('tbody tr.targetable');
 		const sentinel = page.getByTestId('load-more-sentinel');

@@ -33,9 +33,16 @@ test.describe('vault protocol detail pages', () => {
 		await page.goto('/vaults/protocols/apex');
 
 		const rows = page.locator('tbody tr.targetable');
-		await expect(rows).toHaveCount(2);
+		await expect(rows).toHaveCount(125, { timeout: 15_000 });
 		await expect(rows.first()).toContainText('ApeX high TVL vault');
-		await expect(rows.nth(1)).toContainText('ApeX high return vault');
-		await expect(page.locator('thead th.tvl svg')).toBeVisible();
+		await expect(rows.nth(124)).toContainText('ApeX pagination vault 123');
+
+		await expect
+			.poll(async () => {
+				await page.evaluate(() => document.querySelector('[data-testid="load-more-sentinel"]')?.scrollIntoView());
+				return rows.count();
+			})
+			.toBe(130);
+		await expect(rows.last()).toContainText('ApeX high return vault');
 	});
 });

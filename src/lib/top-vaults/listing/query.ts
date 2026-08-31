@@ -5,7 +5,7 @@
  * a page boundary can never sort a different prefix from the server.
  */
 import { getChainDisplayName } from '$lib/helpers/chain';
-import type { VaultInfo } from '../schemas';
+import type { Core3Protocol, VaultInfo } from '../schemas';
 import {
 	calculateTotalTvl,
 	calculateTvlWeightedApy,
@@ -15,6 +15,7 @@ import {
 	getMonthlyReturn,
 	getVaultCurrentTvlUsd,
 	getVaultPeakTvlUsd,
+	getCore3PolForVault,
 	getVaultProtocolDisplayName,
 	hasSupportedProtocol,
 	isAmmPoolLikeVault,
@@ -56,6 +57,8 @@ export interface VaultListingOptions {
 	includeBlacklistedInStats: boolean;
 	maxSummaryTvlUsd?: number;
 	treasuryRate?: number | null;
+	/** Provider whose risk score is used by the provider_risk_rating sort. */
+	ratingProvider?: 'core3' | 'xerberus';
 }
 
 export interface VaultListingResult {
@@ -67,6 +70,22 @@ export interface VaultListingResult {
 	avgTvlWeightedApy1M: number | null;
 }
 
+/**
+ * Return whether a vault falls inside one technical-risk filter range.
+ *
+ * @param vault - Vault whose numeric technical risk is checked.
+ * @param riskFilter - Inclusive risk range selected by the listing.
+ */
+export function matchesVaultRisk(
+	vault: Pick<VaultInfo, 'risk_numeric'>,
+	riskFilter: Pick<(typeof riskFilterOptions)[number], 'minValue' | 'maxValue'>
+): boolean {
+	if (vault.risk_numeric != null) {
+		return vault.risk_numeric >= riskFilter.minValue && vault.risk_numeric <= riskFilter.maxValue;
+	}
+	return riskFilter.minValue === 0 && riskFilter.maxValue >= 50;
+}
+
 function compareStrings(value: (vault: VaultInfo) => string) {
 	return (a: VaultInfo, b: VaultInfo) => value(a).localeCompare(value(b));
 }
@@ -76,7 +95,13 @@ function canonicalKey(vault: VaultInfo): string {
 }
 
 /** Sort the full matching population using a stable canonical tie-breaker. */
-export function sortVaults(vaults: VaultInfo[], sort: string, direction: VaultSortDirection): VaultInfo[] {
+export function sortVaults(
+	vaults: VaultInfo[],
+	sort: string,
+	direction: VaultSortDirection,
+	ratingProvider?: VaultListingOptions['ratingProvider'],
+	core3Protocols: Record<string, Core3Protocol> = {}
+): VaultInfo[] {
 	const comparator = (() => {
 		switch (sort) {
 			case 'chain':
@@ -106,6 +131,16 @@ export function sortVaults(vaults: VaultInfo[], sort: string, direction: VaultSo
 				return rankVaultsBy(['lockup'], Infinity);
 			case 'risk':
 				return rankVaultsBy(['risk_numeric'], Infinity);
+			case 'provider_risk_rating':
+				return (a: VaultInfo, b: VaultInfo) => {
+					const score = (vault: VaultInfo) =>
+						ratingProvider === 'xerberus'
+							? (vault.xerberus?.score ?? -Infinity)
+							: (getCore3PolForVault(vault, core3Protocols)?.score ?? Infinity);
+					const aScore = score(a);
+					const bScore = score(b);
+					return aScore - bScore;
+				};
 			default:
 				return compareVaultsByReturn(sort as ReturnColumnId);
 		}
@@ -144,12 +179,7 @@ export function queryVaultListing(
 		if (options.showFilters && ((age.value > 0 && years < age.value) || (age.maxAge < Infinity && years >= age.maxAge)))
 			return false;
 		if (options.showFilters && (riskFilter.minValue > 0 || riskFilter.maxValue < Infinity)) {
-			if (
-				vault.risk_numeric != null
-					? vault.risk_numeric < riskFilter.minValue || vault.risk_numeric > riskFilter.maxValue
-					: !(riskFilter.minValue === 0 && riskFilter.maxValue >= 50)
-			)
-				return false;
+			if (!matchesVaultRisk(vault, riskFilter)) return false;
 		}
 		if (options.showFilters && dd.value < Infinity) {
 			const maxDrawdown = getLifetimeMaxDrawdown(vault);
@@ -197,7 +227,7 @@ export function queryVaultListing(
 	const stats = options.includeBlacklistedInStats ? matches : matches.filter((vault) => !isBlacklisted(vault));
 	const statsWithUsdTvl = stats.map(withVaultCurrentTvlUsd);
 	return {
-		vaults: sortVaults(matches, query.sort, query.direction),
+		vaults: sortVaults(matches, query.sort, query.direction, options.ratingProvider),
 		hiddenByTvl: hiddenVaults.length,
 		hiddenBlacklistedCount,
 		hiddenVaults,

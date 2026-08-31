@@ -55,6 +55,7 @@ export function parseVaultListingQuery(
 ): VaultListingQuery {
 	const rawSort = params.get('sort') ?? defaults.sort ?? DEFAULT_RETURN_COLUMN_IDS[0];
 	const sort = canonicaliseReturnSortKey(rawSort) ?? rawSort;
+	const sortAllowed = sortKeys.has(sort) || (sort === 'provider_risk_rating' && defaults.sort === sort);
 	const direction = params.get('direction');
 	return {
 		tvl: tvlFilterOptions.some((item) => item.key === params.get('tvl'))
@@ -72,7 +73,7 @@ export function parseVaultListingQuery(
 		unknown: params.get('unknown') == null ? (defaults.unknown ?? true) : params.get('unknown') === '1',
 		amm: params.get('amm') == null ? (defaults.amm ?? true) : params.get('amm') === '1',
 		private: params.get('private') === '1',
-		sort: sortKeys.has(sort) ? sort : (defaults.sort ?? DEFAULT_RETURN_COLUMN_IDS[0]),
+		sort: sortAllowed ? sort : (defaults.sort ?? DEFAULT_RETURN_COLUMN_IDS[0]),
 		direction: direction === 'asc' || direction === 'desc' ? direction : (defaults.direction ?? 'desc')
 	};
 }

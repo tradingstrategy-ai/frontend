@@ -1,3 +1,6 @@
+<!--
+Vault listing and overview for one blockchain or perpetual DEX venue.
+-->
 <script lang="ts">
 	import { isPerpDexChainId } from '$lib/helpers/chain';
 	import { page } from '$app/state';
@@ -10,9 +13,6 @@
 
 	let { data } = $props();
 	let { chain, chainSlug, chainName, initialTopVaults } = $derived(data);
-	let topVaults = $derived(initialTopVaults);
-	let totalVaultCount = $derived(data.totalVaultCount);
-	let loading = false;
 
 	let title = $derived(`${chainName} stablecoin vaults`);
 	let description = $derived(`Top stablecoin vaults on ${chainName} blockchain ranked by performance.`);
@@ -54,10 +54,9 @@
 
 <TopVaultsPage
 	{chain}
-	{topVaults}
-	{totalVaultCount}
-	{loading}
-	progressive={data.initialVaultListingHasMore}
+	topVaults={initialTopVaults}
+	totalVaultCount={data.totalVaultCount}
+	initialHasMore={data.initialHasMore}
 	listingKey={data.listingKey}
 	listingScope={data.listingScope}
 	listingSummary={data.listingSummary}
@@ -66,12 +65,12 @@
 	{defaultTvlKey}
 >
 	{#snippet detailDescription()}
-		{#if topVaults?.vaults.length}
+		{#if initialTopVaults.vaults.length}
 			<VaultGroupDescription
 				title="About {chainName} vaults"
 				subject={descriptionSubject}
-				vaults={topVaults.vaults}
-				listingSummary={data.initialVaultListingHasMore ? data.listingSummary : undefined}
+				vaults={initialTopVaults.vaults}
+				listingSummary={data.initialHasMore ? data.listingSummary : undefined}
 			/>
 		{:else}
 			<div></div>

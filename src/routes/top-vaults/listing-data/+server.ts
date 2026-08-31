@@ -1,10 +1,11 @@
 import { json, error } from '@sveltejs/kit';
 import { getVaultListingDefinition, isVaultListingKey } from '$lib/top-vaults/listing/definitions';
 import { createVaultListingSummary, loadVaultListingContinuation } from '$lib/server/top-vaults/listing';
+import { riskFilterOptions } from '$lib/top-vaults/helpers';
+import { matchesVaultRisk } from '$lib/top-vaults/listing/query';
 import { VAULT_LISTING_PAGE_SIZE } from '$lib/top-vaults/listing/types';
-import { isBlacklisted } from '$lib/top-vaults/helpers';
 
-/** Return one globally sorted vault-listing continuation or blacklisted-reveal page. */
+/** Return one globally sorted vault-listing continuation page. */
 export async function GET({ fetch, url }) {
 	const offset = Number(url.searchParams.get('offset') ?? '0');
 	if (!Number.isInteger(offset) || offset < 0) error(400, 'Invalid vault listing offset');
@@ -21,8 +22,18 @@ export async function GET({ fetch, url }) {
 			{ status: 409, headers: { 'Cache-Control': 'private, no-store' } }
 		);
 	}
-	const onlyBlacklisted = url.searchParams.get('blacklisted') === '1';
-	const matchingVaults = onlyBlacklisted ? listing.vaults.filter(isBlacklisted) : listing.vaults;
+	const previousRiskParam = url.searchParams.get('previousRisk');
+	const previousRiskIndex = previousRiskParam == null ? null : Number(previousRiskParam);
+	if (
+		previousRiskIndex != null &&
+		(!Number.isInteger(previousRiskIndex) || previousRiskIndex < 0 || previousRiskIndex >= riskFilterOptions.length)
+	) {
+		error(400, 'Invalid previous vault risk filter');
+	}
+	const matchingVaults =
+		previousRiskIndex == null
+			? listing.vaults
+			: listing.vaults.filter((vault) => !matchesVaultRisk(vault, riskFilterOptions[previousRiskIndex]));
 	const vaults = matchingVaults.slice(offset, offset + VAULT_LISTING_PAGE_SIZE);
 	return json(
 		{

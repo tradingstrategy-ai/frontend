@@ -1,4 +1,4 @@
-import type { Chain } from '$lib/helpers/chain';
+import { getChain, getChainsBySlug, type Chain } from '$lib/helpers/chain';
 import type { ExchangeIndexResponse } from '$lib/helpers/exchange';
 import type { EntityData } from './TopEntities.svelte';
 import { fetchPublicApi, optionalDataError } from '$lib/helpers/public-api';
@@ -8,20 +8,18 @@ import { fetchPairs } from '$lib/explorer/pair-client';
 import { fetchLendingReserves } from '$lib/explorer/lending-reserve-client';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { getFormattedReserveUSD } from '$lib/helpers/lending-reserve';
-import { getChain } from '$lib/helpers/chain';
 import { error } from '@sveltejs/kit';
+import { summariseChainVaults } from './vault-summary';
 
 export async function load({ fetch, params }) {
 	const chain = getChain(params.chain);
 	if (!chain) error(404, `Chain not found: ${params.chain}`);
+	const chainIds = new Set(getChainsBySlug(chain.slug).map(({ id }) => id));
 
 	return {
 		chainDetails: await fetchChainDetails(fetch, chain),
-		topVaults: await getCachedTopVaults(fetch)
-			.then((data) => ({
-				...data,
-				vaults: data.vaults.filter((v) => v.chain_id === chain.id)
-			}))
+		vaultSummary: await getCachedTopVaults(fetch)
+			.then(({ vaults }) => summariseChainVaults(vaults, chainIds))
 			.catch(optionalDataError('top vaults')),
 		entities: {
 			exchanges: fetchTopExchanges(fetch, chain.slug),

@@ -1,4 +1,4 @@
-import type { VaultInfo } from '$lib/top-vaults/schemas';
+import { vaultInfoSchema, type VaultInfo } from '$lib/top-vaults/schemas';
 
 export interface PositionVaultSparkline {
 	id: string;
@@ -21,6 +21,7 @@ export type VaultSparklinePosition = {
 type SparklineVaultInfo = Pick<VaultInfo, 'id' | 'name' | 'address' | 'chain_id'>;
 
 const vaultIdKeys = ['vault_id', 'vaultId', 'top_vault_id', 'topVaultId'] as const;
+const lookupBatchSize = 100;
 
 function normaliseAddress(address: string | null | undefined) {
 	return address?.trim().toLowerCase();
@@ -40,6 +41,51 @@ function getDirectVaultId(position: VaultSparklinePosition) {
 
 function getPositionLabel(position: VaultSparklinePosition) {
 	return position.pair.symbol ?? 'Vault';
+}
+
+/**
+ * Fetch only the vault records referenced by the supplied strategy positions.
+ *
+ * @param fetchFn - SvelteKit fetch implementation
+ * @param positions - Strategy positions whose vault metadata is needed
+ */
+export async function fetchPositionVaults(fetchFn: Fetch, positions: VaultSparklinePosition[]): Promise<VaultInfo[]> {
+	const vaultIds = new Set<string>();
+	const vaultAddresses = new Map<string, { chainId: number; address: string }>();
+
+	for (const position of positions) {
+		if (!position.pair.isVault) continue;
+		const vaultId = getDirectVaultId(position);
+		if (vaultId) vaultIds.add(vaultId);
+
+		const address = normaliseAddress(position.pair.pool_address);
+		const chainId = position.pair.base?.chain_id;
+		if (address && chainId != null) {
+			vaultAddresses.set(getVaultAddressKey(chainId, address), { chainId, address });
+		}
+	}
+
+	if (vaultIds.size === 0 && vaultAddresses.size === 0) return [];
+	const ids = [...vaultIds];
+	const addresses = [...vaultAddresses.values()];
+	const batchCount = Math.ceil(Math.max(ids.length, addresses.length) / lookupBatchSize);
+	const batches = await Promise.all(
+		Array.from({ length: batchCount }, async (_, index) => {
+			const offset = index * lookupBatchSize;
+			const response = await fetchFn('/strategies/position-vault-data', {
+				method: 'POST',
+				headers: { 'content-type': 'application/json' },
+				body: JSON.stringify({
+					vaultIds: ids.slice(offset, offset + lookupBatchSize),
+					vaultAddresses: addresses.slice(offset, offset + lookupBatchSize)
+				})
+			});
+			if (!response.ok) throw new Error(`Failed to fetch position vaults: ${response.status}`);
+			return vaultInfoSchema.array().parse((await response.json()).vaults);
+		})
+	);
+
+	return [...new Map(batches.flat().map((vault) => [vault.id, vault])).values()];
 }
 
 function getVaultAddressKey(chainId: number, address: string) {

@@ -8,7 +8,12 @@ the score in a column beside each vault name.
 @example
 
 ```svelte
-  <RiskRatingsPage provider="core3" />
+  <RiskRatingsPage
+    provider="core3"
+    initialTopVaults={data.initialTopVaults}
+    initialHasMore={data.initialHasMore}
+    listingSummary={data.listingSummary}
+  />
 ```
 -->
 <script lang="ts">
@@ -16,15 +21,9 @@ the score in a column beside each vault name.
 	import { page } from '$app/state';
 	import { MetaTags, JsonLd } from 'svelte-meta-tags';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
-	import { fetchAllVaultData, hasVaultCache } from './client-cache';
 	import { riskRatingProviders, type RiskRatingProvider } from './risk-rating-providers';
-	import {
-		getRiskRatedVaults,
-		getRiskRatingStatistics,
-		getRiskRatingTvlBands,
-		type RiskRatingStatistics,
-		type RiskRatingTvlBand
-	} from './risk-rating-statistics';
+	import { type RiskRatingStatistics, type RiskRatingTvlBand } from './risk-rating-statistics';
+	import type { VaultListingSummary } from './listing/types';
 	import type { TopVaults } from './schemas';
 	import TopVaultsPage from './TopVaultsPage.svelte';
 	import MarketSharePieChart from '../../routes/vaults/MarketSharePieChart.svelte';
@@ -33,34 +32,29 @@ the score in a column beside each vault name.
 
 	interface Props {
 		provider: RiskRatingProvider;
+		initialTopVaults: TopVaults;
+		initialHasMore: boolean;
+		listingSummary: VaultListingSummary;
 		initialRatingStatistics?: RiskRatingStatistics;
 		initialRiskRatingTvlBands?: RiskRatingTvlBand[];
 	}
 
-	let { provider, initialRatingStatistics, initialRiskRatingTvlBands }: Props = $props();
-	let topVaults = $state<TopVaults>();
-	let loading = $state(!hasVaultCache(page.data.generatedAt));
+	let {
+		provider,
+		initialTopVaults,
+		initialHasMore,
+		listingSummary,
+		initialRatingStatistics,
+		initialRiskRatingTvlBands
+	}: Props = $props();
 	let providerDetails = $derived(riskRatingProviders[provider]);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
-	let ratedTopVaults = $derived.by(() => {
-		const vaultData = topVaults;
-		if (!vaultData) return undefined;
-
-		return {
-			...vaultData,
-			vaults: getRiskRatedVaults(vaultData, provider)
-		};
-	});
-	let ratingStatistics = $derived.by(() => {
-		return ratedTopVaults ? getRiskRatingStatistics(ratedTopVaults.vaults) : initialRatingStatistics;
-	});
-	let riskRatingTvlBands = $derived(
-		topVaults ? getRiskRatingTvlBands(topVaults, provider) : (initialRiskRatingTvlBands ?? [])
-	);
+	let ratingStatistics = $derived(initialRatingStatistics);
+	let riskRatingTvlBands = $derived(initialRiskRatingTvlBands ?? []);
 	let riskRatingGroupLabel = $derived(provider === 'core3' ? 'CORE3 rating' : 'Risk bracket');
 	let riskRatingGroupLabelPlural = $derived(provider === 'core3' ? 'CORE3 ratings' : 'risk brackets');
 	let riskChartTitle = $derived(
-		`${formatDollar(ratingStatistics?.totalTvl ?? 0, 1, 1)} TVL by ${providerDetails.name} rated risk`
+		`${formatDollar(ratingStatistics?.totalTvl ?? 0, 1, 1)} TVL by ${providerDetails.name} risk rating`
 	);
 	let ratingSummary = $derived.by(() => {
 		const { totalTvl, vaultCount, blockchainCount, averageMonthlyReturn } = ratingStatistics ?? {
@@ -72,10 +66,10 @@ the score in a column beside each vault name.
 		const vaultLabel = vaultCount === 1 ? 'vault' : 'vaults';
 		const blockchainLabel = blockchainCount === 1 ? 'blockchain' : 'blockchains';
 
-		return `${providerDetails.name} risk rates ${formatDollar(totalTvl, 0)} TVL in ${vaultCount} ${vaultLabel} on ${blockchainCount} ${blockchainLabel}. The current TVL-weighted average monthly return is ${formatPercent(averageMonthlyReturn, 1)}.`;
+		return `${providerDetails.name} rates ${vaultCount} ${vaultLabel} on ${blockchainCount} ${blockchainLabel}, covering ${formatDollar(totalTvl, 0)} TVL. The current TVL-weighted average monthly return is ${formatPercent(averageMonthlyReturn, 1)}.`;
 	});
 	let metadataDescription = $derived(
-		`${providerDetails.name} risk rates ${formatDollar(ratingStatistics?.totalTvl ?? 0, 0)} TVL in ${
+		`${providerDetails.name} risk ratings cover ${formatDollar(ratingStatistics?.totalTvl ?? 0, 0)} TVL across ${
 			ratingStatistics?.vaultCount ?? 0
 		} ${(ratingStatistics?.vaultCount ?? 0) === 1 ? 'vault' : 'vaults'}`
 	);
@@ -123,13 +117,6 @@ the score in a column beside each vault name.
 	function formatRiskChartTvl(slice: MarketSharePieSlice): string {
 		return formatDollar(slice.tvl, 1, 1);
 	}
-
-	$effect(() => {
-		fetchAllVaultData(page.data.generatedAt)
-			.then((data) => (topVaults = data))
-			.catch((error) => console.error(`Failed to load ${providerDetails.name} ratings:`, error))
-			.finally(() => (loading = false));
-	});
 </script>
 
 <MetaTags
@@ -164,14 +151,13 @@ the score in a column beside each vault name.
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: ratedTopVaults?.vaults.length ?? 0
+			numberOfItems: ratingStatistics?.vaultCount ?? 0
 		}
 	}}
 />
 
 <TopVaultsPage
-	topVaults={ratedTopVaults}
-	{loading}
+	topVaults={initialTopVaults}
 	tvlTriggerLabel="All TVL"
 	tvlTooltip="This list includes all vaults with a rating from this provider, regardless of TVL."
 	title={providerDetails.pageTitle}
@@ -179,6 +165,9 @@ the score in a column beside each vault name.
 	ratingProvider={provider}
 	defaultSort="provider_risk_rating"
 	defaultDirection={providerDetails.defaultDirection}
+	{initialHasMore}
+	listingKey={provider === 'core3' ? 'core3-ratings' : 'xerberus-ratings'}
+	{listingSummary}
 >
 	{#snippet heroAside()}
 		<MarketShareWidgetBox title={riskChartTitle}>
@@ -210,9 +199,7 @@ the score in a column beside each vault name.
 				for DeFi vaults and protocols. Higher scores indicate stronger ratings.
 			</p>
 		{/if}
-		{#if ratedTopVaults}
-			<p>{ratingSummary}</p>
-		{/if}
+		<p>{ratingSummary}</p>
 	{/snippet}
 </TopVaultsPage>
 

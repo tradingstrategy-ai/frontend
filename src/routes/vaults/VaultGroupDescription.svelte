@@ -13,6 +13,7 @@ excluded vault count from the loaded vault data.
 -->
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import type { VaultListingSummary } from '$lib/top-vaults/listing/types';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
@@ -38,7 +39,7 @@ excluded vault count from the loaded vault data.
 		/** Verb phrase linking the subject to the vault count, e.g. "has" or "is used in" */
 		verbPhrase?: string;
 		vaults: VaultInfo[];
-		/** Complete matching-listing stats, used when rows are loaded progressively. */
+		/** Complete matching-listing stats when the supplied vault rows are only an initial server batch. */
 		listingSummary?: VaultListingSummary;
 	}
 
@@ -51,10 +52,12 @@ excluded vault count from the loaded vault data.
 	);
 
 	let totalTvl = $derived(listingSummary?.totalTvl ?? calculateTotalTvl(statsVaults));
-	let protocolCount = $derived(new Set(statsVaults.filter(hasSupportedProtocol).map((v) => v.protocol_slug)).size);
+	let protocolCount = $derived(
+		new SvelteSet(statsVaults.filter(hasSupportedProtocol).map((v) => v.protocol_slug)).size
+	);
 	// dedupe by name so the same fund deployed on multiple chains isn't repeated
 	let largestVaults = $derived.by(() => {
-		const seen = new Set<string>();
+		const seen = new SvelteSet<string>();
 		const result: VaultInfo[] = [];
 		for (const vault of statsVaults.toSorted((a, b) => (b.current_nav ?? 0) - (a.current_nav ?? 0))) {
 			if (seen.has(vault.name)) continue;
@@ -65,7 +68,7 @@ excluded vault count from the loaded vault data.
 		return result;
 	});
 	let topProtocols = $derived.by(() => {
-		const tvlByProtocol = new Map<string, { slug: string; name: string; tvl: number }>();
+		const tvlByProtocol = new SvelteMap<string, { slug: string; name: string; tvl: number }>();
 		for (const vault of statsVaults) {
 			if (!hasSupportedProtocol(vault)) continue;
 			const entry = tvlByProtocol.get(vault.protocol_slug) ?? {
@@ -104,14 +107,15 @@ excluded vault count from the loaded vault data.
 			{#if listingSummary}The current listing contains{:else}{subject} {verbPhrase}{/if}
 			<strong>{vaultCountLabel}</strong> with
 			<strong>{totalTvlLabel}</strong>{#if !listingSummary && protocolCount > 0}
-				{' '}
-				across <strong>{protocolCountLabel}</strong>{/if}.
+				across
+				<strong>{protocolCountLabel}</strong>{/if}.
 			{#if !listingSummary && largestVaults.length}
 				The largest {largestVaults.length === 1 ? 'vault is' : 'vaults are'}
-				{#each largestVaults as vault, index (vault.vault_slug)}{index > 0 ? ', ' : ''}<a
+				{#each largestVaults as vault, index (vault.vault_slug)}{index > 0
+						? ', '
+						: ''}<!-- eslint-disable-next-line svelte/no-navigation-without-resolve --><a
 						href={resolveVaultDetails(vault)}>{vault.name}</a
 					>{/each}{#if topProtocols.length}
-					{' '}
 					and the most popular vault {topProtocols.length === 1 ? 'protocol is' : 'protocols are'}
 					{#each topProtocols as protocol, index (protocol.slug)}{index === 0
 							? ''

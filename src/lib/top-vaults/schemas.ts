@@ -593,10 +593,31 @@ export const slimVaultKeys = [
 	'stablecoinish'
 ] as const satisfies readonly (keyof SlimVaultInfo)[];
 
+/** Runtime schema for the public slim chart payload. */
+export const slimVaultInfoSchema = vaultInfoSchema.pick({
+	id: true,
+	name: true,
+	vault_slug: true,
+	protocol_slug: true,
+	protocol: true,
+	chain: true,
+	chain_id: true,
+	current_nav: true,
+	one_month_cagr: true,
+	one_month_cagr_net: true,
+	three_months_cagr: true,
+	three_months_cagr_net: true,
+	risk: true,
+	risk_numeric: true,
+	stablecoinish: true
+});
+
+export const slimVaultChartDataSchema = z.object({ vaults: slimVaultInfoSchema.array() });
+
 /**
  * Full top-vaults API response. Contains generation timestamp and all vault records.
- * Fetched from the backend, cached server-side in cache.ts, and served via
- * /top-vaults/all-data (Brotli-compressed) for client-side consumption.
+ * Fetched from the backend and cached server-side in cache.ts. Browser routes
+ * receive derived payloads or matched records instead of this complete export.
  */
 export const topVaultsSchema = z.object({
 	/** When the backend last regenerated the vault dataset */

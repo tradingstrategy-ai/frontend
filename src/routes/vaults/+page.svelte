@@ -9,10 +9,9 @@ Top stablecoin vault listing page.
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
 	let { data } = $props();
-	let topVaults = $derived(data.initialTopVaults);
 
 	const title = 'Top stablecoin vaults';
-	const description = 'Vaults rankings with the highest yield and the lowest risk.';
+	const description = 'Stablecoin vault rankings by yield, risk, and other performance criteria.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let rankingDescription = $derived(getVaultSortDescription(page.url.searchParams.get('sort')));
 	let subtitle = $derived(
@@ -44,10 +43,9 @@ Top stablecoin vault listing page.
 />
 
 <TopVaultsPage
-	{topVaults}
+	topVaults={data.initialTopVaults}
 	totalVaultCount={data.totalVaultCount}
-	loading={false}
-	progressive={data.initialVaultListingHasMore}
+	initialHasMore={data.initialHasMore}
 	listingKey={data.listingKey}
 	listingSummary={data.listingSummary}
 	{title}

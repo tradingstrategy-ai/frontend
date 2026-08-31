@@ -1,3 +1,6 @@
+<!--
+Vault listing and overview for one stablecoin denomination.
+-->
 <script lang="ts">
 	import {
 		formatStablecoinDisplayName,
@@ -20,9 +23,6 @@
 		stablecoinMetadata,
 		initialTopVaults
 	} = $derived(data);
-
-	let topVaults = $derived(initialTopVaults);
-	let loading = false;
 
 	let title = $derived(`${denominationName} stablecoin vaults | Trading Strategy`);
 	let description = $derived(shortDescription ?? `Top ${denominationName} DeFi vaults ranked by performance.`);
@@ -86,9 +86,8 @@
 />
 
 <TopVaultsPage
-	{topVaults}
-	{loading}
-	progressive={data.initialVaultListingHasMore}
+	topVaults={initialTopVaults}
+	initialHasMore={data.initialHasMore}
 	listingKey={data.listingKey}
 	listingScope={data.listingScope}
 	listingSummary={data.listingSummary}
@@ -100,13 +99,13 @@
 	defaultHideUnknown={0}
 >
 	{#snippet detailDescription()}
-		{#if topVaults?.vaults.length}
+		{#if initialTopVaults.vaults.length}
 			<VaultGroupDescription
 				title="About {denominationSymbol} vaults"
 				subject={denominationName}
 				verbPhrase="is used in"
-				vaults={topVaults.vaults}
-				listingSummary={data.initialVaultListingHasMore ? data.listingSummary : undefined}
+				vaults={initialTopVaults.vaults}
+				listingSummary={data.initialHasMore ? data.listingSummary : undefined}
 			/>
 		{/if}
 	{/snippet}

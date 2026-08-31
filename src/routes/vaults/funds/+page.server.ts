@@ -13,7 +13,7 @@ export async function load({ fetch, url }) {
 		name: vault.name,
 		tvl: getVaultCurrentTvlUsd(vault) ?? 0,
 		avgApy: vault.cagr_net ?? vault.three_months_cagr ?? null,
-		logoUrl: vault.curator_slug ? curators[vault.curator_slug]?.logos.generic : undefined,
+		logoUrl: vault.curator_slug ? (curators[vault.curator_slug]?.logos.generic ?? undefined) : undefined,
 		href: resolveVaultDetails(vault)
 	}));
 

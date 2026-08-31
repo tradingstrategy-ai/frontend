@@ -13,19 +13,6 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 	import { JsonLd } from 'svelte-meta-tags';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
-	import type { VaultInfo } from '$lib/top-vaults/schemas';
-	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
-
-	let vaults = $state<VaultInfo[]>([]);
-	let vaultsLoading = $state(!hasVaultCache(page.data.generatedAt));
-
-	$effect(() => {
-		fetchAllVaultData(page.data.generatedAt)
-			.then((data) => (vaults = data.vaults))
-			.catch((e) => console.error('Failed to load vault data:', e))
-			.finally(() => (vaultsLoading = false));
-	});
-
 	const title = 'Vault yield vs protocol';
 	const description =
 		'Scatter plot of DeFi vault TVL versus three-month annualised returns, grouped by protocol. Adjust the minimum TVL filter to focus on larger vaults.';
@@ -48,10 +35,7 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 		description,
 		url: pageUrl,
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
-		mainEntity: {
-			'@type': 'ItemList',
-			numberOfItems: vaults.length
-		}
+		mainEntity: { '@type': 'ItemList' }
 	}}
 />
 
@@ -72,7 +56,7 @@ Scatter plot page showing vault TVL vs three-month annualised returns, coloured 
 	</Section>
 
 	<Section padding="sm">
-		<ProtocolScatterPlot {vaults} dataLoading={vaultsLoading} />
+		<ProtocolScatterPlot />
 		<ScatterPlotSelector />
 	</Section>
 

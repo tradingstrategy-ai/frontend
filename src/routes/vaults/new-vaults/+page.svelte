@@ -1,3 +1,6 @@
+<!--
+Recently launched stablecoin vault listing.
+-->
 <script lang="ts">
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
@@ -5,7 +8,6 @@
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
 	let { data } = $props();
-	let topVaults = $derived(data.initialTopVaults);
 
 	const title = 'New DeFi stablecoin vaults';
 	const description = 'The best performing new DeFi stablecoin vaults.';
@@ -36,9 +38,8 @@
 />
 
 <TopVaultsPage
-	{topVaults}
-	loading={false}
-	progressive={data.initialVaultListingHasMore}
+	topVaults={data.initialTopVaults}
+	initialHasMore={data.initialHasMore}
 	listingKey={data.listingKey}
 	listingSummary={data.listingSummary}
 	totalVaultCount={data.totalVaultCount}

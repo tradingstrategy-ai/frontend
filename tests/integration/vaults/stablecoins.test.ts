@@ -97,7 +97,7 @@ test.describe('stablecoins index page', () => {
 		await expect(page).toHaveTitle('International stablecoin vaults');
 		await expect(page.locator('meta[name="description"]')).toHaveAttribute(
 			'content',
-			'DeFi vaults nominated in CHF, EUR, GBP, JPY, SGD, and TRY'
+			'DeFi vaults denominated in currencies such as CHF, EUR, GBP, JPY, SGD, and TRY.'
 		);
 		await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
 			'content',
@@ -105,7 +105,7 @@ test.describe('stablecoins index page', () => {
 		);
 		await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
 			'content',
-			'DeFi vaults nominated in CHF, EUR, GBP, JPY, SGD, and TRY'
+			'DeFi vaults denominated in currencies such as CHF, EUR, GBP, JPY, SGD, and TRY.'
 		);
 	});
 
