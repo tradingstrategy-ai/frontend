@@ -1,3 +1,6 @@
+<!--
+Blog landing page with recent Trading Strategy articles.
+-->
 <script lang="ts">
 	import { inview } from 'svelte-inview';
 	import { getPosts } from '$lib/blog/client';
@@ -48,7 +51,7 @@
 		<HeroBanner
 			image={heroImage}
 			title="Trading Strategy Blog"
-			subtitle="Insights into DeFi vaults, onchain finance and algorithmic trading."
+			subtitle="Insights into DeFi quant strategies, vaults and interviews with vault curators."
 			hr
 		>
 			<div class="social-links-wrapper">
