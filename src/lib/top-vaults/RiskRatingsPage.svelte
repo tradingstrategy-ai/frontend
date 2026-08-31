@@ -165,6 +165,8 @@ the score in a column beside each vault name.
 	ratingProvider={provider}
 	defaultSort="provider_risk_rating"
 	defaultDirection={providerDetails.defaultDirection}
+	defaultHideUnknown={0}
+	showUnknownFilter={false}
 	{initialHasMore}
 	listingKey={provider === 'core3' ? 'core3-ratings' : 'xerberus-ratings'}
 	{listingSummary}
