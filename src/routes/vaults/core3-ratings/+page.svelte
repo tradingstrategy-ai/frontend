@@ -10,7 +10,7 @@ CORE3-rated DeFi stablecoin vaults
 <RiskRatingsPage
 	provider="core3"
 	initialTopVaults={data.initialTopVaults}
-	initialVaultListingHasMore={data.initialVaultListingHasMore}
+	initialHasMore={data.initialHasMore}
 	listingSummary={data.listingSummary}
 	initialRatingStatistics={data.initialRatingStatistics}
 	initialRiskRatingTvlBands={data.initialRiskRatingTvlBands}

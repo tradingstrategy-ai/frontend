@@ -9,8 +9,12 @@ International vault listing for non-USD-denominated vaults.
 	import { formatDollar } from '$lib/helpers/formatters';
 
 	let { data } = $props();
-	let topVaults = $derived(data.initialTopVaults);
 
+	/**
+	 * Format listing currencies as a readable English list.
+	 *
+	 * @param currencies - Currency codes included in the current listing.
+	 */
 	function formatCurrencyList(currencies: string[]): string {
 		if (currencies.length === 0) return 'unknown currencies';
 		if (currencies.length === 1) return currencies[0];
@@ -20,10 +24,10 @@ International vault listing for non-USD-denominated vaults.
 	}
 
 	const title = 'International stablecoin vaults';
-	const description = 'DeFi vaults nominated in CHF, EUR, GBP, JPY, SGD, and TRY';
+	const description = 'DeFi vaults denominated in currencies such as CHF, EUR, GBP, JPY, SGD, and TRY.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let pageSubtitle = $derived.by(() => {
-		return `The current listing contains ${data.listingSummary.matchingCount} non-USD vaults with ${formatDollar(data.listingSummary.totalTvl, 0)} USD TVL with currencies of ${formatCurrencyList(data.listingCurrencies ?? [])}.`;
+		return `The current listing contains ${data.listingSummary.matchingCount} non-USD vaults with ${formatDollar(data.listingSummary.totalTvl, 0)} TVL, denominated in ${formatCurrencyList(data.listingCurrencies ?? [])}.`;
 	});
 </script>
 
@@ -51,9 +55,8 @@ International vault listing for non-USD-denominated vaults.
 />
 
 <TopVaultsPage
-	{topVaults}
-	loading={false}
-	progressive={data.initialVaultListingHasMore}
+	topVaults={data.initialTopVaults}
+	initialHasMore={data.initialHasMore}
 	listingKey={data.listingKey}
 	listingSummary={data.listingSummary}
 	totalVaultCount={data.totalVaultCount}

@@ -4,7 +4,6 @@ Tokenised fund listing for vaults with a regulated fund structure.
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import Alert from '$lib/components/Alert.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import { formatDollar } from '$lib/helpers/formatters';
@@ -18,7 +17,6 @@ Tokenised fund listing for vaults with a regulated fund structure.
 	import MarketShareWidgetBox from '../MarketShareWidgetBox.svelte';
 
 	let { data } = $props();
-	let topVaults = $derived(data.initialTopVaults);
 
 	const title = 'Tokenised funds';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
@@ -64,12 +62,8 @@ Tokenised fund listing for vaults with a regulated fund structure.
 					<HeroBanner {title}>
 						{#snippet subtitle()}
 							<p>
-								{#if topVaults}
-									Tracking {formatDollar(totalNavUsd, 2, 3)} net asset value across {fundCount}
-									{fundCount === 1 ? 'fund' : 'funds'}.
-								{:else}
-									Loading tokenised fund net asset value.
-								{/if}
+								Tracking {formatDollar(totalNavUsd, 2, 3)} net asset value across {fundCount}
+								{fundCount === 1 ? 'fund' : 'funds'}.
 							</p>
 							<p>
 								Tokenised funds are often similar to vaults, but with a different compliance structure. Tokenised funds
@@ -84,19 +78,17 @@ Tokenised fund listing for vaults with a regulated fund structure.
 
 				<div class="chart-column">
 					<MarketShareWidgetBox title={chartTitle}>
-						{#if topVaults}
-							<MarketSharePieChart
-								items={chartFunds}
-								groupLabel="Fund"
-								groupLabelPlural="funds"
-								otherThreshold={0}
-								maxIndividualSlices={7}
-								showLabelLogos
-								wrapLabels
-								valueLabel="Net asset value"
-								testId="tokenised-fund-nav-pie-chart"
-							/>
-						{/if}
+						<MarketSharePieChart
+							items={chartFunds}
+							groupLabel="Fund"
+							groupLabelPlural="funds"
+							otherThreshold={0}
+							maxIndividualSlices={7}
+							showLabelLogos
+							wrapLabels
+							valueLabel="Net asset value"
+							testId="tokenised-fund-nav-pie-chart"
+						/>
 					</MarketShareWidgetBox>
 				</div>
 			</VaultGroupIndexHeader>
@@ -104,20 +96,16 @@ Tokenised fund listing for vaults with a regulated fund structure.
 	</Section>
 
 	<Section padding="sm">
-		{#if topVaults}
-			<TopVaultsTable
-				{topVaults}
-				showFilters
-				defaultTvlKey="10k"
-				defaultHideUnknown={0}
-				progressive={data.initialVaultListingHasMore}
-				listingKey={data.listingKey}
-				listingSummary={data.listingSummary}
-				totalVaultCount={data.totalVaultCount}
-			/>
-		{:else}
-			<Alert title="Error">No tokenised fund data available.</Alert>
-		{/if}
+		<TopVaultsTable
+			topVaults={data.initialTopVaults}
+			showFilters
+			defaultTvlKey="10k"
+			defaultHideUnknown={0}
+			initialHasMore={data.initialHasMore}
+			listingKey={data.listingKey}
+			listingSummary={data.listingSummary}
+			totalVaultCount={data.totalVaultCount}
+		/>
 	</Section>
 
 	<Section>

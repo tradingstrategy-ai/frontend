@@ -3,6 +3,12 @@
 Composes a vault-listing page with its heading, navigation, metadata cards, and table.
 
 Use `ratingProvider` to show a provider-specific risk rating column.
+
+@example
+
+```svelte
+  <TopVaultsPage title="Top vaults" {topVaults} showFilters />
+```
 -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
@@ -91,8 +97,8 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		headingLogo?: { src: string; alt: string };
 		/** Show a third-party risk rating column beside the vault name. */
 		ratingProvider?: RiskRatingProvider;
-		/** Whether rows are fetched in pages from the server. */
-		progressive?: boolean;
+		/** Whether the initial server-rendered batch has continuation rows. */
+		initialHasMore?: boolean;
 		listingKey?: VaultListingKey;
 		listingScope?: string;
 		listingSummary?: VaultListingSummary;
@@ -134,7 +140,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		disableBlacklistedStrikethrough,
 		headingLogo,
 		ratingProvider,
-		progressive = false,
+		initialHasMore = false,
 		listingKey = 'top',
 		listingScope,
 		listingSummary
@@ -281,7 +287,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 					{maxSummaryTvlUsd}
 					{disableBlacklistedStrikethrough}
 					{ratingProvider}
-					{progressive}
+					{initialHasMore}
 					{listingKey}
 					{listingScope}
 					{listingSummary}
@@ -316,7 +322,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 					{maxSummaryTvlUsd}
 					{disableBlacklistedStrikethrough}
 					{ratingProvider}
-					{progressive}
+					{initialHasMore}
 					{listingKey}
 					{listingScope}
 					{listingSummary}

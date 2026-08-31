@@ -52,7 +52,7 @@ The complete `TopVaults` export stays in server memory for normal application pa
 
 Current browser-facing projections are:
 
-- Vault listings return at most 125 initial full records and 50 records per continuation request.
+- Vault listings return at most 125 initial full records and up to 50 records per continuation request.
 - Vault detail pages return one matched full record and only its related metadata.
 - Strategy position pages return only records matching the requested vault IDs or chain/address pairs.
 - `/trading-view/[chain]` returns a vault count, latest block, and latest update time calculated across the chain IDs represented by the route slug.
@@ -66,7 +66,7 @@ The following chart endpoints return only the points, grouping, labels, and link
 - `/vaults/current-peak-tvl/chart-data`
 - `/vaults/cumulative-tvl-apy/chart-data`
 
-The public `/top-vaults/chart-data` endpoint remains for its slim landing-page, diagnostics, and local pricing-fallback consumers. It contains every vault but only the `SlimVaultInfo` fields. The legacy unrestricted complete-export endpoint has been removed.
+The public `/top-vaults/chart-data` endpoint remains for the landing-page chart, diagnostics, and the server-side pricing fallback. It contains every vault but only the `SlimVaultInfo` fields. The legacy unrestricted complete-export endpoint has been removed.
 
 #### Off-chain USD denomination
 

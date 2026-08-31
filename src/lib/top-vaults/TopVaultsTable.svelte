@@ -6,6 +6,12 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 Permissioned vaults are marked as Private, except tokenised funds, which are marked as Fund.
 The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
+
+@example
+
+```svelte
+  <TopVaultsTable {topVaults} showFilters />
+```
 -->
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
@@ -13,6 +19,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 	import type { RiskRatingProvider } from './risk-rating-providers';
 	import type { ParamSchema } from '$lib/helpers/url-search-state';
 	import { onMount, untrack } from 'svelte';
+	import { SvelteURL, SvelteURLSearchParams } from 'svelte/reactivity';
 	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/state';
 	import { inview } from 'svelte-inview';
@@ -164,8 +171,8 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		disableBlacklistedStrikethrough?: boolean;
 		/** Show a third-party risk rating column immediately after the vault name. */
 		ratingProvider?: RiskRatingProvider;
-		/** Whether rows are fetched in pages from the server. */
-		progressive?: boolean;
+		/** Whether the initial server-rendered batch has continuation rows. */
+		initialHasMore?: boolean;
 		listingKey?: VaultListingKey;
 		listingScope?: string;
 		listingSummary?: VaultListingSummary;
@@ -211,7 +218,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		maxSummaryTvlUsd,
 		disableBlacklistedStrikethrough = false,
 		ratingProvider,
-		progressive = false,
+		initialHasMore = false,
 		listingKey = 'top',
 		listingScope,
 		listingSummary
@@ -219,20 +226,25 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 	const defaultHideAmm = untrack(() => ((getVaultListingDefaults(listingKey, listingScope).amm ?? true) ? 1 : 0));
 	let listingAssetType = $derived(listingKey === 'protocol' && isPoolProtocol(listingScope) ? 'pool' : 'vault');
 	let listingAssetTypePlural = $derived(`${listingAssetType}s`);
-	let accumulatedVaults = $state<VaultInfo[]>(topVaults.vaults);
-	let remoteHasMore = $state(progressive);
+	let accumulatedVaults = $state<VaultInfo[]>(untrack(() => topVaults.vaults));
+	let remoteHasMore = $state(untrack(() => initialHasMore));
 	let remoteLoading = $state(false);
-	let remoteOffset = $state(topVaults.vaults.length);
-	let revealedBlacklistedVaults = $state<VaultInfo[]>([]);
+	let loadMoreQueued = false;
+	let remoteOffset = $state(untrack(() => topVaults.vaults.length));
 	let revealedListingSummary = $state<VaultListingSummary>();
+	/** Previous risk selection while a broader risk range is displayed without navigation. */
+	let revealedFromRisk = $state<number | null>(null);
+	let listingRevision = 0;
+	let isServerBacked = $derived(listingSummary != null);
 	$effect(() => {
+		listingRevision++;
 		accumulatedVaults = topVaults.vaults;
 		remoteOffset = topVaults.vaults.length;
-		remoteHasMore = progressive;
-	});
-	$effect(() => {
-		listingSummary;
+		remoteHasMore = initialHasMore;
+		remoteLoading = false;
+		loadMoreQueued = false;
 		revealedListingSummary = undefined;
+		revealedFromRisk = null;
 	});
 
 	// --- Sort column registry (key → default direction) ---
@@ -248,15 +260,14 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 	) as Record<ReturnColumnId, { defaultDirection: 'desc' }>;
 
 	// The provider is a page-level configuration and does not change after the table mounts.
-	const providerSortColumnMap: Record<string, { defaultDirection: 'asc' | 'desc' }> = untrack(() =>
-		ratingProvider
-			? {
-					provider_risk_rating: {
-						defaultDirection: ratingProvider === 'xerberus' ? ('desc' as const) : ('asc' as const)
-					}
-				}
-			: {}
-	);
+	const providerSortColumnMap = untrack((): Record<string, { defaultDirection: 'asc' | 'desc' }> => {
+		if (!ratingProvider) return {};
+		return {
+			provider_risk_rating: {
+				defaultDirection: ratingProvider === 'xerberus' ? 'desc' : 'asc'
+			}
+		};
+	});
 
 	const sortColumnMap: Record<string, { defaultDirection: 'asc' | 'desc' }> = {
 		...returnSortColumnMap,
@@ -276,50 +287,93 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 
 	// --- URL search state schema ---
 
-	const searchParamsSchema = {
-		tvl: { type: 'string', defaultValue: defaultTvlKey, options: tvlFilterOptions.map((o) => o.key) },
-		age: { type: 'number', defaultValue: defaultAgeIndex },
-		risk: { type: 'number', defaultValue: defaultRiskIndex },
-		sort: {
-			type: 'string',
-			defaultValue: defaultSort ?? DEFAULT_RETURN_COLUMN_IDS[0],
-			options: [...Object.keys(sortColumnMap), ...Object.keys(LEGACY_RETURN_SORT_ALIASES)]
-		},
-		direction: { type: 'string', defaultValue: defaultDirection ?? 'desc', options: ['asc', 'desc'] },
-		q: { type: 'string', defaultValue: '' },
-		closed: { type: 'number', defaultValue: 0 },
-		unknown: { type: 'number', defaultValue: defaultHideUnknown },
-		amm: { type: 'number', defaultValue: defaultHideAmm },
-		private: { type: 'number', defaultValue: 0 },
-		dd: { type: 'string', defaultValue: 'any', options: ddFilterOptions.map((o) => o.key) },
-		vol: { type: 'string', defaultValue: 'any', options: volatilityFilterOptions.map((o) => o.key) },
-		mr: {
-			type: 'string',
-			defaultValue: defaultMonthlyReturnKey,
-			options: monthlyReturnFilterOptions.map((o) => o.key)
-		},
-		returns: { type: 'string', defaultValue: DEFAULT_RETURN_COLUMN_IDS.join(',') }
-	} as const satisfies ParamSchema;
+	// Listing defaults are page configuration and intentionally fixed at mount.
+	const searchParamsSchema = untrack(
+		() =>
+			({
+				tvl: { type: 'string', defaultValue: defaultTvlKey, options: tvlFilterOptions.map((o) => o.key) },
+				age: { type: 'number', defaultValue: defaultAgeIndex },
+				risk: { type: 'number', defaultValue: defaultRiskIndex },
+				sort: {
+					type: 'string',
+					defaultValue: defaultSort ?? DEFAULT_RETURN_COLUMN_IDS[0],
+					options: [...Object.keys(sortColumnMap), ...Object.keys(LEGACY_RETURN_SORT_ALIASES)]
+				},
+				direction: { type: 'string', defaultValue: defaultDirection ?? 'desc', options: ['asc', 'desc'] },
+				q: { type: 'string', defaultValue: '' },
+				closed: { type: 'number', defaultValue: 0 },
+				unknown: { type: 'number', defaultValue: defaultHideUnknown },
+				amm: { type: 'number', defaultValue: defaultHideAmm },
+				private: { type: 'number', defaultValue: 0 },
+				dd: { type: 'string', defaultValue: 'any', options: ddFilterOptions.map((o) => o.key) },
+				vol: { type: 'string', defaultValue: 'any', options: volatilityFilterOptions.map((o) => o.key) },
+				mr: {
+					type: 'string',
+					defaultValue: defaultMonthlyReturnKey,
+					options: monthlyReturnFilterOptions.map((o) => o.key)
+				},
+				returns: { type: 'string', defaultValue: DEFAULT_RETURN_COLUMN_IDS.join(',') }
+			}) as const satisfies ParamSchema
+	);
 
 	let urlState = $derived(deserialiseSearchParams(page.url.searchParams, searchParamsSchema));
-	/** URL state changes shallowly while revealing hidden rows, without a page navigation. */
-	let riskOverride = $state<number | null>(null);
 
-	/** Update URL search params, merging overrides with current state */
+	/**
+	 * Build the current listing URL with selected search-state overrides.
+	 *
+	 * @param overrides - Search-state values to merge into the current URL.
+	 */
 	function getSearchUrl(overrides: Partial<typeof urlState>) {
 		const current = deserialiseSearchParams(page.url.searchParams, searchParamsSchema);
-		const updated = { ...current, ...(riskOverride == null ? {} : { risk: riskOverride }), ...overrides };
-		const queryString = serialiseSearchParams(updated, searchParamsSchema);
-		return `${page.url.pathname}?${queryString}`;
+		const updated = {
+			...current,
+			...(revealedFromRisk == null ? {} : { risk: blacklistedRiskIndex }),
+			...overrides
+		};
+		const url = new SvelteURL(page.url);
+		url.search = serialiseSearchParams(updated, searchParamsSchema);
+		return url;
+	}
+
+	/**
+	 * Navigate within the current, already-resolved listing URL.
+	 *
+	 * @param url - Listing URL cloned from the current page URL.
+	 * @param invalidateAll - Whether SvelteKit must reload all page data.
+	 */
+	function navigateToSearchUrl(url: URL, invalidateAll = false) {
+		// eslint-disable-next-line svelte/no-navigation-without-resolve -- The URL clones page.url, which already includes the configured base path.
+		return goto(url, { invalidateAll, replaceState: true, noScroll: true, keepFocus: true });
 	}
 
 	function updateSearchParams(overrides: Partial<typeof urlState>) {
-		if ('risk' in overrides) riskOverride = null;
-		return goto(getSearchUrl(overrides), {
-			replaceState: true,
-			noScroll: true,
-			keepFocus: true
-		});
+		if ('risk' in overrides) revealedFromRisk = null;
+		return navigateToSearchUrl(getSearchUrl(overrides));
+	}
+
+	/**
+	 * Append one deduplicated server page and retain its continuation state.
+	 *
+	 * @param next - Listing page returned by the continuation endpoint.
+	 */
+	function appendListingPage(next: ListingDataResponse) {
+		const seen = new Set(accumulatedVaults.map((vault) => vault.id));
+		accumulatedVaults = [...accumulatedVaults, ...next.vaults.filter((vault) => !seen.has(vault.id))];
+		remoteOffset = next.nextOffset;
+		remoteHasMore = next.hasMore;
+	}
+
+	/**
+	 * Finish a listing request and replay an in-view event received while it was active.
+	 *
+	 * @param revision - Listing revision captured before the request started.
+	 */
+	function finishRemoteLoading(revision: number) {
+		if (revision !== listingRevision) return;
+		remoteLoading = false;
+		if (!loadMoreQueued) return;
+		loadMoreQueued = false;
+		void loadMore();
 	}
 
 	/** Reveal the hidden rows without reloading the listing page. */
@@ -327,24 +381,25 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		if (remoteLoading) return;
 
 		const targetUrl = getSearchUrl({ risk: blacklistedRiskIndex });
-		const targetSearchParams = new URL(targetUrl, page.url.origin).searchParams;
+		const previousRisk = urlState.risk;
+		const revision = listingRevision;
 		remoteLoading = true;
 		try {
-			const next = await fetchListingData(targetSearchParams, 0, true);
+			const next = await fetchListingData(targetUrl.searchParams, 0, previousRisk);
+			if (revision !== listingRevision) return;
 			if (next == null) {
-				riskOverride = null;
-				await goto(targetUrl, { invalidateAll: true, replaceState: true, noScroll: true, keepFocus: true });
+				revealedFromRisk = null;
+				await navigateToSearchUrl(targetUrl, true);
 				return;
 			}
 
-			const seen = new Set(accumulatedVaults.map((vault) => vault.id));
-			revealedBlacklistedVaults = next.vaults.filter((vault) => !seen.has(vault.id));
-			remoteHasMore = next.hasMore;
+			appendListingPage(next);
 			revealedListingSummary = next.listingSummary;
-			riskOverride = blacklistedRiskIndex;
+			revealedFromRisk = previousRisk;
+			// eslint-disable-next-line svelte/no-navigation-without-resolve -- targetUrl clones the already-resolved page.url.
 			replaceState(targetUrl, {});
 		} finally {
-			remoteLoading = false;
+			finishRemoteLoading(revision);
 		}
 	}
 
@@ -357,9 +412,9 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 	let selectedAgeIndex = $derived(urlState.age);
 	let selectedAge = $derived(ageFilterOptions[selectedAgeIndex]);
 
-	let selectedRiskIndex = $derived(riskOverride ?? urlState.risk);
-	let selectedRisk = $derived(riskFilterOptions[selectedRiskIndex]);
 	const blacklistedRiskIndex = riskFilterOptions.findIndex((option) => option.label === 'Blacklisted');
+	let selectedRiskIndex = $derived(revealedFromRisk == null ? urlState.risk : blacklistedRiskIndex);
+	let selectedRisk = $derived(riskFilterOptions[selectedRiskIndex]);
 	let riskDropdownOpen = $state(false);
 	let selectedDdKey = $derived(urlState.dd);
 	let selectedDdOption = $derived(ddFilterOptions.find((o) => o.key === selectedDdKey)!);
@@ -515,9 +570,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 
 	// Filter out blacklisted vaults unless explicitly included, searched for, or selected by risk level.
 	let baseVaults = $derived.by(() => {
-		const sourceVaults = progressive
-			? [...accumulatedVaults, ...revealedBlacklistedVaults]
-			: [...topVaults.vaults, ...revealedBlacklistedVaults];
+		const sourceVaults = isServerBacked ? accumulatedVaults : topVaults.vaults;
 		if (includeBlacklisted || filterValue.startsWith('blacklist') || selectedRisk.maxValue >= 999) {
 			return sourceVaults;
 		}
@@ -541,17 +594,14 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		if (!filterTvl && !showFilters) return [];
 		return baseVaults.filter((v) => getVaultCurrentTvl(v) < getVaultTvlThreshold(v));
 	});
-	// The server summary also provides the hidden-blacklisted count when the
-	// unfiltered result fits in the initial batch (and is therefore not progressive).
+	// The server summary includes rows outside the initial browser batch.
 	let serverListingSummary = $derived(revealedListingSummary ?? listingSummary);
 	let blacklistedVaultsAreHidden = $derived(
 		!includeBlacklisted && !filterValue.startsWith('blacklist') && selectedRisk.maxValue < 999
 	);
 	let hiddenBlacklistedCount = $derived(
 		serverListingSummary?.hiddenBlacklistedCount ??
-			(blacklistedVaultsAreHidden
-				? (progressive ? accumulatedVaults : topVaults.vaults).filter(isBlacklisted).length
-				: 0)
+			(blacklistedVaultsAreHidden ? topVaults.vaults.filter(isBlacklisted).length : 0)
 	);
 	let hiddenVaultNames = $derived(
 		serverListingSummary?.hiddenVaultNames ?? hiddenVaults.slice(0, 2).map((vault) => vault.name)
@@ -639,7 +689,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		});
 	});
 
-	// A progressive listing contains only its initial page here, while the server
+	// A server-backed listing may contain only its initial page here, while its
 	// summary describes every vault matching the same filters.
 	let matchingVaultCount = $derived(serverListingSummary?.matchingCount ?? filteredVaults.length);
 
@@ -662,7 +712,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 			: calculateTotalTvl(statsVaultsWithTvl, { maxTvlUsd: maxSummaryTvlUsd })
 	);
 
-	// A progressive listing only contains its initial row batch in the browser.
+	// A server-backed listing may contain only its initial row batch in the browser.
 	// Use the server calculation over the complete filtered listing so the headline
 	// does not become skewed by the current batch or its sort order.
 	let avgTvlWeightedApy1M = $derived(
@@ -682,22 +732,29 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 	// INFINITE SCROLL:
 	// - limit the displayed vaults during initial render
 	// - track sortedVaults as dependency (reset to initial count when it changes)
-	// - progressively increemnt maxVisibleRows on-scroll (see load-more-sentinel)
+	// - progressively increment maxVisibleRows on scroll (see load-more-sentinel)
 	let maxVisibleRows = $state(INITIAL_VAULT_LISTING_LIMIT);
-	let visibleVaults = $derived(progressive ? sortedVaults : sortedVaults.slice(0, maxVisibleRows));
-	let hasMoreRows = $derived(progressive ? remoteHasMore : maxVisibleRows < sortedVaults.length);
+	let visibleVaults = $derived(isServerBacked ? sortedVaults : sortedVaults.slice(0, maxVisibleRows));
+	let hasMoreRows = $derived(isServerBacked ? remoteHasMore : maxVisibleRows < sortedVaults.length);
 
+	/**
+	 * Fetch one server-side listing continuation.
+	 *
+	 * @param searchParams - Active listing filters and sort.
+	 * @param offset - Number of matching continuation rows already received.
+	 * @param previousRisk - Previous risk-filter index when fetching only newly included rows.
+	 */
 	async function fetchListingData(
 		searchParams: URLSearchParams,
 		offset: number,
-		onlyBlacklisted = false
+		previousRisk?: number
 	): Promise<ListingDataResponse | null> {
-		const params = new URLSearchParams(searchParams);
+		const params = new SvelteURLSearchParams(searchParams);
 		params.set('listing', listingKey);
 		if (listingScope) params.set('scope', listingScope);
 		params.set('offset', String(offset));
 		params.set('version', new Date(topVaults.generated_at).toISOString());
-		if (onlyBlacklisted) params.set('blacklisted', '1');
+		if (previousRisk != null) params.set('previousRisk', String(previousRisk));
 
 		const response = await fetch(`/top-vaults/listing-data?${params}`);
 		if (response.status === 409) return null;
@@ -706,43 +763,29 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 	}
 
 	async function loadMore() {
-		if (!progressive) {
+		if (!isServerBacked) {
 			maxVisibleRows += VAULT_LISTING_PAGE_SIZE;
 			return;
 		}
-		if (remoteLoading || !remoteHasMore) return;
+		if (remoteLoading) {
+			loadMoreQueued = true;
+			return;
+		}
+		if (!remoteHasMore) return;
+		const revision = listingRevision;
 		remoteLoading = true;
 		try {
-			const loadingRevealedBlacklisted = riskOverride === blacklistedRiskIndex;
-			const searchParams = loadingRevealedBlacklisted
-				? new URL(getSearchUrl({}), page.url.origin).searchParams
-				: page.url.searchParams;
-			const offset = loadingRevealedBlacklisted ? revealedBlacklistedVaults.length : remoteOffset;
-			const next = await fetchListingData(searchParams, offset, loadingRevealedBlacklisted);
+			const loadingRevealedBlacklisted = revealedFromRisk != null;
+			const searchParams = loadingRevealedBlacklisted ? getSearchUrl({}).searchParams : page.url.searchParams;
+			const next = await fetchListingData(searchParams, remoteOffset, revealedFromRisk ?? undefined);
+			if (revision !== listingRevision) return;
 			if (next == null) {
-				await goto(getSearchUrl({}), {
-					invalidateAll: true,
-					replaceState: true,
-					noScroll: true,
-					keepFocus: true
-				});
+				await navigateToSearchUrl(getSearchUrl({}), true);
 				return;
 			}
-			if (loadingRevealedBlacklisted) {
-				const seen = new Set([...accumulatedVaults, ...revealedBlacklistedVaults].map((vault) => vault.id));
-				revealedBlacklistedVaults = [
-					...revealedBlacklistedVaults,
-					...next.vaults.filter((vault) => !seen.has(vault.id))
-				];
-				remoteHasMore = next.hasMore;
-				return;
-			}
-			const seen = new Set(accumulatedVaults.map((vault) => vault.id));
-			accumulatedVaults = [...accumulatedVaults, ...next.vaults.filter((vault) => !seen.has(vault.id))];
-			remoteOffset = next.nextOffset;
-			remoteHasMore = next.hasMore;
+			appendListingPage(next);
 		} finally {
-			remoteLoading = false;
+			finishRemoteLoading(revision);
 		}
 	}
 
@@ -1523,7 +1566,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 					<tr class="load-more-sentinel" data-testid="load-more-sentinel">
 						<td colspan={12 + selectedReturnColumns.length + (showChainCol ? 1 : 0) + (showProviderRiskRating ? 1 : 0)}>
 							<div use:inview={{ rootMargin: '300px' }} oninview_enter={loadMore}>
-								<Spinner size="18" /> Loading more vaults... ({visibleVaults.length}{#if !progressive}
+								<Spinner size="18" /> Loading more vaults... ({visibleVaults.length}{#if !isServerBacked}
 									of {sortedVaults.length}{/if})
 							</div>
 						</td>

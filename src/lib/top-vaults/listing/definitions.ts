@@ -121,13 +121,13 @@ export const vaultListingDefinitions: Record<VaultListingKey, VaultListingDefini
 	},
 	'core3-ratings': {
 		key: 'core3-ratings',
-		defaults: { tvl: 'any', sort: 'provider_risk_rating', direction: 'asc' },
+		defaults: { tvl: 'any', unknown: false, amm: false, sort: 'provider_risk_rating', direction: 'asc' },
 		options: { ...commonOptions, showFilters: false, ratingProvider: 'core3' },
 		requiresScope: false
 	},
 	'xerberus-ratings': {
 		key: 'xerberus-ratings',
-		defaults: { tvl: 'any', sort: 'provider_risk_rating', direction: 'desc' },
+		defaults: { tvl: 'any', unknown: false, amm: false, sort: 'provider_risk_rating', direction: 'desc' },
 		options: { ...commonOptions, showFilters: false, ratingProvider: 'xerberus' },
 		requiresScope: false
 	}
@@ -144,7 +144,9 @@ export function getVaultListingDefinition(key: VaultListingKey): VaultListingDef
 /** Resolve dynamic defaults which are part of an immutable route definition. */
 export function getVaultListingDefaults(key: VaultListingKey, scope?: string): VaultListingQueryDefaults {
 	if (key === 'chain' && scope === 'robinhood') return { ...vaultListingDefinitions[key].defaults, tvl: 'any' };
-	if (key === 'protocol' && scope === 'apex') return { ...vaultListingDefinitions[key].defaults, tvl: 'any' };
+	if (key === 'protocol' && scope === 'apex') {
+		return { ...vaultListingDefinitions[key].defaults, tvl: 'any', sort: 'tvl', direction: 'desc' };
+	}
 	return vaultListingDefinitions[key].defaults;
 }
 
@@ -175,8 +177,6 @@ export function filterVaultListingScope(vaults: VaultInfo[], key: VaultListingKe
 			// International listings need denomination-rate enrichment, performed by
 			// the server resolver. Do not accidentally expose the unscoped dataset.
 			return [];
-		case 'xerberus-ratings':
-			return vaults.filter((vault) => vault.xerberus?.score != null);
 		default:
 			return vaults;
 	}

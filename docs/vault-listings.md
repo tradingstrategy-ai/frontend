@@ -4,6 +4,11 @@ Vault table pages render their first 125 matching rows in the SvelteKit server
 load. This makes the initial listing visible without downloading the complete
 vault export in the browser.
 
+`listingSummary` marks a table as server-backed, while `initialHasMore` only
+describes whether its initial rows have a continuation. A short listing can
+therefore gain continuation pages later when hidden blacklisted rows are
+revealed.
+
 ## Ordering and filtering
 
 `src/lib/top-vaults/listing/` is the shared, browser-safe implementation of
@@ -47,27 +52,28 @@ and leaves vaults with or without volatility data in the listing.
 
 ## Continuation API
 
-`GET /top-vaults/listing-data` returns the next 50 rows. It accepts the normal
+`GET /top-vaults/listing-data` returns up to 50 rows. It accepts the normal
 listing filter query parameters plus:
 
-| Parameter     | Required         | Description                                                                                 |
-| ------------- | ---------------- | ------------------------------------------------------------------------------------------- |
-| `listing`     | No               | Listing key; defaults to `top`.                                                             |
-| `scope`       | Dynamic listings | Route-provided chain, protocol, stablecoin, or curator slug. Unknown values return no rows. |
-| `offset`      | No               | Non-negative number of rows already received; defaults to `0`.                              |
-| `version`     | No               | Initial page `generated_at` timestamp. A changed export produces `409`.                     |
-| `blacklisted` | No               | Set to `1` to return only blacklisted rows that match the current listing filters.          |
+| Parameter      | Required         | Description                                                                                              |
+| -------------- | ---------------- | -------------------------------------------------------------------------------------------------------- |
+| `listing`      | No               | Listing key; defaults to `top`.                                                                          |
+| `scope`        | Dynamic listings | Route-provided chain, protocol, stablecoin, or curator slug. Unknown values return no rows.              |
+| `offset`       | No               | Non-negative number of rows already received; defaults to `0`.                                           |
+| `version`      | No               | Initial page `generated_at` timestamp. A changed export produces `409`.                                  |
+| `previousRisk` | Reveal requests  | Previous technical-risk filter index. With a broader target risk, only newly included rows are returned. |
 
 A successful response contains `vaults`, `nextOffset`, `hasMore`,
-`generatedAt`, and the full listing summary. Responses use `Cache-Control:
-private, no-store`. On `409`, the table refreshes the current URL through
-client navigation to obtain a fresh server-rendered first batch.
+`generatedAt`, and the complete-result listing summary. Responses use
+`Cache-Control: private, no-store`. On `409`, the table refreshes the current
+URL through client navigation to obtain a fresh server-rendered first batch.
 
 Once all default rows are visible, a listing with hidden blacklisted vaults
-shows a centred **Show X blacklisted vaults** control below the table. It fetches
-only the matching blacklisted rows, changes the displayed risk level to
-**Blacklisted**, and updates the URL without a document reload. Additional
-blacklisted rows continue loading in 50-row batches when needed.
+shows a centred **Show X blacklisted vaults** control below the table. It changes
+the displayed risk level to **Blacklisted**, retains the existing rows, and
+fetches rows outside the previous risk range in pages of up to 50. The URL is
+updated without a document reload. This also restores non-blacklisted risk
+levels omitted by a narrower previous selection.
 
 The legacy complete-export endpoint has been removed. Normal browser pages use
 paginated listings, matched-record lookups, or purpose-built chart payloads.
@@ -85,6 +91,13 @@ blacklisted listing explicitly includes its matching vaults in its own summary.
 This keeps headline TVL and returns aligned with the established listing rules.
 The server resolves the cached US Treasury rate when that monthly-return filter
 is selected, so the initial batch and continuation requests apply the same rule.
+
+By default, CORE3 and Xerberus rating pages use the same non-blacklisted rated
+vault population for the table, overview statistics, and TVL pie chart. This
+includes AMM-like vaults and vaults without recognised protocol metadata. A URL
+text search narrows the table but not the provider-wide overview. CORE3 protocol
+ratings are resolved into each bounded table row on the server; the complete
+CORE3 protocol registry is not returned with the listing.
 
 ## Stablecoin safety notices
 

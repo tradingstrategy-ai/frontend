@@ -5,7 +5,7 @@ The migration away from sending the complete top-vaults export to normal browser
 ## Current delivery model
 
 - Server-only code reads `top_vaults_by_chain.json` from private R2 or `TS_PRIVATE_TOP_VAULTS_URL`, validates and normalises it, and keeps a one-hour in-memory cache.
-- Vault listings render up to 125 server-filtered and server-sorted records initially, followed by 50-record continuation responses.
+- Vault listings render up to 125 server-filtered and server-sorted records initially, followed by continuation responses of up to 50 records.
 - Vault detail pages receive one matched full record.
 - Chart pages receive route-specific points, traces, groups, or aggregates calculated from the complete server-cached dataset.
 - The landing page receives five slim vault records and calculated aggregates; its lazy ecosystem chart uses the all-vault `SlimVaultInfo` response from `/top-vaults/chart-data`.

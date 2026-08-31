@@ -1,5 +1,9 @@
+<!--
+Vault listing and overview for one protocol.
+-->
 <script lang="ts">
 	import { isPoolProtocol, UNKNOWN_VAULT_PROTOCOL_SLUG } from '$lib/top-vaults/helpers';
+	import { getVaultListingDefaults } from '$lib/top-vaults/listing/definitions';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { resolve } from '$app/paths';
@@ -15,18 +19,10 @@
 	let { protocolSlug, protocolName, protocolMetadata, core3, xerberus, initialTopVaults } = $derived(data);
 	let isUnknownVaultProtocolGroup = $derived(protocolSlug === UNKNOWN_VAULT_PROTOCOL_SLUG);
 	let isHyperliquidProtocolGroup = $derived(protocolSlug === 'hyperliquid');
-	let isApexProtocolGroup = $derived(protocolSlug === 'apex');
 	let isPoolProtocolGroup = $derived(isPoolProtocol(protocolSlug));
 	let listingAssetType = $derived(isPoolProtocolGroup ? 'pool' : 'vault');
 	let listingAssetTypePlural = $derived(`${listingAssetType}s`);
-
-	// Apex does not have a track record yet, so its vaults sit below the usual TVL
-	// threshold. Default the Min TVL filter to "Any" so they are not hidden.
-	let defaultTvlKey = $derived(isApexProtocolGroup ? 'any' : '10k');
-
-	let topVaults = $derived(initialTopVaults);
-	let totalVaultCount = $derived(data.totalVaultCount);
-	let loading = false;
+	let listingDefaults = $derived(getVaultListingDefaults(data.listingKey, data.listingScope));
 
 	const unknownVaultDescription = 'These vaults are not yet mapped out. Contact us to have your vaults listed.';
 
@@ -81,7 +77,7 @@
 				>{data.listingSummary.matchingCount}
 				{data.listingSummary.matchingCount === 1 ? listingAssetType : listingAssetTypePlural}</strong
 			>
-			with the TVL-weighted average monthly returns of <strong>{formatPercent(averageMonthlyReturn, 1)}</strong>.
+			with a TVL-weighted average monthly return of <strong>{formatPercent(averageMonthlyReturn, 1)}</strong>.
 		</p>
 	{/if}
 	{#if isHyperliquidProtocolGroup}
@@ -127,10 +123,9 @@
 />
 
 <TopVaultsPage
-	{topVaults}
-	{totalVaultCount}
-	{loading}
-	progressive={data.initialVaultListingHasMore}
+	topVaults={initialTopVaults}
+	totalVaultCount={data.totalVaultCount}
+	initialHasMore={data.initialHasMore}
 	listingKey={data.listingKey}
 	listingScope={data.listingScope}
 	listingSummary={data.listingSummary}
@@ -142,10 +137,10 @@
 	subtitle={isUnknownVaultProtocolGroup ? unknownVaultSubtitle : undefined}
 	showFilters
 	showUnknownFilter={false}
-	{defaultTvlKey}
-	defaultSort={data.protocolSlug === 'apex' ? 'tvl' : undefined}
-	defaultDirection={data.protocolSlug === 'apex' ? 'desc' : undefined}
-	defaultHideUnknown={isUnknownVaultProtocolGroup ? 0 : 1}
+	defaultTvlKey={listingDefaults.tvl}
+	defaultSort={listingDefaults.sort}
+	defaultDirection={listingDefaults.direction}
+	defaultHideUnknown={(listingDefaults.unknown ?? true) ? 1 : 0}
 >
 	{#snippet detailAside()}
 		<VaultGroupMiniChart

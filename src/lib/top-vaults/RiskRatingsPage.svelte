@@ -8,7 +8,12 @@ the score in a column beside each vault name.
 @example
 
 ```svelte
-  <RiskRatingsPage provider="core3" />
+  <RiskRatingsPage
+    provider="core3"
+    initialTopVaults={data.initialTopVaults}
+    initialHasMore={data.initialHasMore}
+    listingSummary={data.listingSummary}
+  />
 ```
 -->
 <script lang="ts">
@@ -18,6 +23,7 @@ the score in a column beside each vault name.
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { riskRatingProviders, type RiskRatingProvider } from './risk-rating-providers';
 	import { type RiskRatingStatistics, type RiskRatingTvlBand } from './risk-rating-statistics';
+	import type { VaultListingSummary } from './listing/types';
 	import type { TopVaults } from './schemas';
 	import TopVaultsPage from './TopVaultsPage.svelte';
 	import MarketSharePieChart from '../../routes/vaults/MarketSharePieChart.svelte';
@@ -27,8 +33,8 @@ the score in a column beside each vault name.
 	interface Props {
 		provider: RiskRatingProvider;
 		initialTopVaults: TopVaults;
-		initialVaultListingHasMore: boolean;
-		listingSummary: import('./listing/types').VaultListingSummary;
+		initialHasMore: boolean;
+		listingSummary: VaultListingSummary;
 		initialRatingStatistics?: RiskRatingStatistics;
 		initialRiskRatingTvlBands?: RiskRatingTvlBand[];
 	}
@@ -36,7 +42,7 @@ the score in a column beside each vault name.
 	let {
 		provider,
 		initialTopVaults,
-		initialVaultListingHasMore,
+		initialHasMore,
 		listingSummary,
 		initialRatingStatistics,
 		initialRiskRatingTvlBands
@@ -48,7 +54,7 @@ the score in a column beside each vault name.
 	let riskRatingGroupLabel = $derived(provider === 'core3' ? 'CORE3 rating' : 'Risk bracket');
 	let riskRatingGroupLabelPlural = $derived(provider === 'core3' ? 'CORE3 ratings' : 'risk brackets');
 	let riskChartTitle = $derived(
-		`${formatDollar(ratingStatistics?.totalTvl ?? 0, 1, 1)} TVL by ${providerDetails.name} rated risk`
+		`${formatDollar(ratingStatistics?.totalTvl ?? 0, 1, 1)} TVL by ${providerDetails.name} risk rating`
 	);
 	let ratingSummary = $derived.by(() => {
 		const { totalTvl, vaultCount, blockchainCount, averageMonthlyReturn } = ratingStatistics ?? {
@@ -60,10 +66,10 @@ the score in a column beside each vault name.
 		const vaultLabel = vaultCount === 1 ? 'vault' : 'vaults';
 		const blockchainLabel = blockchainCount === 1 ? 'blockchain' : 'blockchains';
 
-		return `${providerDetails.name} risk rates ${formatDollar(totalTvl, 0)} TVL in ${vaultCount} ${vaultLabel} on ${blockchainCount} ${blockchainLabel}. The current TVL-weighted average monthly return is ${formatPercent(averageMonthlyReturn, 1)}.`;
+		return `${providerDetails.name} rates ${vaultCount} ${vaultLabel} on ${blockchainCount} ${blockchainLabel}, covering ${formatDollar(totalTvl, 0)} TVL. The current TVL-weighted average monthly return is ${formatPercent(averageMonthlyReturn, 1)}.`;
 	});
 	let metadataDescription = $derived(
-		`${providerDetails.name} risk rates ${formatDollar(ratingStatistics?.totalTvl ?? 0, 0)} TVL in ${
+		`${providerDetails.name} risk ratings cover ${formatDollar(ratingStatistics?.totalTvl ?? 0, 0)} TVL across ${
 			ratingStatistics?.vaultCount ?? 0
 		} ${(ratingStatistics?.vaultCount ?? 0) === 1 ? 'vault' : 'vaults'}`
 	);
@@ -159,7 +165,7 @@ the score in a column beside each vault name.
 	ratingProvider={provider}
 	defaultSort="provider_risk_rating"
 	defaultDirection={providerDetails.defaultDirection}
-	progressive={initialVaultListingHasMore}
+	{initialHasMore}
 	listingKey={provider === 'core3' ? 'core3-ratings' : 'xerberus-ratings'}
 	{listingSummary}
 >

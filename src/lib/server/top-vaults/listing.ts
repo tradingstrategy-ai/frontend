@@ -10,6 +10,7 @@ import {
 	isNonUsdDenominatedVault,
 	withVaultDenominationTokenRate
 } from '$lib/top-vaults/helpers';
+import { getRiskRatedVaults } from '$lib/top-vaults/risk-rating-statistics';
 import {
 	filterVaultListingScope,
 	getVaultListingDefinition,
@@ -25,22 +26,21 @@ import type { TopVaults } from '$lib/top-vaults/schemas';
 async function resolveListingVaults(fetchFn: typeof fetch, topVaults: TopVaults, key: VaultListingKey, scope?: string) {
 	const { vaults } = topVaults;
 	if (key === 'core3-ratings') {
-		return vaults
-			.map((vault) => {
-				const pol = getCore3PolForVault(vault, topVaults.core3_protocols);
-				if (!pol) return vault;
-				return {
-					...vault,
-					core3: {
-						...vault.core3,
-						risk_score: pol.score,
-						risk_rating_label: pol.rating,
-						confidence: pol.confidence
-					}
-				};
-			})
-			.filter((vault) => vault.core3?.risk_score != null && vault.core3.risk_rating_label != null);
+		return getRiskRatedVaults(topVaults, 'core3').map((vault) => {
+			const pol = getCore3PolForVault(vault, topVaults.core3_protocols);
+			if (!pol) return vault;
+			return {
+				...vault,
+				core3: {
+					...vault.core3,
+					risk_score: pol.score,
+					risk_rating_label: pol.rating,
+					confidence: pol.confidence
+				}
+			};
+		});
 	}
+	if (key === 'xerberus-ratings') return getRiskRatedVaults(topVaults, 'xerberus');
 	if (key !== 'international') return filterVaultListingScope(vaults, key, scope);
 
 	const metadata = await fetchStablecoinMetadataIndex(fetchFn);
@@ -63,7 +63,11 @@ async function getListingOptions(options: VaultListingOptions, query: VaultListi
 	return { ...options, treasuryRate: await fetchLatestTreasuryRate().catch(() => null) };
 }
 
-/** Convert a complete query result into the compact listing metadata sent to the browser. */
+/**
+ * Convert a complete query result into compact listing metadata.
+ *
+ * @param listing - Complete filtered and sorted query result.
+ */
 export function createVaultListingSummary(listing: VaultListingResult): VaultListingSummary {
 	return {
 		matchingCount: listing.vaults.length,
@@ -79,6 +83,11 @@ export function createVaultListingSummary(listing: VaultListingResult): VaultLis
  * Build an SSR-safe first listing page from the complete server-cached export.
  * The returned rows have already passed the definition scope, filters, and
  * deterministic shared sort order.
+ *
+ * @param fetchFn - SvelteKit server fetch function.
+ * @param url - Listing URL containing the active filters and sort.
+ * @param key - Fixed listing definition key.
+ * @param scope - Optional route scope such as a chain or protocol slug.
  */
 export async function loadVaultListing(fetchFn: typeof fetch, url: URL, key: VaultListingKey, scope?: string) {
 	const definition = getVaultListingDefinition(key);
@@ -99,7 +108,7 @@ export async function loadVaultListing(fetchFn: typeof fetch, url: URL, key: Vau
 			core3_protocols: {},
 			curators: {}
 		},
-		initialVaultListingHasMore: initialVaults.length < listing.vaults.length,
+		initialHasMore: initialVaults.length < listing.vaults.length,
 		listingSummary: createVaultListingSummary(listing),
 		listingCurrencies:
 			key === 'international'
@@ -118,7 +127,14 @@ export async function loadVaultListing(fetchFn: typeof fetch, url: URL, key: Vau
 	};
 }
 
-/** Resolve a listing request for the continuation endpoint. */
+/**
+ * Resolve a listing request for the continuation endpoint.
+ *
+ * @param fetchFn - SvelteKit server fetch function.
+ * @param url - Continuation URL containing the active filters and sort.
+ * @param key - Fixed listing definition key.
+ * @param scope - Optional route scope such as a chain or protocol slug.
+ */
 export async function loadVaultListingContinuation(
 	fetchFn: typeof fetch,
 	url: URL,

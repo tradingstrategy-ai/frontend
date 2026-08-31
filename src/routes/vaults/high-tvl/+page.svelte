@@ -1,3 +1,6 @@
+<!--
+High-TVL stablecoin vault listing.
+-->
 <script lang="ts">
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
@@ -5,10 +8,9 @@
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
 	let { data } = $props();
-	let topVaults = $derived(data.initialTopVaults);
 
 	const title = 'High TVL DeFi stablecoin vaults';
-	const description = 'The best performing DeFi stablecoin vaults with more than $2M TVL.';
+	const description = 'The best-performing DeFi stablecoin vaults with at least $2M TVL.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
@@ -36,14 +38,13 @@
 />
 
 <TopVaultsPage
-	{topVaults}
-	loading={false}
-	progressive={data.initialVaultListingHasMore}
+	topVaults={data.initialTopVaults}
+	initialHasMore={data.initialHasMore}
 	listingKey={data.listingKey}
 	listingSummary={data.listingSummary}
 	totalVaultCount={data.totalVaultCount}
 	title="High TVL stablecoin vaults"
-	subtitle="The best performing DeFi stablecoin vaults with more than $2M TVL"
+	subtitle={description}
 	showFilters
 	defaultTvlKey="2m"
 />

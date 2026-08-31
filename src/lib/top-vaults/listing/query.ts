@@ -70,6 +70,22 @@ export interface VaultListingResult {
 	avgTvlWeightedApy1M: number | null;
 }
 
+/**
+ * Return whether a vault falls inside one technical-risk filter range.
+ *
+ * @param vault - Vault whose numeric technical risk is checked.
+ * @param riskFilter - Inclusive risk range selected by the listing.
+ */
+export function matchesVaultRisk(
+	vault: Pick<VaultInfo, 'risk_numeric'>,
+	riskFilter: Pick<(typeof riskFilterOptions)[number], 'minValue' | 'maxValue'>
+): boolean {
+	if (vault.risk_numeric != null) {
+		return vault.risk_numeric >= riskFilter.minValue && vault.risk_numeric <= riskFilter.maxValue;
+	}
+	return riskFilter.minValue === 0 && riskFilter.maxValue >= 50;
+}
+
 function compareStrings(value: (vault: VaultInfo) => string) {
 	return (a: VaultInfo, b: VaultInfo) => value(a).localeCompare(value(b));
 }
@@ -163,12 +179,7 @@ export function queryVaultListing(
 		if (options.showFilters && ((age.value > 0 && years < age.value) || (age.maxAge < Infinity && years >= age.maxAge)))
 			return false;
 		if (options.showFilters && (riskFilter.minValue > 0 || riskFilter.maxValue < Infinity)) {
-			if (
-				vault.risk_numeric != null
-					? vault.risk_numeric < riskFilter.minValue || vault.risk_numeric > riskFilter.maxValue
-					: !(riskFilter.minValue === 0 && riskFilter.maxValue >= 50)
-			)
-				return false;
+			if (!matchesVaultRisk(vault, riskFilter)) return false;
 		}
 		if (options.showFilters && dd.value < Infinity) {
 			const maxDrawdown = getLifetimeMaxDrawdown(vault);

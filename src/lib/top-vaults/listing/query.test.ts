@@ -236,6 +236,23 @@ describe('vault listing query', () => {
 		expect(parseVaultListingQuery(new URLSearchParams(), getVaultListingDefaults('protocol', 'gmx')).amm).toBe(false);
 	});
 
+	it('keeps Apex server pagination aligned with its TVL-sorted page', () => {
+		expect(getVaultListingDefaults('protocol', 'apex')).toMatchObject({
+			tvl: 'any',
+			sort: 'tvl',
+			direction: 'desc'
+		});
+	});
+
+	it('includes unknown protocols and AMM-like vaults on provider rating pages', () => {
+		for (const key of ['core3-ratings', 'xerberus-ratings'] as const) {
+			expect(parseVaultListingQuery(new URLSearchParams(), getVaultListingDefaults(key))).toMatchObject({
+				unknown: false,
+				amm: false
+			});
+		}
+	});
+
 	it('does not expose the complete dataset through an international scope predicate', () => {
 		const vault = createTestVault('EUR vault', { denomination: 'EURC' });
 

@@ -24,6 +24,32 @@ function generateMockVaults(prefix: string, count: number, props: TestVaultProps
 	return vaults;
 }
 
+function providerRatings(
+	name: string,
+	id: string,
+	core3Score: number,
+	core3Label: string,
+	xerberusScore: number
+): Pick<TestVaultProps, 'core3' | 'xerberus'> {
+	return {
+		core3: {
+			risk_score: core3Score,
+			risk_rating_label: core3Label,
+			confidence: 'High'
+		},
+		xerberus: {
+			score: xerberusScore,
+			score_scale: '0_100_higher_is_better',
+			entity_type: 'pool',
+			entity_id: id,
+			name,
+			protocol_slug: null,
+			report_url: `https://app.xerberus.io/pool/dendrogram/${id}`,
+			fetched_at: '2026-07-30T11:30:40Z'
+		}
+	};
+}
+
 function createPeriodResult(
 	period: '6m' | '1y',
 	returnsNet: number,
@@ -95,17 +121,22 @@ const aboveTvl = generateMockVaults('Above TVL', 246, {
 	}
 });
 
+// Keep one High-risk row at or above every chain-specific TVL override so the
+// narrower-risk reveal test does not depend on its generated TVL.
+aboveTvl[9].current_nav = 1_000_000;
+aboveTvl[9].peak_nav = 1_000_000;
+
 // Keep these below the normal $10k threshold so existing vault-index fixtures
-// retain their counts. The progressive-scroll test opts into TVL "Any".
-const progressiveScrollVaults = generateMockVaults('Progressive scroll vault', 500, {
-	protocol: 'Progressive test protocol',
+// retain their counts. The continuation test opts into TVL "Any".
+const continuationVaults = generateMockVaults('Continuation vault', 500, {
+	protocol: 'Continuation test protocol',
 	current_nav: 1_000,
 	peak_nav: 1_000,
 	one_month_cagr: 0.05,
 	three_months_cagr: 0.08
 });
 
-// These rows exercise the headline statistics used with progressive listings.
+// These rows exercise headline statistics for server-paginated listings.
 // Keep them below the normal $50k threshold so they do not affect other vault
 // index fixtures. The regression test opts into TVL "Any".
 const summaryRegressionHighReturnVaults = generateMockVaults('Summary regression high return vault', 150, {
@@ -293,6 +324,18 @@ const apexVaults = [
 	})
 ];
 
+const apexPaginationVaults = Array.from({ length: 128 }, (_, index) =>
+	createTestVault(`ApeX pagination vault ${String(index).padStart(3, '0')}`, {
+		address: `0x3${index.toString(16).padStart(39, '0')}`,
+		chain: 'apex',
+		protocol: 'ApeX',
+		current_nav: 8_000 - index,
+		peak_nav: 8_500 - index,
+		one_month_cagr: 0.01,
+		three_months_cagr: 0.01
+	})
+);
+
 const gmxPool = createTestVault('GMX USDC pool', {
 	address: '0x2000000000000000000000000000000000000001',
 	chain: 'arbitrum',
@@ -425,7 +468,8 @@ const abnormalTvlBlacklistedVault = createTestVault('Abnormal TVL blacklisted va
 	peak_nav: 2_000_000_000,
 	risk: 'Blacklisted',
 	flags: ['abnormal_tvl'],
-	notes: 'The TVL on this vault is abnormal'
+	notes: 'The TVL on this vault is abnormal',
+	...providerRatings('Abnormal TVL blacklisted vault', 'blacklisted-rated-vault', 99, 'D', 1)
 });
 
 const closedVaultPeriodResult = {
@@ -504,6 +548,36 @@ const privateTokenisedFund = createTestVault('Private tokenised fund', {
 	current_nav: 20_000,
 	flags: ['tokenised_fund'],
 	whitelist: { status: 'whitelisted', notes: null }
+});
+
+// Its low TVL keeps the normal listing fixtures stable. Provider-rating pages
+// intentionally include rated vaults at every TVL level.
+const providerRatedVault = createTestVault('Provider rated vault', {
+	chain: 'arbitrum',
+	protocol: 'Provider ratings',
+	current_nav: 5_000,
+	peak_nav: 6_000,
+	risk: 'Low',
+	...providerRatings('Provider rated vault', 'provider-rated-vault', 12, 'AA', 91)
+});
+
+const providerRatedUnknownVault = createTestVault('Provider rated unknown protocol vault', {
+	chain: 'arbitrum',
+	protocol: '<Unknown>',
+	current_nav: 4_000,
+	peak_nav: 5_000,
+	risk: 'Low',
+	...providerRatings('Provider rated unknown protocol vault', 'provider-rated-unknown-vault', 20, 'A', 82)
+});
+
+const providerRatedAmmVault = createTestVault('Provider rated AMM vault', {
+	chain: 'arbitrum',
+	protocol: 'Provider ratings',
+	current_nav: 3_000,
+	peak_nav: 4_000,
+	risk: 'Low',
+	features: ['amm_pool_like'],
+	...providerRatings('Provider rated AMM vault', 'provider-rated-amm-vault', 30, 'BBB', 73)
 });
 
 // Real Parquet-backed vault IDs used by the historical TVL by chain endpoint tests.
@@ -625,6 +699,9 @@ export default defineMock({
 			yamlStrategyVault,
 			abnormalTvlBlacklistedVault,
 			morphoFlaggedBlacklistedVault,
+			providerRatedVault,
+			providerRatedUnknownVault,
+			providerRatedAmmVault,
 			depositDisabledVault,
 			cappedVault,
 			redemptionDisabledVault,
@@ -635,11 +712,12 @@ export default defineMock({
 			limitedCoverageVault,
 			gmxPool,
 			...apexVaults,
+			...apexPaginationVaults,
 			...parquetMatchedVaults,
 			...returnLeaders,
 			...belowTvl,
 			...aboveTvl,
-			...progressiveScrollVaults,
+			...continuationVaults,
 			...summaryRegressionHighReturnVaults,
 			summaryRegressionAnchorVault
 		]
