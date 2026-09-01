@@ -334,6 +334,7 @@ test.describe('vault equity curve comparison page', () => {
 			const layout = await chart.evaluate((element) => {
 				const headingBounds = element.querySelector('h2')!.getBoundingClientRect();
 				const controlsBounds = element.querySelector('.segmented-control')!.getBoundingClientRect();
+				const plotBounds = element.querySelector('[data-testid="tv-chart"]')!.getBoundingClientRect();
 				const chartBounds = element.getBoundingClientRect();
 				const headingOverlapsControls = !(
 					headingBounds.right <= controlsBounds.left ||
@@ -343,6 +344,10 @@ test.describe('vault equity curve comparison page', () => {
 				);
 				return {
 					headingOverlapsControls,
+					contentLeft: headingBounds.left,
+					contentRight: controlsBounds.right,
+					plotLeft: plotBounds.left,
+					plotRight: plotBounds.right,
 					chartLeft: chartBounds.left,
 					chartRight: chartBounds.right,
 					viewportWidth: window.innerWidth,
@@ -350,6 +355,8 @@ test.describe('vault equity curve comparison page', () => {
 				};
 			});
 			expect(layout.headingOverlapsControls).toBe(false);
+			expect(layout.plotLeft).toBeCloseTo(layout.contentLeft, 0);
+			expect(layout.plotRight).toBeCloseTo(layout.contentRight, 0);
 			expect(layout.chartLeft).toBeGreaterThanOrEqual(0);
 			expect(layout.chartRight).toBeLessThanOrEqual(layout.viewportWidth);
 			expect(layout.documentWidth).toBeLessThanOrEqual(layout.viewportWidth);

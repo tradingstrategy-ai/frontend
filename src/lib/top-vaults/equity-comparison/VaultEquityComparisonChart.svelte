@@ -214,6 +214,11 @@ on one TradingView lightweight-charts pane.
 	.comparison-chart {
 		min-width: 0;
 
+		:global(.chart-container > .tv-chart) {
+			width: calc(100% - var(--chart-container-padding) - var(--chart-container-padding));
+			margin-inline: var(--chart-container-padding);
+		}
+
 		:global(.chart-tooltip) {
 			background: var(--c-text-inverted);
 		}
@@ -291,11 +296,14 @@ on one TradingView lightweight-charts pane.
 	}
 
 	.legend {
+		box-sizing: border-box;
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
 		gap: var(--space-sm) var(--space-md);
+		width: 100%;
 		margin-top: var(--space-md);
+		padding-inline: var(--chart-container-padding);
 	}
 
 	.legend-item {
