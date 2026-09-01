@@ -113,11 +113,15 @@ test.describe('vault equity curve comparison page', () => {
 		await expect(page.locator('.benchmark-options .benchmark-logo')).toHaveCount(3);
 		const controlAlignment = await page.locator('.comparison-controls').evaluate((element) => {
 			const bounds = (selector: string) => element.querySelector(selector)!.getBoundingClientRect();
+			const panel = element.getBoundingClientRect();
+			const searchBlock = bounds('.vault-search');
 			const searchHeading = bounds('.search-label');
 			const benchmarkHeading = bounds('.benchmarks legend');
 			const searchInput = bounds('.desktop-search input');
 			const benchmarkItem = bounds('.benchmark-options label');
 			return {
+				topInset: searchBlock.top - panel.top,
+				bottomInset: panel.bottom - searchBlock.bottom,
 				searchHeadingTop: searchHeading.top,
 				benchmarkHeadingTop: benchmarkHeading.top,
 				searchInputTop: searchInput.top,
@@ -126,6 +130,7 @@ test.describe('vault equity curve comparison page', () => {
 				benchmarkItemBottom: benchmarkItem.bottom
 			};
 		});
+		expect(controlAlignment.topInset).toBeCloseTo(controlAlignment.bottomInset, 0);
 		expect(controlAlignment.searchHeadingTop).toBeCloseTo(controlAlignment.benchmarkHeadingTop, 0);
 		expect(controlAlignment.searchInputTop).toBeCloseTo(controlAlignment.benchmarkItemTop, 0);
 		expect(controlAlignment.searchInputBottom).toBeCloseTo(controlAlignment.benchmarkItemBottom, 0);

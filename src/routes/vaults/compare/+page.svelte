@@ -387,6 +387,10 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
 	}
+	.comparison-controls :global(.search-label),
+	.benchmarks legend {
+		line-height: 1;
+	}
 	.selected-vault-selection {
 		margin: var(--space-lg) 0;
 	}
