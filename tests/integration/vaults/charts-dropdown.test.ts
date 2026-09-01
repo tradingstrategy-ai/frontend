@@ -50,12 +50,13 @@ test.describe('charts dropdown in vault listings navigation', () => {
 			await expect(trigger).toBeVisible();
 		});
 
-		test('clicking Charts opens dropdown with 10 chart links', async ({ page }) => {
+		test('clicking Charts opens dropdown with 11 chart links', async ({ page }) => {
 			const { menu } = await openChartsMenu(page);
 
 			const items = menu.locator('[role="menuitem"]');
-			await expect(items).toHaveCount(10);
+			await expect(items).toHaveCount(11);
 
+			await expect(menu).toContainText('Compare equity curves');
 			await expect(menu).toContainText('Yield / Risk');
 			await expect(menu).toContainText('Yield / Protocol');
 			await expect(menu).toContainText('Yield / Chain');

@@ -4,11 +4,11 @@ The frontend reads two server-side vault datasets and one external reference rat
 
 ## Datasets
 
-| Dataset              | Source                                | Local cache path                        | Used by                                                  |
-| -------------------- | ------------------------------------- | --------------------------------------- | -------------------------------------------------------- |
-| Top vaults JSON      | R2: `top_vaults_by_chain.json`        | In-memory (1-hour TTL)                  | Vault pages, strategy metadata, search, and summaries    |
-| Vault prices parquet | R2: `cleaned-vault-prices-1h.parquet` | `data/cleaned-vault-prices-1h.parquet`  | Share price chart, TVL charts, historical TVL aggregates |
-| Treasury benchmark   | FRED CSV: `DTB3` series               | `~/.cache/ts-frontend/fred-DTB3-*.json` | US 3M T-bill benchmark line on non-perp vault charts     |
+| Dataset              | Source                                | Local cache path                          | Used by                                                  |
+| -------------------- | ------------------------------------- | ----------------------------------------- | -------------------------------------------------------- |
+| Top vaults JSON      | R2: `top_vaults_by_chain.json`        | In-memory (1-hour TTL)                    | Vault pages, strategy metadata, search, and summaries    |
+| Vault prices parquet | R2: `cleaned-vault-prices-1h.parquet` | `data/cleaned-vault-prices-1h.parquet`    | Share price chart, TVL charts, historical TVL aggregates |
+| Treasury benchmark   | FRED CSV: `DGS3MO` series             | `~/.cache/ts-frontend/fred-DGS3MO-*.json` | US 3M Treasury benchmark line on non-perp vault charts   |
 
 ## Configuration
 
@@ -124,16 +124,16 @@ Protocol pages and the protocol listing also resolve Xerberus scores from these 
 
 R2 downloads stream the object body via the AWS SDK (`getR2Object`) and pipe it to disk using Node.js `stream.pipeline`. URL downloads use `fetch` with a 5-minute timeout.
 
-### Treasury benchmark (FRED DTB3)
+### Treasury benchmark (FRED DGS3MO)
 
 **Code:** `src/routes/vaults/treasury-benchmark/+server.ts` (server proxy) and `src/lib/top-vaults/treasury-benchmark.ts` (client fetcher)
 
-The US 3-month Treasury bill rate is used as a risk-free benchmark on non-perpetual-futures vault charts. FRED blocks browser CORS and rate-limits aggressively, so the data is proxied through a server endpoint.
+The US 3-month constant-maturity Treasury market yield is used as a reference benchmark on non-perpetual-futures vault charts. DGS3MO is quoted on an investment basis, which is compatible with the benchmark's cumulative-return approximation. FRED blocks browser CORS and rate-limits aggressively, so the data is proxied through a server endpoint.
 
 **Server endpoint** (`/vaults/treasury-benchmark?cosd=YYYY-MM-DD&coed=YYYY-MM-DD`):
 
-1. Validates and clamps date range (rejects future `cosd`, clamps to DTB3 series bounds)
-2. Checks file cache at `~/.cache/ts-frontend/fred-DTB3-{cosd}-{coed}.json` (24h TTL)
+1. Validates and clamps date range (rejects future `cosd`, clamps to DGS3MO series bounds)
+2. Checks file cache at `~/.cache/ts-frontend/fred-DGS3MO-{cosd}-{coed}.json` (24h TTL)
 3. If stale or missing → fetches from `https://fred.stlouisfed.org/graph/fredgraph.csv`
 4. On fetch failure → returns stale cache if available, otherwise 502
 5. Uses User-Agent rotation (FRED blocks bare Node.js requests)
@@ -182,7 +182,7 @@ R2 bucket (vaults-pro-data)
         └─→ historical-tvl-server.ts (DuckDB aggregate)
 
 FRED (fred.stlouisfed.org)
-└── DTB3 (3-month T-bill rate)
+└── DGS3MO (3-month Treasury market yield, investment basis)
     └─→ /vaults/treasury-benchmark endpoint (server proxy)
         ─→ file cache (~/.cache/ts-frontend/, 24h TTL)
         └─→ TreasuryBenchmarkSeries.svelte (client component)
@@ -199,7 +199,7 @@ FRED (fred.stlouisfed.org)
 | Strategy vault metadata            | Top vaults JSON      | Server loads or `/strategies/position-vault-data` matches       |
 | Vault price chart (client fetch)   | Parquet              | `/vaults/[vault]/metrics` → `ensureVaultPricesParquet()`        |
 | Historical TVL charts (server)     | Parquet              | `historical-tvl-server.ts` → `ensureVaultPricesParquet()`       |
-| T-bill benchmark (other vaults)    | FRED DTB3            | `TreasuryBenchmarkSeries.svelte` → `/vaults/treasury-benchmark` |
+| T-bill benchmark (other vaults)    | FRED DGS3MO          | `TreasuryBenchmarkSeries.svelte` → `/vaults/treasury-benchmark` |
 | BTC/ETH benchmarks (perps and GMX) | Coinbase API         | `CoinbaseBenchmarkSeries.svelte` → `coinbase.ts`                |
 | Datasets listing page              | Both (metadata only) | `headTopVaults()` + `headVaultPrices()`                         |
 | Datasets download                  | Both (proxied)       | `/datasets/download/[datasetId]` via Vault API                  |

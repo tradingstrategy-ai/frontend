@@ -20,6 +20,14 @@ Set `small` to use the compact spacing variant.
 </script>
 
 <footer>
+	{#if !small}
+		<nav class="footer-navigation" aria-label="Footer navigation">
+			<a href={resolve('/community')}>Community</a>
+			<a href={resolve('/blog')}>Blog</a>
+			<a href={resolve('/vaults/api')}>API</a>
+		</nav>
+	{/if}
+
 	<div class="social-links" class:small>
 		<div class="link-group">
 			<Tooltip>
@@ -103,6 +111,23 @@ Set `small` to use the compact spacing variant.
 		max-width: 100%;
 		margin-block: 3.5rem;
 		padding-inline: 1.5rem;
+	}
+
+	.footer-navigation {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: var(--space-xl);
+		font: var(--f-ui-md-medium);
+		letter-spacing: var(--ls-ui-md, var(--f-ui-md-spacing, normal));
+
+		a {
+			padding-block: var(--space-xs);
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
 	}
 
 	.social-links {
@@ -239,6 +264,10 @@ Set `small` to use the compact spacing variant.
 					0 1rem 2.2rem color-mix(in srgb, var(--c-text-inverted), transparent 84%);
 			}
 		}
+	}
+
+	.footer-navigation + .social-links {
+		padding-top: 2rem;
 	}
 
 	.disclaimer {

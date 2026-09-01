@@ -12,6 +12,7 @@ Selector linking between vault scatter plot chart pages.
 	import { page } from '$app/state';
 
 	const charts = [
+		{ href: '/vaults/compare', label: 'Compare equity curves' },
 		{ href: '/vaults/cumulative-tvl-apy', label: 'Total vault earnings' },
 		{ href: '/vaults/yield-risk', label: 'Yield / Risk' },
 		{ href: '/vaults/yield-protocol', label: 'Yield / Protocol' },

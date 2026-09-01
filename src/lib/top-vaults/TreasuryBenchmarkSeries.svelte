@@ -2,7 +2,7 @@
 @component
 Overlay a US 3-month Treasury bill benchmark line on the vault share-price chart.
 
-The benchmark compounds daily FRED DTB3 rates into a cumulative return line
+The benchmark compounds daily investment-basis FRED DGS3MO yields into a cumulative return line
 rebased to the vault's starting share price, so relative performance is
 comparable on a single axis. Does not affect Y-axis scaling.
 -->

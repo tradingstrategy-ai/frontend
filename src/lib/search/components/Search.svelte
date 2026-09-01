@@ -1,12 +1,14 @@
 <!--
 @component
-Site-wide vault search with a desktop/tablet typeahead and full-screen mobile dialog.
+Reusable vault and DeFi entity search with navigation and in-page selector layouts.
 
 The component fetches only public search suggestions; the server keeps the
 underlying vault JSON index private.
 -->
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
+	import { SvelteURLSearchParams } from 'svelte/reactivity';
+	import type { Snippet } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { disableScroll } from '$lib/actions/scroll';
@@ -21,16 +23,45 @@ underlying vault JSON index private.
 	} from '$lib/search/entities';
 	import IconCancel from '~icons/local/cancel';
 	import IconSearch from '~icons/local/search';
+	import Spinner from '$lib/components/Spinner.svelte';
 	import VaultSparkline from '$lib/top-vaults/VaultSparkline.svelte';
 
 	interface Props {
 		menu?: boolean;
 		onNavigate?: () => void;
+		/** Limit the suggestions to vaults when search is used as a vault selector. */
+		scope?: 'all' | 'vaults';
+		/** Use page formatting to keep the full search input and anchored result panel at every viewport size. */
+		format?: 'navigation' | 'page';
+		label?: string;
+		inputLabel?: string;
+		placeholder?: string;
+		mobilePlaceholder?: string;
+		showAllResults?: boolean;
+		disabled?: boolean;
+		/** Exclude vault suggestions below this latest TVL in USD. */
+		minimumVaultTvlUsd?: number;
+		/** Optional action rendered beside each result. Call onAction after accepting the result. */
+		addButton?: Snippet<[result: SearchResult, onAction: () => void]>;
 	}
 
-	let { menu = false, onNavigate }: Props = $props();
+	let {
+		menu = false,
+		onNavigate,
+		scope = 'all',
+		format = 'navigation',
+		label,
+		inputLabel = 'Search vaults and DeFi entities',
+		placeholder = 'Search vaults',
+		mobilePlaceholder = 'Search vaults, curators, protocols and chains',
+		showAllResults = true,
+		disabled = false,
+		minimumVaultTvlUsd,
+		addButton
+	}: Props = $props();
 
-	const listboxId = 'site-search-suggestions';
+	const componentId = $props.id();
+	const listboxId = `${componentId}-site-search-suggestions`;
 	const TYPEAHEAD_DEBOUNCE_MS = 200;
 	const TYPEAHEAD_LIMIT = 10;
 	let query = $state('');
@@ -45,11 +76,20 @@ underlying vault JSON index private.
 	let mobileSearchInput = $state<HTMLInputElement>();
 	let searchTrigger = $state<HTMLButtonElement>();
 	let searchRoot: HTMLDivElement;
+	let ready = $state(false);
 
 	let hasQuery = $derived(query.trim().length > 0);
+	let dialogVisible = $derived(open && (format === 'navigation' || hasQuery));
 	let activeOptionId = $derived(selectedIndex >= 0 ? `${listboxId}-${selectedIndex}` : undefined);
 
 	onMount(() => {
+		if (format === 'page' && desktopSearchInput) {
+			// Browsers may restore the previous query across same-route GET submissions.
+			// Page-embedded selectors should always start from a fresh, reactive query.
+			desktopSearchInput.value = '';
+			query = '';
+		}
+		ready = true;
 		const inputWasFocusedBeforeHydration = desktopSearchInput?.dataset.prehydrationFocus === 'true';
 		delete desktopSearchInput?.dataset.prehydrationFocus;
 		if (!inputWasFocusedBeforeHydration) return;
@@ -69,17 +109,20 @@ underlying vault JSON index private.
 			return;
 		}
 		open = true;
+		loading = true;
 
 		const controller = new AbortController();
 		const timeout = setTimeout(async () => {
-			loading = true;
 			try {
-				const response = await fetch(
-					`/search/suggestions?q=${encodeURIComponent(searchQuery)}&limit=${TYPEAHEAD_LIMIT}`,
-					{
-						signal: controller.signal
-					}
-				);
+				const params = new SvelteURLSearchParams({
+					q: searchQuery,
+					limit: String(TYPEAHEAD_LIMIT),
+					scope
+				});
+				if (minimumVaultTvlUsd !== undefined) {
+					params.set('minimumVaultTvlUsd', String(minimumVaultTvlUsd));
+				}
+				const response = await fetch(`/search/suggestions?${params}`, { signal: controller.signal });
 				if (!response.ok) throw new Error('Search is temporarily unavailable.');
 				const data = (await response.json()) as Partial<SearchResponse>;
 				if (sequence === requestSequence) results = Array.isArray(data.results) ? data.results : [];
@@ -131,10 +174,34 @@ underlying vault JSON index private.
 		if (restoreFocus) tick().then(() => searchTrigger?.focus());
 	}
 
+	/** Reset selector-style search after its result action is activated. */
+	function clearActionSearch() {
+		query = '';
+		results = [];
+		closeSearch();
+	}
+
 	/** Close the quick-search UI before navigating to a search or entity page. */
 	function closeSearchForNavigation() {
 		closeSearch();
 		onNavigate?.();
+	}
+
+	/** Trigger the action supplied for a result row instead of navigating away. */
+	function activateResultAction(index: number): boolean {
+		if (!addButton) return false;
+		const actionButton = searchRoot.querySelectorAll<HTMLButtonElement>('.result-action button')[index];
+		actionButton?.click();
+		return true;
+	}
+
+	function handleResultClick(event: MouseEvent, index: number) {
+		if (!activateResultAction(index)) {
+			closeSearchForNavigation();
+			return;
+		}
+
+		event.preventDefault();
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -155,15 +222,20 @@ underlying vault JSON index private.
 		}
 		if (event.key === 'Enter' && selectedIndex >= 0) {
 			event.preventDefault();
-			goto(resolve(results[selectedIndex].href as `/vaults/${string}`));
-			closeSearchForNavigation();
+			if (!activateResultAction(selectedIndex)) {
+				goto(resolve(results[selectedIndex].href as `/vaults/${string}`));
+				closeSearchForNavigation();
+			}
 		}
 	}
 
 	function handleSubmit(event: SubmitEvent) {
+		if (format === 'page') event.preventDefault();
 		if (selectedIndex >= 0) {
 			event.preventDefault();
-			goto(resolve(results[selectedIndex].href as `/vaults/${string}`));
+			if (!activateResultAction(selectedIndex)) {
+				goto(resolve(results[selectedIndex].href as `/vaults/${string}`));
+			}
 		}
 		closeSearchForNavigation();
 	}
@@ -175,30 +247,36 @@ underlying vault JSON index private.
 	bind:this={searchRoot}
 	class="search"
 	class:menu-search={menu}
-	data-testid={menu ? 'mobile-menu-search' : 'nav-search'}
+	class:page-search={format === 'page'}
+	data-ready={ready}
+	data-testid={format === 'page' ? 'page-search' : menu ? 'mobile-menu-search' : 'nav-search'}
 >
+	{#if label}<label class="search-label" for={`${componentId}-desktop-input`}>{label}</label>{/if}
 	<form class="desktop-search" action="/search" role="search" onsubmit={handleSubmit}>
 		<input
 			bind:this={desktopSearchInput}
-			bind:value={query}
+			value={query}
+			id={`${componentId}-desktop-input`}
 			data-preserve-hydration-focus
 			aria-activedescendant={activeOptionId}
 			aria-autocomplete="list"
 			aria-controls={listboxId}
-			aria-expanded={open}
-			aria-label="Search vaults and DeFi entities"
+			aria-expanded={dialogVisible}
+			aria-label={inputLabel}
 			role="combobox"
 			name="q"
 			type="search"
-			placeholder="Search vaults"
+			{placeholder}
 			autocomplete="off"
 			autocapitalize="none"
 			spellcheck="false"
+			{disabled}
 			onfocus={() => {
 				mobileDialogOpen = false;
 				open = true;
 			}}
-			oninput={() => {
+			oninput={(event) => {
+				query = event.currentTarget.value;
 				mobileDialogOpen = false;
 				open = true;
 			}}
@@ -218,49 +296,55 @@ underlying vault JSON index private.
 		{#if menu}<span>Search vaults</span>{/if}
 	</button>
 
-	{#if open}
+	{#if dialogVisible}
 		<div class="dialog" role="dialog" aria-modal={mobileDialogOpen} aria-label="Search">
-			<div class="mobile-search-row">
-				<form action="/search" role="search" onsubmit={handleSubmit}>
-					<input
-						bind:this={mobileSearchInput}
-						bind:value={query}
-						aria-activedescendant={activeOptionId}
-						aria-autocomplete="list"
-						aria-controls={listboxId}
-						aria-expanded={open}
-						aria-label="Search vaults and DeFi entities"
-						role="combobox"
-						name="q"
-						type="search"
-						placeholder="Search vaults, curators, protocols and chains"
-						autocomplete="off"
-						autocapitalize="none"
-						spellcheck="false"
-						onkeydown={handleKeydown}
-					/>
-				</form>
-				<button
-					class="close-button"
-					type="button"
-					aria-label="Close search"
-					onclick={() => closeSearch({ restoreFocus: true })}
-				>
-					<IconCancel />
-				</button>
-			</div>
+			{#if format === 'navigation'}
+				<div class="mobile-search-row">
+					<form action="/search" role="search" onsubmit={handleSubmit}>
+						<input
+							bind:this={mobileSearchInput}
+							value={query}
+							aria-activedescendant={activeOptionId}
+							aria-autocomplete="list"
+							aria-controls={listboxId}
+							aria-expanded={dialogVisible}
+							aria-label={inputLabel}
+							role="combobox"
+							name="q"
+							type="search"
+							placeholder={mobilePlaceholder}
+							autocomplete="off"
+							autocapitalize="none"
+							spellcheck="false"
+							{disabled}
+							oninput={(event) => (query = event.currentTarget.value)}
+							onkeydown={handleKeydown}
+						/>
+					</form>
+					<button
+						class="close-button"
+						type="button"
+						aria-label="Close search"
+						onclick={() => closeSearch({ restoreFocus: true })}
+					>
+						<IconCancel />
+					</button>
+				</div>
+			{/if}
 
 			<div class="results" aria-live="polite" data-testid="entity-search-results">
 				{#if loading}
-					<p>Searching…</p>
+					<div class="search-loading" role="status"><Spinner size="20" /><span>Searching…</span></div>
 				{:else if errorMessage}
 					<p>{errorMessage}</p>
 				{:else if hasQuery && results.length}
-					<p class="result-count">{results.length} suggestion{results.length === 1 ? '' : 's'}</p>
+					<p class="result-count">
+						{results.length} suggestion{results.length === 1 ? '' : 's'}
+					</p>
 					<ul id={listboxId} role="listbox" aria-label="Search suggestions">
 						{#each results as result, index (result.id)}
 							{@const address = formatVaultAddressPrefix(result.address)}
-							<li>
+							<li class:has-action={Boolean(addButton)}>
 								<a
 									id={`${listboxId}-${index}`}
 									class:active={selectedIndex === index}
@@ -269,8 +353,9 @@ underlying vault JSON index private.
 									href={resolve(result.href as `/vaults/${string}`)}
 									role="option"
 									aria-selected={selectedIndex === index}
+									class="result-link"
 									onpointerdown={(event) => event.preventDefault()}
-									onclick={closeSearchForNavigation}
+									onclick={(event) => handleResultClick(event, index)}
 								>
 									<span class="logo-slot"
 										>{#if result.logoUrl}<img src={result.logoUrl} alt="" use:removeOnError />{/if}</span
@@ -303,6 +388,9 @@ underlying vault JSON index private.
 										></span
 									>
 								</a>
+								{#if addButton}
+									<span class="result-action">{@render addButton(result, clearActionSearch)}</span>
+								{/if}
 							</li>
 						{/each}
 					</ul>
@@ -313,7 +401,7 @@ underlying vault JSON index private.
 				{/if}
 			</div>
 
-			{#if hasQuery}
+			{#if hasQuery && showAllResults}
 				<a
 					class="show-all"
 					href={resolve(`/search?q=${encodeURIComponent(query.trim())}` as '/search')}
@@ -328,6 +416,18 @@ underlying vault JSON index private.
 	.search {
 		position: relative;
 		width: 100%;
+	}
+	.search-label {
+		display: block;
+		margin-bottom: var(--space-xs);
+		color: var(--c-text-light);
+		font: var(--f-ui-sm-medium);
+	}
+	.page-search .search-label {
+		font: var(--f-heading-xs-medium);
+		font-size: 1rem;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
 	}
 	.desktop-search input,
 	.mobile-search-row input {
@@ -377,6 +477,11 @@ underlying vault JSON index private.
 		box-shadow: var(--shadow-3);
 		padding: var(--space-md);
 	}
+	.page-search .dialog {
+		left: 0;
+		box-sizing: border-box;
+		width: 100%;
+	}
 	.mobile-search-row {
 		display: none;
 	}
@@ -399,7 +504,13 @@ underlying vault JSON index private.
 		padding: 0;
 		list-style: none;
 	}
-	li a {
+	li.has-action {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+		gap: var(--space-xs);
+	}
+	.result-link {
 		display: grid;
 		grid-template-columns: 2rem minmax(0, 1fr) auto;
 		gap: var(--space-sm);
@@ -409,15 +520,55 @@ underlying vault JSON index private.
 		color: inherit;
 		text-decoration: none;
 	}
-	li a:is(.no-logo, :has(.logo-slot:not(:has(img)))) {
+	.result-link:is(.no-logo, :has(.logo-slot:not(:has(img)))) {
 		grid-template-columns: minmax(0, 1fr) auto;
 	}
-	li a:is(.no-logo, :has(.logo-slot:not(:has(img)))) .logo-slot {
+	.result-link:is(.no-logo, :has(.logo-slot:not(:has(img)))) .logo-slot {
 		display: none;
 	}
-	li a:is(:hover, :focus-visible, .active) {
+	.result-link:is(:hover, :focus-visible, .active) {
 		outline: none;
 		background: var(--background-hover);
+	}
+	.result-action {
+		padding-right: var(--space-sm);
+
+		:global(button) {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: var(--space-xs);
+			min-width: 4rem;
+			min-height: 2.25rem;
+			padding: 0 var(--space-sm);
+			border: 1px solid var(--c-input-border);
+			border-radius: var(--radius-sm);
+			background: var(--c-input-background);
+			color: var(--c-link);
+			font: var(--f-ui-sm-medium);
+			cursor: pointer;
+		}
+
+		:global(button:is(:hover, :focus-visible)) {
+			border-color: var(--c-input-border-focus);
+			outline: none;
+			background: var(--background-hover);
+		}
+
+		:global(button:disabled) {
+			color: var(--c-text-extra-light);
+			cursor: default;
+			opacity: 0.6;
+		}
+	}
+	.search-loading {
+		display: flex;
+		align-items: center;
+		gap: var(--space-sm);
+		min-height: 4rem;
+		padding-inline: var(--space-sm);
+		color: var(--c-text-extra-light);
+		font: var(--f-ui-sm-medium);
 	}
 	.logo-slot {
 		display: grid;
@@ -509,6 +660,12 @@ underlying vault JSON index private.
 		text-align: center;
 	}
 
+	@media (--viewport-sm-down) {
+		.page-search .search-label {
+			font-size: 0.875rem;
+		}
+	}
+
 	@media (--nav-collapsed) {
 		.desktop-search {
 			display: none;
@@ -575,6 +732,33 @@ underlying vault JSON index private.
 			max-width: 31.25rem;
 			margin-inline: auto;
 		}
+		.page-search .desktop-search {
+			display: block;
+		}
+		.page-search .search-trigger,
+		.page-search .mobile-search-row {
+			display: none;
+		}
+		.page-search .dialog {
+			position: absolute;
+			inset: auto 0 auto 0;
+			top: calc(100% + var(--space-xs));
+			display: block;
+			box-sizing: border-box;
+			width: 100%;
+			height: auto;
+			padding: var(--space-md);
+			border: 1px solid var(--c-box-3);
+			border-radius: var(--radius-md);
+			box-shadow: var(--shadow-3);
+		}
+		.page-search .results {
+			max-height: min(26rem, calc(100dvh - var(--header-height) - var(--space-xl)));
+			margin-top: 0;
+		}
+		.page-search .results ul {
+			max-width: none;
+		}
 	}
 
 	@media (--nav-collapsed) and (--viewport-sm-up) {
@@ -597,7 +781,7 @@ underlying vault JSON index private.
 		.mobile-search-row {
 			display: none;
 		}
-		.dialog li a {
+		.dialog .result-link {
 			grid-template-columns: 2rem minmax(0, 1fr) 6rem auto;
 		}
 		.dialog .result-sparkline {
@@ -607,7 +791,7 @@ underlying vault JSON index private.
 	}
 
 	@media (--viewport-xs) {
-		.dialog li a {
+		.dialog .result-link {
 			grid-template-columns: 2rem minmax(0, 1fr) max-content;
 			grid-template-areas:
 				'logo main metrics'
@@ -615,7 +799,7 @@ underlying vault JSON index private.
 			align-items: start;
 			row-gap: var(--space-xs);
 		}
-		.dialog li a:is(.no-logo, :has(.logo-slot:not(:has(img)))) {
+		.dialog .result-link:is(.no-logo, :has(.logo-slot:not(:has(img)))) {
 			grid-template-columns: minmax(0, 1fr) max-content;
 			grid-template-areas:
 				'main metrics'
@@ -653,7 +837,7 @@ underlying vault JSON index private.
 				--sparkline-width: 7rem;
 			}
 		}
-		li a {
+		.result-link {
 			grid-template-columns: 2rem minmax(0, 1fr) 7rem auto;
 		}
 	}
