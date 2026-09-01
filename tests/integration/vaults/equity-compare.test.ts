@@ -136,6 +136,7 @@ test.describe('vault equity curve comparison page', () => {
 		expect(controlAlignment.searchInputBottom).toBeCloseTo(controlAlignment.benchmarkItemBottom, 0);
 		expect(new URL(page.url()).searchParams.getAll('vault')).toHaveLength(1);
 		expect(new URL(page.url()).searchParams.getAll('benchmark')).toEqual(['treasury', 'eth', 'btc']);
+		expect(new URL(page.url()).searchParams.get('period')).toBe('3M');
 		await expect.poll(() => chartRequests.at(-1)?.benchmarks).toEqual(['treasury', 'eth', 'btc']);
 		await expect(page.getByTestId('page-search')).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
 
@@ -246,6 +247,7 @@ test.describe('vault equity curve comparison page', () => {
 		await expect(timePeriodOptions).toHaveText(['1M', '3M', '6M', '1Y', 'Max']);
 		await timePeriodOptions.filter({ hasText: '1Y' }).click();
 		await expect(timePeriodOptions.filter({ hasText: '1Y' })).toHaveClass(/selected/);
+		await expect.poll(() => new URL(page.url()).searchParams.get('period')).toBe('1Y');
 		await expect(selectedVaults).toContainText('21.0% CAGR');
 		await expect(selectedVaults).toContainText('Since 2024-03-01');
 		await expect(page.getByTestId('page-search')).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
@@ -269,6 +271,7 @@ test.describe('vault equity curve comparison page', () => {
 		await comparisonTable.getByRole('button', { name: 'Vault' }).click();
 		await expect.poll(() => new URL(page.url()).searchParams.get('sort')).toBe('vault');
 		expect(new URL(page.url()).searchParams.getAll('vault')).toHaveLength(2);
+		expect(new URL(page.url()).searchParams.get('period')).toBe('1Y');
 		await page.waitForTimeout(500);
 		expect(batchRequests).toHaveLength(chartRequestCountBeforeSort);
 		const vaultColours = await selectedVaults
@@ -303,8 +306,8 @@ test.describe('vault equity curve comparison page', () => {
 		await expect(page.getByRole('checkbox', { name: 'ETH' })).toBeChecked();
 		await expect(page.getByRole('checkbox', { name: 'BTC' })).not.toBeChecked();
 		expect(page.url()).toBe(sharedUrl);
-		await timePeriodOptions.filter({ hasText: '1Y' }).click();
 		await expect(timePeriodOptions.filter({ hasText: '1Y' })).toHaveClass(/selected/);
+		await expect(selectedVaults).toContainText('21.0% CAGR');
 
 		await page.getByRole('button', { name: 'Remove Savings USDS from comparison' }).click();
 		await expect(selectedVaults.locator('li')).toHaveCount(1);
@@ -344,6 +347,7 @@ test.describe('vault equity curve comparison page', () => {
 			selection.append('vault', savingsUsdsId);
 			selection.append('vault', savingsInfiniFiId);
 			selection.append('benchmark', 'btc');
+			selection.set('period', '6M');
 
 			await page.goto(`/vaults/compare?${selection}`);
 
@@ -369,12 +373,13 @@ test.describe('vault equity curve comparison page', () => {
 
 			const timePeriodOptions = chart.locator('.segmented-control label');
 			await expect(timePeriodOptions).toHaveText(['1M', '3M', '6M', '1Y', 'Max']);
-			await timePeriodOptions.filter({ hasText: '6M' }).click();
 			await expect(timePeriodOptions.filter({ hasText: '6M' })).toHaveClass(/selected/);
+			expect(new URL(page.url()).searchParams.get('period')).toBe('6M');
 			await expect(selectedVaults.locator('li').first()).toContainText('16.0% CAGR');
 			await expect(selectedVaults.locator('li').first()).toContainText('Since 2024-09-01');
 			await timePeriodOptions.filter({ hasText: '1Y' }).click();
 			await expect(timePeriodOptions.filter({ hasText: '1Y' })).toHaveClass(/selected/);
+			await expect.poll(() => new URL(page.url()).searchParams.get('period')).toBe('1Y');
 			await expect(selectedVaults.locator('li').first()).toContainText('21.0% CAGR');
 			await expect(selectedVaults.locator('li').first()).toContainText('Since 2024-03-01');
 

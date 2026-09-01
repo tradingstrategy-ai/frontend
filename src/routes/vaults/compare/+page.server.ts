@@ -7,6 +7,7 @@ import {
 	EMPTY_COMPARISON_PARAMETER,
 	EMPTY_COMPARISON_VALUE,
 	MAX_SELECTED_VAULTS,
+	parseEquityComparisonState,
 	writeEquityComparisonState
 } from '$lib/top-vaults/equity-comparison/state';
 import { comparisonBenchmarkKeys, type ComparisonVault } from '$lib/top-vaults/equity-comparison/types';
@@ -16,6 +17,8 @@ import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers';
 export async function load({ fetch, url }) {
 	const requestedVaultIds = url.searchParams.getAll('vault');
 	const requestedBenchmarks = url.searchParams.getAll('benchmark');
+	const requestedPeriods = url.searchParams.getAll('period');
+	const requestedState = parseEquityComparisonState(url.searchParams);
 	const topVaults = await getCachedTopVaults(fetch);
 	const hasExplicitComparisonState =
 		requestedVaultIds.length > 0 ||
@@ -27,7 +30,8 @@ export async function load({ fetch, url }) {
 		if (defaultVault) {
 			const defaultSearchParams = writeEquityComparisonState(url.searchParams, {
 				vaultIds: [defaultVault.id],
-				benchmarks: [...comparisonBenchmarkKeys]
+				benchmarks: [...comparisonBenchmarkKeys],
+				timeSpan: requestedState.timeSpan
 			});
 			redirect(307, `${url.pathname}?${defaultSearchParams}`);
 		}
@@ -35,6 +39,7 @@ export async function load({ fetch, url }) {
 
 	const canonicalVaultIds = canonicaliseComparisonVaultIds(requestedVaultIds);
 	const canonicalBenchmarks = canonicaliseComparisonBenchmarks(requestedBenchmarks);
+	const canonicalTimeSpan = requestedState.timeSpan;
 	const vaultById = new Map(topVaults.vaults.map((vault) => [vault.id, vault]));
 	const resolvedVaultIds = canonicalVaultIds.filter((vaultId) => vaultById.has(vaultId));
 	const hasStaleEmptyMarker =
@@ -46,11 +51,14 @@ export async function load({ fetch, url }) {
 		requestedVaultIds.some((value, index) => value !== resolvedVaultIds[index]) ||
 		requestedBenchmarks.length !== canonicalBenchmarks.length ||
 		requestedBenchmarks.some((value, index) => value !== canonicalBenchmarks[index]) ||
+		requestedPeriods.length !== 1 ||
+		requestedPeriods[0] !== canonicalTimeSpan ||
 		hasStaleEmptyMarker
 	) {
 		const canonicalSearchParams = writeEquityComparisonState(url.searchParams, {
 			vaultIds: resolvedVaultIds,
-			benchmarks: canonicalBenchmarks
+			benchmarks: canonicalBenchmarks,
+			timeSpan: canonicalTimeSpan
 		});
 		redirect(307, `${url.pathname}?${canonicalSearchParams}`);
 	}

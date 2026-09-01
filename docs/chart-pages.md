@@ -35,14 +35,15 @@ below $1,000 current TVL. An accepted Add action clears the query and closes
 the suggestion panel.
 
 The page defaults to Savings USDS with the T-bill, ETH, and BTC benchmarks
-enabled. It supports up to eight vaults, stores the ordered selection and
-benchmarks in repeated URL parameters, and preserves an intentionally empty
-selection with `comparison=empty`. Selected vaults also appear in the shared
-top-vaults table below the chart.
+enabled. It supports up to eight vaults and stores the ordered selection,
+benchmarks, and selected chart period in URL parameters. The `period` parameter
+is always explicit, including the default `period=3M`, and an intentionally
+empty vault selection is preserved with `comparison=empty`. Selected vaults
+also appear in the shared top-vaults table below the chart.
 
-The URL is the authoritative comparison state. Vault and benchmark choices are
-canonicalised on the server and survive reloads, so copying the current URL
-recreates the same selection for another user.
+The URL is the authoritative comparison state. Vault, benchmark, and period
+choices are canonicalised on the server and survive reloads, so copying the
+current URL recreates the same chart for another user.
 
 The T-bill line uses FRED's DGS3MO 3-month constant-maturity Treasury market
 yield, quoted on an investment basis, as a cumulative-return approximation.

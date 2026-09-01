@@ -2,7 +2,7 @@
 Compare selected vault equity curves and fixed market benchmarks on one indexed chart.
 -->
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, replaceState } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { tick, untrack } from 'svelte';
@@ -51,7 +51,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 	let comparisonPending = $state(false);
 	let pendingVaultId = $state<string | null>(null);
 	let colours = $state<ReadonlyMap<string, string>>(new Map());
-	let selectedTimeSpan = $state<ComparisonTimeSpan>('3M');
+	let selectedTimeSpan = $derived(comparisonState.timeSpan);
 	let selectedPeriodMetricsByVaultId = $derived(
 		new Map(
 			(chartData?.vaultSeries ?? []).map((series) => [series.id, series.periodMetrics?.[selectedTimeSpan]] as const)
@@ -130,8 +130,12 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 		return () => controller.abort();
 	}
 
-	async function updateComparison(vaultIds: string[], benchmarks: ComparisonBenchmark[]): Promise<void> {
-		const searchParams = writeEquityComparisonState(page.url.searchParams, { vaultIds, benchmarks });
+	async function updateComparison(
+		vaultIds: string[],
+		benchmarks: ComparisonBenchmark[],
+		timeSpan: ComparisonTimeSpan = selectedTimeSpan
+	): Promise<void> {
+		const searchParams = writeEquityComparisonState(page.url.searchParams, { vaultIds, benchmarks, timeSpan });
 		const search = searchParams.size ? `?${searchParams}` : '';
 		comparisonPending = true;
 		try {
@@ -143,6 +147,17 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 		} finally {
 			comparisonPending = false;
 		}
+	}
+
+	function selectTimeSpan(timeSpan: ComparisonTimeSpan): void {
+		selectedTimeSpan = timeSpan;
+		const searchParams = writeEquityComparisonState(page.url.searchParams, {
+			vaultIds: selectedVaultIds,
+			benchmarks: comparisonState.benchmarks,
+			timeSpan
+		});
+		const search = searchParams.size ? `?${searchParams}` : '';
+		replaceState(resolve(`/vaults/compare${search}` as '/vaults/compare'), page.state);
 	}
 
 	async function addVault(vaultId: string): Promise<void> {
@@ -323,7 +338,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 				{colours}
 				loading={chartLoading || comparisonPending}
 				{selectedTimeSpan}
-				onTimeSpanChange={(timeSpan) => (selectedTimeSpan = timeSpan)}
+				onTimeSpanChange={selectTimeSpan}
 			/>
 		{:else if !chartError}
 			<div class="empty-state">
@@ -342,7 +357,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 					tvlTriggerLabel="Selected vaults"
 					tvlTooltip="This table contains only the vaults selected for the equity comparison."
 					showStablecoinOnlyMeta={false}
-					preserveSearchParams={['vault', 'benchmark']}
+					preserveSearchParams={['vault', 'benchmark', 'period']}
 				/>
 			</section>
 		{/if}

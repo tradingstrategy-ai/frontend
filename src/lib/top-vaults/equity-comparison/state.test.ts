@@ -29,16 +29,33 @@ describe('equity comparison state', () => {
 	test('round trips repeated parameters and preserves unrelated state', () => {
 		const initial = new URLSearchParams('foo=bar&vault=a%2Cb&vault=two&benchmark=btc');
 		const parsed = parseEquityComparisonState(initial);
-		expect(parsed).toEqual({ vaultIds: ['a,b', 'two'], benchmarks: ['btc'] });
+		expect(parsed).toEqual({ vaultIds: ['a,b', 'two'], benchmarks: ['btc'], timeSpan: '3M' });
 
 		const written = writeEquityComparisonState(initial, parsed);
 		expect(written.get('foo')).toBe('bar');
 		expect(written.getAll('vault')).toEqual(['a,b', 'two']);
 		expect(written.getAll('benchmark')).toEqual(['btc']);
+		expect(written.get('period')).toBe('3M');
+	});
+
+	test('validates and persists the selected time period', () => {
+		expect(parseEquityComparisonState(new URLSearchParams('period=1Y')).timeSpan).toBe('1Y');
+		expect(parseEquityComparisonState(new URLSearchParams('period=invalid')).timeSpan).toBe('3M');
+
+		const written = writeEquityComparisonState(new URLSearchParams(), {
+			vaultIds: ['vault-one'],
+			benchmarks: [],
+			timeSpan: 'Max'
+		});
+		expect(written.get('period')).toBe('Max');
 	});
 
 	test('marks an intentionally empty selection so defaults are not restored', () => {
-		const written = writeEquityComparisonState(new URLSearchParams(), { vaultIds: [], benchmarks: [] });
+		const written = writeEquityComparisonState(new URLSearchParams(), {
+			vaultIds: [],
+			benchmarks: [],
+			timeSpan: '3M'
+		});
 		expect(written.get(EMPTY_COMPARISON_PARAMETER)).toBe(EMPTY_COMPARISON_VALUE);
 	});
 });
