@@ -111,6 +111,10 @@ test.describe('vault equity curve comparison page', () => {
 		await expect(page.getByRole('checkbox', { name: 'ETH' })).toBeChecked();
 		await expect(page.getByRole('checkbox', { name: 'BTC' })).toBeChecked();
 		await expect(page.locator('.benchmark-options .benchmark-logo')).toHaveCount(3);
+		const chartLegend = page.getByLabel('Equity comparison chart legend');
+		const benchmarkLegendItems = chartLegend.locator('.legend-item').filter({ has: page.locator('.benchmark-logo') });
+		await expect(benchmarkLegendItems).toHaveCount(3);
+		await expect(benchmarkLegendItems.locator('.swatch')).toHaveCount(0);
 		const controlAlignment = await page.locator('.comparison-controls').evaluate((element) => {
 			const bounds = (selector: string) => element.querySelector(selector)!.getBoundingClientRect();
 			const panel = element.getBoundingClientRect();
@@ -287,14 +291,10 @@ test.describe('vault equity curve comparison page', () => {
 			page
 				.getByRole('checkbox', { name: 'ETH' })
 				.locator('xpath=following-sibling::img[contains(@class, "benchmark-logo")]')
-		).toHaveAttribute('src', '/logos/tokens/eth');
-		expect(
-			await chartLegend
-				.locator('.legend-item')
-				.filter({ hasText: 'ETH' })
-				.locator('.swatch')
-				.evaluate((swatch) => getComputedStyle(swatch).borderTopColor)
-		).toBe('rgba(98, 126, 234, 0.5)');
+		).toHaveAttribute('data-benchmark', 'eth');
+		const ethLegendItem = chartLegend.locator('.legend-item').filter({ hasText: 'ETH' });
+		await expect(ethLegendItem.locator('.benchmark-logo')).toHaveAttribute('data-benchmark', 'eth');
+		await expect(ethLegendItem.locator('.swatch')).toHaveCount(0);
 
 		const sharedUrl = page.url();
 		await page.goto('/vaults/compare?comparison=empty');

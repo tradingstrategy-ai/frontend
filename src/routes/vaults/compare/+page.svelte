@@ -13,9 +13,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
-	import usTreasuryLogo from '$lib/assets/logos/tokens/us-treasury.svg';
 	import { removeOnError } from '$lib/actions/image';
-	import { getLogoUrl } from '$lib/helpers/assets';
 	import { formatPercentProfit, notFilledMarker } from '$lib/helpers/formatters';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import ScatterPlotSelector from '$lib/scatter-plot/ScatterPlotSelector.svelte';
@@ -24,6 +22,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 	import TopVaultsTable from '$lib/top-vaults/TopVaultsTable.svelte';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
+	import BenchmarkLogo from '$lib/top-vaults/equity-comparison/BenchmarkLogo.svelte';
 	import VaultEquityComparisonChart from '$lib/top-vaults/equity-comparison/VaultEquityComparisonChart.svelte';
 	import { assignVaultComparisonColours } from '$lib/top-vaults/equity-comparison/colours';
 	import {
@@ -65,10 +64,10 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 	const metaTitle = 'Compare and find best DeFi vault yield';
 	const description = 'Analyse more than 5000 vaults';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
-	const benchmarkOptions: { key: ComparisonBenchmark; label: string; logoUrl: string }[] = [
-		{ key: 'treasury', label: 'T-Bill', logoUrl: usTreasuryLogo },
-		{ key: 'eth', label: 'ETH', logoUrl: getLogoUrl('token', 'eth') },
-		{ key: 'btc', label: 'BTC', logoUrl: getLogoUrl('token', 'btc') }
+	const benchmarkOptions: { key: ComparisonBenchmark; label: string }[] = [
+		{ key: 'treasury', label: 'T-Bill' },
+		{ key: 'eth', label: 'ETH' },
+		{ key: 'btc', label: 'BTC' }
 	];
 
 	$effect(() => {
@@ -275,7 +274,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 								disabled={!selectedVaults.length || comparisonPending}
 								onchange={(event) => toggleBenchmark(benchmark.key, event.currentTarget.checked)}
 							/>
-							<img class="benchmark-logo" src={benchmark.logoUrl} alt="" aria-hidden="true" use:removeOnError />
+							<BenchmarkLogo benchmark={benchmark.key} />
 							<span>{benchmark.label}</span>
 						</label>
 					{/each}
@@ -460,12 +459,6 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 		height: 0;
 		border-top: 3px solid var(--benchmark-colour);
 		border-radius: 999px;
-	}
-	.benchmark-logo {
-		width: 1.25rem;
-		height: 1.25rem;
-		flex: 0 0 auto;
-		object-fit: contain;
 	}
 	.selected-vaults {
 		display: grid;

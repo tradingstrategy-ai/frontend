@@ -17,6 +17,7 @@ on one TradingView lightweight-charts pane.
 	import Series from '$lib/charts/Series.svelte';
 	import { formatDate } from '$lib/charts/helpers';
 	import { formatNumber } from '$lib/helpers/formatters';
+	import BenchmarkLogo from './BenchmarkLogo.svelte';
 	import { benchmarkComparisonColours } from './colours';
 	import type {
 		ComparisonBenchmark,
@@ -44,6 +45,7 @@ on one TradingView lightweight-charts pane.
 		label: string;
 		colour: string;
 		indexValue: number;
+		benchmark?: ComparisonBenchmark;
 		discontinuous?: boolean;
 	};
 
@@ -76,7 +78,6 @@ on one TradingView lightweight-charts pane.
 		eth: 'ETH',
 		btc: 'BTC'
 	};
-
 	function buildChartPoints(
 		series: ComparisonChartSeries | undefined,
 		timeBucket: ComparisonTimeBucket,
@@ -98,6 +99,7 @@ on one TradingView lightweight-charts pane.
 				label,
 				colour,
 				indexValue: point.value,
+				benchmark,
 				discontinuous: series.discontinuous
 			}
 		}));
@@ -175,7 +177,11 @@ on one TradingView lightweight-charts pane.
 					<ul class="tooltip-rows">
 						{#each rows as row (`${row.kind}:${row.id}`)}
 							<li style:--series-colour={row.colour} title={row.label}>
-								<span class="swatch" aria-hidden="true"></span>
+								{#if row.kind === 'benchmark' && row.benchmark}
+									<BenchmarkLogo benchmark={row.benchmark} />
+								{:else}
+									<span class="swatch" aria-hidden="true"></span>
+								{/if}
 								<span class="tooltip-label" class:vault-name={row.kind === 'vault'}>
 									{row.label}{#if row.discontinuous}<small> · no overlap</small>{/if}
 								</span>
@@ -201,7 +207,7 @@ on one TradingView lightweight-charts pane.
 						class:unavailable={data?.benchmarkErrors[benchmark]}
 						style:--series-colour={benchmarkComparisonColours[benchmark]}
 					>
-						<span class="swatch" aria-hidden="true"></span><span>{benchmarkLabels[benchmark]}</span>
+						<BenchmarkLogo {benchmark} /><span>{benchmarkLabels[benchmark]}</span>
 						{#if data?.benchmarkErrors[benchmark]}<small>Unavailable</small>{/if}
 					</div>
 				{/each}
