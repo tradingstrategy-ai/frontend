@@ -410,7 +410,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 		display: inline-flex;
 		align-items: center;
 		gap: var(--space-xs);
-		min-height: 3rem;
+		min-height: 2.625rem;
 		padding-inline: var(--space-sm);
 		border: 1px solid var(--c-input-border);
 		border-radius: var(--radius-sm);

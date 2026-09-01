@@ -108,6 +108,24 @@ test.describe('vault equity curve comparison page', () => {
 		await expect(page.getByRole('checkbox', { name: 'ETH' })).toBeChecked();
 		await expect(page.getByRole('checkbox', { name: 'BTC' })).toBeChecked();
 		await expect(page.locator('.benchmark-options .benchmark-logo')).toHaveCount(3);
+		const controlAlignment = await page.locator('.comparison-controls').evaluate((element) => {
+			const bounds = (selector: string) => element.querySelector(selector)!.getBoundingClientRect();
+			const searchHeading = bounds('.search-label');
+			const benchmarkHeading = bounds('.benchmarks legend');
+			const searchInput = bounds('.desktop-search input');
+			const benchmarkItem = bounds('.benchmark-options label');
+			return {
+				searchHeadingTop: searchHeading.top,
+				benchmarkHeadingTop: benchmarkHeading.top,
+				searchInputTop: searchInput.top,
+				benchmarkItemTop: benchmarkItem.top,
+				searchInputBottom: searchInput.bottom,
+				benchmarkItemBottom: benchmarkItem.bottom
+			};
+		});
+		expect(controlAlignment.searchHeadingTop).toBeCloseTo(controlAlignment.benchmarkHeadingTop, 0);
+		expect(controlAlignment.searchInputTop).toBeCloseTo(controlAlignment.benchmarkItemTop, 0);
+		expect(controlAlignment.searchInputBottom).toBeCloseTo(controlAlignment.benchmarkItemBottom, 0);
 		expect(new URL(page.url()).searchParams.getAll('vault')).toHaveLength(1);
 		expect(new URL(page.url()).searchParams.getAll('benchmark')).toEqual(['treasury', 'eth', 'btc']);
 		await expect.poll(() => chartRequests.at(-1)?.benchmarks).toEqual(['treasury', 'eth', 'btc']);
