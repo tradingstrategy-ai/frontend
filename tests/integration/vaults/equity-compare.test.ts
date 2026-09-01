@@ -107,6 +107,7 @@ test.describe('vault equity curve comparison page', () => {
 		await expect(page.getByRole('checkbox', { name: 'T-Bill' })).toBeChecked();
 		await expect(page.getByRole('checkbox', { name: 'ETH' })).toBeChecked();
 		await expect(page.getByRole('checkbox', { name: 'BTC' })).toBeChecked();
+		await expect(page.locator('.benchmark-options .benchmark-logo')).toHaveCount(3);
 		expect(new URL(page.url()).searchParams.getAll('vault')).toHaveLength(1);
 		expect(new URL(page.url()).searchParams.getAll('benchmark')).toEqual(['treasury', 'eth', 'btc']);
 		await expect.poll(() => chartRequests.at(-1)?.benchmarks).toEqual(['treasury', 'eth', 'btc']);
@@ -250,12 +251,19 @@ test.describe('vault equity curve comparison page', () => {
 		expect(new Set(vaultColours).size).toBe(2);
 
 		await page.getByRole('checkbox', { name: 'ETH' }).check();
-		await expect(page.getByLabel('Equity comparison chart legend')).toContainText('ETH');
+		const chartLegend = page.getByLabel('Equity comparison chart legend');
+		await expect(chartLegend).toContainText('ETH');
 		expect(new URL(page.url()).searchParams.getAll('benchmark')).toEqual(['eth']);
-		expect(
-			await page
+		await expect(
+			page
 				.getByRole('checkbox', { name: 'ETH' })
-				.locator('xpath=following-sibling::*[contains(@class, "benchmark-swatch")]')
+				.locator('xpath=following-sibling::img[contains(@class, "benchmark-logo")]')
+		).toHaveAttribute('src', '/logos/tokens/eth');
+		expect(
+			await chartLegend
+				.locator('.legend-item')
+				.filter({ hasText: 'ETH' })
+				.locator('.swatch')
 				.evaluate((swatch) => getComputedStyle(swatch).borderTopColor)
 		).toBe('rgba(98, 126, 234, 0.5)');
 
