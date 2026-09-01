@@ -233,7 +233,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 	<Section tag="header">
 		<VaultListingsSelector />
 		<HeroBanner
-			subtitle="Compare the historical performance of vaults with each other and US Treasury, ETH, and BTC benchmarks."
+			subtitle="Compare the historical performance of vaults with each other and US Treasury, ETH, and BTC benchmarks. The index may include or exclude fees depending on the vault type; check the vault pages for fee details."
 		>
 			{#snippet title()}<span>{pageTitle}</span>{/snippet}
 		</HeroBanner>
