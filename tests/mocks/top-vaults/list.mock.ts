@@ -584,6 +584,22 @@ const providerRatedAmmVault = createTestVault('Provider rated AMM vault', {
 // These IDs need to match the local Parquet dataset so blacklist filtering can be
 // exercised against real server-side aggregation.
 const parquetMatchedVaults = [
+	createTestVault('Hyperliquidity Provider (HLP)', {
+		address: '0xdfc24b077bc1425ad1dea75bcb6f8158e10df303',
+		chain: 'hyperliquid',
+		chain_id: 9999,
+		protocol: 'Hyperliquid',
+		current_nav: 350_000_000,
+		peak_nav: 400_000_000,
+		stablecoinish: false
+	}),
+	createTestVault('Spark USDC Vault', {
+		address: '0xbc65ad17c5c0a2a4d159fa5a503f4992c7b545fe',
+		chain: 'ethereum',
+		protocol: 'Spark',
+		current_nav: 100_000_000,
+		peak_nav: 120_000_000
+	}),
 	createTestVault('Savings infiniFi USD', {
 		address: '0x36585e7ae4b8a422135618a2c113b8b516067e7a',
 		chain: 'arbitrum',

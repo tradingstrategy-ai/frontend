@@ -6,6 +6,7 @@ This document describes chart pages and chart navigation in the Trading Strategy
 
 The vault chart pages linked from the top `Charts` menu are:
 
+- `/vaults/compare` - user-selected vault equity curves with optional US Treasury, ETH, and BTC benchmarks.
 - `/vaults/cumulative-tvl-apy` - cumulative vault TVL by annualised return, with benchmark lines.
 - `/vaults/yield-risk` - vault annualised return by TVL, grouped by risk level.
 - `/vaults/yield-protocol` - vault annualised return by TVL, grouped by protocol.
@@ -25,6 +26,36 @@ Related vault list pages also include charts:
 
 The home page vault ecosystem chart reuses the cumulative TVL / APY ECharts renderer through `src/routes/_components/VaultEcosystemChartECharts.svelte`.
 
+### Vault comparison
+
+`/vaults/compare` uses the shared `Search.svelte` result presentation as an
+in-page vault selector. Suggestions include the same logos, protocol and chain
+context, APY, TVL, and sparkline shown by site-wide search, but exclude vaults
+below $1,000 current TVL. An accepted Add action clears the query and closes
+the suggestion panel.
+
+The page defaults to Savings USDS with the T-bill, ETH, and BTC benchmarks
+enabled. It supports up to eight vaults and stores the ordered selection,
+benchmarks, and selected chart period in URL parameters. The `period` parameter
+is always explicit, including the default `period=3M`, and an intentionally
+empty vault selection is preserved with `comparison=empty`. Selected vaults
+also appear in the shared top-vaults table below the chart.
+
+The URL is the authoritative comparison state. Vault, benchmark, and period
+choices are canonicalised on the server and survive reloads, so copying the
+current URL recreates the same chart for another user.
+
+The T-bill line uses FRED's DGS3MO 3-month constant-maturity Treasury market
+yield, quoted on an investment basis, as a cumulative-return approximation.
+
+The chart is labelled **Vault returns index**. The oldest selected vault starts
+at 100; each younger vault starts at the highest older curve that overlaps its
+first observation. A non-overlapping history starts at 100 and is marked in the
+legend. The 1M, 3M, 6M, 1Y, and Max controls drive both the visible range and
+the CAGR/Since values shown on selected-vault cards. T-bill, ETH, and BTC use
+fixed colours, while vaults receive stable, distinct colours for the current
+selection.
+
 ## Data flow
 
 Most vault chart pages read from the top-vaults dataset, not from page-specific backend APIs.
@@ -37,6 +68,9 @@ The common data sources are:
 - Client-side `fetch()` from `+page.svelte` for pages that opt out of SSR or need lazy chart data loading.
 - `+page.server.ts` for pages that can prepare their data during server rendering.
 - Vault detail metrics endpoints such as `/vaults/[vault]/metrics` for time-series data.
+- `/vaults/compare/chart-data` for a bounded, cached payload containing only the selected vaults. The endpoint performs
+  equity alignment, four-hour/daily resampling, benchmark fetching, and benchmark indexing on the server; the browser
+  receives chart-ready points rather than raw vault share-price histories.
 
 Before this dataset reaches chart payload builders, raw USD and Kinexys accounting denominations are normalised to the single `USD (offchain)` / `usd-offchain` group. Charts must use this normalised metadata and must not add provider-specific off-chain USD series.
 

@@ -180,7 +180,7 @@ so relative performance is comparable on a single axis.
 						color: '#4a90d9a0',
 						logoUrl: usTreasuryLogo,
 						href: '/glossary/risk-free-rate',
-						tooltip: 'Risk-free rate: Equivalent investment to U.S. Treasury notes.'
+						tooltip: '3-month US Treasury market-yield benchmark.'
 					}
 				]
 	);

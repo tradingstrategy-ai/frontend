@@ -29,6 +29,7 @@ Renders navigation links for vault listing and chart pages.
 	] as const;
 
 	const chartLinks = [
+		{ href: '/vaults/compare', label: 'Compare equity curves' },
 		{ href: '/vaults/cumulative-tvl-apy', label: 'Total vault earnings' },
 		{ href: '/vaults/yield-risk', label: 'Yield / Risk' },
 		{ href: '/vaults/yield-protocol', label: 'Yield / Protocol' },

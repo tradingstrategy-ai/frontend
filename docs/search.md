@@ -4,7 +4,7 @@
 
 The site-wide vault search is implemented in SvelteKit and searches the vault JSON data already used by the frontend.
 
-Search is available from the desktop navigation, the compact mobile navigation and the server-rendered [`/search`](/search) page. The full results page is a normal GET form, so links such as `/search?q=USDC` work without client-side JavaScript.
+Search is available from the desktop navigation, the compact mobile navigation, the vault-comparison selector, and the server-rendered [`/search`](/search) page. The full results page is a normal GET form, so links such as `/search?q=USDC` work without client-side JavaScript.
 
 ## Searchable entities and results
 
@@ -32,6 +32,13 @@ On desktop, interacting outside the search closes the quick-results panel.
 
 Desktop vault suggestions and full results show the 90-day price mini-map when chart data is available. Aggregate entities do not show a mini-map.
 
+The component also supports an in-page selector format. Callers can restrict
+results to vault entity types, apply a minimum current-TVL threshold, customise
+labels and placeholders, hide the full-results link, and supply an optional
+`addButton` snippet. When an action is supplied, clicking a result row or
+pressing Enter activates that action instead of navigating. The action callback
+clears the query and closes the suggestions after an accepted selection.
+
 ## Data and caching
 
 The index combines `getCachedTopVaults()` with stablecoin metadata. It is held in server memory for two minutes and is rebuilt early when the vault dataset's `generated_at` value changes. The suggestions response is publicly cacheable for 60 seconds.
@@ -46,7 +53,7 @@ The home page retains WebSite `SearchAction` structured data pointing to `/searc
 
 ## Tests
 
-`tests/integration/search.test.ts` covers desktop and mobile typeahead, the mobile navigation drawer, the result page, address lookup, blacklisted vault treatment, sortable entity types, desktop-only mini-maps, and all supported entity types. Vault-listing integration tests confirm the old in-listing search control remains absent.
+`tests/integration/search.test.ts` covers desktop and mobile typeahead, the mobile navigation drawer, the result page, address lookup, blacklisted vault treatment, sortable entity types, desktop-only mini-maps, and all supported entity types. `tests/integration/vaults/equity-compare.test.ts` covers the selector format and Add action at desktop, tablet, and mobile widths. Vault-listing integration tests confirm the old in-listing search control remains absent.
 
 Use:
 

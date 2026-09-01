@@ -267,7 +267,8 @@ export function buildBenchmarkPoints(
 
 	const totalTvl = betterTvl + worseTvl;
 	const label = kind === 'treasury' ? 'US Treasury note rate' : 'US bank savings rate';
-	const description = kind === 'treasury' ? 'The risk-free benchmark.' : 'Average yield on a US bank savings account.';
+	const description =
+		kind === 'treasury' ? 'A US Treasury yield benchmark.' : 'Average yield on a US bank savings account.';
 	const url = kind === 'treasury' ? benchmarkUrls.treasury : benchmarkUrls.savings;
 
 	return Array.from({ length: BENCHMARK_SAMPLE_COUNT }, (_, index) => {

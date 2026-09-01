@@ -176,6 +176,10 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		listingKey?: VaultListingKey;
 		listingScope?: string;
 		listingSummary?: VaultListingSummary;
+		/** Query parameters retained when this table updates its own sorting and filtering state. */
+		preserveSearchParams?: string[];
+		/** Show the standard stablecoin-only badge in the listing metadata. */
+		showStablecoinOnlyMeta?: boolean;
 	}
 
 	interface ListingDataResponse {
@@ -221,7 +225,9 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		initialHasMore = false,
 		listingKey = 'top',
 		listingScope,
-		listingSummary
+		listingSummary,
+		preserveSearchParams = [],
+		showStablecoinOnlyMeta = true
 	}: Props = $props();
 	const defaultHideAmm = untrack(() => ((getVaultListingDefaults(listingKey, listingScope).amm ?? true) ? 1 : 0));
 	let listingAssetType = $derived(listingKey === 'protocol' && isPoolProtocol(listingScope) ? 'pool' : 'vault');
@@ -331,7 +337,11 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 			...overrides
 		};
 		const url = new SvelteURL(page.url);
-		url.search = serialiseSearchParams(updated, searchParamsSchema);
+		const searchParams = new SvelteURLSearchParams(serialiseSearchParams(updated, searchParamsSchema));
+		for (const key of preserveSearchParams) {
+			for (const value of page.url.searchParams.getAll(key)) searchParams.append(key, value);
+		}
+		url.search = searchParams.toString();
 		return url;
 	}
 
@@ -1009,13 +1019,15 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 					>
 				</Tooltip>
 			{/if}
-			<Tooltip>
-				<svelte:fragment slot="trigger">Stablecoin-only</svelte:fragment>
-				<svelte:fragment slot="popup"
-					>We list stablecoin-denominated vaults only. This excludes vaults with cryptocurrency denominator like ETH or
-					BTC.</svelte:fragment
-				>
-			</Tooltip>
+			{#if showStablecoinOnlyMeta}
+				<Tooltip>
+					<svelte:fragment slot="trigger">Stablecoin-only</svelte:fragment>
+					<svelte:fragment slot="popup"
+						>We list stablecoin-denominated vaults only. This excludes vaults with cryptocurrency denomination like ETH
+						or BTC.</svelte:fragment
+					>
+				</Tooltip>
+			{/if}
 			<span
 				><Tooltip>
 					<svelte:fragment slot="trigger">Updated <Timestamp date={topVaults.generated_at} relative /></svelte:fragment>

@@ -1,6 +1,6 @@
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, vi } from 'vitest';
 import { utcDay, utcHour } from 'd3-time';
-import { ratesToCumulativeReturn } from './treasury-benchmark';
+import { fetchTreasuryBenchmarkSeries, ratesToCumulativeReturn } from './treasury-benchmark';
 import { isPerpetualFuturesVault } from './isPerpetualFuturesVault';
 import { isValidDateString } from '$lib/fred-helpers';
 
@@ -156,6 +156,19 @@ describe('ratesToCumulativeReturn', () => {
 		const end = new Date('2025-01-31T00:00:00Z');
 		const rates = makeRates(start, 31, 4.0);
 		expect(ratesToCumulativeReturn(rates, 0, day, start, end)).toEqual([]);
+	});
+});
+
+describe('fetchTreasuryBenchmarkSeries', () => {
+	test('can bypass the module cache for callers with their own bounded cache', async () => {
+		const fetch = vi.fn(async () => new Response(JSON.stringify([[1_738_368_000, 4.2]])));
+		const start = new Date('2025-02-01T00:00:00Z');
+		const end = new Date('2025-03-01T00:00:00Z');
+
+		await fetchTreasuryBenchmarkSeries(fetch as unknown as Fetch, start, end, false);
+		await fetchTreasuryBenchmarkSeries(fetch as unknown as Fetch, start, end, false);
+
+		expect(fetch).toHaveBeenCalledTimes(2);
 	});
 });
 

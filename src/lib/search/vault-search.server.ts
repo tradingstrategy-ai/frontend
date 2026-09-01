@@ -44,6 +44,10 @@ type SearchIndex = {
 type SearchOptions = {
 	/** Return the highest-ranked match for each entity type before filling remaining slots. */
 	diversifyTypes?: boolean;
+	/** Limit results to these public entity types before ranking and limiting. */
+	entityTypes?: readonly SearchEntityType[];
+	/** Exclude vault results whose latest TVL is below this USD value. */
+	minimumVaultTvlUsd?: number;
 };
 
 let cachedIndex: SearchIndex | undefined;
@@ -312,7 +316,14 @@ export async function searchVaultEntities(
 	if (!normalisedQuery) return { query: trimmedQuery, results: [], total: 0 };
 	const tokens = normalisedQuery.split(' ').filter(Boolean);
 	const shortQuery = normalisedQuery.length === 1;
+	const allowedEntityTypes = options.entityTypes ? new Set(options.entityTypes) : null;
 	const matches = index.records
+		.filter((record) => !allowedEntityTypes || allowedEntityTypes.has(record.entityType))
+		.filter(
+			(record) =>
+				options.minimumVaultTvlUsd === undefined ||
+				(record.latestTvl !== null && record.latestTvl >= options.minimumVaultTvlUsd)
+		)
 		.map((record) => ({ record, score: getMatchScore(record, normalisedQuery, tokens) }))
 		.filter((match): match is { record: IndexedSearchRecord; score: number } => match.score !== null)
 		.filter((match) => !shortQuery || match.score >= 2)

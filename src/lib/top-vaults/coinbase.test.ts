@@ -3,8 +3,9 @@ import { fetchCoinbaseBenchmarkCloses, getCoinbaseGranularitySeconds } from './c
 
 function makeProxyFetch(responseData: [number, number][]) {
 	return vi.fn(async (input: RequestInfo | URL) => {
+		void input;
 		return new Response(JSON.stringify(responseData), { status: 200 });
-	}) as unknown as Fetch;
+	});
 }
 
 describe('getCoinbaseGranularitySeconds', () => {
@@ -34,7 +35,7 @@ describe('fetchCoinbaseBenchmarkCloses', () => {
 		];
 		const fetch = makeProxyFetch(expectedData);
 
-		const closes = await fetchCoinbaseBenchmarkCloses(fetch, 'BTC-USD', start, end);
+		const closes = await fetchCoinbaseBenchmarkCloses(fetch as unknown as Fetch, 'BTC-USD', start, end);
 
 		expect(fetch).toHaveBeenCalledOnce();
 		const calledUrl = new URL(String(fetch.mock.calls[0][0]), 'http://localhost');
@@ -44,6 +45,17 @@ describe('fetchCoinbaseBenchmarkCloses', () => {
 		expect(calledUrl.searchParams.get('start')).toBe(start.toISOString());
 		expect(calledUrl.searchParams.get('end')).toBe(end.toISOString());
 		expect(closes).toEqual(expectedData);
+	});
+
+	test('can bypass the module cache for callers with their own bounded cache', async () => {
+		const start = new Date('2025-02-01T00:00:00Z');
+		const end = new Date('2025-03-01T00:00:00Z');
+		const fetch = makeProxyFetch([[1_738_368_000, 42_000]]);
+
+		await fetchCoinbaseBenchmarkCloses(fetch as unknown as Fetch, 'BTC-USD', start, end, false);
+		await fetchCoinbaseBenchmarkCloses(fetch as unknown as Fetch, 'BTC-USD', start, end, false);
+
+		expect(fetch).toHaveBeenCalledTimes(2);
 	});
 
 	test('throws on proxy error response', async () => {

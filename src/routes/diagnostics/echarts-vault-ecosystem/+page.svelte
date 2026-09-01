@@ -179,7 +179,7 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 		const totalTvl = betterTvl + worseTvl;
 		const benchmarkLabel = kind === 'treasury' ? 'US Treasury note rate' : 'US bank savings rate';
 		const benchmarkDescription =
-			kind === 'treasury' ? 'The risk-free benchmark.' : 'Average yield on a US bank savings account.';
+			kind === 'treasury' ? 'A US Treasury yield benchmark.' : 'Average yield on a US bank savings account.';
 		const benchmarkUrl = kind === 'treasury' ? TREASURY_URL : SAVINGS_URL;
 		const benchmarkData = Array.from({ length: BENCHMARK_SAMPLE_COUNT }, (_, index) => {
 			const ratio = index / Math.max(BENCHMARK_SAMPLE_COUNT - 1, 1);
