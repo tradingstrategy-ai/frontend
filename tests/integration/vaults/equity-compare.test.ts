@@ -267,6 +267,19 @@ test.describe('vault equity curve comparison page', () => {
 				.evaluate((swatch) => getComputedStyle(swatch).borderTopColor)
 		).toBe('rgba(98, 126, 234, 0.5)');
 
+		const sharedUrl = page.url();
+		await page.goto('/vaults/compare?comparison=empty');
+		await page.goto(sharedUrl);
+		await expect(selectedVaults.locator('li')).toHaveCount(2);
+		await expect(selectedVaults).toContainText('Savings USDS');
+		await expect(selectedVaults).toContainText('Savings infiniFi USD');
+		await expect(page.getByRole('checkbox', { name: 'T-Bill' })).not.toBeChecked();
+		await expect(page.getByRole('checkbox', { name: 'ETH' })).toBeChecked();
+		await expect(page.getByRole('checkbox', { name: 'BTC' })).not.toBeChecked();
+		expect(page.url()).toBe(sharedUrl);
+		await timePeriodOptions.filter({ hasText: '1Y' }).click();
+		await expect(timePeriodOptions.filter({ hasText: '1Y' })).toHaveClass(/selected/);
+
 		await page.getByRole('button', { name: 'Remove Savings USDS from comparison' }).click();
 		await expect(selectedVaults.locator('li')).toHaveCount(1);
 		await expect(selectedVaults).not.toContainText('Savings USDS');

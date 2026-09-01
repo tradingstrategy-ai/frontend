@@ -1,4 +1,5 @@
 import { comparisonBenchmarkKeys, type ComparisonBenchmark } from './types';
+import { deserialiseSearchParams, serialiseSearchParams, type ParamSchema } from '$lib/helpers/url-search-state';
 
 export const MAX_SELECTED_VAULTS = 8;
 export const EMPTY_COMPARISON_PARAMETER = 'comparison';
@@ -8,6 +9,11 @@ export interface EquityComparisonState {
 	vaultIds: string[];
 	benchmarks: ComparisonBenchmark[];
 }
+
+const comparisonSearchParamsSchema = {
+	vault: { type: 'string[]', defaultValue: [] },
+	benchmark: { type: 'string[]', defaultValue: [], options: comparisonBenchmarkKeys }
+} as const satisfies ParamSchema;
 
 function uniqueTrimmed(values: readonly string[], limit = Number.POSITIVE_INFINITY): string[] {
 	const seen = new Set<string>();
@@ -37,9 +43,10 @@ export function canonicaliseComparisonBenchmarks(values: readonly string[]): Com
 
 /** Parse comparison state from repeated `vault` and `benchmark` parameters. */
 export function parseEquityComparisonState(searchParams: URLSearchParams): EquityComparisonState {
+	const state = deserialiseSearchParams(searchParams, comparisonSearchParamsSchema);
 	return {
-		vaultIds: canonicaliseComparisonVaultIds(searchParams.getAll('vault')),
-		benchmarks: canonicaliseComparisonBenchmarks(searchParams.getAll('benchmark'))
+		vaultIds: canonicaliseComparisonVaultIds(state.vault),
+		benchmarks: canonicaliseComparisonBenchmarks(state.benchmark)
 	};
 }
 
@@ -54,8 +61,13 @@ export function writeEquityComparisonState(
 	next.delete(EMPTY_COMPARISON_PARAMETER);
 
 	const vaultIds = canonicaliseComparisonVaultIds(state.vaultIds);
-	for (const vaultId of vaultIds) next.append('vault', vaultId);
-	for (const benchmark of canonicaliseComparisonBenchmarks(state.benchmarks)) next.append('benchmark', benchmark);
+	const comparisonParams = new URLSearchParams(
+		serialiseSearchParams(
+			{ vault: vaultIds, benchmark: canonicaliseComparisonBenchmarks(state.benchmarks) },
+			comparisonSearchParamsSchema
+		)
+	);
+	for (const [key, value] of comparisonParams) next.append(key, value);
 	if (!vaultIds.length) next.set(EMPTY_COMPARISON_PARAMETER, EMPTY_COMPARISON_VALUE);
 
 	return next;

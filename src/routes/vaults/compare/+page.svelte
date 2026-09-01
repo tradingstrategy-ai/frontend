@@ -2,7 +2,7 @@
 Compare selected vault equity curves and fixed market benchmarks on one indexed chart.
 -->
 <script lang="ts">
-	import { goto, replaceState } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { tick, untrack } from 'svelte';
@@ -27,7 +27,6 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 	import { assignVaultComparisonColours } from '$lib/top-vaults/equity-comparison/colours';
 	import {
 		MAX_SELECTED_VAULTS,
-		canonicaliseComparisonBenchmarks,
 		parseEquityComparisonState,
 		writeEquityComparisonState
 	} from '$lib/top-vaults/equity-comparison/state';
@@ -76,22 +75,6 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 		untrack(() => {
 			colours = assignVaultComparisonColours(ids, colours);
 		});
-	});
-
-	$effect(() => {
-		const rawBenchmarks = page.url.searchParams.getAll('benchmark');
-		const canonicalBenchmarks = canonicaliseComparisonBenchmarks(rawBenchmarks);
-		if (
-			rawBenchmarks.length === canonicalBenchmarks.length &&
-			rawBenchmarks.every((value, index) => value === canonicalBenchmarks[index])
-		)
-			return;
-
-		const canonicalSearchParams = new SvelteURLSearchParams(page.url.searchParams);
-		canonicalSearchParams.delete('benchmark');
-		for (const benchmark of canonicalBenchmarks) canonicalSearchParams.append('benchmark', benchmark);
-		const canonicalSearch = canonicalSearchParams.size ? `?${canonicalSearchParams}` : '';
-		replaceState(resolve(`/vaults/compare${canonicalSearch}` as '/vaults/compare'), page.state);
 	});
 
 	$effect(() => {

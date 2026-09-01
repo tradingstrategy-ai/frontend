@@ -3,6 +3,7 @@ import { getChainDisplayName } from '$lib/helpers/chain';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import {
 	canonicaliseComparisonVaultIds,
+	canonicaliseComparisonBenchmarks,
 	EMPTY_COMPARISON_PARAMETER,
 	EMPTY_COMPARISON_VALUE,
 	MAX_SELECTED_VAULTS,
@@ -14,6 +15,7 @@ import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers';
 
 export async function load({ fetch, url }) {
 	const requestedVaultIds = url.searchParams.getAll('vault');
+	const requestedBenchmarks = url.searchParams.getAll('benchmark');
 	const topVaults = await getCachedTopVaults(fetch);
 	const hasExplicitComparisonState =
 		requestedVaultIds.length > 0 ||
@@ -32,6 +34,7 @@ export async function load({ fetch, url }) {
 	}
 
 	const canonicalVaultIds = canonicaliseComparisonVaultIds(requestedVaultIds);
+	const canonicalBenchmarks = canonicaliseComparisonBenchmarks(requestedBenchmarks);
 	const vaultById = new Map(topVaults.vaults.map((vault) => [vault.id, vault]));
 	const resolvedVaultIds = canonicalVaultIds.filter((vaultId) => vaultById.has(vaultId));
 	const hasStaleEmptyMarker =
@@ -41,16 +44,15 @@ export async function load({ fetch, url }) {
 		requestedVaultIds.length > MAX_SELECTED_VAULTS ||
 		requestedVaultIds.length !== resolvedVaultIds.length ||
 		requestedVaultIds.some((value, index) => value !== resolvedVaultIds[index]) ||
+		requestedBenchmarks.length !== canonicalBenchmarks.length ||
+		requestedBenchmarks.some((value, index) => value !== canonicalBenchmarks[index]) ||
 		hasStaleEmptyMarker
 	) {
-		const canonicalUrl = new URL(url);
-		canonicalUrl.searchParams.delete('vault');
-		canonicalUrl.searchParams.delete(EMPTY_COMPARISON_PARAMETER);
-		for (const vaultId of resolvedVaultIds) canonicalUrl.searchParams.append('vault', vaultId);
-		if (!resolvedVaultIds.length) {
-			canonicalUrl.searchParams.set(EMPTY_COMPARISON_PARAMETER, EMPTY_COMPARISON_VALUE);
-		}
-		redirect(307, `${canonicalUrl.pathname}${canonicalUrl.search}`);
+		const canonicalSearchParams = writeEquityComparisonState(url.searchParams, {
+			vaultIds: resolvedVaultIds,
+			benchmarks: canonicalBenchmarks
+		});
+		redirect(307, `${url.pathname}?${canonicalSearchParams}`);
 	}
 
 	const selectedVaultRecords = resolvedVaultIds.map((vaultId) => vaultById.get(vaultId)!);

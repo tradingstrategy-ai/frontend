@@ -40,6 +40,10 @@ benchmarks in repeated URL parameters, and preserves an intentionally empty
 selection with `comparison=empty`. Selected vaults also appear in the shared
 top-vaults table below the chart.
 
+The URL is the authoritative comparison state. Vault and benchmark choices are
+canonicalised on the server and survive reloads, so copying the current URL
+recreates the same selection for another user.
+
 The T-bill line uses FRED's DGS3MO 3-month constant-maturity Treasury market
 yield, quoted on an investment basis, as a cumulative-return approximation.
 
