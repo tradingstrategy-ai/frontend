@@ -98,6 +98,9 @@ test.describe('vault equity curve comparison page', () => {
 
 		await page.goto('/vaults/compare');
 
+		const pageHeading = page.getByRole('heading', { level: 1, name: 'Compare vaults Beta' });
+		await expect(pageHeading).toBeVisible();
+		await expect(pageHeading.getByText('Beta', { exact: true })).toBeVisible();
 		const selectedVaults = page.getByRole('list', { name: 'Selected vaults' });
 		await expect(page.getByRole('heading', { name: 'Selected vaults' })).toBeVisible();
 		await expect(selectedVaults.locator('li')).toHaveCount(1);

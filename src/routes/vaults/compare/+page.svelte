@@ -9,6 +9,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import { JsonLd } from 'svelte-meta-tags';
 	import Alert from '$lib/components/Alert.svelte';
+	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
@@ -220,7 +221,12 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 		<HeroBanner
 			subtitle="Compare the historical performance of vaults with each other and US Treasury, ETH, and BTC benchmarks. The index may include or exclude fees depending on the vault type; check the vault pages for fee details."
 		>
-			{#snippet title()}<span>{pageTitle}</span>{/snippet}
+			{#snippet title()}
+				<span class="page-title">
+					{pageTitle}
+					<DataBadge class="beta-badge" status="beta">Beta</DataBadge>
+				</span>
+			{/snippet}
 		</HeroBanner>
 	</Section>
 
@@ -350,6 +356,14 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 <style>
 	.vault-compare-page {
 		--control-panel-padding: var(--space-lg);
+	}
+	.page-title {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-sm);
+	}
+	:global(.page-title .beta-badge) {
+		font-size: 0.35em;
 	}
 	.comparison-controls {
 		display: grid;
