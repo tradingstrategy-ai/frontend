@@ -12,47 +12,48 @@ amounts in the denomination's native currency.
 	import Profitability from '$lib/components/Profitability.svelte';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import Metric from './Metric.svelte';
+	import FeaturedPerformanceExample from './FeaturedPerformanceExample.svelte';
 	import { formatDollar, formatNumber, formatPercent, formatTokenAmount } from '$lib/helpers/formatters';
 	import type { TimeSpanKey } from '$lib/charts/time-span';
 	import {
 		getVaultCurrentTvlUsd,
 		getVaultDenominationCurrency,
 		getVaultPeakTvlUsd,
-		getVaultTvlNative
+		getVaultTvlNative,
+		hasNetVaultFeeInformation
 	} from '$lib/top-vaults/helpers';
+	import {
+		getFeaturedPerformanceExample,
+		getFeaturedPerformancePeriod,
+		getFeaturedPerformanceReturnLabel,
+		getFeaturedPerformanceReturnMode,
+		type FeaturedPerformancePeriodKey
+	} from './featured-performance';
 
 	interface Props {
 		vault: VaultInfo;
 		chartLogoUrl?: string;
 	}
 
-	let { vault, chartLogoUrl }: Props = $props();
-	let selectedReturnPeriod = $state<'1M' | '3M' | 'Max'>('3M');
-	let oneMonthMetrics = $derived(vault.period_results.find((period) => period.period.toLowerCase() === '1m'));
-	let lifetimeMetrics = $derived(vault.period_results.find((period) => period.period.toLowerCase() === 'lifetime'));
-	let featuredPerformance = $derived(
-		selectedReturnPeriod === '1M'
-			? {
-					label: '1M',
-					return: { gross: vault.one_month_cagr, net: vault.one_month_cagr_net },
-					sharpe: oneMonthMetrics?.sharpe,
-					volatility: oneMonthMetrics?.volatility
-				}
-			: selectedReturnPeriod === '3M'
-				? {
-						label: '3M',
-						return: { gross: vault.three_months_cagr, net: vault.three_months_cagr_net },
-						sharpe: vault.three_months_sharpe,
-						volatility: vault.three_months_volatility
-					}
-				: {
-						label: 'Lifetime',
-						return: { gross: vault.cagr, net: vault.cagr_net },
-						sharpe: lifetimeMetrics?.sharpe,
-						volatility: lifetimeMetrics?.volatility
-					}
-	);
+	const EXAMPLE_CAPITAL_IN = 10_000;
 
+	let { vault, chartLogoUrl }: Props = $props();
+	let selectedReturnPeriod = $state<FeaturedPerformancePeriodKey>('3M');
+	let featuredPerformance = $derived(getFeaturedPerformancePeriod(vault, selectedReturnPeriod));
+
+	let hasNetFeeInformation = $derived(hasNetVaultFeeInformation(vault));
+	let featuredPerformanceReturnMode = $derived(
+		getFeaturedPerformanceReturnMode(hasNetFeeInformation, featuredPerformance.return.net.annualised)
+	);
+	let featuredPerformanceReturn = $derived(
+		featuredPerformanceReturnMode === 'net'
+			? featuredPerformance.return.net.annualised
+			: featuredPerformance.return.gross.annualised
+	);
+	let featuredPerformanceReturnLabel = $derived(
+		getFeaturedPerformanceReturnLabel(featuredPerformance.label, featuredPerformanceReturnMode)
+	);
+	let performanceExample = $derived(getFeaturedPerformanceExample(vault, featuredPerformance, EXAMPLE_CAPITAL_IN));
 	let denominationCurrency = $derived(getVaultDenominationCurrency(vault));
 	let showNativeTvl = $derived(denominationCurrency != null && denominationCurrency !== 'usd');
 	let currentNativeTvl = $derived(getVaultTvlNative(vault, vault.current_nav));
@@ -88,17 +89,30 @@ amounts in the denomination's native currency.
 		<div class="divider"></div>
 
 		<div class="featured-metrics">
-			<Metric size="xl" label={`${featuredPerformance.label} return (ann)`}>
-				{#if featuredPerformance.return.net != null}
-					<Profitability of={featuredPerformance.return.net} />
+			<Metric size="xl" label={featuredPerformanceReturnLabel}>
+				{#if featuredPerformanceReturnMode === 'net'}
+					<span class="net-return-tooltip">
+						<Tooltip>
+							<span slot="trigger" class="net-return-tooltip-trigger">
+								<Profitability of={featuredPerformanceReturn} />
+							</span>
+							<svelte:fragment slot="popup">
+								<FeaturedPerformanceExample example={performanceExample} />
+							</svelte:fragment>
+						</Tooltip>
+					</span>
 				{:else}
 					<Tooltip>
 						<span slot="trigger" style:white-space="nowrap">
-							<Profitability of={featuredPerformance.return.gross} /><span class="gross-indicator">*</span>
+							<Profitability of={featuredPerformanceReturn} /><span class="gross-indicator">*</span>
 						</span>
 						<svelte:fragment slot="popup">
-							Fee information for this protocol is not yet available. The calculation is based on gross profit and fees
-							may apply.
+							{#if hasNetFeeInformation}
+								Net annualised return data is not available for this period. The calculation is based on gross returns.
+							{:else}
+								Fee information for this protocol is not yet available. The calculation is based on gross profit and
+								fees may apply.
+							{/if}
 						</svelte:fragment>
 					</Tooltip>
 				{/if}
@@ -172,6 +186,15 @@ amounts in the denomination's native currency.
 
 			.gross-indicator {
 				color: var(--c-text-light);
+			}
+
+			.net-return-tooltip-trigger {
+				border-bottom: 1px dashed var(--c-text-light);
+				white-space: nowrap;
+			}
+
+			.net-return-tooltip :global(.popup) {
+				max-width: min(90vw, 28rem);
 			}
 
 			.tvl-tooltip-trigger {

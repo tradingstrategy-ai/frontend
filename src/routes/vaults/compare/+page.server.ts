@@ -13,6 +13,7 @@ import {
 import { comparisonBenchmarkKeys, type ComparisonVault } from '$lib/top-vaults/equity-comparison/types';
 import { getVaultProtocolDisplayName, isBlacklisted, resolveVaultDetails } from '$lib/top-vaults/helpers';
 import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers';
+import { getVaultCompareMeta } from './compare-meta';
 
 export async function load({ fetch, url }) {
 	const requestedVaultIds = url.searchParams.getAll('vault');
@@ -95,6 +96,7 @@ export async function load({ fetch, url }) {
 	);
 
 	return {
+		compareMeta: getVaultCompareMeta(url.searchParams, topVaults.vaults),
 		selectedVaults,
 		selectedTopVaults: {
 			generated_at: topVaults.generated_at,

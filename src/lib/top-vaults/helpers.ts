@@ -700,6 +700,22 @@ export function getFormattedFeeMode({ fee_mode }: VaultInfo): string {
 	return capitalize(fee_mode.replaceAll('_', ' '));
 }
 
+/** Return whether management or performance fees are embedded in the share price. */
+export function hasInternalisedVaultFees(
+	vault: Pick<VaultInfo, 'fee_internalised' | 'gross_fees' | 'net_fees'>
+): boolean {
+	return (
+		vault.fee_internalised === true ||
+		vault.gross_fees?.fee_mode?.startsWith('internalised') === true ||
+		vault.net_fees?.fee_mode?.startsWith('internalised') === true
+	);
+}
+
+/** Return whether the backend supplied the investor fee schedule used for net returns. */
+export function hasNetVaultFeeInformation(vault: Pick<VaultInfo, 'net_fees'>): boolean {
+	return vault.net_fees?.fee_mode != null;
+}
+
 /** Human-readable labels and descriptions for each fee mode */
 const feeModeDetails: Record<FeeMode, { label: string; description: string }> = {
 	internalised_skimming: {

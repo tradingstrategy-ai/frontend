@@ -23,12 +23,83 @@ For more information see:
 </Tooltip>
 ```
 -->
-<dfn class="tooltip ds-3">
+<script lang="ts">
+	import { onMount, tick } from 'svelte';
+
+	const VIEWPORT_MARGIN = 8;
+
+	let tooltip: HTMLElement;
+	let popup: HTMLButtonElement;
+	let isOpen = $state(false);
+	let isPositioned = $state(false);
+	let popupPosition = $state('');
+
+	async function showPopup(): Promise<void> {
+		isOpen = true;
+		isPositioned = false;
+		await tick();
+		positionPopup();
+	}
+
+	function hidePopup(): void {
+		isOpen = false;
+		isPositioned = false;
+	}
+
+	function repositionPopup(): void {
+		if (isOpen) positionPopup();
+	}
+
+	function positionPopup(): void {
+		if (tooltip == null || popup == null) return;
+
+		const triggerRect = tooltip.getBoundingClientRect();
+		const popupRect = popup.getBoundingClientRect();
+		const popupWidth = Math.min(popupRect.width, window.innerWidth - VIEWPORT_MARGIN * 2);
+		const popupHeight = Math.min(popupRect.height, window.innerHeight - VIEWPORT_MARGIN * 2);
+		const preferredLeft = triggerRect.left + (triggerRect.width - popupWidth) / 2;
+		const maxLeft = window.innerWidth - popupWidth - VIEWPORT_MARGIN;
+		const left = Math.max(VIEWPORT_MARGIN, Math.min(preferredLeft, maxLeft));
+		const belowTop = triggerRect.bottom;
+		const aboveTop = triggerRect.top - popupHeight;
+		const top =
+			belowTop + popupHeight <= window.innerHeight - VIEWPORT_MARGIN ? belowTop : Math.max(VIEWPORT_MARGIN, aboveTop);
+
+		popupPosition = `left: ${left}px; top: ${top}px; right: auto; bottom: auto; transform: none;`;
+		isPositioned = true;
+	}
+
+	onMount(() => {
+		window.addEventListener('resize', repositionPopup);
+		window.addEventListener('scroll', repositionPopup, true);
+
+		return () => {
+			window.removeEventListener('resize', repositionPopup);
+			window.removeEventListener('scroll', repositionPopup, true);
+		};
+	});
+</script>
+
+<dfn
+	bind:this={tooltip}
+	class="tooltip ds-3"
+	onmouseenter={showPopup}
+	onmouseleave={hidePopup}
+	onfocusin={showPopup}
+	onfocusout={hidePopup}
+>
 	<span class="trigger targetable-above">
 		<slot name="trigger" />
 	</span>
 	<!-- popup MUST be a button element (disabled); see Tooltip.test.ts -->
-	<button class="popup" disabled>
+	<button
+		bind:this={popup}
+		class="popup"
+		data-open={isOpen}
+		data-positioned={isPositioned}
+		style={popupPosition}
+		disabled
+	>
 		<div class="inner">
 			<slot name="popup" />
 		</div>
@@ -51,10 +122,12 @@ For more information see:
 
 		.popup {
 			display: none;
-			position: absolute;
+			position: fixed;
 			contain: content;
 			width: max-content;
-			max-width: min(90vw, 300px);
+			max-width: min(calc(100vw - 1rem), 300px);
+			max-height: calc(100vh - 1rem);
+			overflow: auto;
 			padding: 0.25rem 0 0 0;
 			border: none;
 			background: transparent;
@@ -63,10 +136,8 @@ For more information see:
 			z-index: 10000;
 
 			@media (--viewport-sm-down) {
-				bottom: 1rem;
-				position: fixed;
-				left: 0.5rem;
-				right: 0.5rem;
+				width: calc(100vw - 1rem) !important;
+				max-width: none !important;
 				padding: 0;
 			}
 
@@ -92,8 +163,13 @@ For more information see:
 			}
 		}
 
-		&:is(:hover, :focus) .popup {
+		.popup[data-open='true'] {
 			display: block;
+			visibility: hidden;
+		}
+
+		.popup[data-open='true'][data-positioned='true'] {
+			visibility: visible;
 		}
 	}
 </style>

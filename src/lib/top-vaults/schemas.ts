@@ -332,9 +332,9 @@ export const vaultInfoSchema = z.object({
 	fee_mode: z.string().nullable(),
 	/** Whether fees are internalised (taken from NAV rather than on transactions) */
 	fee_internalised: z.boolean().nullable(),
-	/** Fee schedule before protocol revenue share */
+	/** Fee schedule before protocol revenue share; also discloses fees embedded in share-price returns */
 	gross_fees: vaultFeesSchema.nullable(),
-	/** Fee schedule after protocol revenue share (what the user actually pays) */
+	/** Investor fee schedule after protocol revenue share, used by the backend to calculate net returns */
 	net_fees: vaultFeesSchema.nullable(),
 
 	// --- Operational metadata ---

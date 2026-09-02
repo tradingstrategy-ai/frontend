@@ -11,7 +11,7 @@ Displays supplementary vault information, performance, fees, and risk metrics.
 	import Metric from './Metric.svelte';
 	import { resolve } from '$app/paths';
 	import IconWarningFilled from '~icons/local/warning-filled';
-	import { getFormattedLockup } from '$lib/top-vaults/helpers';
+	import { getFormattedLockup, hasInternalisedVaultFees, hasNetVaultFeeInformation } from '$lib/top-vaults/helpers';
 	import { formatNumber, formatPercent, formatPercentProfit } from '$lib/helpers/formatters';
 	import { getChainDisplayName } from '$lib/helpers/chain';
 	import {
@@ -39,12 +39,8 @@ Displays supplementary vault information, performance, fees, and risk metrics.
 	let { vault, stablecoinMetadata = null, core3 = null }: Props = $props();
 
 	let hasLimitedHistory = $derived(LIMITED_HISTORY_CHAINS.includes(vault.chain_id));
-	let hasNetFeeInformation = $derived(vault.net_fees?.fee_mode != null);
-	let hasInternalisedFees = $derived(
-		vault.fee_internalised === true ||
-			vault.gross_fees?.fee_mode?.startsWith('internalised') ||
-			vault.net_fees?.fee_mode?.startsWith('internalised')
-	);
+	let hasNetFeeInformation = $derived(hasNetVaultFeeInformation(vault));
+	let hasInternalisedFees = $derived(hasInternalisedVaultFees(vault));
 	let denominationSlug = $derived(
 		resolveStablecoinSlug({
 			slug: vault.denomination_slug,
