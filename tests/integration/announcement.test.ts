@@ -28,7 +28,7 @@ test.describe('announcement banner', () => {
 		test('is displayed with a link to the podcast page', async ({ page }) => {
 			const announcement = page.getByText('We have started the Trading Strategy podcast.');
 			await expect(announcement).toBeVisible();
-			await expect(page.getByRole('link', { name: 'Listen to us on Youtube and Spotify.' })).toHaveAttribute(
+			await expect(page.getByRole('link', { name: 'Listen to us on YouTube and Spotify.' })).toHaveAttribute(
 				'href',
 				'/podcast'
 			);
@@ -54,7 +54,7 @@ test.describe('announcement banner', () => {
 		});
 
 		test('dismisses when the podcast link is clicked', async ({ page }) => {
-			await page.getByRole('link', { name: 'Listen to us on Youtube and Spotify.' }).click();
+			await page.getByRole('link', { name: 'Listen to us on YouTube and Spotify.' }).click();
 			await page.waitForURL('**/podcast');
 			const cookies = await page.context().cookies();
 			expect(cookies.some((cookie) => cookie.name === 'podcast-announcement-dismissed-at')).toBe(true);

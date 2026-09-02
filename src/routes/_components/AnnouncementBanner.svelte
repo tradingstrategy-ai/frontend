@@ -48,7 +48,7 @@ Dismissed state is retained in a podcast-specific cookie (see `hooks.server.ts`)
 		<div class="content">
 			<span class="description">
 				We have started the Trading Strategy podcast.
-				<a href={resolve('/podcast')} on:click={dismiss}>Listen to us on Youtube and Spotify.</a>
+				<a href={resolve('/podcast')} on:click={dismiss}>Listen to us on YouTube and Spotify.</a>
 			</span>
 		</div>
 
