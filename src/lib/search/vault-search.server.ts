@@ -142,6 +142,7 @@ function buildIndex(topVaults: TopVaults, stablecoins: StablecoinMetadata[]): In
 			[
 				vault.vault_slug,
 				vault.address,
+				vault.share_token,
 				vault.protocol,
 				vault.protocol_slug,
 				vault.curator_name,
