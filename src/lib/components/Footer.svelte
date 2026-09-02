@@ -14,6 +14,7 @@ Set `small` to use the compact spacing variant.
 	import IconTwitter from '~icons/local/twitter';
 	import IconLinkedin from '~icons/local/linkedin';
 	import IconYoutube from '~icons/local/youtube';
+	import IconSpotify from '~icons/local/spotify';
 	import IconRss from '~icons/local/rss';
 
 	let { small = false }: { small?: boolean } = $props();
@@ -22,6 +23,30 @@ Set `small` to use the compact spacing variant.
 <footer>
 	<div class="social-links" class:small>
 		<div class="link-group">
+			<Tooltip>
+				<a
+					slot="trigger"
+					href="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
+					aria-label="YouTube"
+					target="_blank"
+					rel="noreferrer"
+				>
+					<IconYoutube />
+				</a>
+				<div slot="popup">YouTube</div>
+			</Tooltip>
+			<Tooltip>
+				<a
+					slot="trigger"
+					href="https://open.spotify.com/show/0BXZEqA3uG5hYZiVYVRZP8"
+					aria-label="Spotify"
+					target="_blank"
+					rel="noreferrer"
+				>
+					<IconSpotify />
+				</a>
+				<div slot="popup">Spotify</div>
+			</Tooltip>
 			<Tooltip>
 				<a
 					slot="trigger"
@@ -51,18 +76,6 @@ Set `small` to use the compact spacing variant.
 					<IconTelegram />
 				</a>
 				<div slot="popup">Telegram</div>
-			</Tooltip>
-			<Tooltip>
-				<a
-					slot="trigger"
-					href="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
-					aria-label="YouTube"
-					target="_blank"
-					rel="noreferrer"
-				>
-					<IconYoutube />
-				</a>
-				<div slot="popup">YouTube</div>
 			</Tooltip>
 			<Tooltip>
 				<a slot="trigger" href={resolve('/blog/rss.xml')} aria-label="RSS" target="_blank">
@@ -117,17 +130,23 @@ Set `small` to use the compact spacing variant.
 
 		@media (--viewport-sm-down) {
 			--icon-size: 1.25rem;
-			gap: 1.75rem;
+			gap: var(--space-md);
 		}
 
 		&.small {
 			--icon-size: 1.25rem;
 			gap: 1.75rem;
 			padding-top: 0;
+
+			@media (--viewport-sm-down) {
+				gap: var(--space-md);
+			}
 		}
 
 		.link-group {
 			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
 			gap: inherit;
 		}
 

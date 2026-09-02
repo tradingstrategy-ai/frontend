@@ -14,6 +14,7 @@ on the conference rolls.
 	import IconTelegram from '~icons/local/telegram';
 	import IconNewspaper from '~icons/local/newspaper';
 	import IconYoutube from '~icons/local/youtube';
+	import IconSpotify from '~icons/local/spotify';
 </script>
 
 <ContentCardsTemplate
@@ -27,6 +28,26 @@ on the conference rolls.
 		subtitle="Follow us on our socials and join the discussion."
 	/>
 	<ContentCardsSection cols={3} title="">
+		<ContentCard
+			title="YouTube"
+			href="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
+			target="_blank"
+			rel="noreferrer"
+		>
+			<IconYoutube slot="icon" />
+			<p>Subscribe to our YouTube channel and watch the latest videos on DeFi and algorithmic trading.</p>
+		</ContentCard>
+
+		<ContentCard
+			title="Spotify"
+			href="https://open.spotify.com/show/0BXZEqA3uG5hYZiVYVRZP8"
+			target="_blank"
+			rel="noreferrer"
+		>
+			<IconSpotify slot="icon" />
+			<p>Follow our podcast on Spotify for conversations about DeFi and algorithmic trading.</p>
+		</ContentCard>
+
 		<ContentCard title="Discord chat" href={discordUrl} target="_blank" rel="noreferrer">
 			<IconDiscord slot="icon" />
 			<p>Join our expert community of traders, developers, and analysts and DeFi specialists.</p>
@@ -55,16 +76,6 @@ on the conference rolls.
 		<ContentCard title="Newsletter" href="/newsletter">
 			<IconNewspaper slot="icon" />
 			<p>Subscribe to our newsletter and never miss protocol updates, trading tips, news and insights.</p>
-		</ContentCard>
-
-		<ContentCard
-			title="YouTube"
-			href="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
-			target="_blank"
-			rel="noreferrer"
-		>
-			<IconYoutube slot="icon" />
-			<p>Subscribe to our Youtube channel and watch the latest videos on DeFi and algorithmic trading.</p>
 		</ContentCard>
 	</ContentCardsSection>
 </ContentCardsTemplate>

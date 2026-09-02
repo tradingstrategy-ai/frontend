@@ -9,6 +9,7 @@
 	import IconReading from '~icons/local/reading';
 	import IconTwitter from '~icons/local/twitter';
 	import IconYoutube from '~icons/local/youtube';
+	import IconSpotify from '~icons/local/spotify';
 	import IconLinkedin from '~icons/local/linkedin';
 	import IconTelegram from '~icons/local/telegram';
 	import IconNewspaper from '~icons/local/newspaper';
@@ -45,6 +46,26 @@
 	</ContentCardsSection>
 
 	<ContentCardsSection cols={3} title="Follow us">
+		<ContentCard
+			title="YouTube"
+			href="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
+			target="_blank"
+			rel="noreferrer"
+		>
+			<IconYoutube slot="icon" />
+			<p>Subscribe to our YouTube channel and watch the latest videos on DeFi and algorithmic trading.</p>
+			<Button slot="cta" label="Subscribe to our channel" />
+		</ContentCard>
+		<ContentCard
+			title="Spotify"
+			href="https://open.spotify.com/show/0BXZEqA3uG5hYZiVYVRZP8"
+			target="_blank"
+			rel="noreferrer"
+		>
+			<IconSpotify slot="icon" />
+			<p>Follow our podcast on Spotify for conversations about DeFi and algorithmic trading.</p>
+			<Button slot="cta" label="Follow our podcast" />
+		</ContentCard>
 		<ContentCard title="Blog" href="/blog">
 			<IconReading slot="icon" />
 			<p>Join our expert community of traders, developers, and analysts and DeFi specialists.</p>
@@ -54,16 +75,6 @@
 			<IconTwitter slot="icon" />
 			<p>Follow us on Twitter for trading alerts, DeFi insight and protocol news.</p>
 			<Button slot="cta" label="Follow us" />
-		</ContentCard>
-		<ContentCard
-			title="YouTube"
-			href="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
-			target="_blank"
-			rel="noreferrer"
-		>
-			<IconYoutube slot="icon" />
-			<p>Subscribe to our Youtube channel and watch the latest videos on DeFi and algorithmic trading.</p>
-			<Button slot="cta" label="Subscribe to our channel" />
 		</ContentCard>
 		<ContentCard
 			title="LinkedIn"
