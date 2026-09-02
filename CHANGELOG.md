@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add a dedicated podcast episode page with YouTube and Spotify links (2026-09-02)
 - Add multi-vault equity curve comparison with T-bill, ETH, and BTC benchmarks (2026-09-01)
 - Add Spotify and podcast-focused community links, and refine community and blog landing-page copy (2026-08-31)
 - Add Vault Pro crypto price, metadata, and exchange-rate datasets (2026-08-28)

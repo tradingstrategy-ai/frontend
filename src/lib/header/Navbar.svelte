@@ -21,6 +21,7 @@ Primary site navigation and the site-wide vault search entry point.
 				<MenuItem label="API" targetUrl="/vaults/api" active={currentPage === '/vaults/api'} />
 				<MenuItem label="Community" targetUrl="/community" active={currentPage === '/community'} />
 				<MenuItem label="Blog" targetUrl="/blog" active={currentPage === '/blog'} />
+				<MenuItem label="Podcast" targetUrl="/podcast" active={currentPage === '/podcast'} />
 			{/if}
 		{/snippet}
 

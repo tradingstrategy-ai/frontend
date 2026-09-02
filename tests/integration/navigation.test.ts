@@ -20,7 +20,8 @@ test('shows Compare and Pricing in desktop navigation and moves secondary links 
 	await expect(primaryNavigation.getByRole('link', { name: 'Blog' })).toHaveCount(0);
 
 	const footerNavigation = page.getByRole('navigation', { name: 'Footer navigation' });
-	await expect(footerNavigation.getByRole('link')).toHaveText(['Community', 'Blog', 'API']);
+	await expect(footerNavigation.getByRole('link')).toHaveText(['Community', 'Blog', 'Podcast', 'API']);
+	await expect(footerNavigation.getByRole('link', { name: 'Podcast' })).toHaveAttribute('href', '/podcast');
 	await expect(footerNavigation.getByRole('link', { name: 'API' })).toHaveAttribute('href', '/vaults/api');
 });
 
@@ -37,7 +38,8 @@ test('keeps every navigation link in the mobile menu', async ({ page }) => {
 		'Pricing',
 		'API',
 		'Community',
-		'Blog'
+		'Blog',
+		'Podcast'
 	]);
 	await expect(navigation.getByRole('navigation', { name: 'Footer navigation' })).toHaveCount(0);
 });

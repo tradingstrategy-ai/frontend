@@ -5,7 +5,7 @@ function setAnnouncementCookie(page: Page, date: ParsableDate) {
 	const isoDateStr = parseDate(date)!.toISOString();
 	return page.context().addCookies([
 		{
-			name: 'announcement-dismissed-at',
+			name: 'podcast-announcement-dismissed-at',
 			value: encodeURIComponent(isoDateStr),
 			domain: 'localhost',
 			path: '/'
@@ -14,79 +14,50 @@ function setAnnouncementCookie(page: Page, date: ParsableDate) {
 }
 
 test.describe('announcement banner', () => {
-	test('should not be displayed if not yet published', async ({ page }) => {
-		await page.clock.setFixedTime(new Date('2024-10-30T00:00:00Z'));
+	test('is not displayed on the landing page', async ({ page }) => {
 		await page.goto('/');
-		const announcement = page.getByText('This is an example announcement.');
+		const announcement = page.getByText('We have started the Trading Strategy podcast.');
 		await expect(announcement).not.toBeVisible();
 	});
 
-	test('should not be displayed if expired', async ({ page }) => {
-		await page.clock.setFixedTime(new Date('2024-12-01T06:00:00Z'));
-		await page.goto('/');
-		const announcement = page.getByText('This is an example announcement.');
-		await expect(announcement).not.toBeVisible();
-	});
-
-	test('should not be displayed if dismissed after published', async ({ page }) => {
-		await setAnnouncementCookie(page, '2024-11-02T00:00:00Z');
-		await page.clock.setFixedTime(new Date('2024-11-02T06:00:00Z'));
-		await page.goto('/');
-		const announcement = page.getByText('This is an example announcement.');
-		await expect(announcement).not.toBeVisible();
-	});
-
-	test('should be displayed if dismissed before published', async ({ page }) => {
-		await setAnnouncementCookie(page, '2024-10-31T00:00:00Z');
-		await page.clock.setFixedTime(new Date('2024-11-02T06:00:00Z'));
-		await page.goto('/');
-		const announcement = page.getByText('This is an example announcement.');
-		await expect(announcement).toBeVisible();
-	});
-
-	test.describe('published, not expired or dismissed', () => {
+	test.describe('on pages other than the landing page', () => {
 		test.beforeEach(async ({ page }) => {
-			await page.clock.setFixedTime(new Date('2024-11-01T06:00:00Z'));
-			await page.goto('/');
+			await page.goto('/vaults');
 		});
 
-		test('should be displayed', async ({ page }) => {
-			const announcement = page.getByText('This is an example announcement.');
+		test('is displayed with a link to the podcast page', async ({ page }) => {
+			const announcement = page.getByText('We have started the Trading Strategy podcast.');
 			await expect(announcement).toBeVisible();
+			await expect(page.getByRole('link', { name: 'Listen to us on YouTube and Spotify.' })).toHaveAttribute(
+				'href',
+				'/podcast'
+			);
 		});
 
-		test('should be dismissed when cancel button is clicked', async ({ page }) => {
+		test('is dismissed when the cancel button is clicked', async ({ page }) => {
 			await page.getByRole('button', { name: 'Dismiss announcement' }).click();
-			const announcement = page.getByText('This is an example announcement.');
+			const announcement = page.getByText('We have started the Trading Strategy podcast.');
 			await expect(announcement).not.toBeVisible();
 		});
 
-		test('should set cookie when cancel button is clicked', async ({ page }) => {
+		test('sets a cookie when dismissed', async ({ page }) => {
 			await page.getByRole('button', { name: 'Dismiss announcement' }).click();
 			const cookies = await page.context().cookies();
-			const cookie = cookies.find((c) => c.name === 'announcement-dismissed-at');
-			expect(cookie?.value).toBe(encodeURIComponent('2024-11-01T06:00:00.000Z'));
+			const cookie = cookies.find((c) => c.name === 'podcast-announcement-dismissed-at');
+			expect(cookie?.value).toBeTruthy();
 		});
 
-		test('should be dismissed when CTA button is clicked', async ({ page }) => {
-			await page.getByRole('link', { name: 'View blog post' }).click();
-			const announcement = page.getByText('This is an example announcement.');
-			await expect(announcement).not.toBeVisible();
+		test('is not displayed after a dismissal', async ({ page }) => {
+			await setAnnouncementCookie(page, '2026-09-02T00:00:00Z');
+			await page.reload();
+			await expect(page.getByText('We have started the Trading Strategy podcast.')).not.toBeVisible();
 		});
 
-		test('should be dismissed when a content link is clicked', async ({ page }) => {
-			await page.getByRole('link', { name: 'latest blog post' }).click();
-			const announcement = page.getByText('This is an example announcement.');
-			await expect(announcement).not.toBeVisible();
-		});
-
-		test('should not be dismissed when non-linked content is clicked', async ({ page }) => {
-			const content = page.getByText('This is an example announcement.');
-			await content.click();
-
-			// wait for potential exit transition to complete before verifying content is still present
-			await page.waitForTimeout(1000);
-			await expect(content).toBeVisible();
+		test('dismisses when the podcast link is clicked', async ({ page }) => {
+			await page.getByRole('link', { name: 'Listen to us on YouTube and Spotify.' }).click();
+			await page.waitForURL('**/podcast');
+			const cookies = await page.context().cookies();
+			expect(cookies.some((cookie) => cookie.name === 'podcast-announcement-dismissed-at')).toBe(true);
 		});
 	});
 });
