@@ -61,9 +61,13 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 	let handledRetryVersion = 0;
 
 	const pageTitle = 'Compare vaults';
-	const metaTitle = 'Compare and find best DeFi vault yield';
-	const description = 'Analyse more than 5000 vaults';
-	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
+	let metaTitle = $derived(data.compareMeta.title);
+	let description = $derived(data.compareMeta.description);
+	let pageUrl = $derived.by(() => {
+		const canonicalUrl = new URL(page.url.pathname, page.url.origin);
+		for (const vaultId of data.compareMeta.selectedVaultIds) canonicalUrl.searchParams.append('vault', vaultId);
+		return canonicalUrl.href;
+	});
 	const benchmarkOptions: { key: ComparisonBenchmark; label: string }[] = [
 		{ key: 'treasury', label: 'T-Bill' },
 		{ key: 'eth', label: 'ETH' },
@@ -213,15 +217,17 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 	title={metaTitle}
 	{description}
 	canonical={pageUrl}
+	image={data.compareMeta.image}
+	imageAlt={data.compareMeta.imageAlt}
 	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title: metaTitle, description, type: 'website' }}
-	twitter={{ site: '@TradingProtocol', cardType: 'summary', title: metaTitle, description }}
+	twitter={{ site: '@TradingProtocol', cardType: 'summary_large_image', title: metaTitle, description }}
 />
 
 <JsonLd
 	schema={{
 		'@context': 'http://schema.org',
 		'@type': 'CollectionPage',
-		name: pageTitle,
+		name: metaTitle,
 		description,
 		url: pageUrl,
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
@@ -233,7 +239,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 	<Section tag="header">
 		<VaultListingsSelector />
 		<HeroBanner
-			subtitle="Compare the historical performance of vaults with each other and US Treasury, ETH, and BTC benchmarks. The index may include or exclude fees depending on the vault type; check the vault pages for fee details."
+			subtitle="Compare the historical performance of vaults with each other and US Treasury, ETH, and BTC benchmarks. Comparison is gross performance; check the vault pages for fee details."
 		>
 			{#snippet title()}
 				<span class="page-title">

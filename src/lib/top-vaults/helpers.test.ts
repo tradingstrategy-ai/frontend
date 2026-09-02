@@ -14,6 +14,8 @@ import {
 	getLockupTooltip,
 	isVaultDepositCapped,
 	getFormattedFeeMode,
+	hasInternalisedVaultFees,
+	hasNetVaultFeeInformation,
 	getFeeModeLabel,
 	getFeeModeDescription,
 	getCore3PolForVault,
@@ -682,6 +684,55 @@ describe('getFormattedFeeMode', () => {
 	test('handles feeless mode', () => {
 		const vault = createTestVault('Test vault', { fee_mode: 'feeless' });
 		expect(getFormattedFeeMode(vault)).toBe('Feeless');
+	});
+});
+
+describe('hasInternalisedVaultFees', () => {
+	test('recognises the explicit flag and either fee schedule', () => {
+		expect(hasInternalisedVaultFees(createTestVault('Flagged', { fee_internalised: true }))).toBe(true);
+		expect(
+			hasInternalisedVaultFees(
+				createTestVault('Gross mode', {
+					gross_fees: {
+						fee_mode: 'internalised_minting',
+						management: 0,
+						performance: 0,
+						deposit: 0,
+						withdraw: 0
+					}
+				})
+			)
+		).toBe(true);
+		expect(
+			hasInternalisedVaultFees(
+				createTestVault('External', {
+					fee_internalised: false,
+					gross_fees: {
+						fee_mode: 'externalised',
+						management: 0,
+						performance: 0,
+						deposit: 0,
+						withdraw: 0
+					}
+				})
+			)
+		).toBe(false);
+	});
+});
+
+describe('hasNetVaultFeeInformation', () => {
+	test('requires a net fee mode', () => {
+		expect(hasNetVaultFeeInformation({ net_fees: null })).toBe(false);
+		expect(
+			hasNetVaultFeeInformation({
+				net_fees: { fee_mode: null, management: 0, performance: 0, deposit: 0, withdraw: 0 }
+			})
+		).toBe(false);
+		expect(
+			hasNetVaultFeeInformation({
+				net_fees: { fee_mode: 'externalised', management: 0, performance: 0, deposit: 0, withdraw: 0 }
+			})
+		).toBe(true);
 	});
 });
 

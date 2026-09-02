@@ -99,6 +99,31 @@ The frontend treats unrecognised source values as `unknown`, and preserves optio
 
 Other reasons, including high utilisation or permissioning, remain their source-provided status rather than being inferred as a cap.
 
+#### Return and fee calculations
+
+Vault period metrics provide gross and net absolute returns alongside their annualised equivalents. The frontend treats raw period returns as authoritative and only derives an absolute return from CAGR when the raw value is unavailable. Derived values use the backend's 365.25-day year convention.
+
+The fee fields have distinct presentation and calculation roles:
+
+| Field        | Meaning                                                                                                       |
+| ------------ | ------------------------------------------------------------------------------------------------------------- |
+| `gross_fees` | The disclosed fee schedule before protocol revenue share, including fees already embedded in the share price. |
+| `net_fees`   | The investor fee schedule after protocol revenue share, used by the backend when calculating net returns.     |
+
+For `internalised_minting` and `internalised_skimming` vaults, management and performance fees are already reflected in share-price returns. The frontend displays their disclosed percentage as **Internalised in share price** and does not invent or deduct a second dollar amount. An exact internalised fee amount cannot be reconstructed from a post-fee share price because crystallisation timing, dilution, and high-water marks are not available in the frontend dataset.
+
+The vault return example presents the backend calculation order:
+
+1. Deduct the deposit fee from capital in.
+2. Apply the gross period return to capital invested.
+3. Deduct externalised management fees, prorated using 365.25 days per year.
+4. Deduct externalised performance fees from positive profit after management fees.
+5. Deduct the withdrawal fee from the pre-withdrawal balance.
+
+The gross return in the backend dataset means the share-price return before external fee adjustments. For an internalised vault, that share price already reflects internalised management and performance fees. The percentage remains labelled gross to match the backend field, and the tooltip states this explicitly.
+
+Capital out and displayed net returns use the backend's net period return as the source of truth. Fee amounts are itemised from the corresponding fee rates and calculation bases; internalised fees remain percentage-only disclosures. The calculation is covered by tests for deposit fees, externalised management and performance fees, internalised fees, and withdrawal fees.
+
 #### Detail-page risk summaries
 
 The vault detail page's **Other metrics** card shows one third-party provider result when it is available. A vault-level or protocol-level Xerberus assessment takes precedence and is shown as **Xerberus risk**. Its score is displayed as `score / 100`; higher scores indicate a stronger rating (lower estimated risk), so it is not a Probability of Loss percentage. The score tooltip states whether Xerberus assessed the vault directly or its underlying protocol.
