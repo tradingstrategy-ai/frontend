@@ -12,6 +12,7 @@ const pages = [
 	'docs',
 	'glossary',
 	'newsletter',
+	'podcast',
 	'search',
 	'strategies',
 	'vaults/api',

@@ -15,6 +15,7 @@ Set `small` to use the compact spacing variant.
 	import IconLinkedin from '~icons/local/linkedin';
 	import IconYoutube from '~icons/local/youtube';
 	import IconSpotify from '~icons/local/spotify';
+	import IconMicrophone from '~icons/local/microphone';
 	import IconRss from '~icons/local/rss';
 
 	let { small = false }: { small?: boolean } = $props();
@@ -46,6 +47,12 @@ Set `small` to use the compact spacing variant.
 					<IconSpotify />
 				</a>
 				<div slot="popup">Spotify</div>
+			</Tooltip>
+			<Tooltip>
+				<a slot="trigger" href={resolve('/podcast')} aria-label="Podcast">
+					<IconMicrophone />
+				</a>
+				<div slot="popup">Podcast</div>
 			</Tooltip>
 			<Tooltip>
 				<a

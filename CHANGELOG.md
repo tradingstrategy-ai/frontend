@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add a dedicated podcast episode page with YouTube and Spotify links (2026-09-02)
 - Optionally export server-side APM traces and logs to SigNoz via OpenTelemetry (2026-08-12)
 - Refine vault risk summaries and transaction-status placement (2026-08-10)
 - Centre content-sized vault information card actions (2026-08-10)
