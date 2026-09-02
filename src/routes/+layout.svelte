@@ -2,7 +2,7 @@
 	Root layout
 -->
 <script lang="ts">
-	import { announcement, strategyMicrosite } from '$lib/config';
+	import { strategyMicrosite } from '$lib/config';
 	import { page } from '$app/stores';
 	import AppHead from '$lib/header/AppHead.svelte';
 	import PageLoadProgressBar from '$lib/header/PageLoadProgressBar.svelte';
@@ -15,7 +15,7 @@
 	import '$lib/components/css/index.css';
 
 	export let data;
-	const { announcementDismissedAt } = data;
+	const { podcastAnnouncementDismissedAt } = data;
 </script>
 
 <svelte:body use:setViewportHeight />
@@ -23,8 +23,8 @@
 <AppHead />
 <PageLoadProgressBar />
 {#if !($page.data.skipNavbar || strategyMicrosite)}
-	{#if announcement}
-		<AnnouncementBanner {...announcement} dismissedAt={announcementDismissedAt} />
+	{#if $page.url.pathname !== '/'}
+		<AnnouncementBanner dismissedAt={podcastAnnouncementDismissedAt} />
 	{/if}
 	<Navbar />
 {/if}

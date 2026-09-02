@@ -84,11 +84,11 @@ const handleAdminRole: Handle = async ({ event, resolve }) => {
 };
 
 /**
- * Set announcementDismissedAt local based on cookie
+ * Set podcastAnnouncementDismissedAt local based on cookie
  */
-const handleAnnouncement: Handle = async ({ event, resolve }) => {
-	const dismissedAtStr = event.cookies.get('announcement-dismissed-at');
-	event.locals.announcementDismissedAt = parseDate(dismissedAtStr);
+const handlePodcastAnnouncement: Handle = async ({ event, resolve }) => {
+	const dismissedAtStr = event.cookies.get('podcast-announcement-dismissed-at');
+	event.locals.podcastAnnouncementDismissedAt = parseDate(dismissedAtStr);
 	return resolve(event);
 };
 
@@ -156,7 +156,7 @@ export const handle = sequence(
 	Sentry.sentryHandle(),
 	handleColorMode,
 	handleAdminRole,
-	handleAnnouncement,
+	handlePodcastAnnouncement,
 	handleIpCountry,
 	handleFontPreload
 );

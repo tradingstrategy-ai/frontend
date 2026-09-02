@@ -11,7 +11,6 @@
  */
 import { env } from '$env/dynamic/public';
 import { type GeoBlock, geoBlockSchema } from './helpers/geo';
-import { type Announcement, announcementSchema } from './schemas/announcement';
 import { type TosContractConfig, tosContractConfigSchema } from 'trade-executor/schemas/tos-contract-info';
 
 const prefix = 'TS_PUBLIC_';
@@ -209,16 +208,6 @@ export const geoBlock = config((jsonStr: string) => {
 		return {};
 	}
 }, 'GEO_BLOCK') as GeoBlock;
-
-export const announcement = config((jsonStr: string = '') => {
-	if (jsonStr.trim().length === 0) return;
-	try {
-		return announcementSchema.parse(JSON.parse(jsonStr || '{}'));
-	} catch (e) {
-		console.warn(`${prefix}ANNOUNCEMENT is not valid announcement JSON`, jsonStr);
-		return undefined;
-	}
-}, 'ANNOUNCEMENT') as Announcement | undefined;
 
 /**
  * Vault protocol metadata base URL

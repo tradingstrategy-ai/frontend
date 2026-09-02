@@ -18,7 +18,7 @@ declare global {
 		interface Locals {
 			admin?: boolean;
 			ipCountry?: CountryCode;
-			announcementDismissedAt?: Date;
+			podcastAnnouncementDismissedAt?: Date;
 		}
 
 		interface PageState {
