@@ -5,7 +5,14 @@
  * that a URL can only narrow its declared listing population.
  */
 import { getChainsBySlug } from '$lib/helpers/chain';
-import { DEFAULT_TVL_KEY, MAX_SUMMARY_TVL_USD, isBlacklisted, isUnknownVaultProtocol } from '../helpers';
+import {
+	DEFAULT_TVL_KEY,
+	MAX_SUMMARY_TVL_USD,
+	UNKNOWN_VAULT_PROTOCOL_SLUG,
+	isBlacklisted,
+	isPermissionedVault,
+	isUnknownVaultProtocol
+} from '../helpers';
 import type { VaultInfo } from '../schemas';
 import type { VaultListingOptions } from './query';
 import type { VaultListingQueryDefaults } from './state';
@@ -23,7 +30,9 @@ export const vaultListingKeys = [
 	'stablecoin',
 	'curator',
 	'tokenised-funds',
-	'international'
+	'international',
+	'core3-ratings',
+	'xerberus-ratings'
 ] as const;
 
 export type VaultListingKey = (typeof vaultListingKeys)[number];
@@ -81,7 +90,12 @@ export const vaultListingDefinitions: Record<VaultListingKey, VaultListingDefini
 		requiresScope: false
 	},
 	chain: { key: 'chain', defaults: { tvl: '10k' }, options: commonOptions, requiresScope: true },
-	protocol: { key: 'protocol', defaults: { tvl: '10k', unknown: false }, options: commonOptions, requiresScope: true },
+	protocol: {
+		key: 'protocol',
+		defaults: { tvl: '10k', unknown: false, amm: false },
+		options: commonOptions,
+		requiresScope: true
+	},
 	stablecoin: {
 		key: 'stablecoin',
 		defaults: { tvl: '10k', unknown: false },
@@ -105,6 +119,18 @@ export const vaultListingDefinitions: Record<VaultListingKey, VaultListingDefini
 		defaults: { tvl: '10k', unknown: false },
 		options: commonOptions,
 		requiresScope: false
+	},
+	'core3-ratings': {
+		key: 'core3-ratings',
+		defaults: { tvl: 'any', unknown: false, amm: false, sort: 'provider_risk_rating', direction: 'asc' },
+		options: { ...commonOptions, showFilters: false, ratingProvider: 'core3' },
+		requiresScope: false
+	},
+	'xerberus-ratings': {
+		key: 'xerberus-ratings',
+		defaults: { tvl: 'any', unknown: false, amm: false, sort: 'provider_risk_rating', direction: 'desc' },
+		options: { ...commonOptions, showFilters: false, ratingProvider: 'xerberus' },
+		requiresScope: false
 	}
 };
 
@@ -119,7 +145,9 @@ export function getVaultListingDefinition(key: VaultListingKey): VaultListingDef
 /** Resolve dynamic defaults which are part of an immutable route definition. */
 export function getVaultListingDefaults(key: VaultListingKey, scope?: string): VaultListingQueryDefaults {
 	if (key === 'chain' && scope === 'robinhood') return { ...vaultListingDefinitions[key].defaults, tvl: 'any' };
-	if (key === 'protocol' && scope === 'apex') return { ...vaultListingDefinitions[key].defaults, tvl: 'any' };
+	if (key === 'protocol' && scope === 'apex') {
+		return { ...vaultListingDefinitions[key].defaults, tvl: 'any', sort: 'tvl', direction: 'desc' };
+	}
 	return vaultListingDefinitions[key].defaults;
 }
 
@@ -129,7 +157,7 @@ export function filterVaultListingScope(vaults: VaultInfo[], key: VaultListingKe
 		case 'blacklisted':
 			return vaults.filter(isBlacklisted);
 		case 'whitelisted':
-			return vaults.filter((vault) => vault.whitelist?.status === 'whitelisted');
+			return vaults.filter(isPermissionedVault);
 		case 'chain': {
 			if (!scope) return [];
 			const chainIds = new Set(getChainsBySlug(scope).map((chain) => chain.id));
@@ -138,7 +166,7 @@ export function filterVaultListingScope(vaults: VaultInfo[], key: VaultListingKe
 		case 'protocol':
 			if (!scope) return [];
 			return vaults.filter((vault) =>
-				scope === 'unknown' ? isUnknownVaultProtocol(vault) : vault.protocol_slug === scope
+				scope === UNKNOWN_VAULT_PROTOCOL_SLUG ? isUnknownVaultProtocol(vault) : vault.protocol_slug === scope
 			);
 		case 'stablecoin':
 			return scope ? vaults.filter((vault) => vault.denomination_slug === scope) : [];

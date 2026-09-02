@@ -1,14 +1,14 @@
 # Vault data sources
 
-The frontend consumes two server-side vault datasets and one external reference rate. The vault datasets are produced by the backend pipeline and stored in a private Cloudflare R2 bucket. The reference rate is fetched from FRED (Federal Reserve Economic Data).
+The frontend reads two server-side vault datasets and one external reference rate. The vault datasets are produced by the backend pipeline and stored in a private Cloudflare R2 bucket. The browser never reads the private R2 source directly.
 
 ## Datasets
 
-| Dataset              | Source                                | Local cache path                        | Used by                                                  |
-| -------------------- | ------------------------------------- | --------------------------------------- | -------------------------------------------------------- |
-| Top vaults JSON      | R2: `top_vaults_by_chain.json`        | In-memory (1-hour TTL)                  | Vault listings, landing page, vault detail pages         |
-| Vault prices parquet | R2: `cleaned-vault-prices-1h.parquet` | `data/cleaned-vault-prices-1h.parquet`  | Share price chart, TVL charts, historical TVL aggregates |
-| Treasury benchmark   | FRED CSV: `DTB3` series               | `~/.cache/ts-frontend/fred-DTB3-*.json` | US 3M T-bill benchmark line on non-perp vault charts     |
+| Dataset              | Source                                | Local cache path                          | Used by                                                  |
+| -------------------- | ------------------------------------- | ----------------------------------------- | -------------------------------------------------------- |
+| Top vaults JSON      | R2: `top_vaults_by_chain.json`        | In-memory (1-hour TTL)                    | Vault pages, strategy metadata, search, and summaries    |
+| Vault prices parquet | R2: `cleaned-vault-prices-1h.parquet` | `data/cleaned-vault-prices-1h.parquet`    | Share price chart, TVL charts, historical TVL aggregates |
+| Treasury benchmark   | FRED CSV: `DGS3MO` series             | `~/.cache/ts-frontend/fred-DGS3MO-*.json` | US 3M Treasury benchmark line on non-perp vault charts   |
 
 ## Configuration
 
@@ -44,11 +44,39 @@ If R2 credentials are unavailable, each dataset can be configured with a direct 
 2. If R2 fails or is not configured → fall back to `TS_PRIVATE_TOP_VAULTS_URL`
 3. If neither is available → throws error
 
-The response is parsed, validated against the Zod schema, normalised for frontend presentation, and cached in memory for one hour via `src/lib/top-vaults/cache.ts`. When the cache expires, the next request waits for a fresh export; there is no stale-while-revalidate behaviour.
+The server parses, validates, normalises, and caches the response in memory for one hour via `src/lib/top-vaults/cache.ts`. When the cache expires, the next request waits for a fresh export; there is no stale-while-revalidate behaviour.
+
+#### Browser delivery
+
+The complete `TopVaults` export stays in server memory for normal application pages. A server load does not by itself prevent exposure: SvelteKit serialises everything it returns as page data, so loaders must explicitly project the cached export into the response needed by the browser.
+
+Current browser-facing projections are:
+
+- Vault listings return at most 125 initial full records and up to 50 records per continuation request.
+- Vault detail pages return one matched full record and only its related metadata.
+- Strategy position pages return only records matching the requested vault IDs or chain/address pairs.
+- `/trading-view/[chain]` returns a vault count, latest block, and latest update time calculated across the chain IDs represented by the route slug.
+- Group, index, search, and chart routes return calculated rows, suggestions, points, or series.
+
+The following chart endpoints return only the points, grouping, labels, and links needed to render their chart:
+
+- `/vaults/yield-risk/chart-data`
+- `/vaults/yield-chain/chart-data`
+- `/vaults/yield-protocol/chart-data`
+- `/vaults/current-peak-tvl/chart-data`
+- `/vaults/cumulative-tvl-apy/chart-data`
+
+The public `/top-vaults/chart-data` endpoint remains for the landing-page chart, diagnostics, and the server-side pricing fallback. It contains every vault but only the `SlimVaultInfo` fields. The legacy unrestricted complete-export endpoint has been removed.
 
 #### Off-chain USD denomination
 
-The frontend presents every raw `USD` accounting denomination as `USD (offchain)` with the `usd-offchain` slug. This includes Kinexys vaults, whose source data can instead expose a USDC settlement-token address. The normalisation happens in `src/lib/top-vaults/client.ts` before any page, listing, or chart consumes the dataset. It groups all off-chain USD accounting balances together and prevents them from being presented as an on-chain stablecoin token.
+The frontend presents every raw `USD` accounting denomination as `USD (offchain)` with the `usd-offchain` slug. This includes Kinexys vaults, whose source data can instead expose a USDC settlement-token address. The normalisation happens in `src/lib/top-vaults/client.ts` before any server page, listing, or chart builder consumes the dataset. Despite the historical filename, this module is server-only because its dependency chain reads private runtime configuration. It groups all off-chain USD accounting balances together and prevents them from being presented as an on-chain stablecoin token.
+
+#### Unknown protocol identity
+
+The source export has used several values when it cannot identify a vault's underlying protocol: empty fields, angle-bracket placeholders, the literal `Unknown`, and generic or legacy slugs such as `erc-4626`. The frontend does not interpret these as evidence that a known protocol is unsupported. It classifies them as unidentified source records.
+
+`isUnknownVaultProtocol()` is the single classification path for both full vault records and slug-only consumers such as protocol-logo lookup. An explicit unknown value in either source field takes precedence, while a blank slug does not erase a recognised protocol name. During `fetchTopVaults()`, `normaliseVaultProtocol()` rewrites every recognised variant to the display name `Unknown vault protocol` and the canonical slug `unknown`. All page loaders, filters, charts, search results, metadata requests, and detail-page links therefore consume the same identity. Previously published routes using a recognised legacy placeholder slug permanently redirect to `/vaults/protocols/unknown`.
 
 #### Whitelist status
 
@@ -96,16 +124,16 @@ Protocol pages and the protocol listing also resolve Xerberus scores from these 
 
 R2 downloads stream the object body via the AWS SDK (`getR2Object`) and pipe it to disk using Node.js `stream.pipeline`. URL downloads use `fetch` with a 5-minute timeout.
 
-### Treasury benchmark (FRED DTB3)
+### Treasury benchmark (FRED DGS3MO)
 
 **Code:** `src/routes/vaults/treasury-benchmark/+server.ts` (server proxy) and `src/lib/top-vaults/treasury-benchmark.ts` (client fetcher)
 
-The US 3-month Treasury bill rate is used as a risk-free benchmark on non-perpetual-futures vault charts. FRED blocks browser CORS and rate-limits aggressively, so the data is proxied through a server endpoint.
+The US 3-month constant-maturity Treasury market yield is used as a reference benchmark on non-perpetual-futures vault charts. DGS3MO is quoted on an investment basis, which is compatible with the benchmark's cumulative-return approximation. FRED blocks browser CORS and rate-limits aggressively, so the data is proxied through a server endpoint.
 
 **Server endpoint** (`/vaults/treasury-benchmark?cosd=YYYY-MM-DD&coed=YYYY-MM-DD`):
 
-1. Validates and clamps date range (rejects future `cosd`, clamps to DTB3 series bounds)
-2. Checks file cache at `~/.cache/ts-frontend/fred-DTB3-{cosd}-{coed}.json` (24h TTL)
+1. Validates and clamps date range (rejects future `cosd`, clamps to DGS3MO series bounds)
+2. Checks file cache at `~/.cache/ts-frontend/fred-DGS3MO-{cosd}-{coed}.json` (24h TTL)
 3. If stale or missing → fetches from `https://fred.stlouisfed.org/graph/fredgraph.csv`
 4. On fetch failure → returns stale cache if available, otherwise 502
 5. Uses User-Agent rotation (FRED blocks bare Node.js requests)
@@ -122,20 +150,22 @@ The US 3-month Treasury bill rate is used as a risk-free benchmark on non-perpet
 - `isValidDateString()` — strict YYYY-MM-DD validation with round-trip check
 - `readJsonFileCache()` / `writeJsonFileCache()` / `isCacheFresh()` — generic file cache with injectable `cacheDir` for testing
 
-**Vault classification** (`src/lib/top-vaults/isPerpetualFuturesVault.ts`):
+**Vault price-chart benchmark classification** (`src/lib/top-vaults/vault-price-benchmarks.ts`):
 
 - Perpetual futures vaults show BTC/ETH benchmarks (via Coinbase API)
-- All other vaults show the US 3M T-bill benchmark
-- Detection: `perp_dex_trading_vault` flag first, then chain_id fallback (9999 HyperCore, 325 GRVT, 9998 Lighter, 9997 Hibachi)
+- Crypto-exposed GMX pools show BTC/ETH benchmarks, except GM BTC and ETH pools, which show their respective market benchmark only
+- Stable-stable GMX GM swap pools show the US 3M T-bill benchmark
+- All remaining vaults show the US 3M T-bill benchmark
+- Perpetual futures detection: `perp_dex_trading_vault` flag first, then chain_id fallback (9999 HyperCore, 325 GRVT, 9998 Lighter, 9997 Hibachi)
 - HyperEVM (chain_id 999) is intentionally excluded — it hosts DeFi/lending vaults
 
 ### Datasets download endpoint
 
 **Code:** `src/routes/vaults/datasets/download/[datasetId]/+server.ts`
 
-This public-facing endpoint proxies downloads through a separate Vault API service (`TS_PUBLIC_VAULT_API_URL`), not through R2 or the local cache. It is used by the datasets listing page for user-facing downloads.
+This authenticated download endpoint proxies requests through a separate Vault API service (`TS_PUBLIC_VAULT_API_URL`), not through R2 or the local cache. It requires an API key and intentionally streams the complete licensed dataset as a file download.
 
-The datasets listing page (`src/routes/vaults/datasets/+page.server.ts`) requires R2 to be configured for displaying file metadata (size, last modified), even though the actual download goes through the Vault API.
+The datasets listing page (`src/routes/vaults/datasets/+page.server.ts`) reads top-vault file metadata from R2 or the configured private URL fallback. Historical parquet file metadata is available only through R2. The actual downloads use the separate Vault API in both cases.
 
 ## Data flow diagram
 
@@ -152,7 +182,7 @@ R2 bucket (vaults-pro-data)
         └─→ historical-tvl-server.ts (DuckDB aggregate)
 
 FRED (fred.stlouisfed.org)
-└── DTB3 (3-month T-bill rate)
+└── DGS3MO (3-month Treasury market yield, investment basis)
     └─→ /vaults/treasury-benchmark endpoint (server proxy)
         ─→ file cache (~/.cache/ts-frontend/, 24h TTL)
         └─→ TreasuryBenchmarkSeries.svelte (client component)
@@ -165,16 +195,18 @@ FRED (fred.stlouisfed.org)
 | ---------------------------------- | -------------------- | --------------------------------------------------------------- |
 | Vault detail page (server load)    | Top vaults JSON      | `+page.server.ts` → `getCachedTopVaults()`                      |
 | Landing page (server load)         | Top vaults JSON      | `+page.server.ts` → `getCachedTopVaults()`                      |
+| Chain overview summary             | Top vaults JSON      | `trading-view/[chain]/+page.server.ts` → calculated scalars     |
+| Strategy vault metadata            | Top vaults JSON      | Server loads or `/strategies/position-vault-data` matches       |
 | Vault price chart (client fetch)   | Parquet              | `/vaults/[vault]/metrics` → `ensureVaultPricesParquet()`        |
 | Historical TVL charts (server)     | Parquet              | `historical-tvl-server.ts` → `ensureVaultPricesParquet()`       |
-| T-bill benchmark (non-perp vaults) | FRED DTB3            | `TreasuryBenchmarkSeries.svelte` → `/vaults/treasury-benchmark` |
-| BTC/ETH benchmark (perp vaults)    | Coinbase API         | `CoinbaseBenchmarkSeries.svelte` → `coinbase.ts`                |
-| Datasets listing page              | Both (metadata only) | `headTopVaults()` + `headVaultPrices()` via R2                  |
+| T-bill benchmark (other vaults)    | FRED DGS3MO          | `TreasuryBenchmarkSeries.svelte` → `/vaults/treasury-benchmark` |
+| BTC/ETH benchmarks (perps and GMX) | Coinbase API         | `CoinbaseBenchmarkSeries.svelte` → `coinbase.ts`                |
+| Datasets listing page              | Both (metadata only) | `headTopVaults()` + `headVaultPrices()`                         |
 | Datasets download                  | Both (proxied)       | `/datasets/download/[datasetId]` via Vault API                  |
 
 ## Known issues
 
-1. **Datasets page error message is misleading.** The datasets listing page throws "R2 credentials missing" if R2 is not configured, but the actual download endpoint uses the Vault API, not R2. R2 is only needed for the metadata display.
+1. Dataset metadata availability differs from download availability. The listing may omit file size or modification time when the corresponding private metadata source is unavailable, while authenticated downloads can still work through the Vault API.
 
 ## Local development
 

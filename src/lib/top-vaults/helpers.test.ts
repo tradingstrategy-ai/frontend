@@ -2,12 +2,12 @@ import { describe, test, expect } from 'vitest';
 import {
 	CORE3_METHODOLOGY_URL,
 	isBlacklisted,
+	isPermissionedVault,
+	isPoolProtocol,
 	isEligibleFrontpageVault,
-	hasSupportedProtocol,
 	getProtocolDisplayName,
 	getVaultProtocolDisplayName,
 	isUnknownVaultProtocol,
-	isUnsupportedProtocolSlug,
 	meetsMinTvl,
 	getLockupDescription,
 	getFormattedLockup,
@@ -30,11 +30,12 @@ import {
 	getVaultPeakTvlUsd,
 	getVaultTvlNative,
 	isVaultTvlDownMoreThan95Percent,
+	shouldShowVaultTvlDownMoreThan95PercentWarning,
 	getXerberusScoreBand,
 	getXerberusScoreColour,
 	isNonUsdDenominatedVault,
 	normaliseOffchainUsdVaultDenomination,
-	normaliseVaultProtocolDisplayName,
+	normaliseVaultProtocol,
 	withVaultCurrentTvlUsd,
 	withVaultDenominationTokenRate,
 	calculateTotalTvl,
@@ -98,6 +99,18 @@ describe('isBlacklisted', () => {
 		const vault = createTestVault('Test vault');
 		expect(vault.risk_numeric).toBeNull();
 		expect(isBlacklisted(vault)).toBe(false);
+	});
+});
+
+describe('isPermissionedVault', () => {
+	test('returns true only for vaults that require deposit permission', () => {
+		expect(
+			isPermissionedVault(createTestVault('Permissioned', { whitelist: { status: 'whitelisted', notes: null } }))
+		).toBe(true);
+		expect(
+			isPermissionedVault(createTestVault('Public', { whitelist: { status: 'permissionless', notes: null } }))
+		).toBe(false);
+		expect(isPermissionedVault(createTestVault('Unknown'))).toBe(false);
 	});
 });
 
@@ -231,39 +244,6 @@ describe('calculateTotalTvl', () => {
 	});
 });
 
-describe('hasSupportedProtocol', () => {
-	test('returns true for supported protocols', () => {
-		const vault = createTestVault('Test vault', { protocol: 'Yearn' });
-		expect(hasSupportedProtocol(vault)).toBe(true);
-	});
-
-	test('returns false for unsupported protocols starting with <', () => {
-		const vault = createTestVault('Test vault', { protocol: '<protocol not yet identified>' });
-		expect(hasSupportedProtocol(vault)).toBe(false);
-	});
-
-	test('returns false for empty protocols', () => {
-		const vault = createTestVault('Test vault', { protocol: ' ' });
-		expect(hasSupportedProtocol(vault)).toBe(false);
-	});
-
-	test('returns false for unsupported protocol slugs generated from placeholders', () => {
-		const vault = {
-			protocol: 'Yearn',
-			protocol_slug: 'unknown-erc-7450'
-		};
-		expect(hasSupportedProtocol(vault)).toBe(false);
-	});
-
-	test('returns false for manually mapped unknown protocol slugs', () => {
-		const vault = {
-			protocol: 'Unknown vault protocol',
-			protocol_slug: 'erc-4626'
-		};
-		expect(hasSupportedProtocol(vault)).toBe(false);
-	});
-});
-
 describe('isEligibleFrontpageVault', () => {
 	test('returns true for known protocol vaults with severe risk or safer', () => {
 		const vault = createTestVault('Test vault', { protocol: 'Yearn', risk: 'Severe' });
@@ -290,8 +270,8 @@ describe('isEligibleFrontpageVault', () => {
 });
 
 describe('getProtocolDisplayName', () => {
-	test('aliases unidentified protocol placeholder to Unknown', () => {
-		expect(getProtocolDisplayName('<protocol not yet identified>')).toBe('Unknown');
+	test('aliases unidentified protocol placeholders to the canonical display name', () => {
+		expect(getProtocolDisplayName('<protocol not yet identified>')).toBe('Unknown vault protocol');
 	});
 
 	test('aliases ERC-4626 slug to unknown vault protocol', () => {
@@ -322,46 +302,74 @@ describe('getVaultProtocolDisplayName', () => {
 	});
 });
 
-describe('normaliseVaultProtocolDisplayName', () => {
-	test('maps ERC-4626 vault protocol display name', () => {
+describe('normaliseVaultProtocol', () => {
+	test('canonicalises both fields for an unknown-protocol variant', () => {
 		const vault = createTestVault('ERC-4626 vault', {
 			protocol: 'ERC-4626',
 			protocol_slug: 'erc-4626'
 		});
 
-		expect(normaliseVaultProtocolDisplayName(vault).protocol).toBe('Unknown vault protocol');
+		expect(normaliseVaultProtocol(vault)).toMatchObject({
+			protocol: 'Unknown vault protocol',
+			protocol_slug: 'unknown'
+		});
+	});
+
+	test('preserves a recognised protocol object', () => {
+		const vault = createTestVault('Yearn vault', { protocol: 'Yearn' });
+
+		expect(normaliseVaultProtocol(vault)).toBe(vault);
+	});
+
+	test('preserves a recognised protocol when its slug is blank', () => {
+		const vault = createTestVault('Yearn vault', { protocol: 'Yearn', protocol_slug: '' });
+
+		expect(normaliseVaultProtocol(vault)).toBe(vault);
 	});
 });
 
-describe('isUnsupportedProtocolSlug', () => {
-	test('matches the protocol not yet identified placeholder slug', () => {
-		expect(isUnsupportedProtocolSlug('protocol-not-yet-identified')).toBe(true);
+describe('isPoolProtocol', () => {
+	test.each(['gmx', 'yieldbasis'])('identifies %s as a pool protocol', (protocolSlug) => {
+		expect(isPoolProtocol(protocolSlug)).toBe(true);
 	});
 
-	test('matches the unknown ERC-7450 placeholder slug', () => {
-		expect(isUnsupportedProtocolSlug('unknown-erc-7450')).toBe(true);
-	});
-
-	test('matches manually mapped unknown protocol slugs', () => {
-		expect(isUnsupportedProtocolSlug('erc-4626')).toBe(true);
-	});
-
-	test('ignores supported protocol slugs', () => {
-		expect(isUnsupportedProtocolSlug('yearn')).toBe(false);
+	test('does not classify other protocols as pool protocols', () => {
+		expect(isPoolProtocol('yearn')).toBe(false);
 	});
 });
 
 describe('isUnknownVaultProtocol', () => {
 	test.each([
-		{ protocol: 'ERC-4626', protocol_slug: 'erc-4626' },
-		{ protocol: '<protocol not yet identified>', protocol_slug: 'protocol-not-yet-identified' },
-		{ protocol: 'Unknown', protocol_slug: 'unknown' }
-	])('groups $protocol as unknown', (vault) => {
-		expect(isUnknownVaultProtocol(vault)).toBe(true);
+		['the canonical name', { protocol: 'Unknown' }],
+		['the canonical display name', { protocol: 'Unknown vault protocol' }],
+		['an empty name', { protocol: ' ' }],
+		['a placeholder name', { protocol: '<protocol not yet identified>' }],
+		['the canonical slug', { protocol_slug: 'unknown' }],
+		['the generic ERC-4626 slug', { protocol_slug: 'erc-4626' }],
+		['the unidentified placeholder slug', { protocol_slug: 'protocol-not-yet-identified' }],
+		['the unknown ERC placeholder slug', { protocol_slug: 'unknown-erc-7450' }],
+		['a blank slug without a name', { protocol_slug: ' ' }]
+	])('classifies %s as unknown', (_, identity) => {
+		expect(isUnknownVaultProtocol(identity)).toBe(true);
 	});
 
-	test('does not group a recognised protocol as unknown', () => {
+	test.each([
+		['a recognised name with a placeholder slug', { protocol: 'Yearn', protocol_slug: 'unknown-erc-7450' }],
+		['an unknown name with a recognised slug', { protocol: 'Unknown', protocol_slug: 'yearn' }]
+	])('gives an explicit unknown value precedence for %s', (_, identity) => {
+		expect(isUnknownVaultProtocol(identity)).toBe(true);
+	});
+
+	test('does not classify a recognised protocol as unknown', () => {
 		expect(isUnknownVaultProtocol({ protocol: 'Yearn', protocol_slug: 'yearn' })).toBe(false);
+	});
+
+	test('does not let a blank slug override a recognised name', () => {
+		expect(isUnknownVaultProtocol({ protocol: 'Yearn', protocol_slug: '' })).toBe(false);
+	});
+
+	test('supports slug-only callers for recognised protocols', () => {
+		expect(isUnknownVaultProtocol({ protocol_slug: 'yearn' })).toBe(false);
 	});
 });
 
@@ -566,6 +574,24 @@ describe('isVaultTvlDownMoreThan95Percent', () => {
 		expect(isVaultTvlDownMoreThan95Percent(createTestVault('Zero peak vault', { current_nav: 0, peak_nav: 0 }))).toBe(
 			false
 		);
+	});
+});
+
+describe('shouldShowVaultTvlDownMoreThan95PercentWarning', () => {
+	test('does not show the warning for GMX vaults', () => {
+		const vault = createTestVault('GMX vault', {
+			protocol: 'GMX',
+			current_nav: 4_999,
+			peak_nav: 100_000
+		});
+
+		expect(shouldShowVaultTvlDownMoreThan95PercentWarning(vault)).toBe(false);
+	});
+
+	test('shows the warning for other vaults with the same TVL decline', () => {
+		const vault = createTestVault('Collapsed vault', { current_nav: 4_999, peak_nav: 100_000 });
+
+		expect(shouldShowVaultTvlDownMoreThan95PercentWarning(vault)).toBe(true);
 	});
 });
 

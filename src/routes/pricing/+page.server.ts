@@ -1,9 +1,9 @@
 import { dev } from '$app/environment';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { calculateTotalTvl, isEligibleFrontpageVault, meetsMinTvl } from '$lib/top-vaults/helpers';
-import { topVaultsSchema, type TopVaults } from '$lib/top-vaults/schemas';
+import { slimVaultChartDataSchema, type SlimVaultInfo } from '$lib/top-vaults/schemas';
 
-const LIVE_TOP_VAULTS_URL = 'https://tradingstrategy.ai/top-vaults/all-data';
+const LIVE_TOP_VAULTS_URL = 'https://tradingstrategy.ai/top-vaults/chart-data';
 
 interface PricingStats {
 	chains: number;
@@ -17,7 +17,7 @@ interface PricingStats {
  *
  * @param topVaults Validated top-vaults dataset
  */
-function calculateStats(topVaults: TopVaults): PricingStats {
+function calculateStats(topVaults: { vaults: SlimVaultInfo[] }): PricingStats {
 	const tvlVaults = topVaults.vaults.filter((vault) => isEligibleFrontpageVault(vault) && meetsMinTvl(vault));
 
 	return {
@@ -38,7 +38,7 @@ export async function load({ fetch }) {
 			try {
 				const response = await fetch(LIVE_TOP_VAULTS_URL);
 				if (!response.ok) return { stats: null };
-				const topVaults = topVaultsSchema.parse(await response.json());
+				const topVaults = slimVaultChartDataSchema.parse(await response.json());
 				return { stats: calculateStats(topVaults) };
 			} catch {
 				return { stats: null };

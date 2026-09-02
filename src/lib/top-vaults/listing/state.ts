@@ -10,7 +10,8 @@ import {
 	ddFilterOptions,
 	monthlyReturnFilterOptions,
 	riskFilterOptions,
-	tvlFilterOptions
+	tvlFilterOptions,
+	volatilityFilterOptions
 } from '../helpers';
 
 const sortKeys = new Set([
@@ -37,6 +38,7 @@ export interface VaultListingQueryDefaults {
 	sort?: string;
 	direction?: VaultSortDirection;
 	unknown?: boolean;
+	amm?: boolean;
 	mr?: string;
 }
 
@@ -53,6 +55,7 @@ export function parseVaultListingQuery(
 ): VaultListingQuery {
 	const rawSort = params.get('sort') ?? defaults.sort ?? DEFAULT_RETURN_COLUMN_IDS[0];
 	const sort = canonicaliseReturnSortKey(rawSort) ?? rawSort;
+	const sortAllowed = sortKeys.has(sort) || (sort === 'provider_risk_rating' && defaults.sort === sort);
 	const direction = params.get('direction');
 	return {
 		tvl: tvlFilterOptions.some((item) => item.key === params.get('tvl'))
@@ -61,13 +64,16 @@ export function parseVaultListingQuery(
 		age: boundedIndex(params.get('age'), defaults.age ?? 0, ageFilterOptions.length),
 		risk: boundedIndex(params.get('risk'), defaults.risk ?? 1, riskFilterOptions.length),
 		dd: ddFilterOptions.some((item) => item.key === params.get('dd')) ? params.get('dd')! : 'any',
+		vol: volatilityFilterOptions.some((item) => item.key === params.get('vol')) ? params.get('vol')! : 'any',
 		mr: monthlyReturnFilterOptions.some((item) => item.key === params.get('mr'))
 			? params.get('mr')!
 			: (defaults.mr ?? 'any'),
 		q: (params.get('q') ?? '').slice(0, 100),
 		closed: params.get('closed') === '1',
 		unknown: params.get('unknown') == null ? (defaults.unknown ?? true) : params.get('unknown') === '1',
-		sort: sortKeys.has(sort) ? sort : (defaults.sort ?? DEFAULT_RETURN_COLUMN_IDS[0]),
+		amm: params.get('amm') == null ? (defaults.amm ?? true) : params.get('amm') === '1',
+		private: params.get('private') === '1',
+		sort: sortAllowed ? sort : (defaults.sort ?? DEFAULT_RETURN_COLUMN_IDS[0]),
 		direction: direction === 'asc' || direction === 'desc' ? direction : (defaults.direction ?? 'desc')
 	};
 }

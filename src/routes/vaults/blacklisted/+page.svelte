@@ -10,7 +10,6 @@ Blacklisted vault listing.
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
 	let { data } = $props();
-	let blacklistedTopVaults = $derived(data.initialTopVaults);
 
 	const title = 'Blacklisted DeFi stablecoin vaults';
 	const description = 'Blacklisted DeFi stablecoin vaults, sorted by current TVL.';
@@ -46,9 +45,8 @@ Blacklisted vault listing.
 />
 
 <TopVaultsPage
-	topVaults={blacklistedTopVaults}
-	loading={false}
-	progressive={data.initialVaultListingHasMore}
+	topVaults={data.initialTopVaults}
+	initialHasMore={data.initialHasMore}
 	listingKey={data.listingKey}
 	listingSummary={data.listingSummary}
 	includeBlacklisted

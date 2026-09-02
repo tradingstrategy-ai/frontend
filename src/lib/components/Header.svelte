@@ -5,13 +5,14 @@ Responsive site header with menu, search and compact-navigation controls.
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { Snippet } from 'svelte';
+	import { resolve } from '$app/paths';
 	import Logo from '$lib/components/Logo.svelte';
 	import Menu from '$lib/components/Menu.svelte';
 	import NavPanel from '$lib/components/NavPanel.svelte';
 	import IconMenu from '~icons/local/menu';
 
 	interface Props {
-		menu?: Snippet;
+		menu?: Snippet<[mobile: boolean]>;
 		search?: Snippet<[menu: boolean, onNavigate: () => void]>;
 	}
 
@@ -35,14 +36,14 @@ Responsive site header with menu, search and compact-navigation controls.
 
 <div class="header-bar">
 	<div class="logo">
-		<a href="/" aria-label="Home">
+		<a href={resolve('/')} aria-label="Home">
 			<Logo />
 		</a>
 	</div>
 
-	<nav class="desktop-only">
+	<nav class="desktop-only" aria-label="Primary navigation">
 		<Menu horizontal align="center">
-			{@render menu?.()}
+			{@render menu?.(false)}
 		</Menu>
 	</nav>
 
@@ -75,7 +76,7 @@ Responsive site header with menu, search and compact-navigation controls.
 		{#snippet panelSearch()}
 			{@render search?.(true, closePanel)}
 		{/snippet}
-		{@render menu?.()}
+		{@render menu?.(true)}
 	</NavPanel>
 </div>
 

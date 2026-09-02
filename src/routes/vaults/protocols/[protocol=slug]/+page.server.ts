@@ -1,4 +1,4 @@
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { loadVaultListing } from '$lib/server/top-vaults/listing';
 import { fetchVaultProtocolMetadata } from '$lib/vault-protocol/client';
@@ -13,6 +13,9 @@ import { getXerberusProtocolAssessment } from '$lib/server/top-vaults/xerberus';
 
 export async function load({ params, fetch, url }) {
 	const { protocol } = params;
+	if (protocol !== UNKNOWN_VAULT_PROTOCOL_SLUG && isUnknownVaultProtocol({ protocol_slug: protocol })) {
+		redirect(301, `/vaults/protocols/${UNKNOWN_VAULT_PROTOCOL_SLUG}${url.search}`);
+	}
 	const topVaults = await getCachedTopVaults(fetch);
 	const { vaults, core3_protocols } = topVaults;
 

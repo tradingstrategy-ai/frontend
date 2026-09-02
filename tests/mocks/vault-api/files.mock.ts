@@ -73,5 +73,68 @@ export default defineMock([
 				res.end(JSON.stringify({ error: 'Forbidden' }));
 			}
 		}
+	},
+
+	/**
+	 * Crypto cleaned prices download — proxied server-side by the download endpoint.
+	 */
+	{
+		url: '/api/files/crypto-cleaned-vault-prices-1d.parquet',
+		method: 'GET',
+		response(req, res) {
+			if (isAuthorised(req)) {
+				const body = Buffer.from('PAR1crypto-prices');
+				res.statusCode = 200;
+				res.setHeader('content-type', 'application/vnd.apache.parquet');
+				res.setHeader('content-length', String(body.byteLength));
+				res.end(body);
+			} else {
+				res.statusCode = 403;
+				res.setHeader('content-type', 'application/json');
+				res.end(JSON.stringify({ error: 'Forbidden' }));
+			}
+		}
+	},
+
+	/**
+	 * Crypto vault metadata download — proxied server-side by the download endpoint.
+	 */
+	{
+		url: '/api/files/crypto-vault-metadata.json',
+		method: 'GET',
+		response(req, res) {
+			if (isAuthorised(req)) {
+				const body = JSON.stringify({ vaults: [], generated_at: new Date().toISOString() });
+				res.statusCode = 200;
+				res.setHeader('content-type', 'application/json');
+				res.setHeader('content-length', String(Buffer.byteLength(body)));
+				res.end(body);
+			} else {
+				res.statusCode = 403;
+				res.setHeader('content-type', 'application/json');
+				res.end(JSON.stringify({ error: 'Forbidden' }));
+			}
+		}
+	},
+
+	/**
+	 * Exchange rates download — proxied server-side by the download endpoint.
+	 */
+	{
+		url: '/api/files/exchange-rates.parquet',
+		method: 'GET',
+		response(req, res) {
+			if (isAuthorised(req)) {
+				const body = Buffer.from('PAR1exchange-rates');
+				res.statusCode = 200;
+				res.setHeader('content-type', 'application/vnd.apache.parquet');
+				res.setHeader('content-length', String(body.byteLength));
+				res.end(body);
+			} else {
+				res.statusCode = 403;
+				res.setHeader('content-type', 'application/json');
+				res.end(JSON.stringify({ error: 'Forbidden' }));
+			}
+		}
 	}
 ]);

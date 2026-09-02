@@ -8,11 +8,9 @@ Whitelisted vault listing for permissioned deposits.
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
 	let { data } = $props();
-	let topVaults = $derived(data.initialTopVaults);
 
 	const title = 'Whitelisted DeFi stablecoin vaults';
-	const description =
-		'This ranking contains only vaults that are not open to public and have some sort of permissioned deposits.';
+	const description = 'This ranking contains vaults whose deposits are permissioned or restricted by an allowlist.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
@@ -40,9 +38,8 @@ Whitelisted vault listing for permissioned deposits.
 />
 
 <TopVaultsPage
-	{topVaults}
-	loading={false}
-	progressive={data.initialVaultListingHasMore}
+	topVaults={data.initialTopVaults}
+	initialHasMore={data.initialHasMore}
 	listingKey={data.listingKey}
 	listingSummary={data.listingSummary}
 	totalVaultCount={data.totalVaultCount}
@@ -54,6 +51,7 @@ Whitelisted vault listing for permissioned deposits.
 	defaultTvlKey="any"
 	defaultRiskIndex={1}
 	defaultHideUnknown={0}
+	showPrivateFilter={false}
 	defaultSort="tvl"
 	defaultDirection="desc"
 />

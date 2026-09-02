@@ -1,47 +1,26 @@
 <!--
 @component
-Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
-
-@example
-```svelte
-  <CumulativeTvlApyChart vaults={topVaults.vaults} {savingsRate} {treasuryRate} />
-```
+Server-derived cumulative TVL and annualised-return chart.
 -->
 <script lang="ts">
-	import type { VaultInfo } from '$lib/top-vaults/schemas';
-	import type { ParamSchema } from '$lib/helpers/url-search-state';
-	import CumulativeTvlApyECharts from '$lib/echarts/CumulativeTvlApyChart.svelte';
-	import { buildCumulativeTvlPoints, formatUsd, getEligibleItems } from '$lib/echarts/cumulative-tvl-apy';
-	import { getLogoUrl } from '$lib/helpers/assets';
-	import { getChain, getChainDisplayName } from '$lib/helpers/chain';
-	import {
-		getProtocolDisplayName,
-		getVaultProtocolDisplayName,
-		isBlacklisted,
-		resolveVaultDetails
-	} from '$lib/top-vaults/helpers';
-	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
-	import { deserialiseSearchParams, serialiseSearchParams } from '$lib/helpers/url-search-state';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
+	import type { ParamSchema } from '$lib/helpers/url-search-state';
+	import { deserialiseSearchParams, serialiseSearchParams } from '$lib/helpers/url-search-state';
+	import CumulativeTvlApyECharts from '$lib/echarts/CumulativeTvlApyChart.svelte';
+	import { formatUsd } from '$lib/echarts/cumulative-tvl-apy';
+	import type { CumulativeChartData } from '$lib/vault-chart-data';
 	import ScatterPlotShell from '$lib/scatter-plot/ScatterPlotShell.svelte';
 
-	const MAX_APY_THRESHOLD = 10; // 1000%
-	const LINEAR_APY_CAP = 15; // Cap X axis at 15% in linear mode for readability
-
+	const LINEAR_APY_CAP = 15;
 	interface Props {
-		vaults: VaultInfo[];
 		savingsRate: number | null;
 		treasuryRate: number | null;
-		dataLoading?: boolean;
 	}
-
-	let { vaults, savingsRate, treasuryRate, dataLoading = false }: Props = $props();
-
+	let { savingsRate, treasuryRate }: Props = $props();
 	let error = $state<string | null>(null);
 	let brokenProtocolLogos = $state<Record<string, true>>({});
-
 	const timeWindows = [
 		{ value: '1m', label: '1 month' },
 		{ value: '3m', label: '3 months' },
@@ -49,171 +28,108 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 		{ value: '1y', label: '1 year' },
 		{ value: 'all', label: 'All time' }
 	] as const;
-
 	type TimeWindow = (typeof timeWindows)[number]['value'];
-
 	const searchParamsSchema = {
 		tvl: { type: 'number', defaultValue: 50_000 },
-		window: { type: 'string', defaultValue: '1m', options: timeWindows.map((w) => w.value) },
+		window: { type: 'string', defaultValue: '1m', options: timeWindows.map((window) => window.value) },
 		protocols: { type: 'string', defaultValue: '' },
 		log: { type: 'string', defaultValue: '1', options: ['0', '1'] }
 	} as const satisfies ParamSchema;
-
 	let urlState = $derived(deserialiseSearchParams(page.url.searchParams, searchParamsSchema));
-
 	let minTvl = $derived(urlState.tvl);
 	let selectedWindow = $derived(urlState.window as TimeWindow);
 	let selectedProtocols = $derived(urlState.protocols ? urlState.protocols.split(',').filter(Boolean) : []);
 	let logAxes = $derived(urlState.log === '1');
+	let chartData = $state<CumulativeChartData>();
+	let loading = $state(true);
 
 	function updateUrl(overrides: Partial<typeof urlState>) {
-		const current = deserialiseSearchParams(page.url.searchParams, searchParamsSchema);
-		const updated = { ...current, ...overrides };
-		const qs = serialiseSearchParams(updated, searchParamsSchema);
-		const href = qs ? `${page.url.pathname}?${qs}` : page.url.pathname;
+		const updated = { ...deserialiseSearchParams(page.url.searchParams, searchParamsSchema), ...overrides };
+		const query = serialiseSearchParams(updated, searchParamsSchema);
 		// eslint-disable-next-line svelte/no-navigation-without-resolve
-		goto(href, { replaceState: true, noScroll: true, keepFocus: true });
+		goto(query ? `${page.url.pathname}?${query}` : page.url.pathname, {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		});
 	}
-
 	function isProtocolSelected(name: string) {
 		return selectedProtocols.length === 0 || selectedProtocols.includes(name);
 	}
-
 	function hasUsableProtocolLogo(name: string, logoUrl: string | undefined) {
 		return !!logoUrl && !brokenProtocolLogos[name];
 	}
-
+	function toggleProtocol(name: string) {
+		const next = selectedProtocols.length === 0 ? [name] : [...selectedProtocols];
+		if (selectedProtocols.length && next.includes(name)) next.splice(next.indexOf(name), 1);
+		else if (selectedProtocols.length) next.push(name);
+		updateUrl({ protocols: next.join(',') });
+	}
 	function markProtocolLogoBroken(name: string) {
 		brokenProtocolLogos = { ...brokenProtocolLogos, [name]: true };
 	}
 
-	/**
-	 * Get the CAGR value for a vault based on the selected time window.
-	 * Uses top-level fields for 1m/3m/lifetime; period_results for 6m/1y.
-	 */
-	function getVaultCagr(v: VaultInfo, window: TimeWindow): number | null {
-		switch (window) {
-			case '1m':
-				return v.one_month_cagr_net ?? v.one_month_cagr;
-			case '3m':
-				return v.three_months_cagr_net ?? v.three_months_cagr;
-			case '6m': {
-				const period = v.period_results?.find((p) => p.period.toLowerCase() === '6m');
-				return period?.cagr_net ?? period?.cagr_gross ?? null;
-			}
-			case '1y': {
-				const period = v.period_results?.find((p) => p.period.toLowerCase() === '1y');
-				return period?.cagr_net ?? period?.cagr_gross ?? null;
-			}
-			case 'all':
-				return v.cagr_net ?? v.cagr;
-		}
-	}
-
-	/** All eligible vaults sorted by APY descending. */
-	let allEligible = $derived(
-		getEligibleItems(vaults, {
-			getApy: (vault) => getVaultCagr(vault, selectedWindow),
-			getTvl: (vault) => vault.current_nav,
-			isBlacklisted,
-			minTvl,
-			maxApyThreshold: MAX_APY_THRESHOLD
-		})
-	);
-
-	/** Unique protocols with TVL totals and vault counts, sorted by TVL desc then count desc then name. */
-	let protocolOptions = $derived(() => {
-		const stats: Record<string, { count: number; tvl: number; logoUrl?: string }> = {};
-		for (const v of allEligible) {
-			const name = getProtocolDisplayName(v.protocol, v.protocol_slug);
-			const tvl = v.current_nav ?? 0;
-			stats[name] ??= { count: 0, tvl: 0, logoUrl: getVaultProtocolLogoUrl(v.protocol_slug) };
-			stats[name].count += 1;
-			stats[name].tvl += tvl;
-		}
-		return Object.entries(stats)
-			.map(([name, { count, tvl, logoUrl }]) => ({ name, count, tvl, logoUrl }))
-			.toSorted(
-				(left, right) => right.tvl - left.tvl || right.count - left.count || left.name.localeCompare(right.name)
-			);
+	$effect(() => {
+		let cancelled = false;
+		loading = true;
+		error = null;
+		const query = new URLSearchParams({
+			tvl: String(minTvl),
+			window: selectedWindow,
+			protocols: selectedProtocols.join(',')
+		});
+		fetch(`/vaults/cumulative-tvl-apy/chart-data?${query}`)
+			.then((response) =>
+				response.ok
+					? (response.json() as Promise<CumulativeChartData>)
+					: Promise.reject(new Error(`Chart request failed (${response.status})`))
+			)
+			.then((data) => {
+				if (!cancelled) chartData = data;
+			})
+			.catch((cause) => {
+				if (!cancelled) error = cause instanceof Error ? cause.message : 'Failed to load chart';
+			})
+			.finally(() => {
+				if (!cancelled) loading = false;
+			});
+		return () => {
+			cancelled = true;
+		};
 	});
 
-	/** Toggle a protocol in the selection set. */
-	function toggleProtocol(name: string) {
-		const allActive = selectedProtocols.length === 0;
-		const next = [...selectedProtocols];
-
-		if (allActive) {
-			next.push(name);
-		} else if (next.includes(name)) {
-			next.splice(next.indexOf(name), 1);
-		} else {
-			next.push(name);
-		}
-
-		updateUrl({ protocols: next.join(',') });
-	}
-
-	/** Vaults filtered by selected protocols. */
-	let protocolFiltered = $derived(
-		selectedProtocols.length === 0
-			? allEligible
-			: allEligible.filter((v) => selectedProtocols.includes(getProtocolDisplayName(v.protocol, v.protocol_slug)))
-	);
-
-	let displayedVaults = $derived(protocolFiltered);
-
-	/** Total TVL across displayed vaults. */
-	let totalTvl = $derived(displayedVaults.reduce((sum, v) => sum + (v.current_nav ?? 0), 0));
-
+	let protocolOptions = $derived(chartData?.protocolOptions ?? []);
+	let points = $derived(chartData?.points ?? []);
+	let totalTvl = $derived(points.reduce((total, point) => total + point.individualTvl, 0));
+	let windowLabel = $derived(timeWindows.find((window) => window.value === selectedWindow)?.label ?? '1 month');
 	const benchmarkUrls = {
 		treasury: resolve('/glossary/risk-free-rate'),
 		savings: resolve('/glossary/fdic-national-rate')
 	};
-
-	let windowLabel = $derived(timeWindows.find((window) => window.value === selectedWindow)?.label ?? '1 month');
-
-	let chartPoints = $derived(
-		buildCumulativeTvlPoints(
-			displayedVaults.map((vault) => ({
-				name: vault.name,
-				chain: getChainDisplayName(vault.chain_id),
-				chainLogoUrl: getLogoUrl('blockchain', getChain(vault.chain_id)?.slug),
-				protocol: getVaultProtocolDisplayName(vault),
-				protocolLogoUrl: getVaultProtocolLogoUrl(vault.protocol_slug),
-				realApy: (getVaultCagr(vault, selectedWindow) ?? 0) * 100,
-				individualTvl: vault.current_nav ?? 0,
-				url: resolveVaultDetails(vault)
-			}))
-		)
-	);
 </script>
 
 <ScatterPlotShell
 	className="standalone-cumulative-tvl-apy-shell"
-	loading={dataLoading}
+	{loading}
 	{error}
 	{minTvl}
-	onMinTvlChange={(v) => updateUrl({ tvl: v })}
+	onMinTvlChange={(value) => updateUrl({ tvl: value })}
 >
 	{#snippet extraControls()}
-		<label>
-			Returns lookback:
-			<select value={selectedWindow} onchange={(e) => updateUrl({ window: e.currentTarget.value })}>
-				{#each timeWindows as { value, label } (value)}
-					<option {value} selected={value === selectedWindow}>{label}</option>
-				{/each}
-			</select>
-		</label>
-		<label class="checkbox-label">
-			<input type="checkbox" checked={logAxes} onchange={() => updateUrl({ log: logAxes ? '0' : '1' })} />
-			Logarithmic axes
-		</label>
+		<label
+			>Returns lookback: <select
+				value={selectedWindow}
+				onchange={(event) => updateUrl({ window: event.currentTarget.value })}
+				>{#each timeWindows as { value, label } (value)}<option {value}>{label}</option>{/each}</select
+			></label
+		>
+		<label class="checkbox-label"
+			><input type="checkbox" checked={logAxes} onchange={() => updateUrl({ log: logAxes ? '0' : '1' })} /> Logarithmic axes</label
+		>
 	{/snippet}
 	{#snippet chartContent()}
-		{#if !dataLoading}
-			<CumulativeTvlApyECharts
-				points={chartPoints}
+		{#if !loading}<CumulativeTvlApyECharts
+				{points}
 				{savingsRate}
 				{treasuryRate}
 				{benchmarkUrls}
@@ -236,13 +152,12 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 				watermarkCorner="top-left"
 				watermarkInset="relaxed"
 				watermarkOpacity={0.05}
-			/>
-		{/if}
+			/>{/if}
 	{/snippet}
 	{#snippet belowChart()}
 		<p class="protocol-label">Select vault protocols</p>
 		<div class="protocol-chips">
-			{#each protocolOptions() as { name, count, tvl, logoUrl } (name)}
+			{#each protocolOptions as { name, count, tvl, logoUrl } (name)}
 				<button class="chip" class:active={isProtocolSelected(name)} onclick={() => toggleProtocol(name)}>
 					<span class="chip-header">
 						{#if hasUsableProtocolLogo(name, logoUrl)}
@@ -257,13 +172,21 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 			{/each}
 		</div>
 		<p class="vault-count">
-			Showing {displayedVaults.length} of {allEligible.length} vault{allEligible.length === 1 ? '' : 's'}
-			· Total TVL: {formatUsd(totalTvl)}
+			Showing {chartData?.selectedCount ?? 0} of {chartData?.matchingCount ?? 0} vault{(chartData?.matchingCount ??
+				0) === 1
+				? ''
+				: 's'} · Total TVL: {formatUsd(totalTvl)}
 		</p>
 	{/snippet}
 </ScatterPlotShell>
 
 <style>
+	.checkbox-label {
+		display: flex;
+		align-items: center;
+		gap: 0.375rem;
+		cursor: pointer;
+	}
 	.protocol-label {
 		text-align: center;
 		font: var(--f-ui-sm-roman);
@@ -271,7 +194,6 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 		margin-bottom: 0.25rem;
 		margin-top: 0.75rem;
 	}
-
 	.protocol-chips {
 		display: flex;
 		flex-wrap: wrap;
@@ -279,50 +201,50 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 		justify-content: center;
 		padding: 0.25rem;
 	}
-
 	.chip {
 		display: flex;
 		flex-direction: column;
+		align-items: center;
 		align-items: flex-start;
 		gap: 0.125rem;
-		padding: 0.375rem 0.75rem;
 		border: 1px solid var(--c-border);
 		border-radius: var(--radius-md);
 		background: var(--c-box-2);
 		color: var(--c-text-extra-light);
+		padding: 0.375rem 0.75rem;
 		font: var(--f-ui-xs-roman);
 		cursor: pointer;
 		transition: all 0.15s ease;
 		opacity: 0.82;
-
-		&.active {
-			background: var(--c-box-3);
-			color: var(--c-text);
-			opacity: 1;
-			border-color: color-mix(in srgb, var(--c-text-light), transparent 60%);
-		}
-
-		&:hover {
-			background: color-mix(in srgb, var(--c-box-2), var(--c-text-light) 10%);
-			border-color: color-mix(in srgb, var(--c-text-light), transparent 35%);
-			box-shadow:
-				0 0 0 1px color-mix(in srgb, var(--c-text-light), transparent 82%),
-				0 0.5rem 1rem color-mix(in srgb, var(--c-text-light), transparent 92%);
-			color: var(--c-text);
-			opacity: 1;
-		}
 	}
-
+	.chip.active {
+		background: var(--c-box-3);
+		color: var(--c-text);
+		opacity: 1;
+		border-color: color-mix(in srgb, var(--c-text-light), transparent 60%);
+	}
+	.chip:hover {
+		background: color-mix(in srgb, var(--c-box-2), var(--c-text-light) 10%);
+		border-color: color-mix(in srgb, var(--c-text-light), transparent 35%);
+		box-shadow:
+			0 0 0 1px color-mix(in srgb, var(--c-text-light), transparent 82%),
+			0 0.5rem 1rem color-mix(in srgb, var(--c-text-light), transparent 92%);
+		color: var(--c-text);
+		opacity: 1;
+	}
 	.chip-name {
 		font: var(--f-ui-xs-medium);
 	}
-
 	.chip-header {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.4rem;
 	}
-
+	.chip-meta {
+		font: var(--f-ui-3xs-roman);
+		color: var(--c-text-extra-light);
+		white-space: nowrap;
+	}
 	.chip-logo {
 		width: 1rem;
 		height: 1rem;
@@ -330,37 +252,20 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 		object-fit: contain;
 		flex: 0 0 auto;
 	}
-
 	.chip-logo-fallback {
 		display: inline-block;
 		background: color-mix(in srgb, var(--c-text-ultra-light), var(--c-box-3) 55%);
 		box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c-text-light), transparent 82%);
 	}
-
-	.chip-meta {
-		font: var(--f-ui-3xs-roman);
-		color: var(--c-text-extra-light);
-		white-space: nowrap;
-	}
-
-	.checkbox-label {
-		display: flex;
-		align-items: center;
-		gap: 0.375rem;
-		cursor: pointer;
-	}
-
 	.vault-count {
 		text-align: center;
 		font: var(--f-ui-sm-roman);
 		color: var(--c-text-extra-light);
 		margin-top: 0.75rem;
 	}
-
 	:global(.standalone-cumulative-tvl-apy-chart .chart) {
 		min-height: 620px;
 	}
-
 	:global(.standalone-cumulative-tvl-apy-shell .chart-surface) {
 		border-color: color-mix(in srgb, var(--c-box-4), var(--c-text-light) 14%);
 		background:
@@ -377,7 +282,6 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 			inset 0 1px 0 color-mix(in srgb, var(--c-text-light), transparent 78%),
 			inset 0 0 0 1px color-mix(in srgb, var(--c-text-light), transparent 94%);
 	}
-
 	:global(.standalone-cumulative-tvl-apy-shell .chart-surface::before) {
 		background: radial-gradient(
 			circle at top,
@@ -386,7 +290,6 @@ Standalone cumulative TVL / APY page adapter using the shared ECharts renderer.
 		);
 		opacity: 0.58;
 	}
-
 	:global(.standalone-cumulative-tvl-apy-shell .chart-surface::after) {
 		background: linear-gradient(
 			180deg,

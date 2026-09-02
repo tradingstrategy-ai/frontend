@@ -1,6 +1,15 @@
 # Weblog of stuff
 
 - Add a dedicated podcast episode page with YouTube and Spotify links (2026-09-02)
+- Add multi-vault equity curve comparison with T-bill, ETH, and BTC benchmarks (2026-09-01)
+- Add Spotify and podcast-focused community links, and refine community and blog landing-page copy (2026-08-31)
+- Add Vault Pro crypto price, metadata, and exchange-rate datasets (2026-08-28)
+- Add an AMM filter to vault listings and pool terminology on detail pages (2026-08-27)
+- Reorganise vault filters into responsive groups and add volatility filtering (2026-08-27)
+- Add a permissioned-vault filter to vault listings (2026-08-25)
+- Show processed flow and reset time in the GuardV0 deposit tooltip (2026-08-20)
+- Add a blacklisted-vault reveal control to vault listings (2026-08-17)
+- Unify CORE3 and Xerberus risk-rating card disclosures (2026-08-13)
 - Optionally export server-side APM traces and logs to SigNoz via OpenTelemetry (2026-08-12)
 - Refine vault risk summaries and transaction-status placement (2026-08-10)
 - Centre content-sized vault information card actions (2026-08-10)

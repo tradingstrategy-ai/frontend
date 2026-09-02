@@ -1,3 +1,6 @@
+<!--
+Stablecoin vault listing filtered to negative returns.
+-->
 <script lang="ts">
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
@@ -5,9 +8,8 @@
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
 	let { data } = $props();
-	let topVaults = $derived(data.initialTopVaults);
 
-	const title = 'DeFi stablecoin vaults making loss';
+	const title = 'DeFi stablecoin vaults with negative returns';
 	const description = 'Vaults with negative returns.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
@@ -36,13 +38,12 @@
 />
 
 <TopVaultsPage
-	{topVaults}
-	loading={false}
-	progressive={data.initialVaultListingHasMore}
+	topVaults={data.initialTopVaults}
+	initialHasMore={data.initialHasMore}
 	listingKey={data.listingKey}
 	listingSummary={data.listingSummary}
 	totalVaultCount={data.totalVaultCount}
-	title="DeFi stablecoin vaults making loss"
+	{title}
 	subtitle="Vaults with negative returns"
 	showFilters
 	defaultTvlKey="10k"

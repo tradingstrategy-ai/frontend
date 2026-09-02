@@ -12,14 +12,17 @@ Primary site navigation and the site-wide vault search entry point.
 
 <Section tag="header">
 	<div class="nav-bar" style:overflow="visible">
-		{#snippet menu()}
+		{#snippet menu(mobile: boolean)}
 			<MenuItem label="Top vaults" targetUrl="/vaults" active={currentPage === '/vaults'} />
 			<MenuItem label="Our vaults" targetUrl="/strategies" active={currentPage === '/strategies'} />
-			<MenuItem label="API" targetUrl="/vaults/api" active={currentPage === '/vaults/api'} />
+			<MenuItem label="Compare" targetUrl="/vaults/compare" active={currentPage === '/vaults/compare'} />
 			<MenuItem label="Pricing" targetUrl="/pricing" active={currentPage === '/pricing'} />
-			<MenuItem label="Community" targetUrl="/community" active={currentPage === '/community'} />
-			<MenuItem label="Podcast" targetUrl="/podcast" active={currentPage === '/podcast'} />
-			<MenuItem label="Blog" targetUrl="/blog" active={currentPage === '/blog'} />
+			{#if mobile}
+				<MenuItem label="API" targetUrl="/vaults/api" active={currentPage === '/vaults/api'} />
+				<MenuItem label="Community" targetUrl="/community" active={currentPage === '/community'} />
+				<MenuItem label="Blog" targetUrl="/blog" active={currentPage === '/blog'} />
+				<MenuItem label="Podcast" targetUrl="/podcast" active={currentPage === '/podcast'} />
+			{/if}
 		{/snippet}
 
 		{#snippet search(menu: boolean, onNavigate: () => void)}

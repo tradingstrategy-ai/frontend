@@ -1,5 +1,5 @@
 <!--
-All vaults listing including problematic/blacklisted vaults
+Broad vault catalogue with controls for including problematic and blacklisted vaults.
 -->
 <script lang="ts">
 	import { page } from '$app/state';
@@ -8,10 +8,10 @@ All vaults listing including problematic/blacklisted vaults
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
 	let { data } = $props();
-	let topVaults = $derived(data.initialTopVaults);
 
-	const title = 'All DeFi stablecoin vaults';
-	const description = 'All stablecoin vaults, including ones with stuck funds and oracle problems.';
+	const title = 'Stablecoin vault catalogue';
+	const description =
+		'Browse stablecoin vaults across supported protocols, including higher-risk vaults. Use the technical-risk filter to include blacklisted entries.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
@@ -39,15 +39,14 @@ All vaults listing including problematic/blacklisted vaults
 />
 
 <TopVaultsPage
-	{topVaults}
-	loading={false}
-	progressive={data.initialVaultListingHasMore}
+	topVaults={data.initialTopVaults}
+	initialHasMore={data.initialHasMore}
 	listingKey={data.listingKey}
 	listingSummary={data.listingSummary}
 	totalVaultCount={data.totalVaultCount}
 	includeBlacklisted
-	title="All stablecoin vaults"
-	subtitle="All stablecoin vaults, including ones with stuck funds and oracle problems"
+	title="Stablecoin vault catalogue"
+	subtitle={description}
 	showFilters
 	defaultTvlKey="10k"
 	defaultRiskIndex={1}

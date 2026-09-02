@@ -1,6 +1,10 @@
+<!--
+@component
+Shared time-series chart shell with range controls, loading state, tooltip and optional frame.
+-->
 <script lang="ts">
 	import type { ComponentProps, Snippet } from 'svelte';
-	import type { SimpleDataItem, TimeSpan, TvChartOptions, TvDataItem } from './types';
+	import type { SimpleDataItem, TimeSpan, TvChartOptions } from './types';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import { TimeSpans, type TimeSpanKey } from '$lib/charts/time-span';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
@@ -21,7 +25,8 @@
 		data: [number, number][] | undefined;
 		formatValue: Formatter<number>;
 		boxed?: boolean;
-		timeSpanOptions?: TimeSpanKey[];
+		timeSpanOptions?: readonly TimeSpanKey[];
+		initialTimeSpan?: TimeSpanKey;
 		/** Called when the chart range selector changes. */
 		onTimeSpanChange?: (timeSpan: TimeSpanKey) => void;
 		title?: Snippet<[TimeSpan]> | string;
@@ -35,7 +40,8 @@
 		data,
 		formatValue,
 		boxed = false,
-		timeSpanOptions = TimeSpans.keys,
+		timeSpanOptions = TimeSpans.defaultKeys,
+		initialTimeSpan = '3M',
 		onTimeSpanChange,
 		options,
 		title,
@@ -46,7 +52,7 @@
 		...restProps
 	}: Props = $props();
 
-	let timeSpans = $derived(new OptionGroup(timeSpanOptions, '3M'));
+	let timeSpans = $derived(new OptionGroup(timeSpanOptions, '3M', initialTimeSpan));
 
 	let timeSpan = $derived(TimeSpans.get(timeSpans.selected));
 

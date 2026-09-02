@@ -14,10 +14,6 @@ with an "about" panel and a TVL/return mini chart.
 	let { data } = $props();
 	let { curatorSlug, curatorName, curator, vaultCount, tvl, averageApy, initialTopVaults } = $derived(data);
 
-	let topVaults = $derived(initialTopVaults);
-	let totalVaultCount = $derived(data.totalVaultCount);
-	let loading = false;
-
 	/** Google truncates search snippets around this length; keep the meta description within it */
 	const META_DESCRIPTION_MAX_LENGTH = 160;
 
@@ -99,10 +95,9 @@ with an "about" panel and a TVL/return mini chart.
 />
 
 <TopVaultsPage
-	{topVaults}
-	{totalVaultCount}
-	{loading}
-	progressive={data.initialVaultListingHasMore}
+	topVaults={initialTopVaults}
+	totalVaultCount={data.totalVaultCount}
+	initialHasMore={data.initialHasMore}
 	listingKey={data.listingKey}
 	listingScope={data.listingScope}
 	listingSummary={data.listingSummary}

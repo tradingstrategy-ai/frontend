@@ -38,4 +38,20 @@ describe('compactStrategyTileChartData', () => {
 		]);
 		expect(compacted.summary_statistics?.share_price_returns_90_days).toBeUndefined();
 	});
+
+	it('keeps one carry-in sample when limiting the visible chart range', () => {
+		const strategy = makeStrategy(true);
+		strategy.summary_statistics!.share_price_returns_90_days = [
+			[Date.UTC(2026, 0, 1, 16) / 1000, 0.1],
+			[Date.UTC(2026, 0, 2, 16) / 1000, 0.2],
+			[Date.UTC(2026, 0, 3, 16) / 1000, 0.3]
+		];
+
+		const compacted = compactStrategyTileChartData(strategy, new Date(Date.UTC(2026, 0, 3)));
+
+		expect(compacted.summary_statistics?.share_price_returns_90_days).toEqual([
+			[Date.UTC(2026, 0, 2) / 1000, 0.2],
+			[Date.UTC(2026, 0, 3) / 1000, 0.3]
+		]);
+	});
 });

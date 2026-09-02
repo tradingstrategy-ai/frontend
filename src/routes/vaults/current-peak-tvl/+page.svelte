@@ -13,19 +13,6 @@ Scatter plot page showing vault current TVL versus historical peak TVL, coloured
 	import { JsonLd } from 'svelte-meta-tags';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
-	import type { VaultInfo } from '$lib/top-vaults/schemas';
-	import { fetchAllVaultData, hasVaultCache } from '$lib/top-vaults/client-cache';
-
-	let vaults = $state<VaultInfo[]>([]);
-	let vaultsLoading = $state(!hasVaultCache(page.data.generatedAt));
-
-	$effect(() => {
-		fetchAllVaultData(page.data.generatedAt)
-			.then((data) => (vaults = data.vaults))
-			.catch((e) => console.error('Failed to load vault data:', e))
-			.finally(() => (vaultsLoading = false));
-	});
-
 	const title = 'Vault current/peak TVL';
 	const description =
 		'Scatter plot of vault current TVL versus historical peak TVL, coloured by blockchain. Vaults on the diagonal are at their all-time high. Adjust the minimum TVL filter to focus on larger vaults.';
@@ -48,10 +35,7 @@ Scatter plot page showing vault current TVL versus historical peak TVL, coloured
 		description,
 		url: pageUrl,
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
-		mainEntity: {
-			'@type': 'ItemList',
-			numberOfItems: vaults.length
-		}
+		mainEntity: { '@type': 'ItemList' }
 	}}
 />
 
@@ -72,7 +56,7 @@ Scatter plot page showing vault current TVL versus historical peak TVL, coloured
 	</Section>
 
 	<Section padding="sm">
-		<TvlScatterPlot {vaults} dataLoading={vaultsLoading} />
+		<TvlScatterPlot />
 		<ScatterPlotSelector />
 	</Section>
 

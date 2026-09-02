@@ -2,9 +2,10 @@
 @component
 Render the vault share-price chart with TVL bars and benchmark overlays.
 
-Perpetual futures vaults (Hyperliquid, GRVT, Lighter, Hibachi, ApeX) show BTC/ETH benchmarks
-and an underwater drawdown pane (equity curve tearsheet style).
-All other vaults show a US 3M T-bill (risk-free rate) benchmark instead.
+Perpetual futures and crypto-exposed GMX pools show BTC/ETH benchmarks. GMX GM BTC and ETH
+pools show their respective market asset only, while stable-stable GM swap pools use the U.S.
+Treasury benchmark. Perpetual futures vaults also include an underwater
+drawdown pane (equity curve tearsheet style); remaining vaults show a US 3M T-bill instead.
 
 Benchmark lines are rebased to the vault share price for the selected range
 so relative performance is comparable on a single axis.
@@ -25,6 +26,8 @@ so relative performance is comparable on a single axis.
 	import { removeOnError } from '$lib/actions/image';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { isPerpetualFuturesVault } from './isPerpetualFuturesVault';
+	import { getVaultAssetType } from './helpers';
+	import { getVaultPriceBenchmarkTokens } from './vault-price-benchmarks';
 	import type { PriceScaleCalculator, SimpleDataItem } from '$lib/charts/types';
 	import {
 		formatDollar,
@@ -59,8 +62,12 @@ so relative performance is comparable on a single axis.
 
 	let { vault, chartLogoUrl, onTimeSpanChange }: Props = $props();
 
-	let showCryptoBenchmarks = $derived(isPerpetualFuturesVault(vault));
-	let assetType = $derived(vault.flags.includes('tokenised_fund') ? 'tokenised fund' : 'vault');
+	let benchmarkTokens = $derived(getVaultPriceBenchmarkTokens(vault));
+	let showCryptoBenchmarks = $derived(benchmarkTokens.length > 0);
+	let showDrawdown = $derived(isPerpetualFuturesVault(vault));
+	let assetType = $derived(getVaultAssetType(vault));
+	let isSharePriceEquivalent = $derived(vault.features.includes('share_price_equivalence'));
+	let chartTitle = $derived(isSharePriceEquivalent ? 'Equity curve' : 'Share token price');
 
 	let loading = $state(true);
 	let priceData = $state<[number, number][]>();
@@ -97,7 +104,11 @@ so relative performance is comparable on a single axis.
 
 	function getBenchmarkCustomValues(point: unknown) {
 		if (!point || typeof point !== 'object' || !('customValues' in point)) return undefined;
-		return (point as { customValues?: { percentChange?: number; usdPrice?: number } }).customValues;
+		return (point as { customValues?: { symbol?: string; percentChange?: number; usdPrice?: number } }).customValues;
+	}
+
+	function getCryptoBenchmarkCustomValues(points: unknown[], symbol: string) {
+		return points.map(getBenchmarkCustomValues).find((values) => values?.symbol === symbol);
 	}
 
 	function getTreasuryCustomValues(point: unknown) {
@@ -156,8 +167,11 @@ so relative performance is comparable on a single axis.
 		showCryptoBenchmarks
 			? [
 					{ label: vault.name, color: getVaultColor(vaultDirection), logoUrl: chartLogoUrl },
-					{ label: 'BTC', color: '#f7931a80', logoUrl: getLogoUrl('token', 'btc') },
-					{ label: 'ETH', color: '#627eea80', logoUrl: getLogoUrl('token', 'eth') }
+					...benchmarkTokens.map((token) => ({
+						label: token,
+						color: token === 'BTC' ? '#f7931a80' : '#627eea80',
+						logoUrl: getLogoUrl('token', token.toLowerCase())
+					}))
 				]
 			: [
 					{ label: vault.name, color: getVaultColor(vaultDirection), logoUrl: chartLogoUrl },
@@ -166,13 +180,13 @@ so relative performance is comparable on a single axis.
 						color: '#4a90d9a0',
 						logoUrl: usTreasuryLogo,
 						href: '/glossary/risk-free-rate',
-						tooltip: 'Risk-free rate: Equivalent investment to U.S. Treasury notes.'
+						tooltip: '3-month US Treasury market-yield benchmark.'
 					}
 				]
 	);
 </script>
 
-<div class={['vault-price-chart', showCryptoBenchmarks && 'has-drawdown']}>
+<div class={['vault-price-chart', showDrawdown && 'has-drawdown']}>
 	<ChartContainer
 		timeSpanOptions={['1M', '3M', 'Max']}
 		{onTimeSpanChange}
@@ -182,7 +196,7 @@ so relative performance is comparable on a single axis.
 		options={{
 			handleScroll: false,
 			handleScale: false,
-			...(showCryptoBenchmarks && {
+			...(showDrawdown && {
 				localization: { priceFormatter: (v: number) => (v >= -1 && v < 0 ? formatPercent(v, 1) : formatValue(v)) }
 			})
 		}}
@@ -190,12 +204,16 @@ so relative performance is comparable on a single axis.
 		{#snippet title()}
 			<h2 class="chart-title">
 				<Tooltip>
-					<span slot="trigger" class="underline">Share token price</span>
+					<span slot="trigger" class="underline">{chartTitle}</span>
 					<svelte:fragment slot="popup">
-						Share token represents a single fungible unit of this {assetType}, which depositors receive in exchange for
-						their money. This chart tracks the onchain reported value of a single share token, which reflects the
-						{assetType}'s performance. Different smart contracts have different methods to report share token price, and
-						sometimes the information may be incorrect.
+						{#if isSharePriceEquivalent}
+							The approximation value of one US Dollar deposited
+						{:else}
+							Share token represents a single fungible unit of this {assetType}, which depositors receive in exchange
+							for their money. This chart tracks the onchain reported value of a single share token, which reflects the
+							{assetType}'s performance. Different smart contracts have different methods to report share token price,
+							and sometimes the information may be incorrect.
+						{/if}
 					</svelte:fragment>
 				</Tooltip>
 			</h2>
@@ -215,57 +233,54 @@ so relative performance is comparable on a single axis.
 
 			{#if data.length > 1 && range}
 				{#if showCryptoBenchmarks}
-					<CoinbaseBenchmarkSeries
-						productId="BTC-USD"
-						{data}
-						timeBucket={timeSpan.timeBucket}
-						{range}
-						color="#f7931a80"
-					/>
-					<CoinbaseBenchmarkSeries
-						productId="ETH-USD"
-						{data}
-						timeBucket={timeSpan.timeBucket}
-						{range}
-						color="#627eea80"
-					/>
+					{#each benchmarkTokens as token (token)}
+						<CoinbaseBenchmarkSeries
+							productId={`${token}-USD` as 'BTC-USD' | 'ETH-USD'}
+							{data}
+							timeBucket={timeSpan.timeBucket}
+							{range}
+							color={token === 'BTC' ? '#f7931a80' : '#627eea80'}
+						/>
+					{/each}
 
-					{@const ddPeriod = !timeSpan.spanDays ? 'All-time' : timeSpan.spanDays <= 30 ? '1M' : '3M'}
-					{@const rangeStart = range ? Math.floor(range[0].getTime() / 1000) : 0}
-					{@const windowData = range ? data.filter((d) => d.time >= rangeStart) : data}
-					{@const drawdownSeriesData = (() => {
-						let peak = -Infinity;
-						return windowData.map((item) => {
-							if (item.value > peak) peak = item.value;
-							const dd = peak > 0 ? (item.value - peak) / peak : 0;
-							return { time: item.time, value: dd, customValues: { series: 'drawdown' as const, period: ddPeriod } };
-						});
-					})()}
-					<Series
-						type={BaselineSeriesType}
-						data={drawdownSeriesData}
-						options={{
-							baseValue: { type: 'price', price: 0 },
-							priceLineVisible: false,
-							crosshairMarkerVisible: false,
-							lineWidth: 1
-						}}
-						paneIndex={1}
-						priceScaleOptions={{ scaleMargins: { top: 0.12, bottom: 0.16 } }}
-						callback={({ series, colors }) => {
-							series.getPane().setHeight(120);
-							series.applyOptions({
-								topLineColor: 'transparent',
-								topFillColor1: 'transparent',
-								topFillColor2: 'transparent',
-								bottomLineColor: '#c0392b',
-								bottomFillColor1: 'rgba(192, 57, 43, 0.25)',
-								bottomFillColor2: 'rgba(192, 57, 43, 0.25)'
+					{#if showDrawdown}
+						{@const ddPeriod = !timeSpan.spanDays ? 'All-time' : timeSpan.spanDays <= 30 ? '1M' : '3M'}
+						{@const rangeStart = range ? Math.floor(range[0].getTime() / 1000) : 0}
+						{@const windowData = range ? data.filter((d) => d.time >= rangeStart) : data}
+						{@const drawdownSeriesData = (() => {
+							let peak = -Infinity;
+							return windowData.map((item) => {
+								if (item.value > peak) peak = item.value;
+								const dd = peak > 0 ? (item.value - peak) / peak : 0;
+								return { time: item.time, value: dd, customValues: { series: 'drawdown' as const, period: ddPeriod } };
 							});
-						}}
-					>
-						<SeriesLabel heading>Drawdown</SeriesLabel>
-					</Series>
+						})()}
+						<Series
+							type={BaselineSeriesType}
+							data={drawdownSeriesData}
+							options={{
+								baseValue: { type: 'price', price: 0 },
+								priceLineVisible: false,
+								crosshairMarkerVisible: false,
+								lineWidth: 1
+							}}
+							paneIndex={1}
+							priceScaleOptions={{ scaleMargins: { top: 0.12, bottom: 0.16 } }}
+							callback={({ series }) => {
+								series.getPane().setHeight(120);
+								series.applyOptions({
+									topLineColor: 'transparent',
+									topFillColor1: 'transparent',
+									topFillColor2: 'transparent',
+									bottomLineColor: '#c0392b',
+									bottomFillColor1: 'rgba(192, 57, 43, 0.25)',
+									bottomFillColor2: 'rgba(192, 57, 43, 0.25)'
+								});
+							}}
+						>
+							<SeriesLabel heading>Drawdown</SeriesLabel>
+						</Series>
+					{/if}
 				{:else}
 					<TreasuryBenchmarkSeries {data} timeBucket={timeSpan.timeBucket} {range} color="#4a90d9a0" />
 				{/if}
@@ -274,7 +289,7 @@ so relative performance is comparable on a single axis.
 					type={HistogramSeries}
 					data={tvlSeriesData}
 					options={{ priceLineVisible: false, color: 'transparent' }}
-					paneIndex={showCryptoBenchmarks ? 2 : 1}
+					paneIndex={showDrawdown ? 2 : 1}
 					priceScaleOptions={{ scaleMargins: { top: 0.25, bottom: 0 } }}
 					callback={({ series, colors }) => {
 						series.getPane().setHeight(150);
@@ -289,8 +304,8 @@ so relative performance is comparable on a single axis.
 		{#snippet tooltip({ point, time }, seriesData, timeSpan)}
 			{#if showCryptoBenchmarks}
 				{@const price = getSeriesValuePoint(seriesData, 'vault-price')}
-				{@const btc = getBenchmarkCustomValues(seriesData[1])}
-				{@const eth = getBenchmarkCustomValues(seriesData[2])}
+				{@const btc = getCryptoBenchmarkCustomValues(seriesData, 'BTC')}
+				{@const eth = getCryptoBenchmarkCustomValues(seriesData, 'ETH')}
 				{@const drawdown = getSeriesValuePoint(seriesData, 'drawdown')}
 				{@const tvl = getSeriesValuePoint(seriesData, 'tvl')}
 				{#if price || btc || eth || tvl}
@@ -301,18 +316,24 @@ so relative performance is comparable on a single axis.
 							<dd>{formatPercent(price?.customValues?.annualizedReturn, 1, 1, { signDisplay: 'exceptZero' })}</dd>
 							<dt>Price:</dt>
 							<dd>{price ? formatValue(price.value) : notFilledMarker} {vault.denomination}</dd>
-							<dt>BTC:</dt>
-							<dd>
-								{formatPercent(btc?.percentChange, 1, 1, { signDisplay: 'exceptZero' })}
-								{#if btc?.usdPrice}<span class="benchmark-usd">{formatDollar(btc.usdPrice, 1)}</span>{/if}
-							</dd>
-							<dt>ETH:</dt>
-							<dd>
-								{formatPercent(eth?.percentChange, 1, 1, { signDisplay: 'exceptZero' })}
-								{#if eth?.usdPrice}<span class="benchmark-usd">{formatDollar(eth.usdPrice, 1)}</span>{/if}
-							</dd>
-							<dt>Drawdown {drawdown?.customValues?.period ?? ''}:</dt>
-							<dd>{formatPercent(drawdown?.value, 2, 2)}</dd>
+							{#if benchmarkTokens.includes('BTC')}
+								<dt>BTC:</dt>
+								<dd>
+									{formatPercent(btc?.percentChange, 1, 1, { signDisplay: 'exceptZero' })}
+									{#if btc?.usdPrice}<span class="benchmark-usd">{formatDollar(btc.usdPrice, 1)}</span>{/if}
+								</dd>
+							{/if}
+							{#if benchmarkTokens.includes('ETH')}
+								<dt>ETH:</dt>
+								<dd>
+									{formatPercent(eth?.percentChange, 1, 1, { signDisplay: 'exceptZero' })}
+									{#if eth?.usdPrice}<span class="benchmark-usd">{formatDollar(eth.usdPrice, 1)}</span>{/if}
+								</dd>
+							{/if}
+							{#if showDrawdown}
+								<dt>Drawdown {drawdown?.customValues?.period ?? ''}:</dt>
+								<dd>{formatPercent(drawdown?.value, 2, 2)}</dd>
+							{/if}
 							<dt>TVL:</dt>
 							<dd>{tvl ? formatValue(tvl.value) : notFilledMarker}</dd>
 						</dl>
@@ -396,6 +417,16 @@ so relative performance is comparable on a single axis.
 		.chart-title {
 			font: var(--f-heading-md-medium);
 			letter-spacing: var(--f-heading-md-spacing, normal);
+
+			@media (--viewport-sm-down) {
+				font: var(--f-ui-sm-roman);
+				letter-spacing: 0.1em;
+				text-transform: uppercase;
+
+				:global(.underline) {
+					border-bottom: 0;
+				}
+			}
 		}
 
 		:global([data-css-props]) {
@@ -446,8 +477,7 @@ so relative performance is comparable on a single axis.
 				border-top: 1px solid var(--c-box-3);
 
 				dt,
-				dd,
-				.benchmark-usd {
+				dd {
 					font-size: 80%;
 				}
 			}

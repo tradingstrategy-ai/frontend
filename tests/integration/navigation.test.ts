@@ -2,6 +2,48 @@ import { expect, test } from '@playwright/test';
 
 const searchName = 'Search vaults and DeFi entities';
 
+test('shows Compare and Pricing in desktop navigation and moves secondary links to the footer', async ({ page }) => {
+	await page.setViewportSize({ width: 1440, height: 1000 });
+	await page.goto('/vaults');
+
+	const primaryNavigation = page.getByRole('navigation', { name: 'Primary navigation' });
+	await expect(primaryNavigation.locator('menu > li > a')).toHaveText([
+		'Top vaults',
+		'Our vaults',
+		'Compare',
+		'Pricing'
+	]);
+	await expect(primaryNavigation.getByRole('link', { name: 'Compare' })).toHaveAttribute('href', '/vaults/compare');
+	await expect(primaryNavigation.getByRole('link', { name: 'Pricing' })).toHaveAttribute('href', '/pricing');
+	await expect(primaryNavigation.getByRole('link', { name: 'API' })).toHaveCount(0);
+	await expect(primaryNavigation.getByRole('link', { name: 'Community' })).toHaveCount(0);
+	await expect(primaryNavigation.getByRole('link', { name: 'Blog' })).toHaveCount(0);
+
+	const footerNavigation = page.getByRole('navigation', { name: 'Footer navigation' });
+	await expect(footerNavigation.getByRole('link')).toHaveText(['Community', 'Blog', 'Podcast', 'API']);
+	await expect(footerNavigation.getByRole('link', { name: 'Podcast' })).toHaveAttribute('href', '/podcast');
+	await expect(footerNavigation.getByRole('link', { name: 'API' })).toHaveAttribute('href', '/vaults/api');
+});
+
+test('keeps every navigation link in the mobile menu', async ({ page }) => {
+	await page.setViewportSize({ width: 375, height: 667 });
+	await page.goto('/vaults');
+	await page.getByTestId('navigation-toggle').click();
+
+	const navigation = page.getByRole('navigation', { name: 'Mobile navigation' });
+	await expect(navigation.locator(':scope > menu > li > a')).toHaveText([
+		'Top vaults',
+		'Our vaults',
+		'Compare',
+		'Pricing',
+		'API',
+		'Community',
+		'Blog',
+		'Podcast'
+	]);
+	await expect(navigation.getByRole('navigation', { name: 'Footer navigation' })).toHaveCount(0);
+});
+
 test('opens compact navigation on the first tap after page load', async ({ page }) => {
 	await page.setViewportSize({ width: 1024, height: 768 });
 	await page.goto('/pricing', { waitUntil: 'commit' });
@@ -17,6 +59,30 @@ test('opens compact navigation on the first tap after page load', async ({ page 
 	expect(bounds).not.toBeNull();
 	expect(bounds!.x).toBeCloseTo(0, 0);
 	expect(bounds!.width).toBeCloseTo(1024, 0);
+});
+
+test('keeps the mobile navigation within the viewport', async ({ page }) => {
+	await page.setViewportSize({ width: 375, height: 667 });
+	await page.goto('/pricing', { waitUntil: 'networkidle' });
+	await page.getByTestId('navigation-toggle').click();
+
+	const navigation = page.getByRole('navigation', { name: 'Mobile navigation' });
+	await expect(page.getByRole('checkbox', { name: 'Hide navigation panel' })).toBeChecked();
+
+	const dimensions = await navigation.evaluate((navigation) => {
+		window.scrollTo({ left: document.documentElement.scrollWidth, top: 0 });
+
+		return {
+			viewportWidth: window.innerWidth,
+			navigationWidth: navigation.scrollWidth,
+			documentWidth: document.documentElement.scrollWidth,
+			horizontalOffset: window.scrollX
+		};
+	});
+
+	expect(dimensions.navigationWidth).toBeLessThanOrEqual(dimensions.viewportWidth);
+	expect(dimensions.documentWidth).toBeLessThanOrEqual(dimensions.viewportWidth);
+	expect(dimensions.horizontalOffset).toBe(0);
 });
 
 test('keeps the first tablet search tap focused through hydration', async ({ page }) => {
@@ -69,6 +135,9 @@ async function searchFromNavigation(page: import('@playwright/test').Page, query
 			search = page.getByRole('dialog', { name: 'Search' }).getByRole('combobox', { name: searchName });
 		}
 	}
+	await expect(search.locator('xpath=ancestor::*[@data-ready][1]')).toHaveAttribute('data-ready', 'true', {
+		timeout: 30_000
+	});
 	await search.fill(query);
 	const results = page.getByTestId('entity-search-results');
 	await expect(results.getByRole('option').first()).toBeVisible();

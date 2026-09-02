@@ -1,31 +1,26 @@
 import type { UTCTimestamp } from 'lightweight-charts';
 import { error, json } from '@sveltejs/kit';
-import { DuckDBConnection } from '@duckdb/node-api';
-import { ensureVaultPricesParquet } from '$lib/top-vaults/vault-prices-parquet';
+import { queryVaultPriceRows } from '$lib/server/top-vaults/vault-price-series';
 
 async function getPriceAndTvlData(vaultId: string) {
-	const connection = await DuckDBConnection.create();
-	const parquetFile = await ensureVaultPricesParquet();
-
 	try {
-		const reader = await connection.runAndReadAll(
-			`SELECT EXTRACT(EPOCH FROM timestamp) as ts, share_price, total_assets,
-              CASE WHEN utilisation >= 0 AND utilisation <= 2 THEN utilisation ELSE NULL END as utilisation
-       FROM parquet_scan($parquetFile)
-       WHERE id = $vaultId
-       ORDER BY timestamp`,
-			{ parquetFile, vaultId }
+		const rows = await queryVaultPriceRows([vaultId], { includeVaultMetrics: true });
+		return rows.map(
+			({ timestamp, sharePrice, totalAssets, utilisation }) =>
+				[timestamp as UTCTimestamp, sharePrice, totalAssets, utilisation ?? null] as [
+					UTCTimestamp,
+					number,
+					number,
+					number | null
+				]
 		);
-		return reader.getRows() as [UTCTimestamp, number, number, number | null][];
 	} catch (e) {
-		console.error(`Error loading data from ${parquetFile} for vault <${vaultId}>`);
+		console.error(`Error loading price data for vault <${vaultId}>`);
 		const { stack } = e as Error;
 		error(500, {
 			message: `Error loading vault data for vault id <${vaultId}>`,
 			stack: stack ? [stack] : undefined
 		});
-	} finally {
-		connection.closeSync();
 	}
 }
 

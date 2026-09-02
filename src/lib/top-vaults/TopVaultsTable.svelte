@@ -3,7 +3,15 @@
 Interactive vault listing with filters, sorting, and progressive row loading.
 
 Use `ratingProvider` to add its risk-rating column beside the vault name.
-Whitelisted vaults are marked as Private, except tokenised funds, which are marked as Fund.
+Permissioned vaults are marked as Private, except tokenised funds, which are marked as Fund.
+The Private checkbox in the Hide vaults group excludes all permissioned vaults.
+The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
+
+@example
+
+```svelte
+  <TopVaultsTable {topVaults} showFilters />
+```
 -->
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
@@ -11,8 +19,8 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 	import type { RiskRatingProvider } from './risk-rating-providers';
 	import type { ParamSchema } from '$lib/helpers/url-search-state';
 	import { onMount, untrack } from 'svelte';
-	import { SvelteURLSearchParams } from 'svelte/reactivity';
-	import { goto } from '$app/navigation';
+	import { SvelteURL, SvelteURLSearchParams } from 'svelte/reactivity';
+	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/state';
 	import { inview } from 'svelte-inview';
 	import { resolve } from '$app/paths';
@@ -41,7 +49,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		formatValue,
 		notFilledMarker
 	} from '$lib/helpers/formatters';
-	import { isStablecoinDepegged } from '$lib/stablecoin-metadata/helpers';
+	import { isStablecoinDepegged, OFFCHAIN_USD_STABLECOIN_SLUG } from '$lib/stablecoin-metadata/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers';
 	import {
 		DEFAULT_TVL_KEY,
@@ -62,21 +70,24 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		getVaultDenominationCurrency,
 		getVaultPeakTvlUsd,
 		getVaultTvlNative,
-		hasSupportedProtocol,
+		isAmmPoolLikeVault,
 		isBlacklisted,
+		isUnknownVaultProtocol,
+		isPoolProtocol,
+		isPermissionedVault,
 		isVaultDepositCapped,
 		isGoodVaultStatus,
+		matchesVolatilityFilter,
 		monthlyReturnFilterOptions,
-		rankVaultsBy,
 		resolveVaultDetails,
 		riskFilterOptions,
-		tvlFilterOptions
+		tvlFilterOptions,
+		volatilityFilterOptions
 	} from './helpers';
 	import {
 		DEFAULT_RETURN_COLUMN_IDS,
 		LEGACY_RETURN_SORT_ALIASES,
 		canonicaliseReturnSortKey,
-		compareVaultsByReturn,
 		getReturnDataCoverage,
 		getReturnLifetimeData,
 		getReturnColumnValues,
@@ -90,11 +101,25 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		type ReturnColumnId
 	} from './return-columns';
 	import { sortVaults } from './listing/query';
+	import { getVaultListingDefaults, type VaultListingKey } from './listing/definitions';
 	import { INITIAL_VAULT_LISTING_LIMIT, VAULT_LISTING_PAGE_SIZE, type VaultListingSummary } from './listing/types';
 
 	const allVaultsPath = resolve('/vaults/all');
 	const filtersOpenStorageKey = 'top-vaults-filters-open';
-	const filterSearchParamKeys = ['tvl', 'age', 'risk', 'q', 'closed', 'unknown', 'dd', 'mr', 'returns'] as const;
+	const filterSearchParamKeys = [
+		'tvl',
+		'age',
+		'risk',
+		'q',
+		'closed',
+		'unknown',
+		'amm',
+		'private',
+		'dd',
+		'vol',
+		'mr',
+		'returns'
+	] as const;
 
 	/** Return whether the URL explicitly contains a vault-table filtering parameter. */
 	function hasFilterSearchParams(searchParams: URLSearchParams) {
@@ -104,7 +129,6 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 	interface SortOptions {
 		key: string;
 		direction: 'asc' | 'desc';
-		compareFn: (a: VaultInfo, b: VaultInfo) => number;
 	}
 
 	interface Props {
@@ -123,10 +147,12 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		defaultAgeIndex?: number;
 		/** Default risk filter index (used to initialise the dropdown when showFilters is true) */
 		defaultRiskIndex?: number;
-		/** Default value for the "Hide unknown" filter (1 = hide, 0 = show) */
+		/** Default value for the Unknown protocols checkbox in the Hide vaults group (1 = hide, 0 = show) */
 		defaultHideUnknown?: number;
-		/** Show the "Hide unknown" protocol filter checkbox */
+		/** Show the Unknown protocols checkbox in the Hide vaults group */
 		showUnknownFilter?: boolean;
+		/** Show the Private permissioned-vault checkbox in the Hide vaults group */
+		showPrivateFilter?: boolean;
 		/** Default monthly return filter key */
 		defaultMonthlyReturnKey?: string;
 		/** Default sort column key */
@@ -145,11 +171,22 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		disableBlacklistedStrikethrough?: boolean;
 		/** Show a third-party risk rating column immediately after the vault name. */
 		ratingProvider?: RiskRatingProvider;
-		/** Whether rows are fetched in pages from the server. */
-		progressive?: boolean;
-		listingKey?: string;
+		/** Whether the initial server-rendered batch has continuation rows. */
+		initialHasMore?: boolean;
+		listingKey?: VaultListingKey;
 		listingScope?: string;
 		listingSummary?: VaultListingSummary;
+		/** Query parameters retained when this table updates its own sorting and filtering state. */
+		preserveSearchParams?: string[];
+		/** Show the standard stablecoin-only badge in the listing metadata. */
+		showStablecoinOnlyMeta?: boolean;
+	}
+
+	interface ListingDataResponse {
+		vaults: VaultInfo[];
+		nextOffset: number;
+		hasMore: boolean;
+		listingSummary: VaultListingSummary;
 	}
 
 	const emptyTopVaults: TopVaults = {
@@ -175,6 +212,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		defaultRiskIndex = 1,
 		defaultHideUnknown = 1,
 		showUnknownFilter = true,
+		showPrivateFilter = true,
 		defaultMonthlyReturnKey = 'any',
 		defaultSort,
 		defaultDirection,
@@ -184,32 +222,38 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		maxSummaryTvlUsd,
 		disableBlacklistedStrikethrough = false,
 		ratingProvider,
-		progressive = false,
+		initialHasMore = false,
 		listingKey = 'top',
 		listingScope,
-		listingSummary
+		listingSummary,
+		preserveSearchParams = [],
+		showStablecoinOnlyMeta = true
 	}: Props = $props();
-	let accumulatedVaults = $state<VaultInfo[]>(topVaults.vaults);
-	let remoteHasMore = $state(progressive);
+	const defaultHideAmm = untrack(() => ((getVaultListingDefaults(listingKey, listingScope).amm ?? true) ? 1 : 0));
+	let listingAssetType = $derived(listingKey === 'protocol' && isPoolProtocol(listingScope) ? 'pool' : 'vault');
+	let listingAssetTypePlural = $derived(`${listingAssetType}s`);
+	let accumulatedVaults = $state<VaultInfo[]>(untrack(() => topVaults.vaults));
+	let remoteHasMore = $state(untrack(() => initialHasMore));
 	let remoteLoading = $state(false);
-	let remoteOffset = $state(topVaults.vaults.length);
+	let loadMoreQueued = false;
+	let remoteOffset = $state(untrack(() => topVaults.vaults.length));
+	let revealedListingSummary = $state<VaultListingSummary>();
+	/** Previous risk selection while a broader risk range is displayed without navigation. */
+	let revealedFromRisk = $state<number | null>(null);
+	let listingRevision = 0;
+	let isServerBacked = $derived(listingSummary != null);
 	$effect(() => {
+		listingRevision++;
 		accumulatedVaults = topVaults.vaults;
 		remoteOffset = topVaults.vaults.length;
-		remoteHasMore = progressive;
+		remoteHasMore = initialHasMore;
+		remoteLoading = false;
+		loadMoreQueued = false;
+		revealedListingSummary = undefined;
+		revealedFromRisk = null;
 	});
 
-	// --- Sort column registry (key → compareFn + default direction) ---
-
-	function stringCompare(fn: (v: VaultInfo) => string) {
-		return (a: VaultInfo, b: VaultInfo) => fn(a).localeCompare(fn(b));
-	}
-
-	function getProviderRiskScore(vault: VaultInfo): number | null {
-		if (ratingProvider === 'xerberus') return vault.xerberus?.score ?? null;
-		if (ratingProvider === 'core3') return getCore3PolForVault(vault, topVaults.core3_protocols)?.score ?? null;
-		return null;
-	}
+	// --- Sort column registry (key → default direction) ---
 
 	function getXerberusRiskRating(vault: VaultInfo): string {
 		const score = vault.xerberus?.score;
@@ -217,103 +261,156 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		return formatNumber(score, 0, 0);
 	}
 
-	function compareProviderRiskRatings(a: VaultInfo, b: VaultInfo): number {
-		const aScore = getProviderRiskScore(a);
-		const bScore = getProviderRiskScore(b);
-		if (aScore == null && bScore == null) return 0;
-
-		const missingScore = ratingProvider === 'xerberus' ? -Infinity : Infinity;
-		return (aScore ?? missingScore) - (bScore ?? missingScore);
-	}
-
 	const returnSortColumnMap = Object.fromEntries(
-		returnColumnDefinitions.map((definition) => [
-			definition.id,
-			{
-				defaultDirection: definition.sortDirection,
-				compareFn: compareVaultsByReturn(definition.id)
-			}
-		])
-	) as Record<ReturnColumnId, { defaultDirection: 'desc'; compareFn: SortOptions['compareFn'] }>;
+		returnColumnDefinitions.map((definition) => [definition.id, { defaultDirection: definition.sortDirection }])
+	) as Record<ReturnColumnId, { defaultDirection: 'desc' }>;
 
 	// The provider is a page-level configuration and does not change after the table mounts.
-	const providerSortColumnMap: Record<
-		string,
-		{ defaultDirection: 'asc' | 'desc'; compareFn: SortOptions['compareFn'] }
-	> = untrack(() =>
-		ratingProvider
-			? { provider_risk_rating: { defaultDirection: 'asc' as const, compareFn: compareProviderRiskRatings } }
-			: {}
-	);
-
-	const sortColumnMap: Record<string, { defaultDirection: 'asc' | 'desc'; compareFn: SortOptions['compareFn'] }> = {
-		...returnSortColumnMap,
-		chain: {
-			defaultDirection: 'asc',
-			compareFn: stringCompare((v) => getChainDisplayName(v.chain_id))
-		},
-		vault: {
-			defaultDirection: 'asc',
-			compareFn: stringCompare((v) => `${v.name.trim()} ${getVaultProtocolDisplayName(v)}`)
-		},
-		three_months_sharpe: { defaultDirection: 'desc', compareFn: rankVaultsBy(['three_months_sharpe']) },
-		three_months_volatility: { defaultDirection: 'asc', compareFn: rankVaultsBy(['three_months_volatility']) },
-		max_dd: {
-			defaultDirection: 'desc',
-			compareFn: (a: VaultInfo, b: VaultInfo) => {
-				const aVal = getLifetimeMaxDrawdown(a) ?? -Infinity;
-				const bVal = getLifetimeMaxDrawdown(b) ?? -Infinity;
-				return aVal - bVal;
+	const providerSortColumnMap = untrack((): Record<string, { defaultDirection: 'asc' | 'desc' }> => {
+		if (!ratingProvider) return {};
+		return {
+			provider_risk_rating: {
+				defaultDirection: ratingProvider === 'xerberus' ? 'desc' : 'asc'
 			}
-		},
-		denomination: { defaultDirection: 'asc', compareFn: stringCompare((v) => v.denomination) },
-		tvl: {
-			defaultDirection: 'desc',
-			compareFn: (a: VaultInfo, b: VaultInfo) =>
-				rankVaultsBy(['current_tvl_usd', 'peak_tvl_usd'])(
-					{ current_tvl_usd: getVaultCurrentTvlUsd(a), peak_tvl_usd: getVaultPeakTvlUsd(a) },
-					{ current_tvl_usd: getVaultCurrentTvlUsd(b), peak_tvl_usd: getVaultPeakTvlUsd(b) }
-				)
-		},
-		age: { defaultDirection: 'desc', compareFn: rankVaultsBy(['years']) },
-		fees: { defaultDirection: 'asc', compareFn: rankVaultsBy(['mgmt_fee', 'perf_fee'], Infinity) },
-		lockup: { defaultDirection: 'asc', compareFn: rankVaultsBy(['lockup'], Infinity) },
-		risk: { defaultDirection: 'asc', compareFn: rankVaultsBy(['risk_numeric'], Infinity) },
+		};
+	});
+
+	const sortColumnMap: Record<string, { defaultDirection: 'asc' | 'desc' }> = {
+		...returnSortColumnMap,
+		chain: { defaultDirection: 'asc' },
+		vault: { defaultDirection: 'asc' },
+		three_months_sharpe: { defaultDirection: 'desc' },
+		three_months_volatility: { defaultDirection: 'asc' },
+		max_dd: { defaultDirection: 'desc' },
+		denomination: { defaultDirection: 'asc' },
+		tvl: { defaultDirection: 'desc' },
+		age: { defaultDirection: 'desc' },
+		fees: { defaultDirection: 'asc' },
+		lockup: { defaultDirection: 'asc' },
+		risk: { defaultDirection: 'asc' },
 		...providerSortColumnMap
 	};
 
 	// --- URL search state schema ---
 
-	const searchParamsSchema = {
-		tvl: { type: 'string', defaultValue: defaultTvlKey, options: tvlFilterOptions.map((o) => o.key) },
-		age: { type: 'number', defaultValue: defaultAgeIndex },
-		risk: { type: 'number', defaultValue: defaultRiskIndex },
-		sort: {
-			type: 'string',
-			defaultValue: defaultSort ?? DEFAULT_RETURN_COLUMN_IDS[0],
-			options: [...Object.keys(sortColumnMap), ...Object.keys(LEGACY_RETURN_SORT_ALIASES)]
-		},
-		direction: { type: 'string', defaultValue: defaultDirection ?? 'desc', options: ['asc', 'desc'] },
-		q: { type: 'string', defaultValue: '' },
-		closed: { type: 'number', defaultValue: 0 },
-		unknown: { type: 'number', defaultValue: defaultHideUnknown },
-		dd: { type: 'string', defaultValue: 'any', options: ddFilterOptions.map((o) => o.key) },
-		mr: {
-			type: 'string',
-			defaultValue: defaultMonthlyReturnKey,
-			options: monthlyReturnFilterOptions.map((o) => o.key)
-		},
-		returns: { type: 'string', defaultValue: DEFAULT_RETURN_COLUMN_IDS.join(',') }
-	} as const satisfies ParamSchema;
+	// Listing defaults are page configuration and intentionally fixed at mount.
+	const searchParamsSchema = untrack(
+		() =>
+			({
+				tvl: { type: 'string', defaultValue: defaultTvlKey, options: tvlFilterOptions.map((o) => o.key) },
+				age: { type: 'number', defaultValue: defaultAgeIndex },
+				risk: { type: 'number', defaultValue: defaultRiskIndex },
+				sort: {
+					type: 'string',
+					defaultValue: defaultSort ?? DEFAULT_RETURN_COLUMN_IDS[0],
+					options: [...Object.keys(sortColumnMap), ...Object.keys(LEGACY_RETURN_SORT_ALIASES)]
+				},
+				direction: { type: 'string', defaultValue: defaultDirection ?? 'desc', options: ['asc', 'desc'] },
+				q: { type: 'string', defaultValue: '' },
+				closed: { type: 'number', defaultValue: 0 },
+				unknown: { type: 'number', defaultValue: defaultHideUnknown },
+				amm: { type: 'number', defaultValue: defaultHideAmm },
+				private: { type: 'number', defaultValue: 0 },
+				dd: { type: 'string', defaultValue: 'any', options: ddFilterOptions.map((o) => o.key) },
+				vol: { type: 'string', defaultValue: 'any', options: volatilityFilterOptions.map((o) => o.key) },
+				mr: {
+					type: 'string',
+					defaultValue: defaultMonthlyReturnKey,
+					options: monthlyReturnFilterOptions.map((o) => o.key)
+				},
+				returns: { type: 'string', defaultValue: DEFAULT_RETURN_COLUMN_IDS.join(',') }
+			}) as const satisfies ParamSchema
+	);
 
 	let urlState = $derived(deserialiseSearchParams(page.url.searchParams, searchParamsSchema));
 
-	/** Update URL search params, merging overrides with current state */
-	function updateSearchParams(overrides: Partial<typeof urlState>) {
+	/**
+	 * Build the current listing URL with selected search-state overrides.
+	 *
+	 * @param overrides - Search-state values to merge into the current URL.
+	 */
+	function getSearchUrl(overrides: Partial<typeof urlState>) {
 		const current = deserialiseSearchParams(page.url.searchParams, searchParamsSchema);
-		const updated = { ...current, ...overrides };
-		const queryString = serialiseSearchParams(updated, searchParamsSchema);
-		goto(resolve(`${page.url.pathname}?${queryString}`), { replaceState: true, noScroll: true, keepFocus: true });
+		const updated = {
+			...current,
+			...(revealedFromRisk == null ? {} : { risk: blacklistedRiskIndex }),
+			...overrides
+		};
+		const url = new SvelteURL(page.url);
+		const searchParams = new SvelteURLSearchParams(serialiseSearchParams(updated, searchParamsSchema));
+		for (const key of preserveSearchParams) {
+			for (const value of page.url.searchParams.getAll(key)) searchParams.append(key, value);
+		}
+		url.search = searchParams.toString();
+		return url;
+	}
+
+	/**
+	 * Navigate within the current, already-resolved listing URL.
+	 *
+	 * @param url - Listing URL cloned from the current page URL.
+	 * @param invalidateAll - Whether SvelteKit must reload all page data.
+	 */
+	function navigateToSearchUrl(url: URL, invalidateAll = false) {
+		// eslint-disable-next-line svelte/no-navigation-without-resolve -- The URL clones page.url, which already includes the configured base path.
+		return goto(url, { invalidateAll, replaceState: true, noScroll: true, keepFocus: true });
+	}
+
+	function updateSearchParams(overrides: Partial<typeof urlState>) {
+		if ('risk' in overrides) revealedFromRisk = null;
+		return navigateToSearchUrl(getSearchUrl(overrides));
+	}
+
+	/**
+	 * Append one deduplicated server page and retain its continuation state.
+	 *
+	 * @param next - Listing page returned by the continuation endpoint.
+	 */
+	function appendListingPage(next: ListingDataResponse) {
+		const seen = new Set(accumulatedVaults.map((vault) => vault.id));
+		accumulatedVaults = [...accumulatedVaults, ...next.vaults.filter((vault) => !seen.has(vault.id))];
+		remoteOffset = next.nextOffset;
+		remoteHasMore = next.hasMore;
+	}
+
+	/**
+	 * Finish a listing request and replay an in-view event received while it was active.
+	 *
+	 * @param revision - Listing revision captured before the request started.
+	 */
+	function finishRemoteLoading(revision: number) {
+		if (revision !== listingRevision) return;
+		remoteLoading = false;
+		if (!loadMoreQueued) return;
+		loadMoreQueued = false;
+		void loadMore();
+	}
+
+	/** Reveal the hidden rows without reloading the listing page. */
+	async function showBlacklistedVaults() {
+		if (remoteLoading) return;
+
+		const targetUrl = getSearchUrl({ risk: blacklistedRiskIndex });
+		const previousRisk = urlState.risk;
+		const revision = listingRevision;
+		remoteLoading = true;
+		try {
+			const next = await fetchListingData(targetUrl.searchParams, 0, previousRisk);
+			if (revision !== listingRevision) return;
+			if (next == null) {
+				revealedFromRisk = null;
+				await navigateToSearchUrl(targetUrl, true);
+				return;
+			}
+
+			appendListingPage(next);
+			revealedListingSummary = next.listingSummary;
+			revealedFromRisk = previousRisk;
+			// eslint-disable-next-line svelte/no-navigation-without-resolve -- targetUrl clones the already-resolved page.url.
+			replaceState(targetUrl, {});
+		} finally {
+			finishRemoteLoading(revision);
+		}
 	}
 
 	// --- Filter state (derived from URL) ---
@@ -325,13 +422,16 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 	let selectedAgeIndex = $derived(urlState.age);
 	let selectedAge = $derived(ageFilterOptions[selectedAgeIndex]);
 
-	let selectedRiskIndex = $derived(urlState.risk);
+	const blacklistedRiskIndex = riskFilterOptions.findIndex((option) => option.label === 'Blacklisted');
+	let selectedRiskIndex = $derived(revealedFromRisk == null ? urlState.risk : blacklistedRiskIndex);
 	let selectedRisk = $derived(riskFilterOptions[selectedRiskIndex]);
 	let riskDropdownOpen = $state(false);
-
 	let selectedDdKey = $derived(urlState.dd);
 	let selectedDdOption = $derived(ddFilterOptions.find((o) => o.key === selectedDdKey)!);
 	let ddDropdownOpen = $state(false);
+	let selectedVolatilityKey = $derived(urlState.vol);
+	let selectedVolatilityOption = $derived(volatilityFilterOptions.find((o) => o.key === selectedVolatilityKey)!);
+	let volatilityDropdownOpen = $state(false);
 
 	let selectedMrKey = $derived(urlState.mr);
 	let selectedMrOption = $derived(monthlyReturnFilterOptions.find((o) => o.key === selectedMrKey)!);
@@ -342,6 +442,8 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 
 	let hideClosed = $derived(urlState.closed === 1);
 	let hideUnknown = $derived(showUnknownFilter && urlState.unknown === 1);
+	let hideAmm = $derived(showFilters && urlState.amm === 1);
+	let hidePrivate = $derived(urlState.private === 1);
 	let returnsDropdownOpen = $state(false);
 	let filtersOpen = $state(hasFilterSearchParams(page.url.searchParams));
 	let hasLoadedFilterPreference = false;
@@ -411,11 +513,10 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		if (!column) {
 			return {
 				key: DEFAULT_RETURN_COLUMN_IDS[0],
-				direction: 'desc' as const,
-				compareFn: sortColumnMap[DEFAULT_RETURN_COLUMN_IDS[0]].compareFn
+				direction: 'desc' as const
 			};
 		}
-		return { key: sortKey, direction: urlState.direction as 'asc' | 'desc', compareFn: column.compareFn };
+		return { key: sortKey, direction: urlState.direction as 'asc' | 'desc' };
 	});
 
 	let showChainCol = $derived(!chain);
@@ -479,7 +580,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 
 	// Filter out blacklisted vaults unless explicitly included, searched for, or selected by risk level.
 	let baseVaults = $derived.by(() => {
-		const sourceVaults = progressive ? accumulatedVaults : topVaults.vaults;
+		const sourceVaults = isServerBacked ? accumulatedVaults : topVaults.vaults;
 		if (includeBlacklisted || filterValue.startsWith('blacklist') || selectedRisk.maxValue >= 999) {
 			return sourceVaults;
 		}
@@ -503,7 +604,15 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		if (!filterTvl && !showFilters) return [];
 		return baseVaults.filter((v) => getVaultCurrentTvl(v) < getVaultTvlThreshold(v));
 	});
-	let serverListingSummary = $derived(progressive ? listingSummary : undefined);
+	// The server summary includes rows outside the initial browser batch.
+	let serverListingSummary = $derived(revealedListingSummary ?? listingSummary);
+	let blacklistedVaultsAreHidden = $derived(
+		!includeBlacklisted && !filterValue.startsWith('blacklist') && selectedRisk.maxValue < 999
+	);
+	let hiddenBlacklistedCount = $derived(
+		serverListingSummary?.hiddenBlacklistedCount ??
+			(blacklistedVaultsAreHidden ? topVaults.vaults.filter(isBlacklisted).length : 0)
+	);
 	let hiddenVaultNames = $derived(
 		serverListingSummary?.hiddenVaultNames ?? hiddenVaults.slice(0, 2).map((vault) => vault.name)
 	);
@@ -549,6 +658,10 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 				if (dd == null || Math.abs(dd) > selectedDdOption.value) return false;
 			}
 
+			// Three-month annualised volatility filter (dropdown-driven)
+			if (showFilters && !matchesVolatilityFilter(v.three_months_volatility, selectedVolatilityOption.value))
+				return false;
+
 			// Monthly returns filter (dropdown-driven)
 			if (showFilters && selectedMrOption.mode !== 'any') {
 				const mr = getMonthlyReturn(v);
@@ -565,7 +678,13 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 			if (hideClosed && v.deposit_closed_reason != null) return false;
 
 			// Hide unknown protocol filter (checkbox-driven)
-			if (hideUnknown && !hasSupportedProtocol(v)) return false;
+			if (hideUnknown && isUnknownVaultProtocol(v)) return false;
+
+			// Hide AMM pool filter (checkbox-driven)
+			if (hideAmm && isAmmPoolLikeVault(v)) return false;
+
+			// Hide private vault filter (checkbox-driven)
+			if (hidePrivate && isPermissionedVault(v)) return false;
 
 			const vaultCompareStr = [
 				v.chain_id,
@@ -580,7 +699,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		});
 	});
 
-	// A progressive listing contains only its initial page here, while the server
+	// A server-backed listing may contain only its initial page here, while its
 	// summary describes every vault matching the same filters.
 	let matchingVaultCount = $derived(serverListingSummary?.matchingCount ?? filteredVaults.length);
 
@@ -603,7 +722,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 			: calculateTotalTvl(statsVaultsWithTvl, { maxTvlUsd: maxSummaryTvlUsd })
 	);
 
-	// A progressive listing only contains its initial row batch in the browser.
+	// A server-backed listing may contain only its initial row batch in the browser.
 	// Use the server calculation over the complete filtered listing so the headline
 	// does not become skewed by the current batch or its sort order.
 	let avgTvlWeightedApy1M = $derived(
@@ -616,53 +735,67 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 	);
 
 	// sort vaults
-	let sortedVaults = $derived.by(() => {
-		if (progressive && sortOptions.key !== 'provider_risk_rating')
-			return sortVaults(filteredVaults, sortOptions.key, sortOptions.direction);
-		const sorted = filteredVaults.toSorted(sortOptions.compareFn);
-		if (sortOptions.direction === 'desc') sorted.reverse();
-		return sorted;
-	});
+	let sortedVaults = $derived(
+		sortVaults(filteredVaults, sortOptions.key, sortOptions.direction, ratingProvider, topVaults.core3_protocols)
+	);
 
 	// INFINITE SCROLL:
 	// - limit the displayed vaults during initial render
 	// - track sortedVaults as dependency (reset to initial count when it changes)
-	// - progressively increemnt maxVisibleRows on-scroll (see load-more-sentinel)
+	// - progressively increment maxVisibleRows on scroll (see load-more-sentinel)
 	let maxVisibleRows = $state(INITIAL_VAULT_LISTING_LIMIT);
-	let visibleVaults = $derived(progressive ? sortedVaults : sortedVaults.slice(0, maxVisibleRows));
-	let hasMoreRows = $derived(progressive ? remoteHasMore : maxVisibleRows < sortedVaults.length);
+	let visibleVaults = $derived(isServerBacked ? sortedVaults : sortedVaults.slice(0, maxVisibleRows));
+	let hasMoreRows = $derived(isServerBacked ? remoteHasMore : maxVisibleRows < sortedVaults.length);
+
+	/**
+	 * Fetch one server-side listing continuation.
+	 *
+	 * @param searchParams - Active listing filters and sort.
+	 * @param offset - Number of matching continuation rows already received.
+	 * @param previousRisk - Previous risk-filter index when fetching only newly included rows.
+	 */
+	async function fetchListingData(
+		searchParams: URLSearchParams,
+		offset: number,
+		previousRisk?: number
+	): Promise<ListingDataResponse | null> {
+		const params = new SvelteURLSearchParams(searchParams);
+		params.set('listing', listingKey);
+		if (listingScope) params.set('scope', listingScope);
+		params.set('offset', String(offset));
+		params.set('version', new Date(topVaults.generated_at).toISOString());
+		if (previousRisk != null) params.set('previousRisk', String(previousRisk));
+
+		const response = await fetch(`/top-vaults/listing-data?${params}`);
+		if (response.status === 409) return null;
+		if (!response.ok) throw new Error(`Vault listing continuation failed: ${response.status}`);
+		return (await response.json()) as ListingDataResponse;
+	}
 
 	async function loadMore() {
-		if (!progressive) {
+		if (!isServerBacked) {
 			maxVisibleRows += VAULT_LISTING_PAGE_SIZE;
 			return;
 		}
-		if (remoteLoading || !remoteHasMore) return;
+		if (remoteLoading) {
+			loadMoreQueued = true;
+			return;
+		}
+		if (!remoteHasMore) return;
+		const revision = listingRevision;
 		remoteLoading = true;
 		try {
-			const params = new SvelteURLSearchParams(page.url.searchParams);
-			params.set('listing', listingKey);
-			if (listingScope) params.set('scope', listingScope);
-			params.set('offset', String(remoteOffset));
-			params.set('version', new Date(topVaults.generated_at).toISOString());
-			const response = await fetch(`/top-vaults/listing-data?${params}`);
-			if (response.status === 409) {
-				await goto(resolve(`${page.url.pathname}${page.url.search}`), {
-					invalidateAll: true,
-					replaceState: true,
-					noScroll: true,
-					keepFocus: true
-				});
+			const loadingRevealedBlacklisted = revealedFromRisk != null;
+			const searchParams = loadingRevealedBlacklisted ? getSearchUrl({}).searchParams : page.url.searchParams;
+			const next = await fetchListingData(searchParams, remoteOffset, revealedFromRisk ?? undefined);
+			if (revision !== listingRevision) return;
+			if (next == null) {
+				await navigateToSearchUrl(getSearchUrl({}), true);
 				return;
 			}
-			if (!response.ok) throw new Error(`Vault listing continuation failed: ${response.status}`);
-			const next = (await response.json()) as { vaults: VaultInfo[]; nextOffset: number; hasMore: boolean };
-			const seen = new Set(accumulatedVaults.map((vault) => vault.id));
-			accumulatedVaults = [...accumulatedVaults, ...next.vaults.filter((vault) => !seen.has(vault.id))];
-			remoteOffset = next.nextOffset;
-			remoteHasMore = next.hasMore;
+			appendListingPage(next);
 		} finally {
-			remoteLoading = false;
+			finishRemoteLoading(revision);
 		}
 	}
 
@@ -850,7 +983,8 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		<div class="table-stats" class:hidden={loading} data-testid="top-vaults-meta">
 			<Tooltip>
 				<svelte:fragment slot="trigger"
-					>{matchingVaultCount} vaults{#if totalVaultCount > matchingVaultCount}
+					>{matchingVaultCount}
+					{listingAssetTypePlural}{#if totalVaultCount > matchingVaultCount}
 						<span>&nbsp;out of {totalVaultCount}</span>{/if}</svelte:fragment
 				>
 				<svelte:fragment slot="popup"
@@ -861,7 +995,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 						not meet the minimum TVL threshold:
 						{hiddenVaultNames.join(', ')}{#if hiddenByTvl > 2}, and {hiddenByTvl - 2} more{/if}.
 					{:else}
-						The number of vaults listed on this page.
+						The number of {listingAssetTypePlural} listed on this page.
 					{/if}</svelte:fragment
 				>
 			</Tooltip>
@@ -885,13 +1019,15 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 					>
 				</Tooltip>
 			{/if}
-			<Tooltip>
-				<svelte:fragment slot="trigger">Stablecoin-only</svelte:fragment>
-				<svelte:fragment slot="popup"
-					>We list stablecoin-denominated vaults only. This excludes vaults with cryptocurrency denominator like ETH or
-					BTC.</svelte:fragment
-				>
-			</Tooltip>
+			{#if showStablecoinOnlyMeta}
+				<Tooltip>
+					<svelte:fragment slot="trigger">Stablecoin-only</svelte:fragment>
+					<svelte:fragment slot="popup"
+						>We list stablecoin-denominated vaults only. This excludes vaults with cryptocurrency denomination like ETH
+						or BTC.</svelte:fragment
+					>
+				</Tooltip>
+			{/if}
 			<span
 				><Tooltip>
 					<svelte:fragment slot="trigger">Updated <Timestamp date={topVaults.generated_at} relative /></svelte:fragment>
@@ -919,226 +1055,315 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 					</summary>
 
 					<div class="filters-content">
-						<div class="primary-filters">
-							<div class="filter-group">
-								<Tooltip>
-									<span class="filter-label filter-label-hint" slot="trigger">Technical risk</span>
-									<svelte:fragment slot="popup">
-										The technical risk accounts for the software development best practices followed by the underlying
-										vault protocol, and is a proxy e.g. for cyber security incidents. The vault technical risk framework
-										is still in beta and we are expecting changes.
-										<a href={resolve('/blog/announcing-vault-technical-risk-framework-beta')} target="_blank"
-											>Read this blog post for more information.</a
+						<div class="filters-groups">
+							<section
+								class="filter-section filter-section-display"
+								data-testid="filter-group-display"
+								role="group"
+								aria-labelledby="filter-group-display-heading"
+							>
+								<h3 class="filter-section-heading" id="filter-group-display-heading">Display</h3>
+								<div class="filter-group">
+									<span class="filter-label">Columns</span>
+									<div class="tvl-dropdown" use:clickOutside={() => (returnsDropdownOpen = false)}>
+										<button
+											class="tvl-trigger"
+											data-testid="return-columns-trigger"
+											onclick={() => (returnsDropdownOpen = !returnsDropdownOpen)}
 										>
-									</svelte:fragment>
-								</Tooltip>
-								<div class="tvl-dropdown" use:clickOutside={() => (riskDropdownOpen = false)}>
-									<button class="tvl-trigger" onclick={() => (riskDropdownOpen = !riskDropdownOpen)}>
-										{selectedRisk.label}
-										<IconChevronDown />
-									</button>
-									{#if riskDropdownOpen}
-										<ul class="tvl-options">
-											{#each riskFilterOptions as option, i (option.label)}
-												<li>
-													<button
-														class:active={selectedRiskIndex === i}
-														onclick={() => {
-															updateSearchParams({ risk: i });
-															riskDropdownOpen = false;
-														}}
-													>
-														{option.optionLabel}
-													</button>
-												</li>
-											{/each}
-										</ul>
-									{/if}
+											{selectedReturnsLabel}
+											<IconChevronDown />
+										</button>
+										{#if returnsDropdownOpen}
+											<ul class="tvl-options returns-options" data-testid="return-columns-menu">
+												{#each returnColumnDefinitions as definition (definition.id)}
+													<li>
+														<label class:selected={selectedReturnColumnIds.includes(definition.id)}>
+															<input
+																type="checkbox"
+																checked={selectedReturnColumnIds.includes(definition.id)}
+																onchange={() => onReturnColumnToggle(definition.id)}
+															/>
+															<span>{definition.label}</span>
+														</label>
+													</li>
+												{/each}
+											</ul>
+										{/if}
+									</div>
 								</div>
-							</div>
+							</section>
 
-							<div class="filter-group">
-								<Tooltip>
-									<label class="checkbox-filter" slot="trigger">
-										<span class="filter-label filter-label-hint">Hide undepositable</span>
-										<input
-											type="checkbox"
-											checked={hideClosed}
-											onchange={() => updateSearchParams({ closed: hideClosed ? 0 : 1 })}
-										/>
-									</label>
-									<svelte:fragment slot="popup">
-										Don't show vaults that are not accepting new deposits currently
-									</svelte:fragment>
-								</Tooltip>
-							</div>
-
-							{#if showUnknownFilter}
+							<section
+								class="filter-section filter-section-hide"
+								data-testid="filter-group-hide"
+								role="group"
+								aria-labelledby="filter-group-hide-heading"
+							>
+								<h3 class="filter-section-heading" id="filter-group-hide-heading">Hide vaults</h3>
 								<div class="filter-group">
 									<Tooltip>
 										<label class="checkbox-filter" slot="trigger">
-											<span class="filter-label filter-label-hint">Hide unknown</span>
 											<input
 												type="checkbox"
-												checked={hideUnknown}
-												onchange={() => updateSearchParams({ unknown: hideUnknown ? 0 : 1 })}
+												checked={hideClosed}
+												onchange={() => updateSearchParams({ closed: hideClosed ? 0 : 1 })}
 											/>
+											<span class="filter-label filter-label-hint">Currently closed</span>
 										</label>
 										<svelte:fragment slot="popup">
-											Don't show vaults whose protocol has not been identified yet
+											Don't show vaults that are not accepting new deposits currently
 										</svelte:fragment>
 									</Tooltip>
 								</div>
-							{/if}
-						</div>
 
-						<div class="secondary-filters">
-							<div class="filter-group">
-								<span class="filter-label">Min TVL</span>
-								<div class="tvl-dropdown" use:clickOutside={() => (tvlDropdownOpen = false)}>
-									<button class="tvl-trigger" onclick={() => (tvlDropdownOpen = !tvlDropdownOpen)}>
-										{selectedTvlOption.label}
-										<IconChevronDown />
-									</button>
-									{#if tvlDropdownOpen}
-										<ul class="tvl-options">
-											{#each tvlFilterOptions as option (option.key)}
-												<li>
-													<button
-														class:active={selectedTvlKey === option.key}
-														onclick={() => {
-															updateSearchParams({ tvl: option.key });
-															tvlDropdownOpen = false;
-														}}
-													>
-														{option.optionLabel}
-													</button>
-												</li>
-											{/each}
-										</ul>
-									{/if}
+								{#if showUnknownFilter}
+									<div class="filter-group">
+										<Tooltip>
+											<label class="checkbox-filter" slot="trigger">
+												<input
+													type="checkbox"
+													checked={hideUnknown}
+													onchange={() => updateSearchParams({ unknown: hideUnknown ? 0 : 1 })}
+												/>
+												<span class="filter-label filter-label-hint">Unknown protocols</span>
+											</label>
+											<svelte:fragment slot="popup">
+												Don't show vaults whose protocol has not been identified yet
+											</svelte:fragment>
+										</Tooltip>
+									</div>
+								{/if}
+
+								<div class="filter-group">
+									<Tooltip>
+										<label class="checkbox-filter" slot="trigger">
+											<input
+												type="checkbox"
+												checked={hideAmm}
+												onchange={() => updateSearchParams({ amm: hideAmm ? 0 : 1 })}
+											/>
+											<span class="filter-label filter-label-hint">AMM</span>
+										</label>
+										<svelte:fragment slot="popup">
+											<p>Hide AMM pools and AMM-like vaults with direct exposure to underlying assets.</p>
+											<a href={resolve('/glossary/amm')}>What is AMM?</a>
+										</svelte:fragment>
+									</Tooltip>
 								</div>
-							</div>
 
-							<div class="filter-group">
-								<span class="filter-label">Age</span>
-								<Select
-									value={selectedAgeIndex}
-									onchange={(e: Event) => updateSearchParams({ age: Number((e.target as HTMLSelectElement).value) })}
-								>
-									{#each ageFilterOptions as option, i (option.label)}
-										<option value={i}>{option.label}</option>
-									{/each}
-								</Select>
-							</div>
+								{#if showPrivateFilter}
+									<div class="filter-group">
+										<Tooltip>
+											<label class="checkbox-filter" slot="trigger">
+												<input
+													type="checkbox"
+													checked={hidePrivate}
+													onchange={() => updateSearchParams({ private: hidePrivate ? 0 : 1 })}
+												/>
+												<span class="filter-label filter-label-hint">Private</span>
+											</label>
+											<svelte:fragment slot="popup">Hide vaults that require permission to deposit</svelte:fragment>
+										</Tooltip>
+									</div>
+								{/if}
+							</section>
 
-							<div class="filter-group">
-								<Tooltip>
-									<span class="filter-label filter-label-hint" slot="trigger">Max drawdown</span>
-									<svelte:fragment slot="popup">
-										Filter vaults by lifetime maximum drawdown.
-										<a href={resolve('/glossary/maximum-drawdown')} target="_blank"
-											>Learn more about maximum drawdown.</a
-										>
-									</svelte:fragment>
-								</Tooltip>
-								<div class="tvl-dropdown" use:clickOutside={() => (ddDropdownOpen = false)}>
-									<button class="tvl-trigger" onclick={() => (ddDropdownOpen = !ddDropdownOpen)}>
-										{selectedDdOption.label}
-										<IconChevronDown />
-									</button>
-									{#if ddDropdownOpen}
-										<ul class="tvl-options">
-											{#each ddFilterOptions as option (option.key)}
-												<li>
-													<button
-														class:active={selectedDdKey === option.key}
-														onclick={() => {
-															updateSearchParams({ dd: option.key });
-															ddDropdownOpen = false;
-														}}
-													>
-														{option.optionLabel}
-													</button>
-												</li>
-											{/each}
-										</ul>
-									{/if}
+							<section
+								class="filter-section filter-section-performance"
+								data-testid="filter-group-performance"
+								role="group"
+								aria-labelledby="filter-group-performance-heading"
+							>
+								<h3 class="filter-section-heading" id="filter-group-performance-heading">Performance and risk</h3>
+								<div class="filter-group">
+									<Tooltip>
+										<span class="filter-label filter-label-hint" slot="trigger">Technical risk</span>
+										<svelte:fragment slot="popup">
+											The technical risk accounts for the software development best practices followed by the underlying
+											vault protocol, and is a proxy e.g. for cyber security incidents. The vault technical risk
+											framework is still in beta and we are expecting changes.
+											<a href={resolve('/blog/announcing-vault-technical-risk-framework-beta')} target="_blank"
+												>Read this blog post for more information.</a
+											>
+										</svelte:fragment>
+									</Tooltip>
+									<div class="tvl-dropdown" use:clickOutside={() => (riskDropdownOpen = false)}>
+										<button class="tvl-trigger" onclick={() => (riskDropdownOpen = !riskDropdownOpen)}>
+											{selectedRisk.label}
+											<IconChevronDown />
+										</button>
+										{#if riskDropdownOpen}
+											<ul class="tvl-options">
+												{#each riskFilterOptions as option, i (option.label)}
+													<li>
+														<button
+															class:active={selectedRiskIndex === i}
+															onclick={() => {
+																updateSearchParams({ risk: i });
+																riskDropdownOpen = false;
+															}}
+														>
+															{option.optionLabel}
+														</button>
+													</li>
+												{/each}
+											</ul>
+										{/if}
+									</div>
 								</div>
-							</div>
 
-							<div class="filter-group">
-								<Tooltip>
-									<span class="filter-label filter-label-hint" slot="trigger">Monthly returns</span>
-									<svelte:fragment slot="popup">
-										Filter vaults by annualised one-month return (net of fees when available).
-									</svelte:fragment>
-								</Tooltip>
-								<div class="tvl-dropdown" use:clickOutside={() => (mrDropdownOpen = false)}>
-									<button class="tvl-trigger" onclick={() => (mrDropdownOpen = !mrDropdownOpen)}>
-										{selectedMrOption.label}
-										<IconChevronDown />
-									</button>
-									{#if mrDropdownOpen}
-										<ul class="tvl-options">
-											{#each monthlyReturnFilterOptions as option (option.key)}
-												<li>
-													<button
-														class:active={selectedMrKey === option.key}
-														disabled={option.mode === 'gt-treasury' && treasuryRate == null}
-														onclick={() => {
-															updateSearchParams({ mr: option.key });
-															mrDropdownOpen = false;
-														}}
-													>
-														{option.optionLabel}{option.mode === 'gt-treasury' && treasuryRate != null
-															? ` (${formatPercent(treasuryRate / 100, 2)})`
-															: ''}
-													</button>
-												</li>
-											{/each}
-										</ul>
-									{/if}
+								<div class="filter-group">
+									<span class="filter-label">Min TVL</span>
+									<div class="tvl-dropdown" use:clickOutside={() => (tvlDropdownOpen = false)}>
+										<button class="tvl-trigger" onclick={() => (tvlDropdownOpen = !tvlDropdownOpen)}>
+											{selectedTvlOption.label}
+											<IconChevronDown />
+										</button>
+										{#if tvlDropdownOpen}
+											<ul class="tvl-options">
+												{#each tvlFilterOptions as option (option.key)}
+													<li>
+														<button
+															class:active={selectedTvlKey === option.key}
+															onclick={() => {
+																updateSearchParams({ tvl: option.key });
+																tvlDropdownOpen = false;
+															}}
+														>
+															{option.optionLabel}
+														</button>
+													</li>
+												{/each}
+											</ul>
+										{/if}
+									</div>
 								</div>
-							</div>
 
-							<div class="filter-group">
-								<span class="filter-label">Returns columns displayed</span>
-								<div class="tvl-dropdown" use:clickOutside={() => (returnsDropdownOpen = false)}>
-									<button
-										class="tvl-trigger"
-										data-testid="return-columns-trigger"
-										onclick={() => (returnsDropdownOpen = !returnsDropdownOpen)}
+								<div class="filter-group">
+									<span class="filter-label">Age</span>
+									<Select
+										value={selectedAgeIndex}
+										onchange={(e: Event) => updateSearchParams({ age: Number((e.target as HTMLSelectElement).value) })}
 									>
-										{selectedReturnsLabel}
-										<IconChevronDown />
-									</button>
-									{#if returnsDropdownOpen}
-										<ul class="tvl-options returns-options" data-testid="return-columns-menu">
-											{#each returnColumnDefinitions as definition (definition.id)}
-												<li>
-													<label class:selected={selectedReturnColumnIds.includes(definition.id)}>
-														<input
-															type="checkbox"
-															checked={selectedReturnColumnIds.includes(definition.id)}
-															onchange={() => onReturnColumnToggle(definition.id)}
-														/>
-														<span>{definition.label}</span>
-													</label>
-												</li>
-											{/each}
-										</ul>
-									{/if}
+										{#each ageFilterOptions as option, i (option.label)}
+											<option value={i}>{option.label}</option>
+										{/each}
+									</Select>
 								</div>
-							</div>
 
-							{#if showAllVaultsFilterNote}
-								<p class="filters-note" data-testid="filters-note">
-									<a href={allVaultsPath}>All vaults page</a> allows you to filter over everything. The vaults on this page
-									are limited to the current category.
-								</p>
-							{/if}
+								<div class="filter-group">
+									<Tooltip>
+										<span class="filter-label filter-label-hint" slot="trigger">Max drawdown</span>
+										<svelte:fragment slot="popup">
+											Filter vaults by lifetime maximum drawdown.
+											<a href={resolve('/glossary/maximum-drawdown')} target="_blank"
+												>Learn more about maximum drawdown.</a
+											>
+										</svelte:fragment>
+									</Tooltip>
+									<div class="tvl-dropdown" use:clickOutside={() => (ddDropdownOpen = false)}>
+										<button class="tvl-trigger" onclick={() => (ddDropdownOpen = !ddDropdownOpen)}>
+											{selectedDdOption.label}
+											<IconChevronDown />
+										</button>
+										{#if ddDropdownOpen}
+											<ul class="tvl-options">
+												{#each ddFilterOptions as option (option.key)}
+													<li>
+														<button
+															class:active={selectedDdKey === option.key}
+															onclick={() => {
+																updateSearchParams({ dd: option.key });
+																ddDropdownOpen = false;
+															}}
+														>
+															{option.optionLabel}
+														</button>
+													</li>
+												{/each}
+											</ul>
+										{/if}
+									</div>
+								</div>
+
+								<div class="filter-group">
+									<Tooltip>
+										<span class="filter-label filter-label-hint" slot="trigger">Monthly returns</span>
+										<svelte:fragment slot="popup">
+											Filter vaults by annualised one-month return (net of fees when available).
+										</svelte:fragment>
+									</Tooltip>
+									<div class="tvl-dropdown" use:clickOutside={() => (mrDropdownOpen = false)}>
+										<button class="tvl-trigger" onclick={() => (mrDropdownOpen = !mrDropdownOpen)}>
+											{selectedMrOption.label}
+											<IconChevronDown />
+										</button>
+										{#if mrDropdownOpen}
+											<ul class="tvl-options">
+												{#each monthlyReturnFilterOptions as option (option.key)}
+													<li>
+														<button
+															class:active={selectedMrKey === option.key}
+															disabled={option.mode === 'gt-treasury' && treasuryRate == null}
+															onclick={() => {
+																updateSearchParams({ mr: option.key });
+																mrDropdownOpen = false;
+															}}
+														>
+															{option.optionLabel}{option.mode === 'gt-treasury' && treasuryRate != null
+																? ` (${formatPercent(treasuryRate / 100, 2)})`
+																: ''}
+														</button>
+													</li>
+												{/each}
+											</ul>
+										{/if}
+									</div>
+								</div>
+
+								<div class="filter-group">
+									<Tooltip>
+										<span class="filter-label filter-label-hint" slot="trigger">Volatility</span>
+										<svelte:fragment slot="popup">
+											Filter vaults by three-month annualised volatility.
+											<a href={resolve('/glossary/volatility')} target="_blank">Learn more about volatility.</a>
+										</svelte:fragment>
+									</Tooltip>
+									<div class="tvl-dropdown" use:clickOutside={() => (volatilityDropdownOpen = false)}>
+										<button class="tvl-trigger" onclick={() => (volatilityDropdownOpen = !volatilityDropdownOpen)}>
+											{selectedVolatilityOption.label}
+											<IconChevronDown />
+										</button>
+										{#if volatilityDropdownOpen}
+											<ul class="tvl-options">
+												{#each volatilityFilterOptions as option (option.key)}
+													<li>
+														<button
+															class:active={selectedVolatilityKey === option.key}
+															onclick={() => {
+																updateSearchParams({ vol: option.key });
+																volatilityDropdownOpen = false;
+															}}
+														>
+															{option.optionLabel}
+														</button>
+													</li>
+												{/each}
+											</ul>
+										{/if}
+									</div>
+								</div>
+							</section>
 						</div>
+
+						{#if showAllVaultsFilterNote}
+							<p class="filters-note" data-testid="filters-note">
+								The vaults on the listing are limited to the current category. <a href={allVaultsPath}
+									>See all vaults.</a
+								>
+							</p>
+						{/if}
 					</div>
 				</details>
 			</div>
@@ -1208,7 +1433,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 					{@const chain = getChain(vault.chain_id)}
 					{@const blacklisted = isBlacklisted(vault)}
 					{@const badStatus = !isGoodVaultStatus(vault)}
-					{@const isPrivate = vault.whitelist?.status === 'whitelisted'}
+					{@const isPrivate = isPermissionedVault(vault)}
 					{@const isTokenisedFund = vault.flags.includes('tokenised_fund')}
 					{@const isCapped = isVaultDepositCapped(vault)}
 					{@const depositStatusLabel = isTokenisedFund ? 'Fund' : 'Private'}
@@ -1256,7 +1481,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 							{getLifetimeMaxDrawdown(vault) != null ? formatPercent(getLifetimeMaxDrawdown(vault)) : notFilledMarker}
 						</td>
 						<td class="denomination center">
-							{formatValue(vault.denomination)}
+							{vault.denomination_slug === OFFCHAIN_USD_STABLECOIN_SLUG ? 'USD' : formatValue(vault.denomination)}
 						</td>
 						<td class="tvl right">
 							{#if shouldShowTvlBreakdown(vault)}
@@ -1353,7 +1578,7 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 					<tr class="load-more-sentinel" data-testid="load-more-sentinel">
 						<td colspan={12 + selectedReturnColumns.length + (showChainCol ? 1 : 0) + (showProviderRiskRating ? 1 : 0)}>
 							<div use:inview={{ rootMargin: '300px' }} oninview_enter={loadMore}>
-								<Spinner size="18" /> Loading more vaults... ({visibleVaults.length}{#if !progressive}
+								<Spinner size="18" /> Loading more vaults... ({visibleVaults.length}{#if !isServerBacked}
 									of {sortedVaults.length}{/if})
 							</div>
 						</td>
@@ -1362,6 +1587,18 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 			</tbody>
 		</table>
 	</div>
+
+	{#if hiddenBlacklistedCount > 0 && !remoteHasMore}
+		<button
+			class="show-blacklisted-vaults"
+			data-testid="show-blacklisted-vaults"
+			disabled={remoteLoading}
+			type="button"
+			onclick={showBlacklistedVaults}
+		>
+			Show {hiddenBlacklistedCount} blacklisted {hiddenBlacklistedCount === 1 ? 'vault' : 'vaults'}
+		</button>
+	{/if}
 </div>
 
 <style>
@@ -1411,12 +1648,37 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 			display: none;
 		}
 
-		.primary-filters,
-		.secondary-filters {
+		.filters-groups {
+			display: grid;
+			gap: 1rem;
+		}
+
+		.filter-section {
 			display: flex;
 			flex-wrap: wrap;
+			align-content: start;
 			gap: 0.75rem 1.5rem;
-			align-items: center;
+			min-width: 0;
+		}
+
+		.filter-section-heading {
+			width: 100%;
+			margin: 0;
+			font: var(--f-ui-sm-bold);
+			font-size: 1rem;
+			letter-spacing: 0.06em;
+			text-transform: uppercase;
+			color: var(--c-text-light);
+
+			@media (--viewport-sm-down) {
+				font-size: 0.875rem;
+			}
+		}
+
+		.filter-section-hide {
+			flex-direction: column;
+			flex-wrap: nowrap;
+			align-items: flex-start;
 		}
 
 		.filter-group {
@@ -1553,6 +1815,67 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 			font: inherit;
 		}
 
+		@media (--viewport-md-up) {
+			.filters-groups {
+				column-gap: 0;
+				grid-template-columns: minmax(16rem, 0.8fr) minmax(12.5rem, 0.55fr) minmax(0, 1.5fr);
+			}
+
+			.filter-section-display {
+				padding-right: 1.5rem;
+			}
+
+			.filter-section-hide {
+				border-left: 1px solid var(--c-input-border);
+				padding-inline: 1.5rem;
+			}
+
+			.filter-section-performance {
+				display: grid;
+				align-items: center;
+				gap: 0.75rem 0.5rem;
+				border-left: 1px solid var(--c-input-border);
+				padding-left: 1.5rem;
+
+				.filter-section-heading {
+					grid-column: 1 / -1;
+				}
+
+				.filter-group {
+					display: contents;
+
+					> .filter-label,
+					> :global(.tooltip) {
+						width: 100%;
+						text-align: right;
+					}
+
+					> :last-child {
+						justify-self: start;
+						max-width: 100%;
+					}
+
+					> :global(.select) {
+						min-width: 0;
+						width: 100%;
+					}
+				}
+			}
+		}
+
+		@media (--viewport-md-up) and (--viewport-lg-down) {
+			.filter-section-performance {
+				grid-template-columns: max-content minmax(0, 1fr);
+			}
+		}
+
+		@media (--viewport-xl-up) {
+			.filter-section-performance {
+				grid-template-columns: repeat(2, max-content max-content) max-content minmax(8rem, 1fr);
+				column-gap: 0.75rem;
+			}
+		}
+
 		.vault-filters {
 			width: 100%;
 			border: 1px solid var(--c-input-border);
@@ -1598,10 +1921,12 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 		.filters-note {
 			width: 100%;
 			margin: 0;
-			color: var(--c-text-extra-light);
+			color: var(--c-text-ultra-light);
+			font: var(--f-ui-xs-medium);
 			line-height: 1.4;
 
 			a {
+				color: inherit;
 				text-decoration: underline;
 				text-underline-offset: 0.15em;
 			}
@@ -1669,6 +1994,18 @@ Whitelisted vaults are marked as Private, except tokenised funds, which are mark
 			@media (--viewport-xl-down) {
 				overflow-x: auto;
 			}
+		}
+
+		.show-blacklisted-vaults {
+			justify-self: center;
+			padding: 0;
+			border: 0;
+			background: transparent;
+			color: var(--c-text-extra-light);
+			font: var(--f-ui-sm-medium);
+			text-decoration: underline;
+			text-underline-offset: 0.15em;
+			cursor: pointer;
 		}
 
 		table {

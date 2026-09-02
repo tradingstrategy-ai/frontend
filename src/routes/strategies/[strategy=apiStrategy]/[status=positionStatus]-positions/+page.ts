@@ -1,6 +1,5 @@
 import { getTradingPositionInfoArray } from 'trade-executor/models/position-info';
-import { topVaultsSchema } from '$lib/top-vaults/schemas';
-import { getPositionVaultSparklines } from './vault-sparklines';
+import { fetchPositionVaults, getPositionVaultSparklines } from './vault-sparklines';
 
 export async function load({ params, parent, fetch }) {
 	// status can be `open`, `closed` or `frozen` (see params/positionStatus.ts)
@@ -25,11 +24,7 @@ async function loadPositionVaultSparklines(fetch: Fetch, positions: ReturnType<t
 	if (!hasVaultPositions) return {};
 
 	try {
-		const response = await fetch('/top-vaults/all-data');
-		if (!response.ok) throw new Error(`Failed to fetch top vaults: ${response.status}`);
-
-		const topVaults = topVaultsSchema.parse(await response.json());
-		return getPositionVaultSparklines(positions, topVaults.vaults);
+		return getPositionVaultSparklines(positions, await fetchPositionVaults(fetch, positions));
 	} catch (error) {
 		console.warn('Failed to resolve vault sparklines for position table', error);
 		return {};

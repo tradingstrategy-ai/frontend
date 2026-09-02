@@ -1,7 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { getTradingPositionInfo } from 'trade-executor/models/position-info';
-import { topVaultsSchema } from '$lib/top-vaults/schemas';
-import { getPositionVault } from '../vault-sparklines';
+import { fetchPositionVaults, getPositionVault } from '../vault-sparklines';
 
 export async function load({ params, parent, fetch }) {
 	// status can be `open`, `closed` or `frozen` (see params/positionStatus.ts)
@@ -29,11 +28,7 @@ async function loadPositionVault(fetch: Fetch, position: NonNullable<ReturnType<
 	if (!position.pair.isVault) return null;
 
 	try {
-		const response = await fetch('/top-vaults/all-data');
-		if (!response.ok) throw new Error(`Failed to fetch top vaults: ${response.status}`);
-
-		const topVaults = topVaultsSchema.parse(await response.json());
-		return getPositionVault(position, topVaults.vaults) ?? null;
+		return getPositionVault(position, await fetchPositionVaults(fetch, [position])) ?? null;
 	} catch (error) {
 		console.warn('Failed to resolve vault about data for position page', error);
 		return null;

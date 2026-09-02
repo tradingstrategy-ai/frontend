@@ -3,6 +3,12 @@
 Composes a vault-listing page with its heading, navigation, metadata cards, and table.
 
 Use `ratingProvider` to show a provider-specific risk rating column.
+
+@example
+
+```svelte
+  <TopVaultsPage title="Top vaults" {topVaults} showFilters />
+```
 -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
@@ -13,6 +19,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
 	import type { CuratorInfo } from './schemas';
 	import type { VaultListingSummary } from './listing/types';
+	import type { VaultListingKey } from './listing/definitions';
 	import Alert from '$lib/components/Alert.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
@@ -55,10 +62,12 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		defaultAgeIndex?: number;
 		/** Default risk filter index (used to initialise the dropdown when showFilters is true) */
 		defaultRiskIndex?: number;
-		/** Default value for the "Hide unknown" filter (1 = hide, 0 = show) */
+		/** Default value for the Unknown protocols checkbox in the Hide vaults group (1 = hide, 0 = show) */
 		defaultHideUnknown?: number;
-		/** Show the "Hide unknown" protocol filter checkbox */
+		/** Show the Unknown protocols checkbox in the Hide vaults group */
 		showUnknownFilter?: boolean;
+		/** Show the Private permissioned-vault checkbox in the Hide vaults group */
+		showPrivateFilter?: boolean;
 		/** Default monthly return filter key */
 		defaultMonthlyReturnKey?: string;
 		/** Default sort column key */
@@ -88,9 +97,9 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		headingLogo?: { src: string; alt: string };
 		/** Show a third-party risk rating column beside the vault name. */
 		ratingProvider?: RiskRatingProvider;
-		/** Whether rows are fetched in pages from the server. */
-		progressive?: boolean;
-		listingKey?: string;
+		/** Whether the initial server-rendered batch has continuation rows. */
+		initialHasMore?: boolean;
+		listingKey?: VaultListingKey;
 		listingScope?: string;
 		listingSummary?: VaultListingSummary;
 	}
@@ -116,6 +125,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		defaultRiskIndex,
 		defaultHideUnknown,
 		showUnknownFilter,
+		showPrivateFilter,
 		defaultMonthlyReturnKey,
 		defaultSort,
 		defaultDirection,
@@ -130,7 +140,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		disableBlacklistedStrikethrough,
 		headingLogo,
 		ratingProvider,
-		progressive = false,
+		initialHasMore = false,
 		listingKey = 'top',
 		listingScope,
 		listingSummary
@@ -269,6 +279,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 					{defaultRiskIndex}
 					{defaultHideUnknown}
 					{showUnknownFilter}
+					{showPrivateFilter}
 					{defaultMonthlyReturnKey}
 					{defaultSort}
 					{defaultDirection}
@@ -276,7 +287,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 					{maxSummaryTvlUsd}
 					{disableBlacklistedStrikethrough}
 					{ratingProvider}
-					{progressive}
+					{initialHasMore}
 					{listingKey}
 					{listingScope}
 					{listingSummary}
@@ -303,6 +314,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 					{defaultRiskIndex}
 					{defaultHideUnknown}
 					{showUnknownFilter}
+					{showPrivateFilter}
 					{defaultMonthlyReturnKey}
 					{defaultSort}
 					{defaultDirection}
@@ -310,7 +322,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 					{maxSummaryTvlUsd}
 					{disableBlacklistedStrikethrough}
 					{ratingProvider}
-					{progressive}
+					{initialHasMore}
 					{listingKey}
 					{listingScope}
 					{listingSummary}

@@ -1,3 +1,6 @@
+<!--
+Vault stablecoins index page.
+-->
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
 	import { goto } from '$app/navigation';
@@ -15,6 +18,7 @@
 	} from '$lib/stablecoin-metadata/helpers.js';
 	import { JsonLd } from 'svelte-meta-tags';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
+	import VaultGroupIndexHeader from '../VaultGroupIndexHeader.svelte';
 	import MarketSharePieChart from '../MarketSharePieChart.svelte';
 	import MarketShareWidgetBox from '../MarketShareWidgetBox.svelte';
 
@@ -63,7 +67,7 @@
 		<div class="header-stack">
 			<VaultListingsSelector />
 
-			<div class="stablecoin-index-header">
+			<VaultGroupIndexHeader>
 				<div class="intro-column">
 					<HeroBanner>
 						{#snippet title()}
@@ -96,7 +100,7 @@
 						/>
 					</MarketShareWidgetBox>
 				</div>
-			</div>
+			</VaultGroupIndexHeader>
 		</div>
 	</Section>
 
@@ -116,40 +120,8 @@
 </main>
 
 <style>
-	.stablecoin-index-page {
-		.header-stack {
-			display: grid;
-			gap: 1rem;
-		}
-
-		.stablecoin-index-header {
-			display: grid;
-			grid-template-columns: minmax(0, 1fr) minmax(25rem, 40rem);
-			gap: 1.5rem;
-			align-items: stretch;
-		}
-
-		.intro-column {
-			display: grid;
-			align-content: start;
-		}
-
-		.chart-column {
-			display: grid;
-		}
-
-		.chart-column :global(.metrics-box) {
-			height: 100%;
-		}
-
-		.chart-column :global(.market-share-pie-chart) {
-			align-self: stretch;
-		}
-
-		@media (--viewport-sm-down) {
-			.stablecoin-index-header {
-				grid-template-columns: 1fr;
-			}
-		}
+	.stablecoin-index-page .header-stack {
+		display: grid;
+		gap: 1rem;
 	}
 </style>

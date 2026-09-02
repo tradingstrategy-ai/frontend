@@ -15,13 +15,21 @@ Set `small` to use the compact spacing variant.
 	import IconLinkedin from '~icons/local/linkedin';
 	import IconYoutube from '~icons/local/youtube';
 	import IconSpotify from '~icons/local/spotify';
-	import IconMicrophone from '~icons/local/microphone';
 	import IconRss from '~icons/local/rss';
 
 	let { small = false }: { small?: boolean } = $props();
 </script>
 
 <footer>
+	{#if !small}
+		<nav class="footer-navigation" aria-label="Footer navigation">
+			<a href={resolve('/community')}>Community</a>
+			<a href={resolve('/blog')}>Blog</a>
+			<a href={resolve('/podcast')}>Podcast</a>
+			<a href={resolve('/vaults/api')}>API</a>
+		</nav>
+	{/if}
+
 	<div class="social-links" class:small>
 		<div class="link-group">
 			<Tooltip>
@@ -47,12 +55,6 @@ Set `small` to use the compact spacing variant.
 					<IconSpotify />
 				</a>
 				<div slot="popup">Spotify</div>
-			</Tooltip>
-			<Tooltip>
-				<a slot="trigger" href={resolve('/podcast')} aria-label="Podcast">
-					<IconMicrophone />
-				</a>
-				<div slot="popup">Podcast</div>
 			</Tooltip>
 			<Tooltip>
 				<a
@@ -119,8 +121,27 @@ Set `small` to use the compact spacing variant.
 
 <style>
 	footer {
+		min-width: 0;
+		max-width: 100%;
 		margin-block: 3.5rem;
 		padding-inline: 1.5rem;
+	}
+
+	.footer-navigation {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: var(--space-xl);
+		font: var(--f-ui-md-medium);
+		letter-spacing: var(--ls-ui-md, var(--f-ui-md-spacing, normal));
+
+		a {
+			padding-block: var(--space-xs);
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
 	}
 
 	.social-links {
@@ -152,6 +173,7 @@ Set `small` to use the compact spacing variant.
 
 		.link-group {
 			display: flex;
+			width: 100%;
 			flex-wrap: wrap;
 			justify-content: center;
 			gap: inherit;
@@ -262,7 +284,12 @@ Set `small` to use the compact spacing variant.
 		}
 	}
 
+	.footer-navigation + .social-links {
+		padding-top: 2rem;
+	}
+
 	.disclaimer {
+		overflow-wrap: anywhere;
 		text-align: center;
 		font: var(--f-ui-xs-roman);
 		letter-spacing: var(--f-ui-xs-spacing, normal);

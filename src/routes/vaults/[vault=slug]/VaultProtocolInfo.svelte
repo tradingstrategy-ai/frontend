@@ -8,6 +8,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
+	import { getVaultAssetType } from '$lib/top-vaults/helpers';
 	import { resolve } from '$app/paths';
 
 	interface Props {
@@ -18,7 +19,8 @@
 	let { vault, protocolMetadata }: Props = $props();
 
 	let protocolPageUrl = $derived(resolve(`/vaults/protocols/${vault.protocol_slug}`));
-	let assetType = $derived(vault.flags.includes('tokenised_fund') ? 'tokenised fund' : 'vault');
+	let assetType = $derived(getVaultAssetType(vault));
+	let assetTypePlural = $derived(`${assetType}s`);
 </script>
 
 <MetricsBox fill>
@@ -39,7 +41,8 @@
 			<p class="description">{protocolMetadata.short_description}</p>
 		</div>
 		<Button size="sm" class="view-all-btn" href={protocolPageUrl}>
-			View all {protocolMetadata.name} vaults
+			View all {protocolMetadata.name}
+			{assetTypePlural}
 		</Button>
 	</div>
 </MetricsBox>
@@ -51,11 +54,6 @@
 		gap: 1rem;
 		height: 100%;
 
-		.protocol-logo {
-			height: 3rem;
-			width: auto;
-		}
-
 		.content {
 			display: grid;
 			gap: 0.625rem;
@@ -64,7 +62,12 @@
 			.heading {
 				display: flex;
 				gap: 1rem;
-				align-items: start;
+				align-items: center;
+
+				.protocol-logo {
+					height: 3rem;
+					width: auto;
+				}
 			}
 
 			h2 {
@@ -81,11 +84,6 @@
 			}
 		}
 
-		:global(.view-all-btn) {
-			align-self: center;
-			margin-top: auto;
-		}
-
 		.description {
 			margin: 0;
 			font: var(--f-ui-md-roman);
@@ -95,6 +93,11 @@
 				text-decoration: underline;
 				font-weight: 500;
 			}
+		}
+
+		:global(.view-all-btn) {
+			--button-width: 100%;
+			margin-top: auto;
 		}
 	}
 </style>

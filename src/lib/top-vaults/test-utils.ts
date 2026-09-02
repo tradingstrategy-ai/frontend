@@ -56,7 +56,7 @@ const defaultVaultProps = {
 export function createTestVault(name: string, props: TestVaultProps = {}): VaultInfo {
 	const merged = { ...defaultVaultProps, ...props, name };
 	const address = merged.address ?? `0x${Math.random().toString(16).slice(2).padEnd(40, '0')}`;
-	const chain_id = getChain(merged.chain)?.id;
+	const chain_id = merged.chain_id ?? getChain(merged.chain)?.id;
 
 	return vaultInfoSchema.parse({
 		...getVaultNullableDefaults(),

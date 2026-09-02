@@ -22,17 +22,20 @@ export function getCoinbaseGranularitySeconds(start: Date, end: Date) {
  *
  * The proxy handles chunking, retries, and caching to avoid CORS issues
  * and Coinbase rate-limiting.
+ *
+ * @param useCache - Disable when the caller already has a bounded server-side cache.
  */
 export function fetchCoinbaseBenchmarkCloses(
 	fetch: Fetch,
 	productId: CoinbaseProductId,
 	start: Date,
-	end: Date
+	end: Date,
+	useCache = true
 ): Promise<[number, number][]> {
 	const granularitySeconds = getCoinbaseGranularitySeconds(start, end);
 	const cacheKey = `${productId}:${granularitySeconds}:${start.toISOString()}:${end.toISOString()}`;
 
-	const cachedResponse = benchmarkRequestCache.get(cacheKey);
+	const cachedResponse = useCache ? benchmarkRequestCache.get(cacheKey) : undefined;
 	if (cachedResponse) return cachedResponse;
 
 	const params = new URLSearchParams({
@@ -48,10 +51,10 @@ export function fetchCoinbaseBenchmarkCloses(
 			return resp.json() as Promise<[number, number][]>;
 		})
 		.catch((error) => {
-			benchmarkRequestCache.delete(cacheKey);
+			if (useCache) benchmarkRequestCache.delete(cacheKey);
 			throw error;
 		});
 
-	benchmarkRequestCache.set(cacheKey, responsePromise);
+	if (useCache) benchmarkRequestCache.set(cacheKey, responsePromise);
 	return responsePromise;
 }

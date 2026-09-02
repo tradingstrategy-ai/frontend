@@ -2,10 +2,19 @@
  * Express.js based SvelteKit server-side renderer.
  */
 
-// Check your SvelteKit build/handler.js file
-// location based on your SvelteKit installation
-import { handler } from '../build/handler.js';
+import { randomBytes } from 'node:crypto';
 import express from 'express';
+
+const refreshIntervalMilliseconds = 20 * 60 * 1000;
+const refreshRequestTimeoutMilliseconds = 15 * 60 * 1000;
+
+// This secret exists only inside this adapter-node process. It lets the local
+// scheduler use a regular SvelteKit request without exposing a public trigger.
+process.env.TS_PRIVATE_STRATEGIES_REFRESH_TOKEN = randomBytes(32).toString('base64url');
+
+// Import after creating the token: $env/dynamic/private is read when the built
+// SvelteKit handler loads the protected refresh endpoint.
+const { handler } = await import('../build/handler.js');
 
 // web-top-node request tracking removed — no longer needed
 // import { Tracker, TrackerServer, createTrackerMiddleware } from '@trading-strategy-ai/web-top-node';
@@ -39,7 +48,42 @@ app.use((req, res, next) => {
 // Install SvelteKit server-side renderer
 app.use(handler);
 
+let refreshInFlight = false;
+
+async function refreshStrategiesCache() {
+	if (refreshInFlight) {
+		console.warn('[strategies-cache] Scheduled refresh skipped because another refresh is still running.');
+		return;
+	}
+
+	refreshInFlight = true;
+	const startedAt = performance.now();
+	try {
+		const response = await fetch('http://127.0.0.1:3000/_internal/cache/strategies/refresh', {
+			method: 'POST',
+			headers: { authorization: `Bearer ${process.env.TS_PRIVATE_STRATEGIES_REFRESH_TOKEN}` },
+			signal: AbortSignal.timeout(refreshRequestTimeoutMilliseconds)
+		});
+		if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+		const result = await response.json();
+		console.log(
+			`[strategies-cache] Scheduled refresh completed in ${Math.round(performance.now() - startedAt)}ms`,
+			result.cache
+		);
+	} catch (error) {
+		const summary = error instanceof Error ? `${error.name}: ${error.message}` : 'Unknown error';
+		console.error(
+			`[strategies-cache] Scheduled refresh failed after ${Math.round(performance.now() - startedAt)}ms (${summary}).`
+		);
+	} finally {
+		refreshInFlight = false;
+	}
+}
+
 // Start web server
 app.listen(3000, () => {
 	console.log('Listening on port 3000');
+	void refreshStrategiesCache();
+	const refreshTimer = setInterval(() => void refreshStrategiesCache(), refreshIntervalMilliseconds);
+	refreshTimer.unref();
 });

@@ -5,7 +5,7 @@
  * a page boundary can never sort a different prefix from the server.
  */
 import { getChainDisplayName } from '$lib/helpers/chain';
-import type { VaultInfo } from '../schemas';
+import type { Core3Protocol, VaultInfo } from '../schemas';
 import {
 	calculateTotalTvl,
 	calculateTvlWeightedApy,
@@ -15,13 +15,18 @@ import {
 	getMonthlyReturn,
 	getVaultCurrentTvlUsd,
 	getVaultPeakTvlUsd,
+	getCore3PolForVault,
 	getVaultProtocolDisplayName,
-	hasSupportedProtocol,
+	isAmmPoolLikeVault,
 	isBlacklisted,
+	isPermissionedVault,
+	isUnknownVaultProtocol,
+	matchesVolatilityFilter,
 	monthlyReturnFilterOptions,
 	rankVaultsBy,
 	riskFilterOptions,
 	tvlFilterOptions,
+	volatilityFilterOptions,
 	withVaultCurrentTvlUsd
 } from '../helpers';
 import { compareVaultsByReturn, type ReturnColumnId } from '../return-columns';
@@ -33,10 +38,13 @@ export interface VaultListingQuery {
 	age: number;
 	risk: number;
 	dd: string;
+	vol: string;
 	mr: string;
 	q: string;
 	closed: boolean;
 	unknown: boolean;
+	amm: boolean;
+	private: boolean;
 	sort: string;
 	direction: VaultSortDirection;
 }
@@ -49,14 +57,33 @@ export interface VaultListingOptions {
 	includeBlacklistedInStats: boolean;
 	maxSummaryTvlUsd?: number;
 	treasuryRate?: number | null;
+	/** Provider whose risk score is used by the provider_risk_rating sort. */
+	ratingProvider?: 'core3' | 'xerberus';
 }
 
 export interface VaultListingResult {
 	vaults: VaultInfo[];
 	hiddenByTvl: number;
+	hiddenBlacklistedCount: number;
 	hiddenVaults: VaultInfo[];
 	totalTvl: number;
 	avgTvlWeightedApy1M: number | null;
+}
+
+/**
+ * Return whether a vault falls inside one technical-risk filter range.
+ *
+ * @param vault - Vault whose numeric technical risk is checked.
+ * @param riskFilter - Inclusive risk range selected by the listing.
+ */
+export function matchesVaultRisk(
+	vault: Pick<VaultInfo, 'risk_numeric'>,
+	riskFilter: Pick<(typeof riskFilterOptions)[number], 'minValue' | 'maxValue'>
+): boolean {
+	if (vault.risk_numeric != null) {
+		return vault.risk_numeric >= riskFilter.minValue && vault.risk_numeric <= riskFilter.maxValue;
+	}
+	return riskFilter.minValue === 0 && riskFilter.maxValue >= 50;
 }
 
 function compareStrings(value: (vault: VaultInfo) => string) {
@@ -68,7 +95,13 @@ function canonicalKey(vault: VaultInfo): string {
 }
 
 /** Sort the full matching population using a stable canonical tie-breaker. */
-export function sortVaults(vaults: VaultInfo[], sort: string, direction: VaultSortDirection): VaultInfo[] {
+export function sortVaults(
+	vaults: VaultInfo[],
+	sort: string,
+	direction: VaultSortDirection,
+	ratingProvider?: VaultListingOptions['ratingProvider'],
+	core3Protocols: Record<string, Core3Protocol> = {}
+): VaultInfo[] {
 	const comparator = (() => {
 		switch (sort) {
 			case 'chain':
@@ -98,6 +131,16 @@ export function sortVaults(vaults: VaultInfo[], sort: string, direction: VaultSo
 				return rankVaultsBy(['lockup'], Infinity);
 			case 'risk':
 				return rankVaultsBy(['risk_numeric'], Infinity);
+			case 'provider_risk_rating':
+				return (a: VaultInfo, b: VaultInfo) => {
+					const score = (vault: VaultInfo) =>
+						ratingProvider === 'xerberus'
+							? (vault.xerberus?.score ?? -Infinity)
+							: (getCore3PolForVault(vault, core3Protocols)?.score ?? Infinity);
+					const aScore = score(a);
+					const bScore = score(b);
+					return aScore - bScore;
+				};
 			default:
 				return compareVaultsByReturn(sort as ReturnColumnId);
 		}
@@ -119,32 +162,30 @@ export function queryVaultListing(
 	const age = ageFilterOptions[query.age] ?? ageFilterOptions[0];
 	const risk = riskFilterOptions[query.risk] ?? riskFilterOptions[0];
 	const dd = ddFilterOptions.find((item) => item.key === query.dd) ?? ddFilterOptions[0];
+	const volatility = volatilityFilterOptions.find((item) => item.key === query.vol) ?? volatilityFilterOptions[0];
 	const monthlyReturn =
 		monthlyReturnFilterOptions.find((item) => item.key === query.mr) ?? monthlyReturnFilterOptions[0];
 	const base = vaults.filter(
 		(vault) =>
 			options.includeBlacklisted || query.q.startsWith('blacklist') || risk.maxValue >= 999 || !isBlacklisted(vault)
 	);
+	const blacklistedVaultsAreHidden =
+		!options.includeBlacklisted && !query.q.startsWith('blacklist') && risk.maxValue < 999;
+	const blacklistedRisk = riskFilterOptions.find((item) => item.label === 'Blacklisted') ?? risk;
 	const threshold = (vault: VaultInfo) =>
 		options.showFilters ? (tvl.chainOverrides?.[vault.chain_id] ?? tvl.value) : options.tvlThreshold;
-	const matchesWithoutTvl = base.filter((vault) => {
+	const matchesFilters = (vault: VaultInfo, riskFilter = risk) => {
 		const years = vault.years ?? 0;
 		if (options.showFilters && ((age.value > 0 && years < age.value) || (age.maxAge < Infinity && years >= age.maxAge)))
 			return false;
-		if (options.showFilters && (risk.minValue > 0 || risk.maxValue < Infinity)) {
-			if (
-				vault.risk_numeric != null
-					? vault.risk_numeric < risk.minValue || vault.risk_numeric > risk.maxValue
-					: !(risk.minValue === 0 && risk.maxValue >= 50)
-			)
-				return false;
+		if (options.showFilters && (riskFilter.minValue > 0 || riskFilter.maxValue < Infinity)) {
+			if (!matchesVaultRisk(vault, riskFilter)) return false;
 		}
-		if (
-			options.showFilters &&
-			dd.value < Infinity &&
-			(getLifetimeMaxDrawdown(vault) == null || Math.abs(getLifetimeMaxDrawdown(vault)!) > dd.value)
-		)
-			return false;
+		if (options.showFilters && dd.value < Infinity) {
+			const maxDrawdown = getLifetimeMaxDrawdown(vault);
+			if (maxDrawdown == null || Math.abs(maxDrawdown) > dd.value) return false;
+		}
+		if (options.showFilters && !matchesVolatilityFilter(vault.three_months_volatility, volatility.value)) return false;
 		if (options.showFilters && monthlyReturn.mode !== 'any') {
 			const value = getMonthlyReturn(vault);
 			if (
@@ -157,7 +198,9 @@ export function queryVaultListing(
 				return false;
 		}
 		if (query.closed && vault.deposit_closed_reason != null) return false;
-		if (query.unknown && !hasSupportedProtocol(vault)) return false;
+		if (query.unknown && isUnknownVaultProtocol(vault)) return false;
+		if (query.amm && isAmmPoolLikeVault(vault)) return false;
+		if (query.private && isPermissionedVault(vault)) return false;
 		const search = [
 			vault.chain_id,
 			getChainDisplayName(vault.chain_id),
@@ -170,20 +213,23 @@ export function queryVaultListing(
 			.join(' ')
 			.toLowerCase();
 		return search.includes(query.q.trim().toLowerCase());
-	});
-	const hiddenVaults =
-		options.filterTvl || options.showFilters
-			? matchesWithoutTvl.filter((vault) => (getVaultCurrentTvlUsd(vault) ?? 0) < threshold(vault))
-			: [];
-	const matches =
-		options.filterTvl || options.showFilters
-			? matchesWithoutTvl.filter((vault) => (getVaultCurrentTvlUsd(vault) ?? 0) >= threshold(vault))
-			: matchesWithoutTvl;
+	};
+	const hasTvlFilter = options.filterTvl || options.showFilters;
+	const passesTvlFilter = (vault: VaultInfo) =>
+		!hasTvlFilter || (getVaultCurrentTvlUsd(vault) ?? 0) >= threshold(vault);
+	const matchesWithoutTvl = base.filter((vault) => matchesFilters(vault));
+	const hiddenVaults = hasTvlFilter ? matchesWithoutTvl.filter((vault) => !passesTvlFilter(vault)) : [];
+	const matches = matchesWithoutTvl.filter(passesTvlFilter);
+	const hiddenBlacklistedCount = blacklistedVaultsAreHidden
+		? vaults.filter((vault) => isBlacklisted(vault) && matchesFilters(vault, blacklistedRisk) && passesTvlFilter(vault))
+				.length
+		: 0;
 	const stats = options.includeBlacklistedInStats ? matches : matches.filter((vault) => !isBlacklisted(vault));
 	const statsWithUsdTvl = stats.map(withVaultCurrentTvlUsd);
 	return {
-		vaults: sortVaults(matches, query.sort, query.direction),
+		vaults: sortVaults(matches, query.sort, query.direction, options.ratingProvider),
 		hiddenByTvl: hiddenVaults.length,
+		hiddenBlacklistedCount,
 		hiddenVaults,
 		totalTvl: calculateTotalTvl(statsWithUsdTvl, { maxTvlUsd: options.maxSummaryTvlUsd }),
 		avgTvlWeightedApy1M: calculateTvlWeightedApy(statsWithUsdTvl, {

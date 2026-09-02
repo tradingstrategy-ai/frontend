@@ -1,5 +1,5 @@
 /**
- * Server-side proxy for FRED DTB3 (3-month Treasury bill) time series.
+ * Server-side proxy for the FRED DGS3MO 3-month Treasury market-yield series.
  *
  * Proxies through the server to avoid CORS issues and FRED rate-limiting.
  * Uses file-based caching with stale-fallback on fetch failure.
@@ -17,9 +17,9 @@ import {
 	isCacheFresh
 } from '$lib/fred-helpers';
 
-const SERIES_ID = 'DTB3';
-/** Earliest DTB3 observation on FRED */
-const SERIES_START = '1954-01-04';
+const SERIES_ID = 'DGS3MO';
+/** Earliest DGS3MO observation on FRED. */
+const SERIES_START = '1981-09-01';
 
 type RateEntry = [timestamp: number, rate: number];
 
@@ -47,7 +47,7 @@ function validateAndClampDates(rawCosd: string | null, rawCoed: string | null): 
 		error(400, 'cosd must not be in the future');
 	}
 
-	// Clamp to DTB3 series bounds
+	// Clamp to DGS3MO series bounds
 	const cosd = rawCosd < SERIES_START ? SERIES_START : rawCosd;
 	const coed = rawCoed > today ? today : rawCoed;
 

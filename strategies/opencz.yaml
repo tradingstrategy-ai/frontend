@@ -16,6 +16,7 @@ chain_id: 9999
 # See https://github.com/tradingstrategy-ai/trade-executor/blob/c27b0895eabf9b9cd190afec21c5f53f626a1a3c/tradeexecutor/strategy/tag.py#L6
 tags:
   - live
+  - archived
 # How far up in the listing page we displays this
 sort_priority: 0
 # Show on front page

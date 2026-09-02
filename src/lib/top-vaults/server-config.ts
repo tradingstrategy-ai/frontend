@@ -100,3 +100,18 @@ export async function headVaultPrices(fetch: Fetch) {
 	// No fallback — parquet file is only available via private R2
 	return { size: null, lastModified: null };
 }
+
+/**
+ * Get metadata (size, last-modified) for a Vault Pro dataset stored in R2.
+ *
+ * @param key R2 object key for the dataset
+ */
+export async function headVaultDataset(key: string) {
+	if (!isR2Configured()) return { size: null, lastModified: null };
+
+	const meta = await headR2Object(key);
+	return {
+		size: meta?.contentLength ?? null,
+		lastModified: meta?.lastModified ?? null
+	};
+}

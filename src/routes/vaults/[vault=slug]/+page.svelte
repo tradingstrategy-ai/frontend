@@ -28,11 +28,13 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	import IconDiscord from '~icons/local/discord';
 	import {
 		getMorphoFlags,
+		getVaultAssetType,
 		getVaultProtocolDisplayName,
-		hasSupportedProtocol,
 		isBlacklisted,
+		isPermissionedVault,
+		isUnknownVaultProtocol,
 		isVaultDepositCapped,
-		isVaultTvlDownMoreThan95Percent
+		shouldShowVaultTvlDownMoreThan95PercentWarning
 	} from '$lib/top-vaults/helpers';
 	import { getCuratorSocialLogoUrl } from '$lib/social-card/helpers';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
@@ -48,24 +50,25 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	let showBlacklistedAlert = $derived(blacklisted && !notesDuplicateMorphoFlags);
 	let showNotes = $derived(vault.notes != null && !notesDuplicateMorphoFlags);
 	let isTokenisedFund = $derived(vault.flags.includes('tokenised_fund'));
-	let isPrivate = $derived(vault.whitelist?.status === 'whitelisted');
+	let assetType = $derived(getVaultAssetType(vault));
+	let isPrivate = $derived(isPermissionedVault(vault));
 	let isCapped = $derived(isVaultDepositCapped(vault));
-	let showTvlWarning = $derived(isVaultTvlDownMoreThan95Percent(vault));
+	let showTvlWarning = $derived(shouldShowVaultTvlDownMoreThan95PercentWarning(vault));
 	let showLongDurationWarning = $derived(vault.flags.includes('long_duration'));
-	let hasUnsupportedProtocol = $derived(!hasSupportedProtocol(vault));
+	let hasUnknownProtocol = $derived(isUnknownVaultProtocol(vault));
 	let depositMayBeDisabled = $derived(vault.deposit_closed_reason != null);
 	let redemptionMayBeDisabled = $derived(vault.redemption_closed_reason != null);
 	let operationWarning = $derived(
 		isCapped
 			? redemptionMayBeDisabled
-				? 'Deposits are capped and withdrawals may be disabled for this vault'
-				: 'Deposits are capped for this vault'
+				? `Deposits are capped and withdrawals may be disabled for this ${assetType}`
+				: `Deposits are capped for this ${assetType}`
 			: depositMayBeDisabled && redemptionMayBeDisabled
-				? 'Deposits and withdrawals may be disabled for this vault'
+				? `Deposits and withdrawals may be disabled for this ${assetType}`
 				: depositMayBeDisabled
-					? 'Deposits may be disabled for this vault'
+					? `Deposits may be disabled for this ${assetType}`
 					: redemptionMayBeDisabled
-						? 'Withdrawals may be disabled for this vault'
+						? `Withdrawals may be disabled for this ${assetType}`
 						: undefined
 	);
 	let hasNotifications = $derived(
@@ -75,11 +78,14 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 			showTvlWarning ||
 			showLongDurationWarning ||
 			showBlacklistedAlert ||
-			hasUnsupportedProtocol
+			hasUnknownProtocol
 	);
 	let chartLogoUrl = $derived(
 		getCuratorSocialLogoUrl(curatorMetadata) ??
 			(protocolMetadata ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined)
+	);
+	let vaultInformationCardCount = $derived(
+		[vault.description, curatorMetadata, protocolMetadata].filter((item) => item != null).length
 	);
 </script>
 
@@ -108,25 +114,26 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 
 				{#if isPrivate && !isTokenisedFund}
 					<Alert size="md" status="warning"
-						>This is a permissioned vault and is not accepting deposits from outsiders</Alert
+						>This is a permissioned {assetType} and is not accepting deposits from outsiders</Alert
 					>
 				{/if}
 
 				{#if showTvlWarning}
 					<Alert size="md" status="warning">
-						The value in this vault is down more than 95% of its peak. The vault is likely abandoned or facing issues.
+						The value in this {assetType} is down more than 95% of its peak. The {assetType} is likely abandoned or facing
+						issues.
 					</Alert>
 				{/if}
 
 				{#if showLongDurationWarning}
 					<Alert size="md" status="error">
-						This vault may have especially long duration redemption periods. Make sure you check the redemptions before
+						This {assetType} may have especially long duration redemption periods. Make sure you check the redemptions before
 						depositing.
 					</Alert>
 				{/if}
 
 				{#if morphoFlags.length > 0}
-					<Alert size="md" status={morphoAlertStatus} title="Morpho has flagged this vault">
+					<Alert size="md" status={morphoAlertStatus} title={`Morpho has flagged this ${assetType}`}>
 						{morphoFlags.join(', ')}
 					</Alert>
 				{/if}
@@ -137,11 +144,11 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 					</Alert>
 				{/if}
 
-				{#if hasUnsupportedProtocol}
-					<Alert size="md" status="warning" title="Protocol not supported">
+				{#if hasUnknownProtocol}
+					<Alert size="md" status="warning" title="Protocol not identified">
 						<div>
-							This protocol is not supported yet. Contact us on Discord for information about how to include new
-							protocols.
+							The underlying protocol has not been identified in the vault dataset yet. Contact us on Discord if you can
+							help identify it.
 						</div>
 						<Button slot="cta" size="sm" label="Join Discord" href={discordUrl} target="_blank" rel="noreferrer">
 							<IconDiscord slot="icon" />
@@ -161,9 +168,9 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 
 		<VaultMetrics {vault} {stablecoinMetadata} {core3} />
 
-		<div class="vault-information">
+		<div class="vault-information" class:single-card={vaultInformationCardCount === 1}>
 			{#if vault.description}
-				<MetricsBox class="description" title="About the vault">
+				<MetricsBox class="description" title={`About the ${assetType}`}>
 					<Markdown content={vault.description} />
 				</MetricsBox>
 			{/if}
@@ -245,6 +252,17 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 		@media (--viewport-lg-up) {
 			grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
 		}
+	}
+
+	:global(.vault-information.single-card :is(.curator-info, .protocol-info)) {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+	}
+
+	:global(.vault-information.single-card .view-all-btn) {
+		--button-width: auto;
+		margin-top: 0;
 	}
 
 	:global(:is(.description, .notes)) {

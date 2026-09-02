@@ -223,7 +223,7 @@ loaded dynamically from CDN.
 						customdata: yPoints.map(() => '/glossary/risk-free-rate'),
 						hovertemplate: [
 							`<b>US Treasury note rate (${treasuryRate.toFixed(1)}%)</b>`,
-							`The risk-free benchmark.`,
+							`A US Treasury yield benchmark.`,
 							``,
 							`Earning better: ${formatUsd(tvlBetter)} (${pctBetter}%)`,
 							`Earning less: ${formatUsd(tvlWorse)} (${pctWorse}%)`,

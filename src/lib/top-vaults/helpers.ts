@@ -5,7 +5,6 @@ import { resolve } from '$app/paths';
 import { vaultSparklinesUrl } from '$lib/config';
 import { capitalize, isNumber } from '$lib/helpers/formatters';
 import { getChain } from '$lib/helpers/chain';
-import { slugify } from '$lib/helpers/slugify';
 import { OFFCHAIN_USD_DENOMINATION, OFFCHAIN_USD_STABLECOIN_SLUG } from '$lib/stablecoin-metadata/helpers';
 
 /**
@@ -22,9 +21,15 @@ export function slimVault(vault: Record<string, unknown>): SlimVaultInfo {
 const HYPERCORE_CHAIN_ID = 9999;
 const KINEXYS_PROTOCOL_SLUG = 'kinexys';
 export const UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME = 'Unknown vault protocol';
-/** Canonical group used for vaults whose underlying protocol is unidentified or unsupported. */
+/** Canonical group for vault records whose underlying protocol is not identified. */
 export const UNKNOWN_VAULT_PROTOCOL_SLUG = 'unknown';
-const UNKNOWN_VAULT_PROTOCOL_SLUGS = new Set(['erc-4626']);
+const UNKNOWN_VAULT_PROTOCOL_NAMES = new Set(['unknown', UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME.toLowerCase()]);
+const UNKNOWN_VAULT_PROTOCOL_SLUGS = new Set([
+	UNKNOWN_VAULT_PROTOCOL_SLUG,
+	'erc-4626',
+	'protocol-not-yet-identified',
+	'unknown-erc-7450'
+]);
 
 /**
  * Raw USD and Kinexys vault balances are denominated in off-chain USD dollars,
@@ -49,13 +54,17 @@ export function normaliseOffchainUsdVaultDenomination(vault: VaultInfo): VaultIn
 	};
 }
 
-export function normaliseVaultProtocolDisplayName(vault: VaultInfo): VaultInfo {
-	const displayName = getProtocolDisplayName(vault.protocol, vault.protocol_slug);
-	if (displayName === vault.protocol) return vault;
+/** Canonicalise every recognised unknown-protocol source variant at ingestion. */
+export function normaliseVaultProtocol(vault: VaultInfo): VaultInfo {
+	if (!isUnknownVaultProtocol(vault)) return vault;
+	if (vault.protocol === UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME && vault.protocol_slug === UNKNOWN_VAULT_PROTOCOL_SLUG) {
+		return vault;
+	}
 
 	return {
 		...vault,
-		protocol: displayName
+		protocol: UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME,
+		protocol_slug: UNKNOWN_VAULT_PROTOCOL_SLUG
 	};
 }
 
@@ -152,11 +161,11 @@ export function formatXerberusScore(score: number | null | undefined): string {
 	return Math.round(score * 100).toString();
 }
 
-export interface DdFilterOption {
+interface UpperBoundFilterOption {
 	key: string;
 	label: string;
 	optionLabel: string;
-	/** Maximum allowed |max_drawdown| as a decimal (e.g., 0.01 = 1%). Infinity = no filter */
+	/** Decimal threshold; each filter defines whether equality passes. Infinity disables filtering. */
 	value: number;
 }
 
@@ -191,7 +200,7 @@ export function getMonthlyReturn(vault: Pick<VaultInfo, 'one_month_cagr_net' | '
 	return vault.one_month_cagr_net ?? vault.one_month_cagr ?? null;
 }
 
-export const ddFilterOptions: DdFilterOption[] = [
+export const ddFilterOptions: UpperBoundFilterOption[] = [
 	{ key: '0.1', label: '0.1%', optionLabel: '0.1% or less', value: 0.001 },
 	{ key: '1', label: '1%', optionLabel: '1% or less', value: 0.01 },
 	{ key: '3', label: '3%', optionLabel: '3% or less', value: 0.03 },
@@ -200,6 +209,24 @@ export const ddFilterOptions: DdFilterOption[] = [
 	{ key: '20', label: '20%', optionLabel: '20% or less', value: 0.2 },
 	{ key: 'any', label: 'Any', optionLabel: 'Any', value: Infinity }
 ];
+
+export const volatilityFilterOptions: UpperBoundFilterOption[] = [
+	{ key: 'any', label: 'Any', optionLabel: 'Any', value: Infinity },
+	{ key: '5', label: 'Less than 5%', optionLabel: 'Less than 5%', value: 0.05 },
+	{ key: '10', label: 'Less than 10%', optionLabel: 'Less than 10%', value: 0.1 },
+	{ key: '25', label: 'Less than 25%', optionLabel: 'Less than 25%', value: 0.25 },
+	{ key: '50', label: 'Less than 50%', optionLabel: 'Less than 50%', value: 0.5 }
+];
+
+/**
+ * Return whether a vault's three-month annualised volatility passes a strict upper bound.
+ *
+ * @param volatility - Annualised volatility as a decimal, or no measurement.
+ * @param upperBound - Exclusive decimal threshold; Infinity disables filtering.
+ */
+export function matchesVolatilityFilter(volatility: number | null | undefined, upperBound: number): boolean {
+	return upperBound === Infinity || (volatility != null && volatility < upperBound);
+}
 
 /**
  * Extract lifetime max drawdown from a vault's period_results.
@@ -224,39 +251,36 @@ export function isBlacklisted(vault: Pick<VaultInfo, 'risk_numeric'> & Partial<P
 	return vault.risk_numeric === 999 || vault.risk?.toLowerCase() === 'blacklisted';
 }
 
-const unsupportedProtocolNames = ['<protocol not yet identified>', '<unknown erc-7450>'] as const;
-const unsupportedProtocolSlugs = new Set([
-	...unsupportedProtocolNames.map((protocol) => slugify(protocol)),
-	...UNKNOWN_VAULT_PROTOCOL_SLUGS
-]);
-
-export function isUnsupportedProtocolName(protocol: string | null | undefined) {
-	const normalisedProtocol = protocol?.trim();
-	return !normalisedProtocol || normalisedProtocol.startsWith('<');
+/** Whether the vault requires permission before deposits can be made. */
+export function isPermissionedVault(vault: Pick<VaultInfo, 'whitelist'>) {
+	return vault.whitelist?.status === 'whitelisted';
 }
 
-export function isUnsupportedProtocolSlug(protocolSlug: string | null | undefined) {
-	return protocolSlug != null && unsupportedProtocolSlugs.has(protocolSlug);
+/** Return whether a protocol's vault listings should use pool terminology. */
+export function isPoolProtocol(protocolSlug: string | null | undefined): boolean {
+	return protocolSlug === 'gmx' || protocolSlug === 'yieldbasis';
 }
 
-export function hasSupportedProtocol(vault: Pick<VaultInfo, 'protocol'> & Partial<Pick<VaultInfo, 'protocol_slug'>>) {
-	return !isUnsupportedProtocolName(vault.protocol) && !isUnsupportedProtocolSlug(vault.protocol_slug);
-}
-
-export function isManuallyMappedUnknownProtocolSlug(protocolSlug: string | null | undefined) {
-	return protocolSlug != null && UNKNOWN_VAULT_PROTOCOL_SLUGS.has(protocolSlug);
-}
+type VaultProtocolIdentity =
+	| { protocol: string | null | undefined; protocol_slug?: string | null }
+	| { protocol?: string | null; protocol_slug: string | null | undefined };
 
 /**
  * Whether a vault belongs in the combined unknown-protocol group.
  *
- * This includes protocol placeholders from the data source, the generic ERC-4626
- * classification, and records explicitly labelled "Unknown".
+ * This is the canonical classification path for full vaults and callers that
+ * only have a protocol slug. Explicit unknown values in either field take
+ * precedence over recognised values in the other. A blank slug alone is
+ * unknown, but does not override a recognised protocol name.
  */
-export function isUnknownVaultProtocol(vault: Pick<VaultInfo, 'protocol'> & Partial<Pick<VaultInfo, 'protocol_slug'>>) {
-	if (isManuallyMappedUnknownProtocolSlug(vault.protocol_slug)) return true;
-	if (isUnsupportedProtocolName(vault.protocol) || isUnsupportedProtocolSlug(vault.protocol_slug)) return true;
-	return vault.protocol?.trim().toLowerCase() === 'unknown';
+export function isUnknownVaultProtocol(vault: VaultProtocolIdentity): boolean {
+	const protocol = vault.protocol?.trim().toLowerCase();
+	const protocolSlug = vault.protocol_slug?.trim().toLowerCase();
+
+	if (vault.protocol !== undefined && (!protocol || protocol.startsWith('<'))) return true;
+	if (protocol && UNKNOWN_VAULT_PROTOCOL_NAMES.has(protocol)) return true;
+	if (protocolSlug && UNKNOWN_VAULT_PROTOCOL_SLUGS.has(protocolSlug)) return true;
+	return vault.protocol === undefined && !protocolSlug;
 }
 
 const FRONTPAGE_RISK_FILTER = riskFilterOptions.find((option) => option.label === 'Severe');
@@ -268,7 +292,7 @@ export function isEligibleFrontpageVault(
 	vault: Pick<VaultInfo, 'protocol' | 'risk_numeric'> & Partial<Pick<VaultInfo, 'protocol_slug' | 'risk'>>
 ) {
 	if (!FRONTPAGE_RISK_FILTER) return false;
-	if (!hasSupportedProtocol(vault)) return false;
+	if (isUnknownVaultProtocol(vault)) return false;
 	if (isBlacklisted(vault)) return false;
 	if (vault.risk_numeric == null) return false;
 
@@ -276,9 +300,8 @@ export function isEligibleFrontpageVault(
 }
 
 export function getProtocolDisplayName(protocol: string | null | undefined, protocolSlug?: string | null): string {
-	if (isManuallyMappedUnknownProtocolSlug(protocolSlug)) return UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME;
-	if (protocol == null || isUnsupportedProtocolName(protocol)) return 'Unknown';
-	return protocol;
+	if (isUnknownVaultProtocol({ protocol, protocol_slug: protocolSlug })) return UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME;
+	return protocol ?? UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME;
 }
 
 /**
@@ -291,6 +314,18 @@ export function getVaultProtocolDisplayName(vault: Pick<VaultInfo, 'protocol' | 
 		return 'Lighter Robinhood';
 	}
 	return displayName;
+}
+
+/** Return whether an asset is an AMM pool or AMM-like vault. */
+export function isAmmPoolLikeVault(vault: Pick<VaultInfo, 'features'>): boolean {
+	return vault.features.includes('amm_pool_like');
+}
+
+/** Return the user-facing type of a vault-like asset. */
+export function getVaultAssetType(vault: Pick<VaultInfo, 'flags' | 'features'>): 'vault' | 'pool' | 'tokenised fund' {
+	if (vault.flags.includes('tokenised_fund')) return 'tokenised fund';
+	if (isAmmPoolLikeVault(vault)) return 'pool';
+	return 'vault';
 }
 
 /**
@@ -575,20 +610,30 @@ export function isVaultTvlDownMoreThan95Percent(vault: Pick<VaultInfo, 'current_
 	);
 }
 
+/**
+ * Whether to show the historical TVL decline warning on a vault detail page.
+ * The warning does not apply to GMX vaults.
+ */
+export function shouldShowVaultTvlDownMoreThan95PercentWarning(
+	vault: Pick<VaultInfo, 'current_nav' | 'peak_nav' | 'protocol_slug'>
+): boolean {
+	return vault.protocol_slug !== 'gmx' && isVaultTvlDownMoreThan95Percent(vault);
+}
+
 const DEFAULT_DETAIL_RISK_FILTER = riskFilterOptions[1];
 
 /**
  * Check if vault is included in vault group (protocol/chain/curator/stablecoin)
  * mini charts and headline stats: not blacklisted, meets the minimum TVL,
- * supported protocol and within the default risk filter (unknown risk passes).
+ * has an identified protocol and is within the default detail risk threshold
+ * (unknown risk passes).
  *
- * Matches the default vault listing table filters, so stats derived from this
- * set agree with the table's initial stats row.
+ * Individual routes apply their own scope and any additional listing filters.
  */
 export function isEligibleVaultGroupMiniChartVault(vault: VaultInfo) {
 	if (isBlacklisted(vault)) return false;
 	if (!meetsMinTvl(vault)) return false;
-	if (!hasSupportedProtocol(vault)) return false;
+	if (isUnknownVaultProtocol(vault)) return false;
 
 	if (vault.risk_numeric == null) return true;
 	return (

@@ -1,5 +1,9 @@
+<!--
+Vault listing and overview for one protocol.
+-->
 <script lang="ts">
-	import { UNKNOWN_VAULT_PROTOCOL_SLUG } from '$lib/top-vaults/helpers';
+	import { isPoolProtocol, UNKNOWN_VAULT_PROTOCOL_SLUG } from '$lib/top-vaults/helpers';
+	import { getVaultListingDefaults } from '$lib/top-vaults/listing/definitions';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { resolve } from '$app/paths';
@@ -15,26 +19,34 @@
 	let { protocolSlug, protocolName, protocolMetadata, core3, xerberus, initialTopVaults } = $derived(data);
 	let isUnknownVaultProtocolGroup = $derived(protocolSlug === UNKNOWN_VAULT_PROTOCOL_SLUG);
 	let isHyperliquidProtocolGroup = $derived(protocolSlug === 'hyperliquid');
-	let isApexProtocolGroup = $derived(protocolSlug === 'apex');
+	let isPoolProtocolGroup = $derived(isPoolProtocol(protocolSlug));
+	let listingAssetType = $derived(isPoolProtocolGroup ? 'pool' : 'vault');
+	let listingAssetTypePlural = $derived(`${listingAssetType}s`);
+	let listingDefaults = $derived(getVaultListingDefaults(data.listingKey, data.listingScope));
 
-	// Apex does not have a track record yet, so its vaults sit below the usual TVL
-	// threshold. Default the Min TVL filter to "Any" so they are not hidden.
-	let defaultTvlKey = $derived(isApexProtocolGroup ? 'any' : '10k');
+	const unknownVaultDescription =
+		'These vaults are listed, but their underlying protocols have not been identified in the source dataset.';
 
-	let topVaults = $derived(initialTopVaults);
-	let totalVaultCount = $derived(data.totalVaultCount);
-	let loading = false;
-
-	const unknownVaultDescription = 'These vaults are not yet mapped out. Contact us to have your vaults listed.';
-
-	let title = $derived(isUnknownVaultProtocolGroup ? 'Unknown vaults' : `${protocolName} vaults and yields`);
+	let title = $derived(
+		isUnknownVaultProtocolGroup
+			? 'Vaults with unidentified protocols'
+			: isPoolProtocolGroup
+				? `${protocolName} pools and yields`
+				: `${protocolName} vaults and yields`
+	);
 	let heroTitle = $derived(
-		isUnknownVaultProtocolGroup ? 'Unknown vaults' : `${protocolName} powered stablecoin vaults`
+		isUnknownVaultProtocolGroup
+			? 'Vaults with unidentified protocols'
+			: isPoolProtocolGroup
+				? `${protocolName} powered pools`
+				: `${protocolName} powered stablecoin vaults`
 	);
 	let description = $derived(
 		isUnknownVaultProtocolGroup
 			? unknownVaultDescription
-			: (protocolMetadata?.short_description ?? `Top stablecoin vaults on ${protocolName}`)
+			: isPoolProtocolGroup
+				? `Explore ${protocolName} pools and yields, including TVL and performance metrics.`
+				: (protocolMetadata?.short_description ?? `Top stablecoin vaults on ${protocolName}`)
 	);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived.by(() => {
@@ -47,8 +59,7 @@
 </script>
 
 {#snippet unknownVaultSubtitle()}
-	These vaults are not yet mapped out. <a class="body-link" href={resolve('/community')}>Contact us</a> to have your vaults
-	listed.
+	{unknownVaultDescription}
 {/snippet}
 
 {#snippet hyperliquidChainDescription()}
@@ -62,14 +73,28 @@
 	{#if averageMonthlyReturn != null}
 		<p>
 			The current listing contains <strong>{formatDollar(data.listingSummary.totalTvl, 1)}</strong> TVL in
-			<strong>{data.listingSummary.matchingCount} {data.listingSummary.matchingCount === 1 ? 'vault' : 'vaults'}</strong
+			<strong
+				>{data.listingSummary.matchingCount}
+				{data.listingSummary.matchingCount === 1 ? listingAssetType : listingAssetTypePlural}</strong
 			>
-			with the TVL-weighted average monthly returns of <strong>{formatPercent(averageMonthlyReturn, 1)}</strong>.
+			with a TVL-weighted average monthly return of <strong>{formatPercent(averageMonthlyReturn, 1)}</strong>.
 		</p>
 	{/if}
 	{#if isHyperliquidProtocolGroup}
 		{@render hyperliquidChainDescription()}
 	{/if}
+{/snippet}
+
+{#snippet protocolMiniChart()}
+	<VaultGroupMiniChart
+		title={`All ${protocolName} ${listingAssetTypePlural}: TVL and TVL-weighted 3-month annualised return`}
+		dataUrl="/vaults/protocols/{protocolSlug}/chart-data"
+		compareLabel="Compare all protocols"
+		compareHref="/vaults/historical-tvl-protocol"
+		returnTooltipLabel="TVL-weighted 3-month ann. return"
+		returnWindowLabel="trailing 3-month"
+		returnHistoryMonthsRequired={3}
+	/>
 {/snippet}
 
 <MetaTags
@@ -110,10 +135,9 @@
 />
 
 <TopVaultsPage
-	{topVaults}
-	{totalVaultCount}
-	{loading}
-	progressive={data.initialVaultListingHasMore}
+	topVaults={initialTopVaults}
+	totalVaultCount={data.totalVaultCount}
+	initialHasMore={data.initialHasMore}
 	listingKey={data.listingKey}
 	listingScope={data.listingScope}
 	listingSummary={data.listingSummary}
@@ -121,33 +145,22 @@
 	protocolDescriptionExtra={averageMonthlyReturn != null || isHyperliquidProtocolGroup
 		? protocolDescriptionExtra
 		: undefined}
+	detailAside={isUnknownVaultProtocolGroup ? undefined : protocolMiniChart}
 	title={heroTitle}
 	subtitle={isUnknownVaultProtocolGroup ? unknownVaultSubtitle : undefined}
 	showFilters
 	showUnknownFilter={false}
-	{defaultTvlKey}
-	defaultSort={data.protocolSlug === 'apex' ? 'tvl' : undefined}
-	defaultDirection={data.protocolSlug === 'apex' ? 'desc' : undefined}
-	defaultHideUnknown={isUnknownVaultProtocolGroup ? 0 : 1}
+	defaultTvlKey={listingDefaults.tvl}
+	defaultSort={listingDefaults.sort}
+	defaultDirection={listingDefaults.direction}
+	defaultHideUnknown={(listingDefaults.unknown ?? true) ? 1 : 0}
 >
-	{#snippet detailAside()}
-		<VaultGroupMiniChart
-			title="All {protocolName} vaults: TVL and TVL-weighted 3-month annualised return"
-			dataUrl="/vaults/protocols/{protocolSlug}/chart-data"
-			compareLabel="Compare all protocols"
-			compareHref="/vaults/historical-tvl-protocol"
-			returnTooltipLabel="TVL-weighted 3-month ann. return"
-			returnWindowLabel="trailing 3-month"
-			returnHistoryMonthsRequired={3}
-		/>
-	{/snippet}
-
 	{#snippet beforeTable()}
 		{#if core3}
-			<Core3Ratings {core3} {protocolName} collapsible />
+			<Core3Ratings {core3} {protocolName} />
 		{/if}
 		{#if xerberus}
-			<XerberusRisk {xerberus} context="protocol" />
+			<XerberusRisk {xerberus} />
 		{/if}
 	{/snippet}
 </TopVaultsPage>

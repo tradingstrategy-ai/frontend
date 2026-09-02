@@ -24,6 +24,32 @@ function generateMockVaults(prefix: string, count: number, props: TestVaultProps
 	return vaults;
 }
 
+function providerRatings(
+	name: string,
+	id: string,
+	core3Score: number,
+	core3Label: string,
+	xerberusScore: number
+): Pick<TestVaultProps, 'core3' | 'xerberus'> {
+	return {
+		core3: {
+			risk_score: core3Score,
+			risk_rating_label: core3Label,
+			confidence: 'High'
+		},
+		xerberus: {
+			score: xerberusScore,
+			score_scale: '0_100_higher_is_better',
+			entity_type: 'pool',
+			entity_id: id,
+			name,
+			protocol_slug: null,
+			report_url: `https://app.xerberus.io/pool/dendrogram/${id}`,
+			fetched_at: '2026-07-30T11:30:40Z'
+		}
+	};
+}
+
 function createPeriodResult(
 	period: '6m' | '1y',
 	returnsNet: number,
@@ -95,17 +121,22 @@ const aboveTvl = generateMockVaults('Above TVL', 246, {
 	}
 });
 
+// Keep one High-risk row at or above every chain-specific TVL override so the
+// narrower-risk reveal test does not depend on its generated TVL.
+aboveTvl[9].current_nav = 1_000_000;
+aboveTvl[9].peak_nav = 1_000_000;
+
 // Keep these below the normal $10k threshold so existing vault-index fixtures
-// retain their counts. The progressive-scroll test opts into TVL "Any".
-const progressiveScrollVaults = generateMockVaults('Progressive scroll vault', 500, {
-	protocol: 'Progressive test protocol',
+// retain their counts. The continuation test opts into TVL "Any".
+const continuationVaults = generateMockVaults('Continuation vault', 500, {
+	protocol: 'Continuation test protocol',
 	current_nav: 1_000,
 	peak_nav: 1_000,
 	one_month_cagr: 0.05,
 	three_months_cagr: 0.08
 });
 
-// These rows exercise the headline statistics used with progressive listings.
+// These rows exercise headline statistics for server-paginated listings.
 // Keep them below the normal $50k threshold so they do not affect other vault
 // index fixtures. The regression test opts into TVL "Any".
 const summaryRegressionHighReturnVaults = generateMockVaults('Summary regression high return vault', 150, {
@@ -135,6 +166,7 @@ const returnLeaders = [
 		one_month_cagr: 0.32,
 		three_months_returns: 0.1,
 		three_months_cagr: 0.24,
+		three_months_volatility: 0.04,
 		cagr: 0.22,
 		lifetime_return: 0.35,
 		period_results: [createPeriodResult('6m', 0.16, 0.18, 0.42, 0.45), createPeriodResult('1y', 0.28, 0.3, 0.28, 0.3)]
@@ -151,6 +183,7 @@ const returnLeaders = [
 		one_month_cagr: 0.26,
 		three_months_returns: 0.085,
 		three_months_cagr: 0.21,
+		three_months_volatility: 0.1,
 		cagr: 0.19,
 		lifetime_return: 0.31,
 		period_results: [createPeriodResult('6m', 0.12, 0.14, 0.31, 0.34), createPeriodResult('1y', 0.2, 0.22, 0.2, 0.22)]
@@ -167,6 +200,7 @@ const returnLeaders = [
 		one_month_cagr: 0.22,
 		three_months_returns: 0.07,
 		three_months_cagr: 0.18,
+		three_months_volatility: 0.2,
 		cagr: 0.16,
 		lifetime_return: 0.27,
 		period_results: [createPeriodResult('6m', 0.08, 0.1, 0.22, 0.25), createPeriodResult('1y', 0.14, 0.16, 0.14, 0.16)]
@@ -290,6 +324,30 @@ const apexVaults = [
 	})
 ];
 
+const apexPaginationVaults = Array.from({ length: 128 }, (_, index) =>
+	createTestVault(`ApeX pagination vault ${String(index).padStart(3, '0')}`, {
+		address: `0x3${index.toString(16).padStart(39, '0')}`,
+		chain: 'apex',
+		protocol: 'ApeX',
+		current_nav: 8_000 - index,
+		peak_nav: 8_500 - index,
+		one_month_cagr: 0.01,
+		three_months_cagr: 0.01
+	})
+);
+
+const gmxPool = createTestVault('GMX USDC pool', {
+	address: '0x2000000000000000000000000000000000000001',
+	chain: 'arbitrum',
+	protocol: 'GMX',
+	current_nav: 750_000,
+	peak_nav: 900_000,
+	one_month_cagr: 0.08,
+	three_months_cagr: 0.12,
+	features: ['amm_pool_like', 'gmx_gm'],
+	description: 'A GMX liquidity pool with direct exposure to its underlying assets.'
+});
+
 // Named vault for YAML strategy integration tests
 const yamlStrategyVault = createTestVault('Trading Strategy ICHIv3 LS 2', {
 	address: '0x1234567890abcdef1234567890abcdef12345678',
@@ -410,7 +468,8 @@ const abnormalTvlBlacklistedVault = createTestVault('Abnormal TVL blacklisted va
 	peak_nav: 2_000_000_000,
 	risk: 'Blacklisted',
 	flags: ['abnormal_tvl'],
-	notes: 'The TVL on this vault is abnormal'
+	notes: 'The TVL on this vault is abnormal',
+	...providerRatings('Abnormal TVL blacklisted vault', 'blacklisted-rated-vault', 99, 'D', 1)
 });
 
 const closedVaultPeriodResult = {
@@ -491,10 +550,56 @@ const privateTokenisedFund = createTestVault('Private tokenised fund', {
 	whitelist: { status: 'whitelisted', notes: null }
 });
 
+// Its low TVL keeps the normal listing fixtures stable. Provider-rating pages
+// intentionally include rated vaults at every TVL level.
+const providerRatedVault = createTestVault('Provider rated vault', {
+	chain: 'arbitrum',
+	protocol: 'Provider ratings',
+	current_nav: 5_000,
+	peak_nav: 6_000,
+	risk: 'Low',
+	...providerRatings('Provider rated vault', 'provider-rated-vault', 12, 'AA', 91)
+});
+
+const providerRatedUnknownVault = createTestVault('Provider rated unknown protocol vault', {
+	chain: 'arbitrum',
+	protocol: '<Unknown>',
+	current_nav: 4_000,
+	peak_nav: 5_000,
+	risk: 'Low',
+	...providerRatings('Provider rated unknown protocol vault', 'provider-rated-unknown-vault', 20, 'A', 82)
+});
+
+const providerRatedAmmVault = createTestVault('Provider rated AMM vault', {
+	chain: 'arbitrum',
+	protocol: 'Provider ratings',
+	current_nav: 3_000,
+	peak_nav: 4_000,
+	risk: 'Low',
+	features: ['amm_pool_like'],
+	...providerRatings('Provider rated AMM vault', 'provider-rated-amm-vault', 30, 'BBB', 73)
+});
+
 // Real Parquet-backed vault IDs used by the historical TVL by chain endpoint tests.
 // These IDs need to match the local Parquet dataset so blacklist filtering can be
 // exercised against real server-side aggregation.
 const parquetMatchedVaults = [
+	createTestVault('Hyperliquidity Provider (HLP)', {
+		address: '0xdfc24b077bc1425ad1dea75bcb6f8158e10df303',
+		chain: 'hyperliquid',
+		chain_id: 9999,
+		protocol: 'Hyperliquid',
+		current_nav: 350_000_000,
+		peak_nav: 400_000_000,
+		stablecoinish: false
+	}),
+	createTestVault('Spark USDC Vault', {
+		address: '0xbc65ad17c5c0a2a4d159fa5a503f4992c7b545fe',
+		chain: 'ethereum',
+		protocol: 'Spark',
+		current_nav: 100_000_000,
+		peak_nav: 120_000_000
+	}),
 	createTestVault('Savings infiniFi USD', {
 		address: '0x36585e7ae4b8a422135618a2c113b8b516067e7a',
 		chain: 'arbitrum',
@@ -610,6 +715,9 @@ export default defineMock({
 			yamlStrategyVault,
 			abnormalTvlBlacklistedVault,
 			morphoFlaggedBlacklistedVault,
+			providerRatedVault,
+			providerRatedUnknownVault,
+			providerRatedAmmVault,
 			depositDisabledVault,
 			cappedVault,
 			redemptionDisabledVault,
@@ -618,12 +726,14 @@ export default defineMock({
 			privateVault,
 			privateTokenisedFund,
 			limitedCoverageVault,
+			gmxPool,
 			...apexVaults,
+			...apexPaginationVaults,
 			...parquetMatchedVaults,
 			...returnLeaders,
 			...belowTvl,
 			...aboveTvl,
-			...progressiveScrollVaults,
+			...continuationVaults,
 			...summaryRegressionHighReturnVaults,
 			summaryRegressionAnchorVault
 		]

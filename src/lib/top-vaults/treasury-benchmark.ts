@@ -1,6 +1,6 @@
 /**
- * Client-side fetcher for FRED DTB3 (3-month Treasury bill) time series,
- * and cumulative return conversion for chart overlay.
+ * Fetch the FRED DGS3MO 3-month Treasury market-yield series and convert it
+ * to cumulative returns for chart overlays.
  */
 import type { TimeInterval } from 'd3-time';
 import type { UTCTimestamp } from 'lightweight-charts';
@@ -22,18 +22,25 @@ const YEAR_MS = 365.25 * 86_400 * 1000;
 const benchmarkRequestCache = new Map<string, Promise<RateEntry[]>>();
 
 /**
- * Fetch DTB3 time series from the server-side proxy endpoint.
+ * Fetch DGS3MO time series from the server-side proxy endpoint.
  *
  * Expands the start date backwards by 7 days to seed forward-fill,
  * so we have a rate observation even if the visible start falls on a weekend.
+ *
+ * @param useCache - Disable when the caller already has a bounded server-side cache.
  */
-export function fetchTreasuryBenchmarkSeries(fetch: Fetch, start: Date, end: Date): Promise<RateEntry[]> {
+export function fetchTreasuryBenchmarkSeries(
+	fetch: Fetch,
+	start: Date,
+	end: Date,
+	useCache = true
+): Promise<RateEntry[]> {
 	const seedStart = new Date(start.getTime() - SEED_DAYS * 86_400 * 1000);
 	const cosd = formatDateYMD(seedStart);
 	const coed = formatDateYMD(end);
 	const cacheKey = `${cosd}:${coed}`;
 
-	const cached = benchmarkRequestCache.get(cacheKey);
+	const cached = useCache ? benchmarkRequestCache.get(cacheKey) : undefined;
 	if (cached) return cached;
 
 	const params = new URLSearchParams({ cosd, coed });
@@ -43,16 +50,16 @@ export function fetchTreasuryBenchmarkSeries(fetch: Fetch, start: Date, end: Dat
 			return resp.json() as Promise<RateEntry[]>;
 		})
 		.catch((error) => {
-			benchmarkRequestCache.delete(cacheKey);
+			if (useCache) benchmarkRequestCache.delete(cacheKey);
 			throw error;
 		});
 
-	benchmarkRequestCache.set(cacheKey, promise);
+	if (useCache) benchmarkRequestCache.set(cacheKey, promise);
 	return promise;
 }
 
 /**
- * Convert FRED daily annual yield rates into a cumulative return price line.
+ * Convert FRED daily annual investment-basis yields into a cumulative return price line.
  *
  * Does NOT use resampleTimeSeries — that would discard customValues metadata.
  * Instead generates interval-aligned points directly, compounding based on

@@ -10,7 +10,7 @@
 	} from '$lib/social-card/helpers';
 	import { getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers';
 	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
-	import { getVaultProtocolDisplayName } from '$lib/top-vaults/helpers';
+	import { getVaultAssetType, getVaultProtocolDisplayName } from '$lib/top-vaults/helpers';
 	import { getChainDisplayName } from '$lib/helpers/chain';
 	import type { CuratorInfo, VaultInfo } from '$lib/top-vaults/schemas';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
@@ -27,6 +27,8 @@
 	}
 
 	let { vault, chain, protocolMetadata, curatorMetadata, stablecoinMetadata }: Props = $props();
+	let assetType = $derived(getVaultAssetType(vault));
+	let socialTitle = $derived(`${vault.name} | DeFi ${assetType} | Trading Strategy`);
 
 	let generatedDescription = $derived.by(() => {
 		const parts = [`${vault.name} on ${getVaultProtocolDisplayName(vault)} on ${getChainDisplayName(vault.chain_id)}`];
@@ -141,7 +143,7 @@
 </script>
 
 <MetaTags
-	title={`${vault.name} | DeFi Vault | Trading Strategy`}
+	title={socialTitle}
 	{description}
 	canonical={pageUrl}
 	image={imageUrl}
@@ -149,14 +151,14 @@
 	openGraph={{
 		siteName: 'Trading Strategy',
 		url: pageUrl,
-		title: vault.name,
+		title: socialTitle,
 		description,
 		type: 'website'
 	}}
 	twitter={{
 		site: '@TradingProtocol',
 		cardType: 'summary_large_image',
-		title: vault.name,
+		title: socialTitle,
 		description
 	}}
 />
