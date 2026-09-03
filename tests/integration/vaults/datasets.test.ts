@@ -66,6 +66,20 @@ test.describe('vault datasets page', () => {
 		await expect(page.getByRole('cell', { name: 'Parquet', exact: true }).first()).toBeVisible();
 	});
 
+	// --- Creem checkout redirect ---
+
+	test('does not show purchase message on a plain visit', async ({ page }) => {
+		await expect(page.getByText('Thank you for your purchase')).toHaveCount(0);
+	});
+
+	test('shows "check your email" message after Creem checkout redirect', async ({ page }) => {
+		const response = await page.goto('/vaults/datasets?checkout_id=ch_test123&product_id=prod_test&signature=deadbeef');
+		expect(response?.headers()['cache-control']).toBe('no-store');
+		await expect(page.getByText('Thank you for your purchase')).toBeVisible();
+		await expect(page.getByText('Check your email for your API key')).toBeVisible();
+		await expect(page.getByLabel('Enter API key to enable download')).toBeVisible();
+	});
+
 	// --- API key form (unauthenticated state) ---
 
 	test('shows API key form before a key is entered', async ({ page }) => {

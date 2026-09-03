@@ -202,9 +202,14 @@ export async function load({ fetch, setHeaders, url }) {
 	// Show free samples above the paid datasets (stable sort keeps each group's order)
 	enriched.sort((a, b) => Number(b.free ?? false) - Number(a.free ?? false));
 
+	// Creem appends checkout_id (plus product_id, signature, …) when redirecting after a
+	// successful Pro purchase. The flag only drives a hint, so presence is sufficient.
+	const purchaseComplete = url.searchParams.has('checkout_id');
+
 	setHeaders({
-		'cache-control': dev ? 'no-cache' : 'public, max-age=600'
+		// Never let a shared cache serve the post-purchase variant to other visitors
+		'cache-control': purchaseComplete ? 'no-store' : dev ? 'no-cache' : 'public, max-age=600'
 	});
 
-	return { datasets: enriched, origin: url.origin };
+	return { datasets: enriched, origin: url.origin, purchaseComplete };
 }

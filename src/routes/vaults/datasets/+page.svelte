@@ -90,6 +90,14 @@ Vault datasets download page
 	<meta name="description" content="Download vault metadata and historical vault price datasets" />
 </svelte:head>
 
+{#if data.purchaseComplete}
+	<Section class="purchase-complete">
+		<Alert size="md" status="success" title="Thank you for your purchase">
+			Check your email for your API key, then enter it below to unlock the Pro datasets.
+		</Alert>
+	</Section>
+{/if}
+
 <Breadcrumbs labels={{ vaults: 'Vaults', datasets: 'Vault datasets' }} />
 
 <main class="vault-datasets-page">
@@ -217,6 +225,10 @@ Vault datasets download page
 </main>
 
 <style>
+	:global(.purchase-complete) {
+		margin-top: var(--space-md);
+	}
+
 	.vault-datasets-page {
 		display: grid;
 		gap: var(--space-lg);
