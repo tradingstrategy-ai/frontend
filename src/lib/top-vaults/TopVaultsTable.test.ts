@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/svelte';
+import { cleanup, fireEvent, render, screen } from '@testing-library/svelte';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { getChain } from '$lib/helpers/chain';
 import TopVaultsTable from './TopVaultsTable.svelte';
@@ -21,6 +21,15 @@ vi.mock('$lib/vault-protocol/helpers', () => ({
 
 function getRenderedVaultNames() {
 	return Array.from(document.querySelectorAll('tbody tr td.vault strong')).map((element) => element.textContent);
+}
+
+function getTopVaults(...vaults: ReturnType<typeof createTestVault>[]) {
+	return {
+		generated_at: '2026-07-30T11:30:40Z',
+		vaults,
+		core3_protocols: {},
+		curators: {}
+	};
 }
 
 describe('TopVaultsTable risk rating column', () => {
@@ -176,5 +185,76 @@ describe('TopVaultsTable risk rating column', () => {
 
 		expect(curatorLogo?.src).toBe('https://example.com/curator-logo.svg');
 		expect(protocolLogo?.src).toBe('https://example.com/protocol/aave.svg');
+	});
+});
+
+describe('TopVaultsTable comparison selection', () => {
+	it('selects vaults from the rank cell and builds the ordered comparison URL', async () => {
+		const firstVault = createTestVault('First comparison vault', {
+			address: '0x0000000000000000000000000000000000000001'
+		});
+		const secondVault = createTestVault('Second comparison vault', {
+			address: '0x0000000000000000000000000000000000000002'
+		});
+
+		render(TopVaultsTable, { props: { topVaults: getTopVaults(firstVault, secondVault) } });
+
+		const firstCheckbox = screen.getByRole('checkbox', { name: 'Select First comparison vault for comparison' });
+		const secondCheckbox = screen.getByRole('checkbox', { name: 'Select Second comparison vault for comparison' });
+		expect(firstCheckbox.closest('td')).toHaveClass('index');
+		expect(firstCheckbox.closest('label')).toHaveClass('targetable-above');
+
+		await fireEvent.click(secondCheckbox);
+		await fireEvent.click(firstCheckbox);
+
+		expect(secondCheckbox).toBeChecked();
+		expect(firstCheckbox).toBeChecked();
+		expect(firstCheckbox.closest('tr')).toHaveClass('selected');
+		expect(secondCheckbox.closest('tr')).toHaveClass('selected');
+
+		const compareActionContainer = screen.getByTestId('compare-vaults-action');
+		const compareAction = compareActionContainer.querySelector<HTMLAnchorElement>('a');
+		expect(compareAction).not.toBeNull();
+		expect(screen.getByRole('link', { name: 'Compare vaults 2 selected vaults' })).toBe(compareAction);
+		const searchParams = new URL(compareAction!.href).searchParams;
+		expect(searchParams.getAll('vault')).toEqual([secondVault.id, firstVault.id]);
+		expect(searchParams.get('period')).toBe('3M');
+		expect(searchParams.has('benchmark')).toBe(false);
+
+		await fireEvent.click(firstCheckbox);
+		await fireEvent.click(secondCheckbox);
+		expect(screen.queryByTestId('compare-vaults-action')).not.toBeInTheDocument();
+	});
+
+	it('keeps unchecked controls focusable but unavailable once the comparison limit is reached', async () => {
+		const vaults = Array.from({ length: 9 }, (_, index) =>
+			createTestVault(`Comparison vault ${index + 1}`, {
+				address: `0x${String(index + 1).padStart(40, '0')}`
+			})
+		);
+		render(TopVaultsTable, { props: { topVaults: getTopVaults(...vaults) } });
+
+		const checkboxes = screen.getAllByRole('checkbox');
+		for (const checkbox of checkboxes.slice(0, 8)) await fireEvent.click(checkbox);
+
+		const unavailableCheckbox = checkboxes[8];
+		expect(unavailableCheckbox).toHaveAttribute('aria-disabled', 'true');
+		expect(unavailableCheckbox).not.toBeDisabled();
+		expect(screen.getByRole('status')).toHaveTextContent('You can compare up to 8 vaults.');
+		expect(screen.getByRole('link', { name: 'Compare vaults 8 selected vaults' })).toBeInTheDocument();
+
+		await fireEvent.click(unavailableCheckbox);
+		expect(unavailableCheckbox).not.toBeChecked();
+		expect(screen.getByTestId('compare-vaults-action')).toHaveTextContent('8');
+	});
+
+	it('can disable comparison selection for embedded summary tables', () => {
+		const vault = createTestVault('Embedded comparison vault');
+		render(TopVaultsTable, {
+			props: { topVaults: getTopVaults(vault), allowVaultComparison: false }
+		});
+
+		expect(screen.queryByRole('checkbox', { name: /Select .* for comparison/ })).not.toBeInTheDocument();
+		expect(screen.queryByTestId('compare-vaults-action')).not.toBeInTheDocument();
 	});
 });

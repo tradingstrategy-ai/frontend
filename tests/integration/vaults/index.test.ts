@@ -261,6 +261,87 @@ test.describe('vault index page', () => {
 		);
 	});
 
+	for (const viewport of [
+		{ name: 'tablet', width: 1024, height: 768 },
+		{ name: 'mobile', width: 375, height: 667 }
+	]) {
+		test(`selects vaults for comparison in the ${viewport.name} viewport`, async ({ page }) => {
+			await page.setViewportSize({ width: viewport.width, height: viewport.height });
+			await page.goto('/vaults');
+
+			const checkbox = page.getByTestId('vault-comparison-checkbox').first();
+			const row = checkbox.locator('xpath=ancestor::tr');
+			const unselectedBackground = await row
+				.locator('td')
+				.first()
+				.evaluate((cell) => getComputedStyle(cell).backgroundColor);
+			await expect(checkbox).toBeVisible();
+			await checkbox.click();
+			await expect(checkbox).toBeChecked();
+			await expect(row).toHaveClass(/selected/);
+			expect(
+				await row
+					.locator('td')
+					.first()
+					.evaluate((cell) => getComputedStyle(cell).backgroundColor)
+			).not.toBe(unselectedBackground);
+
+			const action = page.getByTestId('compare-vaults-action');
+			await expect(action).toBeVisible();
+			const actionLayout = await action.evaluate((element) => {
+				const actionBounds = element.getBoundingClientRect();
+				const tableWrapperBounds = document.querySelector('.table-wrapper')!.getBoundingClientRect();
+				return {
+					position: getComputedStyle(element).position,
+					actionAlignedWithTable: Math.abs(actionBounds.left - tableWrapperBounds.left) < 1,
+					actionFitsViewport:
+						actionBounds.left >= 0 && actionBounds.right <= innerWidth && actionBounds.bottom <= innerHeight
+				};
+			});
+			expect(actionLayout.position).toBe('fixed');
+			expect(actionLayout.actionAlignedWithTable).toBe(true);
+			expect(actionLayout.actionFitsViewport).toBe(true);
+
+			await page.evaluate(() => window.scrollBy(0, 800));
+			await expect(action).toBeVisible();
+			expect(await action.evaluate((element) => getComputedStyle(element).position)).toBe('fixed');
+
+			await checkbox.click();
+			await expect(action).not.toBeVisible();
+		});
+	}
+
+	test('compares the two highest-ranked vaults from the top of the list', async ({ page }) => {
+		await page.setViewportSize({ width: 1440, height: 900 });
+		await page.goto('/vaults');
+
+		const firstCheckbox = page.getByTestId('vault-comparison-checkbox').first();
+		const secondCheckbox = page.getByTestId('vault-comparison-checkbox').nth(1);
+		const firstRow = firstCheckbox.locator('xpath=ancestor::tr');
+		const secondRow = secondCheckbox.locator('xpath=ancestor::tr');
+		const firstVaultName = await firstRow.locator('td.vault strong').textContent();
+		const secondVaultName = await secondRow.locator('td.vault strong').textContent();
+
+		await firstCheckbox.click();
+		await secondCheckbox.click();
+		await expect(firstCheckbox).toBeChecked();
+		await expect(secondCheckbox).toBeChecked();
+
+		const action = page.getByTestId('compare-vaults-action');
+		await expect(action).toBeVisible();
+		const compareLink = action.getByRole('link', { name: /Compare vaults/ });
+		const destination = new URL((await compareLink.getAttribute('href'))!, page.url());
+		expect(destination.pathname).toBe('/vaults/compare');
+		expect(destination.searchParams.getAll('vault')).toHaveLength(2);
+		expect(destination.searchParams.get('period')).toBe('3M');
+
+		await compareLink.click();
+		await expect(page).toHaveURL(/\/vaults\/compare\?.*vault=.*vault=/);
+		const selectedVaults = page.getByRole('list', { name: 'Selected vaults' });
+		await expect(selectedVaults).toContainText(firstVaultName ?? '');
+		await expect(selectedVaults).toContainText(secondVaultName ?? '');
+	});
+
 	test('updates the ranking description when the table sort changes', async ({ page }) => {
 		await page.locator('th.tvl button').click();
 
