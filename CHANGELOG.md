@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add vault comparison selection controls to public vault listings (2026-09-04)
 - Add Gross and Net fee-aware return modes to the multi-vault comparison chart (2026-09-04)
 - Show a "check your email for your API key" notice on the vault datasets page after a Creem checkout redirect (2026-09-03)
 - Add a dedicated podcast episode page with YouTube and Spotify links (2026-09-02)

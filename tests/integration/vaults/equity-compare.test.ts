@@ -160,6 +160,8 @@ test.describe('vault equity curve comparison page', () => {
 		await expect(selectedVaults.locator('li')).toHaveCount(1);
 		await expect(selectedVaults).toContainText('Savings USDS');
 		await expect(page.getByRole('radio', { name: 'Net' })).toBeChecked();
+		await expect(page.locator('.selected-comparison-table').getByTestId('vault-comparison-checkbox')).toHaveCount(0);
+		await expect(page.locator('.selected-comparison-table').getByTestId('compare-vaults-action')).toHaveCount(0);
 		await expect(selectedVaults).toContainText('21.3% CAGR');
 		await expect(selectedVaults).toContainText('Since 2024-12-26');
 		await expect(page.getByRole('checkbox', { name: 'T-Bill' })).toBeChecked();

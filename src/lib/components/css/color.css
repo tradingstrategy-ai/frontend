@@ -53,6 +53,7 @@
 	--box-4-alpha: 20%;
 
 	--c-background-accent-1: hsl(0 0% 0% / 20%);
+	--c-vault-row-selected: hsl(var(--hue-1) 22% 78% / 30%);
 
 	--c-input-background: var(--c-box-2);
 	--c-input-background-focus: var(--c-box-3);
@@ -108,6 +109,7 @@
 		--box-4-alpha: 48%;
 
 		--c-background-accent-1: var(--c-box-2);
+		--c-vault-row-selected: hsl(var(--hue-1) 46% 46% / 30%);
 
 		--c-input-background: color-mix(in srgb, white, transparent 5%);
 		--c-input-background-focus: white;
