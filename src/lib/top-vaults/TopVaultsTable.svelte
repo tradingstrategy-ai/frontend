@@ -37,6 +37,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 	import VaultSparkline from './VaultSparkline.svelte';
 	import IconChevronUp from '~icons/local/chevron-up';
 	import IconChevronDown from '~icons/local/chevron-down';
+	import IconSettings from '~icons/local/settings';
 	import IconHourglass from '~icons/local/hourglass';
 	import IconStop from '~icons/local/stop';
 	import { getChain, getChainDisplayName } from '$lib/helpers/chain';
@@ -1043,15 +1044,17 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 				aria-expanded={filtersOpen}
 				onclick={toggleFilters}
 			>
-				<IconChevronDown />
+				<IconSettings />
 				<span>Filters</span>
+				<IconChevronDown />
 			</button>
 
 			<div class="table-filters" class:mobile-filters-open={filtersOpen}>
 				<details class="vault-filters" data-testid="vault-filters" bind:open={filtersOpen}>
 					<summary class="filters-summary" data-testid="filters-summary" onclick={toggleDesktopFilters}>
-						<IconChevronDown />
+						<IconSettings />
 						<span>Filters</span>
+						<IconChevronDown />
 					</summary>
 
 					<div class="filters-content">
@@ -1900,6 +1903,9 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 			:global(.icon) {
 				flex-shrink: 0;
 				--icon-size: 0.875em;
+			}
+
+			:global(.chevron-down) {
 				transition: transform var(--time-sm) ease-out;
 			}
 		}
@@ -1907,7 +1913,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		.vault-filters[open] .filters-summary {
 			border-bottom: 1px solid var(--c-input-border);
 
-			:global(.icon) {
+			:global(.chevron-down) {
 				transform: rotate(180deg);
 			}
 		}
@@ -1949,10 +1955,13 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 
 				:global(.icon) {
 					--icon-size: 0.875em;
+				}
+
+				:global(.chevron-down) {
 					transition: transform var(--time-sm) ease-out;
 				}
 
-				&[aria-expanded='true'] :global(.icon) {
+				&[aria-expanded='true'] :global(.chevron-down) {
 					transform: rotate(180deg);
 				}
 			}

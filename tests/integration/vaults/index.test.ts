@@ -288,7 +288,10 @@ test.describe('vault index page', () => {
 
 		const filters = page.getByTestId('vault-filters');
 		await expect(filters).not.toHaveAttribute('open', '');
-		await expect(page.getByTestId('filters-summary')).toHaveText('Filters');
+		const filtersSummary = page.getByTestId('filters-summary');
+		await expect(filtersSummary).toHaveText('Filters');
+		await expect(filtersSummary.locator('svg').nth(0)).toHaveClass(/settings/);
+		await expect(filtersSummary.locator('svg').nth(1)).toHaveClass(/chevron-down/);
 		await expect(page.getByTestId('return-columns-trigger')).not.toBeVisible();
 		await expect(page.locator('.filters-content').getByText('Min TVL')).not.toBeVisible();
 
