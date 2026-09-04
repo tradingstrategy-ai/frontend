@@ -18,7 +18,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 	import type { TopVaults, VaultInfo } from './schemas';
 	import type { RiskRatingProvider } from './risk-rating-providers';
 	import type { ParamSchema } from '$lib/helpers/url-search-state';
-	import { onMount, untrack } from 'svelte';
+	import { onMount, tick, untrack } from 'svelte';
 	import { SvelteURL, SvelteURLSearchParams } from 'svelte/reactivity';
 	import { goto, replaceState } from '$app/navigation';
 	import { page } from '$app/state';
@@ -272,6 +272,9 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 	});
 
 	let selectionLimitReached = $derived(selectedVaultIds.length >= MAX_SELECTED_VAULTS);
+	let comparisonTableElement = $state<HTMLTableElement>();
+	let comparisonActionElement = $state<HTMLDivElement>();
+	let comparisonActionTop = $state<number>();
 	let comparisonHref = $derived.by(() => {
 		const searchParams = writeEquityComparisonState(new URLSearchParams(), {
 			vaultIds: selectedVaultIds,
@@ -310,6 +313,50 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 	function preventUnavailableVaultSelection(event: KeyboardEvent, vaultId: string): void {
 		if (isVaultSelectionUnavailable(vaultId) && event.key === ' ') event.preventDefault();
 	}
+
+	/**
+	 * Keep the action immediately below the last visible selected row, while
+	 * clamping it beneath the sticky table heading and inside the viewport.
+	 */
+	function positionComparisonAction(): void {
+		if (!comparisonTableElement || !comparisonActionElement) return;
+
+		const selectedRows = comparisonTableElement.querySelectorAll<HTMLTableRowElement>('tbody tr.selected');
+		const lastSelectedRow = selectedRows.item(selectedRows.length - 1);
+		const headerBottom = comparisonTableElement.querySelector('thead th')?.getBoundingClientRect().bottom ?? 0;
+		const actionHeight = comparisonActionElement.getBoundingClientRect().height;
+		const gap = 8;
+		const minimumTop = Math.max(0, headerBottom) + gap;
+		const maximumTop = Math.max(minimumTop, window.innerHeight - actionHeight - 16);
+		const naturalTop = lastSelectedRow ? lastSelectedRow.getBoundingClientRect().bottom + gap : maximumTop;
+
+		comparisonActionTop = Math.min(Math.max(naturalTop, minimumTop), maximumTop);
+	}
+
+	$effect(() => {
+		if (selectedVaultIds.length === 0) {
+			comparisonActionTop = undefined;
+			return;
+		}
+
+		let disposed = false;
+		const updatePosition = () => {
+			if (!disposed) positionComparisonAction();
+		};
+		void tick().then(updatePosition);
+		window.addEventListener('scroll', updatePosition, { passive: true });
+		window.addEventListener('resize', updatePosition);
+		const resizeObserver = new ResizeObserver(updatePosition);
+		if (comparisonTableElement) resizeObserver.observe(comparisonTableElement);
+		if (comparisonActionElement) resizeObserver.observe(comparisonActionElement);
+
+		return () => {
+			disposed = true;
+			window.removeEventListener('scroll', updatePosition);
+			window.removeEventListener('resize', updatePosition);
+			resizeObserver.disconnect();
+		};
+	});
 
 	// --- Sort column registry (key → default direction) ---
 
@@ -1037,7 +1084,12 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 {/snippet}
 
 {#snippet comparisonAction()}
-	<div class="compare-vaults-action" data-testid="compare-vaults-action">
+	<div
+		bind:this={comparisonActionElement}
+		class="compare-vaults-action"
+		data-testid="compare-vaults-action"
+		style:top={comparisonActionTop == null ? undefined : `${comparisonActionTop}px`}
+	>
 		<p id="vault-comparison-selection-status" role="status" class:sr-only={!selectionLimitReached}>
 			{selectionLimitReached ? `You can compare up to ${MAX_SELECTED_VAULTS} vaults.` : ''}
 		</p>
@@ -1446,6 +1498,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 	<div class="table-wrapper" class:comparison-selection-active={allowVaultComparison && selectedVaultIds.length > 0}>
 		<!-- --table-width needed for proper tr.targetable styling  -->
 		<table
+			bind:this={comparisonTableElement}
 			bind:offsetWidth
 			style:--table-width="{offsetWidth}px"
 			class:loading
@@ -1708,7 +1761,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 			justify-items: start;
 			gap: var(--space-xs);
 			left: max(env(safe-area-inset-left), calc((100% - var(--SECTION-width, calc(100% - (2 * var(--space-lg))))) / 2));
-			bottom: max(var(--space-lg), env(safe-area-inset-bottom));
+			padding-bottom: env(safe-area-inset-bottom);
 
 			p {
 				margin: 0;

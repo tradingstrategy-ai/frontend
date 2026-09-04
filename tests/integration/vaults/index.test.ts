@@ -241,6 +241,38 @@ async function expectLifetimeDataTooltip(
 	await expect(popup).toContainText(`Days of data: ${totalDays}`);
 }
 
+/**
+ * Read the Compare vaults action position relative to the selected row and sticky table heading.
+ */
+async function getCompareActionPlacement(page: import('@playwright/test').Page) {
+	return page.evaluate(() => {
+		const action = document.querySelector<HTMLElement>('[data-testid="compare-vaults-action"]');
+		const table = document.querySelector<HTMLTableElement>('.table-wrapper table');
+		const selectedRows = table?.querySelectorAll<HTMLTableRowElement>('tbody tr.selected');
+		const lastSelectedRow = selectedRows?.item((selectedRows.length ?? 1) - 1);
+		const header = table?.querySelector('thead th');
+		if (!action || !lastSelectedRow || !header)
+			throw new Error('Expected comparison action, selected row, and table heading');
+
+		const actionBounds = action.getBoundingClientRect();
+		const rowBounds = lastSelectedRow.getBoundingClientRect();
+		const headerBounds = header.getBoundingClientRect();
+		const gap = 8;
+		const minimumTop = Math.max(0, headerBounds.bottom) + gap;
+		const maximumTop = Math.max(minimumTop, innerHeight - actionBounds.height - 16);
+
+		return {
+			position: getComputedStyle(action).position,
+			actionTop: actionBounds.top,
+			actionBottom: actionBounds.bottom,
+			actionLeft: actionBounds.left,
+			tableLeft: table.getBoundingClientRect().left,
+			headerBottom: headerBounds.bottom,
+			expectedTop: Math.min(Math.max(rowBounds.bottom + gap, minimumTop), maximumTop)
+		};
+	});
+}
+
 test.describe('vault index page', () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/vaults');
@@ -288,23 +320,24 @@ test.describe('vault index page', () => {
 
 			const action = page.getByTestId('compare-vaults-action');
 			await expect(action).toBeVisible();
-			const actionLayout = await action.evaluate((element) => {
-				const actionBounds = element.getBoundingClientRect();
-				const tableWrapperBounds = document.querySelector('.table-wrapper')!.getBoundingClientRect();
-				return {
-					position: getComputedStyle(element).position,
-					actionAlignedWithTable: Math.abs(actionBounds.left - tableWrapperBounds.left) < 1,
-					actionFitsViewport:
-						actionBounds.left >= 0 && actionBounds.right <= innerWidth && actionBounds.bottom <= innerHeight
-				};
-			});
+			const actionLayout = await getCompareActionPlacement(page);
 			expect(actionLayout.position).toBe('fixed');
-			expect(actionLayout.actionAlignedWithTable).toBe(true);
-			expect(actionLayout.actionFitsViewport).toBe(true);
+			expect(Math.abs(actionLayout.actionLeft - actionLayout.tableLeft)).toBeLessThan(1);
+			expect(actionLayout.actionBottom).toBeLessThanOrEqual(viewport.height);
+			expect(actionLayout.actionTop).toBeGreaterThanOrEqual(0);
+			expect(Math.abs(actionLayout.actionTop - actionLayout.expectedTop)).toBeLessThan(2);
 
-			await page.evaluate(() => window.scrollBy(0, 800));
+			await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
 			await expect(action).toBeVisible();
-			expect(await action.evaluate((element) => getComputedStyle(element).position)).toBe('fixed');
+			await expect
+				.poll(async () => {
+					const layout = await getCompareActionPlacement(page);
+					return Math.abs(layout.actionTop - layout.expectedTop);
+				})
+				.toBeLessThan(2);
+			const stickyActionLayout = await getCompareActionPlacement(page);
+			expect(stickyActionLayout.position).toBe('fixed');
+			expect(stickyActionLayout.actionTop).toBeGreaterThanOrEqual(stickyActionLayout.headerBottom + 7);
 
 			await checkbox.click();
 			await expect(action).not.toBeVisible();
@@ -329,6 +362,10 @@ test.describe('vault index page', () => {
 
 		const action = page.getByTestId('compare-vaults-action');
 		await expect(action).toBeVisible();
+		const actionLayout = await getCompareActionPlacement(page);
+		expect(actionLayout.position).toBe('fixed');
+		expect(Math.abs(actionLayout.actionLeft - actionLayout.tableLeft)).toBeLessThan(1);
+		expect(Math.abs(actionLayout.actionTop - actionLayout.expectedTop)).toBeLessThan(2);
 		const compareLink = action.getByRole('link', { name: /Compare vaults/ });
 		const destination = new URL((await compareLink.getAttribute('href'))!, page.url());
 		expect(destination.pathname).toBe('/vaults/compare');

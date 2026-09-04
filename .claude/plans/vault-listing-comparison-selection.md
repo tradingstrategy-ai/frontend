@@ -10,8 +10,9 @@ viewports.
 
 Each rendered vault row gets a checkbox in the existing first/rank cell, below
 the rank number. Selecting at least one row highlights every selected row and
-shows a persistent **Compare vaults** action aligned with the table's left edge
-at the viewport's safe bottom edge.
+shows a persistent **Compare vaults** action aligned with the table's left edge,
+immediately below the last selected row. While scrolling, it stays beneath the
+fixed table heading or at the viewport's safe bottom edge.
 
 ## Current implementation and constraints
 
@@ -146,15 +147,16 @@ Reuse `writeEquityComparisonState` from
   paths continue to work. Use an anchor-style action (the shared `Button`
   component is suitable) so the destination is inspectable, openable in a new
   tab, and usable without a bespoke click-navigation handler.
-- Render the fixed action only when at least one ID is selected. Keep the main
+- Render the persistent action only when at least one ID is selected. Keep the main
   visible text exactly **Compare vaults**, add a compact visible selected-count
   badge, and expose an unambiguous accessible name such as “Compare 3 selected
   vaults”.
-- Position its wrapper at the table's left edge and the viewport's safe bottom
-  edge with a deliberate stacking level, theme-derived surface/border/shadow,
-  standard spacing tokens, and `env(safe-area-inset-bottom/left)` allowances.
-  Constrain it within the viewport on narrow screens and ensure it does not
-  create page-level horizontal overflow.
+- Position its wrapper at the table's left edge immediately after the last
+  selected row. Clamp its fixed position below the table heading and inside the
+  viewport's safe bottom edge with a deliberate stacking level, theme-derived
+  surface/border/shadow, standard spacing tokens, and
+  `env(safe-area-inset-bottom/left)` allowances. Ensure it does not create
+  page-level horizontal overflow on narrow screens.
 
 Set `allowVaultComparison={false}` on the `TopVaultsTable` instance in
 `src/routes/vaults/compare/+page.svelte`. Its existing selected-vault cards and
@@ -195,9 +197,9 @@ and mobile (375px) widths:
   assert the checkboxes—not the row detail links—receive the interaction;
 - assert both rows share the computed selected background while unselected rows
   retain their alternating backgrounds;
-- confirm the persistent action is fixed at the table's left edge, remains
-  visible after table scrolling, and causes no document-level horizontal
-  overflow at tablet or mobile widths;
+- confirm the persistent action is below the last selected row when it is
+  visible, then remains beneath the fixed heading while scrolling, and causes
+  no document-level horizontal overflow at tablet or mobile widths;
 - in the desktop flow, activate **Compare vaults** and verify `/vaults/compare`
   receives the same two IDs in selection order and renders those vaults in its
   Selected vaults list;
