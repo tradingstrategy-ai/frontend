@@ -3,6 +3,19 @@ export const comparisonBenchmarkKeys = ['treasury', 'eth', 'btc'] as const;
 
 export type ComparisonBenchmark = (typeof comparisonBenchmarkKeys)[number];
 
+/** Whether vault curves show existing share-price returns or fee-adjusted returns. */
+export const comparisonReturnModes = ['net', 'gross'] as const;
+
+export type ComparisonReturnMode = (typeof comparisonReturnModes)[number];
+
+/** Investor fee data required to calculate a net comparison curve. */
+export interface ComparisonFeeProfile {
+	entryRate: number;
+	exitRate: number;
+	managementRate: number;
+	performanceRate: number;
+}
+
 /** Compact public vault metadata used by the comparison page. */
 export interface ComparisonVault {
 	id: string;
@@ -12,6 +25,8 @@ export interface ComparisonVault {
 	protocolName: string;
 	chainName: string;
 	entityType: 'vault' | 'tokenised-fund' | 'blacklisted-vault';
+	/** Null when the source does not provide every fee needed for a net curve. */
+	feeProfile: ComparisonFeeProfile | null;
 }
 
 /** Raw share-price history returned by the comparison chart-data endpoint. */
@@ -47,6 +62,7 @@ export interface ComparisonPeriodMetrics {
 export interface ComparisonChartPoint {
 	time: number;
 	value: number;
+	feeEvent?: 'after-entry' | 'before-exit' | 'after-exit';
 }
 
 export interface ComparisonChartSeries {

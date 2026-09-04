@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add Gross and Net fee-aware return modes to the multi-vault comparison chart (2026-09-04)
 - Show a "check your email for your API key" notice on the vault datasets page after a Creem checkout redirect (2026-09-03)
 - Add a dedicated podcast episode page with YouTube and Spotify links (2026-09-02)
 - Clarify vault gross and net returns, add fee-aware return examples, and improve vault comparison metadata (2026-09-02)

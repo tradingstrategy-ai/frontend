@@ -10,6 +10,10 @@ import {
 	parseEquityComparisonState,
 	writeEquityComparisonState
 } from '$lib/top-vaults/equity-comparison/state';
+import {
+	getCanonicalComparisonReturnMode,
+	getComparisonFeeProfile
+} from '$lib/top-vaults/equity-comparison/net-returns';
 import { comparisonBenchmarkKeys, type ComparisonVault } from '$lib/top-vaults/equity-comparison/types';
 import { getVaultProtocolDisplayName, isBlacklisted, resolveVaultDetails } from '$lib/top-vaults/helpers';
 import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers';
@@ -19,6 +23,7 @@ export async function load({ fetch, url }) {
 	const requestedVaultIds = url.searchParams.getAll('vault');
 	const requestedBenchmarks = url.searchParams.getAll('benchmark');
 	const requestedPeriods = url.searchParams.getAll('period');
+	const requestedReturnModes = url.searchParams.getAll('return');
 	const requestedState = parseEquityComparisonState(url.searchParams);
 	const topVaults = await getCachedTopVaults(fetch);
 	const hasExplicitComparisonState =
@@ -29,10 +34,12 @@ export async function load({ fetch, url }) {
 	if (!hasExplicitComparisonState) {
 		const defaultVault = topVaults.vaults.find((vault) => vault.name === 'Savings USDS');
 		if (defaultVault) {
+			const returnMode = getCanonicalComparisonReturnMode(requestedState.returnMode, [defaultVault]);
 			const defaultSearchParams = writeEquityComparisonState(url.searchParams, {
 				vaultIds: [defaultVault.id],
 				benchmarks: [...comparisonBenchmarkKeys],
-				timeSpan: requestedState.timeSpan
+				timeSpan: requestedState.timeSpan,
+				returnMode
 			});
 			redirect(307, `${url.pathname}?${defaultSearchParams}`);
 		}
@@ -43,6 +50,8 @@ export async function load({ fetch, url }) {
 	const canonicalTimeSpan = requestedState.timeSpan;
 	const vaultById = new Map(topVaults.vaults.map((vault) => [vault.id, vault]));
 	const resolvedVaultIds = canonicalVaultIds.filter((vaultId) => vaultById.has(vaultId));
+	const selectedVaultRecords = resolvedVaultIds.map((vaultId) => vaultById.get(vaultId)!);
+	const canonicalReturnMode = getCanonicalComparisonReturnMode(requestedState.returnMode, selectedVaultRecords);
 	const hasStaleEmptyMarker =
 		resolvedVaultIds.length > 0 && url.searchParams.get(EMPTY_COMPARISON_PARAMETER) === EMPTY_COMPARISON_VALUE;
 
@@ -54,17 +63,19 @@ export async function load({ fetch, url }) {
 		requestedBenchmarks.some((value, index) => value !== canonicalBenchmarks[index]) ||
 		requestedPeriods.length !== 1 ||
 		requestedPeriods[0] !== canonicalTimeSpan ||
+		requestedReturnModes.length !== 1 ||
+		requestedReturnModes[0] !== canonicalReturnMode ||
 		hasStaleEmptyMarker
 	) {
 		const canonicalSearchParams = writeEquityComparisonState(url.searchParams, {
 			vaultIds: resolvedVaultIds,
 			benchmarks: canonicalBenchmarks,
-			timeSpan: canonicalTimeSpan
+			timeSpan: canonicalTimeSpan,
+			returnMode: canonicalReturnMode
 		});
 		redirect(307, `${url.pathname}?${canonicalSearchParams}`);
 	}
 
-	const selectedVaultRecords = resolvedVaultIds.map((vaultId) => vaultById.get(vaultId)!);
 	const selectedVaults: ComparisonVault[] = selectedVaultRecords.map((vault) => {
 		const curatorLogos = vault.curator_slug ? topVaults.curators[vault.curator_slug]?.logos : undefined;
 		const logoUrl =
@@ -85,7 +96,8 @@ export async function load({ fetch, url }) {
 				? 'blacklisted-vault'
 				: vault.flags.includes('tokenised_fund')
 					? 'tokenised-fund'
-					: 'vault'
+					: 'vault',
+			feeProfile: getComparisonFeeProfile(vault)
 		};
 	});
 	const selectedCurators = Object.fromEntries(

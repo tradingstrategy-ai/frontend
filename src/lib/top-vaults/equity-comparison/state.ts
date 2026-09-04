@@ -1,7 +1,9 @@
 import {
 	comparisonBenchmarkKeys,
+	comparisonReturnModes,
 	comparisonTimeSpanKeys,
 	type ComparisonBenchmark,
+	type ComparisonReturnMode,
 	type ComparisonTimeSpan
 } from './types';
 import { deserialiseSearchParams, serialiseSearchParams, type ParamSchema } from '$lib/helpers/url-search-state';
@@ -14,12 +16,14 @@ export interface EquityComparisonState {
 	vaultIds: string[];
 	benchmarks: ComparisonBenchmark[];
 	timeSpan: ComparisonTimeSpan;
+	returnMode: ComparisonReturnMode;
 }
 
 const comparisonSearchParamsSchema = {
 	vault: { type: 'string[]', defaultValue: [] },
 	benchmark: { type: 'string[]', defaultValue: [], options: comparisonBenchmarkKeys },
-	period: { type: 'string', defaultValue: '3M', options: comparisonTimeSpanKeys }
+	period: { type: 'string', defaultValue: '3M', options: comparisonTimeSpanKeys },
+	return: { type: 'string', defaultValue: 'net', options: comparisonReturnModes }
 } as const satisfies ParamSchema;
 
 function uniqueTrimmed(values: readonly string[], limit = Number.POSITIVE_INFINITY): string[] {
@@ -48,13 +52,14 @@ export function canonicaliseComparisonBenchmarks(values: readonly string[]): Com
 	return comparisonBenchmarkKeys.filter((benchmark) => selected.has(benchmark));
 }
 
-/** Parse comparison state from the `vault`, `benchmark`, and `period` parameters. */
+/** Parse comparison state from the comparison URL parameters. */
 export function parseEquityComparisonState(searchParams: URLSearchParams): EquityComparisonState {
 	const state = deserialiseSearchParams(searchParams, comparisonSearchParamsSchema);
 	return {
 		vaultIds: canonicaliseComparisonVaultIds(state.vault),
 		benchmarks: canonicaliseComparisonBenchmarks(state.benchmark),
-		timeSpan: state.period as ComparisonTimeSpan
+		timeSpan: state.period as ComparisonTimeSpan,
+		returnMode: state.return as ComparisonReturnMode
 	};
 }
 
@@ -67,6 +72,7 @@ export function writeEquityComparisonState(
 	next.delete('vault');
 	next.delete('benchmark');
 	next.delete('period');
+	next.delete('return');
 	next.delete(EMPTY_COMPARISON_PARAMETER);
 
 	const vaultIds = canonicaliseComparisonVaultIds(state.vaultIds);
@@ -75,7 +81,8 @@ export function writeEquityComparisonState(
 			{
 				vault: vaultIds,
 				benchmark: canonicaliseComparisonBenchmarks(state.benchmarks),
-				period: state.timeSpan
+				period: state.timeSpan,
+				return: state.returnMode
 			},
 			comparisonSearchParamsSchema
 		)
@@ -83,6 +90,7 @@ export function writeEquityComparisonState(
 	for (const [key, value] of comparisonParams) next.append(key, value);
 	// Keep the default explicit too, so every copied comparison URL fully describes the chart.
 	next.set('period', state.timeSpan);
+	next.set('return', state.returnMode);
 	if (!vaultIds.length) next.set(EMPTY_COMPARISON_PARAMETER, EMPTY_COMPARISON_VALUE);
 
 	return next;

@@ -288,7 +288,10 @@ test.describe('vault index page', () => {
 
 		const filters = page.getByTestId('vault-filters');
 		await expect(filters).not.toHaveAttribute('open', '');
-		await expect(page.getByTestId('filters-summary')).toHaveText('Filters');
+		const filtersSummary = page.getByTestId('filters-summary');
+		await expect(filtersSummary).toHaveText('Filters');
+		await expect(filtersSummary.locator('svg').nth(0)).toHaveClass(/settings/);
+		await expect(filtersSummary.locator('svg').nth(1)).toHaveClass(/chevron-down/);
 		await expect(page.getByTestId('return-columns-trigger')).not.toBeVisible();
 		await expect(page.locator('.filters-content').getByText('Min TVL')).not.toBeVisible();
 
@@ -459,8 +462,8 @@ test.describe('vault index page', () => {
 
 		const revealButton = page.getByTestId('show-blacklisted-vaults');
 		await expect(revealButton).toHaveText(/Show \d+ blacklisted vaults?/);
-		await expect(page.getByTestId('top-vaults-meta')).toContainText('256 vaults');
-		await expect(page.locator('tbody tr.targetable')).toHaveCount(256);
+		await expect(page.getByTestId('top-vaults-meta')).toContainText('258 vaults');
+		await expect(page.locator('tbody tr.targetable')).toHaveCount(258);
 		await revealButton.scrollIntoViewIfNeeded();
 
 		const scrollBefore = await page.evaluate(() => window.scrollY);
@@ -475,8 +478,8 @@ test.describe('vault index page', () => {
 
 		await expect.poll(() => new URL(page.url()).searchParams.get('risk')).toBe('0');
 		await expect(page.getByTestId('show-blacklisted-vaults')).toHaveCount(0);
-		await expect(page.getByTestId('top-vaults-meta')).toContainText('257 vaults');
-		await expect(page.locator('tbody tr.targetable')).toHaveCount(257);
+		await expect(page.getByTestId('top-vaults-meta')).toContainText('259 vaults');
+		await expect(page.locator('tbody tr.targetable')).toHaveCount(259);
 		await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThanOrEqual(scrollBefore - 200);
 		expect(documentNavigationUrl).toBeUndefined();
 	});
@@ -486,14 +489,14 @@ test.describe('vault index page', () => {
 		await loadAllVaultRows(page);
 
 		await page.getByTestId('show-blacklisted-vaults').click();
-		await expect(page.locator('tbody tr.targetable')).toHaveCount(257);
+		await expect(page.locator('tbody tr.targetable')).toHaveCount(259);
 
 		await page.locator('th.vault button').click();
 		await expect(page).toHaveURL(/sort=vault/);
 		await loadAllVaultRows(page);
 
 		const rows = page.locator('tbody tr.targetable');
-		await expect(rows).toHaveCount(257);
+		await expect(rows).toHaveCount(259);
 		await expect(rows.filter({ hasText: 'atvPTmax' })).toHaveCount(1);
 	});
 
@@ -547,11 +550,11 @@ test.describe('vault index page', () => {
 		await expect(page.locator('tbody tr.targetable').filter({ hasText: 'Above TVL 009' })).toHaveCount(0);
 
 		await page.getByTestId('show-blacklisted-vaults').click();
-		await expect(page.getByTestId('top-vaults-meta')).toContainText('257 vaults');
+		await expect(page.getByTestId('top-vaults-meta')).toContainText('259 vaults');
 		await loadAllVaultRows(page);
 
 		await expect(page.locator('tbody tr.targetable').filter({ hasText: 'Above TVL 009' })).toHaveCount(1);
-		await expect(page.locator('tbody tr.targetable')).toHaveCount(257, { timeout: 15_000 });
+		await expect(page.locator('tbody tr.targetable')).toHaveCount(259, { timeout: 15_000 });
 	});
 
 	test('continues a blacklisted reveal when the original listing fits in one server page', async ({ page }) => {
@@ -623,8 +626,8 @@ test.describe('vault index page', () => {
 
 	test('displays vault count in table meta', async ({ page }) => {
 		const meta = page.getByTestId('top-vaults-meta');
-		// Should show 256 vaults (those above TVL threshold)
-		await expect(meta).toContainText('256 vaults');
+		// Should show 258 vaults (those above TVL threshold)
+		await expect(meta).toContainText('258 vaults');
 	});
 
 	test('renders an initial batch of more than 100 rows', async ({ page }) => {
@@ -691,9 +694,9 @@ test.describe('vault index page', () => {
 		await sentinel.scrollIntoViewIfNeeded();
 		await expect(rows).toHaveCount(225);
 
-		// The final continuation contains the remaining 31 rows.
+		// The final continuation contains the remaining 33 rows.
 		await sentinel.scrollIntoViewIfNeeded();
-		await expect(rows).toHaveCount(256);
+		await expect(rows).toHaveCount(258);
 
 		// All rows loaded - no more sentinel.
 		await expect(sentinel).not.toBeVisible();

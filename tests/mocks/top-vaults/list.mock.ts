@@ -618,7 +618,51 @@ const parquetMatchedVaults = [
 		current_nav: 2_400_000,
 		peak_nav: 2_700_000,
 		one_month_cagr: 0.09,
-		three_months_cagr: 0.11
+		three_months_cagr: 0.11,
+		net_fees: {
+			fee_mode: 'feeless',
+			management: null,
+			performance: null,
+			deposit: null,
+			withdraw: null
+		}
+	}),
+	createTestVault('The Kingfisher Vault', {
+		address: '0xd4d607239dcbdb5cc3a301266433810bb63c63bf',
+		chain: 'robinhood',
+		chain_id: 4663,
+		protocol: 'T3tris',
+		current_nav: 210_000,
+		peak_nav: 220_000,
+		fee_internalised: true,
+		gross_fees: {
+			fee_mode: 'internalised_minting',
+			management: 0,
+			performance: 0.3,
+			deposit: 0.01,
+			withdraw: 0
+		},
+		net_fees: {
+			fee_mode: 'internalised_minting',
+			management: 0,
+			performance: 0,
+			deposit: 0.01,
+			withdraw: 0
+		}
+	}),
+	createTestVault('Gami USDC', {
+		address: '0xdae854d0896ad2fee335689a3f7b4a95fd1a3e46',
+		chain: 'ethereum',
+		protocol: 'Lagoon Finance',
+		current_nav: 9_300_000,
+		peak_nav: 10_000_000,
+		net_fees: {
+			fee_mode: 'externalised',
+			management: 0,
+			performance: 0.2,
+			deposit: 0,
+			withdraw: 0
+		}
 	}),
 	createTestVault('Peapods Interest Bearing USDC - 42', {
 		address: '0x4b5c90dc6bc08a10a24487726e614e9d148362e1',
