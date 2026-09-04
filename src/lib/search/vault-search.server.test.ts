@@ -34,4 +34,25 @@ describe('vault search', () => {
 			name: 'Yearn Bold vault'
 		});
 	});
+
+	test('can order matching vaults by latest TVL', async () => {
+		mocks.getCachedTopVaults.mockResolvedValue({
+			generated_at: '2026-09-03T00:00:00.000Z',
+			vaults: [
+				createTestVault('Small vault', { current_nav: 10_000 }),
+				createTestVault('Large vault', { current_nav: 1_000_000 }),
+				createTestVault('Largest blacklisted vault', { current_nav: 2_000_000, risk: 'Blacklisted' })
+			],
+			core3_protocols: {},
+			curators: {}
+		} satisfies TopVaults);
+
+		const response = await searchVaultEntities(vi.fn() as unknown as Fetch, 'vault', 10, { sort: 'tvl' });
+
+		expect(response.results.map(({ name }) => name)).toEqual([
+			'Largest blacklisted vault',
+			'Large vault',
+			'Small vault'
+		]);
+	});
 });

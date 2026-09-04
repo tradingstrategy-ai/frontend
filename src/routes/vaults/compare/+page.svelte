@@ -9,6 +9,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 	import { SvelteURLSearchParams } from 'svelte/reactivity';
 	import { JsonLd } from 'svelte-meta-tags';
 	import Alert from '$lib/components/Alert.svelte';
+	import { TimeSpans } from '$lib/charts/time-span';
 	import DataBadge from '$lib/components/DataBadge.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
@@ -26,12 +27,18 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 	import VaultEquityComparisonChart from '$lib/top-vaults/equity-comparison/VaultEquityComparisonChart.svelte';
 	import { assignVaultComparisonColours } from '$lib/top-vaults/equity-comparison/colours';
 	import {
+		getComparisonVisibleRange,
+		getNetComparisonPeriodMetrics
+	} from '$lib/top-vaults/equity-comparison/net-returns';
+	import {
 		MAX_SELECTED_VAULTS,
 		parseEquityComparisonState,
 		writeEquityComparisonState
 	} from '$lib/top-vaults/equity-comparison/state';
 	import type {
 		ComparisonBenchmark,
+		ComparisonReturnMode,
+		ComparisonTimeBucket,
 		ComparisonTimeSpan,
 		VaultComparisonChartResponse
 	} from '$lib/top-vaults/equity-comparison/types';
@@ -42,6 +49,11 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 	let selectedVaultIds = $derived(selectedVaults.map(({ id }) => id));
 	let selectionLimitReached = $derived(selectedVaultIds.length >= MAX_SELECTED_VAULTS);
 	let comparisonState = $derived(parseEquityComparisonState(page.url.searchParams));
+	let selectedReturnMode = $derived(comparisonState.returnMode);
+	let netAvailable = $derived(selectedVaults.length > 0 && selectedVaults.every((vault) => vault.feeProfile !== null));
+	let missingFeeVaultNames = $derived(
+		selectedVaults.filter((vault) => vault.feeProfile === null).map((vault) => vault.name)
+	);
 	let chartData = $state<VaultComparisonChartResponse>();
 	let chartLoading = $state(true);
 	let chartError = $state<string | null>(null);
@@ -51,11 +63,26 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 	let pendingVaultId = $state<string | null>(null);
 	let colours = $state<ReadonlyMap<string, string>>(new Map());
 	let selectedTimeSpan = $derived(comparisonState.timeSpan);
-	let selectedPeriodMetricsByVaultId = $derived(
-		new Map(
+	let selectedPeriodMetricsByVaultId = $derived.by(() => {
+		const grossMetrics = new Map(
 			(chartData?.vaultSeries ?? []).map((series) => [series.id, series.periodMetrics?.[selectedTimeSpan]] as const)
-		)
-	);
+		);
+		if (selectedReturnMode === 'gross' || !chartData?.range) return grossMetrics;
+
+		const timeSpan = TimeSpans.get(selectedTimeSpan);
+		const visibleRange = getComparisonVisibleRange(chartData.range, timeSpan);
+		const vaultById = new Map(selectedVaults.map((vault) => [vault.id, vault]));
+		const netMetrics: [string, ReturnType<typeof getNetComparisonPeriodMetrics>][] = [];
+		for (const series of chartData.vaultSeries) {
+			const profile = vaultById.get(series.id)?.feeProfile;
+			if (!profile) continue;
+			netMetrics.push([
+				series.id,
+				getNetComparisonPeriodMetrics(series.points[timeSpan.timeBucket as ComparisonTimeBucket], profile, visibleRange)
+			]);
+		}
+		return new Map(netMetrics);
+	});
 	let chartRequestKey = $derived(JSON.stringify([selectedVaultIds, comparisonState.benchmarks]));
 	let previousChartRequestKey: string | undefined;
 	let handledRetryVersion = 0;
@@ -136,9 +163,15 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 	async function updateComparison(
 		vaultIds: string[],
 		benchmarks: ComparisonBenchmark[],
-		timeSpan: ComparisonTimeSpan = selectedTimeSpan
+		timeSpan: ComparisonTimeSpan = selectedTimeSpan,
+		returnMode: ComparisonReturnMode = selectedReturnMode
 	): Promise<void> {
-		const searchParams = writeEquityComparisonState(page.url.searchParams, { vaultIds, benchmarks, timeSpan });
+		const searchParams = writeEquityComparisonState(page.url.searchParams, {
+			vaultIds,
+			benchmarks,
+			timeSpan,
+			returnMode
+		});
 		const search = searchParams.size ? `?${searchParams}` : '';
 		comparisonPending = true;
 		try {
@@ -157,7 +190,21 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 		const searchParams = writeEquityComparisonState(page.url.searchParams, {
 			vaultIds: selectedVaultIds,
 			benchmarks: comparisonState.benchmarks,
-			timeSpan
+			timeSpan,
+			returnMode: selectedReturnMode
+		});
+		const search = searchParams.size ? `?${searchParams}` : '';
+		replaceState(resolve(`/vaults/compare${search}` as '/vaults/compare'), page.state);
+	}
+
+	function selectReturnMode(returnMode: ComparisonReturnMode): void {
+		if (returnMode === 'net' && !netAvailable) return;
+		selectedReturnMode = returnMode;
+		const searchParams = writeEquityComparisonState(page.url.searchParams, {
+			vaultIds: selectedVaultIds,
+			benchmarks: comparisonState.benchmarks,
+			timeSpan: selectedTimeSpan,
+			returnMode
 		});
 		const search = searchParams.size ? `?${searchParams}` : '';
 		replaceState(resolve(`/vaults/compare${search}` as '/vaults/compare'), page.state);
@@ -238,9 +285,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 <main class="vault-compare-page ds-3">
 	<Section tag="header">
 		<VaultListingsSelector />
-		<HeroBanner
-			subtitle="Compare the historical performance of vaults with each other and US Treasury, ETH, and BTC benchmarks. Comparison is gross performance; check the vault pages for fee details."
-		>
+		<HeroBanner subtitle="Compare historical vault performance with US Treasury, ETH, and BTC benchmarks.">
 			{#snippet title()}
 				<span class="page-title">
 					{pageTitle}
@@ -261,6 +306,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 					placeholder="Search by vault name, address, protocol or chain"
 					showAllResults={false}
 					minimumVaultTvlUsd={1_000}
+					vaultSort="tvl"
 					disabled={selectionLimitReached || comparisonPending}
 					addButton={addVaultButton}
 				/>
@@ -340,10 +386,14 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 				vaults={selectedVaults}
 				data={chartData}
 				enabledBenchmarks={comparisonState.benchmarks}
+				returnMode={selectedReturnMode}
+				{netAvailable}
+				{missingFeeVaultNames}
 				{colours}
 				loading={chartLoading || comparisonPending}
 				{selectedTimeSpan}
 				onTimeSpanChange={selectTimeSpan}
+				onReturnModeChange={selectReturnMode}
 			/>
 		{:else if !chartError}
 			<div class="empty-state">
@@ -362,7 +412,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 					tvlTriggerLabel="Selected vaults"
 					tvlTooltip="This table contains only the vaults selected for the equity comparison."
 					showStablecoinOnlyMeta={false}
-					preserveSearchParams={['vault', 'benchmark', 'period']}
+					preserveSearchParams={['vault', 'benchmark', 'period', 'return']}
 				/>
 			</section>
 		{/if}

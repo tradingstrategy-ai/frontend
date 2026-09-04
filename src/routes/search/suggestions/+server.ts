@@ -11,6 +11,7 @@ export async function GET({ fetch, url }) {
 	const scope = url.searchParams.get('scope') ?? 'all';
 	const limitParameter = url.searchParams.get('limit');
 	const minimumVaultTvlParameter = url.searchParams.get('minimumVaultTvlUsd');
+	const sort = url.searchParams.get('sort') ?? 'relevance';
 	const requestedLimit = limitParameter === null ? DEFAULT_LIMIT : Number(limitParameter);
 	const limit = Number.isInteger(requestedLimit) ? Math.min(Math.max(requestedLimit, 1), MAX_LIMIT) : DEFAULT_LIMIT;
 	const minimumVaultTvlUsd = minimumVaultTvlParameter === null ? undefined : Number(minimumVaultTvlParameter);
@@ -20,6 +21,12 @@ export async function GET({ fetch, url }) {
 	}
 	if (scope !== 'all' && scope !== 'vaults') {
 		return json({ message: 'Search scope must be all or vaults.' }, { status: 400 });
+	}
+	if (sort !== 'relevance' && sort !== 'tvl') {
+		return json({ message: 'Sort must be relevance or tvl.' }, { status: 400 });
+	}
+	if (sort === 'tvl' && scope !== 'vaults') {
+		return json({ message: 'TVL sorting is available only for vault searches.' }, { status: 400 });
 	}
 	if (
 		minimumVaultTvlUsd !== undefined &&
@@ -32,7 +39,8 @@ export async function GET({ fetch, url }) {
 		const response = await searchVaultEntities(fetch, query, limit, {
 			diversifyTypes: scope === 'all',
 			entityTypes: scope === 'vaults' ? VAULT_ENTITY_TYPES : undefined,
-			minimumVaultTvlUsd
+			minimumVaultTvlUsd,
+			sort
 		});
 		return json(response, { headers: { 'cache-control': 'public, max-age=60' } });
 	} catch (error) {

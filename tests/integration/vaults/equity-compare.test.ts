@@ -5,6 +5,12 @@ type SearchResult = {
 	vaultId: string | null;
 };
 
+const feeConfiguredVaultIds = {
+	savingsUsds: '1-0xa3931d71877c0e7a3148cb7eb4463524fec27fbd',
+	kingfisher: '4663-0xd4d607239dcbdb5cc3a301266433810bb63c63bf',
+	gamiUsdc: '1-0xdae854d0896ad2fee335689a3f7b4a95fd1a3e46'
+} as const;
+
 /**
  * Resolve a vault ID through the same server-side search used by the selector.
  */
@@ -93,6 +99,54 @@ async function mockResponsiveChartData(page: Page) {
 }
 
 test.describe('vault equity curve comparison page', () => {
+	test('recalculates fee-configured vault curves when Gross and Net are toggled', async ({ page }) => {
+		const chartRequests = await mockResponsiveChartData(page);
+		const selection = new URLSearchParams();
+		for (const vaultId of Object.values(feeConfiguredVaultIds)) selection.append('vault', vaultId);
+		selection.set('period', '3M');
+		selection.set('return', 'net');
+
+		await page.goto(`/vaults/compare?${selection}`);
+
+		const selectedVaults = page.getByRole('list', { name: 'Selected vaults' });
+		await expect(selectedVaults).toContainText('Savings USDS');
+		await expect(selectedVaults).toContainText('The Kingfisher Vault');
+		await expect(selectedVaults).toContainText('Gami USDC');
+		const netRadio = page.getByRole('radio', { name: 'Net' });
+		const grossRadio = page.getByRole('radio', { name: 'Gross' });
+		await expect(netRadio).toBeChecked();
+		await expect(netRadio).toBeEnabled();
+
+		const chart = page.getByTestId('tv-chart');
+		await expect(chart.locator('canvas').first()).toBeVisible();
+		const netChartImage = await chart.screenshot();
+		const kingfisherMetrics = selectedVaults
+			.locator('li')
+			.filter({ hasText: 'The Kingfisher Vault' })
+			.locator('.vault-period-metrics');
+		const gamiMetrics = selectedVaults.locator('li').filter({ hasText: 'Gami USDC' }).locator('.vault-period-metrics');
+		await expect(kingfisherMetrics).toContainText(/CAGR/);
+		await expect(gamiMetrics).toContainText(/CAGR/);
+		await expect(kingfisherMetrics).toContainText('23.8% CAGR Since 2024-12-26');
+		await expect(gamiMetrics).toContainText('33.4% CAGR Since 2024-12-26');
+		const netKingfisherMetrics = await kingfisherMetrics.textContent();
+		const netGamiMetrics = await gamiMetrics.textContent();
+
+		await grossRadio.check();
+		await expect.poll(() => new URL(page.url()).searchParams.get('return')).toBe('gross');
+		await expect(grossRadio).toBeChecked();
+
+		// The screenshot is limited to the plotting canvas: a difference confirms
+		// the series, rather than only the radio state, was recalculated.
+		const netChartBase64 = netChartImage.toString('base64');
+		await expect.poll(async () => (await chart.screenshot()).toString('base64')).not.toBe(netChartBase64);
+		await expect(kingfisherMetrics).toContainText('14.0% CAGR Since 2024-12-01');
+		await expect(gamiMetrics).toContainText('15.0% CAGR Since 2024-12-01');
+		expect(await kingfisherMetrics.textContent()).not.toBe(netKingfisherMetrics);
+		expect(await gamiMetrics.textContent()).not.toBe(netGamiMetrics);
+		expect(chartRequests).toHaveLength(1);
+	});
+
 	test('selects Savings USDS and all benchmarks by default', async ({ page }) => {
 		const chartRequests = await mockResponsiveChartData(page);
 
@@ -105,8 +159,9 @@ test.describe('vault equity curve comparison page', () => {
 		await expect(page.getByRole('heading', { name: 'Selected vaults' })).toBeVisible();
 		await expect(selectedVaults.locator('li')).toHaveCount(1);
 		await expect(selectedVaults).toContainText('Savings USDS');
-		await expect(selectedVaults).toContainText('13.0% CAGR');
-		await expect(selectedVaults).toContainText('Since 2024-12-01');
+		await expect(page.getByRole('radio', { name: 'Net' })).toBeChecked();
+		await expect(selectedVaults).toContainText('21.3% CAGR');
+		await expect(selectedVaults).toContainText('Since 2024-12-26');
 		await expect(page.getByRole('checkbox', { name: 'T-Bill' })).toBeChecked();
 		await expect(page.getByRole('checkbox', { name: 'ETH' })).toBeChecked();
 		await expect(page.getByRole('checkbox', { name: 'BTC' })).toBeChecked();
@@ -141,18 +196,21 @@ test.describe('vault equity curve comparison page', () => {
 		expect(new URL(page.url()).searchParams.getAll('vault')).toHaveLength(1);
 		expect(new URL(page.url()).searchParams.getAll('benchmark')).toEqual(['treasury', 'eth', 'btc']);
 		expect(new URL(page.url()).searchParams.get('period')).toBe('3M');
+		expect(new URL(page.url()).searchParams.get('return')).toBeTruthy();
 		await expect.poll(() => chartRequests.at(-1)?.benchmarks).toEqual(['treasury', 'eth', 'btc']);
 		await expect(page.getByTestId('page-search')).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
 
 		await page.getByRole('button', { name: 'Remove Savings USDS from comparison' }).click();
 		await expect(page.getByRole('list', { name: 'Selected vaults' })).toHaveCount(0);
 		expect(new URL(page.url()).searchParams.get('comparison')).toBe('empty');
+		expect(new URL(page.url()).searchParams.get('return')).toBe('net');
 	});
 
 	test('adds, compares and removes vaults while keeping state in the URL', async ({ page }) => {
 		test.setTimeout(120_000);
 		const batchRequests: string[][] = [];
 		const suggestionMinimumTvls: string[] = [];
+		const suggestionSorts: string[] = [];
 		const pageErrors: string[] = [];
 		page.on('pageerror', (error) => pageErrors.push(error.message));
 		await page.route('**/vaults/compare/chart-data?*', async (route) => {
@@ -208,7 +266,9 @@ test.describe('vault equity curve comparison page', () => {
 			});
 		});
 		await page.route('**/search/suggestions?*', async (route) => {
-			suggestionMinimumTvls.push(new URL(route.request().url()).searchParams.get('minimumVaultTvlUsd') ?? '');
+			const requestUrl = new URL(route.request().url());
+			suggestionMinimumTvls.push(requestUrl.searchParams.get('minimumVaultTvlUsd') ?? '');
+			suggestionSorts.push(requestUrl.searchParams.get('sort') ?? '');
 			await new Promise((resolve) => setTimeout(resolve, 300));
 			await route.continue();
 		});
@@ -230,6 +290,7 @@ test.describe('vault equity curve comparison page', () => {
 		await expect(savingsUsdsResult.getByLabel('Latest TVL')).toBeVisible();
 		await expect(savingsUsdsResult.getByRole('img', { name: /Savings USDS 90 day price/ })).toBeVisible();
 		expect(suggestionMinimumTvls.at(-1)).toBe('1000');
+		expect(suggestionSorts.at(-1)).toBe('tvl');
 		const [searchBounds, menuBounds] = await Promise.all([
 			search.boundingBox(),
 			page.getByRole('dialog', { name: 'Search' }).boundingBox()
@@ -245,15 +306,15 @@ test.describe('vault equity curve comparison page', () => {
 		await expect(selectedVaults.locator('li').first()).toHaveCSS('padding-left', '0px');
 		await expect(page.getByTestId('tv-chart').locator('.loading')).toBeVisible();
 		expect(new URL(page.url()).pathname).toBe('/vaults/compare');
-		await expect(page.getByRole('heading', { name: 'Vault returns index' })).toBeVisible();
+		await expect(page.getByRole('heading', { name: /returns index/i })).toBeVisible();
 		await expect(page.locator('.comparison-chart .chart-container')).toHaveClass(/boxed/);
 		const timePeriodOptions = page.locator('.comparison-chart .segmented-control label');
 		await expect(timePeriodOptions).toHaveText(['1M', '3M', '6M', '1Y', 'Max']);
 		await timePeriodOptions.filter({ hasText: '1Y' }).click();
 		await expect(timePeriodOptions.filter({ hasText: '1Y' })).toHaveClass(/selected/);
 		await expect.poll(() => new URL(page.url()).searchParams.get('period')).toBe('1Y');
-		await expect(selectedVaults).toContainText('21.0% CAGR');
-		await expect(selectedVaults).toContainText('Since 2024-03-01');
+		await expect(selectedVaults).toContainText('>9,999% CAGR');
+		await expect(selectedVaults).toContainText('Since 2025-01-01');
 		await expect(page.getByTestId('page-search')).toHaveAttribute('data-ready', 'true', { timeout: 30_000 });
 		expect(new URL(page.url()).searchParams.getAll('vault')).toHaveLength(1);
 		await expect.poll(() => batchRequests.at(-1)?.length).toBe(1);
@@ -265,6 +326,16 @@ test.describe('vault equity curve comparison page', () => {
 		await expect(page.getByRole('dialog', { name: 'Search' })).toBeHidden();
 		await expect(selectedVaults.locator('li')).toHaveCount(2);
 		expect(new URL(page.url()).searchParams.getAll('vault')).toHaveLength(2);
+		await expect(page.getByRole('radio', { name: 'Gross' })).toBeChecked();
+		await expect(page.getByRole('radio', { name: 'Net' })).toBeDisabled();
+		await expect.poll(() => new URL(page.url()).searchParams.get('return')).toBe('gross');
+		const netUnavailable = page.getByRole('button', { name: 'Why Net returns are unavailable' });
+		await netUnavailable.focus();
+		const netUnavailableTooltip = page.locator('#net-return-unavailable-description');
+		await expect(
+			netUnavailableTooltip.getByText('Net returns need full fee information for every selected vault.')
+		).toBeVisible();
+		await expect(netUnavailableTooltip.getByRole('listitem')).toHaveText(['Savings infiniFi USD']);
 		await expect.poll(() => batchRequests.at(-1)?.length).toBe(2);
 		const comparisonTable = page.getByRole('region', { name: 'Selected vault comparison' });
 		await expect(comparisonTable.getByRole('table')).toBeVisible();
@@ -326,8 +397,8 @@ test.describe('vault equity curve comparison page', () => {
 		await expect(page.locator('.comparison-chart .segmented-control label').filter({ hasText: '1Y' })).toHaveClass(
 			/selected/
 		);
-		await expect(selectedVaults).toContainText('21.0% CAGR');
-		await expect(selectedVaults).toContainText('Since 2024-03-01');
+		await expect(selectedVaults).toContainText('>9,999% CAGR');
+		await expect(selectedVaults).toContainText('Since 2025-01-01');
 		expect(pageErrors).toEqual([]);
 	});
 
