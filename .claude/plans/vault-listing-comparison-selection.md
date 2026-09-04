@@ -11,8 +11,8 @@ viewports.
 Each rendered vault row gets a checkbox in the existing first/rank cell, below
 the rank number. Selecting at least one row highlights every selected row and
 shows a persistent **Compare vaults** action aligned with the table's left edge,
-immediately below the last selected row. While scrolling, it stays beneath the
-fixed table heading or at the viewport's safe bottom edge.
+in its own row immediately below the last selected row. That row stays beneath
+the fixed table heading while scrolling.
 
 ## Current implementation and constraints
 
@@ -151,12 +151,11 @@ Reuse `writeEquityComparisonState` from
   visible text exactly **Compare vaults**, add a compact visible selected-count
   badge, and expose an unambiguous accessible name such as “Compare 3 selected
   vaults”.
-- Position its wrapper at the table's left edge immediately after the last
-  selected row. Clamp its fixed position below the table heading and inside the
-  viewport's safe bottom edge with a deliberate stacking level, theme-derived
-  surface/border/shadow, standard spacing tokens, and
-  `env(safe-area-inset-bottom/left)` allowances. Ensure it does not create
-  page-level horizontal overflow on narrow screens.
+- Insert a dedicated full-width table row immediately after the last selected
+  row. Make its cell sticky below the table heading, with a deliberate stacking
+  level, opaque theme-derived surface/border/shadow, and standard spacing
+  tokens. Ensure it does not cover vault cells or create page-level horizontal
+  overflow on narrow screens.
 
 Set `allowVaultComparison={false}` on the `TopVaultsTable` instance in
 `src/routes/vaults/compare/+page.svelte`. Its existing selected-vault cards and

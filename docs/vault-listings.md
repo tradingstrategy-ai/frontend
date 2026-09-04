@@ -8,12 +8,12 @@ and progressive loading, but resets when the listing category changes. A filter
 can temporarily hide a selected vault; its selection remains in the count and
 comparison until the filter is relaxed or it is removed on the comparison page.
 Selecting one or more vaults reveals a persistent **Compare vaults** action at
-the listing section's left edge, immediately below the last selected row. As
-that row reaches the fixed table heading or leaves the viewport, the action
-stays visible beneath the heading or at the viewport's safe bottom edge. It
-opens the comparison page with the selected IDs in click order as repeated
-`vault` query parameters and `period=3M`. The comparison page's embedded
-selected-vault table does not render these controls.
+the listing section's left edge in its own table row, immediately after the
+last selected row. Its dedicated row sticks beneath the fixed table heading as
+the table scrolls, without covering vault cells. It opens the comparison page
+with the selected IDs in click order as repeated `vault` query parameters and
+`period=3M`. The comparison page's embedded selected-vault table does not
+render these controls.
 
 Vault table pages render their first 125 matching rows in the SvelteKit server
 load. This makes the initial listing visible without downloading the complete
