@@ -6,6 +6,7 @@ Use `ratingProvider` to add its risk-rating column beside the vault name.
 Permissioned vaults are marked as Private, except tokenised funds, which are marked as Fund.
 The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
+Set `allowVaultComparison={false}` for read-only or embedded tables.
 
 @example
 
@@ -105,6 +106,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 	import { sortVaults } from './listing/query';
 	import { getVaultListingDefaults, type VaultListingKey } from './listing/definitions';
 	import { INITIAL_VAULT_LISTING_LIMIT, VAULT_LISTING_PAGE_SIZE, type VaultListingSummary } from './listing/types';
+	import { getCanonicalComparisonReturnMode } from './equity-comparison/net-returns';
 	import { MAX_SELECTED_VAULTS, writeEquityComparisonState } from './equity-comparison/state';
 
 	const allVaultsPath = resolve('/vaults/all');
@@ -272,12 +274,19 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 	});
 
 	let selectionLimitReached = $derived(selectedVaultIds.length >= MAX_SELECTED_VAULTS);
+	let hasComparisonSelection = $derived(allowVaultComparison && selectedVaultIds.length > 0);
 	let lastSelectedVaultId = $derived(selectedVaultIds.at(-1));
 	let comparisonHref = $derived.by(() => {
+		const selectedVaults = accumulatedVaults.filter((vault) => selectedVaultIds.includes(vault.id));
+		const returnMode =
+			selectedVaults.length === selectedVaultIds.length
+				? getCanonicalComparisonReturnMode('net', selectedVaults)
+				: 'gross';
 		const searchParams = writeEquityComparisonState(new URLSearchParams(), {
 			vaultIds: selectedVaultIds,
 			benchmarks: [],
-			timeSpan: '3M'
+			timeSpan: '3M',
+			returnMode
 		});
 		return resolve(`/vaults/compare?${searchParams}` as '/vaults/compare');
 	});
@@ -290,26 +299,22 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		return selectionLimitReached && !isVaultSelected(vaultId);
 	}
 
-	function toggleVaultComparisonSelection(vaultId: string): void {
+	/**
+	 * Toggle an ordered comparison selection unless its checkbox is aria-disabled.
+	 *
+	 * @param event - Checkbox activation event.
+	 * @param vaultId - Vault identifier to add or remove.
+	 */
+	function toggleVaultComparisonSelection(event: MouseEvent, vaultId: string): void {
+		if (isVaultSelectionUnavailable(vaultId)) {
+			event.preventDefault();
+			return;
+		}
 		if (isVaultSelected(vaultId)) {
 			selectedVaultIds = selectedVaultIds.filter((id) => id !== vaultId);
 			return;
 		}
-		if (selectionLimitReached) return;
 		selectedVaultIds = [...selectedVaultIds, vaultId];
-	}
-
-	function onVaultComparisonSelectionChange(event: Event, vaultId: string): void {
-		const input = event.currentTarget as HTMLInputElement;
-		if (isVaultSelectionUnavailable(vaultId)) {
-			input.checked = false;
-			return;
-		}
-		toggleVaultComparisonSelection(vaultId);
-	}
-
-	function preventUnavailableVaultSelection(event: KeyboardEvent, vaultId: string): void {
-		if (isVaultSelectionUnavailable(vaultId) && event.key === ' ') event.preventDefault();
 	}
 
 	// --- Sort column registry (key → default direction) ---
@@ -581,6 +586,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 	let showChainCol = $derived(!chain);
 	let showProviderRiskRating = $derived(ratingProvider != null);
 	let showTechnicalRisk = $derived(ratingProvider == null);
+	let tableColumnCount = $derived(12 + selectedReturnColumns.length + (showChainCol ? 1 : 0));
 
 	let offsetWidth = $state<number>();
 
@@ -805,6 +811,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 	let maxVisibleRows = $state(INITIAL_VAULT_LISTING_LIMIT);
 	let visibleVaults = $derived(isServerBacked ? sortedVaults : sortedVaults.slice(0, maxVisibleRows));
 	let hasMoreRows = $derived(isServerBacked ? remoteHasMore : maxVisibleRows < sortedVaults.length);
+	let lastSelectedVaultIsVisible = $derived(visibleVaults.some((vault) => vault.id === lastSelectedVaultId));
 
 	/**
 	 * Fetch one server-side listing continuation.
@@ -1039,15 +1046,11 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 
 {#snippet comparisonAction()}
 	<tr class="compare-vaults-action-row">
-		<td
-			class="compare-vaults-action"
-			data-testid="compare-vaults-action"
-			colspan={12 + selectedReturnColumns.length + (showChainCol ? 1 : 0) + (showProviderRiskRating ? 1 : 0)}
-		>
-			<p id="vault-comparison-selection-status" role="status" class:sr-only={!selectionLimitReached}>
-				{selectionLimitReached ? `You can compare up to ${MAX_SELECTED_VAULTS} vaults.` : ''}
-			</p>
-			<Button href={comparisonHref} size="md" class="compare-vaults-button">
+		<td class="compare-vaults-action" data-testid="compare-vaults-action" colspan={tableColumnCount}>
+			{#if selectionLimitReached}
+				<p aria-hidden="true">You can compare up to {MAX_SELECTED_VAULTS} vaults.</p>
+			{/if}
+			<Button href={comparisonHref} size="md">
 				Compare vaults
 				<span class="comparison-selection-count" aria-hidden="true">{selectedVaultIds.length}</span>
 				<span class="sr-only">{selectedVaultIds.length} selected vault{selectedVaultIds.length === 1 ? '' : 's'}</span>
@@ -1057,6 +1060,11 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 {/snippet}
 
 <div class="top-vaults-table">
+	{#if allowVaultComparison}
+		<p id="vault-comparison-selection-status" role="status" class="sr-only">
+			{selectionLimitReached ? `You can compare up to ${MAX_SELECTED_VAULTS} vaults.` : ''}
+		</p>
+	{/if}
 	<div class="table-extras">
 		<div class="table-stats" class:hidden={loading} data-testid="top-vaults-meta">
 			<Tooltip>
@@ -1538,8 +1546,7 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 										checked={isVaultSelected(vault.id)}
 										aria-disabled={isVaultSelectionUnavailable(vault.id)}
 										aria-describedby={selectionLimitReached ? 'vault-comparison-selection-status' : undefined}
-										onchange={(event) => onVaultComparisonSelectionChange(event, vault.id)}
-										onkeydown={(event) => preventUnavailableVaultSelection(event, vault.id)}
+										onclick={(event) => toggleVaultComparisonSelection(event, vault.id)}
 									/>
 									<span class="sr-only">Select {vault.name} for comparison</span>
 								</label>
@@ -1671,16 +1678,16 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 							<TargetableLink label="View {vault.name} details" href={resolveVaultDetails(vault)} class="row-link" />
 						</td>
 					</tr>
-					{#if allowVaultComparison && selectedVaultIds.length > 0 && vault.id === lastSelectedVaultId}
+					{#if hasComparisonSelection && vault.id === lastSelectedVaultId}
 						{@render comparisonAction()}
 					{/if}
 				{/each}
-				{#if allowVaultComparison && selectedVaultIds.length > 0 && !visibleVaults.some((vault) => vault.id === lastSelectedVaultId)}
+				{#if hasComparisonSelection && !lastSelectedVaultIsVisible}
 					{@render comparisonAction()}
 				{/if}
 				{#if hasMoreRows}
 					<tr class="load-more-sentinel" data-testid="load-more-sentinel">
-						<td colspan={12 + selectedReturnColumns.length + (showChainCol ? 1 : 0) + (showProviderRiskRating ? 1 : 0)}>
+						<td colspan={tableColumnCount}>
 							<div use:inview={{ rootMargin: '300px' }} oninview_enter={loadMore}>
 								<Spinner size="18" /> Loading more vaults... ({visibleVaults.length}{#if !isServerBacked}
 									of {sortedVaults.length}{/if})
@@ -1711,31 +1718,14 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 		gap: 1rem;
 
 		.compare-vaults-action-row .compare-vaults-action {
-			position: sticky;
-			top: 3.75rem;
-			z-index: 2;
 			padding: var(--space-sm) var(--space-md);
-			background: var(--c-body) !important;
-			box-shadow: 0 0.5rem 1rem color-mix(in srgb, var(--c-shadow), transparent 88%);
+			background: var(--c-body);
 			text-align: left;
 
-			@media (--viewport-sm-down) {
-				top: 3.25rem;
-			}
-
 			p {
-				margin: 0;
-				padding: var(--space-xs) var(--space-sm);
-				border: 1px solid var(--c-box-4);
-				border-radius: var(--radius-sm);
-				background: var(--c-body);
+				margin: 0 0 var(--space-xs);
 				color: var(--c-text-light);
 				font: var(--f-ui-xs-medium);
-				box-shadow: 0 0.5rem 1rem color-mix(in srgb, var(--c-shadow), transparent 88%);
-			}
-
-			:global(.compare-vaults-button) {
-				box-shadow: 0 0.75rem 1.5rem color-mix(in srgb, var(--c-shadow), transparent 82%);
 			}
 
 			:global(.comparison-selection-count) {
@@ -2361,8 +2351,9 @@ The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 
 				.vault-comparison-selection {
 					display: grid;
+					min-height: 1.5rem;
 					place-items: center;
-					margin-top: 0.375rem;
+					margin-top: 0.125rem;
 					cursor: pointer;
 
 					input {

@@ -241,32 +241,17 @@ async function expectLifetimeDataTooltip(
 	await expect(popup).toContainText(`Days of data: ${totalDays}`);
 }
 
-/**
- * Read the Compare vaults action row position relative to the sticky table heading.
- */
-async function getCompareActionPlacement(page: import('@playwright/test').Page) {
-	return page.evaluate(() => {
-		const action = document.querySelector<HTMLElement>('[data-testid="compare-vaults-action"]');
-		const table = document.querySelector<HTMLTableElement>('.table-wrapper table');
-		const actionRow = action?.closest('tr');
-		const precedingRow = actionRow?.previousElementSibling;
-		const header = table?.querySelector('thead th');
-		if (!action || !actionRow || !precedingRow || !header)
-			throw new Error('Expected comparison action row and table heading');
+/** Verify that the comparison action occupies its own row after the latest selection. */
+async function expectCompareActionPlacement(page: import('@playwright/test').Page) {
+	const action = page.getByTestId('compare-vaults-action');
+	const actionRow = action.locator('xpath=ancestor::tr');
+	await expect(actionRow.locator('xpath=preceding-sibling::tr[1]')).toHaveClass(/selected/);
 
-		const actionBounds = action.getBoundingClientRect();
-		const headerBounds = header.getBoundingClientRect();
-
-		return {
-			position: getComputedStyle(action).position,
-			actionTop: actionBounds.top,
-			actionBottom: actionBounds.bottom,
-			actionLeft: actionBounds.left,
-			tableLeft: table.getBoundingClientRect().left,
-			headerBottom: headerBounds.bottom,
-			followsSelectedRow: precedingRow.classList.contains('selected')
-		};
-	});
+	const actionBounds = await action.boundingBox();
+	const tableBounds = await page.locator('.table-wrapper table').boundingBox();
+	expect(actionBounds).not.toBeNull();
+	expect(tableBounds).not.toBeNull();
+	expect(Math.abs(actionBounds!.x - tableBounds!.x)).toBeLessThan(1);
 }
 
 test.describe('vault index page', () => {
@@ -317,18 +302,8 @@ test.describe('vault index page', () => {
 			const action = page.getByTestId('compare-vaults-action');
 			await action.scrollIntoViewIfNeeded();
 			await expect(action).toBeVisible();
-			const actionLayout = await getCompareActionPlacement(page);
-			expect(actionLayout.position).toBe('sticky');
-			expect(Math.abs(actionLayout.actionLeft - actionLayout.tableLeft)).toBeLessThan(1);
-			expect(actionLayout.actionBottom).toBeLessThanOrEqual(viewport.height);
-			expect(actionLayout.actionTop).toBeGreaterThanOrEqual(0);
-			expect(actionLayout.followsSelectedRow).toBe(true);
-
-			await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-			await expect(action).toBeVisible();
-			const stickyActionLayout = await getCompareActionPlacement(page);
-			expect(stickyActionLayout.position).toBe('sticky');
-			expect(stickyActionLayout.actionTop).toBeGreaterThanOrEqual(stickyActionLayout.headerBottom);
+			await expectCompareActionPlacement(page);
+			expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 
 			await checkbox.click();
 			await expect(action).not.toBeVisible();
@@ -336,7 +311,7 @@ test.describe('vault index page', () => {
 	}
 
 	test('compares the two highest-ranked vaults from the top of the list', async ({ page }) => {
-		await page.setViewportSize({ width: 1440, height: 900 });
+		await page.setViewportSize({ width: 1600, height: 900 });
 		await page.goto('/vaults');
 
 		const firstCheckbox = page.getByTestId('vault-comparison-checkbox').first();
@@ -353,18 +328,17 @@ test.describe('vault index page', () => {
 
 		const action = page.getByTestId('compare-vaults-action');
 		await expect(action).toBeVisible();
-		const actionLayout = await getCompareActionPlacement(page);
-		expect(actionLayout.position).toBe('sticky');
-		expect(Math.abs(actionLayout.actionLeft - actionLayout.tableLeft)).toBeLessThan(1);
-		expect(actionLayout.followsSelectedRow).toBe(true);
+		await expectCompareActionPlacement(page);
 		const compareLink = action.getByRole('link', { name: /Compare vaults/ });
 		const destination = new URL((await compareLink.getAttribute('href'))!, page.url());
 		expect(destination.pathname).toBe('/vaults/compare');
 		expect(destination.searchParams.getAll('vault')).toHaveLength(2);
 		expect(destination.searchParams.get('period')).toBe('3M');
+		expect(destination.searchParams.get('return')).toBe('gross');
 
 		await compareLink.click();
 		await expect(page).toHaveURL(/\/vaults\/compare\?.*vault=.*vault=/);
+		expect(new URL(page.url()).searchParams.get('return')).toBe(destination.searchParams.get('return'));
 		const selectedVaults = page.getByRole('list', { name: 'Selected vaults' });
 		await expect(selectedVaults).toContainText(firstVaultName ?? '');
 		await expect(selectedVaults).toContainText(secondVaultName ?? '');

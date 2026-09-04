@@ -1,6 +1,6 @@
 # Vault data optimisation status
 
-The migration away from sending the complete top-vaults export to normal browser pages is implemented. The canonical architecture and configuration are documented in [Vault data sources](vault-data-source.md); listing pagination is documented in [Vault listing pagination](vault-listings.md).
+The migration away from sending the complete top-vaults export to normal browser pages is implemented. The canonical architecture and configuration are documented in [Vault data sources](vault-data-source.md); listing pagination is documented in [Vault listings](vault-listings.md#pagination).
 
 ## Current delivery model
 

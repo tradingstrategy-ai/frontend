@@ -10,9 +10,8 @@ viewports.
 
 Each rendered vault row gets a checkbox in the existing first/rank cell, below
 the rank number. Selecting at least one row highlights every selected row and
-shows a persistent **Compare vaults** action aligned with the table's left edge,
-in its own row immediately below the last selected row. That row stays beneath
-the fixed table heading while scrolling.
+shows a **Compare vaults** action aligned with the table's left edge,
+in its own row immediately below the most recently selected row.
 
 ## Current implementation and constraints
 
@@ -73,11 +72,11 @@ Update `src/lib/top-vaults/TopVaultsTable.svelte`:
   `listingKey` and `listingScope` are unchanged; a listing-identity change takes
   precedence regardless of how navigation encoded it.
 - Import and enforce `MAX_SELECTED_VAULTS`. Once the limit is reached, mark only
-  unchecked row controls `aria-disabled` and make their change handler a no-op;
+  unchecked row controls `aria-disabled` and make their activation a no-op;
   do not use native `disabled`, because the unavailable controls must remain in
   the keyboard tab order and announce why they cannot be selected. Keep checked
   controls operable so users can remove selections, and expose a visible/live
-  “8 vault maximum” status beside the action when the limit is reached.
+  “8 vault maximum” status in the action row when the limit is reached.
 - Add a small helper to identify and toggle a selected ID, keeping the table
   markup declarative and avoiding mutations of `Set` or array state in place.
 
@@ -98,7 +97,7 @@ the CSS counter as the source of the displayed rank:
   rank and checkbox must remain keyboard reachable and must not trigger the
   row-wide vault detail link.
 - Bind `checked` to the ordered selection and `aria-disabled` to the shared
-  maximum, with guarded pointer and keyboard handlers for unavailable controls.
+  maximum, with a guarded activation handler for unavailable controls.
   Expose stable test IDs or data attributes for the row, checkbox, and selected
   state where semantic role/name selectors are insufficient.
 - Apply a selected class/data attribute to the `<tr>`, without removing its
@@ -133,29 +132,34 @@ In `TopVaultsTable.svelte`:
 - Verify the result in both colour modes rather than relying only on the default
   dark theme.
 
-### 4. Build the prefilled comparison destination and persistent action
+### 4. Build the prefilled comparison destination and action row
 
 Reuse `writeEquityComparisonState` from
 `src/lib/top-vaults/equity-comparison/state.ts` to build the action URL:
 
-- Pass the selected IDs in click order, an empty benchmark list, and the
-  comparison page's default `3M` period. This produces repeated encoded `vault`
-  parameters and an explicit, shareable period. The presence of the `vault`
-  parameters—not the period—prevents the compare-page loader from injecting its
-  unrelated default Savings USDS selection.
+- Pass the selected IDs in click order, an empty benchmark list, the comparison
+  page's default `3M` period, and the return mode supported by the selected
+  vaults. Prefer `net` when fee data is available for every selected vault and
+  every selected record remains loaded; use `gross` otherwise. This produces
+  repeated encoded `vault` parameters and explicit, shareable chart settings.
+  The presence of the `vault` parameters—not the period—prevents the compare-page
+  loader from injecting its unrelated default Savings USDS selection.
 - Resolve the `/vaults/compare` path through `$app/paths` so configured base
   paths continue to work. Use an anchor-style action (the shared `Button`
   component is suitable) so the destination is inspectable, openable in a new
   tab, and usable without a bespoke click-navigation handler.
-- Render the persistent action only when at least one ID is selected. Keep the main
+- Render the action only when at least one ID is selected. Keep the main
   visible text exactly **Compare vaults**, add a compact visible selected-count
   badge, and expose an unambiguous accessible name such as “Compare 3 selected
   vaults”.
+- Keep the live selection-limit status outside the moving action-row snippet so
+  it is not remounted when the most recent selection changes. Show the same
+  message visually in the action row when the limit is reached.
 - Insert a dedicated full-width table row immediately after the last selected
-  row. Make its cell sticky below the table heading, with a deliberate stacking
-  level, opaque theme-derived surface/border/shadow, and standard spacing
-  tokens. Ensure it does not cover vault cells or create page-level horizontal
-  overflow on narrow screens.
+  row, with a theme-derived surface and standard spacing tokens. Keep it in the
+  table flow. When the most recently selected vault is not rendered, put the
+  action after the rendered vault rows. Ensure it does not create page-level
+  horizontal overflow on narrow screens.
 
 Set `allowVaultComparison={false}` on the `TopVaultsTable` instance in
 `src/routes/vaults/compare/+page.svelte`. Its existing selected-vault cards and
@@ -168,17 +172,17 @@ verify:
 
 - each non-loading row has one correctly named checkbox inside its rank cell;
 - checking a vault updates the native checked state, selected-row marker, and
-  makes the floating **Compare vaults** link appear;
+  makes the **Compare vaults** action row appear;
 - selecting several rows preserves click order in repeated `vault` parameters,
-  encodes IDs through the shared state writer, sets `period=3M`, and does not add
-  implicit benchmark parameters;
-- unchecking the last vault removes the floating action and row highlight;
+  encodes IDs through the shared state writer, sets `period=3M` and an explicit
+  compatible return mode, and does not add implicit benchmark parameters;
+- unchecking the last vault removes the action row and row highlight;
 - reaching `MAX_SELECTED_VAULTS` disables only unselected checkboxes; and
 - the limit uses focusable `aria-disabled` controls, announces its status, and
   guards both pointer and keyboard attempts to exceed the limit;
 - query-only sort/filter changes retain selections while a changed
   pathname/listing identity clears them; and
-- `allowVaultComparison={false}` omits both row checkboxes and the floating
+- `allowVaultComparison={false}` omits both row checkboxes and the comparison
   action.
 
 Where practical, also assert that the checkbox is marked `targetable-above` and
@@ -189,16 +193,15 @@ duplicating that helper's full test suite.
 ### 6. Cover listing-to-comparison behaviour responsively
 
 Extend `tests/integration/vaults/index.test.ts` with one complete desktop flow at
-1440px and focused layout/interaction passes at representative tablet (1024px)
+1600px and focused layout/interaction passes at representative tablet (1024px)
 and mobile (375px) widths:
 
 - open `/vaults`, select two visible vaults by accessible checkbox name, and
   assert the checkboxes—not the row detail links—receive the interaction;
 - assert both rows share the computed selected background while unselected rows
   retain their alternating backgrounds;
-- confirm the persistent action is below the last selected row when it is
-  visible, then remains beneath the fixed heading while scrolling, and causes
-  no document-level horizontal overflow at tablet or mobile widths;
+- confirm the action is below the last selected row and causes no document-level
+  horizontal overflow at tablet or mobile widths;
 - in the desktop flow, activate **Compare vaults** and verify `/vaults/compare`
   receives the same two IDs in selection order and renders those vaults in its
   Selected vaults list;
@@ -212,7 +215,7 @@ and mobile (375px) widths:
 
 Add an assertion to `tests/integration/vaults/equity-compare.test.ts` that the
 comparison page's embedded summary table does not render listing-selection
-checkboxes or another floating compare action.
+checkboxes or another comparison action.
 
 ## Documentation
 
@@ -234,12 +237,9 @@ vault payload change is expected.
 6. Follow `.claude/docs/worktree.md`, start the Vite development server with
    `pnpm run dev`, and use Playwright against the development server to inspect
    desktop, tablet, and mobile layouts in dark and light modes. Check checkbox
-   hit targets, rank alignment, row highlighting, floating-action safe-area
-   spacing, horizontal table scrolling, keyboard focus, tooltips, and the final
+   hit targets, rank alignment, row highlighting, action-row spacing,
+   horizontal table scrolling, keyboard focus, tooltips, and the final
    selected-vault order on `/vaults/compare`.
-   Also check the floating action alongside any mobile bottom navigation,
-   navigation drawer, search overlay, or consent UI that can coexist with the
-   listing, and confirm stacking does not make either control unusable.
 
 ## Acceptance criteria
 
@@ -249,8 +249,8 @@ vault payload change is expected.
   pointer and keyboard input.
 - Selected rows use a dedicated semantic background colour with readable light-
   and dark-theme contrast.
-- One or more selections reveal a table-left **Compare vaults** action that
-  stays within desktop, tablet, and mobile viewports while scrolling.
+- One or more selections reveal a table-left **Compare vaults** action in its
+  own row at desktop, tablet, and mobile widths.
 - Following the action opens `/vaults/compare` with exactly the selected vaults
   in selection order and no injected default vault.
 - Filtering, sorting, and progressive loading do not clear the current local

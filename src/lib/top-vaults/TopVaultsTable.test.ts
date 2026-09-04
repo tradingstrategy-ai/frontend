@@ -32,6 +32,14 @@ function getTopVaults(...vaults: ReturnType<typeof createTestVault>[]) {
 	};
 }
 
+const completeNetFees = {
+	fee_mode: 'feeless',
+	management: null,
+	performance: null,
+	deposit: null,
+	withdraw: null
+} as const;
+
 describe('TopVaultsTable risk rating column', () => {
 	it('shows the blacklisted-vault reveal control when the server summary reports hidden vaults', () => {
 		const safeVault = createTestVault('Safe vault', { risk: 'Low' });
@@ -191,7 +199,8 @@ describe('TopVaultsTable risk rating column', () => {
 describe('TopVaultsTable comparison selection', () => {
 	it('selects vaults from the rank cell and builds the ordered comparison URL', async () => {
 		const firstVault = createTestVault('First comparison vault', {
-			address: '0x0000000000000000000000000000000000000001'
+			address: '0x0000000000000000000000000000000000000001',
+			net_fees: completeNetFees
 		});
 		const secondVault = createTestVault('Second comparison vault', {
 			address: '0x0000000000000000000000000000000000000002'
@@ -215,14 +224,18 @@ describe('TopVaultsTable comparison selection', () => {
 		const compareActionContainer = screen.getByTestId('compare-vaults-action');
 		const compareAction = compareActionContainer.querySelector<HTMLAnchorElement>('a');
 		expect(compareAction).not.toBeNull();
+		expect(compareActionContainer.closest('tr')?.previousElementSibling).toBe(firstCheckbox.closest('tr'));
+		expect(Number(compareActionContainer.getAttribute('colspan'))).toBe(document.querySelectorAll('thead th').length);
 		expect(screen.getByRole('link', { name: 'Compare vaults 2 selected vaults' })).toBe(compareAction);
 		const searchParams = new URL(compareAction!.href).searchParams;
 		expect(searchParams.getAll('vault')).toEqual([secondVault.id, firstVault.id]);
 		expect(searchParams.get('period')).toBe('3M');
+		expect(searchParams.get('return')).toBe('gross');
 		expect(searchParams.has('benchmark')).toBe(false);
 
-		await fireEvent.click(firstCheckbox);
 		await fireEvent.click(secondCheckbox);
+		expect(new URL(compareAction!.href).searchParams.get('return')).toBe('net');
+		await fireEvent.click(firstCheckbox);
 		expect(screen.queryByTestId('compare-vaults-action')).not.toBeInTheDocument();
 	});
 
@@ -234,7 +247,7 @@ describe('TopVaultsTable comparison selection', () => {
 		);
 		render(TopVaultsTable, { props: { topVaults: getTopVaults(...vaults) } });
 
-		const checkboxes = screen.getAllByRole('checkbox');
+		const checkboxes = screen.getAllByRole('checkbox', { name: /for comparison$/ });
 		for (const checkbox of checkboxes.slice(0, 8)) await fireEvent.click(checkbox);
 
 		const unavailableCheckbox = checkboxes[8];
@@ -246,6 +259,38 @@ describe('TopVaultsTable comparison selection', () => {
 		await fireEvent.click(unavailableCheckbox);
 		expect(unavailableCheckbox).not.toBeChecked();
 		expect(screen.getByTestId('compare-vaults-action')).toHaveTextContent('8');
+	});
+
+	it('resets selection only when the listing identity changes', async () => {
+		const vault = createTestVault('Listing identity vault', { net_fees: completeNetFees });
+		const topVaults = getTopVaults(vault);
+		const { rerender } = render(TopVaultsTable, {
+			props: { topVaults, listingKey: 'protocol', listingScope: 'first-protocol' }
+		});
+		const checkbox = screen.getByRole('checkbox', { name: 'Select Listing identity vault for comparison' });
+
+		await fireEvent.click(checkbox);
+		expect(
+			new URL(
+				screen.getByRole('link', { name: /Compare vaults/ }).getAttribute('href')!,
+				document.baseURI
+			).searchParams.get('return')
+		).toBe('net');
+
+		await rerender({ topVaults: getTopVaults(), listingKey: 'protocol', listingScope: 'first-protocol' });
+		expect(
+			new URL(
+				screen.getByRole('link', { name: /Compare vaults/ }).getAttribute('href')!,
+				document.baseURI
+			).searchParams.get('return')
+		).toBe('gross');
+
+		await rerender({ topVaults, listingKey: 'protocol', listingScope: 'first-protocol' });
+		expect(screen.getByRole('checkbox', { name: 'Select Listing identity vault for comparison' })).toBeChecked();
+
+		await rerender({ topVaults, listingKey: 'protocol', listingScope: 'second-protocol' });
+		expect(screen.getByRole('checkbox', { name: 'Select Listing identity vault for comparison' })).not.toBeChecked();
+		expect(screen.queryByTestId('compare-vaults-action')).not.toBeInTheDocument();
 	});
 
 	it('can disable comparison selection for embedded summary tables', () => {
