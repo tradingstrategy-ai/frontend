@@ -36,14 +36,24 @@ the suggestion panel.
 
 The page defaults to Savings USDS with the T-bill, ETH, and BTC benchmarks
 enabled. It supports up to eight vaults and stores the ordered selection,
-benchmarks, and selected chart period in URL parameters. The `period` parameter
-is always explicit, including the default `period=3M`, and an intentionally
-empty vault selection is preserved with `comparison=empty`. Selected vaults
-also appear in the shared top-vaults table below the chart.
+benchmarks, selected chart period, and `return=net|gross` mode in URL
+parameters. The `period` and `return` parameters are always explicit, including
+the defaults `period=3M` and `return=net`; an intentionally empty vault
+selection is preserved with `comparison=empty`. Selected vaults also appear in
+the shared top-vaults table below the chart.
 
-The URL is the authoritative comparison state. Vault, benchmark, and period
-choices are canonicalised on the server and survive reloads, so copying the
-current URL recreates the same chart for another user.
+The URL is the authoritative comparison state. Vault, benchmark, period, and
+return-mode choices are canonicalised on the server and survive reloads, so
+copying the current URL recreates the same chart for another user. Net mode is
+available only when every selected vault has a complete investor fee schedule;
+otherwise the page selects Gross and the disabled Net control lists the blocking
+vaults. Net estimates a hypothetical liquidation value after known entry,
+externalised management/performance, and exit fees over the selected range.
+Management fees use starting invested capital, and performance fees apply to
+positive profit at each plotted point rather than reconstructing historical
+crystallisation or high-water marks. Internalised management/performance fees
+are already reflected in the share price and are not deducted again. Benchmark
+series are unchanged by the return mode.
 
 The T-bill line uses FRED's DGS3MO 3-month constant-maturity Treasury market
 yield, quoted on an investment basis, as a cumulative-return approximation.

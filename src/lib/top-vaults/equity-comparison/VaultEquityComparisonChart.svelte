@@ -6,22 +6,33 @@ on one TradingView lightweight-charts pane.
 @example
 
 ```svelte
-  <VaultEquityComparisonChart {vaults} {data} {enabledBenchmarks} {colours} />
+  <VaultEquityComparisonChart
+    {vaults}
+    {data}
+    {enabledBenchmarks}
+    returnMode="net"
+    netAvailable
+    missingFeeVaultNames={[]}
+    {colours}
+  />
 ```
 -->
 <script lang="ts">
 	import { LineSeries, type LineData, type UTCTimestamp } from 'lightweight-charts';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
 	import ChartTooltip from '$lib/charts/ChartTooltip.svelte';
+	import type { TimeSpan } from '$lib/charts/types';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import Series from '$lib/charts/Series.svelte';
 	import { formatDate } from '$lib/charts/helpers';
 	import { formatNumber } from '$lib/helpers/formatters';
 	import BenchmarkLogo from './BenchmarkLogo.svelte';
 	import { benchmarkComparisonColours } from './colours';
+	import { getComparisonVisibleRange, getNetComparisonPoints } from './net-returns';
 	import type {
 		ComparisonBenchmark,
 		ComparisonChartSeries,
+		ComparisonReturnMode,
 		ComparisonTimeBucket,
 		ComparisonTimeSpan,
 		ComparisonVault,
@@ -33,10 +44,14 @@ on one TradingView lightweight-charts pane.
 		vaults: ComparisonVault[];
 		data?: VaultComparisonChartResponse;
 		enabledBenchmarks: ComparisonBenchmark[];
+		returnMode: ComparisonReturnMode;
+		netAvailable: boolean;
+		missingFeeVaultNames: string[];
 		colours: ReadonlyMap<string, string>;
 		loading?: boolean;
 		selectedTimeSpan?: ComparisonTimeSpan;
 		onTimeSpanChange?: (timeSpan: ComparisonTimeSpan) => void;
+		onReturnModeChange?: (returnMode: ComparisonReturnMode) => void;
 	}
 
 	type ChartPointMeta = {
@@ -47,6 +62,7 @@ on one TradingView lightweight-charts pane.
 		indexValue: number;
 		benchmark?: ComparisonBenchmark;
 		discontinuous?: boolean;
+		feeEvent?: 'after-entry' | 'before-exit' | 'after-exit';
 	};
 
 	type ComparisonChartPoint = LineData<UTCTimestamp> & { customValues: ChartPointMeta };
@@ -55,10 +71,14 @@ on one TradingView lightweight-charts pane.
 		vaults,
 		data,
 		enabledBenchmarks,
+		returnMode,
+		netAvailable,
+		missingFeeVaultNames,
 		colours,
 		loading = false,
 		selectedTimeSpan = '3M',
-		onTimeSpanChange
+		onTimeSpanChange,
+		onReturnModeChange
 	}: Props = $props();
 	let vaultById = $derived(new Map(vaults.map((vault) => [vault.id, vault])));
 	let vaultSeries = $derived(data?.vaultSeries ?? []);
@@ -80,17 +100,27 @@ on one TradingView lightweight-charts pane.
 	};
 	function buildChartPoints(
 		series: ComparisonChartSeries | undefined,
-		timeBucket: ComparisonTimeBucket,
+		timeSpan: TimeSpan,
 		kind: ChartPointMeta['kind']
 	): ComparisonChartPoint[] {
 		if (!series) return [];
+		const timeBucket = timeSpan.timeBucket as ComparisonTimeBucket;
 		const benchmark = kind === 'benchmark' ? (series.id as ComparisonBenchmark) : undefined;
+		const feeProfile = vaultById.get(series.id)?.feeProfile;
+		const points =
+			kind === 'vault' && returnMode === 'net' && feeProfile
+				? getNetComparisonPoints(
+						series.points[timeBucket],
+						feeProfile,
+						getComparisonVisibleRange(data?.range, timeSpan)
+					)
+				: series.points[timeBucket];
 		const label = benchmark ? benchmarkLabels[benchmark] : (vaultById.get(series.id)?.name ?? series.id);
 		const colour = benchmark
 			? benchmarkComparisonColours[benchmark]
 			: (colours.get(series.id) ?? 'var(--c-text-light)');
 
-		return series.points[timeBucket].map((point) => ({
+		return points.map((point) => ({
 			time: point.time as UTCTimestamp,
 			value: point.value,
 			customValues: {
@@ -100,17 +130,28 @@ on one TradingView lightweight-charts pane.
 				colour,
 				indexValue: point.value,
 				benchmark,
-				discontinuous: series.discontinuous
+				discontinuous: series.discontinuous,
+				feeEvent: point.feeEvent
 			}
 		}));
 	}
 
 	function tooltipRows(points: unknown[]): ChartPointMeta[] {
-		return points.flatMap((point) => {
-			if (!point || typeof point !== 'object' || !('customValues' in point)) return [];
-			const customValues = (point as { customValues?: ChartPointMeta }).customValues;
-			return customValues ? [customValues] : [];
-		});
+		return points
+			.flatMap((point) => {
+				if (!point || typeof point !== 'object' || !('customValues' in point)) return [];
+				const customValues = (point as { customValues?: ChartPointMeta }).customValues;
+				return customValues ? [customValues] : [];
+			})
+			.toSorted((left, right) => Number(left.kind === 'benchmark') - Number(right.kind === 'benchmark'));
+	}
+
+	function feeEventLabel(feeEvent: NonNullable<ChartPointMeta['feeEvent']>): string {
+		return {
+			'after-entry': 'after entry fee',
+			'before-exit': 'before exit fee',
+			'after-exit': 'after exit fee'
+		}[feeEvent];
 	}
 </script>
 
@@ -127,22 +168,70 @@ on one TradingView lightweight-charts pane.
 		options={{ handleScroll: false, handleScale: false }}
 	>
 		{#snippet title()}
-			<h2 aria-label="Vault returns index">
-				<Tooltip>
-					<span slot="trigger" class="chart-heading">Vault returns index</span>
-					<svelte:fragment slot="popup">
-						Oldest vault starts at 100; younger vaults join at the highest overlapping curve.
-					</svelte:fragment>
-				</Tooltip>
-			</h2>
+			<div class="chart-title">
+				<h2 aria-label="Returns index">
+					<Tooltip>
+						<span slot="trigger" class="chart-heading">Returns index</span>
+						<svelte:fragment slot="popup">
+							{#if returnMode === 'net'}
+								Net estimates each vault's liquidation value after its known fees over the selected period. Management
+								fees use starting invested capital, while performance fees apply to positive profit at each point.
+								Internalised fees are already reflected in share prices. Benchmarks are unchanged. The oldest vault
+								starts at 100; younger vaults join at the highest overlapping curve.
+							{:else}
+								Gross follows published vault share prices without additional investor-fee deductions. Benchmarks are
+								unchanged. The oldest vault starts at 100; younger vaults join at the highest overlapping curve.
+							{/if}
+						</svelte:fragment>
+					</Tooltip>
+				</h2>
+				<fieldset class="return-mode" aria-label="Return mode">
+					<label>
+						<input
+							type="radio"
+							name="comparison-return-mode"
+							checked={returnMode === 'gross'}
+							onchange={() => onReturnModeChange?.('gross')}
+						/>
+						Gross
+					</label>
+					<label>
+						<input
+							type="radio"
+							name="comparison-return-mode"
+							checked={returnMode === 'net'}
+							disabled={!netAvailable}
+							onchange={() => onReturnModeChange?.('net')}
+						/>
+						Net
+					</label>
+					{#if !netAvailable}
+						<span class="fee-help">
+							<button
+								class="fee-info"
+								type="button"
+								aria-label="Why Net returns are unavailable"
+								aria-describedby="net-return-unavailable-description">?</button
+							>
+							<span class="fee-help-popup" id="net-return-unavailable-description" role="tooltip">
+								<p>Net returns need full fee information for every selected vault.</p>
+								<ul>
+									{#each missingFeeVaultNames as vaultName, index (`${index}:${vaultName}`)}
+										<li>{vaultName}</li>
+									{/each}
+								</ul>
+							</span>
+						</span>
+					{/if}
+				</fieldset>
+			</div>
 		{/snippet}
 
 		{#snippet series({ timeSpan })}
-			{@const timeBucket = timeSpan.timeBucket as ComparisonTimeBucket}
 			{#each vaults as vault (vault.id)}
 				<Series
 					type={LineSeries}
-					data={buildChartPoints(vaultSeriesById.get(vault.id), timeBucket, 'vault')}
+					data={buildChartPoints(vaultSeriesById.get(vault.id), timeSpan, 'vault')}
 					options={{
 						color: colours.get(vault.id),
 						lineWidth: 2,
@@ -156,7 +245,7 @@ on one TradingView lightweight-charts pane.
 			{#each enabledBenchmarks as benchmark (benchmark)}
 				<Series
 					type={LineSeries}
-					data={buildChartPoints(benchmarkSeriesById.get(benchmark), timeBucket, 'benchmark')}
+					data={buildChartPoints(benchmarkSeriesById.get(benchmark), timeSpan, 'benchmark')}
 					options={{
 						color: benchmarkComparisonColours[benchmark],
 						lineWidth: 2,
@@ -173,7 +262,7 @@ on one TradingView lightweight-charts pane.
 			{@const rows = tooltipRows(seriesData)}
 			{#if rows.length}
 				<ChartTooltip {point}>
-					<div class="tooltip-date">{formatDate(time as number, timeSpan.timeBucket)}</div>
+					<div class="tooltip-heading">{formatDate(time as number, timeSpan.timeBucket)}</div>
 					<ul class="tooltip-rows">
 						{#each rows as row (`${row.kind}:${row.id}`)}
 							<li style:--series-colour={row.colour} title={row.label}>
@@ -183,7 +272,9 @@ on one TradingView lightweight-charts pane.
 									<span class="swatch" aria-hidden="true"></span>
 								{/if}
 								<span class="tooltip-label" class:vault-name={row.kind === 'vault'}>
-									{row.label}{#if row.discontinuous}<small> · no overlap</small>{/if}
+									{row.label}{#if row.discontinuous}<small> · no overlap</small>{/if}{#if row.feeEvent}<small>
+											· {feeEventLabel(row.feeEvent)}</small
+										>{/if}
 								</span>
 								<strong>{formatNumber(row.indexValue, 1)}</strong>
 							</li>
@@ -220,6 +311,85 @@ on one TradingView lightweight-charts pane.
 	.comparison-chart {
 		min-width: 0;
 
+		.chart-title {
+			display: grid;
+			justify-items: start;
+			gap: var(--space-xs);
+		}
+
+		.return-mode {
+			display: inline-flex;
+			align-items: center;
+			gap: var(--space-xs);
+			margin: 0;
+			padding: 0;
+			border: 0;
+			font: var(--f-ui-sm-medium);
+		}
+
+		.return-mode label {
+			display: inline-flex;
+			align-items: center;
+			gap: var(--space-xxs);
+			cursor: pointer;
+		}
+
+		.return-mode label:has(input:disabled) {
+			opacity: 0.55;
+			cursor: not-allowed;
+		}
+
+		.fee-info {
+			display: grid;
+			width: 1.25rem;
+			height: 1.25rem;
+			place-items: center;
+			padding: 0;
+			border: 1px solid var(--c-box-4);
+			border-radius: 50%;
+			background: transparent;
+			color: var(--c-text-light);
+			font: var(--f-ui-xs-bold);
+			cursor: help;
+		}
+
+		.fee-help {
+			position: relative;
+			display: inline-flex;
+		}
+
+		.fee-help-popup {
+			display: none;
+			position: absolute;
+			top: calc(100% + var(--space-xxs));
+			left: 0;
+			z-index: 10000;
+			width: max-content;
+			max-width: min(18rem, calc(100vw - 2rem));
+			padding: var(--space-sm);
+			border: 1px solid var(--c-box-3);
+			border-radius: var(--radius-ms);
+			background: var(--c-text-inverted);
+			box-shadow: var(--shadow-3);
+			font: var(--f-ui-sm-roman);
+			letter-spacing: var(--ls-ui-sm);
+			color: var(--c-text);
+
+			p {
+				margin: 0;
+			}
+
+			ul {
+				margin: var(--space-xs) 0 0;
+				padding-left: var(--space-md);
+			}
+		}
+
+		.fee-help:hover .fee-help-popup,
+		.fee-help:focus-within .fee-help-popup {
+			display: block;
+		}
+
 		:global(.chart-container > .tv-chart) {
 			width: calc(100% - var(--chart-container-padding) - var(--chart-container-padding));
 			margin-inline: var(--chart-container-padding);
@@ -254,10 +424,11 @@ on one TradingView lightweight-charts pane.
 		}
 	}
 
-	.tooltip-date {
-		margin-bottom: var(--space-sm);
-		color: var(--c-text-extra-light);
+	.tooltip-heading {
+		margin: 0 0 var(--space-sm);
 		font: var(--f-ui-sm-bold);
+		letter-spacing: var(--ls-ui-sm);
+		color: var(--c-text);
 	}
 
 	.tooltip-rows {

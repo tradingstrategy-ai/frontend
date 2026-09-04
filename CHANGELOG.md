@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add Gross and Net fee-aware return modes to the multi-vault comparison chart (2026-09-04)
 - Add a dedicated podcast episode page with YouTube and Spotify links (2026-09-02)
 - Clarify vault gross and net returns, add fee-aware return examples, and improve vault comparison metadata (2026-09-02)
 - Add multi-vault equity curve comparison with T-bill, ETH, and BTC benchmarks (2026-09-01)
