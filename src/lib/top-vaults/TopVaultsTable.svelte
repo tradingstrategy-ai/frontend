@@ -606,16 +606,21 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 	let showProviderRiskRating = $derived(ratingProvider != null);
 	let showTechnicalRisk = $derived(ratingProvider == null);
 	let tableColumnCount = $derived(12 + selectedReturnColumns.length + (showChainCol ? 1 : 0));
-	let sortDropdownOptions = $derived.by(() =>
-		[
-			...(showChainCol ? ['chain'] : []),
-			'vault',
-			...(showProviderRiskRating ? ['provider_risk_rating'] : []),
-			...selectedReturnColumns.map((column) => column.id),
-			...standardSortColumnKeys,
-			...(showTechnicalRisk ? ['risk'] : [])
-		].map((key) => ({ key, label: sortColumnMap[key].label }))
-	);
+	let sortDropdownOptionKeys = $derived([
+		...(showChainCol ? ['chain'] : []),
+		'vault',
+		...(showProviderRiskRating ? ['provider_risk_rating'] : []),
+		...selectedReturnColumns.map((column) => column.id),
+		...standardSortColumnKeys,
+		...(showTechnicalRisk ? ['risk'] : [])
+	]);
+	let sortDropdownOptions = $derived(sortDropdownOptionKeys.map((key) => ({ key, label: sortColumnMap[key].label })));
+
+	// Keep every active sort represented by a visible table header and dropdown option.
+	$effect(() => {
+		if (sortDropdownOptionKeys.some((key) => key === sortOptions.key)) return;
+		updateSearchParams({ sort: 'vault', direction: sortColumnMap.vault.defaultDirection });
+	});
 
 	let offsetWidth = $state<number>();
 
@@ -914,8 +919,9 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 		const nextReturns = serialiseReturnColumnSelection(nextSelection);
 		const canonicalSort = canonicaliseReturnSortKey(urlState.sort);
 
-		if (canonicalSort && !nextSelection.includes(canonicalSort) && nextSelection.length > 0) {
-			updateSearchParams({ returns: nextReturns, sort: nextSelection[0], direction: 'desc' });
+		if (canonicalSort && !nextSelection.includes(canonicalSort)) {
+			const sort = nextSelection[0] ?? 'vault';
+			updateSearchParams({ returns: nextReturns, sort, direction: sortColumnMap[sort].defaultDirection });
 			return;
 		}
 

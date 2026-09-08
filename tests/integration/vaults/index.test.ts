@@ -371,17 +371,40 @@ test.describe('vault index page', () => {
 		await expect(page).toHaveURL(urlParamsMatch({ sort: 'tvl', direction: 'asc' }));
 		await expect(tvlHeader.locator('.chevron-up')).toBeVisible();
 
-		// Vault sorts ascending by default, then descending after the header is clicked.
-		await sortSelect.selectOption('vault');
+		// Selecting a different header updates the dropdown, then clicking it again reverses the direction.
+		await vaultHeader.getByRole('button').click();
 		await expect(page).toHaveURL(urlParamsMatch({ sort: 'vault', direction: 'asc' }));
 		await expect(sortSelect).toHaveValue('vault');
 		await expect(vaultHeader.locator('.chevron-up')).toBeVisible();
 
 		await vaultHeader.getByRole('button').click();
-		await expect(page).toHaveURL(/sort=vault/);
+		await expect(page).toHaveURL(urlParamsMatch({ sort: 'vault' }));
 		await expect(page).not.toHaveURL(/direction=/);
 		await expect(vaultHeader.locator('.chevron-down')).toBeVisible();
 		await expect(sortSelect).toHaveValue('vault');
+	});
+
+	test('falls back to vault sorting when no return columns are displayed', async ({ page }) => {
+		await openFilters(page);
+		const sortSelect = filterGroup(page, 'display').getByLabel('Sort', { exact: true });
+
+		for (const [label, selectedColumns] of [
+			['One month annualised', '3M ann., Lifetime abs'],
+			['Three months annualised', 'Lifetime abs'],
+			['Lifetime absolute', 'None']
+		]) {
+			const returnColumnsMenu = page.getByTestId('return-columns-menu');
+			if (!(await returnColumnsMenu.isVisible())) {
+				await returnColumnsTrigger(page).click();
+			}
+			await expect(returnColumnsMenu).toBeVisible();
+			await toggleReturnOption(page, label);
+			await expect(returnColumnsTrigger(page)).toContainText(selectedColumns);
+		}
+
+		await expect(page).toHaveURL(urlParamsMatch({ sort: 'vault', direction: 'asc' }));
+		await expect(sortSelect).toHaveValue('vault');
+		await expect(page.locator('th.vault .chevron-up')).toBeVisible();
 	});
 
 	test('shows lifetime data tooltip on the lifetime return cell', async ({ page }) => {
