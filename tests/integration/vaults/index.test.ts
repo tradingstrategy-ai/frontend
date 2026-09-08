@@ -100,6 +100,7 @@ async function expectFilterControls(page: import('@playwright/test').Page) {
 	}
 
 	await expect(displayGroup.getByText('Columns', { exact: true })).toBeVisible();
+	await expect(displayGroup.getByLabel('Sort', { exact: true })).toBeVisible();
 	await expect(returnColumnsTrigger(page)).toBeVisible();
 	for (const label of ['Currently closed', 'Unknown protocols', 'AMM', 'Private']) {
 		await expect(hideGroup.getByLabel(label, { exact: true })).toBeVisible();
@@ -270,7 +271,7 @@ test.describe('vault index page', () => {
 
 	test('describes the default return ranking', async ({ page }) => {
 		await expect(page.locator('.hero-banner .subtitle')).toHaveText(
-			'The best-performing stablecoin vaults. Ranked by 30-day returns. Table headers and filters offer more criteria.'
+			'The best-performing stablecoin vaults. Ranked by one-month annualised returns.'
 		);
 	});
 
@@ -349,8 +350,61 @@ test.describe('vault index page', () => {
 
 		await expect(page).toHaveURL(/sort=tvl/);
 		await expect(page.locator('.hero-banner .subtitle')).toHaveText(
-			'The best-performing stablecoin vaults. Ranked by total value locked. Table headers and filters offer more criteria.'
+			'The best-performing stablecoin vaults. Ranked by total value locked.'
 		);
+	});
+
+	test('keeps the Sort dropdown synchronised with both directions of sortable table headers', async ({ page }) => {
+		await openFilters(page);
+		const sortSelect = filterGroup(page, 'display').getByLabel('Sort', { exact: true });
+		const tvlHeader = page.locator('th.tvl');
+		const vaultHeader = page.locator('th.vault');
+
+		await expect(sortSelect).toHaveValue('1m-ann');
+
+		// TVL sorts descending by default, then ascending after the header is clicked.
+		await sortSelect.selectOption('tvl');
+		await expect(page).toHaveURL(/sort=tvl/);
+		await expect(tvlHeader).toContainText('TVL USD');
+		await expect(tvlHeader.locator('.chevron-down')).toBeVisible();
+		await tvlHeader.getByRole('button').click();
+		await expect(page).toHaveURL(urlParamsMatch({ sort: 'tvl', direction: 'asc' }));
+		await expect(tvlHeader.locator('.chevron-up')).toBeVisible();
+
+		// Selecting a different header updates the dropdown, then clicking it again reverses the direction.
+		await vaultHeader.getByRole('button').click();
+		await expect(page).toHaveURL(urlParamsMatch({ sort: 'vault', direction: 'asc' }));
+		await expect(sortSelect).toHaveValue('vault');
+		await expect(vaultHeader.locator('.chevron-up')).toBeVisible();
+
+		await vaultHeader.getByRole('button').click();
+		await expect(page).toHaveURL(urlParamsMatch({ sort: 'vault' }));
+		await expect(page).not.toHaveURL(/direction=/);
+		await expect(vaultHeader.locator('.chevron-down')).toBeVisible();
+		await expect(sortSelect).toHaveValue('vault');
+	});
+
+	test('falls back to vault sorting when no return columns are displayed', async ({ page }) => {
+		await openFilters(page);
+		const sortSelect = filterGroup(page, 'display').getByLabel('Sort', { exact: true });
+
+		for (const [label, selectedColumns] of [
+			['One month annualised', '3M ann., Lifetime abs'],
+			['Three months annualised', 'Lifetime abs'],
+			['Lifetime absolute', 'None']
+		]) {
+			const returnColumnsMenu = page.getByTestId('return-columns-menu');
+			if (!(await returnColumnsMenu.isVisible())) {
+				await returnColumnsTrigger(page).click();
+			}
+			await expect(returnColumnsMenu).toBeVisible();
+			await toggleReturnOption(page, label);
+			await expect(returnColumnsTrigger(page)).toContainText(selectedColumns);
+		}
+
+		await expect(page).toHaveURL(urlParamsMatch({ sort: 'vault', direction: 'asc' }));
+		await expect(sortSelect).toHaveValue('vault');
+		await expect(page.locator('th.vault .chevron-up')).toBeVisible();
 	});
 
 	test('shows lifetime data tooltip on the lifetime return cell', async ({ page }) => {

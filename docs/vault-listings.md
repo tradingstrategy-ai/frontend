@@ -41,6 +41,16 @@ Each listing has a fixed definition (`top`, `chain`, `protocol`,
 `stablecoin`, `curator`, `tokenised-funds`, and the special listings). URL
 filters may narrow that definition but cannot change its base population.
 
+### Sorting
+
+The table headers and the **Display** group's **Sort** dropdown share the
+`sort` and `direction` URL state. Choosing a dropdown option applies that
+metric's normal ranking direction; selecting the active table header reverses
+it. A route's configured default direction may be omitted from the URL. The
+dropdown only offers sortable columns currently visible in the table, including
+the selected return columns; removing an active column falls back to sorting by
+vault name.
+
 ### Permissioned vault filter
 
 The Filters panel exposes the permissioned-vault control as **Private** inside
