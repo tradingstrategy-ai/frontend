@@ -1539,17 +1539,20 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 						<!-- index cell is populated with row index via `rowNumber` CSS counter -->
 						<td class="index">
 							{#if allowVaultComparison}
-								<label class="vault-comparison-selection targetable-above">
-									<input
-										type="checkbox"
-										data-testid="vault-comparison-checkbox"
-										checked={isVaultSelected(vault.id)}
-										aria-disabled={isVaultSelectionUnavailable(vault.id)}
-										aria-describedby={selectionLimitReached ? 'vault-comparison-selection-status' : undefined}
-										onclick={(event) => toggleVaultComparisonSelection(event, vault.id)}
-									/>
-									<span class="sr-only">Select {vault.name} for comparison</span>
-								</label>
+								<Tooltip>
+									<label class="vault-comparison-selection targetable-above" slot="trigger">
+										<input
+											type="checkbox"
+											data-testid="vault-comparison-checkbox"
+											checked={isVaultSelected(vault.id)}
+											aria-disabled={isVaultSelectionUnavailable(vault.id)}
+											aria-describedby={selectionLimitReached ? 'vault-comparison-selection-status' : undefined}
+											onclick={(event) => toggleVaultComparisonSelection(event, vault.id)}
+										/>
+										<span class="sr-only">Select {vault.name} for comparison</span>
+									</label>
+									<svelte:fragment slot="popup">Choose vaults to compare against each other</svelte:fragment>
+								</Tooltip>
 							{/if}
 						</td>
 						{#if showChainCol}

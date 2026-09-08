@@ -212,6 +212,9 @@ describe('TopVaultsTable comparison selection', () => {
 		const secondCheckbox = screen.getByRole('checkbox', { name: 'Select Second comparison vault for comparison' });
 		expect(firstCheckbox.closest('td')).toHaveClass('index');
 		expect(firstCheckbox.closest('label')).toHaveClass('targetable-above');
+		expect(firstCheckbox.closest('.tooltip')?.querySelector('.popup')).toHaveTextContent(
+			'Choose vaults to compare against each other'
+		);
 
 		await fireEvent.click(secondCheckbox);
 		await fireEvent.click(firstCheckbox);
