@@ -136,6 +136,11 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 		direction: 'asc' | 'desc';
 	}
 
+	interface SortColumn {
+		defaultDirection: SortOptions['direction'];
+		label: string;
+	}
+
 	interface Props {
 		topVaults?: TopVaults;
 		chain?: Chain;
@@ -317,7 +322,7 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 		selectedVaultIds = [...selectedVaultIds, vaultId];
 	}
 
-	// --- Sort column registry (key → default direction) ---
+	// --- Sort column registry ---
 
 	function getXerberusRiskRating(vault: VaultInfo): string {
 		const score = vault.xerberus?.score;
@@ -326,34 +331,48 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 	}
 
 	const returnSortColumnMap = Object.fromEntries(
-		returnColumnDefinitions.map((definition) => [definition.id, { defaultDirection: definition.sortDirection }])
-	) as Record<ReturnColumnId, { defaultDirection: 'desc' }>;
+		returnColumnDefinitions.map((definition) => [
+			definition.id,
+			{ defaultDirection: definition.sortDirection, label: definition.label }
+		])
+	) as Record<ReturnColumnId, SortColumn>;
 
 	// The provider is a page-level configuration and does not change after the table mounts.
-	const providerSortColumnMap = untrack((): Record<string, { defaultDirection: 'asc' | 'desc' }> => {
+	const providerSortColumnMap = untrack((): Record<string, SortColumn> => {
 		if (!ratingProvider) return {};
 		return {
 			provider_risk_rating: {
-				defaultDirection: ratingProvider === 'xerberus' ? 'desc' : 'asc'
+				defaultDirection: ratingProvider === 'xerberus' ? 'desc' : 'asc',
+				label: 'Risk rating'
 			}
 		};
 	});
 
-	const sortColumnMap: Record<string, { defaultDirection: 'asc' | 'desc' }> = {
+	const sortColumnMap: Record<string, SortColumn> = {
 		...returnSortColumnMap,
-		chain: { defaultDirection: 'asc' },
-		vault: { defaultDirection: 'asc' },
-		three_months_sharpe: { defaultDirection: 'desc' },
-		three_months_volatility: { defaultDirection: 'asc' },
-		max_dd: { defaultDirection: 'desc' },
-		denomination: { defaultDirection: 'asc' },
-		tvl: { defaultDirection: 'desc' },
-		age: { defaultDirection: 'desc' },
-		fees: { defaultDirection: 'asc' },
-		lockup: { defaultDirection: 'asc' },
-		risk: { defaultDirection: 'asc' },
+		chain: { defaultDirection: 'asc', label: 'Chain' },
+		vault: { defaultDirection: 'asc', label: 'Vault' },
+		three_months_sharpe: { defaultDirection: 'desc', label: '3M Sharpe' },
+		three_months_volatility: { defaultDirection: 'asc', label: '3M volatility' },
+		max_dd: { defaultDirection: 'desc', label: 'Maximum drawdown' },
+		denomination: { defaultDirection: 'asc', label: 'Denomination' },
+		tvl: { defaultDirection: 'desc', label: 'TVL' },
+		age: { defaultDirection: 'desc', label: 'Age' },
+		fees: { defaultDirection: 'asc', label: 'Fees' },
+		lockup: { defaultDirection: 'asc', label: 'Deposit and delays' },
+		risk: { defaultDirection: 'asc', label: 'Protocol technical risk' },
 		...providerSortColumnMap
 	};
+	const standardSortColumnKeys = [
+		'three_months_sharpe',
+		'three_months_volatility',
+		'max_dd',
+		'denomination',
+		'tvl',
+		'age',
+		'fees',
+		'lockup'
+	] as const;
 
 	// --- URL search state schema ---
 
@@ -587,27 +606,16 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 	let showProviderRiskRating = $derived(ratingProvider != null);
 	let showTechnicalRisk = $derived(ratingProvider == null);
 	let tableColumnCount = $derived(12 + selectedReturnColumns.length + (showChainCol ? 1 : 0));
-	let sortDropdownOptions = $derived.by(() => {
-		const options: Array<{ key: string; label: string }> = [];
-
-		if (showChainCol) options.push({ key: 'chain', label: 'Chain' });
-		options.push({ key: 'vault', label: 'Vault' });
-		if (showProviderRiskRating) options.push({ key: 'provider_risk_rating', label: 'Risk rating' });
-		options.push(
-			...selectedReturnColumns.map((column) => ({ key: column.id, label: column.label })),
-			{ key: 'three_months_sharpe', label: '3M Sharpe' },
-			{ key: 'three_months_volatility', label: '3M volatility' },
-			{ key: 'max_dd', label: 'Maximum drawdown' },
-			{ key: 'denomination', label: 'Denomination' },
-			{ key: 'tvl', label: 'TVL' },
-			{ key: 'age', label: 'Age' },
-			{ key: 'fees', label: 'Fees' },
-			{ key: 'lockup', label: 'Deposit and delays' }
-		);
-		if (showTechnicalRisk) options.push({ key: 'risk', label: 'Protocol technical risk' });
-
-		return options;
-	});
+	let sortDropdownOptions = $derived.by(() =>
+		[
+			...(showChainCol ? ['chain'] : []),
+			'vault',
+			...(showProviderRiskRating ? ['provider_risk_rating'] : []),
+			...selectedReturnColumns.map((column) => column.id),
+			...standardSortColumnKeys,
+			...(showTechnicalRisk ? ['risk'] : [])
+		].map((key) => ({ key, label: sortColumnMap[key].label }))
+	);
 
 	let offsetWidth = $state<number>();
 

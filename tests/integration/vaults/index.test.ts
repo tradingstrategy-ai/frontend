@@ -271,7 +271,7 @@ test.describe('vault index page', () => {
 
 	test('describes the default return ranking', async ({ page }) => {
 		await expect(page.locator('.hero-banner .subtitle')).toHaveText(
-			'The best-performing stablecoin vaults. Ranked by 30-day returns.'
+			'The best-performing stablecoin vaults. Ranked by one-month annualised returns.'
 		);
 	});
 
