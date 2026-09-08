@@ -34,13 +34,55 @@ export function rebaseComparisonPoints(points: readonly ComparisonChartPoint[]):
 	return points.map((point) => ({ ...point, value: (point.value / startingValue) * 100 }));
 }
 
-/** Clip a series to its visible range and rebase its first plotted point to 100. */
-export function rebaseVisibleComparisonPoints(
+/** Return the observations contained in a selected chart range. */
+export function getVisibleComparisonPoints(
 	points: readonly ComparisonChartPoint[],
 	visibleRange: [number, number] | null
 ): ComparisonChartPoint[] {
 	if (!visibleRange) return [];
-	return rebaseComparisonPoints(points.filter(({ time }) => time >= visibleRange[0] && time <= visibleRange[1]));
+	return points.filter(({ time }) => time >= visibleRange[0] && time <= visibleRange[1]);
+}
+
+/**
+ * Anchor later-starting vault curves to the highest older curve that overlaps
+ * their first visible observation. The earliest visible curve starts at 100.
+ */
+export function alignVisibleVaultCurves(
+	curves: readonly (readonly ComparisonChartPoint[])[]
+): ComparisonChartPoint[][] {
+	const prepared = curves
+		.map((points, index) => ({ index, points }))
+		.filter(({ points }) => {
+			const firstValue = points[0]?.value;
+			return Number.isFinite(firstValue) && firstValue > 0;
+		})
+		.sort((left, right) => left.points[0].time - right.points[0].time || left.index - right.index);
+	const alignedByIndex = new Map<number, ComparisonChartPoint[]>();
+	let index = 0;
+
+	while (index < prepared.length) {
+		const cohortStart = prepared[index].points[0].time;
+		const cohort: (typeof prepared)[number][] = [];
+		while (index < prepared.length && prepared[index].points[0].time === cohortStart) cohort.push(prepared[index++]);
+
+		const overlappingValues = [...alignedByIndex.values()].flatMap((points) => {
+			const lastPoint = points.at(-1);
+			if (!lastPoint || lastPoint.time < cohortStart) return [];
+			const value = valueAtOrBefore(points, cohortStart);
+			return value === null ? [] : [value];
+		});
+		const anchor = overlappingValues.length ? Math.max(...overlappingValues) : 100;
+
+		for (const curve of cohort) {
+			const startingValue = curve.points[0].value;
+			alignedByIndex.set(
+				curve.index,
+				curve.points.map((point) => ({ ...point, value: (point.value / startingValue) * anchor }))
+			);
+		}
+	}
+
+	return curves.map((_, index) => alignedByIndex.get(index) ?? []);
 }
 
 /**
@@ -71,6 +113,24 @@ export function resampleComparisonPoints(
 	const lastPoint = points.at(-1)!;
 	if (lastPoint.time > result.at(-1)!.time) result.push({ ...lastPoint });
 	return result;
+}
+
+function valueAtOrBefore(points: readonly ComparisonChartPoint[], timestamp: number): number | null {
+	let low = 0;
+	let high = points.length - 1;
+	let match = -1;
+
+	while (low <= high) {
+		const middle = Math.floor((low + high) / 2);
+		if (points[middle].time <= timestamp) {
+			match = middle;
+			low = middle + 1;
+		} else {
+			high = middle - 1;
+		}
+	}
+
+	return match === -1 ? null : points[match].value;
 }
 
 /**

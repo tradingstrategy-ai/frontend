@@ -1,9 +1,10 @@
 import { utcHour } from 'd3-time';
 import {
+	alignVisibleVaultCurves,
 	calculateComparisonPeriodMetrics,
+	getVisibleComparisonPoints,
 	indexPriceSeries,
 	rebaseComparisonPoints,
-	rebaseVisibleComparisonPoints,
 	resampleComparisonPoints
 } from './equity-curves';
 
@@ -53,9 +54,9 @@ describe('rebaseComparisonPoints', () => {
 		expect(rebaseComparisonPoints([{ time: 86_400, value: 0 }])).toEqual([]);
 	});
 
-	test('clips to the selected period before rebasing a younger vault', () => {
+	test('keeps only observations inside the selected range', () => {
 		expect(
-			rebaseVisibleComparisonPoints(
+			getVisibleComparisonPoints(
 				[
 					{ time: 1, value: 80 },
 					{ time: 3, value: 120 },
@@ -64,8 +65,46 @@ describe('rebaseComparisonPoints', () => {
 				[2, 4]
 			)
 		).toEqual([
-			{ time: 3, value: 100 },
-			{ time: 4, value: 125 }
+			{ time: 3, value: 120 },
+			{ time: 4, value: 150 }
+		]);
+	});
+});
+
+describe('alignVisibleVaultCurves', () => {
+	test('anchors a vault with shorter history to the highest overlapping curve', () => {
+		expect(
+			alignVisibleVaultCurves([
+				[
+					{ time: 1, value: 50 },
+					{ time: 2, value: 60 },
+					{ time: 3, value: 40 }
+				],
+				[
+					{ time: 1, value: 10 },
+					{ time: 2, value: 13 },
+					{ time: 3, value: 17 }
+				],
+				[
+					{ time: 2, value: 200 },
+					{ time: 3, value: 250 }
+				]
+			])
+		).toEqual([
+			[
+				{ time: 1, value: 100 },
+				{ time: 2, value: 120 },
+				{ time: 3, value: 80 }
+			],
+			[
+				{ time: 1, value: 100 },
+				{ time: 2, value: 130 },
+				{ time: 3, value: 170 }
+			],
+			[
+				{ time: 2, value: 130 },
+				{ time: 3, value: 162.5 }
+			]
 		]);
 	});
 });
