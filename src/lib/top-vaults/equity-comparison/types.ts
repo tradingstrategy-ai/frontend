@@ -35,18 +35,6 @@ export interface VaultPriceSeries {
 	points: [timestamp: number, sharePrice: number][];
 }
 
-export interface AlignedEquityPoint {
-	time: number;
-	value: number;
-}
-
-export interface AlignedVaultSeries {
-	id: string;
-	anchor: number;
-	discontinuous: boolean;
-	points: AlignedEquityPoint[];
-}
-
 /** Server-prepared sampling resolutions used by the comparison chart controls. */
 export type ComparisonTimeBucket = '4h' | '1d';
 
@@ -67,7 +55,6 @@ export interface ComparisonChartPoint {
 
 export interface ComparisonChartSeries {
 	id: string;
-	discontinuous: boolean;
 	points: Record<ComparisonTimeBucket, ComparisonChartPoint[]>;
 	periodMetrics: Record<ComparisonTimeSpan, ComparisonPeriodMetrics>;
 }

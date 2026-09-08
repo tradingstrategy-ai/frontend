@@ -5,9 +5,8 @@ import { utcDay, utcHour } from 'd3-time';
 import { queryVaultPriceRows } from '$lib/server/top-vaults/vault-price-series';
 import { fetchCoinbaseBenchmarkCloses } from '$lib/top-vaults/coinbase';
 import {
-	alignVaultEquityCurves,
 	calculateComparisonPeriodMetrics,
-	indexBenchmarkPrices,
+	indexPriceSeries,
 	resampleComparisonPoints
 } from '$lib/top-vaults/equity-comparison/equity-curves';
 import {
@@ -16,8 +15,6 @@ import {
 	canonicaliseComparisonVaultIds
 } from '$lib/top-vaults/equity-comparison/state';
 import type {
-	AlignedEquityPoint,
-	AlignedVaultSeries,
 	ComparisonBenchmark,
 	ComparisonChartPoint,
 	ComparisonChartSeries,
@@ -33,6 +30,11 @@ const fourHours = utcHour.every(4)!;
 const compress = promisify(brotliCompress);
 type CachedResponse = { json: string; br: Uint8Array };
 const responseCache = new Map<string, { expiresAt: number; response: Promise<CachedResponse> }>();
+
+interface IndexedSeries {
+	id: string;
+	points: ComparisonChartPoint[];
+}
 
 const cacheHeaders = {
 	'cache-control': 'public, max-age=300',
@@ -122,12 +124,14 @@ async function buildComparisonChartResponse(
 		else missingVaultIds.push(vaultId);
 	}
 
-	const alignedSeries = alignVaultEquityCurves(rawSeries);
-	const starts = alignedSeries.flatMap(({ points }) => (points[0] ? [points[0].time] : []));
-	const ends = alignedSeries.flatMap(({ points }) => (points.at(-1) ? [points.at(-1)!.time] : []));
+	const indexedSeries = rawSeries
+		.map(({ id, points }) => ({ id, points: indexPriceSeries(points) }))
+		.filter((series) => series.points.length > 0);
+	const starts = indexedSeries.flatMap(({ points }) => (points[0] ? [points[0].time] : []));
+	const ends = indexedSeries.flatMap(({ points }) => (points.at(-1) ? [points.at(-1)!.time] : []));
 	const range: [number, number] | null = starts.length && ends.length ? [Math.min(...starts), Math.max(...ends)] : null;
 	const recentStart = range ? range[1] - RECENT_FOUR_HOUR_DAYS * 86_400 : 0;
-	const vaultSeries = range ? alignedSeries.map((series) => buildProcessedSeries(series, recentStart, range)) : [];
+	const vaultSeries = range ? indexedSeries.map((series) => buildProcessedSeries(series, recentStart, range)) : [];
 	const benchmarkSeries: ComparisonChartSeries[] = [];
 	const benchmarkErrors: Partial<Record<ComparisonBenchmark, string>> = {};
 
@@ -152,18 +156,17 @@ async function buildComparisonChartResponse(
 }
 
 function buildProcessedSeries(
-	series: AlignedVaultSeries,
+	series: IndexedSeries,
 	recentStart: number,
 	range: [number, number]
 ): ComparisonChartSeries {
-	const { id, points, discontinuous } = series;
+	const { id, points } = series;
 	const processedPoints = {
 		'4h': resampleComparisonPoints(points, fourHours).filter(({ time }) => time >= recentStart),
 		'1d': resampleComparisonPoints(points, utcDay)
 	};
 	return {
 		id,
-		discontinuous,
 		points: processedPoints,
 		periodMetrics: calculateComparisonPeriodMetrics(processedPoints, range)
 	};
@@ -190,7 +193,6 @@ async function buildBenchmarkSeries(
 		};
 		return {
 			id: benchmark,
-			discontinuous: false,
 			points,
 			periodMetrics: calculateComparisonPeriodMetrics(points, range)
 		};
@@ -203,12 +205,8 @@ async function buildBenchmarkSeries(
 		end,
 		false
 	);
-	const indexedPoints: AlignedEquityPoint[] = indexBenchmarkPrices(source).map(([time, value]) => ({ time, value }));
-	return buildProcessedSeries(
-		{ id: benchmark, anchor: 100, discontinuous: false, points: indexedPoints },
-		recentStart,
-		range
-	);
+	const indexedPoints = indexPriceSeries(source);
+	return buildProcessedSeries({ id: benchmark, points: indexedPoints }, recentStart, range);
 }
 
 function toBenchmarkPoint(time: number, value: number): ComparisonChartPoint {

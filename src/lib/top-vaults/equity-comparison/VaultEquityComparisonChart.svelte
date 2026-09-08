@@ -28,6 +28,7 @@ on one TradingView lightweight-charts pane.
 	import { formatNumber } from '$lib/helpers/formatters';
 	import BenchmarkLogo from './BenchmarkLogo.svelte';
 	import { benchmarkComparisonColours } from './colours';
+	import { rebaseComparisonPoints, rebaseVisibleComparisonPoints } from './equity-curves';
 	import { getComparisonVisibleRange, getNetComparisonPoints } from './net-returns';
 	import type {
 		ComparisonBenchmark,
@@ -61,7 +62,6 @@ on one TradingView lightweight-charts pane.
 		colour: string;
 		indexValue: number;
 		benchmark?: ComparisonBenchmark;
-		discontinuous?: boolean;
 		feeEvent?: 'after-entry' | 'before-exit' | 'after-exit';
 	};
 
@@ -101,7 +101,8 @@ on one TradingView lightweight-charts pane.
 	function buildChartPoints(
 		series: ComparisonChartSeries | undefined,
 		timeSpan: TimeSpan,
-		kind: ChartPointMeta['kind']
+		kind: ChartPointMeta['kind'],
+		visibleRange: [number, number] | null
 	): ComparisonChartPoint[] {
 		if (!series) return [];
 		const timeBucket = timeSpan.timeBucket as ComparisonTimeBucket;
@@ -109,12 +110,8 @@ on one TradingView lightweight-charts pane.
 		const feeProfile = vaultById.get(series.id)?.feeProfile;
 		const points =
 			kind === 'vault' && returnMode === 'net' && feeProfile
-				? getNetComparisonPoints(
-						series.points[timeBucket],
-						feeProfile,
-						getComparisonVisibleRange(data?.range, timeSpan)
-					)
-				: series.points[timeBucket];
+				? rebaseComparisonPoints(getNetComparisonPoints(series.points[timeBucket], feeProfile, visibleRange))
+				: rebaseVisibleComparisonPoints(series.points[timeBucket], visibleRange);
 		const label = benchmark ? benchmarkLabels[benchmark] : (vaultById.get(series.id)?.name ?? series.id);
 		const colour = benchmark
 			? benchmarkComparisonColours[benchmark]
@@ -130,7 +127,6 @@ on one TradingView lightweight-charts pane.
 				colour,
 				indexValue: point.value,
 				benchmark,
-				discontinuous: series.discontinuous,
 				feeEvent: point.feeEvent
 			}
 		}));
@@ -176,11 +172,12 @@ on one TradingView lightweight-charts pane.
 							{#if returnMode === 'net'}
 								Net estimates each vault's liquidation value after its known fees over the selected period. Management
 								fees use starting invested capital, while performance fees apply to positive profit at each point.
-								Internalised fees are already reflected in share prices. Benchmarks are unchanged. The oldest vault
-								starts at 100; younger vaults join at the highest overlapping curve.
+								Internalised fees are already reflected in share prices. Every series is rebased to 100 at the beginning
+								of the selected period, or its first plotted observation. Benchmarks are unchanged by the fee
+								calculation.
 							{:else}
-								Gross follows published vault share prices without additional investor-fee deductions. Benchmarks are
-								unchanged. The oldest vault starts at 100; younger vaults join at the highest overlapping curve.
+								Gross follows published vault share prices without additional investor-fee deductions. Every series is
+								rebased to 100 at the beginning of the selected period, or its first plotted observation.
 							{/if}
 						</svelte:fragment>
 					</Tooltip>
@@ -228,10 +225,11 @@ on one TradingView lightweight-charts pane.
 		{/snippet}
 
 		{#snippet series({ timeSpan })}
+			{@const visibleRange = getComparisonVisibleRange(data?.range, timeSpan)}
 			{#each vaults as vault (vault.id)}
 				<Series
 					type={LineSeries}
-					data={buildChartPoints(vaultSeriesById.get(vault.id), timeSpan, 'vault')}
+					data={buildChartPoints(vaultSeriesById.get(vault.id), timeSpan, 'vault', visibleRange)}
 					options={{
 						color: colours.get(vault.id),
 						lineWidth: 2,
@@ -245,7 +243,7 @@ on one TradingView lightweight-charts pane.
 			{#each enabledBenchmarks as benchmark (benchmark)}
 				<Series
 					type={LineSeries}
-					data={buildChartPoints(benchmarkSeriesById.get(benchmark), timeSpan, 'benchmark')}
+					data={buildChartPoints(benchmarkSeriesById.get(benchmark), timeSpan, 'benchmark', visibleRange)}
 					options={{
 						color: benchmarkComparisonColours[benchmark],
 						lineWidth: 2,
@@ -272,9 +270,7 @@ on one TradingView lightweight-charts pane.
 									<span class="swatch" aria-hidden="true"></span>
 								{/if}
 								<span class="tooltip-label" class:vault-name={row.kind === 'vault'}>
-									{row.label}{#if row.discontinuous}<small> · no overlap</small>{/if}{#if row.feeEvent}<small>
-											· {feeEventLabel(row.feeEvent)}</small
-										>{/if}
+									{row.label}{#if row.feeEvent}<small> · {feeEventLabel(row.feeEvent)}</small>{/if}
 								</span>
 								<strong>{formatNumber(row.indexValue, 1)}</strong>
 							</li>
@@ -289,7 +285,6 @@ on one TradingView lightweight-charts pane.
 				{#each vaults as vault (vault.id)}
 					<div class="legend-item" style:--series-colour={colours.get(vault.id)} title={vault.name}>
 						<span class="swatch" aria-hidden="true"></span><span class="vault-name">{vault.name}</span>
-						{#if vaultSeriesById.get(vault.id)?.discontinuous}<small>No overlap</small>{/if}
 					</div>
 				{/each}
 				{#each enabledBenchmarks as benchmark (benchmark)}

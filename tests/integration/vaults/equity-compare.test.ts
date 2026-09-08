@@ -68,7 +68,6 @@ async function mockResponsiveChartData(page: Page) {
 			const points = responsiveChartPoints(index);
 			return {
 				id,
-				discontinuous: false,
 				points: { '4h': points, '1d': points },
 				periodMetrics: mockPeriodMetrics(index)
 			};
@@ -77,7 +76,6 @@ async function mockResponsiveChartData(page: Page) {
 			const points = responsiveChartPoints(0);
 			return {
 				id,
-				discontinuous: false,
 				points: { '4h': points, '1d': points },
 				periodMetrics: mockPeriodMetrics()
 			};
@@ -242,13 +240,11 @@ test.describe('vault equity curve comparison page', () => {
 					range: [1_735_689_600, 1_735_862_400],
 					vaultSeries: vaultIds.map((id, index) => ({
 						id,
-						discontinuous: false,
 						points: { '4h': pointsFor(index), '1d': pointsFor(index) },
 						periodMetrics: mockPeriodMetrics(index)
 					})),
 					benchmarkSeries: benchmarks.map((id) => ({
 						id,
-						discontinuous: false,
 						points: { '4h': pointsFor(0), '1d': pointsFor(0) },
 						periodMetrics: mockPeriodMetrics()
 					})),
