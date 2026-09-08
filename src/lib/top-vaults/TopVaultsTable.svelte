@@ -1996,7 +1996,33 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 			}
 
 			.filter-section-display {
+				display: grid;
+				grid-template-columns: max-content minmax(0, 1fr);
+				align-items: center;
+				gap: 0.75rem 0.5rem;
 				padding-right: 1.5rem;
+
+				.filter-section-heading {
+					grid-column: 1 / -1;
+				}
+
+				.filter-group {
+					display: contents;
+
+					> .filter-label {
+						text-align: right;
+					}
+
+					> :global(.select),
+					> .tvl-dropdown {
+						width: 100%;
+						min-width: 0;
+					}
+
+					.tvl-trigger {
+						width: 100%;
+					}
+				}
 			}
 
 			.filter-section-hide {
