@@ -1,4 +1,4 @@
-import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
+import { expect, test, type APIRequestContext, type Locator, type Page } from '@playwright/test';
 
 type SearchResult = {
 	name: string;
@@ -52,6 +52,36 @@ function mockPeriodMetrics(seriesIndex = 0) {
 		'1Y': { cagr: 0.21 + seriesIndex / 100, since: '2024-03-01' },
 		Max: { cagr: 0.25 + seriesIndex / 100, since: '2024-01-01' }
 	};
+}
+
+/** Build a daily indexed curve with a known start date and value progression. */
+function dailyChartPoints(start: number, length: number, startingValue: number, dailyIncrease: number) {
+	const day = 24 * 60 * 60;
+	return Array.from({ length }, (_, index) => ({
+		time: start + index * day,
+		value: startingValue + index * dailyIncrease
+	}));
+}
+
+/** Move the crosshair near a known point until the chart tooltip shows its date. */
+async function hoverChartDate(page: Page, chart: Locator, formattedDate: string, position: number) {
+	await chart.scrollIntoViewIfNeeded();
+	const bounds = await chart.boundingBox();
+	expect(bounds).toBeTruthy();
+	const tooltip = chart.locator('.chart-tooltip');
+	const heading = tooltip.locator('.tooltip-heading');
+	const expectedX = bounds!.x + bounds!.width * position;
+	const minimumX = Math.max(bounds!.x + 1, expectedX - 80);
+	const maximumX = Math.min(bounds!.x + bounds!.width - 1, expectedX + 80);
+	for (let x = minimumX; x <= maximumX; x += 2) {
+		await page.mouse.move(x, bounds!.y + bounds!.height / 2);
+		if (await heading.count()) {
+			const date = await heading.textContent();
+			if (date?.startsWith(formattedDate)) return tooltip;
+		}
+	}
+
+	throw new Error(`Could not show the chart tooltip for ${formattedDate}`);
 }
 
 /**
@@ -143,6 +173,77 @@ test.describe('vault equity curve comparison page', () => {
 		expect(await kingfisherMetrics.textContent()).not.toBe(netKingfisherMetrics);
 		expect(await gamiMetrics.textContent()).not.toBe(netGamiMetrics);
 		expect(chartRequests).toHaveLength(1);
+	});
+
+	test('anchors three vault curves when switching the selected return period', async ({ page, request }) => {
+		const vaults = await Promise.all([
+			findVaultId(request, 'Savings USDS', 'Savings USDS'),
+			findVaultId(request, 'The Kingfisher Vault', 'The Kingfisher Vault'),
+			findVaultId(request, 'Gami USDC', 'Gami USDC')
+		]);
+		const day = 24 * 60 * 60;
+		const rangeStart = Date.UTC(2025, 0, 1) / 1_000;
+		const rangeLength = 120;
+		const shorterHistoryStart = 99;
+		const firstVaultPoints = dailyChartPoints(rangeStart, rangeLength, 100, 1);
+		const secondVaultPoints = dailyChartPoints(rangeStart, rangeLength, 100, 2);
+		const thirdVaultPoints = dailyChartPoints(
+			rangeStart + shorterHistoryStart * day,
+			rangeLength - shorterHistoryStart,
+			50,
+			5
+		);
+
+		await page.route('**/vaults/compare/chart-data?*', async (route) => {
+			const requestedVaults = new URL(route.request().url()).searchParams.getAll('vault');
+			const pointsByVaultId = new Map([
+				[vaults[0], firstVaultPoints],
+				[vaults[1], secondVaultPoints],
+				[vaults[2], thirdVaultPoints]
+			]);
+			await route.fulfill({
+				contentType: 'application/json',
+				body: JSON.stringify({
+					range: [rangeStart, rangeStart + (rangeLength - 1) * day],
+					vaultSeries: requestedVaults.map((id, index) => {
+						const points = pointsByVaultId.get(id)!;
+						return {
+							id,
+							points: { '4h': points, '1d': points },
+							periodMetrics: mockPeriodMetrics(index)
+						};
+					}),
+					benchmarkSeries: [],
+					missingVaultIds: [],
+					benchmarkErrors: {}
+				})
+			});
+		});
+
+		const selection = new URLSearchParams();
+		for (const vaultId of vaults) selection.append('vault', vaultId);
+		selection.set('period', '3M');
+		selection.set('return', 'gross');
+		await page.goto(`/vaults/compare?${selection}`);
+
+		const chart = page.getByTestId('tv-chart');
+		await expect(chart.locator('canvas').first()).toBeVisible();
+		await expect(chart.locator('.loading')).toBeHidden();
+		const periodOptions = page.locator('.comparison-chart .segmented-control label');
+
+		// For 3M, the first two vaults begin on 31 January. On 10 April the
+		// second is higher (186.3), so the later third vault must begin there.
+		let tooltip = await hoverChartDate(page, chart, '10 Apr 2025', 69 / 89);
+		await expect(tooltip.locator('.tooltip-rows li strong')).toHaveText(['153.1', '186.3', '186.3']);
+
+		await periodOptions.filter({ hasText: '1M' }).click();
+		await expect(periodOptions.filter({ hasText: '1M' })).toHaveClass(/selected/);
+		await expect.poll(() => new URL(page.url()).searchParams.get('period')).toBe('1M');
+
+		// For 1M, the visible period starts on 1 April. The same later vault
+		// starts on 10 April at the higher curve's newly rebased value (106.4).
+		tooltip = await hoverChartDate(page, chart, '10 Apr 2025', 9 / 29);
+		await expect(tooltip.locator('.tooltip-rows li strong')).toHaveText(['104.7', '106.4', '106.4']);
 	});
 
 	test('selects Savings USDS and all benchmarks by default', async ({ page }) => {
