@@ -587,6 +587,27 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 	let showProviderRiskRating = $derived(ratingProvider != null);
 	let showTechnicalRisk = $derived(ratingProvider == null);
 	let tableColumnCount = $derived(12 + selectedReturnColumns.length + (showChainCol ? 1 : 0));
+	let sortDropdownOptions = $derived.by(() => {
+		const options: Array<{ key: string; label: string }> = [];
+
+		if (showChainCol) options.push({ key: 'chain', label: 'Chain' });
+		options.push({ key: 'vault', label: 'Vault' });
+		if (showProviderRiskRating) options.push({ key: 'provider_risk_rating', label: 'Risk rating' });
+		options.push(
+			...selectedReturnColumns.map((column) => ({ key: column.id, label: column.label })),
+			{ key: 'three_months_sharpe', label: '3M Sharpe' },
+			{ key: 'three_months_volatility', label: '3M volatility' },
+			{ key: 'max_dd', label: 'Maximum drawdown' },
+			{ key: 'denomination', label: 'Denomination' },
+			{ key: 'tvl', label: 'TVL' },
+			{ key: 'age', label: 'Age' },
+			{ key: 'fees', label: 'Fees' },
+			{ key: 'lockup', label: 'Deposit and delays' }
+		);
+		if (showTechnicalRisk) options.push({ key: 'risk', label: 'Protocol technical risk' });
+
+		return options;
+	});
 
 	let offsetWidth = $state<number>();
 
@@ -873,6 +894,14 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 		updateSearchParams({ sort: key, direction });
 	}
 
+	/** Select a table sort criterion using its default direction. */
+	function selectSort(event: Event) {
+		const key = (event.target as HTMLSelectElement).value;
+		const column = sortColumnMap[key];
+		if (!column) return;
+		updateSearchParams({ sort: key, direction: column.defaultDirection });
+	}
+
 	function updateReturnColumns(nextSelection: ReturnColumnId[]) {
 		const nextReturns = serialiseReturnColumnSelection(nextSelection);
 		const canonicalSort = canonicaliseReturnSortKey(urlState.sort);
@@ -1151,6 +1180,14 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 								aria-labelledby="filter-group-display-heading"
 							>
 								<h3 class="filter-section-heading" id="filter-group-display-heading">Display</h3>
+								<div class="filter-group">
+									<label class="filter-label" for="vault-sort">Sort</label>
+									<Select id="vault-sort" value={sortOptions.key} data-testid="sort-select" onchange={selectSort}>
+										{#each sortDropdownOptions as option (option.key)}
+											<option value={option.key}>{option.label}</option>
+										{/each}
+									</Select>
+								</div>
 								<div class="filter-group">
 									<span class="filter-label">Columns</span>
 									<div class="tvl-dropdown" use:clickOutside={() => (returnsDropdownOpen = false)}>

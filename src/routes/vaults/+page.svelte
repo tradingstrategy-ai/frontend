@@ -14,9 +14,7 @@ Top stablecoin vault listing page.
 	const description = 'Stablecoin vault rankings by yield, risk, and other performance criteria.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let rankingDescription = $derived(getVaultSortDescription(page.url.searchParams.get('sort')));
-	let subtitle = $derived(
-		`The best-performing stablecoin vaults. Ranked by ${rankingDescription}. Table headers and filters offer more criteria.`
-	);
+	let subtitle = $derived(`The best-performing stablecoin vaults. Ranked by ${rankingDescription}.`);
 </script>
 
 <MetaTags
