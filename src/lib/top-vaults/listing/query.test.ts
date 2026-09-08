@@ -237,6 +237,14 @@ describe('vault listing query', () => {
 		]);
 	});
 
+	it('keeps a category definition scoped to its source strategy tag', () => {
+		const matching = createTestVault('Algorithmic vault', { strategy_tags: ['algorithmic_trading'] });
+		const unrelated = createTestVault('Directional vault', { strategy_tags: ['directional_trading'] });
+
+		expect(filterVaultListingScope([matching, unrelated], 'category', 'algorithmic_trading')).toEqual([matching]);
+		expect(getVaultListingDefaults('category')).toMatchObject({ tvl: '10k', unknown: false, amm: false });
+	});
+
 	it('defaults the whitelisted listing to Dangerous risk or safer', () => {
 		expect(getVaultListingDefaults('whitelisted').risk).toBe(1);
 	});
@@ -245,6 +253,7 @@ describe('vault listing query', () => {
 		expect(getVaultListingDefaults('protocol', 'unknown').unknown).toBe(false);
 		expect(getVaultListingDefaults('stablecoin', 'usdc').unknown).toBe(false);
 		expect(getVaultListingDefaults('curator', 'mev-capital').unknown).toBe(false);
+		expect(getVaultListingDefaults('category', 'algorithmic_trading').unknown).toBe(false);
 	});
 
 	it('shows AMM-like pools by default on protocol listings', () => {

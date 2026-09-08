@@ -114,7 +114,8 @@ export async function load({ fetch, url }) {
 			generated_at: topVaults.generated_at,
 			vaults: selectedVaultRecords,
 			core3_protocols: {},
-			curators: selectedCurators
+			curators: selectedCurators,
+			categories: {}
 		}
 	};
 }

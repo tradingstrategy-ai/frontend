@@ -28,7 +28,8 @@ function getTopVaults(...vaults: ReturnType<typeof createTestVault>[]) {
 		generated_at: '2026-07-30T11:30:40Z',
 		vaults,
 		core3_protocols: {},
-		curators: {}
+		curators: {},
+		categories: {}
 	};
 }
 
@@ -51,7 +52,8 @@ describe('TopVaultsTable risk rating column', () => {
 					generated_at: '2026-07-30T11:30:40Z',
 					vaults: [safeVault, blacklistedVault],
 					core3_protocols: {},
-					curators: {}
+					curators: {},
+					categories: {}
 				},
 				listingSummary: {
 					matchingCount: 1,
@@ -89,7 +91,8 @@ describe('TopVaultsTable risk rating column', () => {
 							pol: { score: 76, rating: 'D', confidence: 'High' }
 						}
 					},
-					curators: {}
+					curators: {},
+					categories: {}
 				},
 				ratingProvider: 'core3',
 				defaultSort: 'provider_risk_rating',
@@ -137,7 +140,8 @@ describe('TopVaultsTable risk rating column', () => {
 					generated_at: '2026-07-30T11:30:40Z',
 					vaults: [riskierVault, saferVault],
 					core3_protocols: {},
-					curators: {}
+					curators: {},
+					categories: {}
 				},
 				ratingProvider: 'xerberus',
 				defaultSort: 'provider_risk_rating',
@@ -179,7 +183,8 @@ describe('TopVaultsTable risk rating column', () => {
 							logos: { generic: 'https://example.com/curator-logo.svg', light: null, dark: null },
 							recent_posts: []
 						}
-					}
+					},
+					categories: {}
 				},
 				chain: getChain('arbitrum')!
 			}

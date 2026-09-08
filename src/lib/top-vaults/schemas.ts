@@ -32,6 +32,21 @@ export const vaultFeesSchema = z.object({
 });
 export type VaultFees = z.infer<typeof vaultFeesSchema>;
 
+/** Metadata and aggregate metrics for one source-defined vault strategy category. */
+export const vaultCategorySchema = z.object({
+	/** Human-readable category name. */
+	label: z.string(),
+	/** Markdown description supplied by the vault data producer. */
+	description: z.string(),
+	/** Number of vaults included in the producer's category aggregate. */
+	vault_count: z.number().int().nonnegative(),
+	/** Total value locked in USD across the producer's category aggregate. */
+	tvl_usd: z.number().nonnegative(),
+	/** Producer-provided 30-day average APY, as a decimal. */
+	one_month_apy: nullableNumber
+});
+export type VaultCategory = z.infer<typeof vaultCategorySchema>;
+
 /**
  * Whether a vault accepts deposits from the public.
  *
@@ -384,6 +399,8 @@ export const vaultInfoSchema = z.object({
 	features: z.string().array(),
 	/** Vault warning/status flags */
 	flags: z.string().array(),
+	/** Source-defined investment strategy category tags, null when unclassified. */
+	strategy_tags: z.string().array().nullable().optional().default(null),
 	/** Admin notes about the vault */
 	notes: z.string().nullable(),
 	/** Short description for listing cards */
@@ -644,7 +661,20 @@ export const topVaultsSchema = z.object({
 	 * Partly built from external feeds — `.catch({})` guarantees a malformed
 	 * payload here can never break parsing of the (critical) vaults array.
 	 */
-	curators: z.record(z.string(), curatorInfoSchema).catch({}).default({})
+	curators: z.record(z.string(), curatorInfoSchema).catch({}).default({}),
+	/**
+	 * Source-defined category registry, keyed by underscore-separated strategy
+	 * tags. A malformed record is discarded without affecting valid categories
+	 * or the critical vault array.
+	 */
+	categories: z
+		.record(z.string(), vaultCategorySchema.or(z.unknown().transform(() => null)))
+		.transform((records) => {
+			const entries = Object.entries(records).filter((entry): entry is [string, VaultCategory] => entry[1] !== null);
+			return Object.fromEntries(entries);
+		})
+		.catch({})
+		.default({})
 });
 export type TopVaults = z.infer<typeof topVaultsSchema>;
 
@@ -658,6 +688,8 @@ export interface VaultGroup {
 	slug: string;
 	/** Display name for the group (e.g. "Aave V3", "Ethereum", "USDC") */
 	name: string;
+	/** Markdown description, used by the vault categories index. */
+	description?: string;
 	/** Full human-readable name — only present on stablecoin groups (e.g. "USD Coin") */
 	fullName?: string;
 	/** Number of eligible vaults in this group */

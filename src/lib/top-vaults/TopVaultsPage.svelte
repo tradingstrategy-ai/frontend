@@ -222,12 +222,16 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 				<ProtocolDescription metadata={protocolMetadata} additionalDescription={protocolDescriptionExtra} />
 			{/if}
 
-			{#if detailDescription && detailAside && !protocolMetadata && !stablecoinMetadata && !curatorMetadata}
-				<div class="detail-overview wide-detail-overview">
-					{@render detailDescription()}
-					<aside class="detail-aside">
-						{@render detailAside()}
-					</aside>
+			{#if detailDescription && !protocolMetadata && !stablecoinMetadata && !curatorMetadata}
+				<div class={[detailAside && 'detail-overview wide-detail-overview']}>
+					<div class="detail-main">
+						{@render detailDescription()}
+					</div>
+					{#if detailAside}
+						<aside class="detail-aside">
+							{@render detailAside()}
+						</aside>
+					{/if}
 				</div>
 			{/if}
 

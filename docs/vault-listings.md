@@ -38,8 +38,10 @@ table uses the exported sorter over its accumulated rows, so equal sort values
 use the same canonical vault-ID tie-breaker on both sides.
 
 Each listing has a fixed definition (`top`, `chain`, `protocol`,
-`stablecoin`, `curator`, `tokenised-funds`, and the special listings). URL
+`stablecoin`, `curator`, `category`, `tokenised-funds`, and the special listings). URL
 filters may narrow that definition but cannot change its base population.
+
+Category listing scopes use the source `strategy_tags` value internally. Their public URLs use dash-separated category slugs, while the category index is alphabetically ordered by display name.
 
 ### Permissioned vault filter
 
@@ -81,13 +83,13 @@ and leaves vaults with or without volatility data in the listing.
 `GET /top-vaults/listing-data` returns up to 50 rows. It accepts the normal
 listing filter query parameters plus:
 
-| Parameter      | Required         | Description                                                                                              |
-| -------------- | ---------------- | -------------------------------------------------------------------------------------------------------- |
-| `listing`      | No               | Listing key; defaults to `top`.                                                                          |
-| `scope`        | Dynamic listings | Route-provided chain, protocol, stablecoin, or curator slug. Unknown values return no rows.              |
-| `offset`       | No               | Non-negative number of rows already received; defaults to `0`.                                           |
-| `version`      | No               | Initial page `generated_at` timestamp. A changed export produces `409`.                                  |
-| `previousRisk` | Reveal requests  | Previous technical-risk filter index. With a broader target risk, only newly included rows are returned. |
+| Parameter      | Required         | Description                                                                                                      |
+| -------------- | ---------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `listing`      | No               | Listing key; defaults to `top`.                                                                                  |
+| `scope`        | Dynamic listings | Route-provided chain, protocol, stablecoin, or curator slug; category source tag. Unknown values return no rows. |
+| `offset`       | No               | Non-negative number of rows already received; defaults to `0`.                                                   |
+| `version`      | No               | Initial page `generated_at` timestamp. A changed export produces `409`.                                          |
+| `previousRisk` | Reveal requests  | Previous technical-risk filter index. With a broader target risk, only newly included rows are returned.         |
 
 A successful response contains `vaults`, `nextOffset`, `hasMore`,
 `generatedAt`, and the complete-result listing summary. Responses use

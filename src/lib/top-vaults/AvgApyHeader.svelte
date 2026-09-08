@@ -12,14 +12,14 @@ Column heading for TVL-weighted average APY values in vault group listings.
 		 * which cannot render this component.
 		 */
 		label?: string;
+		/** Tooltip text describing how the displayed APY was calculated. */
+		tooltip?: string;
 	}
 
-	let { label = 'Avg. APY%' }: Props = $props();
-
-	const avgApyTooltip = 'Total value locked weighted returns, last 30 days';
+	let { label = 'Avg. APY%', tooltip = 'Total value locked weighted returns, last 30 days' }: Props = $props();
 </script>
 
 <Tooltip>
 	<span slot="trigger" class="underline">{label}</span>
-	<svelte:fragment slot="popup">{avgApyTooltip}</svelte:fragment>
+	<svelte:fragment slot="popup">{tooltip}</svelte:fragment>
 </Tooltip>

@@ -36,7 +36,8 @@ describe('getRiskRatingTvlBands', () => {
 				generated_at: '2026-07-30T11:30:40Z',
 				vaults: [lowerScoreVault, higherScoreVault],
 				core3_protocols: {},
-				curators: {}
+				curators: {},
+				categories: {}
 			},
 			'xerberus'
 		);
@@ -71,7 +72,13 @@ describe('getRiskRatingTvlBands', () => {
 		});
 
 		const bands = getRiskRatingTvlBands(
-			{ generated_at: '2026-07-30T11:30:40Z', vaults: [saferVault, riskierVault], core3_protocols: {}, curators: {} },
+			{
+				generated_at: '2026-07-30T11:30:40Z',
+				vaults: [saferVault, riskierVault],
+				core3_protocols: {},
+				curators: {},
+				categories: {}
+			},
 			'core3'
 		);
 
