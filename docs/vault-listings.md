@@ -1,4 +1,24 @@
-# Vault listing pagination
+# Vault listings
+
+## Comparing selected vaults
+
+Public vault listing tables let visitors select up to eight vaults for comparison.
+The selection is local to the current listing: it survives sorting, filtering,
+and progressive loading, but resets when the listing category changes. A filter
+can temporarily hide a selected vault; its selection remains in the count and
+comparison until the filter is relaxed or it is removed on the comparison page.
+Selecting one or more vaults reveals a **Compare vaults** action in a dedicated
+table row immediately after the most recently selected vault. If that vault is
+not currently rendered—for example, because a filter hides it—the action follows
+the rendered vault rows instead. The action scrolls with the listing. It opens
+the comparison page with the selected IDs in click order as repeated `vault`
+query parameters and explicit chart settings. The initial period is three
+months. Net returns are selected when fee data is available for every chosen
+vault and its record remains loaded. Otherwise the comparison starts with gross
+returns. The comparison page's embedded selected-vault table does not render
+these controls.
+
+## Pagination
 
 Vault table pages render their first 125 matching rows in the SvelteKit server
 load. This makes the initial listing visible without downloading the complete

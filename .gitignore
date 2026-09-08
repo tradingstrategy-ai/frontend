@@ -9,6 +9,7 @@ node_modules
 *.local
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+tests/mocks/**/*.timestamp-*.mjs
 .idea
 .vscode
 .zed

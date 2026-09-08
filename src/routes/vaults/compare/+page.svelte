@@ -407,6 +407,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 				<h2 id="selected-comparison-heading">Selected vault comparison</h2>
 				<TopVaultsTable
 					topVaults={data.selectedTopVaults}
+					allowVaultComparison={false}
 					includeBlacklisted
 					defaultHideUnknown={0}
 					tvlTriggerLabel="Selected vaults"

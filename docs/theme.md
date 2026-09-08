@@ -135,6 +135,7 @@ Use these defaults when generating new UI:
 - Default card border: `var(--c-box-3)`
 - Stronger border or control emphasis: `var(--c-box-4)`
 - Section accent wash: `var(--c-background-accent-1)`
+- Selected vault-listing row: `var(--c-vault-row-selected)`
 
 Avoid these mistakes:
 
