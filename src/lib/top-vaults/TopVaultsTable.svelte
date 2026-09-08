@@ -1849,6 +1849,16 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 			min-width: 0;
 		}
 
+		/*
+		 * Native select menus are rendered by the browser. Give the Sort options an
+		 * explicit colour pair so browsers that use a light menu surface do not
+		 * combine it with the dark theme's inherited text colour.
+		 */
+		:global(#vault-sort option) {
+			background-color: var(--c-body);
+			color: var(--c-text);
+		}
+
 		.filter-section-heading {
 			width: 100%;
 			margin: 0;
