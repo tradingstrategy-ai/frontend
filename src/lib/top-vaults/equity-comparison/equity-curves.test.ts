@@ -1,153 +1,127 @@
 import { utcHour } from 'd3-time';
 import {
-	alignVaultEquityCurves,
+	alignVisibleVaultCurves,
 	calculateComparisonPeriodMetrics,
-	indexBenchmarkPrices,
+	getVisibleComparisonPoints,
+	indexPriceSeries,
+	rebaseComparisonPoints,
 	resampleComparisonPoints
 } from './equity-curves';
 
-describe('alignVaultEquityCurves', () => {
-	test('indexes the oldest vault to 100', () => {
-		const [vault] = alignVaultEquityCurves([
-			{
-				id: 'old',
-				points: [
-					[1, 2],
-					[2, 3]
-				]
-			}
+describe('indexPriceSeries', () => {
+	test('indexes a valid price series to 100', () => {
+		expect(
+			indexPriceSeries([
+				[1, 2],
+				[2, 3]
+			])
+		).toEqual([
+			{ time: 1, value: 100 },
+			{ time: 2, value: 150 }
 		]);
-		expect(vault.anchor).toBe(100);
-		expect(vault.points.map(({ value }) => value)).toEqual([100, 150]);
-	});
-
-	test('anchors a younger vault to the highest overlapping curve', () => {
-		const result = alignVaultEquityCurves([
-			{
-				id: 'lower',
-				points: [
-					[1, 1],
-					[3, 0.9],
-					[5, 1]
-				]
-			},
-			{
-				id: 'higher',
-				points: [
-					[1, 2],
-					[3, 3],
-					[5, 4]
-				]
-			},
-			{
-				id: 'young',
-				points: [
-					[4, 10],
-					[5, 12]
-				]
-			}
-		]);
-		const young = result.find(({ id }) => id === 'young')!;
-		expect(young.anchor).toBe(150);
-		expect(young.points[0].value).toBe(150);
-		expect(young.points[1].value).toBe(180);
-		expect(young.points[0].time).toBe(4);
-	});
-
-	test('aligns same-start cohorts without processing-order bias', () => {
-		const result = alignVaultEquityCurves([
-			{
-				id: 'first',
-				points: [
-					[1, 1],
-					[2, 2]
-				]
-			},
-			{
-				id: 'second',
-				points: [
-					[1, 5],
-					[2, 4]
-				]
-			}
-		]);
-		expect(result.map(({ anchor }) => anchor)).toEqual([100, 100]);
-	});
-
-	test('falls back to 100 for non-overlapping histories', () => {
-		const result = alignVaultEquityCurves([
-			{
-				id: 'finished',
-				points: [
-					[1, 1],
-					[2, 2]
-				]
-			},
-			{
-				id: 'later',
-				points: [
-					[4, 5],
-					[5, 6]
-				]
-			}
-		]);
-		expect(result[1]).toMatchObject({ anchor: 100, discontinuous: true });
 	});
 
 	test('sorts, de-duplicates, and removes invalid samples', () => {
-		const [vault] = alignVaultEquityCurves([
-			{
-				id: 'vault',
-				points: [
-					[2, 4],
-					[1, 2],
-					[2, 6],
-					[3, 0],
-					[4, Number.NaN]
-				]
-			}
-		]);
-		expect(vault.points.map(({ time, value }) => [time, value])).toEqual([
-			[1, 100],
-			[2, 300]
+		expect(
+			indexPriceSeries([
+				[2, 4],
+				[1, 2],
+				[2, 6],
+				[3, 0],
+				[4, Number.NaN]
+			])
+		).toEqual([
+			{ time: 1, value: 100 },
+			{ time: 2, value: 300 }
 		]);
 	});
 });
 
-describe('indexBenchmarkPrices', () => {
-	test('indexes valid market prices to the requested starting value', () => {
+describe('rebaseComparisonPoints', () => {
+	test('rebases the first visible observation to index 100 without losing fee markers', () => {
 		expect(
-			indexBenchmarkPrices(
+			rebaseComparisonPoints([
+				{ time: 86_400, value: 125, feeEvent: 'after-entry' },
+				{ time: 2 * 86_400, value: 150 }
+			])
+		).toEqual([
+			{ time: 86_400, value: 100, feeEvent: 'after-entry' },
+			{ time: 2 * 86_400, value: 120 }
+		]);
+	});
+
+	test('does not produce a return index from a non-positive starting value', () => {
+		expect(rebaseComparisonPoints([{ time: 86_400, value: 0 }])).toEqual([]);
+	});
+
+	test('keeps only observations inside the selected range', () => {
+		expect(
+			getVisibleComparisonPoints(
 				[
-					[1, 20],
-					[2, 25]
+					{ time: 1, value: 80 },
+					{ time: 3, value: 120 },
+					{ time: 4, value: 150 }
 				],
-				100
+				[2, 4]
 			)
 		).toEqual([
-			[1, 100],
-			[2, 125]
+			{ time: 3, value: 120 },
+			{ time: 4, value: 150 }
+		]);
+	});
+});
+
+describe('alignVisibleVaultCurves', () => {
+	test('anchors a vault with shorter history to the highest overlapping curve', () => {
+		expect(
+			alignVisibleVaultCurves([
+				[
+					{ time: 1, value: 50 },
+					{ time: 2, value: 60 },
+					{ time: 3, value: 40 }
+				],
+				[
+					{ time: 1, value: 10 },
+					{ time: 2, value: 13 },
+					{ time: 3, value: 17 }
+				],
+				[
+					{ time: 2, value: 200 },
+					{ time: 3, value: 250 }
+				]
+			])
+		).toEqual([
+			[
+				{ time: 1, value: 100 },
+				{ time: 2, value: 120 },
+				{ time: 3, value: 80 }
+			],
+			[
+				{ time: 1, value: 100 },
+				{ time: 2, value: 130 },
+				{ time: 3, value: 170 }
+			],
+			[
+				{ time: 2, value: 130 },
+				{ time: 3, value: 162.5 }
+			]
 		]);
 	});
 });
 
 describe('resampleComparisonPoints', () => {
 	test('prepares forward-filled chart points at the requested server-side interval', () => {
-		const [series] = alignVaultEquityCurves([
-			{
-				id: 'vault',
-				points: [
-					[0, 1],
-					[3 * 3_600, 1.1],
-					[8 * 3_600, 1.2]
-				]
-			}
-		]);
-
-		const points = resampleComparisonPoints(series.points, utcHour.every(4)!);
+		const points = resampleComparisonPoints(
+			[
+				{ time: 0, value: 100 },
+				{ time: 3 * 3_600, value: 110 },
+				{ time: 8 * 3_600, value: 120 }
+			],
+			utcHour.every(4)!
+		);
 		expect(points.map(({ time, value }) => [time, value])).toEqual([
 			[0, 100],
-			[4 * 3_600, 110.00000000000001],
+			[4 * 3_600, 110],
 			[8 * 3_600, 120]
 		]);
 	});

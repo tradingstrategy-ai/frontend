@@ -4,34 +4,118 @@ import { TimeSpans } from '$lib/charts/time-span';
 import { annualizedReturn } from '$lib/helpers/financial';
 import {
 	comparisonTimeSpanKeys,
-	type AlignedEquityPoint,
-	type AlignedVaultSeries,
 	type ComparisonChartPoint,
 	type ComparisonPeriodMetrics,
 	type ComparisonTimeBucket,
-	type ComparisonTimeSpan,
-	type VaultPriceSeries
+	type ComparisonTimeSpan
 } from './types';
 
-interface PreparedSeries {
-	id: string;
-	selectionIndex: number;
-	points: [number, number][];
-}
-
-function prepareSeries(series: VaultPriceSeries, selectionIndex: number): PreparedSeries | null {
+/** Convert raw prices to a clean equity index beginning at 100. */
+export function indexPriceSeries(points: readonly [number, number][]): ComparisonChartPoint[] {
 	const pointsByTimestamp = new Map<number, number>();
 
-	for (const [timestamp, price] of series.points) {
+	for (const [timestamp, price] of points) {
 		if (!Number.isFinite(timestamp) || !Number.isFinite(price) || price <= 0) continue;
 		pointsByTimestamp.set(timestamp, price);
 	}
 
-	const points = [...pointsByTimestamp.entries()].sort(([left], [right]) => left - right);
-	return points.length ? { id: series.id, selectionIndex, points } : null;
+	const validPoints = [...pointsByTimestamp.entries()].sort(([left], [right]) => left - right);
+	const firstPrice = validPoints[0]?.[1];
+	if (!firstPrice) return [];
+
+	return validPoints.map(([time, price]) => ({ time, value: (price / firstPrice) * 100 }));
 }
 
-function valueAtOrBefore(points: AlignedEquityPoint[], timestamp: number): number | null {
+/** Rebase a visible return series so its first plotted observation is index 100. */
+export function rebaseComparisonPoints(points: readonly ComparisonChartPoint[]): ComparisonChartPoint[] {
+	const startingValue = points[0]?.value;
+	if (!Number.isFinite(startingValue) || startingValue <= 0) return [];
+
+	return points.map((point) => ({ ...point, value: (point.value / startingValue) * 100 }));
+}
+
+/** Return the observations contained in a selected chart range. */
+export function getVisibleComparisonPoints(
+	points: readonly ComparisonChartPoint[],
+	visibleRange: [number, number] | null
+): ComparisonChartPoint[] {
+	if (!visibleRange) return [];
+	return points.filter(({ time }) => time >= visibleRange[0] && time <= visibleRange[1]);
+}
+
+/**
+ * Anchor later-starting vault curves to the highest older curve that overlaps
+ * their first visible observation. The earliest visible curve starts at 100.
+ */
+export function alignVisibleVaultCurves(
+	curves: readonly (readonly ComparisonChartPoint[])[]
+): ComparisonChartPoint[][] {
+	const prepared = curves
+		.map((points, index) => ({ index, points }))
+		.filter(({ points }) => {
+			const firstValue = points[0]?.value;
+			return Number.isFinite(firstValue) && firstValue > 0;
+		})
+		.sort((left, right) => left.points[0].time - right.points[0].time || left.index - right.index);
+	const alignedByIndex = new Map<number, ComparisonChartPoint[]>();
+	let index = 0;
+
+	while (index < prepared.length) {
+		const cohortStart = prepared[index].points[0].time;
+		const cohort: (typeof prepared)[number][] = [];
+		while (index < prepared.length && prepared[index].points[0].time === cohortStart) cohort.push(prepared[index++]);
+
+		const overlappingValues = [...alignedByIndex.values()].flatMap((points) => {
+			const lastPoint = points.at(-1);
+			if (!lastPoint || lastPoint.time < cohortStart) return [];
+			const value = valueAtOrBefore(points, cohortStart);
+			return value === null ? [] : [value];
+		});
+		const anchor = overlappingValues.length ? Math.max(...overlappingValues) : 100;
+
+		for (const curve of cohort) {
+			const startingValue = curve.points[0].value;
+			alignedByIndex.set(
+				curve.index,
+				curve.points.map((point) => ({ ...point, value: (point.value / startingValue) * anchor }))
+			);
+		}
+	}
+
+	return curves.map((_, index) => alignedByIndex.get(index) ?? []);
+}
+
+/**
+ * Resample an indexed series on the server, forward-filling the latest point.
+ *
+ * @param points Complete indexed history
+ * @param interval Output time interval
+ */
+export function resampleComparisonPoints(
+	points: readonly ComparisonChartPoint[],
+	interval: TimeInterval
+): ComparisonChartPoint[] {
+	if (points.length < 2) return points.map((point) => ({ ...point }));
+
+	const result: ComparisonChartPoint[] = [{ ...points[0] }];
+	const lastMs = points.at(-1)!.time * 1000;
+	let sourceIndex = 0;
+	let current = interval.ceil(new Date(points[0].time * 1000));
+
+	while (current.getTime() <= lastMs) {
+		const timestamp = current.getTime() / 1000;
+		while (sourceIndex < points.length - 1 && points[sourceIndex + 1].time <= timestamp) sourceIndex++;
+		const source = points[sourceIndex];
+		if (timestamp > result.at(-1)!.time) result.push({ ...source, time: timestamp });
+		current = interval.offset(current);
+	}
+
+	const lastPoint = points.at(-1)!;
+	if (lastPoint.time > result.at(-1)!.time) result.push({ ...lastPoint });
+	return result;
+}
+
+function valueAtOrBefore(points: readonly ComparisonChartPoint[], timestamp: number): number | null {
 	let low = 0;
 	let high = points.length - 1;
 	let match = -1;
@@ -47,107 +131,6 @@ function valueAtOrBefore(points: AlignedEquityPoint[], timestamp: number): numbe
 	}
 
 	return match === -1 ? null : points[match].value;
-}
-
-function alignSeries(series: PreparedSeries, anchor: number, discontinuous: boolean): AlignedVaultSeries {
-	const firstPrice = series.points[0][1];
-	return {
-		id: series.id,
-		anchor,
-		discontinuous,
-		points: series.points.map(([time, rawPrice]) => ({
-			time,
-			value: (rawPrice / firstPrice) * anchor
-		}))
-	};
-}
-
-/**
- * Convert raw vault prices to comparable indexed equity curves.
- *
- * The oldest cohort starts at 100. Each younger cohort starts at the highest
- * value among older curves which still cover its first timestamp.
- */
-export function alignVaultEquityCurves(series: readonly VaultPriceSeries[]): AlignedVaultSeries[] {
-	const prepared = series
-		.map(prepareSeries)
-		.filter((value): value is PreparedSeries => value !== null)
-		.sort((left, right) => left.points[0][0] - right.points[0][0] || left.selectionIndex - right.selectionIndex);
-
-	const alignedById = new Map<string, AlignedVaultSeries>();
-	let index = 0;
-
-	while (index < prepared.length) {
-		const cohortStart = prepared[index].points[0][0];
-		const cohort: PreparedSeries[] = [];
-		while (index < prepared.length && prepared[index].points[0][0] === cohortStart) {
-			cohort.push(prepared[index++]);
-		}
-
-		let anchor = 100;
-		let discontinuous = alignedById.size > 0;
-		if (alignedById.size > 0) {
-			const overlappingValues: number[] = [];
-			for (const older of alignedById.values()) {
-				const lastPoint = older.points.at(-1);
-				if (!lastPoint || lastPoint.time < cohortStart) continue;
-				const value = valueAtOrBefore(older.points, cohortStart);
-				if (value !== null) overlappingValues.push(value);
-			}
-
-			if (overlappingValues.length) {
-				anchor = Math.max(...overlappingValues);
-				discontinuous = false;
-			}
-		}
-
-		for (const member of cohort) alignedById.set(member.id, alignSeries(member, anchor, discontinuous));
-	}
-
-	return series.flatMap(({ id }) => {
-		const aligned = alignedById.get(id);
-		return aligned ? [aligned] : [];
-	});
-}
-
-/** Convert a market-price series to an equity index beginning at `startingValue`. */
-export function indexBenchmarkPrices(points: readonly [number, number][], startingValue = 100): [number, number][] {
-	const valid = points.filter(
-		(point): point is [number, number] => Number.isFinite(point[0]) && Number.isFinite(point[1]) && point[1] > 0
-	);
-	if (!valid.length || startingValue <= 0) return [];
-	const firstPrice = valid[0][1];
-	return valid.map(([timestamp, price]) => [timestamp, (price / firstPrice) * startingValue]);
-}
-
-/**
- * Resample an aligned series on the server, forward-filling the latest point.
- *
- * @param points Complete aligned history
- * @param interval Output time interval
- */
-export function resampleComparisonPoints(
-	points: readonly AlignedEquityPoint[],
-	interval: TimeInterval
-): ComparisonChartPoint[] {
-	if (points.length < 2) return points.map(toComparisonChartPoint);
-
-	const result: ComparisonChartPoint[] = [toComparisonChartPoint(points[0])];
-	const lastMs = points.at(-1)!.time * 1000;
-	let sourceIndex = 0;
-	let current = interval.ceil(new Date(points[0].time * 1000));
-
-	while (current.getTime() <= lastMs) {
-		const timestamp = current.getTime() / 1000;
-		while (sourceIndex < points.length - 1 && points[sourceIndex + 1].time <= timestamp) sourceIndex++;
-		const source = points[sourceIndex];
-		if (timestamp > result.at(-1)!.time) result.push({ ...toComparisonChartPoint(source), time: timestamp });
-		current = interval.offset(current);
-	}
-
-	const lastPoint = points.at(-1)!;
-	if (lastPoint.time > result.at(-1)!.time) result.push(toComparisonChartPoint(lastPoint));
-	return result;
 }
 
 /**
@@ -197,8 +180,4 @@ export function calculateComparisonPeriodMetrics(
 	}
 
 	return metrics;
-}
-
-function toComparisonChartPoint(point: AlignedEquityPoint): ComparisonChartPoint {
-	return { time: point.time, value: point.value };
 }

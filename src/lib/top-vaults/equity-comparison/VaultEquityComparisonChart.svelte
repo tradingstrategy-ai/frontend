@@ -28,9 +28,11 @@ on one TradingView lightweight-charts pane.
 	import { formatNumber } from '$lib/helpers/formatters';
 	import BenchmarkLogo from './BenchmarkLogo.svelte';
 	import { benchmarkComparisonColours } from './colours';
+	import { alignVisibleVaultCurves, getVisibleComparisonPoints, rebaseComparisonPoints } from './equity-curves';
 	import { getComparisonVisibleRange, getNetComparisonPoints } from './net-returns';
 	import type {
 		ComparisonBenchmark,
+		ComparisonChartPoint,
 		ComparisonChartSeries,
 		ComparisonReturnMode,
 		ComparisonTimeBucket,
@@ -61,7 +63,6 @@ on one TradingView lightweight-charts pane.
 		colour: string;
 		indexValue: number;
 		benchmark?: ComparisonBenchmark;
-		discontinuous?: boolean;
 		feeEvent?: 'after-entry' | 'before-exit' | 'after-exit';
 	};
 
@@ -100,21 +101,11 @@ on one TradingView lightweight-charts pane.
 	};
 	function buildChartPoints(
 		series: ComparisonChartSeries | undefined,
-		timeSpan: TimeSpan,
-		kind: ChartPointMeta['kind']
+		kind: ChartPointMeta['kind'],
+		points: readonly ComparisonChartPoint[]
 	): ComparisonChartPoint[] {
 		if (!series) return [];
-		const timeBucket = timeSpan.timeBucket as ComparisonTimeBucket;
 		const benchmark = kind === 'benchmark' ? (series.id as ComparisonBenchmark) : undefined;
-		const feeProfile = vaultById.get(series.id)?.feeProfile;
-		const points =
-			kind === 'vault' && returnMode === 'net' && feeProfile
-				? getNetComparisonPoints(
-						series.points[timeBucket],
-						feeProfile,
-						getComparisonVisibleRange(data?.range, timeSpan)
-					)
-				: series.points[timeBucket];
 		const label = benchmark ? benchmarkLabels[benchmark] : (vaultById.get(series.id)?.name ?? series.id);
 		const colour = benchmark
 			? benchmarkComparisonColours[benchmark]
@@ -130,10 +121,23 @@ on one TradingView lightweight-charts pane.
 				colour,
 				indexValue: point.value,
 				benchmark,
-				discontinuous: series.discontinuous,
 				feeEvent: point.feeEvent
 			}
 		}));
+	}
+
+	function getChartSeriesPoints(
+		series: ComparisonChartSeries | undefined,
+		timeSpan: TimeSpan,
+		kind: ChartPointMeta['kind'],
+		visibleRange: [number, number] | null
+	): ComparisonChartPoint[] {
+		if (!series) return [];
+		const points = series.points[timeSpan.timeBucket as ComparisonTimeBucket];
+		const feeProfile = vaultById.get(series.id)?.feeProfile;
+		return kind === 'vault' && returnMode === 'net' && feeProfile
+			? getNetComparisonPoints(points, feeProfile, visibleRange)
+			: getVisibleComparisonPoints(points, visibleRange);
 	}
 
 	function tooltipRows(points: unknown[]): ChartPointMeta[] {
@@ -176,11 +180,11 @@ on one TradingView lightweight-charts pane.
 							{#if returnMode === 'net'}
 								Net estimates each vault's liquidation value after its known fees over the selected period. Management
 								fees use starting invested capital, while performance fees apply to positive profit at each point.
-								Internalised fees are already reflected in share prices. Benchmarks are unchanged. The oldest vault
-								starts at 100; younger vaults join at the highest overlapping curve.
+								Internalised fees are already reflected in share prices. The earliest vault starts at 100; later vaults
+								join at the highest overlapping vault curve. Benchmarks are unchanged by the fee calculation.
 							{:else}
-								Gross follows published vault share prices without additional investor-fee deductions. Benchmarks are
-								unchanged. The oldest vault starts at 100; younger vaults join at the highest overlapping curve.
+								Gross follows published vault share prices without additional investor-fee deductions. The earliest
+								vault starts at 100; later vaults join at the highest overlapping vault curve.
 							{/if}
 						</svelte:fragment>
 					</Tooltip>
@@ -228,10 +232,19 @@ on one TradingView lightweight-charts pane.
 		{/snippet}
 
 		{#snippet series({ timeSpan })}
-			{#each vaults as vault (vault.id)}
+			{@const visibleRange = getComparisonVisibleRange(data?.range, timeSpan)}
+			{@const vaultPoints = alignVisibleVaultCurves(
+				vaults.map((vault) => getChartSeriesPoints(vaultSeriesById.get(vault.id), timeSpan, 'vault', visibleRange))
+			)}
+			{@const benchmarkPoints = enabledBenchmarks.map((benchmark) =>
+				rebaseComparisonPoints(
+					getChartSeriesPoints(benchmarkSeriesById.get(benchmark), timeSpan, 'benchmark', visibleRange)
+				)
+			)}
+			{#each vaults as vault, index (vault.id)}
 				<Series
 					type={LineSeries}
-					data={buildChartPoints(vaultSeriesById.get(vault.id), timeSpan, 'vault')}
+					data={buildChartPoints(vaultSeriesById.get(vault.id), 'vault', vaultPoints[index])}
 					options={{
 						color: colours.get(vault.id),
 						lineWidth: 2,
@@ -242,10 +255,10 @@ on one TradingView lightweight-charts pane.
 				/>
 			{/each}
 
-			{#each enabledBenchmarks as benchmark (benchmark)}
+			{#each enabledBenchmarks as benchmark, index (benchmark)}
 				<Series
 					type={LineSeries}
-					data={buildChartPoints(benchmarkSeriesById.get(benchmark), timeSpan, 'benchmark')}
+					data={buildChartPoints(benchmarkSeriesById.get(benchmark), 'benchmark', benchmarkPoints[index])}
 					options={{
 						color: benchmarkComparisonColours[benchmark],
 						lineWidth: 2,
@@ -272,9 +285,7 @@ on one TradingView lightweight-charts pane.
 									<span class="swatch" aria-hidden="true"></span>
 								{/if}
 								<span class="tooltip-label" class:vault-name={row.kind === 'vault'}>
-									{row.label}{#if row.discontinuous}<small> · no overlap</small>{/if}{#if row.feeEvent}<small>
-											· {feeEventLabel(row.feeEvent)}</small
-										>{/if}
+									{row.label}{#if row.feeEvent}<small> · {feeEventLabel(row.feeEvent)}</small>{/if}
 								</span>
 								<strong>{formatNumber(row.indexValue, 1)}</strong>
 							</li>
@@ -289,7 +300,6 @@ on one TradingView lightweight-charts pane.
 				{#each vaults as vault (vault.id)}
 					<div class="legend-item" style:--series-colour={colours.get(vault.id)} title={vault.name}>
 						<span class="swatch" aria-hidden="true"></span><span class="vault-name">{vault.name}</span>
-						{#if vaultSeriesById.get(vault.id)?.discontinuous}<small>No overlap</small>{/if}
 					</div>
 				{/each}
 				{#each enabledBenchmarks as benchmark (benchmark)}

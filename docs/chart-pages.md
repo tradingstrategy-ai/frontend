@@ -58,13 +58,13 @@ series are unchanged by the return mode.
 The T-bill line uses FRED's DGS3MO 3-month constant-maturity Treasury market
 yield, quoted on an investment basis, as a cumulative-return approximation.
 
-The chart is labelled **Vault returns index**. The oldest selected vault starts
-at 100; each younger vault starts at the highest older curve that overlaps its
-first observation. A non-overlapping history starts at 100 and is marked in the
-legend. The 1M, 3M, 6M, 1Y, and Max controls drive both the visible range and
-the CAGR/Since values shown on selected-vault cards. T-bill, ETH, and BTC use
-fixed colours, while vaults receive stable, distinct colours for the current
-selection.
+The chart is labelled **Returns index**. The earliest vault in the selected
+period starts at 100. A vault with a shorter history joins at the highest older
+vault curve that overlaps its first observation; a non-overlapping history
+starts at 100. The 1M, 3M, 6M, 1Y, and Max controls drive both the visible
+range and the CAGR/Since values shown on selected-vault cards. T-bill, ETH, and
+BTC use fixed colours, while vaults receive stable, distinct colours for the
+current selection.
 
 ## Data flow
 
