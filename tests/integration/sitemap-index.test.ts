@@ -90,6 +90,14 @@ test.describe('vaults sitemap', () => {
 		expect(curatorPages.length).toBeGreaterThan(0);
 	});
 
+	test('should include category index and dash-separated individual category pages', async () => {
+		expect(urls.some((url) => url.endsWith('/vaults/categories'))).toBe(true);
+
+		const categoryPages = urls.filter((url) => /\/vaults\/categories\/[a-z0-9-]+$/.test(url));
+		expect(categoryPages.length).toBeGreaterThan(0);
+		expect(categoryPages.some((url) => url.includes('_'))).toBe(false);
+	});
+
 	test('should include static vault sub-pages', async () => {
 		const expectedSubPages = [
 			'/vaults/all',

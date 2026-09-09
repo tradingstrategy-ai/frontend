@@ -6,6 +6,7 @@ import { SitemapStream } from 'sitemap';
 import { fetchTopVaults } from '$lib/top-vaults/client';
 import { isBlacklisted, resolveVaultDetails } from '$lib/top-vaults/helpers';
 import { getChain } from '$lib/helpers/chain';
+import { getVaultCategorySlug } from '$lib/top-vaults/categories';
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
 import { buildStablecoinMetadataLookup, resolveStablecoinSlug } from '$lib/stablecoin-metadata/helpers';
 
@@ -30,7 +31,7 @@ const staticSubPages = [
 ];
 
 export async function GET({ fetch, setHeaders, url }) {
-	const [{ vaults, curators }, stablecoinIndex] = await Promise.all([
+	const [{ vaults, curators, categories }, stablecoinIndex] = await Promise.all([
 		fetchTopVaults(fetch),
 		fetchStablecoinMetadataIndex(fetch)
 	]);
@@ -93,6 +94,13 @@ export async function GET({ fetch, setHeaders, url }) {
 	stream.write({ url: `${basePath}/curators`, priority });
 	for (const slug of Object.keys(curators)) {
 		stream.write({ url: `${basePath}/curators/${slug}`, priority });
+	}
+
+	// Category index + individual category pages. Category tags use underscores
+	// in the source export but public routes use dash-separated slugs.
+	stream.write({ url: `${basePath}/categories`, priority });
+	for (const tag of Object.keys(categories)) {
+		stream.write({ url: `${basePath}/categories/${getVaultCategorySlug(tag)}`, priority });
 	}
 
 	stream.end();

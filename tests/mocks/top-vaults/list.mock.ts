@@ -345,7 +345,8 @@ const gmxPool = createTestVault('GMX USDC pool', {
 	one_month_cagr: 0.08,
 	three_months_cagr: 0.12,
 	features: ['amm_pool_like', 'gmx_gm'],
-	description: 'A GMX liquidity pool with direct exposure to its underlying assets.'
+	description: 'A GMX liquidity pool with direct exposure to its underlying assets.',
+	strategy_tags: ['directional_trading']
 });
 
 // Named vault for YAML strategy integration tests
@@ -361,6 +362,7 @@ const yamlStrategyVault = createTestVault('Trading Strategy ICHIv3 LS 2', {
 	three_months_sharpe: 1.5,
 	cagr_net: 0.28,
 	lifetime_return_net: 0.15,
+	strategy_tags: ['algorithmic_trading', 'yield_optimisation'],
 	period_results: [
 		{
 			period: '1m',
@@ -750,11 +752,51 @@ const curators = {
 	}
 };
 
+const categories = {
+	amm_market_making: {
+		label: 'AMM market making',
+		description: 'Strategies that provide liquidity to automated market makers.',
+		vault_count: 0,
+		tvl_usd: 0,
+		one_month_apy: null
+	},
+	algorithmic_trading: {
+		label: 'Algorithmic trading',
+		description:
+			'Systematic strategies that use algorithmic signals to trade [DeFi markets](https://example.com/markets).',
+		vault_count: 1,
+		tvl_usd: 500_000,
+		one_month_apy: 0.42
+	},
+	directional_trading: {
+		label: 'Directional trading',
+		description: 'Strategies with direct market-direction exposure.',
+		vault_count: 1,
+		tvl_usd: 750_000,
+		one_month_apy: 0.08
+	},
+	yield_optimisation: {
+		label: 'Yield optimisation',
+		description: 'Strategies that optimise yield across lending and liquidity venues.',
+		vault_count: 1,
+		tvl_usd: 500_000,
+		one_month_apy: 0.42
+	},
+	zero_vault: {
+		label: 'Zero vault',
+		description: 'A registered category that does not currently have a matching vault in this fixture.',
+		vault_count: 0,
+		tvl_usd: 0,
+		one_month_apy: null
+	}
+};
+
 export default defineMock({
 	url: '/api/top-vaults/vaults.json',
 	body: {
 		generated_at: new Date().toISOString(),
 		curators,
+		categories,
 		vaults: [
 			yamlStrategyVault,
 			abnormalTvlBlacklistedVault,

@@ -25,6 +25,7 @@ import type { TopVaults } from '$lib/top-vaults/schemas';
 
 async function resolveListingVaults(fetchFn: typeof fetch, topVaults: TopVaults, key: VaultListingKey, scope?: string) {
 	const { vaults } = topVaults;
+	if (key === 'category' && (!scope || !Object.hasOwn(topVaults.categories, scope))) return [];
 	if (key === 'core3-ratings') {
 		return getRiskRatedVaults(topVaults, 'core3').map((vault) => {
 			const pol = getCore3PolForVault(vault, topVaults.core3_protocols);
@@ -106,7 +107,8 @@ export async function loadVaultListing(fetchFn: typeof fetch, url: URL, key: Vau
 			generated_at: topVaults.generated_at,
 			vaults: initialVaults,
 			core3_protocols: {},
-			curators: {}
+			curators: {},
+			categories: {}
 		},
 		initialHasMore: initialVaults.length < listing.vaults.length,
 		listingSummary: createVaultListingSummary(listing),

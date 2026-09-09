@@ -29,6 +29,7 @@ export const vaultListingKeys = [
 	'protocol',
 	'stablecoin',
 	'curator',
+	'category',
 	'tokenised-funds',
 	'international',
 	'core3-ratings',
@@ -108,6 +109,12 @@ export const vaultListingDefinitions: Record<VaultListingKey, VaultListingDefini
 		options: commonOptions,
 		requiresScope: true
 	},
+	category: {
+		key: 'category',
+		defaults: { tvl: '10k', unknown: false, amm: false },
+		options: commonOptions,
+		requiresScope: true
+	},
 	'tokenised-funds': {
 		key: 'tokenised-funds',
 		defaults: { tvl: '10k', unknown: false },
@@ -172,6 +179,8 @@ export function filterVaultListingScope(vaults: VaultInfo[], key: VaultListingKe
 			return scope ? vaults.filter((vault) => vault.denomination_slug === scope) : [];
 		case 'curator':
 			return scope ? vaults.filter((vault) => vault.curator_slug === scope) : [];
+		case 'category':
+			return scope ? vaults.filter((vault) => (vault.strategy_tags ?? []).includes(scope)) : [];
 		case 'tokenised-funds':
 			return vaults.filter((vault) => vault.flags.includes('tokenised_fund'));
 		case 'international':

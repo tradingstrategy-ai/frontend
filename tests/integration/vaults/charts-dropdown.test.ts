@@ -31,17 +31,22 @@ test.describe('charts dropdown in vault listings navigation', () => {
 
 		test('shows the requested navigation order', async ({ page }) => {
 			const nav = page.locator('.vault-listings-selector');
-			await expect(nav.locator('a, button')).toHaveText([
-				'Top',
-				'Stablecoins',
-				'Chains',
-				'Protocols',
-				'Curators',
-				'International',
-				'Tokenised funds',
-				'Charts',
-				'More'
-			]);
+			const navigationItems = nav.locator('a, button');
+
+			await expect
+				.poll(async () => (await navigationItems.allTextContents()).map((label) => label.trim()))
+				.toEqual([
+					'Top',
+					'Stablecoins',
+					'Chains',
+					'Categories',
+					'Protocols',
+					'Curators',
+					'International',
+					'Tokenised funds',
+					'Charts',
+					'More'
+				]);
 		});
 
 		test('Charts trigger is visible in the nav', async ({ page }) => {

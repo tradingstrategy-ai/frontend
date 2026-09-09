@@ -20,7 +20,8 @@ describe('vault search', () => {
 			generated_at: '2026-09-02T00:00:00.000Z',
 			vaults: [{ ...createTestVault('Yearn Bold vault'), share_token: 'yBOLD' }],
 			core3_protocols: {},
-			curators: {}
+			curators: {},
+			categories: {}
 		} satisfies TopVaults);
 		mocks.fetchStablecoinMetadataIndex.mockResolvedValue([]);
 	});
@@ -44,7 +45,8 @@ describe('vault search', () => {
 				createTestVault('Largest blacklisted vault', { current_nav: 2_000_000, risk: 'Blacklisted' })
 			],
 			core3_protocols: {},
-			curators: {}
+			curators: {},
+			categories: {}
 		} satisfies TopVaults);
 
 		const response = await searchVaultEntities(vi.fn() as unknown as Fetch, 'vault', 10, { sort: 'tvl' });

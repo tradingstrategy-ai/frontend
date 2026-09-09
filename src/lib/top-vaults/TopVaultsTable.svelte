@@ -205,7 +205,8 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 		generated_at: new Date().toISOString(),
 		vaults: [],
 		core3_protocols: {},
-		curators: {}
+		curators: {},
+		categories: {}
 	};
 	const SKELETON_ROW_COUNT = 10;
 	const skeletonRows = Array.from({ length: SKELETON_ROW_COUNT }, (_, index) => index);

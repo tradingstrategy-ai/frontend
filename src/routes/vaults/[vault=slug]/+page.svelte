@@ -22,6 +22,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	import VaultCuratorInfo from './VaultCuratorInfo.svelte';
 	import VaultProtocolInfo from './VaultProtocolInfo.svelte';
 	import VaultRankings from './VaultRankings.svelte';
+	import VaultCategories from './VaultCategories.svelte';
 	import VaultTransactionStatus from './VaultTransactionStatus.svelte';
 	import Core3Ratings from '$lib/top-vaults/Core3Ratings.svelte';
 	import XerberusRisk from '$lib/top-vaults/XerberusRisk.svelte';
@@ -40,7 +41,8 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 
 	let { data } = $props();
-	let { vault, chain, protocolMetadata, curatorMetadata, stablecoinMetadata, generated_at, core3 } = $derived(data);
+	let { vault, chain, protocolMetadata, curatorMetadata, stablecoinMetadata, generated_at, core3, categoryLinks } =
+		$derived(data);
 	let morphoFlags = $derived(getMorphoFlags(vault));
 	let notesDuplicateMorphoFlags = $derived(
 		morphoFlags.length > 0 && vault.notes?.startsWith('Morpho has flagged this vault with the following issues:')
@@ -159,6 +161,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 		{/if}
 
 		<VaultRankings {vault} {chain} {protocolMetadata} />
+		<VaultCategories categories={categoryLinks} />
 
 		<ChartWithFeaturedMetrics {vault} {chartLogoUrl} />
 

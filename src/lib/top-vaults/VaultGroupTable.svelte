@@ -27,6 +27,7 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 	import { UNKNOWN_VAULT_PROTOCOL_SLUG } from '$lib/top-vaults/helpers';
 	import AvgApyHeader from './AvgApyHeader.svelte';
 	import VaultGroupNameCell from './VaultGroupNameCell.svelte';
+	import VaultGroupDescriptionCell from './VaultGroupDescriptionCell.svelte';
 	import VaultSparkline from './VaultSparkline.svelte';
 	import Core3RiskCell from './Core3RiskCell.svelte';
 	import XerberusRiskCell from './XerberusRiskCell.svelte';
@@ -40,6 +41,7 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 		includeRisk?: boolean;
 		includeCore3Risk?: boolean;
 		includeFullName?: boolean;
+		includeDescription?: boolean;
 		includeVaultCount?: boolean;
 		/** Display a 90-day price sparkline for rows that resolve to a vault. */
 		includeSparkline?: boolean;
@@ -47,6 +49,7 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 		wideName?: boolean;
 		fullNameLabel?: string;
 		averageApyLabel?: string;
+		averageApyTooltip?: string;
 		tvlLabel?: string;
 		ctaLabel?: string;
 		getLogoHref?: (slug: string) => string | undefined;
@@ -69,11 +72,13 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 		includeRisk = false,
 		includeCore3Risk = false,
 		includeFullName = false,
+		includeDescription = false,
 		includeVaultCount = true,
 		includeSparkline = false,
 		wideName = false,
 		fullNameLabel = 'Name',
 		averageApyLabel = 'Avg. APY%',
+		averageApyTooltip,
 		tvlLabel = 'TVL',
 		ctaLabel = 'View',
 		getLogoHref,
@@ -108,6 +113,7 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 		...(includeRisk ? [] : ['risk']),
 		...(includeCore3Risk ? [] : ['core3_risk']),
 		...(includeFullName ? [] : ['full_name']),
+		...(includeDescription ? [] : ['description']),
 		...(includeVaultCount ? [] : ['vault_count']),
 		...(includeSparkline ? [] : ['sparkline'])
 	];
@@ -151,6 +157,13 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 					showPlaceholder: value.slug === UNKNOWN_VAULT_PROTOCOL_SLUG && !getLogoHref?.(value.slug)
 				}),
 			plugins: { sort: { getSortValue: (v) => v.name, invert: true } }
+		}),
+		table.column({
+			id: 'description',
+			header: 'Description',
+			accessor: (row) => row.description ?? '',
+			cell: ({ value }) => (value ? createRender(VaultGroupDescriptionCell, { description: value }) : ''),
+			plugins: { sort: { disable: true } }
 		}),
 		table.column({
 			id: 'full_name',
@@ -201,7 +214,7 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 		}),
 		table.column({
 			accessor: 'avg_apy',
-			header: createRender(AvgApyHeader, { label: averageApyLabel }),
+			header: createRender(AvgApyHeader, { label: averageApyLabel, tooltip: averageApyTooltip }),
 			cell: ({ value }) => formatPercent(value)
 		}),
 		table.column({
@@ -241,6 +254,7 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 <div
 	class="vault-protocol-table"
 	class:wide-name={wideName}
+	class:with-description={includeDescription}
 	class:withoutVaultCount={!includeVaultCount}
 	class:with-sparkline={includeSparkline}
 	style:--rank-offset={pageIndex * 150}
@@ -324,6 +338,34 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 
 			:global(.name) {
 				width: 32%;
+			}
+
+			&.with-description {
+				:global(.name) {
+					width: 18%;
+				}
+
+				:global(.description) {
+					width: 34%;
+					text-align: left;
+				}
+
+				:global(.vault_count) {
+					width: 8%;
+				}
+
+				:global(.avg_apy) {
+					width: 10%;
+				}
+
+				:global(.tvl) {
+					width: 12%;
+				}
+
+				:global(.cta) {
+					--button-width: 8rem;
+					width: 8rem;
+				}
 			}
 
 			:global(.full_name) {
@@ -502,6 +544,29 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 			:global(table.datatable.responsive tbody tr td.tvl) {
 				grid-column: 2 / -1;
 				grid-row: 3;
+			}
+
+			&.with-description {
+				:global(table.datatable.responsive tbody tr td.description) {
+					display: block;
+					grid-column: 1 / -1;
+					grid-row: 2;
+					padding-inline-start: calc(2.5rem + 0.5rem + 2.5rem + 1.5rem);
+					white-space: normal;
+				}
+
+				:global(table.datatable.responsive tbody tr td.description::before) {
+					content: none;
+				}
+
+				:global(table.datatable.responsive tbody tr td.vault_count),
+				:global(table.datatable.responsive tbody tr td.avg_apy) {
+					grid-row: 3;
+				}
+
+				:global(table.datatable.responsive tbody tr td.tvl) {
+					grid-row: 4;
+				}
 			}
 
 			&.withoutVaultCount :global(table.datatable.responsive tbody tr td.avg_apy) {

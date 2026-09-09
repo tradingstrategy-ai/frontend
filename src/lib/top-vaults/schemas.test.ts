@@ -39,6 +39,38 @@ describe('topVaultsSchema resilience', () => {
 		expect(topVaultsSchema.parse(basePayload).curators).toEqual({});
 	});
 
+	it('parses categories and defaults them to an empty record when absent', () => {
+		const category = {
+			label: 'Algorithmic trading',
+			description: 'Systematic strategies.',
+			vault_count: 2,
+			tvl_usd: 123_456,
+			one_month_apy: 0.12
+		};
+
+		expect(topVaultsSchema.parse({ ...basePayload, categories: { algorithmic_trading: category } }).categories).toEqual(
+			{
+				algorithmic_trading: category
+			}
+		);
+		expect(topVaultsSchema.parse(basePayload).categories).toEqual({});
+	});
+
+	it('drops malformed category records while retaining valid records', () => {
+		const category = {
+			label: 'Algorithmic trading',
+			description: 'Systematic strategies.',
+			vault_count: 2,
+			tvl_usd: 123_456,
+			one_month_apy: 0.12
+		};
+		const result = topVaultsSchema.parse({
+			...basePayload,
+			categories: { algorithmic_trading: category, broken: { label: 'Broken' } }
+		});
+		expect(result.categories).toEqual({ algorithmic_trading: category });
+	});
+
 	it('falls back to an empty curators record on a malformed payload instead of failing the parse', () => {
 		const malformed = { ...basePayload, curators: { broken: { slug: 'broken' } } };
 		const result = topVaultsSchema.parse(malformed);
@@ -86,5 +118,11 @@ describe('topVaultsSchema resilience', () => {
 
 		expect(result.vaults[0].xerberus).toEqual(xerberus);
 		expect(result.vaults[1].xerberus).toBeNull();
+	});
+
+	it('defaults an absent strategy tag array to null', () => {
+		expect(
+			topVaultsSchema.parse({ ...basePayload, vaults: [createTestVault('Untagged vault')] }).vaults[0].strategy_tags
+		).toBeNull();
 	});
 });
