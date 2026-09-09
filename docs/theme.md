@@ -144,6 +144,21 @@ Avoid these mistakes:
 - Do not use raw black or white where a semantic token exists.
 - Do not treat `--c-bullish` as a general-purpose brand colour for all controls.
 
+### Native select menus
+
+The closed `<select>` control is styled by the page, but its opened option menu is rendered by the browser and operating system. Some browser environments can combine a light native menu surface with the dark theme's inherited light option text, making unselected options unreadable.
+
+When a native select needs themed option-menu colours, explicitly set both properties on its options and scope the rule to that control:
+
+```css
+#control-id option {
+	background-color: var(--c-body);
+	color: var(--c-text);
+}
+```
+
+The semantic tokens keep this pairing readable in dark and light modes. Do not set only `color`, and do not use hard-coded black or white. Keep native selects where their browser-provided keyboard and assistive-technology behaviour is desirable; use a custom listbox only when the menu itself needs a fully controlled design.
+
 ## Typography
 
 Two typography layers are active.

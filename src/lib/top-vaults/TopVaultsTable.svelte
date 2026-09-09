@@ -136,6 +136,11 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 		direction: 'asc' | 'desc';
 	}
 
+	interface SortColumn {
+		defaultDirection: SortOptions['direction'];
+		label: string;
+	}
+
 	interface Props {
 		topVaults?: TopVaults;
 		chain?: Chain;
@@ -318,7 +323,7 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 		selectedVaultIds = [...selectedVaultIds, vaultId];
 	}
 
-	// --- Sort column registry (key → default direction) ---
+	// --- Sort column registry ---
 
 	function getXerberusRiskRating(vault: VaultInfo): string {
 		const score = vault.xerberus?.score;
@@ -327,34 +332,48 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 	}
 
 	const returnSortColumnMap = Object.fromEntries(
-		returnColumnDefinitions.map((definition) => [definition.id, { defaultDirection: definition.sortDirection }])
-	) as Record<ReturnColumnId, { defaultDirection: 'desc' }>;
+		returnColumnDefinitions.map((definition) => [
+			definition.id,
+			{ defaultDirection: definition.sortDirection, label: definition.label }
+		])
+	) as Record<ReturnColumnId, SortColumn>;
 
 	// The provider is a page-level configuration and does not change after the table mounts.
-	const providerSortColumnMap = untrack((): Record<string, { defaultDirection: 'asc' | 'desc' }> => {
+	const providerSortColumnMap = untrack((): Record<string, SortColumn> => {
 		if (!ratingProvider) return {};
 		return {
 			provider_risk_rating: {
-				defaultDirection: ratingProvider === 'xerberus' ? 'desc' : 'asc'
+				defaultDirection: ratingProvider === 'xerberus' ? 'desc' : 'asc',
+				label: 'Risk rating'
 			}
 		};
 	});
 
-	const sortColumnMap: Record<string, { defaultDirection: 'asc' | 'desc' }> = {
+	const sortColumnMap: Record<string, SortColumn> = {
 		...returnSortColumnMap,
-		chain: { defaultDirection: 'asc' },
-		vault: { defaultDirection: 'asc' },
-		three_months_sharpe: { defaultDirection: 'desc' },
-		three_months_volatility: { defaultDirection: 'asc' },
-		max_dd: { defaultDirection: 'desc' },
-		denomination: { defaultDirection: 'asc' },
-		tvl: { defaultDirection: 'desc' },
-		age: { defaultDirection: 'desc' },
-		fees: { defaultDirection: 'asc' },
-		lockup: { defaultDirection: 'asc' },
-		risk: { defaultDirection: 'asc' },
+		chain: { defaultDirection: 'asc', label: 'Chain' },
+		vault: { defaultDirection: 'asc', label: 'Vault' },
+		three_months_sharpe: { defaultDirection: 'desc', label: '3M Sharpe' },
+		three_months_volatility: { defaultDirection: 'asc', label: '3M volatility' },
+		max_dd: { defaultDirection: 'desc', label: 'Maximum drawdown' },
+		denomination: { defaultDirection: 'asc', label: 'Denomination' },
+		tvl: { defaultDirection: 'desc', label: 'TVL' },
+		age: { defaultDirection: 'desc', label: 'Age' },
+		fees: { defaultDirection: 'asc', label: 'Fees' },
+		lockup: { defaultDirection: 'asc', label: 'Deposit and delays' },
+		risk: { defaultDirection: 'asc', label: 'Protocol technical risk' },
 		...providerSortColumnMap
 	};
+	const standardSortColumnKeys = [
+		'three_months_sharpe',
+		'three_months_volatility',
+		'max_dd',
+		'denomination',
+		'tvl',
+		'age',
+		'fees',
+		'lockup'
+	] as const;
 
 	// --- URL search state schema ---
 
@@ -588,6 +607,21 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 	let showProviderRiskRating = $derived(ratingProvider != null);
 	let showTechnicalRisk = $derived(ratingProvider == null);
 	let tableColumnCount = $derived(12 + selectedReturnColumns.length + (showChainCol ? 1 : 0));
+	let sortDropdownOptionKeys = $derived([
+		...(showChainCol ? ['chain'] : []),
+		'vault',
+		...(showProviderRiskRating ? ['provider_risk_rating'] : []),
+		...selectedReturnColumns.map((column) => column.id),
+		...standardSortColumnKeys,
+		...(showTechnicalRisk ? ['risk'] : [])
+	]);
+	let sortDropdownOptions = $derived(sortDropdownOptionKeys.map((key) => ({ key, label: sortColumnMap[key].label })));
+
+	// Keep every active sort represented by a visible table header and dropdown option.
+	$effect(() => {
+		if (sortDropdownOptionKeys.some((key) => key === sortOptions.key)) return;
+		updateSearchParams({ sort: 'vault', direction: sortColumnMap.vault.defaultDirection });
+	});
 
 	let offsetWidth = $state<number>();
 
@@ -874,12 +908,21 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 		updateSearchParams({ sort: key, direction });
 	}
 
+	/** Select a table sort criterion using its default direction. */
+	function selectSort(event: Event) {
+		const key = (event.target as HTMLSelectElement).value;
+		const column = sortColumnMap[key];
+		if (!column) return;
+		updateSearchParams({ sort: key, direction: column.defaultDirection });
+	}
+
 	function updateReturnColumns(nextSelection: ReturnColumnId[]) {
 		const nextReturns = serialiseReturnColumnSelection(nextSelection);
 		const canonicalSort = canonicaliseReturnSortKey(urlState.sort);
 
-		if (canonicalSort && !nextSelection.includes(canonicalSort) && nextSelection.length > 0) {
-			updateSearchParams({ returns: nextReturns, sort: nextSelection[0], direction: 'desc' });
+		if (canonicalSort && !nextSelection.includes(canonicalSort)) {
+			const sort = nextSelection[0] ?? 'vault';
+			updateSearchParams({ returns: nextReturns, sort, direction: sortColumnMap[sort].defaultDirection });
 			return;
 		}
 
@@ -1152,6 +1195,14 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 								aria-labelledby="filter-group-display-heading"
 							>
 								<h3 class="filter-section-heading" id="filter-group-display-heading">Display</h3>
+								<div class="filter-group">
+									<label class="filter-label" for="vault-sort">Sort</label>
+									<Select id="vault-sort" value={sortOptions.key} data-testid="sort-select" onchange={selectSort}>
+										{#each sortDropdownOptions as option (option.key)}
+											<option value={option.key}>{option.label}</option>
+										{/each}
+									</Select>
+								</div>
 								<div class="filter-group">
 									<span class="filter-label">Columns</span>
 									<div class="tvl-dropdown" use:clickOutside={() => (returnsDropdownOpen = false)}>
@@ -1799,6 +1850,16 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 			min-width: 0;
 		}
 
+		/*
+		 * Native select menus are rendered by the browser. Give the Sort options an
+		 * explicit colour pair so browsers that use a light menu surface do not
+		 * combine it with the dark theme's inherited text colour.
+		 */
+		:global(#vault-sort option) {
+			background-color: var(--c-body);
+			color: var(--c-text);
+		}
+
 		.filter-section-heading {
 			width: 100%;
 			margin: 0;
@@ -1960,7 +2021,33 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 			}
 
 			.filter-section-display {
+				display: grid;
+				grid-template-columns: max-content minmax(0, 1fr);
+				align-items: center;
+				gap: 0.75rem 0.5rem;
 				padding-right: 1.5rem;
+
+				.filter-section-heading {
+					grid-column: 1 / -1;
+				}
+
+				.filter-group {
+					display: contents;
+
+					> .filter-label {
+						text-align: right;
+					}
+
+					> :global(.select),
+					> .tvl-dropdown {
+						width: 100%;
+						min-width: 0;
+					}
+
+					.tvl-trigger {
+						width: 100%;
+					}
+				}
 			}
 
 			.filter-section-hide {

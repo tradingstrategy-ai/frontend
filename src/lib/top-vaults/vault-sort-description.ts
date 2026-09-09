@@ -1,8 +1,8 @@
 import { DEFAULT_RETURN_COLUMN_IDS, canonicaliseReturnSortKey, type ReturnColumnId } from './return-columns';
 
 const returnSortDescriptions: Record<ReturnColumnId, string> = {
-	'1m-ann': '30-day returns',
-	'1m-abs': '30-day absolute returns',
+	'1m-ann': 'one-month annualised returns',
+	'1m-abs': 'one-month absolute returns',
 	'3m-ann': 'three-month annualised returns',
 	'3m-abs': 'three-month absolute returns',
 	'6m-ann': 'six-month annualised returns',

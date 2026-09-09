@@ -1,6 +1,7 @@
 # Weblog of stuff
 
 - Add vault category index and detail listings with category links on vault pages (2026-09-08)
+- Add a Sort dropdown to vault listing filters (2026-09-08)
 - Add vault comparison selection controls to public vault listings (2026-09-04)
 - Add Gross and Net fee-aware return modes to the multi-vault comparison chart (2026-09-04)
 - Show a "check your email for your API key" notice on the vault datasets page after a Creem checkout redirect (2026-09-03)
