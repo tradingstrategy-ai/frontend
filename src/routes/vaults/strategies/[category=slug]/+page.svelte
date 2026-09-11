@@ -16,9 +16,7 @@ Vault listing for a source-defined investment strategy category.
 	let title = $derived(`${category.label} vaults | Trading Strategy`);
 	let description = $derived(`Explore ${category.label.toLowerCase()} vaults, their TVL, and recent returns.`);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
-	let heading = $derived(
-		`${category.label} (${category.vault_count} reported ${category.vault_count === 1 ? 'vault' : 'vaults'})`
-	);
+	let heading = $derived(`${category.label} vaults`);
 </script>
 
 {#snippet detailDescription()}
@@ -28,9 +26,9 @@ Vault listing for a source-defined investment strategy category.
 {#snippet detailAside()}
 	<VaultGroupMiniChart
 		title={`${category.label} vaults: TVL and returns`}
-		dataUrl={`/vaults/categories/${categorySlug}/chart-data`}
-		compareLabel="Compare categories"
-		compareHref="/vaults/categories"
+		dataUrl={`/vaults/strategies/${categorySlug}/chart-data`}
+		compareLabel="Compare strategies"
+		compareHref="/vaults/strategies"
 	/>
 {/snippet}
 

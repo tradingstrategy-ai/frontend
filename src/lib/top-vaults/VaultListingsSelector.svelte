@@ -11,7 +11,7 @@ Renders navigation links for vault listing and chart pages.
 		{ href: '/vaults', label: 'Top' },
 		{ href: '/vaults/stablecoins', label: 'Stablecoins' },
 		{ href: '/vaults/chains', label: 'Chains' },
-		{ href: '/vaults/categories', label: 'Categories' },
+		{ href: '/vaults/strategies', label: 'Strategies' },
 		{ href: '/vaults/protocols', label: 'Protocols' },
 		{ href: '/vaults/curators', label: 'Curators' },
 		{ href: '/vaults/international', label: 'International' },

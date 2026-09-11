@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getVaultCategoryLinks, getVaultCategorySlug, getVaultCategoryTag } from './categories';
+import { getVaultCategoryLinks, getVaultCategorySlug, getVaultCategoryTag, isVisibleVaultCategory } from './categories';
 
 describe('vault categories', () => {
 	it('converts source tags to dash-separated public slugs and back', () => {
@@ -7,11 +7,17 @@ describe('vault categories', () => {
 		expect(getVaultCategoryTag('directional-trading')).toBe('directional_trading');
 	});
 
+	it('hides the unknown strategy category from public pages', () => {
+		expect(isVisibleVaultCategory('unknown')).toBe(false);
+		expect(isVisibleVaultCategory('algorithmic_trading')).toBe(true);
+	});
+
 	it('links only registered categories in alphabetical display order without duplicates', () => {
 		const links = getVaultCategoryLinks(
 			{
 				strategy_tags: [
 					'yield_optimisation',
+					'unknown',
 					'unknown_tag',
 					'algorithmic_trading',
 					'algorithmic_trading',
@@ -29,6 +35,13 @@ describe('vault categories', () => {
 				yield_optimisation: {
 					label: 'Yield optimisation',
 					description: 'Yield strategies.',
+					vault_count: 1,
+					tvl_usd: 1,
+					one_month_apy: null
+				},
+				unknown: {
+					label: 'Unknown strategy',
+					description: 'A strategy without a public classification.',
 					vault_count: 1,
 					tvl_usd: 1,
 					one_month_apy: null

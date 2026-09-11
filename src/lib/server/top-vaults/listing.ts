@@ -2,6 +2,7 @@ import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
 import { buildStablecoinMetadataLookup, findStablecoinMetadata } from '$lib/stablecoin-metadata/helpers';
 import { fetchLatestTreasuryRate } from '$lib/reference-rates';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
+import { isVisibleVaultCategory } from '$lib/top-vaults/categories';
 import {
 	getCurrencyUsdRates,
 	getCore3PolForVault,
@@ -25,7 +26,9 @@ import type { TopVaults } from '$lib/top-vaults/schemas';
 
 async function resolveListingVaults(fetchFn: typeof fetch, topVaults: TopVaults, key: VaultListingKey, scope?: string) {
 	const { vaults } = topVaults;
-	if (key === 'category' && (!scope || !Object.hasOwn(topVaults.categories, scope))) return [];
+	if (key === 'category' && (!scope || !isVisibleVaultCategory(scope) || !Object.hasOwn(topVaults.categories, scope))) {
+		return [];
+	}
 	if (key === 'core3-ratings') {
 		return getRiskRatedVaults(topVaults, 'core3').map((vault) => {
 			const pol = getCore3PolForVault(vault, topVaults.core3_protocols);

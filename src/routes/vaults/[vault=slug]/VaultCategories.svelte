@@ -1,6 +1,6 @@
 <!--
 @component
-Renders a vault's registered strategy categories as links to category listings.
+Renders a vault's registered strategy categories as links to strategy listings.
 -->
 <script lang="ts">
 	import { resolve } from '$app/paths';
@@ -15,10 +15,10 @@ Renders a vault's registered strategy categories as links to category listings.
 
 {#if categories.length > 0}
 	<p class="vault-categories">
-		<span class="label">Categories:</span>
+		<span class="label">Strategy categories:</span>
 		{#each categories as category, index (category.slug)}
 			<span class="category-link"
-				>{index > 0 ? ', ' : ''}<a href={resolve(`/vaults/categories/${category.slug}`)}>{category.label}</a></span
+				>{index > 0 ? ', ' : ''}<a href={resolve(`/vaults/strategies/${category.slug}`)}>{category.label}</a></span
 			>
 		{/each}
 	</p>

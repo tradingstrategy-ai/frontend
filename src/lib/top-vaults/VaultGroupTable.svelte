@@ -43,6 +43,8 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 		includeFullName?: boolean;
 		includeDescription?: boolean;
 		includeVaultCount?: boolean;
+		/** Keep rank positions empty when the surrounding page uses a text-based sort. */
+		hideRankings?: boolean;
 		/** Display a 90-day price sparkline for rows that resolve to a vault. */
 		includeSparkline?: boolean;
 		/** Widen the name column for groups with long display names (e.g. curators) */
@@ -74,6 +76,7 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 		includeFullName = false,
 		includeDescription = false,
 		includeVaultCount = true,
+		hideRankings = false,
 		includeSparkline = false,
 		wideName = false,
 		fullNameLabel = 'Name',
@@ -257,6 +260,7 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 	class:with-description={includeDescription}
 	class:withoutVaultCount={!includeVaultCount}
 	class:with-sparkline={includeSparkline}
+	class:without-rankings={hideRankings}
 	style:--rank-offset={pageIndex * 150}
 >
 	<DataTable
@@ -313,6 +317,11 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 				max-width: 2.75rem;
 				padding-inline: var(--space-xs);
 				text-align: center;
+			}
+
+			/* Alphabetical entity lists are not rankings, but retain the table's index-column spacing. */
+			&.without-rankings :global(td.index::before) {
+				content: '';
 			}
 
 			:global(td.index) {
@@ -413,6 +422,11 @@ logos, target links, sorting, pagination and the shared responsive card layout.
 		}
 
 		@media (--viewport-sm-down) {
+			/* Keep the mobile card's leading corner while omitting alphabetical sort positions. */
+			&.without-rankings :global(tbody tr[data-row-index]::before) {
+				content: '';
+			}
+
 			:global(table.datatable.responsive :is(th.index, td.index)) {
 				display: none;
 			}

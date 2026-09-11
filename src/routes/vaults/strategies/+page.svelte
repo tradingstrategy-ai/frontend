@@ -16,9 +16,9 @@ Vault strategy category index.
 	let { data } = $props();
 	let { categories, options } = $derived(data);
 
-	const title = 'Vault strategy categories | Trading Strategy';
+	const title = 'Vaults by strategy | Trading Strategy';
 	const description =
-		'Explore DeFi vaults by documented investment strategy category, including reported TVL, vault count, and 30-day average APY.';
+		'Explore vaults by the underlying trading strategy, including reported TVL, vault count, and 30-day average APY.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 
 	const onChange: ComponentProps<typeof VaultGroupTable>['onChange'] = async (params, scrollToTop) => {
@@ -27,7 +27,7 @@ Vault strategy category index.
 	};
 
 	function getHref(slug: string) {
-		return resolve(`/vaults/categories/${slug}`);
+		return resolve(`/vaults/strategies/${slug}`);
 	}
 </script>
 
@@ -57,12 +57,10 @@ Vault strategy category index.
 			<VaultListingsSelector />
 			<HeroBanner>
 				{#snippet title()}
-					<span>Vault categories</span>
+					<span>Vaults by strategy</span>
 				{/snippet}
 				{#snippet subtitle()}
-					<p>
-						Explore DeFi vaults by their documented investment strategy. A vault can belong to more than one category.
-					</p>
+					<p>Explore vaults by the underlying trading strategy. A vault can have more than one strategy category.</p>
 				{/snippet}
 			</HeroBanner>
 		</div>
@@ -70,8 +68,9 @@ Vault strategy category index.
 
 	<Section padding="sm">
 		<VaultGroupTable
-			groupLabel="Category"
+			groupLabel="Strategy"
 			includeDescription
+			hideRankings={options.sort === null || options.sort === 'name' || options.sort === 'full_name'}
 			averageApyLabel="Avg. APY (30d)"
 			averageApyTooltip="Source-reported average annual percentage yield over the last 30 days."
 			rows={categories}

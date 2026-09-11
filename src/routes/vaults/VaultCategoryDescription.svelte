@@ -1,6 +1,6 @@
 <!--
 @component
-Shows the source-supplied description and aggregate metrics for one vault category.
+Shows the source-supplied description and aggregate metrics for one vault strategy category.
 -->
 <script lang="ts">
 	import type { VaultCategory } from '$lib/top-vaults/schemas';
@@ -18,7 +18,7 @@ Shows the source-supplied description and aggregate metrics for one vault catego
 <MetricsBox class="category-description" title={`About ${category.label}`}>
 	<Markdown content={category.description} />
 	<p class="category-stats">
-		Reported category totals: <strong>{category.vault_count}</strong>
+		Reported strategy totals: <strong>{category.vault_count}</strong>
 		{category.vault_count === 1 ? 'vault' : 'vaults'},
 		<strong>{formatDollar(category.tvl_usd, 1)} TVL</strong>{#if category.one_month_apy != null}, and
 			<strong>{formatPercent(category.one_month_apy, 1)} 30-day average APY</strong>{/if}.

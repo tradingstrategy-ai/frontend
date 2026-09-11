@@ -1,12 +1,12 @@
 /**
  * Generate sitemap with entries for all vault pages, including individual vaults,
- * protocol/stablecoin/chain category pages, and static vault sub-pages.
+ * protocol, stablecoin, chain, and strategy pages, plus static vault sub-pages.
  */
 import { SitemapStream } from 'sitemap';
 import { fetchTopVaults } from '$lib/top-vaults/client';
 import { isBlacklisted, resolveVaultDetails } from '$lib/top-vaults/helpers';
 import { getChain } from '$lib/helpers/chain';
-import { getVaultCategorySlug } from '$lib/top-vaults/categories';
+import { getVaultCategorySlug, isVisibleVaultCategory } from '$lib/top-vaults/categories';
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
 import { buildStablecoinMetadataLookup, resolveStablecoinSlug } from '$lib/stablecoin-metadata/helpers';
 
@@ -96,11 +96,11 @@ export async function GET({ fetch, setHeaders, url }) {
 		stream.write({ url: `${basePath}/curators/${slug}`, priority });
 	}
 
-	// Category index + individual category pages. Category tags use underscores
-	// in the source export but public routes use dash-separated slugs.
-	stream.write({ url: `${basePath}/categories`, priority });
-	for (const tag of Object.keys(categories)) {
-		stream.write({ url: `${basePath}/categories/${getVaultCategorySlug(tag)}`, priority });
+	// Strategy index + individual strategy pages. Source category tags use
+	// underscores, while public routes use dash-separated slugs.
+	stream.write({ url: `${basePath}/strategies`, priority });
+	for (const tag of Object.keys(categories).filter(isVisibleVaultCategory)) {
+		stream.write({ url: `${basePath}/strategies/${getVaultCategorySlug(tag)}`, priority });
 	}
 
 	stream.end();
