@@ -39,7 +39,7 @@ test.describe('charts dropdown in vault listings navigation', () => {
 					'Top',
 					'Stablecoins',
 					'Chains',
-					'Categories',
+					'Strategies',
 					'Protocols',
 					'Curators',
 					'International',

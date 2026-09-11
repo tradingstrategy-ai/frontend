@@ -782,6 +782,13 @@ const categories = {
 		tvl_usd: 500_000,
 		one_month_apy: 0.42
 	},
+	unknown: {
+		label: 'Unknown strategy',
+		description: 'A source category that is intentionally hidden from public listings.',
+		vault_count: 1,
+		tvl_usd: 100_000,
+		one_month_apy: null
+	},
 	zero_vault: {
 		label: 'Zero vault',
 		description: 'A registered category that does not currently have a matching vault in this fixture.',

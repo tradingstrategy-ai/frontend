@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Rename public vault category pages to strategies and clarify strategy terminology (2026-09-11)
 - Add vault category index and detail listings with category links on vault pages (2026-09-08)
 - Add a Sort dropdown to vault listing filters (2026-09-08)
 - Add vault comparison selection controls to public vault listings (2026-09-04)

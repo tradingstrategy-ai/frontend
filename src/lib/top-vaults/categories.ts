@@ -7,6 +7,8 @@
  */
 import type { VaultCategory, VaultInfo } from './schemas';
 
+const HIDDEN_VAULT_CATEGORY_TAGS = new Set(['unknown']);
+
 export interface VaultCategoryLink {
 	slug: string;
 	label: string;
@@ -22,6 +24,11 @@ export function getVaultCategoryTag(slug: string): string {
 	return slug.replaceAll('-', '_');
 }
 
+/** Return whether a source category should be exposed in public vault pages. */
+export function isVisibleVaultCategory(tag: string): boolean {
+	return !HIDDEN_VAULT_CATEGORY_TAGS.has(tag);
+}
+
 /** Return the registered categories for one vault in stable display order. */
 export function getVaultCategoryLinks(
 	vault: Pick<VaultInfo, 'strategy_tags'>,
@@ -29,6 +36,7 @@ export function getVaultCategoryLinks(
 ): VaultCategoryLink[] {
 	return [...new Set(vault.strategy_tags ?? [])]
 		.flatMap((tag) => {
+			if (!isVisibleVaultCategory(tag)) return [];
 			const category = Object.hasOwn(categories, tag) ? categories[tag] : undefined;
 			return category ? [{ slug: getVaultCategorySlug(tag), label: category.label }] : [];
 		})

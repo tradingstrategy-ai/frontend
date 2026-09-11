@@ -41,7 +41,9 @@ Each listing has a fixed definition (`top`, `chain`, `protocol`,
 `stablecoin`, `curator`, `category`, `tokenised-funds`, and the special listings). URL
 filters may narrow that definition but cannot change its base population.
 
-Category listing scopes use the source `strategy_tags` value internally. Their public URLs use dash-separated category slugs, while the category index is alphabetically ordered by display name.
+Strategy listing scopes use the source `strategy_tags` value internally. Their public URLs use
+dash-separated strategy slugs under `/vaults/strategies`, while the strategy index is alphabetically
+ordered by display name.
 
 ### Sorting
 

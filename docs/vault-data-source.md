@@ -50,7 +50,7 @@ The server parses, validates, normalises, and caches the response in memory for 
 
 The top-vaults export includes a top-level `categories` record keyed by source strategy tags such as `directional_trading`. Each category provides a label, Markdown description, reported aggregate TVL, vault count, and 30-day average APY. Individual vault membership is stored in the optional `strategy_tags` array.
 
-The frontend exposes categories at `/vaults/categories`. Public URLs convert source underscores to dashes, for example `/vaults/categories/directional-trading`; underscore URLs permanently redirect to the canonical dash URL. Category metrics remain source-provided because categories can overlap, while the listing rows are filtered from `strategy_tags`.
+The frontend exposes strategy categories at `/vaults/strategies`. Public URLs convert source underscores to dashes, for example `/vaults/strategies/directional-trading`; underscore URLs permanently redirect to the canonical dash URL. Former `/vaults/categories` URLs redirect to the strategy route. Category metrics remain source-provided because categories can overlap, while the listing rows are filtered from `strategy_tags`.
 
 #### Browser delivery
 
