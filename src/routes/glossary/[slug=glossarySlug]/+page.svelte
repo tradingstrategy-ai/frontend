@@ -8,7 +8,7 @@
 <script lang="ts">
 	import type { GlossaryEntry } from '../glossary';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { CanonicalLink, Section } from '$lib/components';
+	import { Section } from '$lib/components';
 	import { serializeSchema } from '$lib/helpers/google-meta';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 
@@ -44,8 +44,6 @@
 	<meta name="description" content={entry.description} />
 	{@html serializeSchema(getGoogleFAQPageSchema(entry))}
 </svelte:head>
-
-<CanonicalLink />
 
 <main>
 	<Breadcrumbs labels={{ [entry.slug]: entry.name }} />

@@ -100,7 +100,6 @@ Vault listing and overview for one protocol.
 <MetaTags
 	{title}
 	{description}
-	canonical={pageUrl}
 	image={logoUrl}
 	imageAlt={`${protocolName} logo`}
 	openGraph={{

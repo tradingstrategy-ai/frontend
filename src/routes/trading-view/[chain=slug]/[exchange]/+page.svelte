@@ -7,7 +7,7 @@
 	import { goto } from '$app/navigation';
 	import { getPairsClient } from '$lib/explorer/pair-client';
 	import { parseExchangeName } from '$lib/helpers/exchange';
-	import { Alert, Button, CanonicalLink, EntitySymbol, PageHeader } from '$lib/components';
+	import { Alert, Button, EntitySymbol, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import PairTable, { sortOptions } from '$lib/explorer/PairTable.svelte';
 	import InfoTable from './InfoTable.svelte';
@@ -54,8 +54,6 @@
 		content={`Decentralise exchange ${exchange.human_readable_name} on ${exchange.chain_name} blockchain`}
 	/>
 </svelte:head>
-
-<CanonicalLink />
 
 <Breadcrumbs labels={breadcrumbs} />
 

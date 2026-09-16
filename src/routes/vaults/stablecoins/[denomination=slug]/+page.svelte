@@ -40,7 +40,6 @@ Vault listing and overview for one stablecoin denomination.
 <MetaTags
 	{title}
 	{description}
-	canonical={pageUrl}
 	image={logoUrl}
 	imageAlt={`${denominationName} logo`}
 	openGraph={{

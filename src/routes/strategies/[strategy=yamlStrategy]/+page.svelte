@@ -9,18 +9,31 @@ Overview page for YAML-configured strategies — displays vault metrics and inte
 	import Profitability from '$lib/components/Profitability.svelte';
 	import { Button, Tooltip } from '$lib/components';
 	import IconQuestionCircle from '~icons/local/question-circle';
+	import { getStrategyPageMeta } from '$lib/strategies/seo';
 
-	export let data;
+	let { data } = $props();
+	let { strategy, vaultInfo, chain } = $derived(data);
 
-	$: ({ strategy, vaultInfo, chain } = data);
+	let startDate = $derived(vaultInfo?.start_date ? new Date(vaultInfo.start_date) : undefined);
+	let ageDays = $derived(
+		startDate ? Math.floor((Date.now() - startDate.getTime()) / (1000 * 60 * 60 * 24)) : undefined
+	);
 
-	$: startDate = vaultInfo?.start_date ? new Date(vaultInfo.start_date) : undefined;
-	$: ageDays = startDate ? Math.floor((Date.now() - startDate.getTime()) / (1000 * 60 * 60 * 24)) : undefined;
+	// same figures the page shows as "Annual return" and "Total value locked"
+	let meta = $derived(
+		getStrategyPageMeta({
+			name: strategy.name,
+			shortDescription: strategy.short_description,
+			chainName: chain?.name,
+			annualReturn: vaultInfo?.cagr_net,
+			tvlUsd: vaultInfo?.current_nav
+		})
+	);
 </script>
 
 <svelte:head>
-	<title>{strategy.name} | Trading Strategy</title>
-	<meta name="description" content={strategy.short_description} />
+	<title>{meta.title}</title>
+	<meta name="description" content={meta.description} />
 </svelte:head>
 
 {#if vaultInfo}

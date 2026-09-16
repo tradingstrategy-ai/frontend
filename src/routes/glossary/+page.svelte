@@ -1,7 +1,7 @@
 <!-- Render the glossary index page with a link to the each term -->
 <script lang="ts">
 	import type { GlossaryIndexEntry } from './glossary';
-	import { CanonicalLink, HeroBanner, Section } from '$lib/components';
+	import { HeroBanner, Section } from '$lib/components';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 
 	let { data } = $props();
@@ -23,8 +23,6 @@
 	<title>DeFi and trading dictionary</title>
 	<meta name="description" content="What do different technical trading terms mean?" />
 </svelte:head>
-
-<CanonicalLink />
 
 <main class="glossary-main">
 	<Section tag="header" padding="md">

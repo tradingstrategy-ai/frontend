@@ -24,6 +24,8 @@ export interface PairInfo extends PairIndexingMetrics {
 	pair_slug: string;
 	pair_symbol: string;
 	pair_name: string;
+	base_token_symbol: string;
+	quote_token_symbol: string;
 	chain_slug: string;
 	chain_name: string;
 	exchange_slug: string;

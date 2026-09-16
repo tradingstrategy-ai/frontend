@@ -9,6 +9,10 @@
  *
  * Missing data is not treated as low quality: when every metric is `null`/`undefined` the
  * page stays indexable. Only a confirmed number below threshold excludes a page.
+ *
+ * Independently of the metrics, tokens and pairs whose names contain adult or gambling
+ * terms are never indexed: a handful of them have real liquidity, and ranking for those
+ * names is not the search footprint we want.
  */
 
 import { isNumber } from '$lib/helpers/formatters';
@@ -19,17 +23,53 @@ export const INDEXABLE_MIN_LIQUIDITY_USD = 5_000;
 /** Minimum USD trading volume (24h for tokens, 30d for pairs) for a page to be indexed. */
 export const INDEXABLE_MIN_VOLUME_USD = 1_000;
 
+/**
+ * Name fragments that keep a page out of the index regardless of liquidity.
+ *
+ * Substring matches are for terms that never appear innocently ("porn", "xxx"). Terms that
+ * occur inside legitimate names are word-start bounded ("Essex", "Peacock") or whole-word
+ * bounded ("Alphabet", "analysis", "slotted"). The list is English-only by design;
+ * obfuscated or non-Latin names are out of scope.
+ */
+export const NOINDEX_NAME_PATTERN =
+	/porn|xxx|nude|fuck|pussy|boob|tits|milf|hentai|bokep|xhamster|xnxx|brazzers|onlyfans|casino|poker|jackpot|lottery|gacor|togel|\b(?:sex|cock)|\b(?:slot|bet|cum|anal)\b/;
+
 export type TokenIndexingMetrics = {
 	liquidity_latest?: MaybeNumber;
 	tvl_latest?: MaybeNumber;
 	volume_24h?: MaybeNumber;
+	name?: string | null;
+	symbol?: string | null;
 };
 
 export type PairIndexingMetrics = {
 	pair_tvl?: MaybeNumber;
 	usd_liquidity_latest?: MaybeNumber;
 	usd_volume_30d?: MaybeNumber;
+	pair_symbol?: string | null;
+	pair_name?: string | null;
+	base_token_symbol?: string | null;
 };
+
+/**
+ * Does any of the display names contain a blocklisted term?
+ *
+ * Names are lower-cased, stripped of diacritics (NFKD) and have `-`, `_` and `/` turned into
+ * spaces so hyphenated pair symbols such as `PORNHUB-ETH` match the word-bounded terms too.
+ *
+ * @param names token / pair display names; `null` and `undefined` entries are skipped
+ */
+export function hasBlockedName(names: (string | null | undefined)[]): boolean {
+	return names.some((name) => {
+		if (!name) return false;
+		const normalised = name
+			.normalize('NFKD')
+			.replace(/[\u0300-\u036f]/g, '')
+			.toLowerCase()
+			.replace(/[-_/]+/g, ' ');
+		return NOINDEX_NAME_PATTERN.test(normalised);
+	});
+}
 
 /**
  * Shared rule: indexable when any known metric clears its threshold, or when no metric is known.
@@ -50,17 +90,19 @@ function isIndexable(liquidity: MaybeNumber[], volume: MaybeNumber): boolean {
 /**
  * Should the token detail page for this token be indexed?
  *
- * @param token `token/details` API response (only the liquidity/volume fields are read)
+ * @param token `token/details` API response (only the name and liquidity/volume fields are read)
  */
 export function isTokenIndexable(token: TokenIndexingMetrics): boolean {
+	if (hasBlockedName([token.name, token.symbol])) return false;
 	return isIndexable([token.liquidity_latest, token.tvl_latest], token.volume_24h);
 }
 
 /**
  * Should the pair detail page for this trading pair be indexed?
  *
- * @param summary `pair-details` API `summary` object (only the TVL/liquidity/volume fields are read)
+ * @param summary `pair-details` API `summary` object (only the name and TVL/liquidity/volume fields are read)
  */
 export function isPairIndexable(summary: PairIndexingMetrics): boolean {
+	if (hasBlockedName([summary.pair_symbol, summary.pair_name, summary.base_token_symbol])) return false;
 	return isIndexable([summary.pair_tvl, summary.usd_liquidity_latest], summary.usd_volume_30d);
 }

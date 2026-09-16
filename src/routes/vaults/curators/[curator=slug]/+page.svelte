@@ -53,7 +53,6 @@ with an "about" panel and a TVL/return mini chart.
 <MetaTags
 	{title}
 	description={metaDescription}
-	canonical={pageUrl}
 	image={logoUrl}
 	imageAlt={`${curatorName} logo`}
 	openGraph={{

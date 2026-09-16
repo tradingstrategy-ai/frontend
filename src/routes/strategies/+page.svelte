@@ -83,7 +83,6 @@
 <MetaTags
 	title="{title} | Trading Strategy"
 	{description}
-	canonical={pageUrl}
 	openGraph={{
 		siteName: 'Trading Strategy',
 		url: pageUrl,

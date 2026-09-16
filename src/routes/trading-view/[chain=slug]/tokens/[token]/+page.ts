@@ -19,6 +19,8 @@ export async function load({ params, fetch, setHeaders }) {
 	return {
 		token,
 		// keep dead / spam tokens out of search engine indexes (see $lib/explorer/indexing)
-		robots: isTokenIndexable(token) ? undefined : 'noindex,follow'
+		robots: isTokenIndexable(token) ? undefined : 'noindex,follow',
+		// the address is accepted in any casing; index one URL per token
+		lowercaseCanonical: true
 	};
 }

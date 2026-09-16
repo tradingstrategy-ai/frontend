@@ -30,7 +30,6 @@ Vault listing and overview for one blockchain or perpetual DEX venue.
 <MetaTags
 	{title}
 	{description}
-	canonical={pageUrl}
 	image={logoUrl}
 	imageAlt={`${chainName} blockchain logo`}
 	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}

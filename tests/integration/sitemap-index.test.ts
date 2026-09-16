@@ -19,14 +19,18 @@ test.describe('sitemap index', () => {
 			'strategies/sitemap',
 			'blockchains/sitemap',
 			'vaults/sitemap',
-			'exchanges/sitemap',
-			'pairs/paged/0'
+			'exchanges/sitemap'
 		];
 
 		for (const expected of expectedEntries) {
 			const found = sitemapIndex.find(({ url }) => url.includes(expected));
 			expect(found).toBeTruthy();
 		}
+	});
+
+	test('should not submit the backend pair sitemaps', async () => {
+		// most pair pages are noindex; see docs/google-webmasters.md
+		expect(sitemapIndex.some(({ url }) => url.includes('pairs/paged'))).toBe(false);
 	});
 
 	test('local sitemap entries should be valid sitemaps', async ({ request }) => {

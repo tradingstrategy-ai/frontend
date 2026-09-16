@@ -64,7 +64,6 @@ CORE3 stablecoin vault risk chart page.
 <MetaTags
 	{title}
 	{description}
-	canonical={pageUrl}
 	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
 	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
 />

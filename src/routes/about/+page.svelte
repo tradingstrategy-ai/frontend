@@ -3,7 +3,7 @@
 -->
 <script lang="ts">
 	import { discordUrl } from '$lib/config';
-	import { Banner, Button, CanonicalLink, HeroVideo, Section } from '$lib/components';
+	import { Banner, Button, HeroVideo, Section } from '$lib/components';
 	import IntroHero from './IntroHero.svelte';
 	import Audience from './Audience.svelte';
 	import Partners from './Partners.svelte';
@@ -16,8 +16,6 @@
 	<title>About Us</title>
 	<meta name="description" content="About Trading Strategy Protocol" />
 </svelte:head>
-
-<CanonicalLink />
 
 <main>
 	<IntroHero />

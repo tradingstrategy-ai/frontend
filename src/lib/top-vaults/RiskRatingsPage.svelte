@@ -122,7 +122,6 @@ the score in a column beside each vault name.
 <MetaTags
 	title={providerDetails.pageTitle}
 	description={metadataDescription}
-	canonical={pageUrl}
 	openGraph={{
 		siteName: 'Trading Strategy',
 		url: pageUrl,
