@@ -3,11 +3,9 @@
 Display the site-wide podcast announcement, which may be dismissed by the user.
 Dismissed state is retained in a podcast-specific cookie (see `hooks.server.ts`).
 
-The banner must render on the server whenever the cookie is absent: it sits above the page
-content, so mounting it only after hydration shifts the whole page down (a 0.11 CLS on
-phones). Only the client keeps an in-session flag, so the banner stays hidden after a
-dismissal across client-side navigations (e.g. entering a wizard) without the server ever
-sharing state between requests.
+The root layout renders it on non-home pages. It is hidden below the small-screen breakpoint.
+The server derives its state from the cookie, while the client retains a dismissal during
+client-side navigation.
 
 @example
 
@@ -16,7 +14,7 @@ sharing state between requests.
 ```
 -->
 <script lang="ts" module>
-	// client-only session flag; never written on the server, so SSR follows the cookie alone
+	// Updated only by the browser's dismissal handler.
 	let dismissedInSession = $state(false);
 </script>
 
@@ -26,12 +24,13 @@ sharing state between requests.
 	import { slide } from 'svelte/transition';
 	import { Button } from '$lib/components';
 	import IconCancel from '~icons/local/cancel';
+	import IconPodcast from '~icons/local/podcast';
 
 	let { dismissedAt }: { dismissedAt: Date | undefined } = $props();
 
 	let dismissed = $derived(dismissedInSession || Boolean(dismissedAt));
 
-	// set cookie and dismissed flag when announcement is dismissed
+	// Persist the dismissal and retain it through client-side navigation.
 	function dismiss() {
 		const ts = new Date().toISOString();
 		document.cookie = serialize('podcast-announcement-dismissed-at', ts, {
@@ -45,6 +44,7 @@ sharing state between requests.
 {#if !dismissed}
 	<section class="announcement-banner ds-container" out:slide={{ axis: 'y', duration: 300 }}>
 		<div class="content">
+			<span class="podcast-icon" aria-hidden="true"><IconPodcast /></span>
 			<span class="description">
 				We have started the Trading Strategy podcast.
 				<a href={resolve('/podcast')} onclick={dismiss}>Listen to us on YouTube and Spotify.</a>
@@ -60,9 +60,18 @@ sharing state between requests.
 <style>
 	.announcement-banner {
 		display: grid;
+		grid-template-columns: 1fr auto;
+		gap: 0.875rem;
+		align-items: center;
 		padding-block: 1rem;
-		background: var(--c-text-light);
-		color: var(--c-text-inverted);
+		background: linear-gradient(
+			105deg,
+			color-mix(in srgb, var(--c-bullish) 56%, var(--c-body)),
+			color-mix(in srgb, var(--c-bullish) 40%, var(--c-body))
+		);
+		border-bottom: 1px solid color-mix(in srgb, var(--c-bullish) 60%, var(--c-box-4));
+		box-shadow: 0 0.5rem 1.25rem color-mix(in srgb, var(--c-bullish), transparent 88%);
+		color: var(--c-text);
 		font: var(--f-ui-md-roman);
 		letter-spacing: var(--f-ui-1md-spacing);
 
@@ -71,40 +80,58 @@ sharing state between requests.
 			letter-spacing: var(--f-ui-sm-spacing);
 		}
 
-		/* desktop layout */
-		@media (--viewport-md-up) {
-			grid-template-columns: 1fr auto;
-			gap: 0.875rem;
-			align-items: center;
+		/* Keep mobile navigation and page content unobstructed. */
+		@media (--viewport-sm-down) {
+			display: none;
 		}
 
-		/* mobile layout: a compact single strip so the banner does not dominate the first screen */
-		@media (--viewport-sm-down) {
-			grid-template-columns: 1fr auto;
-			gap: 0.5rem;
-			align-items: center;
-			padding-block: 0.375rem;
-			font: var(--f-ui-xs-roman);
-			letter-spacing: var(--f-ui-xs-spacing);
-
-			.content {
-				grid-column: 1;
-			}
-
-			:global(.cancel) {
-				grid-area: 1 / 2;
-				padding: 0.25rem;
-				--icon-size: 0.875rem;
-			}
+		.description,
+		.description :global(a[href]) {
+			color: inherit;
 		}
 
 		.description :global(a[href]) {
 			text-decoration: underline;
+			text-decoration-thickness: 1px;
+			text-underline-offset: 0.15em;
 			font-weight: 500;
 		}
 
+		.content {
+			display: flex;
+			gap: var(--space-sm);
+			align-items: center;
+		}
+
+		.podcast-icon {
+			display: grid;
+			flex: 0 0 auto;
+			width: 1.25rem;
+			height: 1.25rem;
+
+			:global(.icon) {
+				width: 100%;
+				height: 100%;
+			}
+		}
+
 		:global(.cancel) {
+			display: grid;
+			place-items: center;
+			width: 2rem;
+			height: 2rem;
+			padding: 0.25rem;
+			border-radius: var(--radius-md);
 			--icon-size: 1rem;
+
+			&:is(:hover, :focus-visible) {
+				background: color-mix(in srgb, var(--c-text), transparent 88%);
+			}
+
+			&:focus-visible {
+				outline: 2px solid currentColor;
+				outline-offset: 2px;
+			}
 		}
 
 		:global(.cancel .icon path) {

@@ -95,7 +95,7 @@ This project uses Svelte 5 with experimental features enabled in `svelte.config.
 - Sentry error tracking integration
 - Colour mode resolution (cookie-based)
 - Lightweight admin authentication via password
-- Announcement dismissal tracking
+- Podcast announcement dismissal cookie parsing
 - IP country detection via Cloudflare headers
 
 ### Icons

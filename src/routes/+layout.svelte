@@ -20,12 +20,10 @@
 <AppHead />
 <PageLoadProgressBar />
 {#if !(page.data.skipNavbar || strategyMicrosite)}
-	<div class="site-header">
-		{#if page.url.pathname !== '/'}
-			<AnnouncementBanner dismissedAt={podcastAnnouncementDismissedAt} />
-		{/if}
-		<Navbar />
-	</div>
+	{#if page.url.pathname !== '/'}
+		<AnnouncementBanner dismissedAt={podcastAnnouncementDismissedAt} />
+	{/if}
+	<Navbar />
 {/if}
 <MaintenanceNotice />
 {@render children()}
@@ -33,17 +31,3 @@
 	<Footer />
 {/if}
 <SiteMode />
-
-<style>
-	.site-header {
-		display: flex;
-		flex-direction: column;
-
-		/* On phones the navigation comes first and the announcement sits below it */
-		@media (--viewport-sm-down) {
-			:global(.announcement-banner) {
-				order: 1;
-			}
-		}
-	}
-</style>
