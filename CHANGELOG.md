@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- SEO follow-ups: fix the mobile layout shift caused by the announcement banner, noindex adult and gambling token names, descriptive strategy page titles, one canonical mechanism, stop submitting pair sitemaps, faster vault listing hydration (2026-09-16)
 - Improve SEO and Core Web Vitals: noindex dead token/pair pages, canonical URLs on trading-view and glossary pages, inline small stylesheets, resize Ghost blog images again, halve vault listing page weight with row projection and lazy tooltips, slim glossary pages, add Search Console and CrUX API scripts (2026-09-16)
 - Rename public vault category pages to strategies and clarify strategy terminology (2026-09-11)
 - Add vault category index and detail listings with category links on vault pages (2026-09-08)

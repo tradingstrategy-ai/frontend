@@ -128,17 +128,19 @@ All commands accept `--json` for the raw response. Search analytics windows end 
 
 Where the search-facing behaviour lives in this codebase (added in response to the audit below; the implementation plan is `.claude/plans/seo-and-core-web-vitals.md`):
 
-| Concern                                         | Where                                                                                                                                                                                                                                   |
-| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `noindex` for dead / spam token and pair pages  | `src/lib/explorer/indexing.ts` — thresholds `INDEXABLE_MIN_LIQUIDITY_USD` and `INDEXABLE_MIN_VOLUME_USD`; used by the token and pair `+page.svelte` heads. Missing metrics keep a page indexable; only confirmed low values exclude it. |
-| Canonical URLs on trading-view / glossary pages | `src/lib/components/CanonicalLink.svelte` (`$lib/helpers/canonical.ts`). Routes using `svelte-meta-tags` set `canonical` there instead — never both.                                                                                    |
-| Render-blocking CSS                             | `kit.inlineStyleThreshold` in `svelte.config.js` (compared against uncompressed CSS size at build time)                                                                                                                                 |
-| Vault sparkline layout shift                    | `src/lib/top-vaults/VaultSparkline.svelte` declares the 72×18 intrinsic size and a 4:1 wrapper                                                                                                                                          |
-| Ghost blog images                               | `src/lib/blog/images.ts` routes both `<ghost api host>` and `storage.ghost.io` images through `/blog/image/`                                                                                                                            |
-| Glossary page weight                            | `src/routes/glossary/*/+page.server.ts` return only what each page renders (`loadGlossaryForPage`)                                                                                                                                      |
-| Vault listing page weight                       | `INITIAL_VAULT_LISTING_LIMIT` (75 rows) and `toVaultListingRow()` in `src/lib/top-vaults/helpers.ts`; guarded by `tests/integration/vaults/page-weight.test.ts`                                                                         |
-
-Pair URLs in sitemaps come from the backend (`api/sitemap/pairs/paged/N.xml`); applying the same thresholds there is a backend change.
+| Concern                                        | Where                                                                                                                                                                                                                              |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `noindex` for dead / spam token and pair pages | `src/lib/explorer/indexing.ts` — thresholds `INDEXABLE_MIN_LIQUIDITY_USD` and `INDEXABLE_MIN_VOLUME_USD`; the token and pair loaders return `robots`. Missing metrics keep a page indexable; only confirmed low values exclude it. |
+| `noindex` for adult / gambling names           | `NOINDEX_NAME_PATTERN` and `hasBlockedName()` in the same file, applied to token names/symbols and pair symbols regardless of liquidity. English-only by design.                                                                   |
+| Canonical URL on every page                    | `src/lib/header/AppHead.svelte` emits the single `<link rel="canonical">` (`$lib/helpers/canonical.ts`); loaders adjust it with `lowercaseCanonical` (token pages) or `canonical` (vault comparisons). Never add a second one.     |
+| Strategy page titles and descriptions          | `getStrategyPageMeta()` in `src/lib/strategies/seo.ts`, used by both strategy overview routes                                                                                                                                      |
+| Sitemap index                                  | `src/routes/sitemap.xml/+server.ts` — the backend pair sitemaps are deliberately not listed (most pair pages are `noindex`)                                                                                                        |
+| Announcement banner layout shift               | `src/routes/_components/AnnouncementBanner.svelte` must render on the server per request; guarded by `tests/integration/announcement.test.ts` and `tests/integration/layout-shift.test.ts`                                         |
+| Render-blocking CSS                            | `kit.inlineStyleThreshold` in `svelte.config.js` (compared against uncompressed CSS size at build time)                                                                                                                            |
+| Vault sparkline layout shift                   | `src/lib/top-vaults/VaultSparkline.svelte` declares the 72×18 intrinsic size and a 4:1 wrapper                                                                                                                                     |
+| Ghost blog images                              | `src/lib/blog/images.ts` routes both `<ghost api host>` and `storage.ghost.io` images through `/blog/image/`                                                                                                                       |
+| Glossary page weight                           | `src/routes/glossary/*/+page.server.ts` return only what each page renders (`loadGlossaryForPage`)                                                                                                                                 |
+| Vault listing page weight                      | `INITIAL_VAULT_LISTING_LIMIT` (75 rows) and `toVaultListingRow()` in `src/lib/top-vaults/helpers.ts`; guarded by `tests/integration/vaults/page-weight.test.ts`                                                                    |
 
 ## Site audit 2026-09-16
 
@@ -373,7 +375,7 @@ Expected effect on the audit's numbers, to be confirmed after deploy with `pnpm 
 - **Main-thread time on `/vaults`**: 63 % less HTML to parse, 73 % less page data to deserialise and ~555 fewer DOM subtrees to hydrate address the 10 s main-thread / 949 ms long-task finding.
 - **Search footprint**: as Google recrawls the `noindex` pages, adult/gambling token names should drop out of the top queries and the token pages' 83 % share of impressions should fall.
 
-Not done (plan workstream 7): the `/vaults` table's client-side sort/format work, strategy page meta descriptions, and the backend-side sitemap thresholds.
+Not done (plan workstream 7): the `/vaults` table's client-side sort/format work, strategy page meta descriptions, and the backend-side sitemap thresholds — picked up in the follow-up round below.
 
 ### Post-release Search Console actions (2026-09-16)
 
@@ -384,3 +386,47 @@ Done through the Search Console UI after the release:
 - **Core Web Vitals → mobile → LCP issue: "Validate fix" started** (single URL group: pair pages, 135 URLs, 3.1 s). Google reports within 28 days.
 - CLS validation not started — see the correction under "Vault sparkline layout shift".
 - Page indexing report at release time, for reference: 29.2K indexed, 45.4K not indexed (4,522 "page with redirect", 1,677 404, 1,633 blocked by robots.txt, 1,256 alternate page with canonical, 549 duplicate without user-selected canonical, 377 soft 404, 161 5xx).
+
+## Follow-up round — 2026-09-16
+
+Second round after the release of the changes above; the plan is `.claude/plans/seo-follow-ups.md`. Numbers below are from local production builds (real data) and the Search Console UI on 16 September 2026.
+
+### Mobile CLS root cause: the announcement banner was not server-rendered
+
+Reproduced with a `layout-shift` `PerformanceObserver` on a throttled phone profile against production: on every page the whole `<main>` moved down by 92 px once hydration finished (score 0.119, the same 0.11 Search Console reports for the token and pair groups). The candidates named earlier — the pairs table skeleton and the lazy candle chart — produce no measurable shift (≤ 0.007 including scrolling).
+
+The cause was `AnnouncementBanner.svelte`: its dismissed flag lived in a module-level `writable` store, which on the server is shared by every request and was never reset to `false`. After the first visitor with the dismissal cookie, the server rendered the banner for nobody, and each browser then mounted it after hydration, pushing the page down. The component now derives the SSR state from the cookie prop alone and keeps only a client-side session flag; the dismissal slide is 300 ms so it stays inside the 500 ms user-input exemption. Local production build after the fix: CLS 0.001–0.007 on the two Search Console example pages and on `/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5`.
+
+Guards: `tests/integration/announcement.test.ts` fetches a page with the dismissal cookie and then without it and asserts the banner is in the second response's HTML; `tests/integration/layout-shift.test.ts` installs the observer before navigation on the token and pair pages (with the `pairs` request delayed) and asserts CLS < 0.05.
+
+### Name blocklist
+
+`hasBlockedName()` in `src/lib/explorer/indexing.ts` marks token and pair pages `noindex` when the name or symbol contains an adult or gambling term (NFKD-normalised, `-`/`_`/`/` treated as word separators, short words such as `bet`, `slot`, `cum`, `anal` whole-word, `sex`/`cock` word-start). Dry run over the top 500 pages by clicks plus the earlier bad-word candidates (372 pages resolved through the public API): exactly the four pages that had escaped the liquidity thresholds change — PornForce ($225k), Nude AI ($115k), PORNHUB-ETH ($53k TVL), XXX-BNB ($9k TVL). Note that `BET-USDT` on Polygon (`bet` whole-word) would also be excluded; it was not in the sample.
+
+### Strategy page titles and descriptions
+
+`getStrategyPageMeta()` produces `<name> — automated DeFi vault on <chain> | Trading Strategy` (dropping detail until it fits 60 characters) and a description that leads with the live annualised return and TVL when both are known and positive, otherwise the strategy's own short description; both routes (API and YAML strategies) use it with the same figures their pages display. Target: CTR on `/strategies/<id>` above 1 % at the current ~10th position (0.15 % before).
+
+### One canonical mechanism
+
+`AppHead.svelte` now emits the canonical for every page from `page.data`; the 36 `canonical={pageUrl}` props, the `CanonicalLink` component and its nine placements are gone, so a page can no longer end up with two canonicals or none. Query strings are dropped except where they identify the page (`/vaults/compare?vault=…`, set by that loader). `tests/integration/canonical.test.ts` asserts exactly one canonical with the expected value on twelve routes, including a mixed-case token address and parameterised URLs.
+
+### Pair sitemaps no longer submitted
+
+The sitemap index no longer lists `api/sitemap/pairs/paged/N.xml` (6,674 pair URLs). Measured before removal: of those, 6,649 are known to the pairs API and **4,077 are indexable** under `isPairIndexable`; only **34 of the 4,077 (0.8 %)** are linked from server-rendered HTML (the first page of each `trading-pairs` listing). Chain pages stream their top-pair tables, exchange and token pages fetch their pair tables client-side, so the long tail of indexable pairs is now discoverable only through Google's existing knowledge of the URLs and client-rendered links. This is a deliberate decision; if pair-page impressions fall noticeably, the fix is a sitemap that lists only indexable pairs (the pairs API has 15,312 of them out of 52,028).
+
+### `/vaults` main-thread work
+
+CPU profile of hydration on a 4×-throttled phone: the long task was Svelte hydration of the 75-row table plus two **forced layouts** — `bind:offsetWidth` on the table (read synchronously during hydration for `--table-width`) and the `visualViewport` height read on `<body>`. Both are gone: `use:tableWidth` (`src/lib/actions/table-width.ts`) sets `--table-width` from a `ResizeObserver` only, and `--viewport-height` is maintained on the full-screen dialog that consumes it rather than on `<body>`, where every mobile address-bar resize invalidated the styles of the whole page. Longest hydration task ~800 ms → ~450 ms (4× throttling); the remainder is hydration proper. SvelteKit's own `pageXOffset` read at the end of hydration still forces one style pass and is not ours to change.
+
+### Search Console housekeeping
+
+- Sitemaps: `https://tradingstrategy.ai/vaults/sitemap.xml` submitted (read immediately, 5,268 URLs); the `trading-view/vaults/sitemap.xml?version=2` entry removed; the glossary sitemap resubmitted (all 404 of its URLs return 200 today, so the 37 warnings from the 8 September read are stale).
+- Page indexing report, read from the UI (the API does not expose these lists):
+  - **Blocked by robots.txt** (1,633; 510 examples): 281 old `/api/{execution,technical-analysis,client}/help/*.html` documentation URLs that now 404, 174 `/api/pairs?…export_format=excel` links from the exchange export-data page, 55 `trade-<id>.json` raw-data links. The two link sources now carry `rel="nofollow"`; the API stays blocked.
+  - **Page with redirect** (4,522; 845 examples): 746 legacy `/trading-view/vaults/<slug>` and `/trading-view/<chain>/vaults/<slug>` URLs (some with `?a=` or `?ref=` parameters) that 301 to `/vaults/<slug>`, plus `/docsprogramming/*`. No internal link produces them; nothing to change.
+  - **Soft 404** (377): 263 of the same legacy vault URLs crawled before the consolidation (now 301), 27 dead token pages (now `noindex`), a handful of logo SVGs and wizard pages. No template renders an empty page.
+  - **5xx** (161): 45 `/social-card/vault/…` image URLs (now 400), retired strategy pages (`enzyme-*`, `base-memex`, now 404) and 11 token pages from the 4–5 September window.
+- Glossary rankings (workstream 7): 225 glossary pages had impressions in the last 90 days; 103 sit at position ≤ 20 (DeFi-specific: `hyperliquid-provider-vault`, `alpha-signal`, `forward-fill`, `quantstats`, `martin-ratio`, `clmm`, `erc-7540` …) and 122 at position > 20 with essentially zero clicks (generic: `leverage` 55, `stop-loss` 54, `cagr` 68, `volatility` 73, `apr` 78). The generic terms are left as they are — Google ignores sitemap `priority`, and the content lives in the docs repository.
+
+Not done: the `inlineStyleThreshold` step (waits for the LCP validation result), index-bloat follow-up (waits for the next full recrawl), and glossary content work (docs repository).

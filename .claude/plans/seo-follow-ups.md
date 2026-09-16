@@ -1,5 +1,9 @@
 # SEO and Core Web Vitals follow-ups
 
+## Status (2026-09-16)
+
+Implemented on branch `seo-follow-ups`; outcomes are recorded in `docs/google-webmasters.md`, "Follow-up round — 2026-09-16". The CLS root cause turned out to be the announcement banner (module-level store shared across server renders), not the table or chart; workstream 1 items 2–3 were measured and not needed. Workstream 6 waits for the next recrawl, workstream 9 for the LCP validation result, workstream 7's content work lives in the docs repository.
+
 ## Goal
 
 Second round of search-experience work after PR #1435 (see `docs/google-webmasters.md`, "Optimising the website — 2026-09-16" and "Post-release Search Console actions"). Eleven items, ordered by value per effort. Each workstream is independently shippable; items 1–2 unblock Search Console fix validation and should go first.

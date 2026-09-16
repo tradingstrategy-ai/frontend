@@ -58,6 +58,7 @@
 			label="View raw trade data"
 			href="trade-{trade.trade_id}.json"
 			target="_blank"
+			rel="nofollow"
 			on:click={(e) => e.currentTarget.blur()}
 		/>
 	</PageHeading>

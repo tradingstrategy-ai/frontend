@@ -107,10 +107,12 @@
 			</div>
 
 			<div class="cta">
+				<!-- nofollow: the API is crawl-blocked, so the link only adds "blocked by robots.txt" report noise -->
 				<Button
 					label="Download Excel"
 					href="{downloadUrl}?{downloadParams}"
 					download
+					rel="nofollow"
 					disabled={downloadDisabled}
 					on:click={() => (downloadDisabled = true)}
 				/>
