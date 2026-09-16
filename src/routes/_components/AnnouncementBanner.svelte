@@ -53,7 +53,7 @@ Dismissed state is retained in a podcast-specific cookie (see `hooks.server.ts`)
 		</div>
 
 		<Button class="cancel" ghost title="Dismiss announcement" on:click={dismiss}>
-			<IconCancel slot="icon" --icon-size="1rem" />
+			<IconCancel slot="icon" />
 		</Button>
 	</section>
 {/if}
@@ -79,25 +79,33 @@ Dismissed state is retained in a podcast-specific cookie (see `hooks.server.ts`)
 			align-items: center;
 		}
 
-		/* mobile layout */
+		/* mobile layout: a compact single strip so the banner does not dominate the first screen */
 		@media (--viewport-sm-down) {
 			grid-template-columns: 1fr auto;
-			gap: 0.25rem;
-			align-items: start;
+			gap: 0.5rem;
+			align-items: center;
+			padding-block: 0.375rem;
+			font: var(--f-ui-xs-roman);
+			letter-spacing: var(--f-ui-xs-spacing);
 
 			.content {
 				grid-column: 1;
 			}
 
-			/* move cancel button to upper-right corner */
 			:global(.cancel) {
 				grid-area: 1 / 2;
+				padding: 0.25rem;
+				--icon-size: 0.875rem;
 			}
 		}
 
 		.description :global(a[href]) {
 			text-decoration: underline;
 			font-weight: 500;
+		}
+
+		:global(.cancel) {
+			--icon-size: 1rem;
 		}
 
 		:global(.cancel .icon path) {
