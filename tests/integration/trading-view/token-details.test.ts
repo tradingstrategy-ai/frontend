@@ -1,8 +1,17 @@
 import { expect, test } from '@playwright/test';
+import { ILLIQUID_TOKEN_ADDRESS } from '../../mocks/tokens/fixtures';
+
+const LIQUID_TOKEN_PATH = 'trading-view/ethereum/tokens/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2';
+const ILLIQUID_TOKEN_PATH = `trading-view/ethereum/tokens/${ILLIQUID_TOKEN_ADDRESS}`;
+const robotsMeta = 'head meta[name="robots"]';
 
 test.describe('token details page', () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto('trading-view/ethereum/tokens/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2');
+		await page.goto(LIQUID_TOKEN_PATH);
+	});
+
+	test('should be indexable when the token has liquidity', async ({ page }) => {
+		await expect(page.locator(robotsMeta)).toHaveCount(0);
 	});
 
 	test('should include token info', async ({ page }) => {
@@ -35,5 +44,25 @@ test.describe('token details page', () => {
 		const tableRow = await page.waitForSelector(selector);
 		await tableRow.click();
 		await expect(page).toHaveURL('trading-view/ethereum/uniswap-v3/eth-usdc-fee-5');
+	});
+
+	test('should mark tokens without liquidity or volume as noindex', async ({ page }) => {
+		await page.goto(ILLIQUID_TOKEN_PATH);
+		await expect(page.getByTestId('token-info')).toContainText('Name Dead Token');
+		await expect(page.locator(robotsMeta)).toHaveAttribute('content', 'noindex,follow');
+	});
+
+	test('should update the robots tag on client-side navigation between tokens', async ({ page }) => {
+		await expect(page.locator(robotsMeta)).toHaveCount(0);
+
+		// SvelteKit intercepts same-origin anchor clicks, so this navigates client-side
+		await page.evaluate((href) => {
+			document.body.insertAdjacentHTML('beforeend', `<a id="illiquid-token-link" href="${href}">dead</a>`);
+		}, `/${ILLIQUID_TOKEN_PATH}`);
+		await page.locator('#illiquid-token-link').click();
+
+		await expect(page).toHaveURL(ILLIQUID_TOKEN_PATH);
+		await expect(page.getByTestId('token-info')).toContainText('Name Dead Token');
+		await expect(page.locator(robotsMeta)).toHaveAttribute('content', 'noindex,follow');
 	});
 });

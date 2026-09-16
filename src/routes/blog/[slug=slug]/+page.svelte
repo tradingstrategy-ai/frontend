@@ -1,3 +1,6 @@
+<!--
+	Render a single blog post from Ghost
+-->
 <script lang="ts">
 	import { page } from '$app/state';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
@@ -7,9 +10,25 @@
 	import BlogPostContent from './BlogPostContent.svelte';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 	import { Section } from '$lib/components';
+	import { getBlogImageSrcSet } from '$lib/blog/images';
 
 	let { data } = $props();
 	let { post } = $derived(data);
+
+	// The header image is the LCP element on blog posts. It is displayed at the article
+	// column width (48rem max) with a 3:2 crop, so request that crop from the image proxy
+	// instead of the original upload (often >1 MB PNG).
+	const HEADER_IMAGE_WIDTH = 768;
+	const HEADER_IMAGE_HEIGHT = 512;
+
+	let headerImage = $derived(
+		getBlogImageSrcSet(post.feature_image, {
+			width: HEADER_IMAGE_WIDTH,
+			height: HEADER_IMAGE_HEIGHT,
+			quality: 60,
+			version: post.updated_at
+		})
+	);
 </script>
 
 <SocialMetaTags url={page.url} {post} />
@@ -27,7 +46,16 @@
 				{/snippet}
 			</Timestamp>
 
-			<img src={post.feature_image} alt={post.feature_image_alt} />
+			<img
+				src={headerImage.src}
+				srcset={headerImage.srcset}
+				sizes="(max-width: 48rem) 100vw, 48rem"
+				width={HEADER_IMAGE_WIDTH}
+				height={HEADER_IMAGE_HEIGHT}
+				fetchpriority="high"
+				decoding="async"
+				alt={post.feature_image_alt ?? post.title}
+			/>
 		</header>
 
 		<BlogPostContent html={post.html} />

@@ -1,21 +1,21 @@
 <!-- Render the glossary index page with a link to the each term -->
 <script lang="ts">
-	import type { GlossaryEntry } from './glossary';
-	import { HeroBanner, Section } from '$lib/components';
+	import type { GlossaryIndexEntry } from './glossary';
+	import { CanonicalLink, HeroBanner, Section } from '$lib/components';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 
-	export let data;
+	let { data } = $props();
 
-	const { glossary } = data;
-
-	const index = Object.values(glossary).reduce(
-		(acc, entry) => {
-			const firstChar = entry.slug[0];
-			acc[firstChar] ??= [];
-			acc[firstChar].push(entry);
-			return acc;
-		},
-		{} as Record<string, GlossaryEntry[]>
+	let index = $derived(
+		data.terms.reduce(
+			(acc, entry) => {
+				const firstChar = entry.slug[0];
+				acc[firstChar] ??= [];
+				acc[firstChar].push(entry);
+				return acc;
+			},
+			{} as Record<string, GlossaryIndexEntry[]>
+		)
 	);
 </script>
 
@@ -23,6 +23,8 @@
 	<title>DeFi and trading dictionary</title>
 	<meta name="description" content="What do different technical trading terms mean?" />
 </svelte:head>
+
+<CanonicalLink />
 
 <main class="glossary-main">
 	<Section tag="header" padding="md">

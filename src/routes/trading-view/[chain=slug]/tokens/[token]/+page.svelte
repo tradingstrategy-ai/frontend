@@ -8,7 +8,7 @@ Token detail page with token metadata and its tracked trading pairs.
 	import { getPairsClient } from '$lib/explorer/pair-client';
 	import { getTokenStandardName } from '$lib/chain/tokenstandard';
 	import { getLogoUrl } from '$lib/helpers/assets';
-	import { Alert, EntitySymbol, PageHeader } from '$lib/components';
+	import { Alert, CanonicalLink, EntitySymbol, PageHeader } from '$lib/components';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import InfoTable from './InfoTable.svelte';
 	import InfoSummary from './InfoSummary.svelte';
@@ -52,6 +52,8 @@ Token detail page with token metadata and its tracked trading pairs.
 		content={`${token.name} (${token.symbol} ${getTokenStandardName(token.chain_slug)} on ${token.chain_name})`}
 	/>
 </svelte:head>
+
+<CanonicalLink lowercasePath />
 
 <Breadcrumbs labels={breadcrumbs} />
 

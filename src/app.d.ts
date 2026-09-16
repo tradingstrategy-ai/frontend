@@ -25,7 +25,10 @@ declare global {
 			timeBucket?: TimeBucket;
 		}
 
-		// interface PageData {}
+		interface PageData {
+			/** Robots meta directive for the current page, e.g. `noindex,follow`; omitted pages are indexable */
+			robots?: string;
+		}
 		// interface Platform {}
 	}
 }

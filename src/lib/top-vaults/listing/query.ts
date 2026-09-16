@@ -5,7 +5,7 @@
  * a page boundary can never sort a different prefix from the server.
  */
 import { getChainDisplayName } from '$lib/helpers/chain';
-import type { Core3Protocol, VaultInfo } from '../schemas';
+import type { Core3Protocol, VaultInfo, VaultListingRow } from '../schemas';
 import {
 	calculateTotalTvl,
 	calculateTvlWeightedApy,
@@ -86,22 +86,27 @@ export function matchesVaultRisk(
 	return riskFilter.minValue === 0 && riskFilter.maxValue >= 50;
 }
 
-function compareStrings(value: (vault: VaultInfo) => string) {
-	return (a: VaultInfo, b: VaultInfo) => value(a).localeCompare(value(b));
+function compareStrings(value: (vault: VaultListingRow) => string) {
+	return (a: VaultListingRow, b: VaultListingRow) => value(a).localeCompare(value(b));
 }
 
-function canonicalKey(vault: VaultInfo): string {
+function canonicalKey(vault: Pick<VaultListingRow, 'id' | 'chain_id' | 'address'>): string {
 	return vault.id || `${vault.chain_id}:${vault.address.toLowerCase()}`;
 }
 
-/** Sort the full matching population using a stable canonical tie-breaker. */
-export function sortVaults(
-	vaults: VaultInfo[],
+/**
+ * Sort the full matching population using a stable canonical tie-breaker.
+ *
+ * Generic over the row type so the server can sort complete `VaultInfo` records and
+ * the browser table can re-sort the projected `VaultListingRow`s it received.
+ */
+export function sortVaults<T extends VaultListingRow>(
+	vaults: T[],
 	sort: string,
 	direction: VaultSortDirection,
 	ratingProvider?: VaultListingOptions['ratingProvider'],
 	core3Protocols: Record<string, Core3Protocol> = {}
-): VaultInfo[] {
+): T[] {
 	const comparator = (() => {
 		switch (sort) {
 			case 'chain':
@@ -113,12 +118,12 @@ export function sortVaults(
 			case 'three_months_volatility':
 				return rankVaultsBy(['three_months_volatility']);
 			case 'max_dd':
-				return (a: VaultInfo, b: VaultInfo) =>
+				return (a: VaultListingRow, b: VaultListingRow) =>
 					(getLifetimeMaxDrawdown(a) ?? -Infinity) - (getLifetimeMaxDrawdown(b) ?? -Infinity);
 			case 'denomination':
 				return compareStrings((vault) => vault.denomination);
 			case 'tvl':
-				return (a: VaultInfo, b: VaultInfo) =>
+				return (a: VaultListingRow, b: VaultListingRow) =>
 					rankVaultsBy(['current_tvl_usd', 'peak_tvl_usd'])(
 						{ current_tvl_usd: getVaultCurrentTvlUsd(a), peak_tvl_usd: getVaultPeakTvlUsd(a) },
 						{ current_tvl_usd: getVaultCurrentTvlUsd(b), peak_tvl_usd: getVaultPeakTvlUsd(b) }
@@ -132,8 +137,8 @@ export function sortVaults(
 			case 'risk':
 				return rankVaultsBy(['risk_numeric'], Infinity);
 			case 'provider_risk_rating':
-				return (a: VaultInfo, b: VaultInfo) => {
-					const score = (vault: VaultInfo) =>
+				return (a: VaultListingRow, b: VaultListingRow) => {
+					const score = (vault: VaultListingRow) =>
 						ratingProvider === 'xerberus'
 							? (vault.xerberus?.score ?? -Infinity)
 							: (getCore3PolForVault(vault, core3Protocols)?.score ?? Infinity);

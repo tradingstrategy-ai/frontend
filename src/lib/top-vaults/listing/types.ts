@@ -1,5 +1,11 @@
-/** Rows included directly in the server-rendered page response. */
-export const INITIAL_VAULT_LISTING_LIMIT = 125;
+/**
+ * Rows included directly in the server-rendered page response.
+ *
+ * Each row is serialised into the HTML twice (table markup and page data), so this
+ * number drives listing page weight; `tests/integration/vaults/page-weight.test.ts`
+ * enforces the budget.
+ */
+export const INITIAL_VAULT_LISTING_LIMIT = 75;
 
 /** Rows returned by each browser continuation request. */
 export const VAULT_LISTING_PAGE_SIZE = 50;

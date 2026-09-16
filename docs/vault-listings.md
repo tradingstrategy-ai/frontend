@@ -20,9 +20,37 @@ these controls.
 
 ## Pagination
 
-Vault table pages render their first 125 matching rows in the SvelteKit server
-load. This makes the initial listing visible without downloading the complete
-vault export in the browser.
+Vault table pages render their first 75 matching rows
+(`INITIAL_VAULT_LISTING_LIMIT`) in the SvelteKit server load. This makes the
+initial listing visible without downloading the complete vault export in the
+browser.
+
+## Row projection and page weight
+
+Every row in the initial batch is serialised into the HTML twice — as table
+markup and as SvelteKit page data — so listing page weight is the batch size
+times the row shape. The server therefore projects each full `VaultInfo`
+(83 fields, ~7.7 KB) to a `VaultListingRow` with `toVaultListingRow()` before
+returning it, both in the page loader and in the continuation endpoint. The
+projection keeps the fields in `vaultListingRowKeys` (what the table, its cell
+components, the shared sort pipeline and the listing helpers read) and reduces
+`period_results` to the 3M/6M/1Y/lifetime periods and the metrics the return
+columns use. Row-consuming code should accept `VaultListingRow` (or a `Pick` of
+it); a full `VaultInfo` is assignable to it, so server-side callers are not
+affected.
+
+Tooltip popups (`src/lib/components/Tooltip.svelte`) are rendered lazily on
+first hover/focus. A listing row carries about seven tooltips whose hidden
+content was ~40 % of the table markup; because the popup can only open after
+hydration, deferring it changes nothing visible. Component tests that assert on
+popup text must call `openAllTooltips()` from
+`$lib/components/tooltip-test-utils` first.
+
+`tests/integration/vaults/page-weight.test.ts` asserts the row count, a document
+byte budget, and that detail-only fields never reach a listing page. Raise the
+batch size or widen the row shape deliberately, with that test updated in the
+same change — the batch previously grew from 75 to 125 rows inside an unrelated
+fix and doubled the page weight.
 
 `listingSummary` marks a table as server-backed, while `initialHasMore` only
 describes whether its initial rows have a continuation. A short listing can
@@ -122,7 +150,7 @@ paginated listings, matched-record lookups, or purpose-built chart payloads.
 
 The server sends compact full-result aggregates with the first row batch.
 Listing counts, TVL, weighted returns, and SEO item counts must use those
-aggregates, not the initial 125 rows. Charts that need every member receive a
+aggregates, not the initial 75 rows. Charts that need every member receive a
 separate, purpose-built payload rather than reusing table rows.
 
 Summary calculations use the same scope and filters as the listing. They omit

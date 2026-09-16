@@ -24,6 +24,13 @@ const config = {
 
 		outDir: isTestMode ? '.svelte-kit-test' : '.svelte-kit',
 
+		/**
+		 * Inline component CSS under 8 KB (uncompressed, measured at build time) so the
+		 * long tail of small stylesheets is not a separate render-blocking request each;
+		 * the large shared chunks stay external and cacheable. See docs/google-webmasters.md.
+		 */
+		inlineStyleThreshold: 8192,
+
 		alias: {
 			'design-system-fonts': 'deps/fonts',
 			'trade-executor': 'src/lib/trade-executor'

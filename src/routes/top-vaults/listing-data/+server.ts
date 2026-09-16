@@ -1,7 +1,7 @@
 import { json, error } from '@sveltejs/kit';
 import { getVaultListingDefinition, isVaultListingKey } from '$lib/top-vaults/listing/definitions';
 import { createVaultListingSummary, loadVaultListingContinuation } from '$lib/server/top-vaults/listing';
-import { riskFilterOptions } from '$lib/top-vaults/helpers';
+import { riskFilterOptions, toVaultListingRow } from '$lib/top-vaults/helpers';
 import { matchesVaultRisk } from '$lib/top-vaults/listing/query';
 import { VAULT_LISTING_PAGE_SIZE } from '$lib/top-vaults/listing/types';
 
@@ -34,7 +34,8 @@ export async function GET({ fetch, url }) {
 		previousRiskIndex == null
 			? listing.vaults
 			: listing.vaults.filter((vault) => !matchesVaultRisk(vault, riskFilterOptions[previousRiskIndex]));
-	const vaults = matchingVaults.slice(offset, offset + VAULT_LISTING_PAGE_SIZE);
+	// project rows to the listing shape so continuation pages match the SSR batch
+	const vaults = matchingVaults.slice(offset, offset + VAULT_LISTING_PAGE_SIZE).map(toVaultListingRow);
 	return json(
 		{
 			vaults,

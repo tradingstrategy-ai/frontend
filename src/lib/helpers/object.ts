@@ -19,3 +19,14 @@ export function merge(target: any = {}, source: any = {}) {
 function isPureObject(obj: any): obj is Object {
 	return obj instanceof Object && Object.getPrototypeOf(obj) === Object.prototype;
 }
+
+/**
+ * Copy only the given keys from an object.
+ *
+ * @param obj source object
+ * @param keys keys to keep
+ * @returns a new object with just those keys
+ */
+export function pick<T extends object, K extends keyof T>(obj: T, keys: readonly K[]): Pick<T, K> {
+	return Object.fromEntries(keys.map((key) => [key, obj[key]])) as Pick<T, K>;
+}

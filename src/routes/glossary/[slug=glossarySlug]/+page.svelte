@@ -8,12 +8,12 @@
 <script lang="ts">
 	import type { GlossaryEntry } from '../glossary';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
-	import { Section } from '$lib/components';
+	import { CanonicalLink, Section } from '$lib/components';
 	import { serializeSchema } from '$lib/helpers/google-meta';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
 
-	export let data;
-	$: ({ entry } = data);
+	let { data } = $props();
+	let { entry } = $derived(data);
 
 	/**
 	 * Generate LD JSON markup
@@ -44,6 +44,8 @@
 	<meta name="description" content={entry.description} />
 	{@html serializeSchema(getGoogleFAQPageSchema(entry))}
 </svelte:head>
+
+<CanonicalLink />
 
 <main>
 	<Breadcrumbs labels={{ [entry.slug]: entry.name }} />

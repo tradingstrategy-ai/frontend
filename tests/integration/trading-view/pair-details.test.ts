@@ -1,9 +1,21 @@
 import { expect, test } from '@playwright/test';
-import { a } from 'vitest/dist/chunks/suite.BMWOKiTe.js';
+import { ILLIQUID_PAIR_SLUG } from '../../mocks/pairs/fixtures';
+
+const robotsMeta = 'head meta[name="robots"]';
 
 test.describe('trading pair details page', () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('trading-view/ethereum/uniswap-v2/eth-usdc');
+	});
+
+	test('should be indexable when the pair has liquidity', async ({ page }) => {
+		await expect(page.locator(robotsMeta)).toHaveCount(0);
+	});
+
+	test('should mark pairs without liquidity or volume as noindex', async ({ page }) => {
+		await page.goto(`trading-view/ethereum/uniswap-v2/${ILLIQUID_PAIR_SLUG}`);
+		await expect(page.getByTestId('pair-info')).toBeVisible();
+		await expect(page.locator(robotsMeta)).toHaveAttribute('content', 'noindex,follow');
 	});
 
 	test('should include pair info', async ({ page }) => {

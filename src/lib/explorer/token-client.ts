@@ -1,4 +1,5 @@
 import { fetchPublicApi } from '$lib/helpers/public-api';
+import type { TokenIndexingMetrics } from './indexing';
 
 export type TokenIndexParams = Partial<{
 	chain_slug: string;
@@ -10,8 +11,24 @@ export type TokenIndexParams = Partial<{
 
 type TokenSearchKey = keyof TokenIndexParams;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type TokenDetails = Record<string, any>;
+/**
+ * `token/details` API response. Only the fields the frontend reads directly are typed;
+ * the index signature keeps the rest of the (large, backend-defined) payload accessible.
+ */
+export interface TokenDetails extends TokenIndexingMetrics {
+	name: string;
+	symbol: string;
+	token_id: number;
+	chain_id: number;
+	chain_name: string;
+	chain_slug: string;
+	address: Address;
+	total_supply: string;
+	pair_count: number | null;
+	explorer_link: string;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	[key: string]: any;
+}
 
 type TokenApiResponse = {
 	results: TokenDetails[];

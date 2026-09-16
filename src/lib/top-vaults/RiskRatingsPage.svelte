@@ -24,7 +24,7 @@ the score in a column beside each vault name.
 	import { riskRatingProviders, type RiskRatingProvider } from './risk-rating-providers';
 	import { type RiskRatingStatistics, type RiskRatingTvlBand } from './risk-rating-statistics';
 	import type { VaultListingSummary } from './listing/types';
-	import type { TopVaults } from './schemas';
+	import type { VaultListingTopVaults } from './schemas';
 	import TopVaultsPage from './TopVaultsPage.svelte';
 	import MarketSharePieChart from '../../routes/vaults/MarketSharePieChart.svelte';
 	import MarketShareWidgetBox from '../../routes/vaults/MarketShareWidgetBox.svelte';
@@ -32,7 +32,7 @@ the score in a column beside each vault name.
 
 	interface Props {
 		provider: RiskRatingProvider;
-		initialTopVaults: TopVaults;
+		initialTopVaults: VaultListingTopVaults;
 		initialHasMore: boolean;
 		listingSummary: VaultListingSummary;
 		initialRatingStatistics?: RiskRatingStatistics;

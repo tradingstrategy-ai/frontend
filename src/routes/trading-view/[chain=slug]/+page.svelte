@@ -5,6 +5,7 @@ Blockchain overview with market entities and a server-calculated vault summary.
 	import { resolve } from '$app/paths';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import Alert from '$lib/components/Alert.svelte';
+	import CanonicalLink from '$lib/components/CanonicalLink.svelte';
 	import ChainHeader from './ChainHeader.svelte';
 	import SummaryDataTile from './SummaryDataTile.svelte';
 	import BlockInfoTile from './BlockInfoTile.svelte';
@@ -24,6 +25,8 @@ Blockchain overview with market entities and a server-calculated vault summary.
 		content={`Explore exchanges, trading pairs, tokens, lending markets, and tracked DeFi vaults on ${chain.name}.`}
 	/>
 </svelte:head>
+
+<CanonicalLink />
 
 <Breadcrumbs labels={{ [chain.slug]: chain.name }} />
 

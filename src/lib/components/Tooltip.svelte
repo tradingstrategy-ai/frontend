@@ -29,12 +29,19 @@ For more information see:
 	const VIEWPORT_MARGIN = 8;
 
 	let tooltip: HTMLElement;
-	let popup: HTMLButtonElement;
+	let popup: HTMLButtonElement | undefined = $state();
 	let isOpen = $state(false);
 	let isPositioned = $state(false);
 	let popupPosition = $state('');
 
+	/**
+	 * Render the popup lazily on first open, so hidden popups are in neither the
+	 * server-rendered HTML nor the initial hydration; it stays mounted afterwards.
+	 */
+	let hasOpened = $state(false);
+
 	async function showPopup(): Promise<void> {
+		hasOpened = true;
 		isOpen = true;
 		isPositioned = false;
 		await tick();
@@ -92,18 +99,20 @@ For more information see:
 		<slot name="trigger" />
 	</span>
 	<!-- popup MUST be a button element (disabled); see Tooltip.test.ts -->
-	<button
-		bind:this={popup}
-		class="popup"
-		data-open={isOpen}
-		data-positioned={isPositioned}
-		style={popupPosition}
-		disabled
-	>
-		<div class="inner">
-			<slot name="popup" />
-		</div>
-	</button>
+	{#if hasOpened}
+		<button
+			bind:this={popup}
+			class="popup"
+			data-open={isOpen}
+			data-positioned={isPositioned}
+			style={popupPosition}
+			disabled
+		>
+			<div class="inner">
+				<slot name="popup" />
+			</div>
+		</button>
+	{/if}
 </dfn>
 
 <style>
