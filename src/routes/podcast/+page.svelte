@@ -20,22 +20,25 @@ Trading Strategy podcast episode index.
 
 <main class="podcast-index-page">
 	<Section tag="header">
-		{#snippet description()}
-			We interview the smartest onchain strategy quants, vault curators and DeFi masterminds. Find episodes below.
-			Listen to us on
-			<a
-				class="body-link"
-				href="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
-				target="_blank"
-				rel="noreferrer">YouTube</a
-			>
-			and
-			<a class="body-link" href="https://open.spotify.com/show/0BXZEqA3uG5hYZiVYVRZP8" target="_blank" rel="noreferrer"
-				>Spotify</a
-			>
-		{/snippet}
-
-		<HeroBanner image={heroImage} title="Trading Strategy Podcast" subtitle={description} hr />
+		<HeroBanner image={heroImage} title="Trading Strategy Podcast" hr>
+			{#snippet subtitle()}
+				We interview the smartest onchain strategy quants, vault curators and DeFi masterminds. Find episodes below.
+				Listen to us on
+				<a
+					class="body-link"
+					href="https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ"
+					target="_blank"
+					rel="noreferrer">YouTube</a
+				>
+				and
+				<a
+					class="body-link"
+					href="https://open.spotify.com/show/0BXZEqA3uG5hYZiVYVRZP8"
+					target="_blank"
+					rel="noreferrer">Spotify</a
+				>
+			{/snippet}
+		</HeroBanner>
 	</Section>
 
 	<Section padding="md">
