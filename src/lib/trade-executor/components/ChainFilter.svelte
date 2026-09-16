@@ -1,3 +1,13 @@
+<!--
+@component
+Segmented control for filtering strategies by blockchain, with a chain logo per option.
+
+@example
+
+```svelte
+	<ChainFilter {options} bind:selected />
+```
+-->
 <script module lang="ts">
 	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 	import { type Chain, chains, getChain, getChainsBySlug } from '$lib/helpers/chain';
@@ -45,7 +55,7 @@
 	{#snippet children(option)}
 		<div class="filter-option {option}">
 			{#if option !== 'all'}
-				<img class="chain-icon" src={getLogoUrl('blockchain', option)} alt={option} />
+				<img class="chain-icon" src={getLogoUrl('blockchain', option)} alt={option} width="20" height="20" />
 			{/if}
 			<span>{option}</span>
 		</div>
@@ -68,6 +78,7 @@
 
 		img {
 			width: 1.25em;
+			height: auto;
 		}
 	}
 </style>

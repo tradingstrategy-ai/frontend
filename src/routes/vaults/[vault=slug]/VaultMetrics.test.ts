@@ -1,8 +1,9 @@
 import { cleanup, render, screen, within } from '@testing-library/svelte';
 import { afterEach, describe, expect, test } from 'vitest';
-import { createTestVault } from '$lib/top-vaults/test-utils';
-import type { Core3Protocol, PeriodMetrics } from '$lib/top-vaults/schemas';
+import { createPeriodMetrics, createTestVault } from '$lib/top-vaults/test-utils';
+import type { Core3Protocol } from '$lib/top-vaults/schemas';
 import VaultMetrics from './VaultMetrics.svelte';
+import { openAllTooltips } from '$lib/components/tooltip-test-utils';
 
 const MISSING_FEE_TOOLTIP = 'The fee information is not available onchain. Net returns cannot be calculated.';
 const SHORT_TERM_FEE_WARNING = 'Deposit and withdrawal fees may greatly affect short-term returns';
@@ -16,42 +17,8 @@ const INTERNALISED_FEE_DISCLAIMER =
 
 afterEach(cleanup);
 
-function createPeriodMetrics(
-	period: string,
-	grossReturn: number,
-	grossCagr: number,
-	netReturn: number | null
-): PeriodMetrics {
-	return {
-		period,
-		error_reason: null,
-		period_start_at: '2026-01-01T00:00:00',
-		period_end_at: '2026-02-01T00:00:00',
-		share_price_start: 1,
-		share_price_end: 1 + grossReturn,
-		raw_samples: 31,
-		samples_start_at: '2026-01-01T00:00:00',
-		samples_end_at: '2026-02-01T00:00:00',
-		daily_samples: 31,
-		returns_gross: grossReturn,
-		returns_net: netReturn,
-		cagr_gross: grossCagr,
-		cagr_net: netReturn,
-		volatility: null,
-		sharpe: null,
-		max_drawdown: null,
-		tvl_start: null,
-		tvl_end: null,
-		tvl_low: null,
-		tvl_high: null,
-		ranking_overall: null,
-		ranking_chain: null,
-		ranking_protocol: null
-	};
-}
-
 describe('VaultMetrics', () => {
-	test('shows a Xerberus score in preference to a CORE3 rating', () => {
+	test('shows a Xerberus score in preference to a CORE3 rating', async () => {
 		const vault = createTestVault('Xerberus-rated vault', {
 			xerberus: {
 				score: 81,
@@ -71,6 +38,7 @@ describe('VaultMetrics', () => {
 		};
 
 		render(VaultMetrics, { props: { vault, core3 } });
+		openAllTooltips();
 
 		expect(screen.getByText('Xerberus risk')).toBeInTheDocument();
 		expect(screen.getByText('81 / 100')).toBeInTheDocument();
@@ -82,7 +50,7 @@ describe('VaultMetrics', () => {
 		expect(screen.queryByText('CORE3 risk')).not.toBeInTheDocument();
 	});
 
-	test('shows the CORE3 rating when Xerberus is unavailable', () => {
+	test('shows the CORE3 rating when Xerberus is unavailable', async () => {
 		const core3: Core3Protocol = {
 			slug: 'core3-protocol',
 			name: 'CORE3 protocol',
@@ -90,6 +58,7 @@ describe('VaultMetrics', () => {
 		};
 
 		render(VaultMetrics, { props: { vault: createTestVault('CORE3-rated vault'), core3 } });
+		openAllTooltips();
 
 		expect(screen.getByText('CORE3 risk')).toBeInTheDocument();
 		expect(screen.getByText('BB')).toBeInTheDocument();
@@ -97,14 +66,15 @@ describe('VaultMetrics', () => {
 		expect(screen.queryByText('View more')).not.toBeInTheDocument();
 	});
 
-	test('falls back to the protocol technical risk when no provider rating is available', () => {
+	test('falls back to the protocol technical risk when no provider rating is available', async () => {
 		render(VaultMetrics, { props: { vault: createTestVault('Unrated vault', { risk: 'Low' }) } });
+		openAllTooltips();
 
 		expect(screen.getByText('Protocol Technical Risk')).toBeInTheDocument();
 		expect(screen.getByText('Low')).toBeInTheDocument();
 	});
 
-	test('shows no data tooltips when fee information and net returns are missing', () => {
+	test('shows no data tooltips when fee information and net returns are missing', async () => {
 		const vault = createTestVault('No fee data vault', {
 			one_month_cagr: 0.12,
 			one_month_returns: 0.01,
@@ -117,13 +87,14 @@ describe('VaultMetrics', () => {
 		});
 
 		render(VaultMetrics, { props: { vault } });
+		openAllTooltips();
 
 		expect(screen.getAllByText('No data')).toHaveLength(25);
 		expect(screen.getAllByText(MISSING_FEE_TOOLTIP)).toHaveLength(25);
 		expect(screen.getAllByText('12.0%').length).toBeGreaterThan(0);
 	});
 
-	test('formats known fee and net return values normally', () => {
+	test('formats known fee and net return values normally', async () => {
 		const vault = createTestVault('Known fee vault', {
 			one_month_cagr: 0.12,
 			one_month_returns: 0.01,
@@ -155,6 +126,7 @@ describe('VaultMetrics', () => {
 		});
 
 		render(VaultMetrics, { props: { vault } });
+		openAllTooltips();
 
 		expect(screen.queryByText('No data')).not.toBeInTheDocument();
 		expect(screen.queryByText('20.0%')).not.toBeInTheDocument();
@@ -167,7 +139,7 @@ describe('VaultMetrics', () => {
 		expect(screen.getByText(NET_RETURNS_TOOLTIP, { exact: false })).toBeInTheDocument();
 	});
 
-	test('warns on non-zero deposit or withdrawal fee rows', () => {
+	test('warns on non-zero deposit or withdrawal fee rows', async () => {
 		const vault = createTestVault('Deposit and withdrawal fee vault', {
 			one_month_cagr: 0.12,
 			one_month_returns: 0.01,
@@ -195,6 +167,7 @@ describe('VaultMetrics', () => {
 		});
 
 		render(VaultMetrics, { props: { vault } });
+		openAllTooltips();
 
 		const getRow = (label: string) => {
 			const row = screen
@@ -216,7 +189,7 @@ describe('VaultMetrics', () => {
 		expect(screen.getAllByText(SHORT_TERM_FEE_WARNING)).toHaveLength(2);
 	});
 
-	test('explains internalised fees in fee and net return tooltips', () => {
+	test('explains internalised fees in fee and net return tooltips', async () => {
 		const vault = createTestVault('Internalised fee vault', {
 			one_month_cagr: 0.12,
 			one_month_returns: 0.01,
@@ -249,6 +222,7 @@ describe('VaultMetrics', () => {
 		});
 
 		render(VaultMetrics, { props: { vault } });
+		openAllTooltips();
 
 		expect(screen.getAllByText(INTERNALISED_FEE_TOOLTIP)).toHaveLength(6);
 		expect(screen.getByText(INTERNALISED_FEE_DISCLAIMER)).toBeInTheDocument();

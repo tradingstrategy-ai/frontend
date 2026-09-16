@@ -16,7 +16,7 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 -->
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
-	import type { TopVaults, VaultInfo } from './schemas';
+	import type { VaultListingRow, VaultListingTopVaults } from './schemas';
 	import type { RiskRatingProvider } from './risk-rating-providers';
 	import type { ParamSchema } from '$lib/helpers/url-search-state';
 	import { onMount, untrack } from 'svelte';
@@ -142,7 +142,7 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 	}
 
 	interface Props {
-		topVaults?: TopVaults;
+		topVaults?: VaultListingTopVaults;
 		chain?: Chain;
 		tvlThreshold?: number;
 		tvlTriggerLabel?: string;
@@ -195,13 +195,13 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 	}
 
 	interface ListingDataResponse {
-		vaults: VaultInfo[];
+		vaults: VaultListingRow[];
 		nextOffset: number;
 		hasMore: boolean;
 		listingSummary: VaultListingSummary;
 	}
 
-	const emptyTopVaults: TopVaults = {
+	const emptyTopVaults: VaultListingTopVaults = {
 		generated_at: new Date().toISOString(),
 		vaults: [],
 		core3_protocols: {},
@@ -246,7 +246,7 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 	const defaultHideAmm = untrack(() => ((getVaultListingDefaults(listingKey, listingScope).amm ?? true) ? 1 : 0));
 	let listingAssetType = $derived(listingKey === 'protocol' && isPoolProtocol(listingScope) ? 'pool' : 'vault');
 	let listingAssetTypePlural = $derived(`${listingAssetType}s`);
-	let accumulatedVaults = $state<VaultInfo[]>(untrack(() => topVaults.vaults));
+	let accumulatedVaults = $state<VaultListingRow[]>(untrack(() => topVaults.vaults));
 	let remoteHasMore = $state(untrack(() => initialHasMore));
 	let remoteLoading = $state(false);
 	let loadMoreQueued = false;
@@ -325,7 +325,7 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 
 	// --- Sort column registry ---
 
-	function getXerberusRiskRating(vault: VaultInfo): string {
+	function getXerberusRiskRating(vault: VaultListingRow): string {
 		const score = vault.xerberus?.score;
 		if (score == null) return notFilledMarker;
 		return formatNumber(score, 0, 0);
@@ -643,23 +643,23 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 		return typeof value === 'number' && Number.isFinite(value) && value > 0;
 	}
 
-	function getVaultUsdRate(vault: VaultInfo): number | null {
+	function getVaultUsdRate(vault: VaultListingRow): number | null {
 		const rate = vault.denomination_token_rate?.usd_rate;
 		return isFinitePositiveNumber(rate) ? rate : null;
 	}
 
-	function getVaultNativeRate(vault: VaultInfo): number | null {
+	function getVaultNativeRate(vault: VaultListingRow): number | null {
 		return getVaultDenominationNativeRate(vault);
 	}
 
-	function formatNativeTvl(vault: VaultInfo, nav: number | null): string {
+	function formatNativeTvl(vault: VaultListingRow, nav: number | null): string {
 		const currency = getVaultDenominationCurrency(vault);
 		if (!currency) return notFilledMarker;
 		const nativeTvl = getVaultTvlNative(vault, nav);
 		return nativeTvl == null ? notFilledMarker : `${formatTokenAmount(nativeTvl, 2)} ${currency.toUpperCase()}`;
 	}
 
-	function formatVaultExchangeRate(vault: VaultInfo): string {
+	function formatVaultExchangeRate(vault: VaultListingRow): string {
 		const usdRate = getVaultUsdRate(vault);
 		if (usdRate == null) return notFilledMarker;
 
@@ -673,7 +673,7 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 		return `1 ${vault.denomination} = ${formatDollar(usdRate, 4, 6)}${nativeText}`;
 	}
 
-	function shouldShowTvlBreakdown(vault: VaultInfo): boolean {
+	function shouldShowTvlBreakdown(vault: VaultListingRow): boolean {
 		const currency = getVaultDenominationCurrency(vault);
 		return currency != null && currency !== 'usd' ? true : isStablecoinDepegged(vault);
 	}
@@ -688,14 +688,14 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 	});
 
 	/** Resolve the effective TVL threshold for a vault, accounting for chain overrides */
-	function getVaultTvlThreshold(vault: VaultInfo): number {
+	function getVaultTvlThreshold(vault: VaultListingRow): number {
 		if (showFilters) {
 			return selectedTvlOption.chainOverrides?.[vault.chain_id] ?? selectedTvlOption.value;
 		}
 		return tvlThreshold;
 	}
 
-	function getVaultCurrentTvl(vault: VaultInfo): number {
+	function getVaultCurrentTvl(vault: VaultListingRow): number {
 		return getVaultCurrentTvlUsd(vault) ?? 0;
 	}
 
@@ -1024,7 +1024,7 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 	{/if}
 {/snippet}
 
-{#snippet returnColumnCell(vault: VaultInfo, column: ReturnColumnDefinition)}
+{#snippet returnColumnCell(vault: VaultListingRow, column: ReturnColumnDefinition)}
 	{@const values = getReturnColumnValues(vault, column.id)}
 	{@const limitedData = getReturnDataCoverage(vault, column.id)}
 	{@const lifetimeData = getReturnLifetimeData(vault, column.id)}
@@ -1040,7 +1040,7 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 	</td>
 {/snippet}
 
-{#snippet providerRiskRatingCell(vault: VaultInfo)}
+{#snippet providerRiskRatingCell(vault: VaultListingRow)}
 	{#if ratingProvider === 'core3'}
 		<!-- Reuse the protocol-list grade and tone treatment for consistency. -->
 		<Core3RiskCell rating={getCore3PolForVault(vault, topVaults.core3_protocols)?.rating} slug={vault.protocol_slug} />
@@ -1061,14 +1061,14 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 	{/if}
 {/snippet}
 
-{#snippet tvlValues(vault: VaultInfo)}
+{#snippet tvlValues(vault: VaultListingRow)}
 	<div class="multiline multival">
 		<span class="primary">{formatTvl(getVaultCurrentTvlUsd(vault))}</span>
 		<span class="secondary">{formatTvl(getVaultPeakTvlUsd(vault))}</span>
 	</div>
 {/snippet}
 
-{#snippet tvlBreakdown(label: string, nav: number | null, vault: VaultInfo)}
+{#snippet tvlBreakdown(label: string, nav: number | null, vault: VaultListingRow)}
 	<section class="tvl-breakdown-section">
 		<h4>{label}</h4>
 		<dl>

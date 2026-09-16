@@ -1,5 +1,6 @@
 import type { TokenDetails } from '$lib/explorer/token-client.js';
 import { fetchPublicApi } from '$lib/helpers/public-api';
+import { isTokenIndexable } from '$lib/explorer/indexing';
 
 export async function load({ params, fetch, setHeaders }) {
 	const { chain, token: address } = params;
@@ -14,5 +15,10 @@ export async function load({ params, fetch, setHeaders }) {
 	});
 
 	const token = await fetchPublicApi<TokenDetails>(fetch, 'token/details', { chain_slug: chain, address });
-	return { token };
+
+	return {
+		token,
+		// keep dead / spam tokens out of search engine indexes (see $lib/explorer/indexing)
+		robots: isTokenIndexable(token) ? undefined : 'noindex,follow'
+	};
 }

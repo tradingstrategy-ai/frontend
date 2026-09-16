@@ -12,6 +12,7 @@ Render the pair trading page
 	import Alert from '$lib/components/Alert.svelte';
 	import AlertList from '$lib/components/AlertList.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import CanonicalLink from '$lib/components/CanonicalLink.svelte';
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
 	import PageHeader from '$lib/components/PageHeader.svelte';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
@@ -63,6 +64,8 @@ Render the pair trading page
 		content="Price and liquidity for {summary.pair_symbol} on {details.exchange_name} on {details.chain_name}"
 	/>
 </svelte:head>
+
+<CanonicalLink />
 
 <Breadcrumbs labels={breadcrumbs} />
 
@@ -129,7 +132,7 @@ Render the pair trading page
 				<PairCandleChart
 					chainSlug={summary.chain_slug}
 					exchangeType={summary.exchange_type}
-					pairId={summary.pair_id}
+					pairId={String(summary.pair_id)}
 					pairSymbol={summary.pair_symbol}
 					{timeBucket}
 					onchange={handleTimeBucketChange}

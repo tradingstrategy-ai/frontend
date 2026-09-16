@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { getChain } from '$lib/helpers/chain';
 import TopVaultsTable from './TopVaultsTable.svelte';
 import { createTestVault } from './test-utils';
+import { openAllTooltips } from '$lib/components/tooltip-test-utils';
 
 afterEach(cleanup);
 
@@ -105,6 +106,7 @@ describe('TopVaultsTable risk rating column', () => {
 		expect(getRenderedVaultNames()).toEqual(['Safer CORE3 vault', 'Riskier CORE3 vault']);
 		expect(screen.getByText('AA')).toHaveAttribute('data-tone', 'excellent');
 		expect(screen.getByText('D')).toHaveAttribute('data-tone', 'poor');
+		openAllTooltips();
 		expect(screen.getAllByText(/graded from AA \(lowest risk\) down to D/)).toHaveLength(2);
 	});
 
@@ -153,6 +155,7 @@ describe('TopVaultsTable risk rating column', () => {
 		expect(screen.queryByRole('columnheader', { name: 'Protocol Technical Risk' })).not.toBeInTheDocument();
 		expect(getRenderedVaultNames()).toEqual(['Safer Xerberus vault', 'Riskier Xerberus vault']);
 		expect(screen.getByText('91')).toBeInTheDocument();
+		openAllTooltips();
 		expect(screen.getAllByText(/Xerberus scored this vault directly/)).toHaveLength(2);
 	});
 
@@ -217,6 +220,7 @@ describe('TopVaultsTable comparison selection', () => {
 		const secondCheckbox = screen.getByRole('checkbox', { name: 'Select Second comparison vault for comparison' });
 		expect(firstCheckbox.closest('td')).toHaveClass('index');
 		expect(firstCheckbox.closest('label')).toHaveClass('targetable-above');
+		openAllTooltips();
 		expect(firstCheckbox.closest('.tooltip')?.querySelector('.popup')).toHaveTextContent(
 			'Choose vaults to compare against each other'
 		);

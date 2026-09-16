@@ -1,6 +1,6 @@
 import { getChain } from '$lib/helpers/chain';
 import { slugify } from '$lib/helpers/slugify';
-import { type VaultInfo, vaultInfoSchema } from './schemas';
+import { type PeriodMetrics, type VaultInfo, vaultInfoSchema } from './schemas';
 
 type NullableVaultKeysRaw = {
 	[K in keyof VaultInfo]: null extends VaultInfo[K] ? K : never;
@@ -71,4 +71,46 @@ export function createTestVault(name: string, props: TestVaultProps = {}): Vault
 		denomination_slug: slugify(merged.denomination),
 		risk_numeric: props.risk ? vaultRiskMap[props.risk] : null
 	});
+}
+
+/**
+ * Build a complete `PeriodMetrics` fixture for one period.
+ *
+ * @param period period label as the backend emits it, e.g. `1M`, `6m`, `lifetime`
+ * @param grossReturn absolute gross return for the period
+ * @param grossCagr annualised gross return for the period
+ * @param netReturn net return, used for both the absolute and annualised net values
+ */
+export function createPeriodMetrics(
+	period: string,
+	grossReturn: number,
+	grossCagr: number,
+	netReturn: number | null
+): PeriodMetrics {
+	return {
+		period,
+		error_reason: null,
+		period_start_at: '2026-01-01T00:00:00',
+		period_end_at: '2026-02-01T00:00:00',
+		share_price_start: 1,
+		share_price_end: 1 + grossReturn,
+		raw_samples: 31,
+		samples_start_at: '2026-01-01T00:00:00',
+		samples_end_at: '2026-02-01T00:00:00',
+		daily_samples: 31,
+		returns_gross: grossReturn,
+		returns_net: netReturn,
+		cagr_gross: grossCagr,
+		cagr_net: netReturn,
+		volatility: null,
+		sharpe: null,
+		max_drawdown: null,
+		tvl_start: null,
+		tvl_end: null,
+		tvl_low: null,
+		tvl_high: null,
+		ranking_overall: null,
+		ranking_chain: null,
+		ranking_protocol: null
+	};
 }

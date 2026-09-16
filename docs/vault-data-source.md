@@ -58,7 +58,7 @@ The complete `TopVaults` export stays in server memory for normal application pa
 
 Current browser-facing projections are:
 
-- Vault listings return at most 125 initial full records and up to 50 records per continuation request.
+- Vault listings return at most 75 initial rows and up to 50 rows per continuation request, projected to `VaultListingRow` (see `docs/vault-listings.md`), not full records.
 - Vault detail pages return one matched full record and only its related metadata.
 - Strategy position pages return only records matching the requested vault IDs or chain/address pairs.
 - `/trading-view/[chain]` returns a vault count, latest block, and latest update time calculated across the chain IDs represented by the route slug.

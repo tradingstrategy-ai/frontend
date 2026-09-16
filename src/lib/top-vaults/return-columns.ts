@@ -1,4 +1,4 @@
-import type { VaultInfo } from './schemas';
+import type { VaultListingRow } from './schemas';
 
 export const DEFAULT_RETURN_COLUMN_IDS = ['1m-ann', '3m-ann', 'lifetime-abs'] as const;
 
@@ -49,10 +49,10 @@ export interface ReturnColumnDefinition {
 	shortLabel: string;
 	sortDirection: 'desc';
 	showAnnualisedTooltip: boolean;
-	getValues(vault: VaultInfo): ReturnMetricValues;
+	getValues(vault: VaultListingRow): ReturnMetricValues;
 }
 
-function getPeriodResult(vault: VaultInfo, period: string) {
+function getPeriodResult(vault: VaultListingRow, period: string) {
 	return vault.period_results.find((item) => item.period.toLowerCase() === period);
 }
 
@@ -105,7 +105,7 @@ function getTopLevelCoverage(
 }
 
 function getPeriodCoverage(
-	vault: VaultInfo,
+	vault: VaultListingRow,
 	period: '3m' | '6m' | '1y',
 	expectedDays: number
 ): ReturnDataCoverage | null {
@@ -126,7 +126,7 @@ function getPeriodCoverage(
 	};
 }
 
-function getLifetimeRange(vault: VaultInfo): ReturnDataRange | null {
+function getLifetimeRange(vault: VaultListingRow): ReturnDataRange | null {
 	const result = getPeriodResult(vault, 'lifetime');
 	if (result) {
 		return {
@@ -148,14 +148,18 @@ function getLifetimeRange(vault: VaultInfo): ReturnDataRange | null {
 	};
 }
 
-function getTopLevelValues(vault: VaultInfo, netKey: keyof VaultInfo, grossKey: keyof VaultInfo): ReturnMetricValues {
+function getTopLevelValues(
+	vault: VaultListingRow,
+	netKey: keyof VaultListingRow,
+	grossKey: keyof VaultListingRow
+): ReturnMetricValues {
 	return {
 		net: (vault[netKey] as number | null) ?? null,
 		gross: (vault[grossKey] as number | null) ?? null
 	};
 }
 
-function getPeriodValues(vault: VaultInfo, period: '6m' | '1y', type: 'ann' | 'abs'): ReturnMetricValues {
+function getPeriodValues(vault: VaultListingRow, period: '6m' | '1y', type: 'ann' | 'abs'): ReturnMetricValues {
 	const result = getPeriodResult(vault, period);
 	if (!result) {
 		return { net: null, gross: null };
@@ -326,11 +330,11 @@ export function toggleReturnColumnSelection(value: ReturnColumnId[], id: ReturnC
 	return [...value.slice(0, 2), id];
 }
 
-export function getReturnColumnValues(vault: VaultInfo, id: ReturnColumnId): ReturnMetricValues {
+export function getReturnColumnValues(vault: VaultListingRow, id: ReturnColumnId): ReturnMetricValues {
 	return returnColumnDefinitionMap[id].getValues(vault);
 }
 
-export function getReturnDataCoverage(vault: VaultInfo, id: ReturnColumnId): ReturnDataCoverage | null {
+export function getReturnDataCoverage(vault: VaultListingRow, id: ReturnColumnId): ReturnDataCoverage | null {
 	switch (id) {
 		case '3m-ann':
 		case '3m-abs': {
@@ -352,12 +356,12 @@ export function getReturnDataCoverage(vault: VaultInfo, id: ReturnColumnId): Ret
 	}
 }
 
-export function getEffectiveReturnValue(vault: VaultInfo, id: ReturnColumnId): number | null {
+export function getEffectiveReturnValue(vault: VaultListingRow, id: ReturnColumnId): number | null {
 	const values = getReturnColumnValues(vault, id);
 	return values.net ?? values.gross;
 }
 
-export function getReturnLifetimeData(vault: VaultInfo, id: ReturnColumnId): ReturnDataRange | null {
+export function getReturnLifetimeData(vault: VaultListingRow, id: ReturnColumnId): ReturnDataRange | null {
 	switch (id) {
 		case 'lifetime-ann':
 		case 'lifetime-abs':
@@ -368,7 +372,7 @@ export function getReturnLifetimeData(vault: VaultInfo, id: ReturnColumnId): Ret
 }
 
 export function compareVaultsByReturn(id: ReturnColumnId) {
-	return (a: VaultInfo, b: VaultInfo) => {
+	return (a: VaultListingRow, b: VaultListingRow) => {
 		const aValue = getEffectiveReturnValue(a, id) ?? -Infinity;
 		const bValue = getEffectiveReturnValue(b, id) ?? -Infinity;
 		return aValue - bValue;

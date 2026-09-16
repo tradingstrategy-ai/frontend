@@ -5,6 +5,7 @@
  * - See: https://github.com/taoqf/node-html-parser
  */
 import { type HTMLElement, parse } from 'node-html-parser';
+import { error } from '@sveltejs/kit';
 import { slugify } from '$lib/helpers/slugify';
 import assert from 'node:assert';
 import { dev } from '$app/environment';
@@ -20,6 +21,9 @@ export type GlossaryEntry = {
 };
 
 export type GlossaryMap = Record<string, GlossaryEntry>;
+
+/** The subset of a glossary entry the index page needs to render a link. */
+export type GlossaryIndexEntry = Pick<GlossaryEntry, 'slug' | 'name'>;
 
 /**
  * Convert Sphinx term IDs or legacy glossary URL segments to canonical app slugs.
@@ -142,3 +146,39 @@ export async function fetchAndParseGlossary(fetch: Fetch) {
 // Create a SWR cache for strategies with 5 minute TTL in production (1 min in dev)
 const cacheTimeSeconds = dev ? 1 : 5 * 60;
 export const getCachedGlossary = swrCache(fetchAndParseGlossary, cacheTimeSeconds);
+
+/**
+ * Load the cached glossary for a server `load` function.
+ *
+ * Wraps `getCachedGlossary` with the shared error handling (a scraping failure becomes a
+ * 503 rather than a 500) and sets the cache headers that let the browser and CDN avoid
+ * re-fetching the page while the server-side cache is fresh.
+ *
+ * Callers must return only the entries they render: SvelteKit serialises all `load` data
+ * into the page HTML, and the full glossary is over 1 MB.
+ *
+ * @param fetch SvelteKit's `fetch`
+ * @param setHeaders SvelteKit's `setHeaders`
+ */
+export async function loadGlossaryForPage(fetch: Fetch, setHeaders: (headers: Record<string, string>) => void) {
+	let glossary: GlossaryMap;
+
+	try {
+		glossary = await getCachedGlossary(fetch);
+	} catch (e) {
+		if (e instanceof GlossaryParseError) {
+			error(503, {
+				message: 'Service Unavailable',
+				stack: e.stack?.split('\n')
+			});
+		}
+		throw e;
+	}
+
+	setHeaders({
+		'cache-control': `public, max-age=${getCachedGlossary.ttl}`,
+		age: getCachedGlossary.getAge(fetch).toFixed(0)
+	});
+
+	return glossary;
+}

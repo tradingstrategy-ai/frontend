@@ -1,21 +1,46 @@
 import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
-import type { Core3Pol, Core3Protocol, DenominationTokenRate, FeeMode, SlimVaultInfo, VaultInfo } from './schemas';
-import { slimVaultKeys } from './schemas';
+import type {
+	Core3Pol,
+	Core3Protocol,
+	DenominationTokenRate,
+	FeeMode,
+	SlimVaultInfo,
+	VaultInfo,
+	VaultListingRow
+} from './schemas';
+import { slimVaultKeys, vaultListingPeriodMetricKeys, vaultListingPeriods, vaultListingRowKeys } from './schemas';
 import { resolve } from '$app/paths';
 import { vaultSparklinesUrl } from '$lib/config';
 import { capitalize, isNumber } from '$lib/helpers/formatters';
+import { pick } from '$lib/helpers/object';
 import { getChain } from '$lib/helpers/chain';
 import { OFFCHAIN_USD_DENOMINATION, OFFCHAIN_USD_STABLECOIN_SLUG } from '$lib/stablecoin-metadata/helpers';
 
 /**
  * Strip a full vault object to only the fields needed for listing/summary views.
  */
-export function slimVault(vault: Record<string, unknown>): SlimVaultInfo {
-	const slim = {} as Record<string, unknown>;
-	for (const key of slimVaultKeys) {
-		slim[key] = vault[key as string];
-	}
-	return slim as SlimVaultInfo;
+export function slimVault(vault: VaultInfo): SlimVaultInfo {
+	return pick(vault, slimVaultKeys);
+}
+
+const listingPeriods: ReadonlySet<string> = new Set(vaultListingPeriods);
+
+/**
+ * Project a full vault record to the fields the listing table renders.
+ *
+ * Applied server-side to the initial listing batch and to every continuation page
+ * so the browser never receives the full record per row (see `vaultListingRowKeys`
+ * for what is kept and why).
+ *
+ * @param vault complete vault record from the server-cached export
+ */
+export function toVaultListingRow(vault: VaultInfo): VaultListingRow {
+	return {
+		...pick(vault, vaultListingRowKeys),
+		period_results: vault.period_results
+			.filter((metrics) => listingPeriods.has(metrics.period.toLowerCase()))
+			.map((metrics) => pick(metrics, vaultListingPeriodMetricKeys))
+	};
 }
 
 const HYPERCORE_CHAIN_ID = 9999;
@@ -233,7 +258,7 @@ export function matchesVolatilityFilter(volatility: number | null | undefined, u
  *
  * @returns a non-positive number (e.g. -0.05 for -5%) or null if unavailable
  */
-export function getLifetimeMaxDrawdown(vault: Pick<VaultInfo, 'period_results'>): number | null {
+export function getLifetimeMaxDrawdown(vault: Pick<VaultListingRow, 'period_results'>): number | null {
 	return vault.period_results?.find((p) => p.period.toLowerCase() === 'lifetime')?.max_drawdown ?? null;
 }
 
@@ -340,7 +365,9 @@ export function getMorphoFlags(vault: Pick<VaultInfo, 'other_data'>): string[] {
 /**
  * Check if vault has good operational status (deposits and redemptions are both open)
  */
-export function isGoodVaultStatus(vault: VaultInfo): boolean {
+export function isGoodVaultStatus(
+	vault: Pick<VaultInfo, 'deposit_closed_reason' | 'redemption_closed_reason'>
+): boolean {
 	return vault.deposit_closed_reason == null && vault.redemption_closed_reason == null;
 }
 
@@ -580,7 +607,7 @@ export function getVaultCurrentTvlUsd(vault: VaultWithNavAndRate): number | null
  * Aggregate helpers use `current_nav` as their TVL input. Call this before
  * calculating a cross-denomination total or TVL-weighted return.
  */
-export function withVaultCurrentTvlUsd(vault: VaultInfo): VaultInfo {
+export function withVaultCurrentTvlUsd<T extends VaultWithNavAndRate>(vault: T): T {
 	return { ...vault, current_nav: getVaultCurrentTvlUsd(vault) };
 }
 
@@ -630,7 +657,9 @@ const DEFAULT_DETAIL_RISK_FILTER = riskFilterOptions[1];
  *
  * Individual routes apply their own scope and any additional listing filters.
  */
-export function isEligibleVaultGroupMiniChartVault(vault: VaultInfo) {
+export function isEligibleVaultGroupMiniChartVault(
+	vault: Pick<VaultListingRow, 'risk_numeric' | 'risk' | 'current_nav' | 'protocol' | 'protocol_slug'>
+) {
 	if (isBlacklisted(vault)) return false;
 	if (!meetsMinTvl(vault)) return false;
 	if (isUnknownVaultProtocol(vault)) return false;
@@ -645,7 +674,7 @@ export function isEligibleVaultGroupMiniChartVault(vault: VaultInfo) {
 /**
  * Return the formatted lockup value for a vault (in days, hours, minutes if needed)
  */
-export function getFormattedLockup({ lockup: seconds }: VaultInfo): string {
+export function getFormattedLockup({ lockup: seconds }: Pick<VaultInfo, 'lockup'>): string {
 	if (!isNumber(seconds)) return 'Unknown';
 
 	const minutes = Math.floor(seconds / 60);

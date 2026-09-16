@@ -13,7 +13,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { Chain } from '$lib/helpers/chain';
-	import type { TopVaults } from './schemas';
+	import type { VaultListingTopVaults } from './schemas';
 	import type { RiskRatingProvider } from './risk-rating-providers';
 	import type { VaultProtocolMetadata } from '$lib/vault-protocol/schemas';
 	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
@@ -39,7 +39,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 	interface Props {
 		chain?: Chain;
 		/** Vault dataset to display; may be undefined while loading */
-		topVaults?: TopVaults;
+		topVaults?: VaultListingTopVaults;
 		title: string;
 		subtitle?: string | Snippet;
 		tvlThreshold?: number;

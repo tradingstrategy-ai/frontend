@@ -1,5 +1,7 @@
 import { mount, tick, unmount } from 'svelte';
 import Tooltip from './Tooltip.svelte';
+import TooltipWithContent from './Tooltip.test.svelte';
+import { openAllTooltips } from './tooltip-test-utils';
 
 describe('Tooltip component', () => {
 	// This test is intentionally checking for very specific markup:
@@ -9,6 +11,9 @@ describe('Tooltip component', () => {
 	// see: https://stackoverflow.com/questions/40531029 updates 3 & 4
 	test('should use button tag for popup content', async () => {
 		const component = mount(Tooltip, { target: document.body });
+		// the popup element is created on first open
+		document.body.querySelector('.tooltip')!.dispatchEvent(new MouseEvent('mouseenter'));
+		await tick();
 		const popup = document.body.querySelector('.popup');
 		expect(popup?.tagName).toBe('BUTTON');
 		// button should be disabled to remove from tab index and prevent click events
@@ -29,11 +34,11 @@ describe('Tooltip component', () => {
 
 		const component = mount(Tooltip, { target: document.body });
 		const tooltip = document.body.querySelector('.tooltip')!;
-		const popup = document.body.querySelector<HTMLElement>('.popup')!;
 		await tick();
 		tooltip.dispatchEvent(new MouseEvent('mouseenter'));
 		await tick();
 		await tick();
+		const popup = document.body.querySelector<HTMLElement>('.popup')!;
 
 		expect(popup.dataset.positioned).toBe('true');
 		expect(popup.style.left).toBe('92px');
@@ -45,6 +50,23 @@ describe('Tooltip component', () => {
 
 		vi.restoreAllMocks();
 		Object.defineProperty(window, 'innerWidth', { configurable: true, value: originalInnerWidth });
+		await unmount(component);
+	});
+
+	test('renders the popup only after the tooltip is first opened', async () => {
+		const component = mount(TooltipWithContent, { target: document.body });
+		const tooltip = document.body.querySelector('.tooltip')!;
+
+		expect(document.body.querySelector('.popup')).toBeNull();
+
+		openAllTooltips();
+		expect(document.body.querySelector('.popup .inner')?.textContent).toContain('Popup body');
+
+		// the popup stays mounted after closing so re-opening does not re-render it
+		tooltip.dispatchEvent(new MouseEvent('mouseleave'));
+		await tick();
+		expect(document.body.querySelector('.popup .inner')?.textContent).toContain('Popup body');
+
 		await unmount(component);
 	});
 });

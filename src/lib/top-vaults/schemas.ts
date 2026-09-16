@@ -610,6 +610,106 @@ export const slimVaultKeys = [
 	'stablecoinish'
 ] as const satisfies readonly (keyof SlimVaultInfo)[];
 
+/**
+ * Period metrics kept on vault listing rows.
+ *
+ * The return columns read the gross/net returns and CAGR plus the sample coverage
+ * dates; `max_drawdown` feeds the lifetime drawdown column. The other ~14 metrics
+ * per period (share prices, TVL range, rankings, Sharpe, volatility) are only used
+ * on the vault detail page.
+ */
+export const vaultListingPeriodMetricKeys = [
+	'period',
+	'period_start_at',
+	'period_end_at',
+	'daily_samples',
+	'returns_gross',
+	'returns_net',
+	'cagr_gross',
+	'cagr_net',
+	'max_drawdown'
+] as const satisfies readonly (keyof PeriodMetrics)[];
+
+export type VaultListingPeriodMetrics = Pick<PeriodMetrics, (typeof vaultListingPeriodMetricKeys)[number]>;
+
+/**
+ * Periods kept on vault listing rows (lower-cased `period` values). The one-week and
+ * one-month periods are not read by any listing column: the 1M columns use the
+ * top-level `one_month_*` fields.
+ */
+export const vaultListingPeriods = ['3m', '6m', '1y', 'lifetime'] as const;
+
+/**
+ * Top-level keys included in a vault listing row — every field the listing table, its
+ * cell components, the shared listing query/sort pipeline and the listing helpers read.
+ * `period_results` is added separately with the slimmed `VaultListingPeriodMetrics`.
+ *
+ * Listing pages serialise their first batch of rows into the page HTML and every
+ * continuation page ships them as JSON, so the full `VaultInfo` is projected down to
+ * this shape server-side. Detail views load the complete record separately.
+ */
+export const vaultListingRowKeys = [
+	'id',
+	'name',
+	'vault_slug',
+	'protocol',
+	'protocol_slug',
+	'curator_slug',
+	'chain',
+	'chain_id',
+	'address',
+	'denomination',
+	'normalised_denomination',
+	'denomination_slug',
+	'denomination_token_rate',
+	'stablecoinish',
+	'current_nav',
+	'peak_nav',
+	'years',
+	'start_date',
+	'end_date',
+	'mgmt_fee',
+	'perf_fee',
+	'fee_mode',
+	'fee_internalised',
+	'gross_fees',
+	'net_fees',
+	'lockup',
+	'risk',
+	'risk_numeric',
+	'features',
+	'flags',
+	'strategy_tags',
+	'deposit_closed_reason',
+	'redemption_closed_reason',
+	'whitelist',
+	'lifetime_return',
+	'lifetime_return_net',
+	'cagr',
+	'cagr_net',
+	'one_month_returns',
+	'one_month_returns_net',
+	'one_month_cagr',
+	'one_month_cagr_net',
+	'three_months_returns',
+	'three_months_returns_net',
+	'three_months_cagr',
+	'three_months_cagr_net',
+	'three_months_sharpe',
+	'three_months_volatility',
+	'three_months_start',
+	'three_months_end',
+	'three_months_samples',
+	'other_data',
+	'core3',
+	'xerberus'
+] as const satisfies readonly (keyof VaultInfo)[];
+
+/** A vault as rendered by the listing table: the `vaultListingRowKeys` subset of `VaultInfo` plus slimmed period metrics. */
+export type VaultListingRow = Pick<VaultInfo, (typeof vaultListingRowKeys)[number]> & {
+	period_results: VaultListingPeriodMetrics[];
+};
+
 /** Runtime schema for the public slim chart payload. */
 export const slimVaultInfoSchema = vaultInfoSchema.pick({
 	id: true,
@@ -677,6 +777,11 @@ export const topVaultsSchema = z.object({
 		.default({})
 });
 export type TopVaults = z.infer<typeof topVaultsSchema>;
+
+/** Listing page payload: `TopVaults` whose rows are projected to `VaultListingRow`. */
+export interface VaultListingTopVaults extends Omit<TopVaults, 'vaults'> {
+	vaults: VaultListingRow[];
+}
 
 /**
  * Aggregated vault group used on index pages (protocols, chains, stablecoins).

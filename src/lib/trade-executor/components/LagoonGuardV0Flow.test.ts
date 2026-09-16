@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/svelte';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { State } from 'trade-executor/schemas/state';
 import LagoonGuardV0Flow from './LagoonGuardV0Flow.svelte';
+import { openAllTooltips } from '$lib/components/tooltip-test-utils';
 
 const guard = {
 	daily_automatic_settlement_limit_enabled: true,
@@ -12,7 +13,7 @@ const guard = {
 afterEach(() => vi.useRealTimers());
 
 describe('LagoonGuardV0Flow', () => {
-	it('displays the daily automated settlement allowance', () => {
+	it('displays the daily automated settlement allowance', async () => {
 		render(LagoonGuardV0Flow, {
 			guard,
 			treasury: {
@@ -20,6 +21,7 @@ describe('LagoonGuardV0Flow', () => {
 				pending_redemptions: 345.67
 			}
 		});
+		openAllTooltips();
 
 		expect(screen.getByRole('heading', { name: 'Deposit and redemption flow' })).toBeInTheDocument();
 		expect(screen.getByText('$5,000')).toBeInTheDocument();
@@ -38,12 +40,13 @@ describe('LagoonGuardV0Flow', () => {
 				pending_redemptions: 2500
 			})
 		});
+		openAllTooltips();
 
 		expect(await screen.findByText('$10,000')).toBeInTheDocument();
 		expect(await screen.findByText('$2,500')).toBeInTheDocument();
 	});
 
-	it('displays gross automated flow and the active window reset time from state', () => {
+	it('displays gross automated flow and the active window reset time from state', async () => {
 		vi.useFakeTimers();
 		vi.setSystemTime(new Date('2023-11-15T00:00:00Z'));
 		const state = {
@@ -76,6 +79,7 @@ describe('LagoonGuardV0Flow', () => {
 		} as State;
 
 		render(LagoonGuardV0Flow, { guard, state });
+		openAllTooltips();
 
 		expect(screen.getByText('Processed in 24h window so far')).toBeInTheDocument();
 		expect(screen.getByText('$1,500')).toBeInTheDocument();
@@ -83,7 +87,7 @@ describe('LagoonGuardV0Flow', () => {
 		expect(screen.getByText('15/11/2023, 22:13:20 UTC')).toBeInTheDocument();
 	});
 
-	it('reports an expired settlement window as available', () => {
+	it('reports an expired settlement window as available', async () => {
 		vi.useFakeTimers();
 		vi.setSystemTime(new Date('2023-11-20T00:00:00Z'));
 
@@ -105,6 +109,7 @@ describe('LagoonGuardV0Flow', () => {
 				}
 			} as State
 		});
+		openAllTooltips();
 
 		const processedMetric = screen.getByText('Processed in 24h window so far').parentElement;
 		expect(processedMetric).toHaveTextContent('$0');

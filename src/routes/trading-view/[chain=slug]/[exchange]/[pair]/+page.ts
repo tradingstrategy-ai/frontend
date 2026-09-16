@@ -1,5 +1,6 @@
 import type { PairDetails } from '$lib/explorer/pair-client.js';
 import { fetchPublicApi } from '$lib/helpers/public-api';
+import { isPairIndexable } from '$lib/explorer/indexing';
 import { timeBucketEnum } from '$lib/schemas/utility.js';
 
 export async function load({ fetch, params, setHeaders, url }) {
@@ -24,6 +25,8 @@ export async function load({ fetch, params, setHeaders, url }) {
 	return {
 		summary: pair.summary,
 		details: pair.additional_details,
-		timeBucket
+		timeBucket,
+		// keep dead / spam pairs out of search engine indexes (see $lib/explorer/indexing)
+		robots: isPairIndexable(pair.summary) ? undefined : 'noindex,follow'
 	};
 }

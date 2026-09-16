@@ -14,7 +14,7 @@ excluded vault count from the loaded vault data.
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
-	import type { VaultInfo } from '$lib/top-vaults/schemas';
+	import type { VaultListingRow } from '$lib/top-vaults/schemas';
 	import type { VaultListingSummary } from '$lib/top-vaults/listing/types';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import {
@@ -38,7 +38,7 @@ excluded vault count from the loaded vault data.
 		subject: string;
 		/** Verb phrase linking the subject to the vault count, e.g. "has" or "is used in" */
 		verbPhrase?: string;
-		vaults: VaultInfo[];
+		vaults: VaultListingRow[];
 		/** Complete matching-listing stats when the supplied vault rows are only an initial server batch. */
 		listingSummary?: VaultListingSummary;
 	}
@@ -58,7 +58,7 @@ excluded vault count from the loaded vault data.
 	// dedupe by name so the same fund deployed on multiple chains isn't repeated
 	let largestVaults = $derived.by(() => {
 		const seen = new SvelteSet<string>();
-		const result: VaultInfo[] = [];
+		const result: VaultListingRow[] = [];
 		for (const vault of statsVaults.toSorted((a, b) => (b.current_nav ?? 0) - (a.current_nav ?? 0))) {
 			if (seen.has(vault.name)) continue;
 			seen.add(vault.name);

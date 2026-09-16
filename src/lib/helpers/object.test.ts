@@ -1,4 +1,4 @@
-import { merge } from './object';
+import { merge, pick } from './object';
 
 describe('merge helper', () => {
 	const target = {
@@ -55,5 +55,19 @@ describe('merge helper', () => {
 		expect(target.obj).toHaveProperty('a', 'sourca a');
 		expect(target.obj).toHaveProperty('b', 'target b');
 		expect(target.obj).toHaveProperty('c', 'source c');
+	});
+});
+
+describe('pick', () => {
+	test('copies only the requested keys', () => {
+		const source = { a: 1, b: 'two', c: null };
+		expect(pick(source, ['a', 'c'])).toEqual({ a: 1, c: null });
+	});
+
+	test('keeps missing keys as undefined and does not mutate the source', () => {
+		const source: { a: number; b?: string } = { a: 1 };
+		const result = pick(source, ['a', 'b']);
+		expect(result).toEqual({ a: 1, b: undefined });
+		expect(source).toEqual({ a: 1 });
 	});
 });

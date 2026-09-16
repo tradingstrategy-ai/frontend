@@ -9,6 +9,7 @@ import {
 	getVaultCurrentTvlUsd,
 	getVaultDenominationCurrency,
 	isNonUsdDenominatedVault,
+	toVaultListingRow,
 	withVaultDenominationTokenRate
 } from '$lib/top-vaults/helpers';
 import { getRiskRatedVaults } from '$lib/top-vaults/risk-rating-statistics';
@@ -99,7 +100,7 @@ export async function loadVaultListing(fetchFn: typeof fetch, url: URL, key: Vau
 	const scopedVaults = await resolveListingVaults(fetchFn, topVaults, key, scope);
 	const query = parseVaultListingQuery(url.searchParams, getVaultListingDefaults(key, scope));
 	const listing = queryVaultListing(scopedVaults, query, await getListingOptions(definition.options, query));
-	const initialVaults = listing.vaults.slice(0, INITIAL_VAULT_LISTING_LIMIT);
+	const initialVaults = listing.vaults.slice(0, INITIAL_VAULT_LISTING_LIMIT).map(toVaultListingRow);
 
 	return {
 		totalVaultCount: topVaults.vaults.length,

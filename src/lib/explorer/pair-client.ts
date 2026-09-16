@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import { fetchPublicApi } from '$lib/helpers/public-api';
+import type { PairIndexingMetrics } from './indexing';
 
 export type PairIndexParams = Partial<{
 	chain_slugs: string;
@@ -14,8 +15,23 @@ export type PairIndexParams = Partial<{
 
 type PairSearchKey = keyof PairIndexParams;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type PairInfo = Record<string, any>;
+/**
+ * `pair-details` API `summary` / `additional_details` objects and `pairs` index rows. Only the
+ * fields the frontend reads directly are typed; the index signature keeps the rest accessible.
+ */
+export interface PairInfo extends PairIndexingMetrics {
+	pair_id: number;
+	pair_slug: string;
+	pair_symbol: string;
+	pair_name: string;
+	chain_slug: string;
+	chain_name: string;
+	exchange_slug: string;
+	exchange_name: string;
+	usd_volume_24h?: number | null;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	[key: string]: any;
+}
 
 export type PairDetails = {
 	summary: PairInfo;
