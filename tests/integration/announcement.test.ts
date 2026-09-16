@@ -14,6 +14,21 @@ function setAnnouncementCookie(page: Page, date: ParsableDate) {
 }
 
 test.describe('announcement banner', () => {
+	test('is rendered on the server, also after another visitor dismissed it', async ({ page }) => {
+		const announcement = 'We have started the Trading Strategy podcast.';
+
+		// a request carrying the dismissal cookie must not leak into later requests: the banner
+		// used to be held in a module-level store shared across server renders, which hid it
+		// from every visitor and made it mount only after hydration (a 0.11 CLS on phones)
+		const dismissed = await page.request.get('/vaults', {
+			headers: { cookie: `podcast-announcement-dismissed-at=${encodeURIComponent('2026-09-02T00:00:00Z')}` }
+		});
+		expect(await dismissed.text()).not.toContain(announcement);
+
+		const fresh = await page.request.get('/vaults');
+		expect(await fresh.text()).toContain(announcement);
+	});
+
 	test('is not displayed on the landing page', async ({ page }) => {
 		await page.goto('/');
 		const announcement = page.getByText('We have started the Trading Strategy podcast.');

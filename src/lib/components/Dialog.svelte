@@ -19,6 +19,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 	import { createEventDispatcher } from 'svelte';
 	import IconCancel from '~icons/local/cancel';
 	import { disableScroll } from '$lib/actions/scroll';
+	import { setViewportHeight } from '$lib/actions/viewport';
 
 	export let title = '';
 	export let open = false;
@@ -66,7 +67,13 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 
 <svelte:body use:disableScroll={open} />
 
-<dialog bind:this={dialog} class={fullScreen ? 'full-screen' : 'compact'} on:close={state.escaped} data-css-props>
+<dialog
+	bind:this={dialog}
+	class={fullScreen ? 'full-screen' : 'compact'}
+	on:close={state.escaped}
+	use:setViewportHeight={fullScreen && open}
+	data-css-props
+>
 	<slot name="header">
 		<header>
 			<h5><slot name="title">{title}</slot></h5>
@@ -141,7 +148,7 @@ Modal dialog component. Dispatches `open` and `close` events when state changes
 	}
 
 	.full-screen {
-		height: var(--viewport-height);
+		height: var(--viewport-height, 100vh);
 		max-height: unset;
 
 		&[open] {

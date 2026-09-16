@@ -55,7 +55,6 @@ Historical vault TVL by vault protocol page with a server-side aggregated weekly
 <MetaTags
 	{title}
 	{description}
-	canonical={pageUrl}
 	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
 	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
 />

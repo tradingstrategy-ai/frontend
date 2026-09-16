@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { INDEXABLE_MIN_LIQUIDITY_USD, INDEXABLE_MIN_VOLUME_USD, isPairIndexable, isTokenIndexable } from './indexing';
+import {
+	INDEXABLE_MIN_LIQUIDITY_USD,
+	INDEXABLE_MIN_VOLUME_USD,
+	hasBlockedName,
+	isPairIndexable,
+	isTokenIndexable
+} from './indexing';
 
 describe('isTokenIndexable', () => {
 	it('indexes tokens with liquidity at or above the threshold', () => {
@@ -56,5 +62,69 @@ describe('isPairIndexable', () => {
 	it('treats missing data as unknown and keeps the page indexable', () => {
 		expect(isPairIndexable({})).toBe(true);
 		expect(isPairIndexable({ pair_tvl: null, usd_liquidity_latest: null, usd_volume_30d: undefined })).toBe(true);
+	});
+});
+
+describe('hasBlockedName', () => {
+	it('matches adult and gambling terms in any position', () => {
+		expect(hasBlockedName(['PornForce'])).toBe(true);
+		expect(hasBlockedName(['Nude AI'])).toBe(true);
+		expect(hasBlockedName(['xXx Token'])).toBe(true);
+		expect(hasBlockedName(['CasinoCoin'])).toBe(true);
+		expect(hasBlockedName(['SexyToken'])).toBe(true);
+	});
+
+	it('treats hyphens, underscores and slashes as word separators', () => {
+		expect(hasBlockedName(['PORNHUB-ETH'])).toBe(true);
+		expect(hasBlockedName(['XXX-BNB'])).toBe(true);
+		expect(hasBlockedName(['BET-USDT'])).toBe(true);
+		expect(hasBlockedName(['CUM/WETH'])).toBe(true);
+		expect(hasBlockedName(['slot_machine'])).toBe(true);
+	});
+
+	it('strips diacritics before matching', () => {
+		expect(hasBlockedName(['Pörn'])).toBe(true);
+	});
+
+	it('does not match legitimate names that contain short blocked words', () => {
+		for (const name of [
+			'USDT',
+			'Alphabet',
+			'Super AI',
+			'ZEUS',
+			'Longinus',
+			'QQ4',
+			'Analytics DAO',
+			'888',
+			'Essex',
+			'Peacock',
+			'Betelgeuse',
+			'Cumulus',
+			'Slotted',
+			'Analysis'
+		]) {
+			expect(hasBlockedName([name]), name).toBe(false);
+		}
+	});
+
+	it('skips missing names', () => {
+		expect(hasBlockedName([null, undefined, ''])).toBe(false);
+	});
+});
+
+describe('name blocklist on indexable pages', () => {
+	it('keeps liquid tokens with blocked names out of the index', () => {
+		// the four pages that survived the liquidity thresholds in the 2026-09-16 audit
+		expect(isTokenIndexable({ name: 'PornForce', symbol: 'PORNFORCE', liquidity_latest: 225_000 })).toBe(false);
+		expect(isTokenIndexable({ name: 'Nude AI', symbol: 'NUDE', liquidity_latest: 115_000 })).toBe(false);
+		expect(isPairIndexable({ pair_symbol: 'PORNHUB-ETH', pair_tvl: 53_000 })).toBe(false);
+		expect(isPairIndexable({ pair_symbol: 'XXX-BNB', base_token_symbol: 'XXX', pair_tvl: 9_000 })).toBe(false);
+	});
+
+	it('still indexes liquid tokens and pairs with ordinary names', () => {
+		expect(isTokenIndexable({ name: 'Tether USD', symbol: 'USDT', liquidity_latest: 1_000_000 })).toBe(true);
+		expect(isPairIndexable({ pair_symbol: 'ZEUS-WETH', pair_name: 'Zeus - Wrapped Ether', pair_tvl: 50_000 })).toBe(
+			true
+		);
 	});
 });

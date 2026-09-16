@@ -9,6 +9,7 @@ Strategy overview dashboard.
 	import LagoonGuardV0Flow from 'trade-executor/components/LagoonGuardV0Flow.svelte';
 	import { getMetricsWithAltCAGR } from 'trade-executor/helpers/metrics';
 	import { getExchangeAccountInfo } from 'trade-executor/helpers/exchange-account';
+	import { getStrategyPageMeta } from '$lib/strategies/seo';
 
 	let { data } = $props();
 	let { chain, strategy, vault, admin, ipCountry } = $derived(data);
@@ -19,11 +20,21 @@ Strategy overview dashboard.
 
 	// Temporary hack to address inaccurate CAGR metric (remove once this is fixed)
 	let keyMetrics = $derived(getMetricsWithAltCAGR(strategy));
+
+	let meta = $derived(
+		getStrategyPageMeta({
+			name: strategy.name,
+			shortDescription: strategy.short_description,
+			chainName: chain.name,
+			annualReturn: keyMetrics.cagr?.value,
+			tvlUsd: keyMetrics.total_equity?.value
+		})
+	);
 </script>
 
 <svelte:head>
-	<title>{strategy.name} | Trading Strategy</title>
-	<meta name="description" content={strategy.short_description} />
+	<title>{meta.title}</title>
+	<meta name="description" content={meta.description} />
 </svelte:head>
 
 <div class="strategy-overview-page">

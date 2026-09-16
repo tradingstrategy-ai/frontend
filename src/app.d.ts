@@ -28,6 +28,10 @@ declare global {
 		interface PageData {
 			/** Robots meta directive for the current page, e.g. `noindex,follow`; omitted pages are indexable */
 			robots?: string;
+			/** Lowercase the canonical URL path (routes keyed by EVM addresses accepted in any casing) */
+			lowercaseCanonical?: boolean;
+			/** Canonical URL override (path or absolute) when the query string identifies the page */
+			canonical?: string;
 		}
 		// interface Platform {}
 	}

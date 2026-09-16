@@ -8,6 +8,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import TargetableLink from '$lib/components/TargetableLink.svelte';
+	import { tableWidth } from '$lib/actions/table-width';
 	import { formatValue } from '$lib/helpers/formatters';
 
 	type TradingEntityRow = Record<string, any>;
@@ -18,12 +19,10 @@
 	}
 
 	let { loading = false, rows, getHref, cells }: Props = $props();
-
-	let offsetWidth = $state<number>();
 </script>
 
 <!-- --table-width needed for proper tr.targetable styling  -->
-<table class="trading-entities-table datatable" class:loading bind:offsetWidth style:--table-width="{offsetWidth}px">
+<table class="trading-entities-table datatable" class:loading use:tableWidth>
 	<tbody>
 		{#each rows as row, idx (idx)}
 			<tr class="targetable">

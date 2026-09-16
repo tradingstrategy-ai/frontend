@@ -25,7 +25,6 @@
 <MetaTags
 	title={post.title}
 	description={post.excerpt}
-	canonical={pageUrl}
 	openGraph={{
 		siteName: 'Trading Strategy',
 		url: pageUrl,

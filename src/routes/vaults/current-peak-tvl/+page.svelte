@@ -22,7 +22,6 @@ Scatter plot page showing vault current TVL versus historical peak TVL, coloured
 <MetaTags
 	{title}
 	{description}
-	canonical={pageUrl}
 	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
 	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
 />

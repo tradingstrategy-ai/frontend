@@ -90,11 +90,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 	const pageTitle = 'Compare vaults';
 	let metaTitle = $derived(data.compareMeta.title);
 	let description = $derived(data.compareMeta.description);
-	let pageUrl = $derived.by(() => {
-		const canonicalUrl = new URL(page.url.pathname, page.url.origin);
-		for (const vaultId of data.compareMeta.selectedVaultIds) canonicalUrl.searchParams.append('vault', vaultId);
-		return canonicalUrl.href;
-	});
+	let pageUrl = $derived(data.canonical);
 	const benchmarkOptions: { key: ComparisonBenchmark; label: string }[] = [
 		{ key: 'treasury', label: 'T-Bill' },
 		{ key: 'eth', label: 'ETH' },
@@ -263,7 +259,6 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 <MetaTags
 	title={metaTitle}
 	{description}
-	canonical={pageUrl}
 	image={data.compareMeta.image}
 	imageAlt={data.compareMeta.imageAlt}
 	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title: metaTitle, description, type: 'website' }}

@@ -145,7 +145,6 @@
 <MetaTags
 	title={socialTitle}
 	{description}
-	canonical={pageUrl}
 	image={imageUrl}
 	imageAlt={`${vault.name} preview image`}
 	openGraph={{

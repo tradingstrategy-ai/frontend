@@ -18,7 +18,6 @@ Broad vault catalogue with controls for including problematic and blacklisted va
 <MetaTags
 	{title}
 	{description}
-	canonical={pageUrl}
 	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
 	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
 />

@@ -3,7 +3,7 @@ Conversion-focused pricing page for professional DeFi vault market data.
 -->
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Button, CanonicalLink, Tooltip } from '$lib/components';
+	import { Button, Tooltip } from '$lib/components';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import IconCheck from '~icons/local/check-circle-gradient';
 
@@ -184,8 +184,6 @@ Conversion-focused pricing page for professional DeFi vault market data.
 		content="Normalised historical returns, TVL, liquidity, fees and risk metrics for DeFi vault research, backtesting and automated data workflows."
 	/>
 </svelte:head>
-
-<CanonicalLink />
 
 <main>
 	<section class="hero-section">

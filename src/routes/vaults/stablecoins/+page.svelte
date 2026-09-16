@@ -42,7 +42,6 @@ Vault stablecoins index page.
 <MetaTags
 	title={pageTitle}
 	{description}
-	canonical={pageUrl}
 	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title: pageTitle, description, type: 'website' }}
 	twitter={{ site: '@TradingProtocol', cardType: 'summary', title: pageTitle, description }}
 />

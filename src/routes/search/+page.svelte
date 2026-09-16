@@ -2,7 +2,7 @@
 Search vaults and vault-related data about curators, protocols and stablecoins.
 -->
 <script lang="ts">
-	import { Button, CanonicalLink, PageHeader } from '$lib/components';
+	import { Button, PageHeader } from '$lib/components';
 	import {
 		formatVaultAddressPrefix,
 		searchEntityColours,
@@ -77,8 +77,6 @@ Search vaults and vault-related data about curators, protocols and stablecoins.
 	<title>Search vaults</title>
 	<meta name="description" content="Search vaults and vault-related data about curators, protocols and stablecoins." />
 </svelte:head>
-
-<CanonicalLink />
 
 <main>
 	<PageHeader

@@ -107,8 +107,14 @@ export async function load({ fetch, url }) {
 		})
 	);
 
+	const compareMeta = getVaultCompareMeta(url.searchParams, topVaults.vaults);
+	// the selected vaults are the page identity, so they stay in the canonical URL
+	const canonical = new URL(url.pathname, url.origin);
+	for (const vaultId of compareMeta.selectedVaultIds) canonical.searchParams.append('vault', vaultId);
+
 	return {
-		compareMeta: getVaultCompareMeta(url.searchParams, topVaults.vaults),
+		compareMeta,
+		canonical: canonical.href,
 		selectedVaults,
 		selectedTopVaults: {
 			generated_at: topVaults.generated_at,

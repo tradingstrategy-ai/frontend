@@ -3,18 +3,21 @@
 Display the site-wide podcast announcement, which may be dismissed by the user.
 Dismissed state is retained in a podcast-specific cookie (see `hooks.server.ts`).
 
+The banner must render on the server whenever the cookie is absent: it sits above the page
+content, so mounting it only after hydration shifts the whole page down (a 0.11 CLS on
+phones). Only the client keeps an in-session flag, so the banner stays hidden after a
+dismissal across client-side navigations (e.g. entering a wizard) without the server ever
+sharing state between requests.
+
 @example
 
 ```svelte
 	<AnnouncementBanner dismissedAt={podcastAnnouncementDismissedAt} />
 ```
 -->
-<script lang="ts" context="module">
-	import { writable } from 'svelte/store';
-
-	// use global store for dismissed flag so the state persists
-	// when the component is unloaded/reloaded (e.g., entering a wizard)
-	export const dismissed = writable(false);
+<script lang="ts" module>
+	// client-only session flag; never written on the server, so SSR follows the cookie alone
+	let dismissedInSession = $state(false);
 </script>
 
 <script lang="ts">
@@ -24,13 +27,9 @@ Dismissed state is retained in a podcast-specific cookie (see `hooks.server.ts`)
 	import { Button } from '$lib/components';
 	import IconCancel from '~icons/local/cancel';
 
-	export let dismissedAt: Date | undefined;
+	let { dismissedAt }: { dismissedAt: Date | undefined } = $props();
 
-	// set the initial state of the dismissed flag
-	dismissed.update(($dismissed) => {
-		if ($dismissed) return $dismissed; // already dismissed in current browser session
-		return Boolean(dismissedAt); // previously dismissed (cookie)
-	});
+	let dismissed = $derived(dismissedInSession || Boolean(dismissedAt));
 
 	// set cookie and dismissed flag when announcement is dismissed
 	function dismiss() {
@@ -39,16 +38,16 @@ Dismissed state is retained in a podcast-specific cookie (see `hooks.server.ts`)
 			path: '/',
 			maxAge: 365 * 24 * 60 * 60
 		});
-		$dismissed = true;
+		dismissedInSession = true;
 	}
 </script>
 
-{#if !$dismissed}
-	<section class="announcement-banner ds-container" out:slide={{ axis: 'y', duration: 750 }}>
+{#if !dismissed}
+	<section class="announcement-banner ds-container" out:slide={{ axis: 'y', duration: 300 }}>
 		<div class="content">
 			<span class="description">
 				We have started the Trading Strategy podcast.
-				<a href={resolve('/podcast')} on:click={dismiss}>Listen to us on YouTube and Spotify.</a>
+				<a href={resolve('/podcast')} onclick={dismiss}>Listen to us on YouTube and Spotify.</a>
 			</span>
 		</div>
 
