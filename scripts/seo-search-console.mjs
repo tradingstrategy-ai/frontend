@@ -24,6 +24,7 @@
  */
 import { createSign } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
+import { homedir } from 'node:os';
 import { parseArgs } from 'node:util';
 
 const API = 'https://www.googleapis.com/webmasters/v3';
@@ -46,7 +47,8 @@ const {
 });
 
 const site = process.env.TS_PRIVATE_SEARCH_CONSOLE_SITE?.trim() || 'sc-domain:tradingstrategy.ai';
-const credentialsFile = process.env.TS_PRIVATE_GOOGLE_SERVICE_ACCOUNT_FILE?.trim();
+// Node does not expand `~`, so accept the shell-style path used in the docs
+const credentialsFile = process.env.TS_PRIVATE_GOOGLE_SERVICE_ACCOUNT_FILE?.trim().replace(/^~(?=\/)/, homedir());
 
 if (!credentialsFile) {
 	console.error('TS_PRIVATE_GOOGLE_SERVICE_ACCOUNT_FILE is not set (add it to .env.local)');
