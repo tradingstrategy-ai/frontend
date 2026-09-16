@@ -104,6 +104,7 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 		type ReturnColumnId
 	} from './return-columns';
 	import { sortVaults } from './listing/query';
+	import { tableWidth } from '$lib/actions/table-width';
 	import { getVaultListingDefaults, type VaultListingKey } from './listing/definitions';
 	import { INITIAL_VAULT_LISTING_LIMIT, VAULT_LISTING_PAGE_SIZE, type VaultListingSummary } from './listing/types';
 	import { getCanonicalComparisonReturnMode } from './equity-comparison/net-returns';
@@ -622,8 +623,6 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 		if (sortDropdownOptionKeys.some((key) => key === sortOptions.key)) return;
 		updateSearchParams({ sort: 'vault', direction: sortColumnMap.vault.defaultDirection });
 	});
-
-	let offsetWidth = $state<number>();
 
 	const VOLATILITY_CAP = 9.99; // 999% in decimal form
 	const VOLATILITY_CAP_LABEL = '>999%';
@@ -1512,12 +1511,7 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 
 	<div class="table-wrapper">
 		<!-- --table-width needed for proper tr.targetable styling  -->
-		<table
-			bind:offsetWidth
-			style:--table-width="{offsetWidth}px"
-			class:loading
-			class:with-rating={showProviderRiskRating}
-		>
+		<table use:tableWidth class:loading class:with-rating={showProviderRiskRating}>
 			<thead>
 				<tr>
 					<th class="index"></th>

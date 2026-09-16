@@ -43,7 +43,7 @@ test.describe('canonical link', () => {
 			const links = html.match(/<link[^>]*rel="canonical"[^>]*>/g) ?? [];
 			expect(links, 'canonical links in HTML').toHaveLength(1);
 			// attribute values are HTML-escaped, so `&` between query params arrives as `&amp;`
-			expect(links[0].replaceAll('&amp;', '&')).toContain(`href="${ORIGIN}${canonical}"`);
+			expect(links[0]?.replaceAll('&amp;', '&')).toContain(`href="${ORIGIN}${canonical}"`);
 		});
 	}
 });

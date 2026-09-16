@@ -2,6 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import type { HTMLAttributes } from 'svelte/elements';
 	import type { PaginationState } from 'svelte-headless-table/plugins';
+	import { tableWidth } from '$lib/actions/table-width';
 	import { Subscribe, type BodyRow } from 'svelte-headless-table';
 	import TableRow from './TableRow.svelte';
 
@@ -20,8 +21,6 @@
 	let pageIndex = $derived(page?.pageIndex);
 	let pageSize = $derived(page?.pageSize);
 
-	let offsetWidth = $state<number>();
-
 	function getRowIndex(pageRowIndex: number) {
 		if ($pageIndex !== undefined && $pageSize !== undefined) {
 			return $pageIndex * $pageSize + pageRowIndex + 1;
@@ -35,7 +34,7 @@
 </script>
 
 <!-- --table-width needed for proper tr.targetable styling  -->
-<tbody {...attrs} bind:offsetWidth style:--table-width="{offsetWidth}px">
+<tbody {...attrs} use:tableWidth>
 	{@render children?.()}
 	{#each rows as row, pageRowIndex (row.id)}
 		<Subscribe rowAttrs={row.attrs()} let:rowAttrs>
