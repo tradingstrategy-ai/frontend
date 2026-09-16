@@ -17,9 +17,8 @@ test.describe('announcement banner', () => {
 	test('is rendered on the server, also after another visitor dismissed it', async ({ page }) => {
 		const announcement = 'We have started the Trading Strategy podcast.';
 
-		// a request carrying the dismissal cookie must not leak into later requests: the banner
-		// used to be held in a module-level store shared across server renders, which hid it
-		// from every visitor and made it mount only after hydration (a 0.11 CLS on phones)
+		// A request carrying the dismissal cookie must not leak into later requests. The banner
+		// must remain server-rendered for visitors who have not dismissed it.
 		const dismissed = await page.request.get('/vaults', {
 			headers: { cookie: `podcast-announcement-dismissed-at=${encodeURIComponent('2026-09-02T00:00:00Z')}` }
 		});
@@ -33,6 +32,14 @@ test.describe('announcement banner', () => {
 		await page.goto('/');
 		const announcement = page.getByText('We have started the Trading Strategy podcast.');
 		await expect(announcement).not.toBeVisible();
+	});
+
+	test('is hidden on mobile', async ({ page }) => {
+		await page.setViewportSize({ width: 375, height: 667 });
+		await page.goto('/vaults');
+		const announcement = page.getByText('We have started the Trading Strategy podcast.');
+		await expect(announcement).toBeAttached();
+		await expect(announcement).toBeHidden();
 	});
 
 	test.describe('on pages other than the landing page', () => {

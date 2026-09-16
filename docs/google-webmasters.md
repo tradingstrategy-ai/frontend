@@ -135,7 +135,7 @@ Where the search-facing behaviour lives in this codebase (added in response to t
 | Canonical URL on every page                    | `src/lib/header/AppHead.svelte` emits the single `<link rel="canonical">` (`$lib/helpers/canonical.ts`); loaders adjust it with `lowercaseCanonical` (token pages) or `canonical` (vault comparisons). Never add a second one.     |
 | Strategy page titles and descriptions          | `getStrategyPageMeta()` in `src/lib/strategies/seo.ts`, used by both strategy overview routes                                                                                                                                      |
 | Sitemap index                                  | `src/routes/sitemap.xml/+server.ts` — the backend pair sitemaps are deliberately not listed (most pair pages are `noindex`)                                                                                                        |
-| Announcement banner layout shift               | `src/routes/_components/AnnouncementBanner.svelte` must render on the server per request; guarded by `tests/integration/announcement.test.ts` and `tests/integration/layout-shift.test.ts`                                         |
+| Podcast announcement visibility                | `src/routes/_components/AnnouncementBanner.svelte` renders on non-home pages, derives dismissal from the server cookie, and is hidden at the small-screen breakpoint; guarded by `tests/integration/announcement.test.ts`          |
 | Render-blocking CSS                            | `kit.inlineStyleThreshold` in `svelte.config.js` (compared against uncompressed CSS size at build time)                                                                                                                            |
 | Vault sparkline layout shift                   | `src/lib/top-vaults/VaultSparkline.svelte` declares the 72×18 intrinsic size and a 4:1 wrapper                                                                                                                                     |
 | Ghost blog images                              | `src/lib/blog/images.ts` routes both `<ghost api host>` and `storage.ghost.io` images through `/blog/image/`                                                                                                                       |
@@ -256,16 +256,16 @@ The Search Console CWV report (read in the UI on 2026-09-16; it is not available
 
 **Lab data (PageSpeed Insights, mobile)** shows where the time goes:
 
-| Page type     | Score | LCP       | TBT         | CLS           | LCP element                             | Element render delay |
-| ------------- | ----- | --------- | ----------- | ------------- | --------------------------------------- | -------------------- |
-| Home          | 65–74 | 5.9–6.0 s | 7–78 ms     | 0.00          | hero banner text                        | —                    |
-| `/vaults`     | 24–35 | 6.6–8.1 s | 0.6–1.4 s   | **0.19–0.30** | hero subtitle text                      | 1.8 s                |
-| Vault page    | 66    | 5.2 s     | 271 ms      | 0.08          |                                         |                      |
-| Token page    | 69–81 | 3.8 s     | 61–88 ms    | 0.00–0.29     | summary paragraph                       | 2.4 s                |
-| Pair page     | 76–77 | 2.6–4.2 s | 0–19 ms     | 0.00–0.36     | **announcement banner** (podcast promo) | 2.5 s                |
-| Glossary term | 73    | 4.2–4.7 s | 0–2 ms      | 0.08–0.12     | definition paragraph                    | 1.3 s                |
-| Blog post     | 47–70 | 4.5–5.9 s | 12 ms–2.7 s | 0.00–0.08     | cover image                             | 2.0 s                |
-| `/strategies` | 50–81 | 4.5–4.7 s | 30 ms–1.3 s | 0.00          | page description text                   | 0.9 s                |
+| Page type     | Score | LCP       | TBT         | CLS           | LCP element                         | Element render delay |
+| ------------- | ----- | --------- | ----------- | ------------- | ----------------------------------- | -------------------- |
+| Home          | 65–74 | 5.9–6.0 s | 7–78 ms     | 0.00          | hero banner text                    | —                    |
+| `/vaults`     | 24–35 | 6.6–8.1 s | 0.6–1.4 s   | **0.19–0.30** | hero subtitle text                  | 1.8 s                |
+| Vault page    | 66    | 5.2 s     | 271 ms      | 0.08          |                                     |                      |
+| Token page    | 69–81 | 3.8 s     | 61–88 ms    | 0.00–0.29     | summary paragraph                   | 2.4 s                |
+| Pair page     | 76–77 | 2.6–4.2 s | 0–19 ms     | 0.00–0.36     | announcement banner (at audit time) | 2.5 s                |
+| Glossary term | 73    | 4.2–4.7 s | 0–2 ms      | 0.08–0.12     | definition paragraph                | 1.3 s                |
+| Blog post     | 47–70 | 4.5–5.9 s | 12 ms–2.7 s | 0.00–0.08     | cover image                         | 2.0 s                |
+| `/strategies` | 50–81 | 4.5–4.7 s | 30 ms–1.3 s | 0.00          | page description text               | 0.9 s                |
 
 Consistent findings across pages:
 
@@ -273,7 +273,7 @@ Consistent findings across pages:
 2. **Vault listing CLS comes from unsized sparkline images.** `td.sparkline > div.vault-sparkline > img` has no intrinsic size, scoring 0.30 on its own. This affects every `/vaults/*` listing page (135 indexed). Give the `<img>` explicit `width`/`height` (or an `aspect-ratio` on the wrapper).
 3. **The home page loads a 1.7 MB PNG** from Ghost (a blog cover, 1168×1168 displayed at 408×380). Lighthouse estimates 1.5 MB of waste. Blog post covers have the same problem at a smaller scale (301 KB, 1408 px wide displayed at 665 px). Request sized WebP variants from the Ghost image API.
 4. **One Svelte runtime chunk causes long tasks and forced reflows** on every page (`/_app/immutable/chunks/DT-NfHcI.js`): 949 ms long task and 427 ms of forced reflow on `/vaults`, 20–30 ms of reflow elsewhere. The vault table is the worst case — 174 KB of HTML and up to 10 s of main-thread work in the lab.
-5. **The announcement banner is the LCP element on pair pages**: on a narrow viewport the podcast promo is the largest text block above the fold, so LCP measures marketing copy rather than content.
+5. **Historical note — the announcement banner was the LCP element on pair pages**: the banner is now hidden below the small-screen breakpoint, so it no longer contributes to mobile LCP.
 6. **Fonts**: 4–6 font files, 127–159 KB per page. `font-display` is already correct (no penalty reported).
 7. Minor: the Cloudflare Insights beacon ships 11 KB of legacy polyfills; ~23 KB of the Svelte runtime is duplicated across chunks.
 
@@ -334,9 +334,9 @@ Root cause: Ghost moved image hosting to `storage.ghost.io`, and `getBlogImageUr
 
 - `/glossary/leverage`: **1,145 KB → 91 KB** uncompressed (198 KB → ~19 KB on the wire), for all 200 glossary pages
 
-### Announcement banner below the navigation on mobile
+### Podcast announcement hidden on mobile
 
-The podcast banner was the LCP element on pair pages. On phones it now renders below the navbar (`.site-header` flex order in the root layout); desktop order is unchanged. Its size is the same, so this is a UX change rather than an LCP fix.
+The podcast announcement is server-rendered on non-home pages and hidden below the small-screen breakpoint. Its dismissal state is derived from the request cookie. This prevents the notice from becoming the mobile LCP element while preserving the promotion on larger screens.
 
 ### Vault listing page weight
 
@@ -391,13 +391,13 @@ Done through the Search Console UI after the release:
 
 Second round after the release of the changes above; the plan is `.claude/plans/seo-follow-ups.md`. Numbers below are from local production builds (real data) and the Search Console UI on 16 September 2026.
 
-### Mobile CLS root cause: the announcement banner was not server-rendered
+### Former mobile CLS root cause: the announcement banner was not server-rendered
 
 Reproduced with a `layout-shift` `PerformanceObserver` on a throttled phone profile against production: on every page the whole `<main>` moved down by 92 px once hydration finished (score 0.119, the same 0.11 Search Console reports for the token and pair groups). The candidates named earlier — the pairs table skeleton and the lazy candle chart — produce no measurable shift (≤ 0.007 including scrolling).
 
-The cause was `AnnouncementBanner.svelte`: its dismissed flag lived in a module-level `writable` store, which on the server is shared by every request and was never reset to `false`. After the first visitor with the dismissal cookie, the server rendered the banner for nobody, and each browser then mounted it after hydration, pushing the page down. The component now derives the SSR state from the cookie prop alone and keeps only a client-side session flag; the dismissal slide is 300 ms so it stays inside the 500 ms user-input exemption. Local production build after the fix: CLS 0.001–0.007 on the two Search Console example pages and on `/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5`.
+The cause was `AnnouncementBanner.svelte`: its dismissed flag lived in a module-level `writable` store, which on the server is shared by every request and was never reset to `false`. After the first visitor with the dismissal cookie, the server rendered the banner for nobody, and each browser then mounted it after hydration, pushing the page down. The component now derives the SSR state from the cookie prop alone and keeps only a client-side session flag. It is also hidden on mobile, so it cannot affect mobile layout or LCP. Local production build after the server-rendering fix: CLS 0.001–0.007 on the two Search Console example pages and on `/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5`.
 
-Guards: `tests/integration/announcement.test.ts` fetches a page with the dismissal cookie and then without it and asserts the banner is in the second response's HTML; `tests/integration/layout-shift.test.ts` installs the observer before navigation on the token and pair pages (with the `pairs` request delayed) and asserts CLS < 0.05.
+Guards: `tests/integration/announcement.test.ts` verifies that the server renders the banner for a visitor without the dismissal cookie, that it is hidden on mobile, and that it can be dismissed; `tests/integration/layout-shift.test.ts` installs the observer before navigation on the token and pair pages (with the `pairs` request delayed) and asserts CLS < 0.05.
 
 ### Name blocklist
 
