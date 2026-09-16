@@ -305,6 +305,14 @@ New `CanonicalLink` component (`$lib/helpers/canonical.ts`) on the chain, exchan
 
 ### Vault sparkline layout shift
 
+**Correction (post-release, 2026-09-16):** the Search Console CLS report groups flagged
+URLs by template, and its two groups are the **token pages** (219 URLs, group CLS 0.11)
+and the **pair pages** (135 URLs, 0.11) — not the vault listings, which have too little
+mobile traffic for CrUX to report on. The sparkline fix below is still correct for
+`/vaults`, but the field CLS regression lives on the trading-view pages and its cause is
+not yet identified (candidates: the client-side pairs table and lazy chart mounting
+without reserved space). Fix validation for CLS was therefore **not** started.
+
 `VaultSparkline.svelte` declares the sparkline's 72×18 intrinsic size, reserves a 4:1 box for the loading/fallback state and lazy-loads the images. Lighthouse attributed a **0.30 CLS** to the unsized sparkline `<img>` on `/vaults`; the culprit entry is gone from `cls-culprits-insight`. This is the most likely cause of mobile field CLS drifting from 0.04 to 0.09 in late August, and affects all 135 indexed listing pages.
 
 ### Render-blocking CSS
@@ -366,3 +374,13 @@ Expected effect on the audit's numbers, to be confirmed after deploy with `pnpm 
 - **Search footprint**: as Google recrawls the `noindex` pages, adult/gambling token names should drop out of the top queries and the token pages' 83 % share of impressions should fall.
 
 Not done (plan workstream 7): the `/vaults` table's client-side sort/format work, strategy page meta descriptions, and the backend-side sitemap thresholds.
+
+### Post-release Search Console actions (2026-09-16)
+
+Done through the Search Console UI after the release:
+
+- **URL inspection, live test** of the EverPorn token page: "Page cannot be indexed: Excluded by 'noindex' tag", user-declared canonical picked up. "Request indexing" is rejected for `noindex` pages, so re-crawl cannot be forced that way.
+- **Removals → Temporarily remove URL** submitted for that one page (95 % of the spam impressions). The removal hides it within hours and lasts about six months; with `noindex` in place it will not come back. The other `noindex` pages drop out as Google recrawls them.
+- **Core Web Vitals → mobile → LCP issue: "Validate fix" started** (single URL group: pair pages, 135 URLs, 3.1 s). Google reports within 28 days.
+- CLS validation not started — see the correction under "Vault sparkline layout shift".
+- Page indexing report at release time, for reference: 29.2K indexed, 45.4K not indexed (4,522 "page with redirect", 1,677 404, 1,633 blocked by robots.txt, 1,256 alternate page with canonical, 549 duplicate without user-selected canonical, 377 soft 404, 161 5xx).
