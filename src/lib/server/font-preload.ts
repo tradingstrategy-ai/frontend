@@ -40,7 +40,7 @@ const fontPreloadPathPatterns = [
 	/^\/glossary\/[^/]+$/,
 	/^\/blog\/[^/]+$/,
 	/^\/trading-view\/[^/]+\/tokens\/[^/]+$/,
-	/^\/trading-view\/[^/]+\/[^/]+\/[^/]+$/
+	/^\/trading-view\/[^/]+\/[^/]+\/(?!export-data$)[^/]+$/
 ];
 
 export function getFontPreloadLinks(pathname: string): string {

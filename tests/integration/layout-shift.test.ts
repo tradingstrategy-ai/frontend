@@ -8,9 +8,9 @@ const LIQUID_TOKEN_PATH = '/trading-view/ethereum/tokens/0xc02aaa39b223fe8d0a0e5
  * The `layout-shift` observer must be installed before navigation so the shifts caused by
  * hydration are captured. The client-side `pairs` request on the token page is delayed so the
  * skeleton → data transition of the pair table is observable rather than racing hydration, and
- * the web fonts are delayed so the fallback → web font swap happens after first paint (locally
- * they would otherwise arrive before the page renders and the metric-matched fallbacks in
- * `static/fonts/fonts6.css` would never be exercised).
+ * the font stylesheet and files are delayed so the fallback → web font swap happens after first
+ * paint (locally they would otherwise arrive before the page renders and the metric-matched
+ * fallbacks in `src/lib/components/css/font-fallbacks.css` would never be exercised).
  */
 
 declare global {
@@ -38,7 +38,7 @@ async function measureCls(page: Page, path: string) {
 		await new Promise((resolve) => setTimeout(resolve, 500));
 		await route.continue();
 	});
-	await page.route('**/fonts/**/*.woff2', async (route) => {
+	await page.route('**/fonts/**', async (route) => {
 		await new Promise((resolve) => setTimeout(resolve, 800));
 		await route.continue();
 	});

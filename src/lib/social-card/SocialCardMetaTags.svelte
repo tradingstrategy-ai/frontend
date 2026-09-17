@@ -20,6 +20,7 @@ preview image for Twitter/X, Facebook, LinkedIn, Telegram and other Open Graph c
 -->
 <script lang="ts">
 	import { page } from '$app/state';
+	import { getCanonicalUrl } from '$lib/helpers/canonical';
 	import { SITE_NAME, getMetaDescription, getPageTitle } from '$lib/helpers/seo';
 	import { TRADING_STRATEGY_SOCIAL_IMAGE_PATH } from '$lib/social-card/helpers';
 	import { MetaTags, type MetaTagsProps } from 'svelte-meta-tags';
@@ -57,7 +58,12 @@ preview image for Twitter/X, Facebook, LinkedIn, Telegram and other Open Graph c
 
 	let pageDescription = $derived(description == null ? undefined : getMetaDescription([description]));
 
-	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
+	/** Same URL as the canonical link `AppHead` emits, so `og:url` never disagrees with it. */
+	let pageUrl = $derived(
+		page.data.canonical
+			? new URL(page.data.canonical, page.url.origin).href
+			: getCanonicalUrl(page.url, { lowercasePath: page.data.lowercaseCanonical })
+	);
 
 	/** Resolve relative image paths and reject URL schemes social scrapers cannot fetch. */
 	function getAbsoluteImageUrl(candidate: string | null | undefined): string {

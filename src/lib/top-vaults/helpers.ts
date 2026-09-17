@@ -278,6 +278,26 @@ export function isBlacklisted(vault: Pick<VaultInfo, 'risk_numeric'> & Partial<P
 }
 
 /**
+ * A NAV figure in USD for the indexing decision, or `null` when no confirmed rate exists.
+ *
+ * Unlike `getVaultDenominationUsdRate`, which assumes $1 for unrecognised denominations so
+ * that display totals still add up, this returns `null` unless the rate is explicit, the
+ * denomination is recognised as USD, or the backend flags the vault as stablecoin-denominated.
+ * A WETH vault with a NAV of 3 must not be read as "$3 of TVL" and dropped from the index.
+ */
+function getVaultIndexingTvlUsd(
+	vault: VaultWithRate & Pick<VaultInfo, 'stablecoinish'>,
+	nav: number | null | undefined
+): number | null {
+	if (nav == null || !Number.isFinite(nav)) return null;
+	const explicitRate = vault.denomination_token_rate?.usd_rate;
+	if (isFinitePositiveNumber(explicitRate)) return nav * explicitRate;
+	const currency = getVaultDenominationCurrency(vault);
+	if (currency === 'usd' || (currency == null && vault.stablecoinish)) return nav;
+	return null;
+}
+
+/**
  * Should the detail page of this vault be indexed by search engines?
  *
  * Adapter over `isVaultMetricsIndexable`: converts TVL to USD (so the vault should already
@@ -287,14 +307,15 @@ export function isBlacklisted(vault: Pick<VaultInfo, 'risk_numeric'> & Partial<P
 export function isVaultIndexable(
 	vault: Pick<
 		VaultInfo,
-		'name' | 'current_nav' | 'peak_nav' | 'denomination_token_rate' | 'protocol' | 'risk_numeric'
+		'name' | 'current_nav' | 'peak_nav' | 'denomination_token_rate' | 'protocol' | 'risk_numeric' | 'stablecoinish'
 	> &
-		Partial<Pick<VaultInfo, 'protocol_slug' | 'risk'>>
+		Partial<Pick<VaultInfo, 'protocol_slug' | 'risk'>> &
+		Partial<VaultDenominationFields>
 ): boolean {
 	return isVaultMetricsIndexable({
 		name: vault.name,
-		current_tvl_usd: getVaultCurrentTvlUsd(vault),
-		peak_tvl_usd: getVaultPeakTvlUsd(vault),
+		current_tvl_usd: getVaultIndexingTvlUsd(vault, vault.current_nav),
+		peak_tvl_usd: getVaultIndexingTvlUsd(vault, vault.peak_nav),
 		unknown_protocol: isUnknownVaultProtocol(vault),
 		blacklisted: isBlacklisted(vault)
 	});

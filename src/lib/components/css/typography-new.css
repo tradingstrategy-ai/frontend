@@ -1,5 +1,5 @@
 .ds-3 {
-	/* the "… Fallback" faces are metric-matched system fonts, see static/fonts/fonts6.css */
+	/* the "… Fallback" faces are metric-matched system fonts, see font-fallbacks.css */
 	--ff-article: 'Source Serif Pro', 'Source Serif Pro Fallback', serif;
 	--ff-heading: 'Neue Haas Grotesk Display', 'Neue Haas Grotesk Display Fallback', system-ui, sans-serif;
 	--ff-mono:

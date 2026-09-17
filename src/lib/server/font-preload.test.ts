@@ -5,6 +5,7 @@ describe('getFontPreloadLinks', () => {
 	it('preloads the stylesheet everywhere', () => {
 		expect(getFontPreloadLinks('/vaults')).toBe('</fonts/fonts6.css>; rel=preload; as=style');
 		expect(getFontPreloadLinks('/trading-view/ethereum')).not.toContain('woff2');
+		expect(getFontPreloadLinks('/trading-view/ethereum/uniswap-v3/export-data')).not.toContain('woff2');
 	});
 
 	it('preloads the primary faces on text-led templates', () => {

@@ -1,0 +1,100 @@
+/**
+ * Metric-matched fallback faces for the web fonts declared in static/fonts/fonts6.css.
+ *
+ * Each is a system font with `size-adjust` / `ascent-override` / `descent-override` /
+ * `line-gap-override` tuned so it occupies exactly the space of the web font it stands in
+ * for; the font stacks in typography.css list them right after the web font. That is what
+ * stops `font-display: swap` from shifting the layout when the woff2 arrives (the swap was
+ * the whole of the 0.25 CLS measured on text-heavy pages in the 2026-09 audit).
+ *
+ * They live in the render-blocking app CSS, not in the deferred font stylesheet, so the very
+ * first paint already uses the adjusted fallback — otherwise the page would first paint in
+ * plain system-ui, shift when fonts6.css applies, and shift again on the swap.
+ *
+ * Only the src changes per weight range: the fallbacks point at the *regular* local face for
+ * every weight because the browser then uses the metrics the overrides were computed for.
+ * Bold text is briefly shown in regular weight before the web font lands; that is a visual
+ * trade-off, the box sizes are what matter here. The overrides were computed with
+ * @capsizecss/core from the metrics unpacked out of the woff2 files (Display and Text differ
+ * per weight, hence the weight ranges); regenerate them if a font file changes.
+ */
+
+@font-face {
+	font-family: 'Neue Haas Grotesk Display Fallback';
+	font-weight: 400;
+	src: local('Arial'), local('ArialMT'), local('Roboto'), local('Roboto-Regular'), local('Helvetica Neue');
+	ascent-override: 103.68%;
+	descent-override: 24.275%;
+	line-gap-override: 0%;
+	size-adjust: 88.156%;
+}
+
+@font-face {
+	font-family: 'Neue Haas Grotesk Display Fallback';
+	font-weight: 500 600;
+	src: local('Arial'), local('ArialMT'), local('Roboto'), local('Roboto-Regular'), local('Helvetica Neue');
+	ascent-override: 96.194%;
+	descent-override: 27.203%;
+	line-gap-override: 0%;
+	size-adjust: 96.68%;
+}
+
+@font-face {
+	font-family: 'Neue Haas Grotesk Display Fallback';
+	font-weight: 700 900;
+	src: local('Arial'), local('ArialMT'), local('Roboto'), local('Roboto-Regular'), local('Helvetica Neue');
+	ascent-override: 93.668%;
+	descent-override: 26.347%;
+	line-gap-override: 0%;
+	size-adjust: 99.82%;
+}
+
+@font-face {
+	font-family: 'Neue Haas Grotesk Text Fallback';
+	font-weight: 400;
+	src: local('Arial'), local('ArialMT'), local('Roboto'), local('Roboto-Regular'), local('Helvetica Neue');
+	ascent-override: 93.561%;
+	descent-override: 23.438%;
+	line-gap-override: 0%;
+	size-adjust: 104.531%;
+}
+
+@font-face {
+	font-family: 'Neue Haas Grotesk Text Fallback';
+	font-weight: 500 600;
+	src: local('Arial'), local('ArialMT'), local('Roboto'), local('Roboto-Regular'), local('Helvetica Neue');
+	ascent-override: 92.338%;
+	descent-override: 23.832%;
+	line-gap-override: 0%;
+	size-adjust: 106.999%;
+}
+
+@font-face {
+	font-family: 'Neue Haas Grotesk Text Fallback';
+	font-weight: 700 900;
+	src: local('Arial'), local('ArialMT'), local('Roboto'), local('Roboto-Regular'), local('Helvetica Neue');
+	ascent-override: 91.266%;
+	descent-override: 24.075%;
+	line-gap-override: 0%;
+	size-adjust: 109.242%;
+}
+
+@font-face {
+	font-family: 'Source Serif Pro Fallback';
+	font-weight: 400 700;
+	src: local('Georgia'), local('Times New Roman'), local('TimesNewRomanPSMT');
+	ascent-override: 90.943%;
+	descent-override: 33.187%;
+	line-gap-override: 0%;
+	size-adjust: 100.942%;
+}
+
+@font-face {
+	font-family: 'Source Code Pro Fallback';
+	font-weight: 200 900;
+	src: local('Courier New'), local('CourierNewPSMT'), local('Menlo'), local('Consolas');
+	ascent-override: 98.416%;
+	descent-override: 27.304%;
+	line-gap-override: 0%;
+	size-adjust: 99.984%;
+}

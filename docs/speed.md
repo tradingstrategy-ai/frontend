@@ -40,8 +40,10 @@ served with a long cache lifetime). Three mechanisms keep them from hurting Core
 1. **Deferred stylesheet.** `src/app.html` loads the stylesheet with the `media="print"` →
    `onload="this.media='all'"` trick, so text paints immediately in the fallback face
    instead of waiting for the font CSS. All faces are `font-display: swap`.
-2. **Metric-matched fallbacks.** Every family has a `… Fallback` `@font-face` in the same
-   stylesheet: a system font (`Arial`/`Roboto` for the grotesks, `Georgia` for the serif,
+2. **Metric-matched fallbacks.** Every family has a `… Fallback` `@font-face` in
+   `src/lib/components/css/font-fallbacks.css` — part of the render-blocking app CSS, so it
+   applies from the first paint rather than only once the deferred font stylesheet lands: a
+   system font (`Arial`/`Roboto` for the grotesks, `Georgia` for the serif,
    `Courier New` for the mono) with `size-adjust`, `ascent-override`, `descent-override` and
    `line-gap-override` tuned so it occupies exactly the space of the web font. The swap
    therefore does not move any text — before this, the swap alone was a CLS of 0.17–0.25 on

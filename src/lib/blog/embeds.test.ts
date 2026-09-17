@@ -51,6 +51,14 @@ describe('transformPostHtml', () => {
 		expect(transformPostHtml(html)).toBe(html);
 	});
 
+	it('does not double-escape entities in Ghost titles', () => {
+		const html = transformPostHtml(
+			'<iframe src="https://www.youtube.com/embed/abc123XYZ" title="Research &amp; trading"></iframe>'
+		);
+		expect(html).toContain('alt="Research &amp; trading"');
+		expect(html).not.toContain('&amp;amp;');
+	});
+
 	it('escapes attribute values in the facade', () => {
 		expect(renderYouTubeFacade('abc', 'A "quoted" <title>')).toContain('alt="A &quot;quoted&quot; &lt;title&gt;"');
 	});

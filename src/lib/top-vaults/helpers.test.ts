@@ -424,7 +424,7 @@ describe('isVaultIndexable', () => {
 		expect(isVaultIndexable(centVault)).toBe(false);
 	});
 
-	test('keeps a vault indexable when its denomination has no USD rate', () => {
+	test('keeps a vault indexable when its denomination has no confirmed USD rate', () => {
 		const vault = createTestVault('WETH vault', {
 			denomination: 'WETH',
 			current_nav: 1,
@@ -433,6 +433,22 @@ describe('isVaultIndexable', () => {
 		});
 		expect(getVaultCurrentTvlUsd(vault)).toBeNull();
 		expect(isVaultIndexable(vault)).toBe(true);
+
+		// unrecognised denomination and no rate metadata: the display helpers assume $1, the
+		// indexing rule must not
+		const unknownDenomination = createTestVault('Mystery token vault', {
+			denomination: 'XYZ',
+			denomination_slug: 'xyz',
+			normalised_denomination: 'XYZ',
+			stablecoinish: false,
+			current_nav: 3,
+			peak_nav: 3,
+			denomination_token_rate: null
+		});
+		expect(isVaultIndexable(unknownDenomination)).toBe(true);
+
+		// but a backend-flagged stablecoin with a tiny NAV is confirmed dust
+		expect(isVaultIndexable({ ...unknownDenomination, stablecoinish: true })).toBe(false);
 	});
 
 	test('excludes blacklisted, unknown-protocol dust and placeholder-named vaults', () => {

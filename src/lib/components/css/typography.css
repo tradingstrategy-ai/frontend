@@ -1,6 +1,6 @@
 :root {
 	/* Font Families */
-	/* the "… Fallback" faces are metric-matched system fonts, see static/fonts/fonts6.css */
+	/* the "… Fallback" faces are metric-matched system fonts, see font-fallbacks.css */
 	--ff-display: 'Neue Haas Grotesk Display', 'Neue Haas Grotesk Display Fallback', system-ui, sans-serif;
 	--ff-ui: 'Neue Haas Grotesk Text', 'Neue Haas Grotesk Text Fallback', system-ui, sans-serif;
 	--ff-text: 'Source Serif Pro', 'Source Serif Pro Fallback', serif;

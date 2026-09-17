@@ -4,14 +4,11 @@
  * Neue Haas Grotesk is licensed and only present on the production server; run
  * `scripts/setup-fonts.sh` to sync the referenced files locally (it reads this file).
  *
- * Every family has a metric-matched "… Fallback" face below its real faces: a system font
- * with `size-adjust` / `ascent-override` / `descent-override` / `line-gap-override` tuned
- * so the fallback occupies the same space as the web font. That is what stops the
- * `font-display: swap` from shifting the layout when the woff2 arrives (the swap was the
- * whole of the 0.25 CLS measured on text-heavy pages in the 2026-09 audit). The overrides
- * were computed with @capsizecss/core against the metrics unpacked from the woff2 files;
- * regenerate them if a font file changes. Display and Text metrics differ per weight, so
- * their fallbacks are declared per weight range.
+ * This stylesheet is loaded deferred (see src/app.html). The metric-matched "… Fallback"
+ * faces that keep the swap from shifting layout live in the render-blocking app CSS instead
+ * (src/lib/components/css/font-fallbacks.css), so they apply from the very first paint; their
+ * overrides were computed from the metrics of the files declared here — regenerate them if a
+ * font file changes.
  *
  * Rename this file (fonts6 → fonts7 …) whenever its contents change: it is served with a
  * long cache lifetime.
@@ -203,86 +200,4 @@
   font-style: italic;
   font-weight: 200 900;
 	src: url("./SourceCodePro/latin-italic.woff2") format("woff2");
-}
-
-/* Metric-matched fallbacks (see the header comment) */
-
-@font-face {
-	font-family: "Neue Haas Grotesk Display Fallback";
-	font-weight: 400;
-	src: local("Arial"), local("ArialMT"), local("Roboto"), local("Roboto-Regular"), local("Helvetica Neue");
-	ascent-override: 103.68%;
-	descent-override: 24.275%;
-	line-gap-override: 0%;
-	size-adjust: 88.156%;
-}
-
-@font-face {
-	font-family: "Neue Haas Grotesk Display Fallback";
-	font-weight: 500 600;
-	src: local("Arial"), local("ArialMT"), local("Roboto"), local("Roboto-Regular"), local("Helvetica Neue");
-	ascent-override: 96.194%;
-	descent-override: 27.203%;
-	line-gap-override: 0%;
-	size-adjust: 96.68%;
-}
-
-@font-face {
-	font-family: "Neue Haas Grotesk Display Fallback";
-	font-weight: 700 900;
-	src: local("Arial"), local("ArialMT"), local("Roboto"), local("Roboto-Regular"), local("Helvetica Neue");
-	ascent-override: 93.668%;
-	descent-override: 26.347%;
-	line-gap-override: 0%;
-	size-adjust: 99.82%;
-}
-
-@font-face {
-	font-family: "Neue Haas Grotesk Text Fallback";
-	font-weight: 400;
-	src: local("Arial"), local("ArialMT"), local("Roboto"), local("Roboto-Regular"), local("Helvetica Neue");
-	ascent-override: 93.561%;
-	descent-override: 23.438%;
-	line-gap-override: 0%;
-	size-adjust: 104.531%;
-}
-
-@font-face {
-	font-family: "Neue Haas Grotesk Text Fallback";
-	font-weight: 500 600;
-	src: local("Arial"), local("ArialMT"), local("Roboto"), local("Roboto-Regular"), local("Helvetica Neue");
-	ascent-override: 92.338%;
-	descent-override: 23.832%;
-	line-gap-override: 0%;
-	size-adjust: 106.999%;
-}
-
-@font-face {
-	font-family: "Neue Haas Grotesk Text Fallback";
-	font-weight: 700 900;
-	src: local("Arial"), local("ArialMT"), local("Roboto"), local("Roboto-Regular"), local("Helvetica Neue");
-	ascent-override: 91.266%;
-	descent-override: 24.075%;
-	line-gap-override: 0%;
-	size-adjust: 109.242%;
-}
-
-@font-face {
-	font-family: "Source Serif Pro Fallback";
-	font-weight: 400 700;
-	src: local("Georgia"), local("Times New Roman"), local("TimesNewRomanPSMT");
-	ascent-override: 90.943%;
-	descent-override: 33.187%;
-	line-gap-override: 0%;
-	size-adjust: 100.942%;
-}
-
-@font-face {
-	font-family: "Source Code Pro Fallback";
-	font-weight: 200 900;
-	src: local("Courier New"), local("CourierNewPSMT"), local("Menlo"), local("Consolas");
-	ascent-override: 98.416%;
-	descent-override: 27.304%;
-	line-gap-override: 0%;
-	size-adjust: 99.984%;
 }

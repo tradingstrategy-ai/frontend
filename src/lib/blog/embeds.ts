@@ -19,6 +19,16 @@ const YOUTUBE_EMBED_PATTERN =
 
 export const YOUTUBE_FACADE_CLASS = 'youtube-facade';
 
+/** Undo the entities Ghost uses in attribute values before the value is re-escaped. */
+function decodeAttribute(value: string): string {
+	return value
+		.replace(/&quot;/g, '"')
+		.replace(/&#39;/g, "'")
+		.replace(/&lt;/g, '<')
+		.replace(/&gt;/g, '>')
+		.replace(/&amp;/g, '&');
+}
+
 /** Escape the characters that matter inside an HTML attribute value. */
 function escapeAttribute(value: string): string {
 	return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -64,8 +74,8 @@ export function transformPostHtml(html: string): string {
 		const videoId = getYouTubeVideoId(src);
 
 		if (videoId) {
-			const titleMatch = attributes.match(TITLE_PATTERN);
-			return renderYouTubeFacade(videoId, titleMatch?.[1] ?? titleMatch?.[2] ?? undefined);
+			const title = attributes.match(TITLE_PATTERN)?.slice(1).find(Boolean);
+			return renderYouTubeFacade(videoId, title ? decodeAttribute(title) : undefined);
 		}
 
 		if (/\bloading\s*=/i.test(attributes)) return tag;
