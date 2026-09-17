@@ -18,7 +18,7 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 fonts_repo_url="${TS_FONTS_REPO_URL:-https://github.com/tradingstrategy-ai/fonts}"
 fonts_checkout_dir="${1:-$repo_root/deps/fonts}"
 fonts_ref="${2:-${TS_FONTS_REF:-}}"
-fonts_css="$repo_root/static/fonts/fonts5.css"
+fonts_css="$repo_root/static/fonts/fonts6.css"
 
 sync_dir() {
 	local source_dir="$1"

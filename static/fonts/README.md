@@ -17,4 +17,4 @@ bash scripts/setup-fonts.sh /path/to/fonts-checkout
 bash scripts/setup-fonts.sh /path/to/fonts-checkout main
 ```
 
-The script reads [`fonts5.css`](./fonts5.css) and syncs the referenced font directories into `static/fonts`.
+The script reads [`fonts6.css`](./fonts6.css) and syncs the referenced font directories into `static/fonts`.

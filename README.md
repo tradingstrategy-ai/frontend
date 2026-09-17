@@ -35,7 +35,7 @@ SHARP_IGNORE_GLOBAL_LIBVIPS=1 pnpm install --frozen-lockfile
 
 `frontend` has one submodule dependency installed under `deps`:
 
-- `fonts` - optional licensed fonts (see `static/fonts5.css` and `src/lib/components/css/typography.css`)
+- `fonts` - optional licensed fonts (see `static/fonts6.css` and `src/lib/components/css/typography.css`)
 
 ### Install submodules
 

@@ -10,36 +10,6 @@ export function serializeSchema(metadata: any) {
 }
 
 /**
- * Google Article – enhanced search results for blog posts:
- * https://developers.google.com/search/docs/advanced/structured-data/article
- *
- * The generated <script> tag should included in the <head> of all blog posts
- * as raw @html
- */
-interface Post {
-	title: string;
-	author: string;
-	published_at: Date;
-	updated_at: string;
-}
-
-export function serializePost(postData: Post) {
-	const metadata = {
-		'@context': 'http://schema.org',
-		'@type': 'NewsArticle',
-		headline: postData.title,
-		author: {
-			'@type': 'Person',
-			name: 'Trading Strategy'
-		},
-		datePublished: postData.published_at,
-		dateModified: postData.updated_at
-	};
-
-	return serializeSchema(metadata);
-}
-
-/**
  * WebSite SearchAction structured data for the site's query URL.
  *
  * Google retired the visual sitelinks search box, but this remains accurate

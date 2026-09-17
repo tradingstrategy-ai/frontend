@@ -31,36 +31,39 @@ https://blog.cloudflare.com/early-hints/#testing-early-hints-with-web-page-test
 - https://search.google.com/test/mobile-friendly
   - Example https://search.google.com/test/mobile-friendly?url=https%3A%2F%2Ftradingstrategy.ai%2Ftrading-view%2Fbinance%2Fpancakeswap-v2%2Fbillntedsupsidedownbackwardsmatrixmetaverse5000xinu-bnb&url=https%3A%2F%2Ftradingstrategy.ai%2Ftrading-view%2Fbinance%2Fpancakeswap-v2%2Fbillntedsupsidedownbackwardsmatrixmetaverse5000xinu-bnb&hl=en
 
-# Mobile font cheat - Cheating on the Largest Contentful Paint (LCP) event
+# Web fonts and layout shift
 
-The largest contentful paint event is a measure Google uses to
-rank pages up in its search listing. Because we have exchausted pretty much every other speed optimization on the page,
-the LCP on slow mobile connections is mostly driven by font downloads (see `/static/fonts.css`).
-Note that this is
+The licensed Neue Haas Grotesk faces, Source Serif Pro and Source Code Pro are declared in
+`static/fonts/fonts6.css` (the file is renamed whenever its contents change because it is
+served with a long cache lifetime). Three mechanisms keep them from hurting Core Web Vitals:
 
-- Only concern for slow connections - fast connections do LCP with fonts under one second
-- Not a real concern for users because we use `font-display: swap`
+1. **Deferred stylesheet.** `src/app.html` loads the stylesheet with the `media="print"` →
+   `onload="this.media='all'"` trick, so text paints immediately in the fallback face
+   instead of waiting for the font CSS. All faces are `font-display: swap`.
+2. **Metric-matched fallbacks.** Every family has a `… Fallback` `@font-face` in the same
+   stylesheet: a system font (`Arial`/`Roboto` for the grotesks, `Georgia` for the serif,
+   `Courier New` for the mono) with `size-adjust`, `ascent-override`, `descent-override` and
+   `line-gap-override` tuned so it occupies exactly the space of the web font. The swap
+   therefore does not move any text — before this, the swap alone was a CLS of 0.17–0.25 on
+   text-heavy pages. The overrides were computed with `@capsizecss/core` from the metrics
+   unpacked out of the woff2 files (Display and Text differ per weight, so their fallbacks
+   are declared per weight range); recompute them if a font file changes. The font stacks in
+   `src/lib/components/css/typography.css` and `typography-new.css` list the fallback right
+   after the web font.
+3. **Preload headers.** `src/lib/server/font-preload.ts` adds `Link: rel=preload` headers
+   (Cloudflare turns them into 103 Early Hints) for the stylesheet on every HTML page, and
+   for the three primary woff2 files on the templates whose LCP element is text.
 
-... however Google still bugs on mobile LCP if it falls below 2500 ms.
+`tests/integration/layout-shift.test.ts` delays the woff2 responses and asserts the token,
+pair and glossary pages stay under a CLS of 0.05 on a phone viewport.
 
-What we do is that we cheat our way through. We only want to load fonts on fast connections.
-However, we cannot detect this in the client. Thus, we load fonts only when we detect a mobile screen,
-shaving off 500 ms from our "Google mobile LCP" and getting perfect Core Web Vitals score on the website.
-
-The downside is, of course, that we do not have proper styling with fonts on mobile.
-However I consider Core Web Vitals score more important than artistic essence of the website
-on mobile.
-
-![Download bytes breakdown](font-breakdown.png)
-
-# Analyzing vendor.js bundle
+# Analysing the client bundle
 
 - https://www.npmjs.com/package/source-map-explorer
 
 An example:
 
-```
-npm install -g source-map-explorer
-rm -rf build && node_modules/.bin/svelte-kit build
-source-map-explorer build/client/_app/chunks/vendor-*.js
+```shell
+pnpm run build
+npx source-map-explorer 'build/client/_app/immutable/chunks/*.js'
 ```

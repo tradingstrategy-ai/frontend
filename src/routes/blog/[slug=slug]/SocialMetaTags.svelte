@@ -1,13 +1,27 @@
 <!--
-  Facebook, Twitter and Google SEO tags.
+@component
+Search, Facebook and Twitter metadata plus `BlogPosting` structured data for a blog post.
 
-  To test:
-  - https://developers.facebook.com/tools/debug/
-  - https://cards-dev.twitter.com/validator
- -->
+- The meta description is Ghost's `meta_description` when the author set one, otherwise the
+  excerpt cut to ~155 characters (Ghost excerpts are 500 characters, far past what Google shows)
+- The article is published by the site's `Organization` node (`ORGANIZATION_ID`, declared on
+  the home page), which is what Google's Article feature expects
+
+To test:
+- https://search.google.com/test/rich-results
+- https://developers.facebook.com/tools/debug/
+- https://cards-dev.twitter.com/validator
+
+@example
+
+```svelte
+	<SocialMetaTags url={page.url} {post} />
+```
+-->
 <script lang="ts">
 	import { getBlogImageUrl } from '$lib/blog/images';
 	import type { BlogPostDetails } from '$lib/blog/schemas';
+	import { ORGANIZATION_ID, SITE_NAME, getMetaDescription, getPageTitle } from '$lib/helpers/seo';
 	import { JsonLd } from 'svelte-meta-tags';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
@@ -20,11 +34,13 @@
 
 	let pageUrl = $derived(new URL(url.pathname, url.origin).href);
 	let imageUrl = $derived(new URL(getBlogImageUrl(post.feature_image, { version: post.updated_at }), url).href);
+	let title = $derived(getPageTitle([post.meta_title || post.title]));
+	let description = $derived(getMetaDescription([post.meta_description, post.excerpt]));
 </script>
 
 <MetaTags
-	title={post.title}
-	description={post.excerpt}
+	{title}
+	{description}
 	openGraph={{
 		siteName: 'Trading Strategy',
 		url: pageUrl,
@@ -44,14 +60,16 @@
 
 <JsonLd
 	schema={{
-		'@context': 'http://schema.org',
-		'@type': 'NewsArticle',
+		'@context': 'https://schema.org',
+		'@type': 'BlogPosting',
 		headline: post.title,
-		author: {
-			'@type': 'Person',
-			name: 'Trading Strategy'
-		},
+		description,
+		image: [imageUrl],
+		url: pageUrl,
+		mainEntityOfPage: pageUrl,
 		datePublished: post.published_at,
-		dateModified: post.updated_at
+		dateModified: post.updated_at,
+		author: { '@type': 'Organization', '@id': ORGANIZATION_ID, name: SITE_NAME },
+		publisher: { '@type': 'Organization', '@id': ORGANIZATION_ID, name: SITE_NAME }
 	}}
 />
