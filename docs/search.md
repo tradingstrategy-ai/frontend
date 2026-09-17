@@ -22,7 +22,7 @@ Every result provides a name, entity type, one-month APY, latest TVL, canonical 
 
 The full results page selects matches by relevance, then latest TVL descending and name ascending. Its table starts sorted by latest TVL, with blacklisted vaults still placed last.
 
-Typeahead suggestions use strict latest-TVL descending ordering across every searchable entity type. They are intentionally not diversified by entity type, because diversification would make the visible order differ from TVL order.
+Typeahead suggestions use latest-TVL descending ordering across every searchable entity type, with blacklisted vaults always placed after healthy results. They are intentionally not diversified by entity type, because diversification would make the visible order differ from TVL order.
 The results page returns at most 100 rows and explicitly reports when a broader query has been truncated.
 
 ## Typeahead

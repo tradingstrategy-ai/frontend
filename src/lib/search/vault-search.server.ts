@@ -48,7 +48,7 @@ type SearchOptions = {
 	entityTypes?: readonly SearchEntityType[];
 	/** Exclude vault results whose latest TVL is below this USD value. */
 	minimumVaultTvlUsd?: number;
-	/** Prioritise matching entities with the largest latest USD TVL. */
+	/** Prioritise healthy matching entities by latest USD TVL, keeping blacklisted vaults last. */
 	sort?: 'relevance' | 'tvl';
 };
 
@@ -332,7 +332,11 @@ export async function searchVaultEntities(
 		.filter((match) => !shortQuery || match.score >= 2)
 		.toSorted((a, b) => {
 			if (options.sort === 'tvl') {
-				// TVL ordering is strict, including matching blacklisted vaults and entity groups.
+				// Keep known-bad vaults below healthy results even when sorting by TVL.
+				const aBlacklisted = a.record.entityType === 'blacklisted-vault';
+				const bBlacklisted = b.record.entityType === 'blacklisted-vault';
+				if (aBlacklisted !== bBlacklisted) return aBlacklisted ? 1 : -1;
+
 				const tvlDifference = (b.record.latestTvl ?? -1) - (a.record.latestTvl ?? -1);
 				if (tvlDifference !== 0) return tvlDifference;
 				if (a.score !== b.score) return b.score - a.score;
