@@ -1,4 +1,4 @@
-import type { Hex, TypedData, TypedDataDomain } from 'viem';
+import type { TypedData, TypedDataDomain } from 'viem';
 import type { TokenInfo } from './schemas/token';
 import { bytesToHex, getTypesForEIP712Domain, hexToNumber, numberToHex, slice } from 'viem';
 import { type Config, type SignTypedDataParameters, signTypedData } from '@wagmi/core';

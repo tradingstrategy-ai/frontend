@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { Chain } from '$lib/helpers/chain';
 	import Tooltip from '$lib/components/Tooltip.svelte';
 	import { getLogoUrl } from '$lib/helpers/assets';
@@ -15,7 +16,7 @@
 	<Tooltip>
 		<svelte:fragment slot="trigger">
 			{#if chain}
-				<a href="/vaults/chains/{chain.slug}">
+				<a href={resolve('/vaults/chains/[chain=slug]', { chain: chain.slug })}>
 					<img src={getLogoUrl('blockchain', chain.slug)} alt={label} />
 				</a>
 			{:else}

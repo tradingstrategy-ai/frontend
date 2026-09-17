@@ -1,17 +1,35 @@
-<script lang="ts">
-	export let active = false;
-	export let label: string = '';
-	export let targetUrl: string;
-	export let external = false;
+<!--
+@component
+A single entry of a `Menu`. The active item keeps its `href` (so the link stays crawlable
+and usable) and is marked with `aria-current="page"`, which also drives its styling.
 
-	$: href = active ? undefined : targetUrl;
-	$: rel = external ? 'external noreferrer' : undefined;
-	$: target = external ? '_blank' : undefined;
+@example
+
+```svelte
+	<MenuItem label="Top vaults" targetUrl="/vaults" active={currentPage === '/vaults'} />
+```
+-->
+<script lang="ts">
+	import type { Snippet } from 'svelte';
+
+	interface Props {
+		active?: boolean;
+		label?: string;
+		targetUrl: string;
+		external?: boolean;
+		children?: Snippet;
+	}
+
+	let { active = false, label = '', targetUrl, external = false, children }: Props = $props();
+
+	let rel = $derived(external ? 'external noreferrer' : undefined);
+	let target = $derived(external ? '_blank' : undefined);
 </script>
 
 <li class="menu-item">
-	<a {href} {rel} {target} on:click>
-		<slot>{label}</slot>
+	<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- href is a resolved path passed in by the caller -->
+	<a href={targetUrl} {rel} {target} aria-current={active ? 'page' : undefined}>
+		{#if children}{@render children()}{:else}{label}{/if}
 	</a>
 </li>
 
@@ -33,7 +51,7 @@
 		padding: var(--menu-item-padding, var(--space-sl) 0);
 		border-radius: var(--menu-item-border-radius, var(--radius-xs));
 
-		&:not([href]):not([tabindex]) {
+		&[aria-current='page'] {
 			background: var(--c-box-3);
 			color: var(--menu-item-active-color, inherit);
 		}

@@ -1,5 +1,5 @@
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
-import { buildStablecoinMetadataLookup, findStablecoinMetadata } from '$lib/stablecoin-metadata/helpers';
+import { buildStablecoinMetadataLookup, findVaultStablecoinMetadata } from '$lib/stablecoin-metadata/helpers';
 import { fetchLatestTreasuryRate } from '$lib/reference-rates';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { isVisibleVaultCategory } from '$lib/top-vaults/categories';
@@ -52,13 +52,7 @@ async function resolveListingVaults(fetchFn: typeof fetch, topVaults: TopVaults,
 	const lookup = buildStablecoinMetadataLookup(metadata);
 	const rates = getCurrencyUsdRates(metadata);
 	return vaults
-		.map((vault) =>
-			withVaultDenominationTokenRate(
-				vault,
-				findStablecoinMetadata(lookup, vault.denomination_slug, vault.denomination, vault.normalised_denomination),
-				rates
-			)
-		)
+		.map((vault) => withVaultDenominationTokenRate(vault, findVaultStablecoinMetadata(lookup, vault), rates))
 		.filter((vault) => isNonUsdDenominatedVault(vault) && getVaultCurrentTvlUsd(vault) != null);
 }
 

@@ -8,7 +8,7 @@
 	import TransactionStatus from './TransactionStatus.svelte';
 
 	export let chain: Chain;
-	export let transactions: Record<string, any>[] = [];
+	export let transactions: UntypedApiRow[] = [];
 
 	const table = createTable(readable(transactions));
 

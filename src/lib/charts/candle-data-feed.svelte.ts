@@ -1,6 +1,6 @@
 import type { TimeInterval } from 'd3-time';
 import type { TimeBucket } from '$lib/schemas/utility';
-import type { ApiCandle, CandleDataItem, DataFeed } from './types';
+import type { ApiCandle, CandleDataItem, DataFeed, TvDataItem } from './types';
 import { timeBucketToInterval } from './helpers';
 import { isHttpError } from '@sveltejs/kit';
 import { fetchPublicApi } from '$lib/helpers/public-api';
@@ -21,21 +21,28 @@ export function apiCandleToDataItem(c: ApiCandle): CandleDataItem {
 	};
 }
 
-export type ApiDataTransformer = (data: unknown) => CandleDataItem[];
+/** The candles endpoints return a map keyed by candle type or pair id. */
+export type ApiCandleResponse = Record<string, ApiCandle[] | undefined>;
 
-export class CandleDataFeed implements DataFeed<CandleDataItem> {
+export type ApiDataTransformer<T extends TvDataItem = CandleDataItem> = (data: ApiCandleResponse) => T[];
+
+/**
+ * Paged data feed over the candles API endpoints. `T` is the chart item the transformer
+ * produces — candles by default, or line points for series such as interest rates.
+ */
+export class CandleDataFeed<T extends TvDataItem = CandleDataItem> implements DataFeed<T> {
 	interval: TimeInterval;
 	endDate: Date;
 	loading = $state(false);
 	hasMoreData = $state(true);
-	data = $state([]) as CandleDataItem[];
+	data = $state([]) as T[];
 
 	constructor(
 		readonly fetch: Fetch,
 		readonly endpoint: string,
 		readonly timeBucket: TimeBucket,
 		readonly urlParams: Record<string, string> = {},
-		readonly transformApiData: ApiDataTransformer
+		readonly transformApiData: ApiDataTransformer<T>
 	) {
 		this.interval = timeBucketToInterval(timeBucket);
 		// eslint-disable-next-line svelte/prefer-svelte-reactivity
@@ -56,10 +63,10 @@ export class CandleDataFeed implements DataFeed<CandleDataItem> {
 
 		const startDate = this.interval.offset(this.endDate, -(ticks - 1));
 
-		let candles: CandleDataItem[] = [];
+		let candles: T[] = [];
 
 		try {
-			const data = await fetchPublicApi(this.fetch, this.endpoint, {
+			const data = await fetchPublicApi<ApiCandleResponse>(this.fetch, this.endpoint, {
 				...this.urlParams,
 				time_bucket: this.timeBucket,
 				start: startDate.toISOString().slice(0, 19),

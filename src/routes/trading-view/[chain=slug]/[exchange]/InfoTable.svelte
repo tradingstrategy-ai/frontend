@@ -3,13 +3,14 @@
 Render exchange summary table on exchange page.
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { fromUnixTime, format } from 'date-fns';
-	import { formatAmount, formatDollar, formatUrlAsDomain } from '$lib/helpers/formatters';
+	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
 	import type { ExchangeNameInfo } from '$lib/helpers/exchange';
 	import { exchangeTypeLabel } from '$lib/helpers/exchange';
 	import { TradingDataInfo, TradingDataInfoRow } from '$lib/components';
 
-	export let details: any;
+	export let details: UntypedApiRow;
 	export let nameDetails: ExchangeNameInfo;
 </script>
 
@@ -61,7 +62,7 @@ Render exchange summary table on exchange page.
 	<TradingDataInfoRow label="Type" value={exchangeTypeLabel(details.exchange_type)} />
 
 	<TradingDataInfoRow label="Blockchain">
-		<a slot="value" href="/trading-view/{details.chain_slug}">{details.chain_name}</a>
+		<a slot="value" href={resolve(`/trading-view/${details.chain_slug}`)}>{details.chain_name}</a>
 	</TradingDataInfoRow>
 
 	<TradingDataInfoRow value={details.exchange_id}>

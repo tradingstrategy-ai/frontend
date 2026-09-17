@@ -11,5 +11,5 @@ export const TOKEN_STANDARDS = {
 };
 
 export function getTokenStandardName(chainSlug: string) {
-	return TOKEN_STANDARDS[chainSlug] || 'ERC-20';
+	return (TOKEN_STANDARDS as Record<string, string>)[chainSlug] || 'ERC-20';
 }

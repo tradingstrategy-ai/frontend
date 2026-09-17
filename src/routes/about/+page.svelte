@@ -2,6 +2,7 @@
 	About Trading Strategy: introduction, audience, platform and partners
 -->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { discordUrl } from '$lib/config';
 	import { Banner, Button, HeroVideo, Section } from '$lib/components';
 	import IntroHero from './IntroHero.svelte';
@@ -12,10 +13,10 @@
 	import IconDiscord from '~icons/local/discord';
 </script>
 
-<svelte:head>
-	<title>About Us</title>
-	<meta name="description" content="About Trading Strategy Protocol" />
-</svelte:head>
+<MetaTags
+	titleParts={['About us']}
+	description="Trading Strategy builds data-driven DeFi vault discovery and automated trading strategies. Learn who we are, what we build and how to get in touch."
+/>
 
 <main>
 	<IntroHero />

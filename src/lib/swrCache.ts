@@ -19,9 +19,9 @@
  * met the requirements. (Extract this and publish?)
  */
 
-type CacheRecord = {
-	value?: any;
-	loading?: Promise<any>;
+type CacheRecord<U> = {
+	value?: U;
+	loading?: Promise<U>;
 	updatedAt?: number;
 };
 
@@ -33,8 +33,8 @@ type CacheRecord = {
  * @param fn - original function to memoize
  * @param ttl - cache TTL in seconds
  */
-export default <T extends any[], U>(fn: (...args: T) => Promise<U>, ttl: number) => {
-	const cache: Record<string, CacheRecord> = {};
+export default <T extends unknown[], U>(fn: (...args: T) => Promise<U>, ttl: number) => {
+	const cache: Record<string, CacheRecord<U>> = {};
 
 	// Wrap original fn with a cache function that implements SWR caching strategy
 	async function cacheFn(...args: T): Promise<U> {
@@ -53,7 +53,7 @@ export default <T extends any[], U>(fn: (...args: T) => Promise<U>, ttl: number)
 		}
 
 		// Return cached value if available; or fallback to loading promise
-		return hasValue ? cached.value : cached.loading;
+		return hasValue ? (cached.value as U) : cached.loading!;
 	}
 
 	cacheFn.ttl = ttl;

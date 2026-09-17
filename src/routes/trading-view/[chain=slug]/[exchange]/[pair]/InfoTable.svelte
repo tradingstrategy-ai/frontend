@@ -1,10 +1,11 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { Timestamp, Tooltip, TradingDataInfo, TradingDataInfoRow } from '$lib/components';
 	import { formatDollar, formatSwapFee, formatTokenAmount } from '$lib/helpers/formatters';
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 
-	export let summary: Record<string, any>;
-	export let details: Record<string, any>;
+	export let summary: UntypedApiRow;
+	export let details: UntypedApiRow;
 
 	$: priceChange = getProfitInfo(summary.price_change_24h);
 
@@ -18,13 +19,13 @@
 
 <TradingDataInfo>
 	<TradingDataInfoRow label="Token">
-		<a slot="value" href="/trading-view/{summary.chain_slug}/tokens/{summary.base_token_address}">
+		<a slot="value" href={resolve(`/trading-view/${summary.chain_slug}/tokens/${summary.base_token_address}`)}>
 			{summary.base_token_symbol_friendly}
 		</a>
 	</TradingDataInfoRow>
 
 	<TradingDataInfoRow label="Quoted in">
-		<a slot="value" href="/trading-view/{summary.chain_slug}/tokens/{summary.quote_token_address}">
+		<a slot="value" href={resolve(`/trading-view/${summary.chain_slug}/tokens/${summary.quote_token_address}`)}>
 			{summary.quote_token_symbol_friendly}
 		</a>
 	</TradingDataInfoRow>
@@ -85,13 +86,13 @@
 	{/if}
 
 	<TradingDataInfoRow label="Exchange">
-		<a slot="value" href="/trading-view/{summary.chain_slug}/{summary.exchange_slug}">
+		<a slot="value" href={resolve(`/trading-view/${summary.chain_slug}/${summary.exchange_slug}`)}>
 			{details.exchange_name}
 		</a>
 	</TradingDataInfoRow>
 
 	<TradingDataInfoRow label="Blockchain">
-		<a slot="value" href="/trading-view/{summary.chain_slug}">
+		<a slot="value" href={resolve(`/trading-view/${summary.chain_slug}`)}>
 			{details.chain_name}
 		</a>
 	</TradingDataInfoRow>

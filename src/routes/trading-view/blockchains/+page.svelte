@@ -2,6 +2,8 @@
 	Display chain information and indexing status
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
@@ -10,10 +12,10 @@
 	import { getLogoUrl } from '$lib/helpers/assets';
 </script>
 
-<svelte:head>
-	<title>Trading data for blockchains</title>
-	<meta name="description" content="Explore trading pairs and exchanges" />
-</svelte:head>
+<MetaTags
+	titleParts={['Blockchains', 'DEX trading data']}
+	description="Explore decentralised exchange trading pairs, tokens and exchanges across every blockchain Trading Strategy tracks."
+/>
 
 <Breadcrumbs labels={{ blockchains: 'Blockchains' }} />
 
@@ -25,7 +27,7 @@
 	<Section>
 		<div class="chains">
 			{#each chains as chain (chain.id)}
-				<a class="tile b" href={`/trading-view/${chain.slug}`}>
+				<a class="tile b" href={resolve('/trading-view/[chain=slug]', { chain: chain.slug })}>
 					<div class="tile c">
 						<img alt={`${chain.name} logo`} src={getLogoUrl('blockchain', chain.slug)} />
 					</div>

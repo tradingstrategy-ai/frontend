@@ -6,7 +6,7 @@ export const strategyHiddenElementsSchema = z
 	.object({
 		timeframes: z.boolean().default(false)
 	})
-	.default({});
+	.default({ timeframes: false });
 
 export const strategyConfigurationSchema = z.object({
 	id: z.string(),

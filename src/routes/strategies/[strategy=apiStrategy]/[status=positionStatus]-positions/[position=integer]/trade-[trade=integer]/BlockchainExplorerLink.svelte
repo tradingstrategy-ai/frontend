@@ -11,7 +11,7 @@
 </script>
 
 {#if href}
-	<a target="_blank" rel="noreferrer" {href}>
+	<a target="_blank" rel="external noreferrer" {href}>
 		{tx_hash}
 	</a>
 {:else}

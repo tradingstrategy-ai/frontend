@@ -1,4 +1,9 @@
+<!--
+	DEX backtesting dataset downloads behind an API key
+-->
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { backendUrl, backendInternalUrl } from '$lib/config';
 	import { formatByteUnits, formatNumber } from '$lib/helpers/formatters';
 	import {
@@ -15,11 +20,11 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import IconBook from '~icons/local/book';
 
-	export let data;
+	let { data } = $props();
 
-	let submitting = false;
-	let validApiKey = '';
-	let apiKeyError = '';
+	let submitting = $state(false);
+	let validApiKey = $state('');
+	let apiKeyError = $state('');
 
 	function getDownloadUrl(originalUrl: string) {
 		// NOTE: public API does not properly identify the request origin based on `X-Forwarded-Host`
@@ -33,6 +38,7 @@
 	}
 
 	async function handleSubmit(event: SubmitEvent) {
+		event.preventDefault();
 		const url = `${backendUrl}/validate-api-key`;
 		const key = (event.target as HTMLFormElement).apiKey.value.trim();
 
@@ -66,10 +72,10 @@
 	}
 </script>
 
-<svelte:head>
-	<title>DEX spot data</title>
-	<meta name="description" content="Download price, OHLCV and liquidity backtesting data" />
-</svelte:head>
+<MetaTags
+	titleParts={['DEX spot data for backtesting']}
+	description="Download decentralised exchange price, OHLCV and liquidity datasets for backtesting algorithmic trading strategies."
+/>
 
 <Breadcrumbs />
 
@@ -79,7 +85,9 @@
 			{#snippet subtitle()}
 				<p>
 					The following datasets are available for historical DEX trading data.
-					<a class="body-link" href="/vaults/api/register">Sign up for a free API key to download the data.</a>
+					<a class="body-link" href={resolve('/vaults/api/register')}
+						>Sign up for a free API key to download the data.</a
+					>
 				</p>
 				<p>
 					Read the documentation
@@ -106,7 +114,7 @@
 		<h2>Available datasets</h2>
 
 		{#if !validApiKey}
-			<form id="form-api-key" on:submit|preventDefault={handleSubmit}>
+			<form id="form-api-key" onsubmit={handleSubmit}>
 				<label for="apiKey">Enter API key to enable download</label>
 
 				<div class="form-group">
@@ -146,7 +154,7 @@
 				</thead>
 
 				<tbody>
-					{#each data.datasets as row}
+					{#each data.datasets as row (row.download_link)}
 						<tr>
 							<td class="name">{row.name}</td>
 							<td>{row.designation}</td>
@@ -159,7 +167,12 @@
 							<td class="links">
 								<a class="action-link" href={row.documentation} rel="external">Documentation</a>
 								{#if validApiKey}
-									<a class="action-link" target="_blank" rel="noreferrer" href={getDownloadUrl(row.download_link)}>
+									<a
+										class="action-link"
+										target="_blank"
+										rel="external noreferrer"
+										href={getDownloadUrl(row.download_link)}
+									>
 										Download
 									</a>
 								{:else}

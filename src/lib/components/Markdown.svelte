@@ -11,6 +11,7 @@
 </script>
 
 <div class="markdown ds-3">
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- markdown rendered by micromark from trusted content -->
 	{@html micromark(content, options)}
 </div>
 

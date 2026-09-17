@@ -12,7 +12,9 @@ Renders the server-derived current versus peak TVL chart.
 		chartAxisBorder,
 		chartGridColor,
 		chartTextColor,
-		loadPlotly
+		loadPlotly,
+		type PlotlyApi,
+		type PlotlyElement
 	} from '$lib/scatter-plot/helpers';
 	import ScatterPlotShell from '$lib/scatter-plot/ScatterPlotShell.svelte';
 
@@ -24,11 +26,11 @@ Renders the server-derived current versus peak TVL chart.
 	let loading = $state(true);
 	let error = $state<string | null>(null);
 
-	function addIsolatingLegend(Plotly: any, traces: unknown[]) {
-		(chartContainer as any).on('plotly_legendclick', (event: any) => {
+	function addIsolatingLegend(Plotly: PlotlyApi, traces: unknown[]) {
+		(chartContainer as PlotlyElement).on('plotly_legendclick', (event) => {
 			const clicked = event.curveNumber;
-			const visibleStates: (boolean | string)[] = (chartContainer as any).data.map(
-				(trace: any) => trace.visible ?? true
+			const visibleStates: (boolean | string)[] = (chartContainer as PlotlyElement).data.map(
+				(trace) => trace.visible ?? true
 			);
 			const allVisible = visibleStates.every((visible) => visible === true);
 			const visibleCount = visibleStates.filter((visible) => visible === true).length;
@@ -128,7 +130,7 @@ Renders the server-derived current versus peak TVL chart.
 				height: 600,
 				margin: isMobile ? { t: 10, r: 10, b: 100, l: 10 } : { t: 20, r: 20, b: 100, l: 80 },
 				legend: {
-					...(chrome.legend as Record<string, any>),
+					...(chrome.legend as Record<string, unknown>),
 					title: { text: colourBy === 'chain' ? 'Chain' : 'Protocol' },
 					orientation: 'h',
 					yanchor: 'top',
@@ -153,7 +155,7 @@ Renders the server-derived current versus peak TVL chart.
 				hovertemplate: '%{text}<extra></extra>'
 			}));
 			await Plotly.newPlot(chartContainer, traces, layout, buildChartConfig());
-			(chartContainer as any).on('plotly_click', (event: any) => {
+			(chartContainer as PlotlyElement).on('plotly_click', (event) => {
 				const url = event.points?.[0]?.customdata;
 				if (url) goto(url);
 			});
@@ -163,7 +165,7 @@ Renders the server-derived current versus peak TVL chart.
 		});
 		return () => {
 			cancelled = true;
-			if (chartContainer && (window as any).Plotly) (window as any).Plotly.purge(chartContainer);
+			if (chartContainer) window.Plotly?.purge(chartContainer);
 		};
 	});
 </script>

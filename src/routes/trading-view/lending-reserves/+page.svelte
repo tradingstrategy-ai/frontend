@@ -2,6 +2,7 @@
 	Render listing of all available Reserves
 -->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import type { ComponentProps } from 'svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
@@ -27,10 +28,10 @@
 	};
 </script>
 
-<svelte:head>
-	<title>Lending Reserves</title>
-	<meta name="description" content="Top decentralised lending reserves" />
-</svelte:head>
+<MetaTags
+	titleParts={['Lending reserves']}
+	description="Top decentralised lending reserves across Aave and other protocols, with supply and borrow rates and historical data."
+/>
 
 <Breadcrumbs labels={{ 'lending-reserves': 'All lending reserves' }} />
 

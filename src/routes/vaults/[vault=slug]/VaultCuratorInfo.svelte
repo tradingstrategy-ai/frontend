@@ -41,12 +41,14 @@ curator.
 				<h2>Curated by {curator.name}</h2>
 			</div>
 			<p class="description">
+				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- curatorPageUrl is built with resolve() -->
 				This {assetType} is curated by <a href={curatorPageUrl}>{curator.name}</a>.
 			</p>
 			{#if curator.short_description}
 				<p class="description">{curator.short_description}</p>
 			{/if}
 		</div>
+		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- curatorPageUrl is built with resolve() -->
 		<Button size="sm" class="view-all-btn" href={curatorPageUrl}>
 			View all {curator.name}
 			{assetTypePlural}

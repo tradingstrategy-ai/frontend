@@ -18,7 +18,7 @@
 
 <span class="crypto-address-widget size-{size} tile b {classes}">
 	{@render icon?.()}
-	<a {href} rel="noreferrer" target="_blank">
+	<a {href} rel="external noreferrer" target="_blank">
 		<HashAddress {address} endChars={7} />
 	</a>
 	{#if clipboardCopier}

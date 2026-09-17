@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { ComponentProps } from 'svelte';
 	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 	import { page } from '$app/state';
@@ -143,7 +144,7 @@
 			</p>
 
 			<p>
-				<a class="body-link" href="/community">Join Discord to get access</a>.
+				<a class="body-link" href={resolve('/community')}>Join Discord to get access</a>.
 			</p>
 		{/if}
 	</Section>

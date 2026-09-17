@@ -8,7 +8,7 @@
 	let props: EntityTableProps = $props();
 </script>
 
-<TradingEntitiesTable {...props} getHref={lendingReserveInternalUrl}>
+<TradingEntitiesTable {...props} getHref={(row) => lendingReserveInternalUrl(row as LendingReserve)}>
 	{#snippet cells(row, format)}
 		<td width="60%" class="asset">
 			{#if row.asset_name}

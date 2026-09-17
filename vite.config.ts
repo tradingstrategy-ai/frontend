@@ -110,7 +110,7 @@ export default defineConfig(({ mode }) => {
 		test: {
 			environment: 'jsdom',
 			globals: true,
-			include: ['src/**/*.{test,spec}.{js,ts}'],
+			include: ['src/**/*.{test,spec}.{js,ts}', 'scripts/**/*.{test,spec}.{js,ts}'],
 			restoreMocks: true,
 			setupFiles: ['./vitest.setup.js']
 		}

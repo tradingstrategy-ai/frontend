@@ -25,7 +25,7 @@ Display summary performance data for a given period; lazy-loads data when scroll
 	export let active = false;
 
 	let loaded = false;
-	let tradeData: any = {};
+	let tradeData: UntypedApiRow = {};
 
 	$: if (pairId) {
 		loaded = false;
@@ -37,7 +37,7 @@ Display summary performance data for a given period; lazy-loads data when scroll
 	$: priceChange = getProfitInfo(getPriceChange(tradeData));
 
 	async function loadData() {
-		const params = new URLSearchParams({ pair_id: pairId, period });
+		const params = new URLSearchParams({ pair_id: String(pairId), period });
 
 		// see: https://tradingstrategy.ai/api/explorer/#/Pair/web_candles
 		const apiUrl = `${backendUrl}/pair-trade-data?${params}`;

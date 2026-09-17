@@ -40,7 +40,7 @@
 			<thead>
 				<tr>
 					<th class="name">Metric</th>
-					{#each tableData.columns as column}
+					{#each tableData.columns as column (column)}
 						<th class={column.toLowerCase()}>
 							{column}
 						</th>
@@ -52,12 +52,12 @@
 					<tr>
 						<td class="name">
 							{#if row.help_link}
-								<a class="body-link" href={row.help_link} target="_blank">{row.name}</a>
+								<a class="body-link" href={row.help_link} target="_blank" rel="external noreferrer">{row.name}</a>
 							{:else}
 								{row.name}
 							{/if}
 						</td>
-						{#each tableData.columns as column}
+						{#each tableData.columns as column (column)}
 							{@const value = row.value[column]}
 							<td class={column.toLowerCase()}>
 								{#if isDurationField(row)}

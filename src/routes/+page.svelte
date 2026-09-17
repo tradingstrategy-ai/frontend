@@ -2,7 +2,6 @@
 	Home page
 -->
 <script lang="ts">
-	import { page } from '$app/state';
 	import DebugFreshnessData from '$lib/components/DebugFreshnessData.svelte';
 	import HomeHeroBanner from './_components/HomeHeroBanner.svelte';
 	import FeaturedStrategies from './_components/FeaturedStrategies.svelte';
@@ -13,28 +12,25 @@
 	import BlogRoll from '$lib/components/BlogRoll.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Section from '$lib/components/Section.svelte';
-	import { sitelinksSearchBox } from '$lib/helpers/google-meta';
+	import { organizationSchema, sitelinksSearchBox } from '$lib/helpers/google-meta';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
 	let { data } = $props();
 
 	let { posts, strategies, topVaults, savingsRate, treasuryRate } = $derived(data);
 
-	const title = 'Trading Strategy';
-	const description = 'Data-driven DeFi vault opportunities';
-	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
+	const title = 'DeFi vault rankings, yields and risk data | Trading Strategy';
+	const description =
+		'Compare 3,000+ DeFi vaults by yield, TVL, risk and fees across every major chain and protocol, with on-chain performance history and curator data.';
 </script>
 
-<MetaTags
-	{title}
-	{description}
-	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
-	twitter={{ site: '@TradingProtocol', cardType: 'summary', title, description }}
-/>
+<MetaTags {title} {description} openGraph={{ title: 'Trading Strategy — DeFi vault rankings, yields and risk data' }} />
 
 <svelte:head>
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html sitelinksSearchBox()}
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+	{@html organizationSchema()}
 </svelte:head>
 
 <main class="home-page">

@@ -47,7 +47,7 @@
 			</WalletInfoItem>
 		{:then { estimatedValue, assetsReceived }}
 			{@const tokenBalances = requiresSettlement ? [estimatedValue] : assetsReceived}
-			{#each tokenBalances as { label, symbol, ...balance }}
+			{#each tokenBalances as { label, symbol, ...balance } (label)}
 				<WalletInfoItem>
 					<EntitySymbol slot="label" size="1.5rem" {label} logoUrl={getLogoUrl('token', symbol)} />
 					{formatBalance(balance, 2, 4)}
@@ -56,10 +56,10 @@
 		{/await}
 	</WalletInfo>
 
-	{#if requiresSettlement}
+	{#if vault.requiresSettlement()}
 		<Alert size="sm" status="info" title="Settlement in progress">
 			Your redemption is now <i>pending</i>. Once settlement is complete, you'll be able to claim your redeemed tokens.
-			<a href={vault.settlementInfoUrl} target="_blank" rel="noreferrer">Learn more about settlement</a>
+			<a href={vault.settlementInfoUrl} target="_blank" rel="external noreferrer">Learn more about settlement</a>
 		</Alert>
 	{/if}
 </div>

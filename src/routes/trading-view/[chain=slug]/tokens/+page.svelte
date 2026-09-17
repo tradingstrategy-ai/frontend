@@ -1,4 +1,9 @@
+<!--
+	Tokens listing for one blockchain
+-->
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import type { ComponentProps } from 'svelte';
 	import { goto } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
@@ -19,10 +24,11 @@
 	};
 </script>
 
-<svelte:head>
-	<title>{chain.name} Tokens | Trading Strategy</title>
-	<meta name="description" content="Top tokens on {chain.name} blockchain" />
-</svelte:head>
+<MetaTags
+	titleParts={[`${chain.name} tokens`, 'DEX prices and liquidity']}
+	description={`Top tokens on ${chain.name} ranked by liquidity and volume, with DEX prices, trading pairs and historical market data.`}
+	image={`/social-card/blockchain/${chain.slug}`}
+/>
 
 <Breadcrumbs labels={{ [chain.slug]: chain.name }} />
 
@@ -31,7 +37,9 @@
 		<HeroBanner title="{chain.name} tokens">
 			{#snippet subtitle()}
 				Browse {formatAmount(tokens.totalRowCount)} tokens on
-				<a class="body-link" href=".">{chain.name} blockchain</a>.
+				<a class="body-link" href={resolve('/trading-view/[chain=slug]', { chain: chain.slug })}
+					>{chain.name} blockchain</a
+				>.
 			{/snippet}
 		</HeroBanner>
 	</Section>

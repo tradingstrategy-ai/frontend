@@ -1,4 +1,9 @@
+<!--
+	Exchange trading pair data export (Excel download) — noindex
+-->
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { backendUrl } from '$lib/config';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -40,12 +45,10 @@
 	);
 </script>
 
-<svelte:head>
-	<title>
-		Export {exchangeName} data from {exchange.chain_name} blockchain
-	</title>
-	<meta name="description" content="Download {exchangeName} on {exchange.chain_name} trading pair data as Excel file" />
-</svelte:head>
+<MetaTags
+	titleParts={[`Export ${exchangeName} data`, exchange.chain_name]}
+	description={`Download ${exchangeName} on ${exchange.chain_name} trading pair data as an Excel file.`}
+/>
 
 <Breadcrumbs labels={breadcrumbs} />
 
@@ -56,7 +59,7 @@
 		<p>
 			Download the exchange top trading pairs as Microsoft Excel file for analysis. This analysis is suitable for quick
 			market overview.
-			<a class="body-link" href="/trading-view/backtesting">
+			<a class="body-link" href={resolve('/trading-view/backtesting')}>
 				For comprehensive analysis use the full backtesting datasets
 			</a>.
 		</p>
@@ -126,8 +129,9 @@
 		<p>Exported data is useful e.g. for analysis of new tokens entering the market.</p>
 		<p>
 			This data export contains only data for
-			<a class="body-link" href="/trading-view/{exchange.chain_slug}/{exchange.exchange_slug}">{exchangeName}</a>. Read
-			about
+			<a class="body-link" href={resolve(`/trading-view/${exchange.chain_slug}/${exchange.exchange_slug}`)}
+				>{exchangeName}</a
+			>. Read about
 			<a class="body-link" target="_blank" rel="external" href="https://tradingstrategy.ai/api/explorer/"
 				>the column format in PairSummary section of the API documentation.</a
 			>

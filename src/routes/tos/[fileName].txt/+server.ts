@@ -7,7 +7,7 @@ export async function GET({ params }) {
 
 	try {
 		tosText = (await import(`$lib/assets/tos/${fileName}.txt?raw`)).default;
-	} catch (e) {
+	} catch {
 		error(404, 'File not found');
 	}
 

@@ -737,12 +737,11 @@ test.describe('vault index page', () => {
 		await page.goto('/vaults/high-tvl');
 		await page.getByTestId('show-blacklisted-vaults').click();
 
+		// The second page can load before the first 50 rows are asserted, so only the end state
+		// is checked: all 51 rows present, the sentinel gone, and exactly two reveal requests.
 		const paginationRows = page.locator('tbody tr.targetable').filter({ hasText: 'Pagination blacklisted' });
-		await expect(paginationRows).toHaveCount(50);
-		const sentinel = page.getByTestId('load-more-sentinel');
-		await expect(sentinel).toBeVisible();
 		await expect(paginationRows).toHaveCount(51);
-		await expect(sentinel).toHaveCount(0);
+		await expect(page.getByTestId('load-more-sentinel')).toHaveCount(0);
 		expect(revealRequestCount).toBe(2);
 	});
 

@@ -415,16 +415,19 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 	 * @param overrides - Search-state values to merge into the current URL.
 	 */
 	function getSearchUrl(overrides: Partial<typeof urlState>) {
-		const current = deserialiseSearchParams(page.url.searchParams, searchParamsSchema);
+		// `page.url` only changes once a navigation has completed; while one is in flight, build on
+		// the URL it is heading to so a quick second change does not discard the first one
+		const baseUrl = pendingSearchUrl ?? page.url;
+		const current = deserialiseSearchParams(baseUrl.searchParams, searchParamsSchema);
 		const updated = {
 			...current,
 			...(revealedFromRisk == null ? {} : { risk: blacklistedRiskIndex }),
 			...overrides
 		};
-		const url = new SvelteURL(page.url);
+		const url = new SvelteURL(baseUrl);
 		const searchParams = new SvelteURLSearchParams(serialiseSearchParams(updated, searchParamsSchema));
 		for (const key of preserveSearchParams) {
-			for (const value of page.url.searchParams.getAll(key)) searchParams.append(key, value);
+			for (const value of baseUrl.searchParams.getAll(key)) searchParams.append(key, value);
 		}
 		url.search = searchParams.toString();
 		return url;
@@ -436,9 +439,15 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 	 * @param url - Listing URL cloned from the current page URL.
 	 * @param invalidateAll - Whether SvelteKit must reload all page data.
 	 */
-	function navigateToSearchUrl(url: URL, invalidateAll = false) {
-		// eslint-disable-next-line svelte/no-navigation-without-resolve -- The URL clones page.url, which already includes the configured base path.
-		return goto(url, { invalidateAll, replaceState: true, noScroll: true, keepFocus: true });
+	let pendingSearchUrl: URL | undefined;
+
+	async function navigateToSearchUrl(url: URL, invalidateAll = false) {
+		pendingSearchUrl = url;
+		try {
+			await goto(url, { invalidateAll, replaceState: true, noScroll: true, keepFocus: true });
+		} finally {
+			if (pendingSearchUrl === url) pendingSearchUrl = undefined;
+		}
 	}
 
 	function updateSearchParams(overrides: Partial<typeof urlState>) {
@@ -491,7 +500,6 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 			appendListingPage(next);
 			revealedListingSummary = next.listingSummary;
 			revealedFromRisk = previousRisk;
-			// eslint-disable-next-line svelte/no-navigation-without-resolve -- targetUrl clones the already-resolved page.url.
 			replaceState(targetUrl, {});
 		} finally {
 			finishRemoteLoading(revision);

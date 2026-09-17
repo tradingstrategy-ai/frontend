@@ -1,11 +1,13 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { CopyWidget, CryptoAddressWidget } from '$lib/components';
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { formatDistanceToNowStrict } from 'date-fns';
 
-	export let summary: Record<string, string | number>;
-	export let details: Record<string, string | number>;
+	// pair-details payload has no schema yet; see UntypedApiRow
+	export let summary: UntypedApiRow;
+	export let details: UntypedApiRow;
 	export let pageUrl: string;
 
 	function formatTimeAgo(dateStr: string, options = {}) {
@@ -40,24 +42,24 @@
 <div class="summary">
 	<p>
 		The token pair
-		<a href="/trading-view/{summary.chain_slug}/tokens/{summary.base_token_address}">
+		<a href={resolve(`/trading-view/${summary.chain_slug}/tokens/${summary.base_token_address}`)}>
 			{baseTokenName}
 		</a>
 		&ndash;
-		<a href="/trading-view/{summary.chain_slug}/tokens/{summary.quote_token_address}">
+		<a href={resolve(`/trading-view/${summary.chain_slug}/tokens/${summary.quote_token_address}`)}>
 			{quoteTokenName}
 		</a>
 		trades as the ticker <strong>{summary.pair_symbol}</strong> on
-		<a href="/trading-view/{summary.chain_slug}/{summary.exchange_slug}">
+		<a href={resolve(`/trading-view/${summary.chain_slug}/${summary.exchange_slug}`)}>
 			{summary.exchange_name} exchange
 		</a>
 		on
-		<a href="/trading-view/{summary.chain_slug}">{summary.chain_name} blockchain</a>.
+		<a href={resolve(`/trading-view/${summary.chain_slug}`)}>{summary.chain_name} blockchain</a>.
 	</p>
 
 	<p>
 		The price of
-		<a href="/trading-view/{summary.chain_slug}/tokens/{summary.base_token_address}">
+		<a href={resolve(`/trading-view/${summary.chain_slug}/tokens/${summary.base_token_address}`)}>
 			{summary.base_token_symbol}
 		</a>
 		in <strong>{summary.pair_symbol}</strong> pair is

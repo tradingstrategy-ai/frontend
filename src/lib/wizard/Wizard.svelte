@@ -33,7 +33,7 @@
 				<h1>{title}</h1>
 
 				<menu>
-					{#each steps as { slug, label }, idx}
+					{#each steps as { slug, label }, idx (slug)}
 						<WizardNavItem
 							{slug}
 							{label}

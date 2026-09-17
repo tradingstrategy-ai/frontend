@@ -88,7 +88,7 @@ export async function headTopVaults(fetch: Fetch) {
  *
  * @param fetch SvelteKit's fetch (used for HEAD fallback)
  */
-export async function headVaultPrices(fetch: Fetch) {
+export async function headVaultPrices(_fetch: Fetch) {
 	if (isR2Configured()) {
 		const meta = await headR2Object(VAULT_PRICES_PARQUET);
 		return {

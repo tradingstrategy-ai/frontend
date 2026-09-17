@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { Tooltip, TradingDataInfo, TradingDataInfoRow } from '$lib/components';
 	import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
 	import { getFormattedReserveUSD } from '$lib/helpers/lending-reserve';
@@ -101,13 +102,13 @@
 			<span slot="trigger" class="underline">Asset Token</span>
 			<div slot="popup">Underlying asset token to be supplied or borrowed.</div>
 		</Tooltip>
-		<a slot="value" href="/trading-view/{reserve.chain_slug}/tokens/{reserve.asset_address}">
+		<a slot="value" href={resolve(`/trading-view/${reserve.chain_slug}/tokens/${reserve.asset_address}`)}>
 			{reserve.asset_name}
 		</a>
 	</TradingDataInfoRow>
 
 	<TradingDataInfoRow label="Blockchain">
-		<a slot="value" href="/trading-view/{reserve.chain_slug}">{reserve.chain_name}</a>
+		<a slot="value" href={resolve(`/trading-view/${reserve.chain_slug}`)}>{reserve.chain_name}</a>
 	</TradingDataInfoRow>
 
 	<TradingDataInfoRow value={reserve.reserve_id}>

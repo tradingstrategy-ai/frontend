@@ -1,55 +1,20 @@
 /**
- * Neue Haas is only available on the prod server.
+ * Web fonts.
  *
+ * Neue Haas Grotesk is licensed and only present on the production server; run
+ * `scripts/setup-fonts.sh` to sync the referenced files locally (it reads this file).
  *
+ * This stylesheet is loaded deferred (see src/app.html). The metric-matched "… Fallback"
+ * faces that keep the swap from shifting layout live in the render-blocking app CSS instead
+ * (src/lib/components/css/font-fallbacks.css), so they apply from the very first paint; their
+ * overrides were computed from the metrics of the files declared here — regenerate them if a
+ * font file changes.
+ *
+ * Rename this file (fonts6 → fonts7 …) whenever its contents change: it is served with a
+ * long cache lifetime.
  */
 
-/* Neue Haas Grotesk - Display */
-
-@font-face {
-	font-display: swap;
-	font-family: "Neue Haas Grotesk Display";
-	font-weight: 100;
-	src: url("./NeueHaasGroteskDisplay/15.woff2") format("woff2");
-}
-
-@font-face {
-	font-display: swap;
-	font-family: "Neue Haas Grotesk Display";
-	font-style: italic;
-	font-weight: 100;
-	src: url("./NeueHaasGroteskDisplay/16.woff2") format("woff2");
-}
-
-@font-face {
-	font-display: swap;
-	font-family: "Neue Haas Grotesk Display";
-	font-weight: 200;
-	src: url("./NeueHaasGroteskDisplay/25.woff2") format("woff2");
-}
-
-@font-face {
-	font-display: swap;
-	font-family: "Neue Haas Grotesk Display";
-	font-style: italic;
-	font-weight: 200;
-	src: url("./NeueHaasGroteskDisplay/26.woff2") format("woff2");
-}
-
-@font-face {
-	font-display: swap;
-	font-family: "Neue Haas Grotesk Display";
-	font-weight: 300;
-	src: url("./NeueHaasGroteskDisplay/35.woff2") format("woff2");
-}
-
-@font-face {
-	font-display: swap;
-	font-family: "Neue Haas Grotesk Display";
-	font-style: italic;
-	font-weight: 300;
-	src: url("./NeueHaasGroteskDisplay/36.woff2") format("woff2");
-}
+/* Neue Haas Grotesk - Display (weights 400–700 and 900; nothing on the site uses 100–300) */
 
 @font-face {
 	font-display: swap;

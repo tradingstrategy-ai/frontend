@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
 	import type { TimeBucket } from '$lib/schemas/utility';
-	import type { ApiCandle, CandleDataItem, DataFeed, TvChartOptions } from './types';
+	import type { CandleDataItem, DataFeed, TvChartOptions } from './types';
 	import type { OptionGroup } from '$lib/helpers/option-group.svelte.js';
 	import { type ApiDataTransformer, CandleDataFeed, apiCandleToDataItem } from '$lib/charts/candle-data-feed.svelte.js';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
@@ -38,11 +38,11 @@
 		data: [],
 		loadingInitialData: false,
 		hasData: false,
-		fetchData: (ticks?: number) => {}
+		fetchData: (_ticks?: number) => {}
 	};
 
 	const transformApiData: ApiDataTransformer = (data) => {
-		return (data[pairId] ?? []).map((c: ApiCandle) => ({
+		return (data[pairId] ?? []).map((c) => ({
 			...apiCandleToDataItem(c),
 			customValues: { volume: c.v }
 		}));

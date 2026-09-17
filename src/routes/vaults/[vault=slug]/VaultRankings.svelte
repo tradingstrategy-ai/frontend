@@ -47,7 +47,7 @@ Shows one-month vault return rankings alongside linked strategy categories.
 							<span class="rank">#{period1m.ranking_chain}</span>
 							on
 							<EntitySymbol size="0.875em" logoUrl={getLogoUrl('blockchain', chain.slug)}>
-								<a href={`/vaults/chains/${chain.slug}`}>
+								<a href={resolve('/vaults/chains/[chain=slug]', { chain: chain.slug })}>
 									{chain.name}
 								</a>
 							</EntitySymbol>
@@ -61,7 +61,7 @@ Shows one-month vault return rankings alongside linked strategy categories.
 								size="0.875em"
 								logoUrl={protocolMetadata ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined}
 							>
-								<a href={`/vaults/protocols/${vault.protocol_slug}`}>
+								<a href={resolve(`/vaults/protocols/${vault.protocol_slug}`)}>
 									{vault.protocol}
 								</a>
 							</EntitySymbol>

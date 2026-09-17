@@ -15,7 +15,7 @@ Displays relevant user-facing error message based on the type of payment error e
 	import { type ErrorInfo, errorCausedBy } from '$lib/eth-defi/helpers';
 
 	type Props = {
-		error: ErrorInfo | any;
+		error: Partial<ErrorInfo>;
 		symbol: string;
 		transactionCopy: string;
 	};
@@ -32,7 +32,7 @@ Displays relevant user-facing error message based on the type of payment error e
 	{#if causedBy('UserRejectedRequestError')}
 		Authorization to transfer {symbol} tokens from your wallet was refused by user. To proceed with share purchase, please
 		try again and approve the request.
-	{:else if error.name === 'UnknownRpcError' && error.details.includes('eth_signTypedData_v4')}
+	{:else if error.name === 'UnknownRpcError' && error.details?.includes('eth_signTypedData_v4')}
 		Authorization failed because your wallet does not support typed data signatures. Consider using TrustWallet, Rainbow
 		or a browser extension wallet like MetaMask.
 	{:else}

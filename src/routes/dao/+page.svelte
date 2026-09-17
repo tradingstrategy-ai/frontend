@@ -1,12 +1,16 @@
+<!--
+	Trading Strategy DAO LLC member information
+-->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import heroImage from '$lib/assets/illustrations/working-together.svg?raw';
 	import { HeroBanner, Section } from '$lib/components';
 </script>
 
-<svelte:head>
-	<title>Trading Strategy DAO LLC</title>
-	<meta name="description" content="Information for Trading Strategy DAO LLC members." />
-</svelte:head>
+<MetaTags
+	titleParts={['Trading Strategy DAO LLC']}
+	description="Information for Trading Strategy DAO LLC members: governance, membership and legal documents."
+/>
 
 <main class="dao-page">
 	<Section tag="header" padding="md">

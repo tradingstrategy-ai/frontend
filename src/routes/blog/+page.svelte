@@ -2,6 +2,7 @@
 Blog landing page with recent Trading Strategy articles.
 -->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { inview } from 'svelte-inview';
 	import { getPosts } from '$lib/blog/client';
 	import Alert from '$lib/components/Alert.svelte';
@@ -41,10 +42,10 @@ Blog landing page with recent Trading Strategy articles.
 	}
 </script>
 
-<svelte:head>
-	<title>Trading Strategy Blog</title>
-	<meta name="description" content="Research in DeFi and algorithmic trading." />
-</svelte:head>
+<MetaTags
+	titleParts={['Blog', 'DeFi vaults, yields and algorithmic trading']}
+	description="Articles and podcast episodes on DeFi vaults, stablecoin yields, on-chain market data and algorithmic trading from the Trading Strategy team."
+/>
 
 <main class="blog-index-page">
 	<Section tag="header">

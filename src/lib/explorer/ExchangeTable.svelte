@@ -22,8 +22,7 @@
 	type DataTableProps = Omit<ComponentProps<typeof DataTable>, 'tableViewModel'>;
 
 	interface Props extends DataTableProps {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		rows?: Record<string, any>[];
+		rows?: UntypedApiRow[];
 		page?: number;
 		sort?: SortOptions['keys'][number];
 		direction?: SortOptions['directions'][number];
@@ -50,7 +49,7 @@
 	});
 
 	// return a CompareValue object to enable "Unknown 0x…" values to be sorted last
-	function getCompareValue(row: Record<string, any>, propertyName: string) {
+	function getCompareValue(row: UntypedApiRow, propertyName: string) {
 		return {
 			nameOrder: Number(!row.human_readable_name.startsWith('Unknown 0x')),
 			value: row[propertyName] as number
@@ -78,11 +77,14 @@
 			id: 'exchange_name',
 			accessor: 'human_readable_name',
 			header: 'Exchange',
-			cell: ({ value, row: { original } }) =>
-				createRender(EntitySymbol, {
+			cell: ({ value, row }) => {
+				// every row of this table is a data row; the headless-table type is the row union
+				const original = row.isData() ? row.original : {};
+				return createRender(EntitySymbol, {
 					label: original.chain_name,
 					logoUrl: hideChainIcon ? undefined : getLogoUrl('blockchain', original.chain_slug)
-				}).slot(value)
+				}).slot(value);
+			}
 		}),
 		table.column({
 			id: 'pair_count',

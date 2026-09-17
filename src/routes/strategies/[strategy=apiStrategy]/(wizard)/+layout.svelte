@@ -13,7 +13,7 @@
 
 	try {
 		setWizardContext(new WizardState(slug, returnTo, dataSchema));
-	} catch (e) {
+	} catch {
 		goto(`/strategies/${strategy.id}/error`, { replaceState: true });
 	}
 </script>

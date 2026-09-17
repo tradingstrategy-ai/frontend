@@ -7,6 +7,5 @@ const entities = {
 };
 
 export function escapeHtml(unsafe: string | null | undefined) {
-	// @ts-ignore
-	return unsafe ? unsafe.replace(/[&<>"']/g, (char) => entities[char]) : '';
+	return unsafe ? unsafe.replace(/[&<>"']/g, (char) => entities[char as keyof typeof entities]) : '';
 }

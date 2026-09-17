@@ -65,6 +65,27 @@ pnpm run test:integration
 - uses mock API data found in `tests/mocks`
 - loads `.env.test` for deterministic test configuration
 
+Everything the server fetches during a test must resolve to the mock server: `.env.test` points the
+backend, vault, stablecoin-metadata and Ghost blog URLs at `http://127.0.0.1:4173/api/...`, and the
+mocks mirror the upstream URL layout under that prefix (e.g. `tests/mocks/ghost/` serves the Ghost
+content API for `/blog` and blog posts). A page that reaches an unmocked upstream fails or, worse,
+passes against live data. The glossary is the one exception: it is scraped from the documentation
+site and still goes to the network.
+
+The strategies page persists its snapshot to disk (`TS_PRIVATE_STRATEGIES_CACHE_DIR`). The test
+server uses its own directory (`.cache/strategies-test`, set in `.env.test`) and
+`webServerConfig()` empties it before every run, so a snapshot left behind by a dev session with
+real data cannot leak into the mocked suite — that was the cause of the strategy listing tests
+failing locally while passing in CI.
+
+#### Search-snippet coverage
+
+`tests/integration/head-meta.test.ts` is the contract for what the indexable templates put in their
+`<head>` (one sample URL per template) (one canonical, a branded title, a 70–155 character description, one `og:image`);
+`tests/integration/response-headers.test.ts` covers the font preload, `X-Robots-Tag` and cache
+headers; `tests/integration/layout-shift.test.ts` measures CLS on a phone viewport with the fonts
+delayed. See `docs/google-webmasters.md` for the reasoning behind each.
+
 #### Responsive navigation coverage
 
 `tests/integration/navigation.test.ts` covers the shared header at desktop, tablet and narrow-mobile

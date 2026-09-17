@@ -1,20 +1,26 @@
+<!--
+	Free API key sign-up form
+-->
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { backendUrl } from '$lib/config';
 	import { Alert, Button, Spinner, TextInput } from '$lib/components';
 
 	const url = `${backendUrl}/register`;
 
-	let submitting = false;
-	let success = false;
-	let error: string | undefined = undefined;
+	let submitting = $state(false);
+	let success = $state(false);
+	let error: string | undefined = $state();
 
-	let email = '';
-	let firstName = '';
-	let lastName = '';
+	let email = $state('');
+	let firstName = $state('');
+	let lastName = $state('');
 
-	$: disabled = submitting || success;
+	let disabled = $derived(submitting || success);
 
-	async function handleSubmit() {
+	async function handleSubmit(event: SubmitEvent) {
+		event.preventDefault();
 		submitting = true;
 		error = undefined;
 
@@ -51,22 +57,24 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Sign up for free DEX data API key</title>
-	<meta name="description" content="DeFi markets API access and data download" />
-</svelte:head>
+<MetaTags
+	titleParts={['Sign up for a free DEX data API key']}
+	description="Register for free access to the Trading Strategy DeFi market data API and dataset downloads."
+/>
 
 <main>
 	<header class="ds-container">
 		<h1>Sign up for free DEX data API key</h1>
 		<p>
 			Sign up for Trading Strategy's newsletter to get a free API key to
-			<a class="body-link" href="/trading-view/backtesting">access historical and backtesting DEX datasets.</a>
+			<a class="body-link" href={resolve('/trading-view/backtesting')}
+				>access historical and backtesting DEX datasets.</a
+			>
 		</p>
 	</header>
 
 	<section class="ds-container">
-		<form on:submit|preventDefault={handleSubmit}>
+		<form onsubmit={handleSubmit}>
 			{#if error}
 				<Alert status="error">{error}</Alert>
 			{:else if success}

@@ -43,13 +43,13 @@ export function createConnectedStrategyInfo(
 
 export function createDisconnectedStrategyInfo(
 	strategyConf: StrategyConfiguration,
-	error: any
+	error: unknown
 ): DisconnectedStrategyInfo {
 	return {
 		...strategyConf,
 		connected: false,
 		icon_url: loadError,
-		error: error.message ?? String(error),
+		error: error instanceof Error ? error.message : String(error),
 		sort_priority: -1
 	};
 }

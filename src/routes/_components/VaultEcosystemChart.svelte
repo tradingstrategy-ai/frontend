@@ -11,10 +11,10 @@ loaded dynamically from CDN.
 	import {
 		loadPlotly,
 		buildPlotlyChrome,
-		chartFontFamily,
 		chartTextColor,
 		chartGridColor,
-		chartAxisBorder
+		chartAxisBorder,
+		type PlotlyElement
 	} from '$lib/scatter-plot/helpers';
 	import { goto } from '$app/navigation';
 	import Spinner from '$lib/components/Spinner.svelte';
@@ -196,7 +196,7 @@ loaded dynamically from CDN.
 					hovermode: 'closest' as const
 				};
 
-				const traces: any[] = [trace];
+				const traces: unknown[] = [trace];
 
 				function distributeYPoints(yMin: number, yMax: number, count: number): number[] {
 					const logMin = Math.log10(yMin);
@@ -275,7 +275,7 @@ loaded dynamically from CDN.
 
 				await Plotly.newPlot(chartContainer, traces, layout, config);
 
-				(chartContainer as any).on('plotly_click', (data: any) => {
+				(chartContainer as PlotlyElement).on('plotly_click', (data) => {
 					const point = data.points?.[0];
 					if (point?.customdata) goto(point.customdata);
 				});
@@ -291,9 +291,7 @@ loaded dynamically from CDN.
 
 		return () => {
 			destroyed = true;
-			if (chartContainer && (window as any).Plotly) {
-				(window as any).Plotly.purge(chartContainer);
-			}
+			if (chartContainer) window.Plotly?.purge(chartContainer);
 		};
 	});
 </script>

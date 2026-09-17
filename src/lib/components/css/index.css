@@ -19,5 +19,6 @@
 @import './time.css';
 @import './transitions.css';
 @import './truncate.css';
+@import './font-fallbacks.css';
 @import './typography.css';
 @import './typography-new.css';

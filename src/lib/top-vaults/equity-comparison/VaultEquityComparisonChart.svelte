@@ -66,7 +66,8 @@ on one TradingView lightweight-charts pane.
 		feeEvent?: 'after-entry' | 'before-exit' | 'after-exit';
 	};
 
-	type ComparisonChartPoint = LineData<UTCTimestamp> & { customValues: ChartPointMeta };
+	/** A chart line point carrying the tooltip metadata (distinct from the API's `ComparisonChartPoint`). */
+	type ChartLinePoint = LineData<UTCTimestamp> & { customValues: ChartPointMeta };
 
 	let {
 		vaults,
@@ -103,7 +104,7 @@ on one TradingView lightweight-charts pane.
 		series: ComparisonChartSeries | undefined,
 		kind: ChartPointMeta['kind'],
 		points: readonly ComparisonChartPoint[]
-	): ComparisonChartPoint[] {
+	): ChartLinePoint[] {
 		if (!series) return [];
 		const benchmark = kind === 'benchmark' ? (series.id as ComparisonBenchmark) : undefined;
 		const label = benchmark ? benchmarkLabels[benchmark] : (vaultById.get(series.id)?.name ?? series.id);

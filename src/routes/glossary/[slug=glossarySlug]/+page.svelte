@@ -6,6 +6,7 @@
 
 -->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import type { GlossaryEntry } from '../glossary';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { Section } from '$lib/components';
@@ -39,9 +40,10 @@
 	}
 </script>
 
+<MetaTags titleParts={[`What is ${entry.name}?`, 'DeFi and trading glossary']} description={entry.description} />
+
 <svelte:head>
-	<title>What is {entry.name}?</title>
-	<meta name="description" content={entry.description} />
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- JSON-LD serialised from the glossary entry -->
 	{@html serializeSchema(getGoogleFAQPageSchema(entry))}
 </svelte:head>
 
@@ -51,6 +53,7 @@
 	<Section tag="article" padding="sm" gap="sm">
 		<h1 data-testid="glossary-heading">What Is {entry.name}?</h1>
 		<div class="answer">
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -- glossary definition HTML scraped from the documentation site -->
 			{@html entry.html}
 		</div>
 	</Section>

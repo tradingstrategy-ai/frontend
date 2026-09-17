@@ -103,13 +103,12 @@ page); omit it on the protocol page itself to render the name as plain text.
 								<tr>
 									<th>
 										<Tooltip>
-											<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 											<a
 												slot="trigger"
 												class="metric-link"
 												href={CORE3_METHODOLOGY_URL}
 												target="_blank"
-												rel="noreferrer"
+												rel="external noreferrer"
 											>
 												Probability of Loss
 												<IconQuestionCircle />

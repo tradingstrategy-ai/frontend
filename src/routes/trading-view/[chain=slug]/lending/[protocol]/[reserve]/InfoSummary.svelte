@@ -1,22 +1,31 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { formatDollar, formatInterestRate } from '$lib/helpers/formatters';
 	import { SECONDS_PER_DAY, compoundInterest } from '$lib/helpers/lending-reserve';
 
-	export let reserve: any;
-	export let borrowable: boolean;
+	import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
 
-	$: details = reserve.additional_details;
+	interface Props {
+		reserve: LendingReserve;
+		borrowable: boolean;
+	}
 
-	$: examplePrincipal = 5000;
-	$: exampleInterest = compoundInterest(examplePrincipal, details.variable_borrow_apr_latest / 100, SECONDS_PER_DAY);
+	let { reserve, borrowable }: Props = $props();
+
+	let details = $derived(reserve.additional_details);
+
+	const examplePrincipal = 5000;
+	let exampleInterest = $derived(
+		compoundInterest(examplePrincipal, details.variable_borrow_apr_latest / 100, SECONDS_PER_DAY)
+	);
 </script>
 
 <div class="summary">
 	<p>
 		The asset token
-		<a href="/trading-view/{reserve.chain_slug}/tokens/{reserve.asset_address}">{reserve.asset_name}</a>, which trades
-		as <strong>{reserve.asset_symbol}</strong> on
-		<a href="/trading-view/{reserve.chain_slug}">{reserve.chain_name}</a>, is available
+		<a href={resolve(`/trading-view/${reserve.chain_slug}/tokens/${reserve.asset_address}`)}>{reserve.asset_name}</a>,
+		which trades as <strong>{reserve.asset_symbol}</strong> on
+		<a href={resolve(`/trading-view/${reserve.chain_slug}`)}>{reserve.chain_name}</a>, is available
 		{borrowable ? 'to borrow' : ''} as an
 		<strong>{reserve.protocol_name}</strong> lending reserve.
 	</p>

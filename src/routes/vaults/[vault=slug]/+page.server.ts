@@ -1,15 +1,12 @@
 import { getChain } from '$lib/helpers/chain';
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
-import {
-	buildStablecoinMetadataLookup,
-	findStablecoinMetadata,
-	OFFCHAIN_USD_STABLECOIN_SLUG
-} from '$lib/stablecoin-metadata/helpers';
+import { buildStablecoinMetadataLookup, findVaultStablecoinMetadata } from '$lib/stablecoin-metadata/helpers';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { getVaultCategoryLinks } from '$lib/top-vaults/categories';
 import {
 	getCore3ProtocolForVault,
 	getCurrencyUsdRates,
+	isVaultIndexable,
 	resolveVaultDetails,
 	withVaultDenominationTokenRate
 } from '$lib/top-vaults/helpers.js';
@@ -39,16 +36,7 @@ export async function load({ params, fetch }) {
 		fetchVaultProtocolMetadata(fetch, vault.protocol_slug, vault.protocol),
 		fetchStablecoinMetadataIndex(fetch)
 	]);
-	const stablecoinMetadataLookup = buildStablecoinMetadataLookup(stablecoinMetadataIndex);
-	const stablecoinMetadata =
-		vault.denomination_slug === OFFCHAIN_USD_STABLECOIN_SLUG
-			? undefined
-			: findStablecoinMetadata(
-					stablecoinMetadataLookup,
-					vault.denomination_slug,
-					vault.denomination,
-					vault.normalised_denomination
-				);
+	const stablecoinMetadata = findVaultStablecoinMetadata(buildStablecoinMetadataLookup(stablecoinMetadataIndex), vault);
 	const vaultWithRates = withVaultDenominationTokenRate(
 		vault,
 		stablecoinMetadata,
@@ -57,6 +45,7 @@ export async function load({ params, fetch }) {
 	const curatorMetadata = vault.curator_slug ? curators[vault.curator_slug] : null;
 
 	return {
+		robots: isVaultIndexable(vaultWithRates) ? undefined : 'noindex,follow',
 		vault: vaultWithRates,
 		chain,
 		protocolMetadata,

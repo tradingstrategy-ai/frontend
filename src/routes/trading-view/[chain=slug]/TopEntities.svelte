@@ -1,5 +1,5 @@
 <script module lang="ts">
-	export type EntityData = { error: object; rows?: [] } | { error?: undefined; rows: Record<string, any>[] };
+	export type EntityData = { error: object; rows?: [] } | { error?: undefined; rows: UntypedApiRow[] };
 </script>
 
 <script lang="ts">

@@ -8,7 +8,8 @@ export async function load({ parent }) {
 
 	let denominationTokenPromise: Promise<TokenBalance> | undefined;
 
-	if (vault.depositEnabled()) {
+	// only vaults with in-app deposits know their denomination token
+	if (vault.internalDepositEnabled()) {
 		denominationTokenPromise = vault.getDenominationTokenBalance(config, address);
 	}
 

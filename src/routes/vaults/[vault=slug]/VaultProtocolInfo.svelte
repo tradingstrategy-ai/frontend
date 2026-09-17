@@ -36,10 +36,12 @@
 				<h2>Running on {protocolMetadata.name} protocol</h2>
 			</div>
 			<p class="description">
+				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- protocolPageUrl is built with resolve() -->
 				This {assetType} is running on <a href={protocolPageUrl}>{protocolMetadata.name}</a>:
 			</p>
 			<p class="description">{protocolMetadata.short_description}</p>
 		</div>
+		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- protocolPageUrl is built with resolve() -->
 		<Button size="sm" class="view-all-btn" href={protocolPageUrl}>
 			View all {protocolMetadata.name}
 			{assetTypePlural}

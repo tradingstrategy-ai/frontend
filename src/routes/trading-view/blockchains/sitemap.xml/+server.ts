@@ -7,7 +7,7 @@ import { chains } from '$lib/helpers/chain';
 const path = 'trading-view';
 const priority = 0.8;
 
-export async function GET({ fetch, setHeaders, url, route }) {
+export async function GET({ setHeaders, url }) {
 	const stream = new SitemapStream({ hostname: url.origin });
 
 	for (const chain of chains) {

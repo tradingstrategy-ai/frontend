@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { WebChartType } from 'trade-executor/schemas/web-chart';
 	import type { ChartCallbackParam, TvChartOptions } from '$lib/charts/types';
 	import type { ConnectedStrategyInfo } from 'trade-executor/models/strategy-info';
 	import ChartContainer from '$lib/charts/ChartContainer.svelte';
@@ -18,7 +19,7 @@
 
 	let chartClient = $derived(getChartClient(fetch, strategy.url));
 
-	let chartDataType = $derived(
+	let chartDataType: WebChartType = $derived(
 		strategy.useSharePrice ? 'share_price_based_return' : 'compounding_unrealised_trading_profitability_sampled'
 	);
 

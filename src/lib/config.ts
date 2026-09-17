@@ -19,7 +19,8 @@ const prefix = 'TS_PUBLIC_';
  * config utility function - expects a configurator function
  * and list of environment variable keys (without prefix).
  */
-function config(fn: Function, ...keys: string[]) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- each configurator validates its own raw env values
+function config<T>(fn: (...values: any[]) => T, ...keys: string[]): T {
 	return fn(...keys.map((key) => env[`${prefix}${key}`]));
 }
 
@@ -111,7 +112,7 @@ export const turnstileSiteKey = config((key: string) => {
 export const strategyConfig = config((jsonStr: string) => {
 	try {
 		return JSON.parse(jsonStr);
-	} catch (e) {
+	} catch {
 		console.warn(`Could not parse TS_PUBLIC_STRATEGIES env JSON; content is ${jsonStr}`);
 		return [];
 	}
@@ -121,7 +122,7 @@ export const strategyConfig = config((jsonStr: string) => {
  * If a configured strategy includes a truthy `microsite` value, set strategyMicrosite
  * to the strategy's ID (otherwise undefined)
  */
-export const strategyMicrosite = ((strategies: any[]) => {
+export const strategyMicrosite = ((strategies: { id: string; microsite?: boolean }[]) => {
 	return strategies.find((s) => s.microsite)?.id;
 })(strategyConfig) as string | undefined;
 
@@ -142,7 +143,7 @@ export const walletConnectConfig = config((projectId: string) => {
 export const rpcUrls = config((jsonStr: string) => {
 	try {
 		return JSON.parse(jsonStr || '{}');
-	} catch (e) {
+	} catch {
 		console.warn(`${prefix}RPC_URLS is not valid JSON`, jsonStr);
 		return {};
 	}
@@ -155,7 +156,7 @@ export const rpcUrls = config((jsonStr: string) => {
 export const tosContracts = config((jsonStr: string = '{}') => {
 	try {
 		return tosContractConfigSchema.parse(JSON.parse(jsonStr));
-	} catch (e) {
+	} catch {
 		console.warn(`${prefix}TOS_CONTRACTS is not valid ToS contract JSON`, jsonStr);
 		return {};
 	}
@@ -188,7 +189,7 @@ export const maintenanceNotice = config((value: string) => {
 export const chainsUnderMaintenance = config((jsonStr: string) => {
 	try {
 		return JSON.parse(jsonStr || '{}');
-	} catch (e) {
+	} catch {
 		console.warn(`${prefix}CHAINS_UNDER_MAINTENANCE is not valid JSON`, jsonStr);
 		return {};
 	}
@@ -203,7 +204,7 @@ export const chainsUnderMaintenance = config((jsonStr: string) => {
 export const geoBlock = config((jsonStr: string) => {
 	try {
 		return geoBlockSchema.parse(JSON.parse(jsonStr || '{}'));
-	} catch (e) {
+	} catch {
 		console.warn(`${prefix}GEO_BLOCK is not valid GeoBlock JSON`, jsonStr);
 		return {};
 	}

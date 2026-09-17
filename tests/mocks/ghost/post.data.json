@@ -1,0 +1,40 @@
+{
+	"posts": [
+		{
+			"slug": "test-post-with-embeds",
+			"id": "6aa3c2b9433c71000110c460",
+			"uuid": "96f22ce0-b012-4b58-91d2-ee8271fe708d",
+			"title": "Test post with embeds",
+			"html": "<p>Listen to our latest episode featuring Atoma Vault and learn why points on perp DEXs should come on top of profit, not at the cost of bleeding your capital. </p>\n<figure class=\"kg-card kg-embed-card\"><iframe width=\"200\" height=\"113\" src=\"https://www.youtube.com/embed/PWNJyuylDv8?feature=oembed\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" referrerpolicy=\"strict-origin-when-cross-origin\" allowfullscreen=\"\" title=\"Episode #12: Atoma\"></iframe></figure>\n<p>A paragraph between the embeds.</p>\n<iframe src=\"https://open.spotify.com/embed/episode/0000000000000000000000\" width=\"100%\" height=\"152\" frameborder=\"0\" allow=\"autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture\"></iframe>\n\n<p>Closing paragraph.</p>",
+			"comment_id": "6aa3c2b9433c71000110c460",
+			"feature_image": "https://storage.ghost.io/c/c6/d9/c6d9ffb5-c9c2-4127-9dd5-12f60693d847/content/images/2026/09/ChatGPT-Image-Sep-11--2026--10_57_45-AM-1.png",
+			"featured": false,
+			"visibility": "public",
+			"created_at": "2026-09-11T08:58:33.000+00:00",
+			"updated_at": "2026-09-11T09:24:44.000+00:00",
+			"published_at": "2026-09-11T09:24:44.000+00:00",
+			"custom_excerpt": null,
+			"codeinjection_head": null,
+			"codeinjection_foot": null,
+			"custom_template": null,
+			"canonical_url": null,
+			"url": "https://tradingstrategy.ai/blog/test-post-with-embeds/",
+			"excerpt": "Listen to our latest episode featuring Atoma Vault and learn why points on perp DEXs should come on top of profit, not at the cost of bleeding your capital.\n\nIn this episode, Nertila from Trading Strategy discusses with Anton from Atoma. Atoma is a delta-neutral USDC yield vault that opens long and short positions across perpetual DEXs at the same time, neutralizing price exposure while capturing funding-rate spreads.\n\n\n\n * View Atoma Vaults and Yields\n * Watch the Atoma episode on Youtube\n * Li",
+			"reading_time": 7,
+			"access": true,
+			"comments": false,
+			"og_image": null,
+			"og_title": null,
+			"og_description": null,
+			"twitter_image": null,
+			"twitter_title": null,
+			"twitter_description": null,
+			"meta_title": null,
+			"meta_description": null,
+			"email_subject": null,
+			"frontmatter": null,
+			"feature_image_alt": null,
+			"feature_image_caption": null
+		}
+	]
+}

@@ -2,6 +2,8 @@
 	Render listing of all available Reserves for specific chain
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import type { ComponentProps } from 'svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
@@ -28,10 +30,11 @@
 	};
 </script>
 
-<svelte:head>
-	<title>{chain.name} Lending Reserves</title>
-	<meta name="description" content="Top lending reserves on {chain.name} blockchain" />
-</svelte:head>
+<MetaTags
+	titleParts={[`${chain.name} lending reserves`]}
+	description={`Top decentralised lending reserves on ${chain.name} with supply and borrow rates and historical data.`}
+	image={`/social-card/blockchain/${chain.slug}`}
+/>
 
 <Breadcrumbs labels={{ [chain.slug]: chain.name, lending: 'Lending reserves' }} />
 
@@ -40,7 +43,9 @@
 		<HeroBanner title="{chain.name} lending reserves">
 			{#snippet subtitle()}
 				Browse {formatAmount(totalRowCount)} lending reserves on
-				<a class="body-link" href=".">{chain.name} blockchain</a>.
+				<a class="body-link" href={resolve('/trading-view/[chain=slug]', { chain: chain.slug })}
+					>{chain.name} blockchain</a
+				>.
 			{/snippet}
 		</HeroBanner>
 	</Section>

@@ -1,12 +1,29 @@
+<!--
+@component
+Round strategy avatar. Connected strategies use the bundled `/avatars/<id>` image (webp with
+an SVG fallback); others use the icon URL from the strategy metadata. The rendered size comes
+from the parent (`height`/`width: inherit`); the intrinsic `width`/`height` only fix the
+aspect ratio so the image reserves its box before it loads.
+
+@example
+
+```svelte
+	<StrategyIcon {strategy} />
+```
+-->
 <script lang="ts">
 	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 
-	export let strategy: StrategyInfo;
+	interface Props {
+		strategy: StrategyInfo;
+	}
 
-	const localWebpIconUrl = `/avatars/${strategy.id}.webp`;
-	const localSvgIconUrl = `/avatars/${strategy.id}.svg`;
-	const strategyIconUrl = strategy.icon_url?.replace(/^http:/, 'https:');
-	const outdated = Boolean(strategy.newVersionId);
+	let { strategy }: Props = $props();
+
+	let localWebpIconUrl = $derived(`/avatars/${strategy.id}.webp`);
+	let localSvgIconUrl = $derived(`/avatars/${strategy.id}.svg`);
+	let strategyIconUrl = $derived(strategy.icon_url?.replace(/^http:/, 'https:'));
+	let outdated = $derived(Boolean(strategy.newVersionId));
 </script>
 
 <div class="strategy-icon" class:outdated>
@@ -18,10 +35,10 @@
 		<picture>
 			<source srcset={localWebpIconUrl} type="image/webp" />
 			<source srcset={localSvgIconUrl} type="image/svg+xml" />
-			<img src={localSvgIconUrl} alt="Strategy icon" loading="lazy" decoding="async" />
+			<img src={localSvgIconUrl} alt="Strategy icon" width="128" height="128" loading="lazy" decoding="async" />
 		</picture>
 	{:else}
-		<img src={strategyIconUrl} alt="Strategy icon" loading="lazy" decoding="async" />
+		<img src={strategyIconUrl} alt="Strategy icon" width="128" height="128" loading="lazy" decoding="async" />
 	{/if}
 </div>
 

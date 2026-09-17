@@ -1,5 +1,5 @@
 import { loadEnv } from 'vite';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 /**
@@ -20,13 +20,22 @@ import { resolve } from 'node:path';
 export const ciRetries = process.env.CI ? 2 : 0;
 
 export function webServerConfig(mode: string) {
+	const env = loadModeEnv(mode);
+
+	// The strategies page persists a snapshot to disk and serves it on start. Start every test
+	// server from an empty test-mode cache so mocked data is what the tests see.
+	if (env.TS_PRIVATE_STRATEGIES_CACHE_DIR) {
+		rmSync(resolve(process.cwd(), env.TS_PRIVATE_STRATEGIES_CACHE_DIR), { recursive: true, force: true });
+	}
+
 	return {
 		command: `pnpm run preview --mode=${mode} --host=127.0.0.1 --port=4173`,
 		port: 4173,
-		env: {
-			...process.env,
-			...loadModeEnv(mode)
-		},
+		env: Object.fromEntries(
+			Object.entries({ ...process.env, ...env }).filter(
+				(entry): entry is [string, string] => typeof entry[1] === 'string'
+			)
+		),
 		stdout: 'ignore' as const,
 		stderr: 'ignore' as const
 	};

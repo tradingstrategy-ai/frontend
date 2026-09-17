@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import Section from '$lib/components/Section.svelte';
 	import { chains } from '$lib/helpers/chain';
 	import { getLogoUrl } from '$lib/helpers/assets';
@@ -16,7 +17,12 @@
 		<div class="chains">
 			<div class="chain-logos">
 				{#each indexedChains as chain (chain.id)}
-					<a class="tile b" title={chain.name} href="/trading-view/{chain.slug}" data-sveltekit-preload-data>
+					<a
+						class="tile b"
+						title={chain.name}
+						href={resolve(`/trading-view/${chain.slug}`)}
+						data-sveltekit-preload-data
+					>
 						<img src={getLogoUrl('blockchain', chain.slug)} alt={chain.name} />
 					</a>
 				{/each}
@@ -28,17 +34,17 @@
 	{#if impressiveNumbers}
 		<h2>Your strategy can trade</h2>
 		<div class="number-tiles">
-			<a class="tile b" href="/trading-view/trading-pairs" data-sveltekit-preload-data>
+			<a class="tile b" href={resolve('/trading-view/trading-pairs')} data-sveltekit-preload-data>
 				<strong>{formatAmount(impressiveNumbers.pairs)}</strong>
 				<span>trading pairs</span>
 			</a>
 
-			<a class="tile b" href="/trading-view/trading-pairs" data-sveltekit-preload-data>
+			<a class="tile b" href={resolve('/trading-view/trading-pairs')} data-sveltekit-preload-data>
 				<strong>{formatDollar(impressiveNumbers.liquidity)}</strong>
 				<span>liquidity</span>
 			</a>
 
-			<a class="tile b" href="/trading-view/exchanges" data-sveltekit-preload-data>
+			<a class="tile b" href={resolve('/trading-view/exchanges')} data-sveltekit-preload-data>
 				<strong>{formatAmount(impressiveNumbers.exchanges)}</strong>
 				<span>decentralised exchanges</span>
 			</a>

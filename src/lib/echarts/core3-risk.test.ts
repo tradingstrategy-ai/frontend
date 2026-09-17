@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import type { Core3Protocol, VaultInfo } from '$lib/top-vaults/schemas';
 import {
 	buildCore3RiskPayload,
 	CORE3_RISK_MIN_TVL,
@@ -77,7 +78,7 @@ function createVault(overrides: Record<string, unknown> = {}) {
 		badges: [],
 		period_results: [],
 		...overrides
-	} as any;
+	} as unknown as VaultInfo;
 }
 
 function getBand(payload: Core3RiskPayload, key: string) {
@@ -127,7 +128,7 @@ describe('buildCore3RiskPayload', () => {
 					name: 'Spark',
 					pol: { score: 42, rating: 'BBB', confidence: 'Moderate' }
 				}
-			} as any,
+			} as unknown as Record<string, Core3Protocol>,
 			12,
 			new Date('2026-06-18T12:00:00Z')
 		);
@@ -210,7 +211,7 @@ describe('buildCore3RiskPayload', () => {
 					name: 'Aave',
 					pol: { score: 22, rating: 'A', confidence: 'High' }
 				}
-			} as any,
+			} as unknown as Record<string, Core3Protocol>,
 			0
 		);
 

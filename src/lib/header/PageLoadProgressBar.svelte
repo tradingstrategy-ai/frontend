@@ -31,6 +31,7 @@ Display a loading indicator during client-side routing. Invoked when a page
 		preloading: {
 			_enter() {
 				progress.set(0, { duration: 0 });
+				// @ts-expect-error svelte-fsm adds `.debounce()` to actions at runtime; it is not in the types
 				this.advance.debounce(250);
 			},
 			advance: 'loading',

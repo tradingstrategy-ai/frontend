@@ -18,13 +18,17 @@ Community links for discussion, development, social media and publications.
 	import IconNewspaper from '~icons/local/newspaper';
 </script>
 
-<ContentCardsTemplate pageTitle="Community" pageDescription="Blog, Discord and discussion">
-	<HeroBanner
-		slot="hero"
-		image={heroImage}
-		title="Community"
-		subtitle="Join and follow the Trading Strategy community for insights in DeFi, vaults and onchain quant strategies."
-	/>
+<ContentCardsTemplate
+	titleParts={['Community', 'Discord, GitHub, blog and podcast']}
+	description="Join the Trading Strategy community on Discord, GitHub, X, YouTube and Spotify for insights in DeFi, vaults and on-chain quant strategies."
+>
+	{#snippet hero()}
+		<HeroBanner
+			image={heroImage}
+			title="Community"
+			subtitle="Join and follow the Trading Strategy community for insights in DeFi, vaults and onchain quant strategies."
+		/>
+	{/snippet}
 
 	<ContentCardsSection cols={3} title="Discuss & develop">
 		<ContentCard title="Discord chat" href={discordUrl} target="_blank" rel="noreferrer">

@@ -11,7 +11,7 @@ Display log messages as a scrollable panel
 
 <div class="log-panel terminal-viewport xs" class:empty={logs.length === 0}>
 	<!-- `reverse()` mutates the original array; use `toReversed` instead -->
-	{#each logs.toReversed() as { timestamp, level, message, formatted_data }}
+	{#each logs.toReversed() as { timestamp, level, message, formatted_data }, index (index)}
 		<LogEntry {timestamp} {level} {message} {formatted_data} />
 	{:else}
 		No logs to display (try changing log level)

@@ -79,7 +79,7 @@
 			id: 'pair_symbol',
 			accessor: (row) => row,
 			header: 'Trading pair',
-			cell: ({ value: row }: { value: any }) =>
+			cell: ({ value: row }: { value: UntypedApiRow }) =>
 				createRender(PairSymbolCell, {
 					symbol: row.pair_symbol,
 					swapFee: row.pair_swap_fee,

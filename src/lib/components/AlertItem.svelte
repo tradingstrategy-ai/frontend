@@ -14,7 +14,7 @@ Display a single alert item (should always be nested within AlertList).
 	import IconWarning from '~icons/local/warning';
 
 	export let title = '';
-	export let displayWhen: any = true;
+	export let displayWhen: unknown = true;
 </script>
 
 {#if displayWhen}

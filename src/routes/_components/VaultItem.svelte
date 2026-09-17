@@ -11,10 +11,6 @@
 	}
 
 	let { vault }: Props = $props();
-
-	// vault is static (keyed each block)
-	// svelte-ignore state_referenced_locally
-	let chain = getChain(vault.chain_id)!;
 </script>
 
 <li class="vault-item">

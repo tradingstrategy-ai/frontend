@@ -10,6 +10,7 @@ Page to display the strategy backtest results.
 
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { Alert, Spinner, SummaryBox } from '$lib/components';
 
 	export let data;
@@ -42,7 +43,7 @@ Page to display the strategy backtest results.
 		<SummaryBox title="Backtest results">
 			<div class="content">
 				You can find the backtest results for this strategy below.
-				<a class="body-link" href="/glossary/backtest">Learn more about backtesting</a>.
+				<a class="body-link" href={resolve('/glossary/backtest')}>Learn more about backtesting</a>.
 			</div>
 		</SummaryBox>
 

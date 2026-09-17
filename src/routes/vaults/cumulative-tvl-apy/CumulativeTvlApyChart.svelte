@@ -46,7 +46,6 @@ Server-derived cumulative TVL and annualised-return chart.
 	function updateUrl(overrides: Partial<typeof urlState>) {
 		const updated = { ...deserialiseSearchParams(page.url.searchParams, searchParamsSchema), ...overrides };
 		const query = serialiseSearchParams(updated, searchParamsSchema);
-		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		goto(query ? `${page.url.pathname}?${query}` : page.url.pathname, {
 			replaceState: true,
 			noScroll: true,

@@ -23,7 +23,11 @@ test.describe('vault yield / risk scatter plot page', () => {
 		await plotWrapper.locator('.legend .traces').first().click({ force: true });
 
 		await expect
-			.poll(async () => plotlyChart.evaluate((node: any) => node.data.map((trace: any) => trace.visible ?? true)))
+			.poll(async () =>
+				plotlyChart.evaluate((node) =>
+					(node as HTMLElement & { data: { visible?: boolean | string }[] }).data.map((trace) => trace.visible ?? true)
+				)
+			)
 			.toContain('legendonly');
 	});
 

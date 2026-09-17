@@ -2,6 +2,9 @@
 Token detail page with token metadata and its tracked trading pairs.
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import type { ComponentProps } from 'svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
@@ -43,24 +46,22 @@ Token detail page with token metadata and its tracked trading pairs.
 	};
 </script>
 
-<svelte:head>
-	<title>
-		{token.symbol} on {token.chain_name}
-	</title>
-	<meta
-		name="description"
-		content={`${token.name} (${token.symbol} ${getTokenStandardName(token.chain_slug)} on ${token.chain_name})`}
-	/>
-</svelte:head>
+<MetaTags
+	titleParts={[`${token.symbol} price and trading pairs on ${token.chain_name}`, token.name]}
+	description={`${token.name} (${token.symbol}) ${getTokenStandardName(token.chain_slug)} token on ${token.chain_name}: ${formatAmount(token.pair_count)} DEX trading pairs, ${formatDollar(token.liquidity_latest, 1, 1)} liquidity, ${formatDollar(token.volume_24h, 1, 1)} 24h volume. Live prices and historical data.`}
+	image={`/social-card/blockchain/${token.chain_slug}`}
+/>
 
 <Breadcrumbs labels={breadcrumbs} />
 
 <main>
 	<PageHeader title={token.name}>
-		<span slot="subtitle" class="subtitle">
-			token trading as {token.symbol} on
-			<EntitySymbol size="0.875em" label={token.chain_name} logoUrl={getLogoUrl('blockchain', token.chain_slug)} />
-		</span>
+		{#snippet subtitle()}
+			<span class="subtitle">
+				token trading as {token.symbol} on
+				<EntitySymbol size="0.875em" label={token.chain_name} logoUrl={getLogoUrl('blockchain', token.chain_slug)} />
+			</span>
+		{/snippet}
 	</PageHeader>
 
 	<section class="ds-container ds-2-col info" data-testid="token-info">
@@ -70,7 +71,7 @@ Token detail page with token metadata and its tracked trading pairs.
 
 	<section class="ds-container blockchain-alert">
 		<Alert status="info" size="md">
-			The information on this page is for <a href="/trading-view/{token.chain_slug}">{token.chain_name}</a>.
+			The information on this page is for <a href={resolve(`/trading-view/${token.chain_slug}`)}>{token.chain_name}</a>.
 			<strong>{token.symbol}</strong> presentations bridged and wrapped on other blockchains are not included in the figures.
 		</Alert>
 	</section>

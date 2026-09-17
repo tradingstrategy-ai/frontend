@@ -2,7 +2,7 @@
 	import type { ComponentProps } from 'svelte';
 	import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
 	import type { TimeBucket } from '$lib/schemas/utility';
-	import type { ApiCandle, TvChartOptions } from './types';
+	import type { TvChartOptions } from './types';
 	import type { OptionGroup } from '$lib/helpers/option-group.svelte';
 	import { CandleDataFeed, apiCandleToDataItem, tsToUnixTimestamp } from './candle-data-feed.svelte';
 	import { type LineSeriesPartialOptions, LineSeries } from 'lightweight-charts';
@@ -37,7 +37,7 @@
 			'lending-reserve/candles',
 			timeBucket.selected,
 			{ ...urlParams, candle_types: 'variable_borrow_apr' },
-			(data) => (data.variable_borrow_apr ?? []).map((c: ApiCandle) => apiCandleToDataItem(c))
+			(data) => (data.variable_borrow_apr ?? []).map((c) => apiCandleToDataItem(c))
 		)
 	);
 
@@ -48,7 +48,7 @@
 			timeBucket.selected,
 			{ ...urlParams, candle_types: 'supply_apr' },
 			(data) =>
-				(data.supply_apr ?? []).map(({ ts, c: value, o: open }: ApiCandle) => ({
+				(data.supply_apr ?? []).map(({ ts, c: value, o: open }) => ({
 					time: tsToUnixTimestamp(ts),
 					value,
 					customValues: { open }

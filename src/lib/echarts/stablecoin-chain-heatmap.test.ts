@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest';
+import type { VaultInfo } from '$lib/top-vaults/schemas';
 import {
 	buildStablecoinChainHeatmapPayload,
 	STABLECOIN_CHAIN_HEATMAP_OUTLIER_THRESHOLD,
@@ -76,7 +77,7 @@ function createVault(overrides: Record<string, unknown> = {}) {
 		badges: [],
 		period_results: [],
 		...overrides
-	} as any;
+	} as unknown as VaultInfo;
 }
 
 describe('buildStablecoinChainHeatmapPayload', () => {
@@ -433,7 +434,7 @@ describe('buildStablecoinChainHeatmapPayload', () => {
 					badges: [],
 					period_results: []
 				}
-			] as any,
+			] as unknown as VaultInfo[],
 			[],
 			145.4,
 			new Date('2026-03-21T12:00:00Z'),
@@ -595,9 +596,15 @@ describe('buildStablecoinChainHeatmapPayload', () => {
 			};
 		});
 
-		const payload = buildStablecoinChainHeatmapPayload(vaults as any, [], 87.3, new Date('2026-03-21T12:00:00Z'), {
-			minTvl: 0
-		});
+		const payload = buildStablecoinChainHeatmapPayload(
+			vaults as unknown as VaultInfo[],
+			[],
+			87.3,
+			new Date('2026-03-21T12:00:00Z'),
+			{
+				minTvl: 0
+			}
+		);
 
 		expect(payload.chains).toHaveLength(STABLECOIN_CHAIN_HEATMAP_TOP_N);
 		expect(payload.stablecoins).toHaveLength(STABLECOIN_CHAIN_HEATMAP_TOP_N);

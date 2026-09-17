@@ -42,6 +42,15 @@ export type TokenIndexingMetrics = {
 	symbol?: string | null;
 };
 
+/** Vault detail page inputs, with TVL already converted to USD by the caller. */
+export type VaultIndexingMetrics = {
+	name?: string | null;
+	current_tvl_usd?: MaybeNumber;
+	peak_tvl_usd?: MaybeNumber;
+	unknown_protocol?: boolean;
+	blacklisted?: boolean;
+};
+
 export type PairIndexingMetrics = {
 	pair_tvl?: MaybeNumber;
 	usd_liquidity_latest?: MaybeNumber;
@@ -105,4 +114,34 @@ export function isTokenIndexable(token: TokenIndexingMetrics): boolean {
 export function isPairIndexable(summary: PairIndexingMetrics): boolean {
 	if (hasBlockedName([summary.pair_symbol, summary.pair_name, summary.base_token_symbol])) return false;
 	return isIndexable([summary.pair_tvl, summary.usd_liquidity_latest], summary.usd_volume_30d);
+}
+
+/**
+ * Should the vault detail page for this vault be indexed?
+ *
+ * Unlike tokens and pairs, a vault with a real deposit history keeps its page even after the
+ * money has left: it is only excluded when both current and peak TVL are confirmed below the
+ * threshold. `null` TVL (no data, or no USD rate for the denomination) keeps the page indexable.
+ * Unknown-protocol vaults are excluded unless they hold real TVL right now, and vaults with a
+ * placeholder name (`<unnamed>`) or a blocklisted name are never indexed.
+ *
+ * @param vault name, USD TVL figures and classification flags — see `isVaultIndexable` in
+ *   `$lib/top-vaults/helpers` for the `VaultInfo` adapter
+ */
+export function isVaultIndexable(vault: VaultIndexingMetrics): boolean {
+	if (vault.blacklisted) return false;
+
+	const name = vault.name?.trim();
+	if (!name || name.startsWith('<')) return false;
+	if (hasBlockedName([name])) return false;
+
+	const current = vault.current_tvl_usd;
+	const peak = vault.peak_tvl_usd;
+	const currentBelow = isNumber(current) && current < INDEXABLE_MIN_LIQUIDITY_USD;
+	const peakBelow = isNumber(peak) && peak < INDEXABLE_MIN_LIQUIDITY_USD;
+
+	if (currentBelow && peakBelow) return false;
+	if (vault.unknown_protocol && (currentBelow || !isNumber(current))) return false;
+
+	return true;
 }

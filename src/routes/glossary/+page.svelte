@@ -1,5 +1,7 @@
 <!-- Render the glossary index page with a link to the each term -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import type { GlossaryIndexEntry } from './glossary';
 	import { HeroBanner, Section } from '$lib/components';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
@@ -19,10 +21,10 @@
 	);
 </script>
 
-<svelte:head>
-	<title>DeFi and trading dictionary</title>
-	<meta name="description" content="What do different technical trading terms mean?" />
-</svelte:head>
+<MetaTags
+	titleParts={['DeFi and trading glossary']}
+	description="Plain-language definitions of DeFi, vault, yield and algorithmic trading terms, from APY and drawdown to ERC-7540 and Hyperliquid provider vaults."
+/>
 
 <main class="glossary-main">
 	<Section tag="header" padding="md">
@@ -32,10 +34,10 @@
 
 				<p class="glossary-introduction">
 					This dictionary has been compiled to help newcomers to get quickly familiar with
-					<a class="body-link" href="/glossary/decentralised-finance">decentralised finance</a>,
-					<a class="body-link" href="/glossary/decentralised-exchange">decentralised exchanges</a>,
-					<a class="body-link" href="/glossary/trading-strategy">trading strategies</a> and
-					<a class="body-link" href="/glossary/algorithmic-trading">algorithmic trading</a>.
+					<a class="body-link" href={resolve('/glossary/decentralised-finance')}>decentralised finance</a>,
+					<a class="body-link" href={resolve('/glossary/decentralised-exchange')}>decentralised exchanges</a>,
+					<a class="body-link" href={resolve('/glossary/trading-strategy')}>trading strategies</a> and
+					<a class="body-link" href={resolve('/glossary/algorithmic-trading')}>algorithmic trading</a>.
 				</p>
 			{/snippet}
 		</HeroBanner>
@@ -43,13 +45,13 @@
 
 	<Section padding="sm">
 		<div class="content">
-			{#each Object.entries(index) as [letter, terms]}
+			{#each Object.entries(index) as [letter, terms] (letter)}
 				<div class="index-letter">
 					<h2>{letter.toUpperCase()}</h2>
 					<hr />
 					<div class="terms">
-						{#each terms as term}
-							<a class="term" data-testid="index-term" href={`/glossary/${term.slug}`}>
+						{#each terms as term (term.slug)}
+							<a class="term" data-testid="index-term" href={resolve(`/glossary/${term.slug}`)}>
 								{term.name}
 							</a>
 						{/each}

@@ -10,7 +10,7 @@ Segmented control for filtering strategies by blockchain, with a chain logo per 
 -->
 <script module lang="ts">
 	import type { StrategyInfo } from 'trade-executor/models/strategy-info';
-	import { type Chain, chains, getChain, getChainsBySlug } from '$lib/helpers/chain';
+	import { type Chain, chains, getChainsBySlug } from '$lib/helpers/chain';
 
 	export type ChainOption = Chain['slug'] | 'all';
 

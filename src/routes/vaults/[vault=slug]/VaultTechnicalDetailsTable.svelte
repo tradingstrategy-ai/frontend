@@ -5,6 +5,7 @@ Displays a vault's technical metadata in a two-column table.
 Includes the source whitelist status and any source-provided whitelist notes.
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import type { Chain } from '$lib/helpers/chain';
 	import { getExplorerUrl } from '$lib/helpers/chain';
@@ -226,13 +227,14 @@ Includes the source whitelist status and any source-provided whitelist notes.
 	<div class="table-wrapper">
 		<table class="details-table">
 			<tbody>
-				{#each rows as row}
+				{#each rows as row (row.label)}
 					<tr>
+						<!-- eslint-disable-next-line svelte/no-at-html-tags -- labels are static markup defined in this component -->
 						<td class="label">{@html row.label}</td>
 						<td class="value">
 							{#if row.type === 'address'}
 								<span class="address-cell">
-									<a href={getExplorerUrl(chain, row.value)} target="_blank" rel="noreferrer">
+									<a href={getExplorerUrl(chain, row.value)} target="_blank" rel="external noreferrer">
 										<HashAddress address={row.value} endChars={7} />
 									</a>
 									<button title="Copy to clipboard" onclick={() => copyWidget?.copy(row.value)}>
@@ -240,7 +242,7 @@ Includes the source whitelist status and any source-provided whitelist notes.
 									</button>
 								</span>
 							{:else if row.type === 'chain'}
-								<a class="chain-link" href="/vaults/chains/{row.value.slug}">
+								<a class="chain-link" href={resolve('/vaults/chains/[chain=slug]', { chain: row.value.slug })}>
 									<img class="chain-logo" src={getLogoUrl('blockchain', row.value.slug)} alt="" />
 									{row.value.name} ({row.value.id})
 								</a>
@@ -249,6 +251,7 @@ Includes the source whitelist status and any source-provided whitelist notes.
 									<Tooltip>
 										<span slot="trigger">
 											{#if row.value.href}
+												<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- internal path from getStablecoinDetailsHref() -->
 												<a class="denomination-link tooltip-hint" href={row.value.href}>
 													{#if row.value.logoUrl}
 														<img class="denomination-logo" src={row.value.logoUrl} alt="" />
@@ -269,13 +272,14 @@ Includes the source whitelist status and any source-provided whitelist notes.
 												class="tooltip-link"
 												href={getExplorerUrl(chain, row.value.address)}
 												target="_blank"
-												rel="noreferrer"
+												rel="external noreferrer"
 											>
 												View on blockchain explorer: <HashAddress address={row.value.address} endChars={7} />
 											</a>
 										</svelte:fragment>
 									</Tooltip>
 								{:else if row.value.href}
+									<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- internal path from getStablecoinDetailsHref() -->
 									<a class="denomination-link" href={row.value.href}>
 										{#if row.value.logoUrl}
 											<img class="denomination-logo" src={row.value.logoUrl} alt="" />
@@ -294,6 +298,7 @@ Includes the source whitelist status and any source-provided whitelist notes.
 								{#if row.value.usdRate != null}
 									<span class="exchange-rate-cell">
 										{#if row.value.href}
+											<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- internal path from getStablecoinDetailsHref() -->
 											<a href={row.value.href}>{formatExchangeRate(row.value.usdRate, row.value.symbol)}</a>
 										{:else}
 											{formatExchangeRate(row.value.usdRate, row.value.symbol)}
@@ -316,7 +321,7 @@ Includes the source whitelist status and any source-provided whitelist notes.
 												class="tooltip-link"
 												href={getExplorerUrl(chain, row.value.address)}
 												target="_blank"
-												rel="noreferrer"
+												rel="external noreferrer"
 											>
 												View on blockchain explorer: <HashAddress address={row.value.address} endChars={7} />
 											</a>
@@ -326,12 +331,12 @@ Includes the source whitelist status and any source-provided whitelist notes.
 									{row.value.name}
 								{/if}
 							{:else if row.type === 'protocol'}
-								<a href="/vaults/protocols/{row.value.slug}">{row.value.name}</a>
+								<a href={resolve(`/vaults/protocols/${row.value.slug}`)}>{row.value.name}</a>
 							{:else if row.type === 'currency'}
 								{row.value.amount != null ? `${formatAmount(row.value.amount)} ${row.value.symbol}` : notFilledMarker}
 							{:else if row.type === 'link'}
 								{#if row.value.url}
-									<a href={row.value.url} target="_blank" rel="noreferrer">
+									<a href={row.value.url} target="_blank" rel="external noreferrer">
 										{row.value.hasProtocol ? 'View vault on protocol website' : 'View vault on blockchain explorer'}
 									</a>
 								{:else}

@@ -1,9 +1,10 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
 	import { getTokenStandardName } from '$lib/chain/tokenstandard';
 	import { TradingDataInfo, TradingDataInfoRow } from '$lib/components';
 
-	export let token: any;
+	export let token: UntypedApiRow;
 </script>
 
 <TradingDataInfo>
@@ -14,7 +15,7 @@
 	<TradingDataInfoRow label="Available liquidity" value={formatDollar(token.liquidity_latest)} />
 	<TradingDataInfoRow label="Volume 24h" value={formatDollar(token.volume_24h)} />
 	<TradingDataInfoRow label="Blockchain">
-		<a slot="value" href="/trading-view/{token.chain_slug}">{token.chain_name}</a>
+		<a slot="value" href={resolve(`/trading-view/${token.chain_slug}`)}>{token.chain_name}</a>
 	</TradingDataInfoRow>
 	<TradingDataInfoRow value={token.token_id}>
 		<a slot="label" href="https://tradingstrategy.ai/docs/programming/market-data/internal-id.html" rel="external"

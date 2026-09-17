@@ -27,7 +27,7 @@ test.describe('vault datasets page', () => {
 	// --- Page structure ---
 
 	test('renders with correct title', async ({ page }) => {
-		await expect(page).toHaveTitle('Vault data');
+		await expect(page).toHaveTitle('Vault datasets | Trading Strategy');
 	});
 
 	test('links to the vault file and data description', async ({ page }) => {

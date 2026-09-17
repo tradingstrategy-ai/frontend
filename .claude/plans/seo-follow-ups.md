@@ -24,7 +24,7 @@ Search Console groups the mobile CLS issue into two templates: token pages (`/tr
 1. **Pairs table on token pages** — `src/routes/trading-view/[chain=slug]/tokens/[token]/+page.svelte:84` renders `PairTable` from a client-side store (`getPairsClient`). While `loading`, `PairTable.svelte:48` substitutes ten empty `{}` rows; neither `PairTable` nor `DataTable` (`src/lib/components/datatable/DataTable.svelte`) declares a row height, so whether the skeleton and data rows match in height on mobile is unverified and must be measured first.
 2. **Candle chart on pair pages** — `[pair]/+page.svelte:131` mounts `PairCandleChart` inside `{#await import(...)}` with no placeholder; `.charts` (line 197) has no `min-height`, so the section grows from 0 to the chart height once the ~300 KB lightweight-charts bundle arrives.
 3. **Announcement banner slide-out** — `AnnouncementBanner.svelte:47` uses `out:slide` on dismiss; a user-initiated shift is exempt from CLS only within 500 ms of the input, and the slide lasts 750 ms. This can only explain shifts on sessions where the user dismisses the banner, so shortening it is a hygiene fix, not proof of a field improvement.
-4. Fonts are already `font-display: swap` with size-adjusted fallbacks per `docs/speed.md`; do not touch unless the audit points there.
+4. ~~Fonts are already `font-display: swap` with size-adjusted fallbacks per `docs/speed.md`; do not touch unless the audit points there.~~ Correction (2026-09-17): the fonts were `swap` but had **no** size-adjusted fallbacks, and `docs/speed.md` described a mechanism that no longer existed; the swap was measured as a 0.25 CLS on glossary pages and fixed in round 3 (`.claude/plans/seo-round-3.md`, workstream 3).
 
 ### Changes
 

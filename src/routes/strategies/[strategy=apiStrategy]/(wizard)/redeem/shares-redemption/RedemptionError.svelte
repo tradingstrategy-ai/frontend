@@ -6,7 +6,6 @@ Displays relevant user-facing error message based on the type of redemption erro
 ```svelte
   <RedemptionError
     error={redemptionError}
-    symbol={denominationToken.symbol}
     transactionCopy="See tx info above"
   >
 ```
@@ -15,12 +14,11 @@ Displays relevant user-facing error message based on the type of redemption erro
 	import { type ErrorInfo, errorCausedBy } from '$lib/eth-defi/helpers';
 
 	type Props = {
-		error: ErrorInfo | any;
-		symbol: string;
+		error: Partial<ErrorInfo>;
 		transactionCopy: string;
 	};
 
-	let { error, symbol, transactionCopy }: Props = $props();
+	let { error, transactionCopy }: Props = $props();
 
 	let causedBy = $derived(errorCausedBy.bind(null, error));
 	let state = $derived(error.state ?? 'unknown');

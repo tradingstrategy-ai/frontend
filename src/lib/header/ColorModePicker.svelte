@@ -46,7 +46,7 @@
 <div class="color-mode-picker">
 	<Dialog title="Color Mode" bind:open>
 		<menu>
-			{#each Object.entries(modes) as [mode, label]}
+			{#each Object.entries(modes) as [mode, label] (mode)}
 				<li class={mode} class:active={mode === currentMode}>
 					<button onclick={() => setMode(mode as ColorMode)}>{label}</button>
 				</li>

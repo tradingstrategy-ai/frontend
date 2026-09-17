@@ -2,6 +2,7 @@
 Fees page for YAML-configured strategies — displays vault fee information.
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { Tooltip } from '$lib/components';
 	import IconQuestionCircle from '~icons/local/question-circle';
 	import { formatPercent } from '$lib/helpers/formatters';
@@ -27,7 +28,7 @@ Fees page for YAML-configured strategies — displays vault fee information.
 					<span slot="trigger">Management fee <IconQuestionCircle /></span>
 					<div slot="popup">
 						<p>The management fee is a periodic fee charged for managing the vault's assets.</p>
-						<p><a href="/glossary/management-fee" target="_blank">Learn more about management fees</a>.</p>
+						<p><a href={resolve('/glossary/management-fee')} target="_blank">Learn more about management fees</a>.</p>
 					</div>
 				</Tooltip>
 				<span>{vaultInfo.mgmt_fee != null ? formatPercent(vaultInfo.mgmt_fee, 2) : '—'}</span>
@@ -38,7 +39,7 @@ Fees page for YAML-configured strategies — displays vault fee information.
 					<span slot="trigger">Performance fee <IconQuestionCircle /></span>
 					<div slot="popup">
 						<p>The performance fee is charged against the vault's profits.</p>
-						<p><a href="/glossary/performance-fee" target="_blank">Learn more about performance fees</a>.</p>
+						<p><a href={resolve('/glossary/performance-fee')} target="_blank">Learn more about performance fees</a>.</p>
 					</div>
 				</Tooltip>
 				<span>{vaultInfo.perf_fee != null ? formatPercent(vaultInfo.perf_fee, 2) : '—'}</span>

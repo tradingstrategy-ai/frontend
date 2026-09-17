@@ -354,6 +354,7 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 					{#each data?.stablecoins ?? [] as stablecoin (stablecoin.key)}
 						{@const tooltipId = getAxisTooltipId('stablecoin', stablecoin.key)}
 						{#if stablecoin.href}
+							<!-- eslint-disable svelte/no-navigation-without-resolve -- internal path built by the heatmap model ($lib/echarts/stablecoin-chain-heatmap) -->
 							<a
 								class="axis-label stablecoin-label"
 								href={stablecoin.href}
@@ -364,6 +365,7 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 								onfocus={() => showAxisTooltip(tooltipId)}
 								onblur={() => hideAxisTooltip(tooltipId)}
 							>
+								<!-- eslint-enable svelte/no-navigation-without-resolve -->
 								{#if stablecoin.logoUrl}
 									<img class="axis-logo" src={stablecoin.logoUrl} alt="" loading="lazy" />
 								{/if}
@@ -421,6 +423,7 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 				<div class="chain-axis" aria-label="Chains">
 					{#each data?.chains ?? [] as chain (chain.key)}
 						{@const tooltipId = getAxisTooltipId('chain', chain.key)}
+						<!-- eslint-disable svelte/no-navigation-without-resolve -- internal path built by the heatmap model ($lib/echarts/stablecoin-chain-heatmap) -->
 						<a
 							class="axis-label chain-label"
 							href={chain.href}
@@ -431,6 +434,7 @@ Client-side ECharts heatmap for current vault TVL by stablecoin and chain.
 							onfocus={() => showAxisTooltip(tooltipId)}
 							onblur={() => hideAxisTooltip(tooltipId)}
 						>
+							<!-- eslint-enable svelte/no-navigation-without-resolve -->
 							{#if chain.logoUrl}
 								<img class="axis-logo" src={chain.logoUrl} alt="" loading="lazy" />
 							{/if}

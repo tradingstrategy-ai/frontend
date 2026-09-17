@@ -60,6 +60,21 @@ describe('collapseVaultSnapshotsToWeeklyRows', () => {
 	});
 });
 
+/** Minimal vault metadata for the chain grouping; the other fields are irrelevant here. */
+function chainMeta(id: string, chain_id: number, chain: string, risk_numeric = 20) {
+	return {
+		id,
+		risk_numeric,
+		chain_id,
+		chain,
+		denomination: 'USDC',
+		normalised_denomination: 'USDC',
+		denomination_slug: 'usdc',
+		protocol: 'Test',
+		protocol_slug: 'test'
+	};
+}
+
 describe('buildHistoricalTvlByChainPayload', () => {
 	test('forward fills sparse weekly vault rows before grouping chain totals', () => {
 		const payload = buildHistoricalTvlByChainPayload(
@@ -70,10 +85,7 @@ describe('buildHistoricalTvlByChainPayload', () => {
 				{ id: 'hyper-core-b', chainId: 9999, week: '2025-10-20', tvl: 130 },
 				{ id: 'hyper-core-b', chainId: 9999, week: '2025-10-27', tvl: 140 }
 			],
-			[
-				{ id: 'hyper-core-a', risk_numeric: 20, chain_id: 9999, chain: 'Hyperliquid' },
-				{ id: 'hyper-core-b', risk_numeric: 20, chain_id: 9999, chain: 'Hyperliquid' }
-			],
+			[chainMeta('hyper-core-a', 9999, 'Hyperliquid', 20), chainMeta('hyper-core-b', 9999, 'Hyperliquid', 20)],
 			100
 		);
 
@@ -110,11 +122,11 @@ describe('buildHistoricalTvlByChainPayload', () => {
 				}
 			],
 			[
-				{ id: 'hyper-evm', risk_numeric: 20, chain_id: 999, chain: 'Hyperliquid' },
-				{ id: 'hyper-core', risk_numeric: 20, chain_id: 9999, chain: 'Hyperliquid' },
-				{ id: 'unknown-good', risk_numeric: 20, chain_id: 777777, chain: 'Mystery chain' },
-				{ id: 'blacklisted', risk_numeric: 999, chain_id: 1, chain: 'Ethereum' },
-				{ id: 'outlier', risk_numeric: 20, chain_id: 8453, chain: 'Base' }
+				chainMeta('hyper-evm', 999, 'Hyperliquid', 20),
+				chainMeta('hyper-core', 9999, 'Hyperliquid', 20),
+				chainMeta('unknown-good', 777777, 'Mystery chain', 20),
+				chainMeta('blacklisted', 1, 'Ethereum', 999),
+				chainMeta('outlier', 8453, 'Base', 20)
 			],
 			245.4,
 			new Date('2026-03-21T12:00:00Z')

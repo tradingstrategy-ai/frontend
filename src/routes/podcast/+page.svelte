@@ -2,6 +2,7 @@
 Trading Strategy podcast episode index.
 -->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import BlogRoll from '$lib/components/BlogRoll.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
@@ -10,13 +11,10 @@ Trading Strategy podcast episode index.
 	let { data } = $props();
 </script>
 
-<svelte:head>
-	<title>Trading Strategy Podcast</title>
-	<meta
-		name="description"
-		content="Listen to the Trading Strategy podcast on YouTube and Spotify for conversations about DeFi and algorithmic trading."
-	/>
-</svelte:head>
+<MetaTags
+	titleParts={['Podcast', 'Conversations on DeFi and algorithmic trading']}
+	description="Listen to the Trading Strategy podcast on YouTube and Spotify for conversations about DeFi vaults, yields and algorithmic trading."
+/>
 
 <main class="podcast-index-page">
 	<Section tag="header">

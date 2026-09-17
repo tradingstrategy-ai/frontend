@@ -83,8 +83,8 @@ but with a static set of menu items (no conditional visibility or badges).
 	</div>
 
 	<div class="menu-wrapper" bind:this={menuWrapper}>
-		<Menu on:click={mobileMenu.close}>
-			{#each visibleOptions as { slug, label, externalUrl }}
+		<Menu onclick={mobileMenu.close}>
+			{#each visibleOptions as { slug, label, externalUrl } (slug)}
 				{@const active = slug === currentOption?.slug}
 				<MenuItem targetUrl={externalUrl ?? getTargetUrl(slug)} external={!!externalUrl} {active}>
 					<span class="label">{label}</span>

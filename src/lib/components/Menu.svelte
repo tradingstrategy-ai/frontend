@@ -12,14 +12,16 @@ Use `align` to position the items within the available space.
 	interface Props {
 		horizontal?: boolean;
 		align?: Alignment;
+		/** Click anywhere in the menu (bubbled from the items), e.g. to close a mobile menu */
+		onclick?: (event: MouseEvent) => void;
 		children?: Snippet;
 	}
 
-	let { horizontal = false, align = 'left', children }: Props = $props();
+	let { horizontal = false, align = 'left', onclick, children }: Props = $props();
 	let direction = $derived(horizontal ? 'horizontal' : 'vertical');
 </script>
 
-<menu class="dir--{direction} align--{align}">
+<menu class="dir--{direction} align--{align}" {onclick}>
 	{@render children?.()}
 </menu>
 

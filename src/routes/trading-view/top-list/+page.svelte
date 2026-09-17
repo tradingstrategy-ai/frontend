@@ -1,14 +1,18 @@
+<!--
+	Top lists index: daily DEX gainers and losers
+-->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { Button, ContentCard, ContentCardsSection, HeroBanner, Section } from '$lib/components';
 	import IconTrendUp from '~icons/local/trend-up';
 	import IconTrendDown from '~icons/local/trend-down';
 </script>
 
-<svelte:head>
-	<title>Top lists for DEX trading</title>
-	<meta name="description" content="Most volatile trading pairs" />
-</svelte:head>
+<MetaTags
+	titleParts={['Top lists for DEX trading']}
+	description="Daily top lists of decentralised exchange tokens and trading pairs: biggest gainers, biggest losers and the most volatile markets."
+/>
 
 <Breadcrumbs labels={{ 'top-list': 'Top lists' }} />
 

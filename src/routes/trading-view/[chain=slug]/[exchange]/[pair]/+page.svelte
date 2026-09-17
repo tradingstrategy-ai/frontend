@@ -6,10 +6,12 @@ Render the pair trading page
   be moved to SvelteKit routing query parameter
 -->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
 	import { captureException } from '@sentry/sveltekit';
 	import Alert from '$lib/components/Alert.svelte';
+	import AlertItem from '$lib/components/AlertItem.svelte';
 	import AlertList from '$lib/components/AlertList.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
@@ -21,7 +23,7 @@ Render the pair trading page
 	// so the heavy lightweight-charts bundle stays off the critical path.
 	import TimePeriodSummaryTable from './TimePeriodSummaryTable.svelte';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
-	import { formatSwapFee } from '$lib/helpers/formatters';
+	import { formatDollar, formatSwapFee } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { timeBucketEnum } from '$lib/schemas/utility';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
@@ -54,15 +56,14 @@ Render the pair trading page
 	};
 </script>
 
-<svelte:head>
-	<title>
-		{summary.pair_symbol} ({swapFee}) token price on {details.exchange_name}
-	</title>
-	<meta
-		name="description"
-		content="Price and liquidity for {summary.pair_symbol} on {details.exchange_name} on {details.chain_name}"
-	/>
-</svelte:head>
+<MetaTags
+	titleParts={[
+		`${summary.pair_symbol}${swapFee ? ` (${swapFee})` : ''} price on ${details.exchange_name}`,
+		details.chain_name
+	]}
+	description={`${summary.pair_symbol} on ${details.exchange_name} (${details.chain_name}): price ${formatDollar(summary.usd_price_latest)}, 24h volume ${formatDollar(summary.usd_volume_24h, 1, 1)}, liquidity ${formatDollar(summary.usd_liquidity_latest ?? summary.pair_tvl, 1, 1)}. Live chart, OHLCV history and token tax.`}
+	image={`/social-card/blockchain/${summary.chain_slug}`}
+/>
 
 <Breadcrumbs labels={breadcrumbs} />
 
@@ -101,24 +102,22 @@ Render the pair trading page
 
 		{#if isUniswapIncompatible || tokenTax.broken || ridiculousPrice}
 			<AlertList status="warning">
-				{#snippet children({ AlertItem })}
-					<AlertItem title="Incompatible exchange" displayWhen={isUniswapIncompatible}>
-						{summary.exchange_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data for
-						{summary.pair_symbol} may be inaccurate.
-					</AlertItem>
+				<AlertItem title="Incompatible exchange" displayWhen={isUniswapIncompatible}>
+					{summary.exchange_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data for
+					{summary.pair_symbol} may be inaccurate.
+				</AlertItem>
 
-					<AlertItem displayWhen={tokenTax.broken}>
-						This token is unlikely to be tradeable.
-						<a
-							href="https://tradingstrategy.ai/docs/programming/market-data/token-tax.html#honeypots-and-other-rug-pull-risks"
-							rel="external">Read more about transfer fees being broken or malicious in the token tax documentation</a
-						>. Error code <strong>{tokenTax.sellTax}</strong>.
-					</AlertItem>
+				<AlertItem displayWhen={tokenTax.broken}>
+					This token is unlikely to be tradeable.
+					<a
+						href="https://tradingstrategy.ai/docs/programming/market-data/token-tax.html#honeypots-and-other-rug-pull-risks"
+						rel="external">Read more about transfer fees being broken or malicious in the token tax documentation</a
+					>. Error code <strong>{tokenTax.sellTax}</strong>.
+				</AlertItem>
 
-					<AlertItem displayWhen={ridiculousPrice}>
-						This trading pair is using low digit price units that may prevent displaying the price data properly.
-					</AlertItem>
-				{/snippet}
+				<AlertItem displayWhen={ridiculousPrice}>
+					This trading pair is using low digit price units that may prevent displaying the price data properly.
+				</AlertItem>
 			</AlertList>
 		{/if}
 	</section>

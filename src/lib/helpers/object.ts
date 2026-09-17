@@ -6,9 +6,10 @@
  * @param source object
  * @returns target object with merged properties
  */
-export function merge(target: any = {}, source: any = {}) {
+export function merge(target: Record<string, unknown> = {}, source: Record<string, unknown> = {}) {
 	for (const [key, val] of Object.entries(source)) {
-		target[key] = isPureObject(val) ? merge(target[key], val) : val;
+		const current = target[key];
+		target[key] = isPureObject(val) ? merge(isPureObject(current) ? current : {}, val) : val;
 	}
 	return target;
 }
@@ -16,7 +17,7 @@ export function merge(target: any = {}, source: any = {}) {
 /**
  * Check if arg is a pure object (i.e, an object with no prototype)
  */
-function isPureObject(obj: any): obj is Object {
+function isPureObject(obj: unknown): obj is Record<string, unknown> {
 	return obj instanceof Object && Object.getPrototypeOf(obj) === Object.prototype;
 }
 

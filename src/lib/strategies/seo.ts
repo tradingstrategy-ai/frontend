@@ -8,12 +8,7 @@
  */
 
 import { formatDollar, formatPercent, isNumber } from '$lib/helpers/formatters';
-
-/** Roughly what Google displays before truncating a title. */
-export const TITLE_MAX_LENGTH = 60;
-
-/** Roughly what Google displays before truncating a description. */
-export const DESCRIPTION_MAX_LENGTH = 155;
+import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH, truncateAtWord } from '$lib/helpers/seo';
 
 export type StrategyPageMetaInput = {
 	name: string;
@@ -29,16 +24,6 @@ export type StrategyPageMeta = {
 	title: string;
 	description: string;
 };
-
-/**
- * Cut a string at the last word boundary before `max`, appending an ellipsis when cut.
- */
-export function truncateAtWord(text: string, max: number): string {
-	if (text.length <= max) return text;
-	const cut = text.slice(0, max - 1);
-	const boundary = cut.lastIndexOf(' ');
-	return `${(boundary > max / 2 ? cut.slice(0, boundary) : cut).replace(/[\s,.;:—-]+$/, '')}…`;
-}
 
 /**
  * Build the strategy page `<title>` and meta description.

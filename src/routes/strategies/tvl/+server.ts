@@ -16,7 +16,7 @@
 import { json } from '@sveltejs/kit';
 
 import { getCachedStrategies } from 'trade-executor/client/strategy-info';
-import type { StrategySummaryStatistics } from 'trade-executor/schemas/summary';
+import type { OnChainData, StrategySummaryStatistics } from 'trade-executor/schemas/summary';
 
 type PartialSummaryStatistics = Partial<StrategySummaryStatistics>;
 
@@ -30,9 +30,23 @@ interface StrategyTVL {
 	short_description: string | null;
 	chain_id: number | null;
 	address: string;
-	asset_management_mode: 'enzyme' | 'hot_wallet' | 'simple_vault' | 'velvet' | null;
+	asset_management_mode: 'enzyme' | 'hot_wallet' | 'velvet' | 'lagoon' | 'hyperliquid' | null;
 	tvl_usd: number | null;
 	summary_statistics: PartialSummaryStatistics;
+}
+
+/** The vault contract address, which each asset management mode stores under its own key. */
+function getVaultAddress(onChainData: OnChainData | undefined): string | undefined {
+	switch (onChainData?.asset_management_mode) {
+		case 'enzyme':
+			return onChainData.smart_contracts.vault;
+		case 'velvet':
+			return onChainData.smart_contracts.vaultAddress;
+		case 'lagoon':
+			return onChainData.smart_contracts.address;
+		default:
+			return undefined;
+	}
 }
 
 // The export main interface description
@@ -64,7 +78,7 @@ export async function GET({ fetch }) {
 			console.warn(`Bad strategy TVL: ${id}`);
 		}
 
-		const address = strat.on_chain_data?.smart_contracts?.vault ?? strat.on_chain_data?.trade_executor_hot_wallet;
+		const address = getVaultAddress(strat.on_chain_data) ?? strat.on_chain_data?.trade_executor_hot_wallet;
 		if (!address) {
 			// The trade-executor likely down
 			// TODO: cache and use a cached value
@@ -75,8 +89,6 @@ export async function GET({ fetch }) {
 		const asset_management_mode = strat.on_chain_data?.asset_management_mode ?? null;
 
 		const summary_statistics: PartialSummaryStatistics = structuredClone(strat.summary_statistics ?? {});
-		// Decrease the payload size by deleting data we do not need to export
-		delete summary_statistics.performance_chart_90_days;
 
 		// Sum the total TVL
 		result.total_tvl_usd += tvl;

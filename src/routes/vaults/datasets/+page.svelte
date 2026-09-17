@@ -2,6 +2,7 @@
 Vault datasets download page
 -->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { resolve } from '$app/paths';
 	import type { PageData } from './$types';
 	import { vaultApiUrl } from '$lib/config';
@@ -85,10 +86,10 @@ Vault datasets download page
 	}
 </script>
 
-<svelte:head>
-	<title>Vault data</title>
-	<meta name="description" content="Download vault metadata and historical vault price datasets" />
-</svelte:head>
+<MetaTags
+	titleParts={['Vault datasets']}
+	description="Download DeFi vault metadata and historical vault price and TVL datasets for research and backtesting."
+/>
 
 {#if data.purchaseComplete}
 	<Section class="purchase-complete">

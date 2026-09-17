@@ -18,15 +18,16 @@ on the conference rolls.
 </script>
 
 <ContentCardsTemplate
-	pageTitle="Follow Trading Strategy"
-	pageDescription="Follow us on our socials and join the discussion."
+	titleParts={['Follow Trading Strategy']}
+	description="Follow Trading Strategy on YouTube, Spotify, X, Discord and GitHub and join the discussion on DeFi vaults and algorithmic trading."
 >
-	<HeroBanner
-		slot="hero"
-		image={BrandMark}
-		title="Follow Trading Strategy"
-		subtitle="Follow us on our socials and join the discussion."
-	/>
+	{#snippet hero()}
+		<HeroBanner
+			image={BrandMark}
+			title="Follow Trading Strategy"
+			subtitle="Follow us on our socials and join the discussion."
+		/>
+	{/snippet}
 	<ContentCardsSection cols={3} title="">
 		<ContentCard
 			title="YouTube"

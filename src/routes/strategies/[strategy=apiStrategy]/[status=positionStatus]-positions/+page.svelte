@@ -2,7 +2,7 @@
 Strategy position listing page.
 -->
 <script lang="ts">
-	import type { ComponentEvents, ComponentProps } from 'svelte';
+	import type { ComponentProps } from 'svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { Alert } from '$lib/components';

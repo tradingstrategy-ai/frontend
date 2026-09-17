@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { strategyMicrosite } from '$lib/config';
 	import { page } from '$app/state';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
@@ -44,7 +45,7 @@
 		<PageHeading description={strategy.short_description}>
 			<svelte:fragment slot="icon">
 				{#if strategyMicrosite && !isOverviewPage}
-					<a href="/strategies/{strategy.id}" aria-label="Home">
+					<a href={resolve(`/strategies/${strategy.id}`)} aria-label="Home">
 						<StrategyIcon {strategy} />
 					</a>
 				{:else}
@@ -54,7 +55,7 @@
 			<div class="title" slot="title">
 				{strategy.name}
 
-				{#each tags as tag}
+				{#each tags as tag (tag)}
 					{#if isBetaTag(tag)}
 						<DataBadge class="badge" status="beta">{tag}</DataBadge>
 					{/if}
@@ -78,9 +79,9 @@
 					<AlertList status="warning" size="md" let:AlertItem>
 						<AlertItem title="Outdated strategy" displayWhen={isOutdated}>
 							You are viewing an outdated version of this strategy. An updated version is available
-							<a href="/strategies/{strategy.newVersionId}" data-sveltekit-reload>here</a>. To maximize future returns,
-							participants should consider tranfering deposits to the latest version (though there is no guarantee of
-							better performance).
+							<a href={resolve(`/strategies/${strategy.newVersionId}`)} data-sveltekit-reload>here</a>. To maximize
+							future returns, participants should consider tranfering deposits to the latest version (though there is no
+							guarantee of better performance).
 						</AlertItem>
 						<AlertItem title="Ongoing execution issues" displayWhen={hasError}>
 							<StrategyError {strategy} />

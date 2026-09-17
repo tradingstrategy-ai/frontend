@@ -2,6 +2,8 @@
 Search vaults and vault-related data about curators, protocols and stablecoins.
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { Button, PageHeader } from '$lib/components';
 	import {
 		formatVaultAddressPrefix,
@@ -20,7 +22,9 @@ Search vaults and vault-related data about curators, protocols and stablecoins.
 	}
 
 	let { data }: { data: SearchPageData } = $props();
-	let query = $state('');
+	// the input follows the loaded query but can be edited before the next search
+	let query = $derived(data.query);
+	let retryHref = $derived(`${resolve('/search')}?q=${encodeURIComponent(data.query)}`);
 	let resultById = $derived(new Map(data.results.map((result) => [result.id, result])));
 	let tableRows: VaultGroup[] = $derived(
 		data.results.map((result) => ({
@@ -32,10 +36,6 @@ Search vaults and vault-related data about curators, protocols and stablecoins.
 			tvl: result.latestTvl ?? Number.NaN
 		}))
 	);
-
-	$effect(() => {
-		query = data.query;
-	});
 
 	function labelForType(type: SearchResult['entityType']) {
 		return searchEntityLabels[type];
@@ -73,10 +73,10 @@ Search vaults and vault-related data about curators, protocols and stablecoins.
 	}
 </script>
 
-<svelte:head>
-	<title>Search vaults</title>
-	<meta name="description" content="Search vaults and vault-related data about curators, protocols and stablecoins." />
-</svelte:head>
+<MetaTags
+	titleParts={['Search vaults']}
+	description="Search DeFi vaults and vault-related data about curators, protocols, chains and stablecoins across the Trading Strategy database."
+/>
 
 <main>
 	<PageHeader
@@ -103,7 +103,8 @@ Search vaults and vault-related data about curators, protocols and stablecoins.
 		{#if data.error}
 			<div class="message error" role="alert">
 				<p>{data.error}</p>
-				<a href={`/search?q=${encodeURIComponent(data.query)}`}>Try again</a>
+				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolve('/search') plus the query string -->
+				<a href={retryHref}>Try again</a>
 			</div>
 		{:else if !data.query}
 			<div class="message">Enter a name, symbol, address, chain or curator to search the vault index.</div>

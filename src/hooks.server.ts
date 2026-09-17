@@ -7,6 +7,7 @@ import { countryCodeSchema } from '$lib/helpers/geo';
 import { parseDate } from '$lib/helpers/date';
 import { diagnoseFetch } from '$lib/diagnostics/server';
 import { signozSentryOptions, installConsoleLogBridge } from '$lib/server/signoz-telemetry';
+import { getFontPreloadLinks } from '$lib/server/font-preload';
 
 const defaultColorMode = 'dark';
 
@@ -93,45 +94,30 @@ const handlePodcastAnnouncement: Handle = async ({ event, resolve }) => {
 };
 
 /**
- * Add Link headers for font preloading.
+ * Response headers that depend on the URL or content type:
  *
- * Cloudflare caches these Link headers and serves them as HTTP 103 Early Hints
- * on subsequent requests, allowing the browser to start fetching fonts before
- * the full response arrives from the origin.
- *
- * The page-specific lists below come from a live mobile audit of the home page
- * and a vault detail page. After trimming secondary Display usage, the visible
- * above-the-fold typography on both routes is dominated by:
- * - Neue Haas Grotesk Display 600 for the main page title
- * - Neue Haas Grotesk Text 400 for body copy
- * - Neue Haas Grotesk Text 500 for buttons, links, and large supporting values
- *
- * We intentionally do not preload Source Serif Pro, Source Code Pro, Display
- * 400/500/700, or Text 700, because those faces are either lower priority or
- * below the fold on these routes and can be fetched on demand instead.
- *
- * @see https://developers.cloudflare.com/cache/advanced-configuration/early-hints/
- * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Link
+ * - `Link` preloads for the web fonts on HTML responses (Cloudflare turns them into 103
+ *   Early Hints); see `$lib/server/font-preload`. Sitemaps, JSON and images get none.
+ * - `X-Robots-Tag: noindex` on the generated image endpoints. `og:image` URLs
+ *   (`/social-card/…`, including their `?fallback=` redirects) and resized protocol logos
+ *   (`/metadata-logo/…`) get crawled like pages and were 45 % of a 1,000-URL sample of the
+ *   "crawled – currently not indexed" report in the 2026-09 audit. Images cannot carry a robots meta tag, so the
+ *   header is the only signal; robots.txt must keep allowing them because social scrapers
+ *   (and Google's own og:image fetch) need to read them. Set here rather than per `Response`
+ *   so the redirect and error branches of the endpoints are covered too.
  */
-const baseFontPreloadLinks = ['</fonts/fonts5.css>; rel=preload; as=style'];
+const NOINDEX_IMAGE_PATH_PATTERN = /^\/(social-card|metadata-logo)\//;
 
-const prominentPageFontPreloadLinks = [
-	'</fonts/NeueHaasGroteskDisplay/65.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
-	'</fonts/NeueHaasGroteskText/55.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
-	'</fonts/NeueHaasGroteskText/65.woff2>; rel=preload; as=font; type=font/woff2; crossorigin'
-];
-
-function getFontPreloadLinks(pathname: string): string {
-	if (pathname === '/' || /^\/vaults\/[^/]+$/.test(pathname)) {
-		return [...baseFontPreloadLinks, ...prominentPageFontPreloadLinks].join(', ');
-	}
-
-	return baseFontPreloadLinks.join(', ');
-}
-
-const handleFontPreload: Handle = async ({ event, resolve }) => {
+const handleResponseHeaders: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
-	response.headers.append('Link', getFontPreloadLinks(event.url.pathname));
+	const { pathname } = event.url;
+
+	if (response.headers.get('content-type')?.startsWith('text/html')) {
+		response.headers.append('Link', getFontPreloadLinks(pathname));
+	}
+	if (NOINDEX_IMAGE_PATH_PATTERN.test(pathname)) {
+		response.headers.set('X-Robots-Tag', 'noindex');
+	}
 	return response;
 };
 
@@ -158,5 +144,5 @@ export const handle = sequence(
 	handleAdminRole,
 	handlePodcastAnnouncement,
 	handleIpCountry,
-	handleFontPreload
+	handleResponseHeaders
 );

@@ -24,7 +24,6 @@ Vault chains index page.
 	let totalTvlLabel = $derived(`${formatDollar(totalTvl / 1_000_000_000, 1, 1, { notation: 'standard' })} billion`);
 
 	const onChange: ComponentProps<typeof VaultGroupTable>['onChange'] = async (params, scrollToTop) => {
-		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		await goto('?' + new URLSearchParams(params), { noScroll: true });
 		scrollToTop();
 	};
@@ -81,12 +80,17 @@ Vault chains index page.
 						{/snippet}
 						{#snippet subtitle()}
 							<p>
+								<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- glossaryLinks are built with resolve() -->
 								<a class="body-link" href={glossaryLinks.defi}>DeFi</a>
+								<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- glossaryLinks are built with resolve() -->
 								<a class="body-link" href={glossaryLinks.stablecoin}>stablecoin</a>
+								<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- glossaryLinks are built with resolve() -->
 								<a class="body-link" href={glossaryLinks.vault}>vaults</a>
 								on each blockchain.
+								<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- glossaryLinks are built with resolve() -->
 								<a class="body-link" href={glossaryLinks.tvl}>TVL</a> represents stablecoin deposits in vaults on a
 								particular chain.
+								<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- glossaryLinks are built with resolve() -->
 								<a class="body-link" href={glossaryLinks.apy}>APY</a>
 								represents the yield of last thirty days.
 							</p>

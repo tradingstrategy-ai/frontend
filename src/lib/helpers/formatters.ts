@@ -355,7 +355,7 @@ export function formatDaysAgo(unixTimestamp: MaybeNumber): string {
 /**
  * Formats arbitrary value with fallback string if undefined/null
  */
-export function formatValue(value: any): string {
+export function formatValue(value: unknown): string {
 	return value?.toString() ?? notFilledMarker;
 }
 

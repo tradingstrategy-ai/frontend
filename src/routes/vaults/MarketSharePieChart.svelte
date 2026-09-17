@@ -373,7 +373,6 @@
 
 		chartInstance.on('click', (params) => {
 			const targetUrl = params.data?.url;
-			// eslint-disable-next-line svelte/no-navigation-without-resolve -- Chart items already provide resolved hrefs.
 			if (targetUrl) goto(targetUrl);
 		});
 

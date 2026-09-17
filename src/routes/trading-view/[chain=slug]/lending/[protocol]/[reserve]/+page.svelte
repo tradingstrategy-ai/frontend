@@ -1,4 +1,8 @@
+<!--
+	Lending reserve detail page with rates and history
+-->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import type { ComponentProps } from 'svelte';
 	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
@@ -48,30 +52,33 @@
 	};
 </script>
 
-<svelte:head>
-	<title>{reserve.asset_symbol} {reserve.protocol_name} reserve on {reserve.chain_name}</title>
-	<meta
-		name="description"
-		content="{reserve.asset_name} lending reserve on {reserve.protocol_name} protocol on {reserve.chain_name}"
-	/>
-</svelte:head>
+<MetaTags
+	titleParts={[`${reserve.asset_symbol} ${reserve.protocol_name} lending reserve on ${reserve.chain_name}`]}
+	description={`${reserve.asset_name} (${reserve.asset_symbol}) lending reserve on ${reserve.protocol_name} on ${reserve.chain_name}: supply and borrow rates, utilisation and historical interest data.`}
+/>
 
 <Breadcrumbs labels={breadcrumbs} />
 
 <main class="ds-3">
 	<PageHeader title={reserve.asset_name}>
-		<span slot="subtitle" class="subtitle">
-			{reserve.protocol_name}
-			reserve on
-			<EntitySymbol size="0.875em" label={reserve.chain_name} logoUrl={getLogoUrl('blockchain', reserve.chain_slug)} />
-		</span>
-		<svelte:fragment slot="cta">
+		{#snippet subtitle()}
+			<span class="subtitle">
+				{reserve.protocol_name}
+				reserve on
+				<EntitySymbol
+					size="0.875em"
+					label={reserve.chain_name}
+					logoUrl={getLogoUrl('blockchain', reserve.chain_slug)}
+				/>
+			</span>
+		{/snippet}
+		{#snippet cta()}
 			{#if reserveUrl}
 				<Button href={reserveUrl} target="_blank" rel="noreferrer">
 					View on {formatUrlAsDomain(reserveUrl)}
 				</Button>
 			{/if}
-		</svelte:fragment>
+		{/snippet}
 	</PageHeader>
 
 	<section class="ds-container info" data-testid="reserve-info">

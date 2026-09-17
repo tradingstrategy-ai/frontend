@@ -149,19 +149,21 @@ export type ErrorInfo = {
  * Extrated data includes common Error properties as well as some custom properties
  * available on [viem errors](https://github.com/wevm/viem/blob/main/src/errors/base.ts).
  */
-export function extractErrorInfo(error: unknown, state?: string | undefined): ErrorInfo | unknown {
-	if (!(error instanceof Error)) return error;
+export function extractErrorInfo(error: unknown, state?: string | undefined): Partial<ErrorInfo> {
+	if (!(error instanceof Error)) return { message: String(error), state };
 
-	const { name, message, shortMessage, details, functionName } = error as any;
-	const cause = extractErrorInfo(error.cause);
+	const { name, message, shortMessage, details, functionName } = error as Error &
+		Partial<Record<'shortMessage' | 'details' | 'functionName', string>>;
+	const cause = error.cause === undefined ? undefined : extractErrorInfo(error.cause);
 	return { name, message, shortMessage, details, functionName, state, cause };
 }
 
 /**
  * Walk error's causes and return true if any match the provided error name
  */
-export function errorCausedBy(error: any, name: string) {
-	if (error?.name === name) return true;
-	if (error?.cause) return errorCausedBy(error.cause, name);
-	return false;
+export function errorCausedBy(error: unknown, name: string): boolean {
+	if (typeof error !== 'object' || error === null) return false;
+	const { name: errorName, cause } = error as { name?: unknown; cause?: unknown };
+	if (errorName === name) return true;
+	return cause ? errorCausedBy(cause, name) : false;
 }

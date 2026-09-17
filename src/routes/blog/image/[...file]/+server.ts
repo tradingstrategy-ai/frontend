@@ -95,5 +95,5 @@ export async function GET({ params, url, fetch }) {
 	const transformed = await pipeline.toBuffer();
 	headers.set('content-type', format === 'webp' ? 'image/webp' : contentType);
 
-	return new Response(transformed, { headers });
+	return new Response(new Uint8Array(transformed), { headers });
 }

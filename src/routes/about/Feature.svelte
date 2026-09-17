@@ -5,6 +5,7 @@
 
 <div class="feature">
 	<div class="media">
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -- raw SVG illustration imported from $lib/assets -->
 		{@html image}
 	</div>
 
