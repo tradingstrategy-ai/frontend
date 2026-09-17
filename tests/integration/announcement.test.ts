@@ -7,7 +7,7 @@ function setAnnouncementCookie(page: Page, date: ParsableDate) {
 		{
 			name: 'podcast-announcement-dismissed-at',
 			value: encodeURIComponent(isoDateStr),
-			domain: 'localhost',
+			domain: new URL(page.url()).hostname,
 			path: '/'
 		}
 	]);
