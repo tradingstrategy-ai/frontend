@@ -9,7 +9,7 @@ Strategy overview dashboard.
 	import StrategyPerformanceChart from './StrategyPerformanceChart.svelte';
 	import LagoonGuardV0Flow from 'trade-executor/components/LagoonGuardV0Flow.svelte';
 	import { getMetricsWithAltCAGR } from 'trade-executor/helpers/metrics';
-	import { getExchangeAccountInfo } from 'trade-executor/helpers/exchange-account';
+	import { getExchangeAccountInfo, getExchangeAccountInfoFromPortfolio } from 'trade-executor/helpers/exchange-account';
 	import { getStrategyPageMeta } from '$lib/strategies/seo';
 
 	let { data } = $props();
@@ -17,7 +17,13 @@ Strategy overview dashboard.
 
 	let backtestLink = $derived(`/strategies/${strategy.id}/backtest`);
 
-	let exchangeAccount = $derived(getExchangeAccountInfo(strategy));
+	// Resolve from tags synchronously; fall back to portfolio positions once /state has loaded
+	let exchangeAccountPromise = $derived.by(async () => {
+		const fromTags = getExchangeAccountInfo(strategy);
+		if (fromTags) return fromTags;
+		const state = await data.deferred.state;
+		return state && getExchangeAccountInfoFromPortfolio(strategy, state.portfolio);
+	});
 
 	// Temporary hack to address inaccurate CAGR metric (remove once this is fixed)
 	let keyMetrics = $derived(getMetricsWithAltCAGR(strategy));
@@ -39,18 +45,20 @@ Strategy overview dashboard.
 	<div class="sidebar-stack">
 		<MyDeposits {strategy} {chain} {vault} {ipCountry} {admin} />
 
-		{#if exchangeAccount}
-			<section class="exchange-account-box tile a">
-				<h2>
-					<img src="/avatars/{exchangeAccount.protocol}.svg" alt="{exchangeAccount.name} logo" />
-					<span>{exchangeAccount.name} account</span>
-				</h2>
-				<p>This vault trades on {exchangeAccount.name}</p>
-				<Button size="lg" href={exchangeAccount.url} target="_blank" rel="noreferrer">
-					View strategy on {exchangeAccount.name}
-				</Button>
-			</section>
-		{/if}
+		{#await exchangeAccountPromise then exchangeAccount}
+			{#if exchangeAccount}
+				<section class="exchange-account-box tile a">
+					<h2>
+						<img src="/avatars/{exchangeAccount.protocol}.svg" alt="{exchangeAccount.name} logo" />
+						<span>{exchangeAccount.name} account</span>
+					</h2>
+					<p>This vault trades on {exchangeAccount.name}</p>
+					<Button size="lg" href={exchangeAccount.url} target="_blank" rel="noreferrer">
+						View strategy on {exchangeAccount.name}
+					</Button>
+				</section>
+			{/if}
+		{/await}
 	</div>
 	<StrategyPerformanceChart {strategy} />
 	<SummaryMetrics {keyMetrics} {backtestLink} hideTimeframes={strategy.hiddenElements.timeframes}>

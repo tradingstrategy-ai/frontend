@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add the Lighter multistrategy vault: link its open positions to the Lighter account explorer page, add its avatars, support the new Lagoon GuardV0 settlement-window metadata alongside the legacy shape, fix the dead Lighter explorer URL (2026-09-17)
 - SEO round 3: noindex empty vault pages and crawl-waste endpoints, metric-matched font fallbacks against layout shift, click-to-load YouTube embeds on blog posts, branded titles, full descriptions and social images on every template, Organization and BlogPosting structured data, asset caching (2026-09-17)
 - SEO follow-ups: fix the mobile layout shift caused by the announcement banner, noindex adult and gambling token names, descriptive strategy page titles, one canonical mechanism, stop submitting pair sitemaps, faster vault listing hydration (2026-09-16)
 - Improve SEO and Core Web Vitals: noindex dead token/pair pages, canonical URLs on trading-view and glossary pages, inline small stylesheets, resize Ghost blog images again, halve vault listing page weight with row projection and lazy tooltips, slim glossary pages, add Search Console and CrUX API scripts (2026-09-16)

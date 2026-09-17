@@ -378,6 +378,7 @@ The current custom strategy SVGs are:
 - `static/avatars/ichi-hyperliquid.svg`
 - `static/avatars/gmx-ai.svg`
 - `static/avatars/hyper-ai.svg`
+- `static/avatars/lighter-ai.svg`
 
 These follow a shared pattern:
 
@@ -410,6 +411,14 @@ Practical guidance:
 - regenerate the `.webp` whenever the SVG changes
 - verify the result at small avatar sizes, not just full resolution
 - include `<title>` and `<desc>` in custom SVGs for accessibility and future editing context
+
+### Exchange account logos
+
+Exchange account strategies (GMX, Derive, Lighter) also show the exchange's own logo in the
+"account" box on the strategy overview page, looked up as `/avatars/{protocol}.svg` (e.g.
+`static/avatars/gmx.svg`, `static/avatars/lighter.svg`). These are plain brand marks on a dark
+disc, without the strategy concept badge. Add one whenever a new exchange protocol is added to
+`src/lib/trade-executor/helpers/exchange-account.ts`.
 
 ## Notes
 

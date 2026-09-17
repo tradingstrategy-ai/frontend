@@ -6,37 +6,14 @@ Strategy position listing page.
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { Alert } from '$lib/components';
-	import {
-		getExchangeAccountInfo,
-		getExchangeAccountUrl,
-		getExchangeDisplayName
-	} from 'trade-executor/helpers/exchange-account';
+	import { getExchangeAccountInfo } from 'trade-executor/helpers/exchange-account';
 	import PositionTable from './PositionTable.svelte';
 	import { capitalize } from '$lib/helpers/formatters';
 
 	let { data } = $props();
 	let { admin, positions, status, strategy, reserves, positionVaultSparklines } = $derived(data);
 
-	let exchangeAccount = $derived.by(() => {
-		// Try tag-based detection first
-		const fromTags = getExchangeAccountInfo(strategy);
-		if (fromTags) return fromTags;
-
-		// Fall back to detecting from position data
-		const exchangePosition = positions.find((p) => p.pair.kind === 'exchange_account');
-		const protocol = exchangePosition?.pair.other_data?.exchange_protocol as string | undefined;
-		if (!protocol) return undefined;
-
-		const address =
-			strategy.on_chain_data.asset_management_mode === 'lagoon'
-				? strategy.on_chain_data.smart_contracts.safe
-				: undefined;
-		if (!address) return undefined;
-
-		const url = getExchangeAccountUrl(protocol, address);
-		if (!url) return undefined;
-		return { url, name: getExchangeDisplayName(protocol), protocol };
-	});
+	let exchangeAccount = $derived(getExchangeAccountInfo(strategy, positions));
 
 	type Options = Pick<ComponentProps<typeof PositionTable>, 'page' | 'sort' | 'direction'>;
 

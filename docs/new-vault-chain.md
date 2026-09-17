@@ -12,7 +12,7 @@ Add an entry to the `chains` array in `src/lib/helpers/chain.ts`:
   slug: 'lighter',     // URL-friendly slug (used in routes and logo lookup)
   name: 'Lighter',     // human-readable display name
   homepage: 'https://lighter.xyz',
-  explorer: 'https://scan.lighter.xyz',
+  explorer: 'https://app.lighter.xyz/explorer',
   nativeCurrency: 'ETH',
   hasBackendData: false // true only if the chain has full backend oracle/price data
 }

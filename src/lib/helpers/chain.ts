@@ -194,7 +194,7 @@ export const chains = (() => {
 			slug: 'lighter',
 			name: 'Lighter',
 			homepage: 'https://lighter.xyz',
-			explorer: 'https://scan.lighter.xyz',
+			explorer: 'https://app.lighter.xyz/explorer',
 			nativeCurrency: 'ETH',
 			hasBackendData: false
 		},

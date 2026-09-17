@@ -18,6 +18,7 @@ import {
 	hexString,
 	percent,
 	performanceData,
+	unixTimestamp,
 	unixTimestampToDate,
 	usDollarAmount
 } from './utility-types';
@@ -42,11 +43,52 @@ export const velvetSmartContractSchema = z.object({
 });
 export type VelvetSmartContracts = z.infer<typeof velvetSmartContractSchema>;
 
-const lagoonGuardV0Schema = z.object({
-	daily_automatic_settlement_limit_enabled: z.boolean(),
-	daily_automatic_settlement_limit: decimal.nullish(),
-	settlement_cooldown_seconds: duration.positive()
+/**
+ * Normalised GuardV0 automatic-settlement policy.
+ *
+ * Trade executors report this in two shapes (see `lagoonGuardV0Schema`); both are
+ * mapped to this one so components only deal with a single set of field names.
+ */
+const lagoonGuardV0NormalisedSchema = z.object({
+	guard_version: z.string().nullish(),
+	/** Whether GuardV0 currently caps automatic settlement */
+	automatic_settlement_window_limit_enabled: z.boolean(),
+	/** Gross deposit + redemption amount allowed per settlement window (null when uncapped) */
+	automatic_settlement_window_limit: decimal.nullish(),
+	/** Fixed settlement window duration in seconds */
+	settlement_window_seconds: duration.positive(),
+	/** Gross amount already settled in the active window (only reported by newer executors) */
+	settled_amount_in_window: decimal.nullish(),
+	/** Gross budget still available in the active window (only reported by newer executors) */
+	remaining_automatic_settlement_budget: decimal.nullish(),
+	/** Unix timestamp (seconds) when the active window ends; 0 or absent when no window is open */
+	settlement_window_end_timestamp: unixTimestamp.nullish()
 });
+
+export type LagoonGuardV0 = z.infer<typeof lagoonGuardV0NormalisedSchema>;
+
+/** Legacy shape reported by executors before trade-executor #1653 (daily cooldown wording) */
+const lagoonGuardV0LegacySchema = z
+	.object({
+		guard_version: z.string().nullish(),
+		daily_automatic_settlement_limit_enabled: z.boolean(),
+		daily_automatic_settlement_limit: decimal.nullish(),
+		settlement_cooldown_seconds: duration.positive()
+	})
+	.transform(
+		(legacy): LagoonGuardV0 => ({
+			guard_version: legacy.guard_version,
+			automatic_settlement_window_limit_enabled: legacy.daily_automatic_settlement_limit_enabled,
+			automatic_settlement_window_limit: legacy.daily_automatic_settlement_limit,
+			settlement_window_seconds: legacy.settlement_cooldown_seconds
+		})
+	);
+
+/**
+ * GuardV0 settlement policy as reported by `/metadata`; accepts the current
+ * settlement-window shape and the legacy daily-cooldown shape.
+ */
+const lagoonGuardV0Schema = z.union([lagoonGuardV0NormalisedSchema, lagoonGuardV0LegacySchema]);
 
 export const lagoonSmartContractSchema = z.object({
 	address: hexString,
