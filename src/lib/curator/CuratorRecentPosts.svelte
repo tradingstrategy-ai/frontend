@@ -102,6 +102,7 @@ its latest entry).
 	let posts = $derived.by(() => {
 		const sorted = [...curator.recent_posts].sort((a, b) => toTime(b.published_at) - toTime(a.published_at));
 		// Sorted most-recent first, so the first occurrence of each content is the latest entry.
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity -- local scratch set, not state
 		const seen = new Set<string>();
 		return sorted.filter((item) => {
 			const key = contentKey(item);

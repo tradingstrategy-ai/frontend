@@ -27,6 +27,7 @@ and usable) and is marked with `aria-current="page"`, which also drives its styl
 </script>
 
 <li class="menu-item">
+	<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- href is a resolved path passed in by the caller -->
 	<a href={targetUrl} {rel} {target} aria-current={active ? 'page' : undefined}>
 		{#if children}{@render children()}{:else}{label}{/if}
 	</a>

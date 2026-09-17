@@ -8,7 +8,7 @@ import { ORGANIZATION_ID, SITE_NAME } from '$lib/helpers/seo';
 
 // Utility function for generating metadata script tag
 // See https://navillus.dev/blog/json-ld-in-sveltekit
-export function serializeSchema(metadata: any) {
+export function serializeSchema(metadata: object) {
 	return `<script type="application/ld+json">${JSON.stringify(metadata)}</script>`;
 }
 

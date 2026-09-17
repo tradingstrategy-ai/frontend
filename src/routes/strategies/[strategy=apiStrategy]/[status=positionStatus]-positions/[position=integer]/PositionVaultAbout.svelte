@@ -31,6 +31,7 @@ Compact vault metadata card for vault position detail pages.
 					{description}
 				{/if}
 			</p>
+			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- datasheetHref is built with resolve() -->
 			<a href={datasheetHref}>View full information</a>
 		</div>
 

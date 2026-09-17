@@ -25,7 +25,6 @@ Vault protocols index page.
 	let totalTvlLabel = $derived(`${formatDollar(totalTvl / 1_000_000_000, 1, 1, { notation: 'standard' })} billion`);
 
 	const onChange: ComponentProps<typeof VaultGroupTable>['onChange'] = async (params, scrollToTop) => {
-		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		await goto('?' + new URLSearchParams(params), { noScroll: true });
 		scrollToTop();
 	};
@@ -77,10 +76,13 @@ Vault protocols index page.
 						{#snippet subtitle()}
 							<p>
 								Vault protocols ranking for DeFi stablecoin vaults.
+								<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- glossaryLinks are built with resolve() -->
 								<a class="body-link" href={glossaryLinks.tvl}>TVL</a>
 								represents
+								<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- glossaryLinks are built with resolve() -->
 								<a class="body-link" href={glossaryLinks.stablecoin}>stablecoin</a>
 								deposits in a protocol’s vaults.
+								<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- glossaryLinks are built with resolve() -->
 								<a class="body-link" href={glossaryLinks.apy}>APY</a>
 								represents the yield of the last thirty days.
 							</p>

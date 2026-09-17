@@ -175,6 +175,7 @@ Two ECharts visualisations for stablecoin vault returns and TVL by CORE3 Probabi
 	}
 
 	function buildBinnedReturnData() {
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity -- local accumulator, not state
 		const bins = new Map<
 			string,
 			{

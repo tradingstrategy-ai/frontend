@@ -29,7 +29,8 @@ Display one key metric in a strategy tile.
 	export let tooltipExtraDescription: string | undefined = undefined;
 	// Source from the trade-executir API
 	export let metric: KeyMetric | undefined = undefined;
-	// How to we format the number
+	// How to we format the number (each metric decides what its formatter takes)
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	export let formatter: Formatter<any> | undefined = undefined;
 	// Used link to strategy's backtest page
 	export let backtestLink: string | undefined = undefined;
@@ -69,7 +70,7 @@ Display one key metric in a strategy tile.
 				<h3>Backtesting estimate</h3>
 				<p>
 					This strategy has not been trading long enough to reliably calculate
-					<a target="_blank" href={metric.help_link}>{tooltipName ?? name}</a>
+					<a target="_blank" rel="external noreferrer" href={metric.help_link}>{tooltipName ?? name}</a>
 					based on the live trading data. Instead, a
 					<a href={backtestLink}>backtested</a>
 					estimation is displayed.

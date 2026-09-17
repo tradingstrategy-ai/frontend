@@ -75,7 +75,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 
 		subscribed: {
 			_enter() {
-				// @ts-ignore
+				// @ts-expect-error svelte-fsm adds `.debounce()` to actions at runtime; it is not in the types
 				form.reset.debounce(5000);
 			},
 
@@ -102,7 +102,7 @@ Embeddable <form> based component that allows subscribing to newsletter.
 	 */
 	const enhancedSubmit: SubmitFunction = () => {
 		form.submit();
-		// @ts-ignore
+		// @ts-expect-error the fsm actions are keyed by the ActionResult type names
 		return ({ result }) => form[result.type](result);
 	};
 </script>

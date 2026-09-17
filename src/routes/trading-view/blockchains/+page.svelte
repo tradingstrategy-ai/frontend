@@ -2,6 +2,7 @@
 	Display chain information and indexing status
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -26,7 +27,7 @@
 	<Section>
 		<div class="chains">
 			{#each chains as chain (chain.id)}
-				<a class="tile b" href={`/trading-view/${chain.slug}`}>
+				<a class="tile b" href={resolve('/trading-view/[chain=slug]', { chain: chain.slug })}>
 					<div class="tile c">
 						<img alt={`${chain.name} logo`} src={getLogoUrl('blockchain', chain.slug)} />
 					</div>

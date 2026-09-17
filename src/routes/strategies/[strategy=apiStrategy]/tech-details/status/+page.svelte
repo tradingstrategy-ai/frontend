@@ -95,7 +95,12 @@
 				<td>Hot wallet address</td>
 				<td>
 					{#if runState.hot_wallet_address}
-						<a class="hot-wallet" href={getExplorerUrl(chain, runState.hot_wallet_address)} target="_blank">
+						<a
+							class="hot-wallet"
+							href={getExplorerUrl(chain, runState.hot_wallet_address)}
+							target="_blank"
+							rel="external noreferrer"
+						>
 							<HashAddress address={runState.hot_wallet_address} />
 						</a>
 					{:else}

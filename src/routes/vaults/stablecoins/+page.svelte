@@ -28,7 +28,6 @@ Vault stablecoins index page.
 	let totalTvlLabel = $derived(`${formatDollar(totalTvl / 1_000_000_000, 1, 1, { notation: 'standard' })} billion`);
 
 	const onChange: ComponentProps<typeof VaultGroupTable>['onChange'] = async (params, scrollToTop) => {
-		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		await goto('?' + new URLSearchParams(params), { noScroll: true });
 		scrollToTop();
 	};

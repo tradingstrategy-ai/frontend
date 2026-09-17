@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/stores';
 	import { Button, Logo } from '$lib/components';
 	import MaintenanceNotice from './_components/MaintenanceNotice.svelte';
@@ -18,7 +19,7 @@
 
 <main class="error-page">
 	<header>
-		<a href="/" rel="homepage">
+		<a href={resolve('/')} rel="homepage">
 			<Logo />
 		</a>
 	</header>

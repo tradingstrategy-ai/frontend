@@ -1,4 +1,5 @@
 <script>
+	import { resolve } from '$app/paths';
 	import { MediaQuery } from 'svelte/reactivity';
 	import { discordUrl } from '$lib/config';
 	import { Button, Logo, Section } from '$lib/components';
@@ -9,7 +10,7 @@
 
 <Section tag="header" class="wizard-header">
 	<div class="inner">
-		<a href="/" aria-label="Home">
+		<a href={resolve('/')} aria-label="Home">
 			<Logo />
 		</a>
 

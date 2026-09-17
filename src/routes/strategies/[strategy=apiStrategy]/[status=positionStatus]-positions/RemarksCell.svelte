@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { TradingPositionInfo } from 'trade-executor/models/position-info';
 	import type { TradeInfo } from 'trade-executor/models/trade-info';
 	import { Alert } from '$lib/components';
@@ -32,8 +33,9 @@
 			<p>Position can still have a profitable close if a trailing or dynamic stop loss was used.</p>
 			<p>See more</p>
 			<ul>
+				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- relative link within the strategy's own route, built from the resolved baseUrl prop -->
 				<li><a href={getTradeLink(position.lastTrade!)}>View the closing trade</a></li>
-				<li><a href="/glossary/stop-loss">What is a stop loss</a></li>
+				<li><a href={resolve('/glossary/stop-loss')}>What is a stop loss</a></li>
 			</ul>
 		</PositionFlag>
 	{/if}
@@ -61,6 +63,7 @@
 			</p>
 			<p>See more</p>
 			<ul>
+				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- relative link within the strategy's own route, built from the resolved baseUrl prop -->
 				<li><a href={getTradeLink(position.failedTrades.at(-1)!)}>View the last trade with issues</a></li>
 			</ul>
 		</PositionFlag>

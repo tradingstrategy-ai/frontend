@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { KeyMetric } from 'trade-executor/schemas/key-metric';
 	import { Timestamp } from '$lib/components';
 
@@ -27,7 +28,7 @@
 		{#if metric?.help_link}
 			<li>
 				See the glossary for the definition of
-				<a target="_blank" href={metric.help_link}><strong>{title}</strong></a>
+				<a target="_blank" rel="external noreferrer" href={metric.help_link}><strong>{title}</strong></a>
 				and how it is calculated.
 			</li>
 		{/if}
@@ -35,11 +36,11 @@
 		{#if metric?.source == 'backtesting'}
 			<li>
 				This strategy has not been trading long enough to reliably calculate
-				<a target="_blank" href={metric.help_link}>{title}</a> based on the live trading data.
+				<a target="_blank" rel="external noreferrer" href={metric.help_link}>{title}</a> based on the live trading data.
 			</li>
 
 			<li>
-				Instead, a <a href="/glossary/backtest">backtested</a> estimation is displayed.
+				Instead, a <a href={resolve('/glossary/backtest')}>backtested</a> estimation is displayed.
 			</li>
 
 			{#if backtestLink}

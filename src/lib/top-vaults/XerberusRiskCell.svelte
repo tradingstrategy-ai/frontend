@@ -39,7 +39,7 @@ Renders a dash when Xerberus does not publish a score for the protocol.
 					Risk band: <strong>{band}</strong>.
 				{/if}
 				{#if url}
-					<a href={url} target="_blank" rel="noreferrer">View scorecard</a>
+					<a href={url} target="_blank" rel="external noreferrer">View scorecard</a>
 				{/if}
 			</svelte:fragment>
 		</Tooltip>

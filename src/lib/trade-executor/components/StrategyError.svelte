@@ -28,10 +28,9 @@ Display an appropriate error message for a strategy when needed. There can be mu
 </script>
 
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { Timestamp } from '$lib/components';
 	export let strategy: StrategyInfo;
-
-	const baseUrl = `/strategies/${strategy.id}`;
 </script>
 
 {#if !strategy.connected}
@@ -45,8 +44,10 @@ Display an appropriate error message for a strategy when needed. There can be mu
 			{/snippet}
 		</Timestamp>
 	{/if}
-	<a href="{baseUrl}/tech-details/status"> See instance status page for more information </a>.
+	<a href={resolve(`/strategies/${strategy.id}/tech-details/status`)}>
+		See instance status page for more information
+	</a>.
 {:else if strategy.frozen_positions > 0}
 	Strategy has currently frozen trading positions that require manual intervention.
-	<a href="{baseUrl}/frozen-positions">See frozen positions page for more information</a>.
+	<a href={resolve(`/strategies/${strategy.id}/frozen-positions`)}>See frozen positions page for more information</a>.
 {/if}

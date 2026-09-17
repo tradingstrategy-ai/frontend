@@ -1,12 +1,11 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { Tooltip } from '$lib/components';
 	import IconQuestionCircle from '~icons/local/question-circle';
 	import { formatPercent } from '$lib/helpers/formatters';
 
 	export let data;
 	const { strategy, vault, fees } = data;
-
-	const enzymeFeeUrl = 'https://docs.enzyme.finance/what-is-enzyme/faq#fees-performance-and-accounting';
 </script>
 
 <svelte:head>
@@ -23,7 +22,7 @@
 				<span slot="trigger">Management fee <IconQuestionCircle /></span>
 				<div slot="popup">
 					<p>The management fee is a periodic fee charged for managing the strategy's assets.</p>
-					<p><a href="/glossary/management-fee" target="_blank">Learn more about management fees</a>.</p>
+					<p><a href={resolve('/glossary/management-fee')} target="_blank">Learn more about management fees</a>.</p>
 				</div>
 			</Tooltip>
 			<span>{formatPercent(fees.managementFee, 2)}</span>
@@ -35,7 +34,7 @@
 					<span slot="trigger">Total performance fee <IconQuestionCircle /></span>
 					<div slot="popup">
 						<p>The combined fee charged against the strategy's profits.</p>
-						<p><a href="/glossary/performance-fee" target="_blank">Learn more about performance fees</a>.</p>
+						<p><a href={resolve('/glossary/performance-fee')} target="_blank">Learn more about performance fees</a>.</p>
 					</div>
 				</Tooltip>
 				<span>{formatPercent(fees.totalPerformanceFee, 2)}</span>
@@ -83,10 +82,11 @@
 			<Tooltip>
 				<span slot="trigger">{vault.label} Protocol fee <IconQuestionCircle /></span>
 				<div slot="popup">
+					<!-- eslint-disable-next-line svelte/no-at-html-tags -- protocol fee description from the strategy metadata -->
 					<p>{@html vault.protocolFeeTooltip}</p>
 					{#if vault.protocolFeeUrl}
 						<p>
-							<a href={vault.protocolFeeUrl} target="_blank" rel="noreferrer">
+							<a href={vault.protocolFeeUrl} target="_blank" rel="external noreferrer">
 								Learn more about {vault.shortLabel} protocol fees
 							</a>.
 						</p>

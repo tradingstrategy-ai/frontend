@@ -176,7 +176,7 @@
 
 		// add preceeding pane heights to point.y (+1 for pane separator)
 		preceedingPanes.forEach((pane) => {
-			(point as any).y += pane.getHeight() + 1;
+			(point as { y: number }).y += pane.getHeight() + 1;
 		});
 
 		return { ...params, point };

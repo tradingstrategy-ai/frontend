@@ -4,7 +4,7 @@
 
 	let props: EntityTableProps = $props();
 
-	const getHref = (row: Record<string, any>) => `/trading-view/${row.chain_slug}/tokens/${row.address}`;
+	const getHref = (row: UntypedApiRow) => `/trading-view/${row.chain_slug}/tokens/${row.address}`;
 </script>
 
 <TradingEntitiesTable {...props} {getHref}>

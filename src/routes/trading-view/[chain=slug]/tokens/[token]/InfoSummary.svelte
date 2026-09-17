@@ -3,6 +3,7 @@
 Summarise a token's identity, supply and smart-contract address.
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { TokenDetails } from '$lib/explorer/token-client.js';
 	import { formatAmount } from '$lib/helpers/formatters';
 	import { getTokenStandardName } from '$lib/chain/tokenstandard';
@@ -14,7 +15,7 @@ Summarise a token's identity, supply and smart-contract address.
 <div class="summary">
 	<p>
 		<strong>{token.name}</strong> is a {getTokenStandardName(token.chain_slug)} token on
-		<a href="/trading-view/{token.chain_slug}">{token.chain_name} blockchain</a>. It trades under
+		<a href={resolve(`/trading-view/${token.chain_slug}`)}>{token.chain_name} blockchain</a>. It trades under
 		<strong>{token.symbol}</strong> ticker.
 	</p>
 

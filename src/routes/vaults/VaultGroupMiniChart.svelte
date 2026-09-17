@@ -412,6 +412,7 @@ the tooltip states the included vault count.
 	{/if}
 
 	{#if compareLabel && compareHref}
+		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- resolveHref() prefixes the base path itself -->
 		<a class="compare-link" href={resolveHref(compareHref)}>{compareLabel}</a>
 	{/if}
 </div>

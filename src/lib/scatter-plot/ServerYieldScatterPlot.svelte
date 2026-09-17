@@ -12,7 +12,9 @@ text, and detail links are fetched; complete vault records stay on the server.
 		buildMarker,
 		computeAxisRange,
 		loadPlotly,
-		minReturnLog
+		minReturnLog,
+		type PlotlyApi,
+		type PlotlyElement
 	} from './helpers';
 	import ScatterPlotShell from './ScatterPlotShell.svelte';
 
@@ -26,11 +28,11 @@ text, and detail links are fetched; complete vault records stay on the server.
 
 	let { endpoint, legendTitle, excludedLabel, isolateLegend = false }: Props = $props();
 
-	function addIsolatingLegend(Plotly: any, traces: unknown[]) {
-		(chartContainer as any).on('plotly_legendclick', (event: any) => {
+	function addIsolatingLegend(Plotly: PlotlyApi, traces: unknown[]) {
+		(chartContainer as PlotlyElement).on('plotly_legendclick', (event) => {
 			const clicked = event.curveNumber;
-			const visibleStates: (boolean | string)[] = (chartContainer as any).data.map(
-				(trace: any) => trace.visible ?? true
+			const visibleStates: (boolean | string)[] = (chartContainer as PlotlyElement).data.map(
+				(trace) => trace.visible ?? true
 			);
 			const allVisible = visibleStates.every((visible) => visible === true);
 			const visibleCount = visibleStates.filter((visible) => visible === true).length;
@@ -114,7 +116,7 @@ text, and detail links are fetched; complete vault records stay on the server.
 				hovertemplate: '%{text}<extra></extra>'
 			}));
 			await Plotly.newPlot(chartContainer, traces, layout, buildChartConfig());
-			(chartContainer as any).on('plotly_click', (event: any) => {
+			(chartContainer as PlotlyElement).on('plotly_click', (event) => {
 				const url = event.points?.[0]?.customdata;
 				if (url) goto(url);
 			});
@@ -124,7 +126,7 @@ text, and detail links are fetched; complete vault records stay on the server.
 		});
 		return () => {
 			cancelled = true;
-			if (chartContainer && (window as any).Plotly) (window as any).Plotly.purge(chartContainer);
+			if (chartContainer) window.Plotly?.purge(chartContainer);
 		};
 	});
 </script>

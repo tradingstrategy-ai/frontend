@@ -69,7 +69,7 @@
 				<li>Failure reason: <i>{trade.failedTx?.revert_reason ?? 'unknown'}</i></li>
 				{#if trade.failedTx?.tx_hash}
 					<li>
-						<a href={getExplorerUrl(chain, trade.failedTx.tx_hash)} target="_blank" rel="noreferrer">
+						<a href={getExplorerUrl(chain, trade.failedTx.tx_hash)} target="_blank" rel="external noreferrer">
 							View transaction
 							<span class="hash-wrapper"><HashAddress address={trade.failedTx.tx_hash} /></span>
 						</a>
@@ -79,6 +79,7 @@
 					<li>
 						Repaired by:
 						{#if trade.repairedByTradeId}
+							<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- relative link within the current position route -->
 							<a href="./trade-{trade.repairedByTradeId}">Trade #{trade.repairedByTradeId}</a>
 						{:else}
 							<i>unknown</i>
@@ -92,6 +93,7 @@
 	{#if trade.repaired_trade_id}
 		<Alert size="sm" status="info" title="Repair trade">
 			This trade was recorded to repair
+			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- relative link within the current position route -->
 			<a href="./trade-{trade.repaired_trade_id}">Trade #{trade.repaired_trade_id}</a>
 		</Alert>
 	{/if}

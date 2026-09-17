@@ -25,7 +25,7 @@ Display summary performance data for a given period; lazy-loads data when scroll
 	export let active = false;
 
 	let loaded = false;
-	let tradeData: any = {};
+	let tradeData: UntypedApiRow = {};
 
 	$: if (pairId) {
 		loaded = false;

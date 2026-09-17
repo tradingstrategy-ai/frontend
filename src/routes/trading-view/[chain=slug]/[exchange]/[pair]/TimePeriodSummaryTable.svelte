@@ -39,7 +39,7 @@ Display summary performance table for various periods.
 		{/if}
 	</ul>
 
-	{#each ['hourly', 'daily', 'weekly', 'monthly'] as period}
+	{#each ['hourly', 'daily', 'weekly', 'monthly'] as period (period)}
 		<TimePeriodSummaryColumn {pairId} {hideLiquidityAndTrades} {period} active={period === selected} />
 	{/each}
 </div>

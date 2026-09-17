@@ -104,7 +104,7 @@ export const proxyPosts: RequestHandler = async function ({ fetch, url }) {
 
 	try {
 		resp = await fetch(`${apiUrl}/ghost/api/content/posts/?${searchParams}`);
-	} catch (e) {
+	} catch {
 		error(500, 'Failed to connect to Ghost API');
 	}
 

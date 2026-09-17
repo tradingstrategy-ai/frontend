@@ -47,7 +47,6 @@
 		if (!(vault.depositEnabled() && address && !wrongNetwork)) return [undefined, undefined];
 
 		// force update to dervived values when deposit values invalidated
-		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		depositBalancesNonce;
 
 		const shares = vault.getShareBalance(config, address);
@@ -91,7 +90,7 @@
 							<div class="vault-balance">
 								{formatDollar(formatBalance(balance))}
 							</div>
-						{:catch e}
+						{:catch}
 							<div class="vault-balance">---</div>
 						{/await}
 					{/if}

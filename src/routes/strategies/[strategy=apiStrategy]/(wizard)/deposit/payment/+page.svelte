@@ -39,7 +39,7 @@
 	let isPreApproved = $state(false);
 	let approvalTxId: Maybe<Address> = $state();
 	let paymentTxId: Maybe<Address> = $state();
-	let error: ErrorInfo | unknown | undefined = $state();
+	let error: Partial<ErrorInfo> | undefined = $state();
 
 	const payment = fsm('initial', {
 		'*': { fail: 'failed' },
@@ -317,7 +317,7 @@
 				<Alert size="sm" status="warning" title="Settlement period required">
 					Your deposit will show as <i>pending</i> during settlement. Once complete, you'll be able to claim your
 					deposited shares.
-					<a href={vault.settlementInfoUrl} target="_blank" rel="noreferrer">Learn more about settlement</a>
+					<a href={vault.settlementInfoUrl} target="_blank" rel="external noreferrer">Learn more about settlement</a>
 				</Alert>
 			{/if}
 
@@ -367,7 +367,7 @@
 
 			{#if $payment === 'failed'}
 				<Alert size="sm" status="error" title="Error">
-					<PaymentError {error} symbol={denominationToken.symbol} {transactionCopy} />
+					<PaymentError error={error!} symbol={denominationToken.symbol} {transactionCopy} />
 					<Button slot="cta" size="xs" label="Try again" on:click={payment.retry} />
 				</Alert>
 			{/if}

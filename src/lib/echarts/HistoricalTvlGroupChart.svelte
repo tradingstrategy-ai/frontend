@@ -156,6 +156,7 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		if (range === 'all' || weeks.length === 0) return 0;
 
 		const latestWeek = new Date(`${weeks.at(-1)}T00:00:00Z`);
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity -- local arithmetic, not state
 		const cutoff = new Date(latestWeek);
 
 		if (range === '1y') {
@@ -263,7 +264,6 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		const updated = { ...current, ...overrides };
 		const qs = serialiseSearchParams(updated, schema);
 		const href = qs ? `${page.url.pathname}?${qs}` : page.url.pathname;
-		// eslint-disable-next-line svelte/no-navigation-without-resolve
 		goto(href, { replaceState: true, noScroll: true, keepFocus: true });
 	}
 

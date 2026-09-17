@@ -31,6 +31,7 @@ Decorative Trading Strategy chart watermark rendered behind chart content.
 	aria-hidden="true"
 	style={`--chart-watermark-opacity: ${opacity};`}
 >
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- raw SVG imported from $lib/assets -->
 	{@html logo}
 </div>
 

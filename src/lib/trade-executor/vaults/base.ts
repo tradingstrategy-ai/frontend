@@ -19,7 +19,7 @@ export const DepositMethod = {
  * Custom error thrown when getSharePrice fails
  */
 export class GetSharePriceError extends Error {
-	constructor(cause: any) {
+	constructor(cause: unknown) {
 		super('Error fetching share price');
 		this.name = 'GetSharePriceError';
 		this.cause = cause;

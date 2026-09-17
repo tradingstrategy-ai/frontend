@@ -3,6 +3,7 @@
 Responsive navigation drawer with optional search entry, primary links and site footer.
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { Snippet } from 'svelte';
 	import { disableScroll } from '$lib/actions/scroll';
 	import { Logo, Menu, Footer } from '$lib/components';
@@ -38,7 +39,7 @@ Responsive navigation drawer with optional search entry, primary links and site 
 
 <nav class:open aria-label="Mobile navigation" use:closeOnNavigation>
 	<header>
-		<a href="/" aria-label="Home"><Logo /></a>
+		<a href={resolve('/')} aria-label="Home"><Logo /></a>
 		<button aria-label="Close navigation panel" onclick={close}>
 			<IconCancel />
 		</button>

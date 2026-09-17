@@ -163,7 +163,7 @@
 
 	<div class="menu-wrapper" bind:this={menuWrapper}>
 		<Menu on:click={mobileMenu.close}>
-			{#each visibleOptions as { slug, label, positionStatus }}
+			{#each visibleOptions as { slug, label, positionStatus } (slug)}
 				{@const active = slug === currentOption?.slug}
 				{@const isExchangePosition = !!(resolvedExchangeAccount && positionStatus)}
 				<MenuItem

@@ -25,7 +25,6 @@ anchor if `href` is provided. The `icon` and `cta` slots are optional.
 	$: anchorProps = { href, rel, target };
 </script>
 
-<!-- svelte-ignore a11y-no-static-element-interactions -->
 <svelte:element this={tag} {...anchorProps} class="content-card tile b" data-testid={testId} on:click>
 	{#if $$slots.icon}
 		<div class="icon tile c">

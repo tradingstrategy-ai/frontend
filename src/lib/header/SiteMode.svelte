@@ -9,6 +9,7 @@ A helpful widget to identify non-production deployment and give some developer d
 ```
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { backendUrl, siteMode } from '$lib/config';
 </script>
 
@@ -20,9 +21,9 @@ A helpful widget to identify non-production deployment and give some developer d
 		</p>
 
 		<p>
-			<a class="body-link" href="/diagnostics">Diagnostics page</a> |
-			<a class="body-link" href="/slow-load">Slow page</a> |
-			<a class="body-link" href="/sentry-test">Sentry test page</a>
+			<a class="body-link" href={resolve('/diagnostics')}>Diagnostics page</a> |
+			<a class="body-link" href={resolve('/slow-load')}>Slow page</a> |
+			<a class="body-link" href={resolve('/sentry-test')}>Sentry test page</a>
 		</p>
 	</section>
 {/if}

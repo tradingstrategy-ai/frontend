@@ -2,6 +2,7 @@
 Conversion-focused pricing page for professional DeFi vault market data.
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { onMount } from 'svelte';
 	import { Button, Tooltip } from '$lib/components';
@@ -11,8 +12,8 @@ Conversion-focused pricing page for professional DeFi vault market data.
 	let { data } = $props();
 
 	onMount(() => {
-		const tawkApi = ((window as any).Tawk_API = (window as any).Tawk_API || {});
-		(window as any).Tawk_LoadStart = new Date();
+		const tawkApi = (window.Tawk_API = window.Tawk_API || {});
+		window.Tawk_LoadStart = new Date();
 
 		if (typeof tawkApi.showWidget === 'function') {
 			tawkApi.showWidget();
@@ -27,7 +28,7 @@ Conversion-focused pricing page for professional DeFi vault market data.
 		}
 
 		return () => {
-			const api = (window as any).Tawk_API;
+			const api = window.Tawk_API;
 			if (api && typeof api.hideWidget === 'function') api.hideWidget();
 		};
 	});
@@ -76,7 +77,7 @@ Conversion-focused pricing page for professional DeFi vault market data.
 		{ feature: 'Daily updates', free: true, pro: true },
 		{ feature: 'Equity curves and portfolio metrics', free: true, pro: true },
 		{ feature: 'Community Discord', free: true, pro: true },
-		{ feature: 'DEX price data', free: true, pro: true, href: '/trading-view/backtesting' },
+		{ feature: 'DEX price data', free: true, pro: true, href: resolve('/trading-view/backtesting') },
 		{ feature: 'AI-ready historical data', free: false, pro: true },
 		{ feature: 'Raw data files', free: false, pro: true },
 		{ feature: 'Backtesting framework', free: false, pro: true },
@@ -260,7 +261,7 @@ Conversion-focused pricing page for professional DeFi vault market data.
 				</p>
 			</header>
 			<div class="audience-grid">
-				{#each audiences as audience, index}
+				{#each audiences as audience, index (index)}
 					<article>
 						<div class="card-top"><span class="pill">{audience.label}</span><span>0{index + 1}</span></div>
 						<h3>{audience.title}</h3>
@@ -281,7 +282,7 @@ Conversion-focused pricing page for professional DeFi vault market data.
 					historical returns or protocol-specific fields.
 				</p>
 				<ul>
-					{#each dataPoints as point}<li><span>✓</span>{point}</li>{/each}
+					{#each dataPoints as point (point)}<li><span>✓</span>{point}</li>{/each}
 				</ul>
 				<a class="text-link" href={docsUrl} target="_blank" rel="noreferrer">View full field documentation ↗</a>
 			</div>
@@ -375,13 +376,14 @@ history = pd.read_parquet(
 				<table>
 					<thead><tr><th>Feature</th><th>Free</th><th>Pro</th></tr></thead>
 					<tbody>
-						{#each comparison as row}
+						{#each comparison as row (row.feature)}
 							<tr>
 								<td>
 									{#if row.note}<Tooltip
 											><span slot="trigger" class="underline">{row.feature}</span><span slot="popup">{row.note}</span
 											></Tooltip
 										>
+										<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- href built with resolve() in the feature table -->
 									{:else if row.href}<a href={row.href}>{row.feature}</a>{:else}{row.feature}{/if}
 								</td>
 								<td class:dash={!row.free}
@@ -462,7 +464,7 @@ history = pd.read_parquet(
 						rel="noreferrer"
 						size="lg"
 						primaryHeroBanner
-					/>{/if}<a href="/vaults/datasets">Or download the free sample ↓</a>
+					/>{/if}<a href={resolve('/vaults/datasets')}>Or download the free sample ↓</a>
 			</div>
 		</div>
 	</section>

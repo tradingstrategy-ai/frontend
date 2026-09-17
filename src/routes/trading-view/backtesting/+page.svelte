@@ -2,6 +2,7 @@
 	DEX backtesting dataset downloads behind an API key
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { backendUrl, backendInternalUrl } from '$lib/config';
 	import { formatByteUnits, formatNumber } from '$lib/helpers/formatters';
@@ -84,7 +85,9 @@
 			{#snippet subtitle()}
 				<p>
 					The following datasets are available for historical DEX trading data.
-					<a class="body-link" href="/vaults/api/register">Sign up for a free API key to download the data.</a>
+					<a class="body-link" href={resolve('/vaults/api/register')}
+						>Sign up for a free API key to download the data.</a
+					>
 				</p>
 				<p>
 					Read the documentation
@@ -151,7 +154,7 @@
 				</thead>
 
 				<tbody>
-					{#each data.datasets as row}
+					{#each data.datasets as row (row.download_link)}
 						<tr>
 							<td class="name">{row.name}</td>
 							<td>{row.designation}</td>
@@ -164,7 +167,12 @@
 							<td class="links">
 								<a class="action-link" href={row.documentation} rel="external">Documentation</a>
 								{#if validApiKey}
-									<a class="action-link" target="_blank" rel="noreferrer" href={getDownloadUrl(row.download_link)}>
+									<a
+										class="action-link"
+										target="_blank"
+										rel="external noreferrer"
+										href={getDownloadUrl(row.download_link)}
+									>
 										Download
 									</a>
 								{:else}

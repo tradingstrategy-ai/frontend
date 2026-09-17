@@ -19,35 +19,43 @@ Display the current Trading Strategy partner logos.
 
 	<div>
 		<a href="https://www.avax.network/" target="_blank" style:width="208px">
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -- raw SVG partner logo imported from $lib/assets -->
 			{@html AvalancheImage}
 		</a>
 
 		<a href="https://twitter.com/blizzardfund" target="_blank" style:width="180px">
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -- raw SVG partner logo imported from $lib/assets -->
 			{@html BlizzardImage}
 		</a>
 
 		<a href="https://www.ivcrypto.io/" target="_blank" style:width="170px" style:opacity="0.9">
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -- raw SVG partner logo imported from $lib/assets -->
 			{@html InfinityVenturesImage}
 		</a>
 
 		<a href="https://mentha.partners/" target="_blank" style:width="190px" style:opacity="0.8">
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -- raw SVG partner logo imported from $lib/assets -->
 			{@html MenthaPartnersImage}
 		</a>
 
 		<a href="https://www.petrock.capital/" target="_blank" style:width="250px">
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -- raw SVG partner logo imported from $lib/assets -->
 			{@html PetRockCapitalImage}
 		</a>
 
 		<a href="https://www.republiccapital.co/" target="_blank" style:width="85px">
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -- raw SVG partner logo imported from $lib/assets -->
 			{@html RepublicCapitalImage}
 		</a>
 
 		<a href="https://www.timescale.com/" target="_blank" style:width="220px">
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -- raw SVG partner logo imported from $lib/assets -->
 			{@html TimescaleImage}
 		</a>
 
 		<Tooltip>
 			<a slot="trigger" href="https://www.tradingview.com/" target="_blank" style:width="220px">
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -- raw SVG partner logo imported from $lib/assets -->
 				{@html TradingViewImage}
 			</a>
 			<svelte:fragment slot="popup">

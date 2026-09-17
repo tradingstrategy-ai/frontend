@@ -6,7 +6,8 @@ the local report endpoint. Uses postMessage to auto-resize
 the iframe height to match its content.
 -->
 <script lang="ts">
-	import { Alert, Spinner, SummaryBox } from '$lib/components';
+	import { resolve } from '$app/paths';
+	import { Spinner, SummaryBox } from '$lib/components';
 
 	export let data;
 	const { strategy } = data;
@@ -35,7 +36,7 @@ the iframe height to match its content.
 	<SummaryBox title="Backtest results">
 		<div class="content">
 			You can find the backtest results for this strategy below.
-			<a class="body-link" href="/glossary/backtest">Learn more about backtesting</a>.
+			<a class="body-link" href={resolve('/glossary/backtest')}>Learn more about backtesting</a>.
 		</div>
 	</SummaryBox>
 

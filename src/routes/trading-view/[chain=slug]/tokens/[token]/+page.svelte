@@ -2,6 +2,7 @@
 Token detail page with token metadata and its tracked trading pairs.
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import type { ComponentProps } from 'svelte';
@@ -68,7 +69,7 @@ Token detail page with token metadata and its tracked trading pairs.
 
 	<section class="ds-container blockchain-alert">
 		<Alert status="info" size="md">
-			The information on this page is for <a href="/trading-view/{token.chain_slug}">{token.chain_name}</a>.
+			The information on this page is for <a href={resolve(`/trading-view/${token.chain_slug}`)}>{token.chain_name}</a>.
 			<strong>{token.symbol}</strong> presentations bridged and wrapped on other blockchains are not included in the figures.
 		</Alert>
 	</section>

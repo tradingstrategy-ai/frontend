@@ -52,7 +52,7 @@ export function formatTokenTaxPercent(n: number): string {
 /**
  * @param details As returned by /pairs endpoint.
  */
-export function getTokenTaxInformation(details: any): TokenTax {
+export function getTokenTaxInformation(details: UntypedApiRow): TokenTax {
 	const missing = details.buy_tax === null || details.buy_tax === undefined;
 	const liquidityIssue = details.buy_tax == 999 || details.sell_tax == 999 || details.transfer_tax == 999;
 	const measurementIssue = details.buy_tax > 1 || details.sell_tax > 1 || details.transfer_tax > 1;
@@ -73,7 +73,7 @@ export function getTokenTaxInformation(details: any): TokenTax {
 }
 
 // Return token tax as human-readable "buy tax / transfer tax / sell tax" tuple.
-export function getTokenTaxDescription(details: any, longFormat = false): string {
+export function getTokenTaxDescription(details: UntypedApiRow, longFormat = false): string {
 	const tokenTax = getTokenTaxInformation(details);
 	if (tokenTax.missing) {
 		return 'Data not yet available';

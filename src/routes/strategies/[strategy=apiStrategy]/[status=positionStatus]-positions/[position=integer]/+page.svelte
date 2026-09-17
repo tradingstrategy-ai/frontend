@@ -104,10 +104,11 @@ Individual strategy position page.
 				<ul class="error-details">
 					<li>Failure reason: <i>{revertReason}</i></li>
 					<li>
+						<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- relative link within the current position route -->
 						<a href={`./${position.position_id}/trade-${tradeId}`}>View failed trade #{tradeId}</a>
 					</li>
 					<li>
-						<a href={getExplorerUrl(chain, txHash)} target="_blank" rel="noreferrer">
+						<a href={getExplorerUrl(chain, txHash)} target="_blank" rel="external noreferrer">
 							View transaction
 							<span class="hash-wrapper"><HashAddress address={txHash} /></span>
 						</a>

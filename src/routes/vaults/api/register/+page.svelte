@@ -2,6 +2,7 @@
 	Free API key sign-up form
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { backendUrl } from '$lib/config';
 	import { Alert, Button, Spinner, TextInput } from '$lib/components';
@@ -66,7 +67,9 @@
 		<h1>Sign up for free DEX data API key</h1>
 		<p>
 			Sign up for Trading Strategy's newsletter to get a free API key to
-			<a class="body-link" href="/trading-view/backtesting">access historical and backtesting DEX datasets.</a>
+			<a class="body-link" href={resolve('/trading-view/backtesting')}
+				>access historical and backtesting DEX datasets.</a
+			>
 		</p>
 	</header>
 

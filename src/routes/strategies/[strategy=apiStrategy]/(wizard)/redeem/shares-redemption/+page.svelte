@@ -33,7 +33,7 @@
 	let sharePrice: MaybeNumber = $state();
 	let estimatedValue = $derived(Number(sharesValue ?? 0) * (sharePrice ?? 0));
 	let transactionId: Address | undefined = $state();
-	let error: ErrorInfo | unknown | undefined = $state();
+	let error: Partial<ErrorInfo> | undefined = $state();
 
 	const redemption = fsm('initial', {
 		'*': {
@@ -201,7 +201,9 @@
 							<AlertItem title="Settlement period required">
 								Your redemption will show as <i>pending</i> during settlement. Once complete, you'll be able to claim
 								your redeemed tokens.
-								<a href={vault.settlementInfoUrl} target="_blank" rel="noreferrer">Learn more about settlement</a>
+								<a href={vault.settlementInfoUrl} target="_blank" rel="external noreferrer"
+									>Learn more about settlement</a
+								>
 							</AlertItem>
 						{/if}
 					</AlertList>
@@ -232,7 +234,7 @@
 
 			{#if $redemption === 'failed'}
 				<Alert size="sm" status="error" title="Error">
-					<RedemptionError {error} symbol={denominationToken.symbol} {transactionCopy} />
+					<RedemptionError error={error!} {transactionCopy} />
 					<Button slot="cta" size="sm" label="Try again" on:click={redemption.retry} />
 				</Alert>
 			{/if}

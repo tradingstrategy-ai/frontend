@@ -47,6 +47,5 @@ const exchangeLabels = {
 };
 
 export function exchangeTypeLabel(type: string) {
-	// @ts-ignore
-	return exchangeLabels[type] || type;
+	return (exchangeLabels as Record<string, string>)[type] || type;
 }

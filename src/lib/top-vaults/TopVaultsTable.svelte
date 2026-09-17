@@ -437,7 +437,6 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 	 * @param invalidateAll - Whether SvelteKit must reload all page data.
 	 */
 	function navigateToSearchUrl(url: URL, invalidateAll = false) {
-		// eslint-disable-next-line svelte/no-navigation-without-resolve -- The URL clones page.url, which already includes the configured base path.
 		return goto(url, { invalidateAll, replaceState: true, noScroll: true, keepFocus: true });
 	}
 
@@ -491,7 +490,6 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 			appendListingPage(next);
 			revealedListingSummary = next.listingSummary;
 			revealedFromRisk = previousRisk;
-			// eslint-disable-next-line svelte/no-navigation-without-resolve -- targetUrl clones the already-resolved page.url.
 			replaceState(targetUrl, {});
 		} finally {
 			finishRemoteLoading(revision);

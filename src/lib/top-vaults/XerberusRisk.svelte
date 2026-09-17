@@ -57,7 +57,7 @@ to Xerberus for the full assessment rather than duplicating the report here.
 				</p>
 			{:else}
 				<p>
-					<a href={riskRatingProviders.xerberus.website} target="_blank" rel="noreferrer"
+					<a href={riskRatingProviders.xerberus.website} target="_blank" rel="external noreferrer"
 						>Visit Xerberus to view the full {assessmentType} risk rating.</a
 					>
 				</p>

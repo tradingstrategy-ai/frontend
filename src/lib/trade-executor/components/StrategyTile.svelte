@@ -50,6 +50,7 @@
 			<div class="badges"></div>
 		</div>
 
+		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- href is a resolved path passed in by the caller -->
 		<a class="chart targetable-above" {href}>
 			<LazyChartThumbnail data={chartData} dateRange={chartDateRange} directionMode={strategy.tileChartDirection} />
 		</a>

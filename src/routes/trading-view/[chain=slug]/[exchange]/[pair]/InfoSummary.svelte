@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { CopyWidget, CryptoAddressWidget } from '$lib/components';
 	import { getProfitInfo } from '$lib/components/Profitability.svelte';
 	import { formatDollar } from '$lib/helpers/formatters';
@@ -40,24 +41,24 @@
 <div class="summary">
 	<p>
 		The token pair
-		<a href="/trading-view/{summary.chain_slug}/tokens/{summary.base_token_address}">
+		<a href={resolve(`/trading-view/${summary.chain_slug}/tokens/${summary.base_token_address}`)}>
 			{baseTokenName}
 		</a>
 		&ndash;
-		<a href="/trading-view/{summary.chain_slug}/tokens/{summary.quote_token_address}">
+		<a href={resolve(`/trading-view/${summary.chain_slug}/tokens/${summary.quote_token_address}`)}>
 			{quoteTokenName}
 		</a>
 		trades as the ticker <strong>{summary.pair_symbol}</strong> on
-		<a href="/trading-view/{summary.chain_slug}/{summary.exchange_slug}">
+		<a href={resolve(`/trading-view/${summary.chain_slug}/${summary.exchange_slug}`)}>
 			{summary.exchange_name} exchange
 		</a>
 		on
-		<a href="/trading-view/{summary.chain_slug}">{summary.chain_name} blockchain</a>.
+		<a href={resolve(`/trading-view/${summary.chain_slug}`)}>{summary.chain_name} blockchain</a>.
 	</p>
 
 	<p>
 		The price of
-		<a href="/trading-view/{summary.chain_slug}/tokens/{summary.base_token_address}">
+		<a href={resolve(`/trading-view/${summary.chain_slug}/tokens/${summary.base_token_address}`)}>
 			{summary.base_token_symbol}
 		</a>
 		in <strong>{summary.pair_symbol}</strong> pair is

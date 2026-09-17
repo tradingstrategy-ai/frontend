@@ -11,7 +11,22 @@ declare global {
 	type MaybeDate = Maybe<Date>;
 	type MaybePromise<T> = T | Promise<T>;
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- extra arguments are formatter-specific
 	type Formatter<T> = (value: T, ...args: any[]) => string;
+
+	/**
+	 * A row of a backend JSON payload that has no Zod schema (the trading-view explorer
+	 * responses). One documented `any` here instead of one at every call site; give a
+	 * payload a schema in `src/lib/schemas/` when its shape is worth pinning down.
+	 */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	type UntypedApiRow = Record<string, any>;
+
+	interface Window {
+		// Tawk.to live-chat widget globals, see src/routes/pricing/+page.svelte
+		Tawk_API?: Record<string, unknown>;
+		Tawk_LoadStart?: Date;
+	}
 
 	type Fetch = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 

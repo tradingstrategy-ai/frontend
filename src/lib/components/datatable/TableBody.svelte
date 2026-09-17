@@ -8,7 +8,7 @@
 
 	interface Props {
 		attrs: HTMLAttributes<HTMLTableSectionElement>;
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- svelte-headless-table rows are generic over the item and plugin types
 		rows: BodyRow<any, any>[];
 		page: PaginationState | undefined;
 		targetableRows?: boolean;
@@ -27,6 +27,7 @@
 		}
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- svelte-headless-table rows are generic over the item and plugin types
 	function resolveRowClass(row: BodyRow<any, any>) {
 		if (!row.isData()) return undefined;
 		return getRowClass?.(row.original);

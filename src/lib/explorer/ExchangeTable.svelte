@@ -50,7 +50,7 @@
 	});
 
 	// return a CompareValue object to enable "Unknown 0x…" values to be sorted last
-	function getCompareValue(row: Record<string, any>, propertyName: string) {
+	function getCompareValue(row: UntypedApiRow, propertyName: string) {
 		return {
 			nameOrder: Number(!row.human_readable_name.startsWith('Unknown 0x')),
 			value: row[propertyName] as number

@@ -111,17 +111,37 @@ export function buildPlotlyChrome(options?: { showLegend?: boolean }) {
 	};
 }
 
+/** A rendered Plotly chart: the container element with the data and event API Plotly attaches to it. */
+export type PlotlyElement = HTMLDivElement & {
+	data: { visible?: boolean | 'legendonly' }[];
+	on(event: 'plotly_click', handler: (event: { points?: { customdata?: string }[] }) => void): void;
+	on(event: 'plotly_legendclick', handler: (event: { curveNumber: number }) => boolean): void;
+};
+
+/** The subset of the Plotly.js global this app uses; the library is loaded from the CDN without types. */
+export interface PlotlyApi {
+	newPlot(element: HTMLDivElement, data: unknown[], layout: unknown, config?: unknown): Promise<PlotlyElement>;
+	restyle(element: HTMLDivElement, update: Record<string, unknown>): Promise<unknown>;
+	purge(element: HTMLDivElement): void;
+}
+
+declare global {
+	interface Window {
+		Plotly?: PlotlyApi;
+	}
+}
+
 /** Load Plotly.js from CDN by injecting a script tag. Idempotent. */
-export function loadPlotly(): Promise<any> {
+export function loadPlotly(): Promise<PlotlyApi> {
 	return new Promise((resolve, reject) => {
-		if ((window as any).Plotly) {
-			resolve((window as any).Plotly);
+		if (window.Plotly) {
+			resolve(window.Plotly);
 			return;
 		}
 		const script = document.createElement('script');
 		script.src = 'https://cdn.plot.ly/plotly-2.35.2.min.js';
 		script.async = true;
-		script.onload = () => resolve((window as any).Plotly);
+		script.onload = () => (window.Plotly ? resolve(window.Plotly) : reject(new Error('Plotly.js did not initialise')));
 		script.onerror = () => reject(new Error('Failed to load Plotly.js'));
 		document.head.appendChild(script);
 	});
@@ -178,14 +198,14 @@ export function buildChartLayout(
 		},
 		...chrome,
 		legend: {
-			...(chrome.legend as Record<string, any>),
+			...(chrome.legend as Record<string, unknown>),
 			title: { text: legendTitle },
 			orientation: 'h' as const,
 			yanchor: 'top' as const,
 			y: -0.15,
 			xanchor: 'center' as const,
 			x: 0.5
-		} as Record<string, any>,
+		} as Record<string, unknown>,
 		height: 600,
 		margin: isMobile ? { t: 10, r: 10, b: 100, l: 10 } : { t: 20, r: 20, b: 100, l: 80 },
 		dragmode: isMobile ? (false as const) : ('zoom' as const),

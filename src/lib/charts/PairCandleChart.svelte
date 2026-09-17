@@ -38,7 +38,7 @@
 		data: [],
 		loadingInitialData: false,
 		hasData: false,
-		fetchData: (ticks?: number) => {}
+		fetchData: (_ticks?: number) => {}
 	};
 
 	const transformApiData: ApiDataTransformer = (data) => {

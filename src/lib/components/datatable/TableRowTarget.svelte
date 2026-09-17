@@ -13,6 +13,7 @@
 	let { label = 'Details', targetLabel = label, href, target, rel }: Props = $props();
 </script>
 
+<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- href is a resolved path passed in by the caller -->
 <a class="row-link" aria-label={targetLabel} {href} {target} {rel}>{label}</a>
 <TargetableLink {href} label={targetLabel} {target} {rel} />
 

@@ -11,7 +11,7 @@
 	import { tableWidth } from '$lib/actions/table-width';
 	import { formatValue } from '$lib/helpers/formatters';
 
-	type TradingEntityRow = Record<string, any>;
+	type TradingEntityRow = UntypedApiRow;
 
 	interface Props extends EntityTableProps {
 		getHref: Formatter<TradingEntityRow>;

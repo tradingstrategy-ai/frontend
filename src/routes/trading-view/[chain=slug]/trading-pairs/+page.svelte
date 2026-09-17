@@ -2,6 +2,7 @@
 	Render listing of all available Pairs for specific chain
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import type { ComponentProps } from 'svelte';
 	import { goto } from '$app/navigation';
@@ -36,7 +37,9 @@
 		<HeroBanner title="{chain.name} trading pairs">
 			{#snippet subtitle()}
 				Browse {formatAmount(pairs?.totalRowCount)} trading pairs on
-				<a class="body-link" href=".">{chain.name} blockchain</a>.
+				<a class="body-link" href={resolve('/trading-view/[chain=slug]', { chain: chain.slug })}
+					>{chain.name} blockchain</a
+				>.
 			{/snippet}
 		</HeroBanner>
 	</Section>

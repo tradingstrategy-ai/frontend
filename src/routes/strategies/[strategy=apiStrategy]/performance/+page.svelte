@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { getChartClient } from 'trade-executor/client/chart';
 	import Alert from '$lib/components/Alert.svelte';
 	import SegmentedControl from '$lib/components/SegmentedControl.svelte';
@@ -56,7 +57,7 @@
 	>
 		{#snippet subtitle()}
 			Compounded
-			<a class="body-link" href="/glossary/profitability" target="_blank">profitability</a>
+			<a class="body-link" href={resolve('/glossary/profitability')} target="_blank">profitability</a>
 			based on {selectedDataSource.toLocaleLowerCase()} data
 		{/snippet}
 

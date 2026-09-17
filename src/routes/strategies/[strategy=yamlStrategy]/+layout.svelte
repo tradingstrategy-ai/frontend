@@ -37,7 +37,7 @@ Layout for YAML-configured strategies — heading with sidebar navigation.
 		<svelte:fragment slot="title">
 			{strategy.name}
 
-			{#each tags as tag}
+			{#each tags as tag (tag)}
 				<DataBadge class="badge" status={isBetaTag(tag) ? 'beta' : 'warning'}>{tag}</DataBadge>
 			{/each}
 		</svelte:fragment>

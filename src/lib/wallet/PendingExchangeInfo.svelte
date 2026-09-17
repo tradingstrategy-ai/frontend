@@ -31,7 +31,7 @@
 	let { type, vault, address, cycleDuration, invalidateBalances }: Props = $props();
 
 	let pendingExchange: PendingExchange | undefined = $state.raw();
-	let error: any = $state();
+	let error: (Error & { shortMessage?: string }) | undefined = $state();
 
 	let abortController: AbortController;
 	let retries: RetryGenerator;
@@ -187,7 +187,6 @@
 
 	$effect(() => {
 		// run effect whenever address changes
-		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		address;
 
 		exchange.reset();
@@ -271,7 +270,9 @@
 						<p>{error.shortMessage ?? String(error)}</p>
 						<p>
 							Click <strong>Try again</strong> to reset the form and retry your <strong>{buttonLabel}</strong> request.
-							Or visit the <a href={vault.externalProviderUrl} target="_blank" rel="noreferrer">{vault.mode}</a> to try
+							Or visit the
+							<a href={vault.externalProviderUrl} target="_blank" rel="external noreferrer">{vault.mode}</a>
+							to try
 							{#if type === 'deposit'}
 								{settled ? 'claming your shares' : 'canceling your deposit'}
 							{:else}

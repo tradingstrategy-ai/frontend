@@ -9,6 +9,7 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 ```
  -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { BlogPostIndexItem } from '$lib/blog/schemas';
 	import { getBlogImageSrcSet } from '$lib/blog/images';
 	import Timestamp from '$lib/components/Timestamp.svelte';
@@ -25,7 +26,7 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 </script>
 
 <article class="blog-post-tile tile a">
-	<a class="image-link" href="/blog/{post.slug}" aria-label={`Read blog post: ${post.title}`}>
+	<a class="image-link" href={resolve(`/blog/${post.slug}`)} aria-label={`Read blog post: ${post.title}`}>
 		<img
 			src={thumbnail.src}
 			srcset={thumbnail.srcset}
@@ -47,14 +48,14 @@ Display a blog post tile - e.g., on main blog roll or home page preview
 			</Timestamp>
 
 			<h3 class="truncate lines-3">
-				<a class="title-link" href="/blog/{post.slug}">{post.title}</a>
+				<a class="title-link" href={resolve(`/blog/${post.slug}`)}>{post.title}</a>
 			</h3>
 
 			<p class="excerpt truncate lines-9">{post.excerpt}</p>
 		</div>
 
 		<div class="cta">
-			<a class="body-link read-post-link" href="/blog/{post.slug}">Read post</a>
+			<a class="body-link read-post-link" href={resolve(`/blog/${post.slug}`)}>Read post</a>
 		</div>
 	</div>
 </article>

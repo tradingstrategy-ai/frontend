@@ -51,6 +51,7 @@ https://search.google.com/structured-data/testing-tool
 			{@const active = index !== breadcrumbs?.length - 1}
 			<li class:truncate={!active} itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem">
 				{#if active}
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- href is derived from the current pathname -->
 					<a class="tile a" itemprop="item" {href} itemtype="http://schema.org/Thing">
 						<span itemprop="name">{label}</span>
 					</a>

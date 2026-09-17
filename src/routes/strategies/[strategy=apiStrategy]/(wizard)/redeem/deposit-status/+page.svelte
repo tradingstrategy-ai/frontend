@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { RedeemWizardDataSchema, RedeemWizardData } from '../+layout';
+	import type { RedeemWizardDataSchema } from '../+layout';
 	import { fade } from 'svelte/transition';
 	import { getWizardContext } from '$lib/wizard/state.svelte';
 	import { formatBalance } from '$lib/eth-defi/helpers';
-	import { Alert, Button, EntitySymbol, Grid, Spinner } from '$lib/components';
+	import { Alert, Button, EntitySymbol, Grid } from '$lib/components';
 	import ShareBalances from '$lib/wallet/ShareBalances.svelte';
 	import WalletInfo from '$lib/wallet/WalletInfo.svelte';
 	import WalletInfoItem from '$lib/wallet/WalletInfoItem.svelte';

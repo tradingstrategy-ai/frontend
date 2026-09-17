@@ -3,6 +3,7 @@
 </script>
 
 <div>
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -- raw SVG imported from $lib/assets -->
 	{@html svg}
 </div>
 

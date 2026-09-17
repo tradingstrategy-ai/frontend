@@ -1,15 +1,16 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { fromUnixTime } from 'date-fns';
 	import { formatAmount, formatDollar } from '$lib/helpers/formatters';
 	import { CryptoAddressWidget } from '$lib/components';
 
-	export let details: any;
+	export let details: UntypedApiRow;
 </script>
 
 <div class="summary">
 	<p>
 		<strong>{details.human_readable_name}</strong> is a decentralised exchange on
-		<a href="/trading-view/{details.chain_slug}">{details.chain_name} blockchain</a>.
+		<a href={resolve(`/trading-view/${details.chain_slug}`)}>{details.chain_name} blockchain</a>.
 	</p>
 
 	<p>

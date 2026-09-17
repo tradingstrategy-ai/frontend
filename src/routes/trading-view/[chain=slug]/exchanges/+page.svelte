@@ -2,6 +2,7 @@
 	Render listing of all exchanges for particular chain
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import type { ComponentProps } from 'svelte';
 	import { page } from '$app/state';
@@ -41,7 +42,9 @@
 		<HeroBanner title="{chain.name} DEXes">
 			{#snippet subtitle()}
 				Browse {exchanges.length} decentralised exchanges on
-				<a class="body-link" href=".">{chain.name} blockchain</a>.
+				<a class="body-link" href={resolve('/trading-view/[chain=slug]', { chain: chain.slug })}
+					>{chain.name} blockchain</a
+				>.
 			{/snippet}
 		</HeroBanner>
 	</Section>
