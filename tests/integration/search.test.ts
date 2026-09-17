@@ -19,6 +19,25 @@ function parseCompactDollar(value: string) {
 }
 
 test.describe('site search typeahead', () => {
+	test('requests suggestions sorted by latest TVL', async ({ page }) => {
+		await page.goto('/vaults');
+		const search = page.getByTestId('nav-search').getByRole('combobox');
+		const isVaultSuggestionsRequest = (candidate: { url(): string }) => {
+			const url = new URL(candidate.url());
+			return url.pathname === '/search/suggestions' && url.searchParams.get('q') === 'vault';
+		};
+		const request = page.waitForRequest(isVaultSuggestionsRequest);
+		const response = page.waitForResponse((candidate) => isVaultSuggestionsRequest(candidate.request()));
+		await search.fill('vault');
+
+		expect(new URL((await request).url()).searchParams.get('sort')).toBe('tvl');
+		expect((await response).status()).toBe(200);
+		const suggestions = page.getByRole('dialog', { name: 'Search' }).locator('[role="option"]');
+		await expect(suggestions.first()).toBeVisible();
+		const tvls = (await suggestions.locator('[aria-label="Latest TVL"]').allTextContents()).map(parseCompactDollar);
+		expect(tvls).toEqual([...tvls].toSorted((a, b) => b - a));
+	});
+
 	test('shows typeahead results and opens the selected entity', async ({ page }) => {
 		await page.goto('/vaults');
 		await page.waitForLoadState('networkidle');

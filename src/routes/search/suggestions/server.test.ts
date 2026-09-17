@@ -25,7 +25,23 @@ describe('search suggestions endpoint', () => {
 		});
 	});
 
-	test('passes TVL sorting to server-side vault search', async () => {
+	test('passes TVL sorting to the site-wide search without diversification', async () => {
+		const fetch = vi.fn();
+		const response = await GET({
+			fetch,
+			url: new URL('http://localhost/search/suggestions?q=vault&scope=all&sort=tvl')
+		} as never);
+
+		expect(response.status).toBe(200);
+		expect(searchVaultEntities).toHaveBeenCalledWith(fetch, 'vault', 8, {
+			diversifyTypes: false,
+			entityTypes: undefined,
+			minimumVaultTvlUsd: undefined,
+			sort: 'tvl'
+		});
+	});
+
+	test('passes TVL sorting to the vault-only search', async () => {
 		const fetch = vi.fn();
 		const response = await GET({
 			fetch,
@@ -50,10 +66,9 @@ describe('search suggestions endpoint', () => {
 		expect(response.status).toBe(400);
 	});
 
-	test.each([
-		['unknown', 'vaults'],
-		['tvl', 'all']
-	])('rejects sort=%s for scope=%s', async (sort, scope) => {
+	test('rejects an unknown sort', async () => {
+		const sort = 'unknown';
+		const scope = 'vaults';
 		const response = await GET({
 			fetch: vi.fn(),
 			url: new URL(`http://localhost/search/suggestions?q=vault&scope=${scope}&sort=${sort}`)

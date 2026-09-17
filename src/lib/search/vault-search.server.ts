@@ -48,7 +48,7 @@ type SearchOptions = {
 	entityTypes?: readonly SearchEntityType[];
 	/** Exclude vault results whose latest TVL is below this USD value. */
 	minimumVaultTvlUsd?: number;
-	/** Prioritise matching vaults with the largest latest USD TVL. */
+	/** Prioritise matching entities with the largest latest USD TVL. */
 	sort?: 'relevance' | 'tvl';
 };
 
@@ -332,8 +332,7 @@ export async function searchVaultEntities(
 		.filter((match) => !shortQuery || match.score >= 2)
 		.toSorted((a, b) => {
 			if (options.sort === 'tvl') {
-				// The comparison selector promises strict highest-TVL-first ordering,
-				// including blacklisted vaults that still match its vault scope.
+				// TVL ordering is strict, including matching blacklisted vaults and entity groups.
 				const tvlDifference = (b.record.latestTvl ?? -1) - (a.record.latestTvl ?? -1);
 				if (tvlDifference !== 0) return tvlDifference;
 				if (a.score !== b.score) return b.score - a.score;

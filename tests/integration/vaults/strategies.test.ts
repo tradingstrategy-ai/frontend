@@ -37,9 +37,7 @@ test.describe('vault strategy pages', () => {
 		expect(await row.evaluate((element) => element.getBoundingClientRect().width)).toBeGreaterThan(0);
 	});
 
-	test('uses dash-separated strategy routes, shows strategy details, and links vault strategy categories', async ({
-		page
-	}) => {
+	test('uses dash-separated strategy routes, shows strategy details, and lists vault strategies', async ({ page }) => {
 		await page.goto('/vaults/strategies/algorithmic_trading?sort=tvl&direction=desc');
 		await expect(page).toHaveURL('/vaults/strategies/algorithmic-trading?sort=tvl&direction=desc');
 		await expect(page.getByRole('heading', { name: 'Algorithmic trading vaults', level: 1 })).toBeVisible();
@@ -50,16 +48,18 @@ test.describe('vault strategy pages', () => {
 		await expect(page.getByTestId('vault-group-mini-chart')).toBeVisible();
 
 		await page.goto('/vaults/trading-strategy-ichiv3-ls-2');
-		const categories = page.locator('.vault-categories');
-		await expect(categories).toContainText('Strategy categories:');
-		await expect(categories.getByRole('link', { name: 'Algorithmic trading' })).toHaveAttribute(
+		const metadata = page.locator('.vault-metadata');
+		await expect(metadata.getByText('Strategies used by vault', { exact: true })).toBeVisible();
+		await expect(metadata.getByRole('link', { name: 'Algorithmic trading' })).toHaveAttribute(
 			'href',
 			'/vaults/strategies/algorithmic-trading'
 		);
-		await expect(categories.getByRole('link', { name: 'Yield optimisation' })).toHaveAttribute(
+		await expect(metadata.getByRole('link', { name: 'Yield optimisation' })).toHaveAttribute(
 			'href',
 			'/vaults/strategies/yield-optimisation'
 		);
+		const strategyTags = page.locator('tr').filter({ has: page.locator('td.label', { hasText: 'Strategy tags' }) });
+		await expect(strategyTags).toContainText('algorithmic_trading, yield_optimisation');
 	});
 
 	test('redirects legacy category URLs to the strategy route while preserving search parameters', async ({ page }) => {

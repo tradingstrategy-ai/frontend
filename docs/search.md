@@ -16,11 +16,13 @@ The server-only index in `src/lib/search/vault-search.server.ts` creates records
 - stablecoins; and
 - chains.
 
-Blacklisted vaults remain findable but are shown as the distinct **Blacklisted vault** type, with a struck-through name. They sort after non-blacklisted matches. Vault names show the first eight hexadecimal digits of the address after `0x`.
+Blacklisted vaults remain findable but are shown as the distinct **Blacklisted vault** type, with a struck-through name. Relevance-based searches place them after non-blacklisted matches. Vault names show the first eight hexadecimal digits of the address after `0x`.
 
 Every result provides a name, entity type, one-month APY, latest TVL, canonical destination and logo URL. Aggregate entity metrics use eligible, non-blacklisted vaults and USD-normalised TVL. One-month APY is TVL-weighted and excludes invalid or extreme values through the same helper used by vault listings.
 
-Results sort by relevance first, then latest TVL descending and name ascending. The full results table starts sorted by latest TVL, with blacklisted vaults still placed last. The typeahead diversifies the initial suggestions by entity type before filling any remaining positions.
+The full results page selects matches by relevance, then latest TVL descending and name ascending. Its table starts sorted by latest TVL, with blacklisted vaults still placed last.
+
+Typeahead suggestions use strict latest-TVL descending ordering across every searchable entity type. They are intentionally not diversified by entity type, because diversification would make the visible order differ from TVL order.
 The results page returns at most 100 rows and explicitly reports when a broader query has been truncated.
 
 ## Typeahead
@@ -33,11 +35,12 @@ On desktop, interacting outside the search closes the quick-results panel.
 Desktop vault suggestions and full results show the 90-day price mini-map when chart data is available. Aggregate entities do not show a mini-map.
 
 The component also supports an in-page selector format. Callers can restrict
-results to vault entity types, apply a minimum current-TVL threshold, customise
-labels and placeholders, hide the full-results link, and supply an optional
-`addButton` snippet. When an action is supplied, clicking a result row or
-pressing Enter activates that action instead of navigating. The action callback
-clears the query and closes the suggestions after an accepted selection.
+results to vault entity types, apply a minimum current-TVL threshold, and choose
+relevance or TVL ordering. They can also customise labels and placeholders, hide
+the full-results link, and supply an optional `addButton` snippet. When an action
+is supplied, clicking a result row or pressing Enter activates that action instead
+of navigating. The action callback clears the query and closes the suggestions
+after an accepted selection.
 
 ## Data and caching
 

@@ -52,6 +52,8 @@ The top-vaults export includes a top-level `categories` record keyed by source s
 
 The frontend exposes strategy categories at `/vaults/strategies`. Public URLs convert source underscores to dashes, for example `/vaults/strategies/directional-trading`; underscore URLs permanently redirect to the canonical dash URL. Former `/vaults/categories` URLs redirect to the strategy route. Category metrics remain source-provided because categories can overlap, while the listing rows are filtered from `strategy_tags`.
 
+On a vault detail page, the metadata row links registered strategy categories using their display labels. The **Technical details** table also exposes the raw `strategy_tags` values unchanged, so source tag names remain inspectable.
+
 #### Browser delivery
 
 The complete `TopVaults` export stays in server memory for normal application pages. A server load does not by itself prevent exposure: SvelteKit serialises everything it returns as page data, so loaders must explicitly project the cached export into the response needed by the browser.
