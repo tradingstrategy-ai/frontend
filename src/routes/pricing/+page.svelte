@@ -224,7 +224,7 @@ Conversion-focused pricing page for professional DeFi vault market data.
 					<p><span>06</span><i>&quot;sharpe_3m_net&quot;</i>: <em>number</em>,</p>
 					<p><span>07</span><i>&quot;risk_category&quot;</i>: <mark>&quot;…&quot;</mark>,</p>
 					<p><span>08</span><i>&quot;available_liquidity&quot;</i>: <em>number</em></p>
-					<p><span>09</span><b>{'}'}</b></p>
+					<p><span>09</span><b>}</b></p>
 				</div>
 				<div class="preview-foot">
 					<span><i></i>One normalised schema</span><span

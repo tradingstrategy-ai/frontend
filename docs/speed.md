@@ -45,8 +45,9 @@ served with a long cache lifetime). Three mechanisms keep them from hurting Core
    applies from the first paint rather than only once the deferred font stylesheet lands: a
    system font (`Arial`/`Roboto` for the grotesks, `Georgia` for the serif,
    `Courier New` for the mono) with `size-adjust`, `ascent-override`, `descent-override` and
-   `line-gap-override` tuned so it occupies exactly the space of the web font. The swap
-   therefore does not move any text — before this, the swap alone was a CLS of 0.17–0.25 on
+   `line-gap-override` tuned so it occupies the same space as the web font, within the
+   tolerance of the platform's actual fallback font (bold text is shown in the regular fallback
+   face until the web font lands). The swap therefore barely moves text — before this, the swap alone was a CLS of 0.17–0.25 on
    text-heavy pages. The overrides were computed with `@capsizecss/core` from the metrics
    unpacked out of the woff2 files (Display and Text differ per weight, so their fallbacks
    are declared per weight range); recompute them if a font file changes. The font stacks in

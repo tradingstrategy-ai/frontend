@@ -12,7 +12,7 @@ export async function load({ params }) {
 
 	const imageUrls: Record<string, string> = {};
 
-	for (let theme of ['light', 'dark']) {
+	for (const theme of ['light', 'dark']) {
 		const encoded = new URLSearchParams({ theme, type: 'large' });
 		imageUrls[theme] = `${strategy.url}/visualisation?${encoded}`;
 	}

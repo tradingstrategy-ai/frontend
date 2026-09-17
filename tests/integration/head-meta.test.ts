@@ -33,6 +33,10 @@ const samples: { path: string; canonical: string }[] = [
 	{ path: `/blog/${BLOG_POST_SLUG}`, canonical: `/blog/${BLOG_POST_SLUG}` },
 	{ path: '/search?q=keyring', canonical: '/search' },
 	{ path: '/about', canonical: '/about' },
+	{ path: '/community', canonical: '/community' },
+	{ path: '/newsletter', canonical: '/newsletter' },
+	{ path: '/vaults/api', canonical: '/vaults/api' },
+	{ path: '/podcast', canonical: '/podcast' },
 	{
 		path: '/vaults/compare?vault=1-0xa3931d71877c0e7a3148cb7eb4463524fec27fbd&vault=4663-0xd4d607239dcbdb5cc3a301266433810bb63c63bf&period=3M',
 		canonical:

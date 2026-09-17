@@ -16,7 +16,7 @@ export function merge(target: any = {}, source: any = {}) {
 /**
  * Check if arg is a pure object (i.e, an object with no prototype)
  */
-function isPureObject(obj: any): obj is Object {
+function isPureObject(obj: any): obj is object {
 	return obj instanceof Object && Object.getPrototypeOf(obj) === Object.prototype;
 }
 

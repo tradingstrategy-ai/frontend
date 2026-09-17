@@ -5,7 +5,7 @@
  *
  */
 
-export let metricDescriptions = {
+export const metricDescriptions = {
 	cagr: 'Yearly expected returns, compounded',
 	age: 'How long this strategy has been live',
 	sharpe: 'Sharpe ratio of the returns',

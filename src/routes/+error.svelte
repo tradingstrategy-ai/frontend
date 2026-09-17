@@ -39,7 +39,7 @@
 				<Button label="Explore DEX data" href="/vaults/api" />
 			</ErrorPageInfo>
 		{:else if status === 503}
-			<ErrorPageInfo {status} title={'Service is unavailable'}>
+			<ErrorPageInfo {status} title="Service is unavailable">
 				{#if stack}
 					<Button on:click={() => (showLogs = !showLogs)}>
 						<IconConsole slot="icon" />

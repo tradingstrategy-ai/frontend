@@ -74,8 +74,8 @@ site and still goes to the network.
 
 #### Search-snippet coverage
 
-`tests/integration/head-meta.test.ts` is the contract for what every indexable template puts in its
-`<head>` (one canonical, a branded title, a 70–155 character description, one `og:image`);
+`tests/integration/head-meta.test.ts` is the contract for what the indexable templates put in their
+`<head>` (one sample URL per template) (one canonical, a branded title, a 70–155 character description, one `og:image`);
 `tests/integration/response-headers.test.ts` covers the font preload, `X-Robots-Tag` and cache
 headers; `tests/integration/layout-shift.test.ts` measures CLS on a phone viewport with the fonts
 delayed. See `docs/google-webmasters.md` for the reasoning behind each.

@@ -2,8 +2,8 @@
  * Metric-matched fallback faces for the web fonts declared in static/fonts/fonts6.css.
  *
  * Each is a system font with `size-adjust` / `ascent-override` / `descent-override` /
- * `line-gap-override` tuned so it occupies exactly the space of the web font it stands in
- * for; the font stacks in typography.css list them right after the web font. That is what
+ * `line-gap-override` tuned so it occupies the same space as the web font it stands in for
+ * (within the tolerance of the platform's actual fallback font); the font stacks in typography.css list them right after the web font. That is what
  * stops `font-display: swap` from shifting the layout when the woff2 arrives (the swap was
  * the whole of the 0.25 CLS measured on text-heavy pages in the 2026-09 audit).
  *

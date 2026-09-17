@@ -20,15 +20,16 @@
 </script>
 
 <ContentCardsTemplate
-	pageTitle="Vaults and DeFi data for strategy developers"
-	pageDescription="Vaults and DeFi data for strategy developers"
+	titleParts={['Vault and DeFi data API', 'For strategy developers']}
+	description="Programmatic access to DeFi vault metadata, historical prices, TVL and DEX market data for strategy research, backtesting and automated workflows."
 >
-	<HeroBanner
-		slot="hero"
-		image={heroImage}
-		title="Vaults and DeFi data for strategy developers"
-		subtitle="Specially curated DeFi data for quant strategies and backtesting"
-	/>
+	{#snippet hero()}
+		<HeroBanner
+			image={heroImage}
+			title="Vaults and DeFi data for strategy developers"
+			subtitle="Specially curated DeFi data for quant strategies and backtesting"
+		/>
+	{/snippet}
 
 	<ContentCardsSection title="Explore data">
 		<ContentCard title="Blockchains" href="/trading-view/blockchains">

@@ -3,6 +3,7 @@
  * https://developers.google.com/search/docs/advanced/structured-data/search-gallery
  */
 
+import { discordUrl } from '$lib/config';
 import { ORGANIZATION_ID, SITE_NAME } from '$lib/helpers/seo';
 
 // Utility function for generating metadata script tag
@@ -59,7 +60,8 @@ export function organizationSchema() {
 			'https://twitter.com/TradingProtocol',
 			'https://github.com/tradingstrategy-ai',
 			'https://www.youtube.com/channel/UCXBQRclPxMY40n52-k3VhYQ',
-			'https://open.spotify.com/show/0BXZEqA3uG5hYZiVYVRZP8'
+			'https://open.spotify.com/show/0BXZEqA3uG5hYZiVYVRZP8',
+			...(discordUrl ? [discordUrl] : [])
 		]
 	};
 
