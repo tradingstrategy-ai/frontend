@@ -1,3 +1,6 @@
+<!--
+	DEX backtesting dataset downloads behind an API key
+-->
 <script lang="ts">
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { backendUrl, backendInternalUrl } from '$lib/config';
@@ -16,11 +19,11 @@
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import IconBook from '~icons/local/book';
 
-	export let data;
+	let { data } = $props();
 
-	let submitting = false;
-	let validApiKey = '';
-	let apiKeyError = '';
+	let submitting = $state(false);
+	let validApiKey = $state('');
+	let apiKeyError = $state('');
 
 	function getDownloadUrl(originalUrl: string) {
 		// NOTE: public API does not properly identify the request origin based on `X-Forwarded-Host`
@@ -34,6 +37,7 @@
 	}
 
 	async function handleSubmit(event: SubmitEvent) {
+		event.preventDefault();
 		const url = `${backendUrl}/validate-api-key`;
 		const key = (event.target as HTMLFormElement).apiKey.value.trim();
 
@@ -107,7 +111,7 @@
 		<h2>Available datasets</h2>
 
 		{#if !validApiKey}
-			<form id="form-api-key" on:submit|preventDefault={handleSubmit}>
+			<form id="form-api-key" onsubmit={handleSubmit}>
 				<label for="apiKey">Enter API key to enable download</label>
 
 				<div class="form-group">

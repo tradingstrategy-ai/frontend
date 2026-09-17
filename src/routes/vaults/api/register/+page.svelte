@@ -1,3 +1,6 @@
+<!--
+	Free API key sign-up form
+-->
 <script lang="ts">
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { backendUrl } from '$lib/config';
@@ -5,17 +8,18 @@
 
 	const url = `${backendUrl}/register`;
 
-	let submitting = false;
-	let success = false;
-	let error: string | undefined = undefined;
+	let submitting = $state(false);
+	let success = $state(false);
+	let error: string | undefined = $state();
 
-	let email = '';
-	let firstName = '';
-	let lastName = '';
+	let email = $state('');
+	let firstName = $state('');
+	let lastName = $state('');
 
-	$: disabled = submitting || success;
+	let disabled = $derived(submitting || success);
 
-	async function handleSubmit() {
+	async function handleSubmit(event: SubmitEvent) {
+		event.preventDefault();
 		submitting = true;
 		error = undefined;
 
@@ -67,7 +71,7 @@
 	</header>
 
 	<section class="ds-container">
-		<form on:submit|preventDefault={handleSubmit}>
+		<form onsubmit={handleSubmit}>
 			{#if error}
 				<Alert status="error">{error}</Alert>
 			{:else if success}

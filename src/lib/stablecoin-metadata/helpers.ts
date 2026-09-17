@@ -113,6 +113,19 @@ export function findStablecoinMetadata(
 	return undefined;
 }
 
+/**
+ * Stablecoin metadata for a vault's denomination token, matched by slug, symbol and name.
+ *
+ * Off-chain USD (`usd-offchain`) has no metadata entry by design; it is plain USD.
+ */
+export function findVaultStablecoinMetadata(
+	lookup: Map<string, StablecoinMetadata>,
+	vault: { denomination_slug: string | null; denomination: string | null; normalised_denomination: string | null }
+): StablecoinMetadata | undefined {
+	if (vault.denomination_slug === OFFCHAIN_USD_STABLECOIN_SLUG) return undefined;
+	return findStablecoinMetadata(lookup, vault.denomination_slug, vault.denomination, vault.normalised_denomination);
+}
+
 export function resolveStablecoinSlug(
 	input: StablecoinLookupInput,
 	metadataIndexOrLookup?: StablecoinMetadata[] | Map<string, StablecoinMetadata>

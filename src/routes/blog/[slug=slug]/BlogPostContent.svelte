@@ -1,3 +1,15 @@
+<!--
+@component
+Render the HTML body of a Ghost post: injects the table of contents, wraps tables for
+horizontal scrolling and swaps the click-to-load YouTube facades (see `$lib/blog/embeds`)
+for the real player.
+
+@example
+
+```svelte
+	<BlogPostContent html={post.html} />
+```
+-->
 <script lang="ts">
 	import { mount } from 'svelte';
 	import { YOUTUBE_FACADE_CLASS } from '$lib/blog/embeds';

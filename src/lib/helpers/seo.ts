@@ -51,9 +51,8 @@ export function getPageTitle(parts: (string | null | undefined)[]): string {
  * Meta description from the best available text, cut to `DESCRIPTION_MAX_LENGTH`.
  *
  * @param candidates texts in order of preference; blank ones are skipped
- * @param fallback used when every candidate is blank
  */
-export function getMetaDescription(candidates: (string | null | undefined)[], fallback = ''): string {
-	const text = candidates.map((candidate) => candidate?.trim()).find(Boolean) ?? fallback;
+export function getMetaDescription(candidates: (string | null | undefined)[]): string {
+	const text = candidates.map((candidate) => candidate?.trim()).find(Boolean) ?? '';
 	return truncateAtWord(text.replace(/\s+/g, ' '), DESCRIPTION_MAX_LENGTH);
 }

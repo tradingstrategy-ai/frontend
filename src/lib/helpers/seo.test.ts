@@ -38,14 +38,21 @@ describe('getMetaDescription', () => {
 		expect(description.endsWith('…')).toBe(true);
 	});
 
-	it('returns the fallback when nothing is set', () => {
-		expect(getMetaDescription([undefined], 'Fallback text')).toBe('Fallback text');
+	it('returns an empty string when nothing is set', () => {
+		expect(getMetaDescription([undefined, ''])).toBe('');
 	});
 });
 
 describe('truncateAtWord', () => {
-	it('cuts on a word boundary and trims trailing punctuation', () => {
-		expect(truncateAtWord('alpha beta, gamma delta', 12)).toBe('alpha beta…');
-		expect(truncateAtWord('short', 12)).toBe('short');
+	it('returns short strings unchanged', () => {
+		expect(truncateAtWord('hello world', 20)).toBe('hello world');
+	});
+
+	it('cuts at the last space and strips trailing punctuation', () => {
+		expect(truncateAtWord('alpha beta, gamma delta', 16)).toBe('alpha beta…');
+	});
+
+	it('hard-cuts when there is no usable word boundary', () => {
+		expect(truncateAtWord('abcdefghijklmnopqrstuvwxyz', 10)).toBe('abcdefghi…');
 	});
 });

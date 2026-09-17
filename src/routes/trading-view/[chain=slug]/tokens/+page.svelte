@@ -1,3 +1,6 @@
+<!--
+	Tokens listing for one blockchain
+-->
 <script lang="ts">
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import type { ComponentProps } from 'svelte';

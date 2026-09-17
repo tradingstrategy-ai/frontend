@@ -11,9 +11,8 @@ and usable) and is marked with `aria-current="page"`, which also drives its styl
 -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import type { HTMLAnchorAttributes } from 'svelte/elements';
 
-	interface Props extends Omit<HTMLAnchorAttributes, 'href' | 'rel' | 'target'> {
+	interface Props {
 		active?: boolean;
 		label?: string;
 		targetUrl: string;
@@ -21,14 +20,14 @@ and usable) and is marked with `aria-current="page"`, which also drives its styl
 		children?: Snippet;
 	}
 
-	let { active = false, label = '', targetUrl, external = false, children, ...rest }: Props = $props();
+	let { active = false, label = '', targetUrl, external = false, children }: Props = $props();
 
 	let rel = $derived(external ? 'external noreferrer' : undefined);
 	let target = $derived(external ? '_blank' : undefined);
 </script>
 
 <li class="menu-item">
-	<a href={targetUrl} {rel} {target} aria-current={active ? 'page' : undefined} {...rest}>
+	<a href={targetUrl} {rel} {target} aria-current={active ? 'page' : undefined}>
 		{#if children}{@render children()}{:else}{label}{/if}
 	</a>
 </li>

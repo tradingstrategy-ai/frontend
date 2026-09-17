@@ -6,9 +6,10 @@
  * the full response arrives from the origin.
  *
  * The stylesheet itself is preloaded on every HTML page. The three woff2 files
- * are preloaded on the templates whose above-the-fold content is text in these
- * faces (live mobile audits, 2026-09): home, vault detail, glossary term, token,
- * pair and blog post pages. Their visible typography is dominated by
+ * are preloaded on the templates whose largest above-the-fold element is text in
+ * these faces (home and vault detail per the 2026-09 mobile audits; glossary term,
+ * token, pair and blog post pages by the same reasoning). Their visible typography
+ * is dominated by
  * - Neue Haas Grotesk Display 600 for the main page title
  * - Neue Haas Grotesk Text 400 for body copy
  * - Neue Haas Grotesk Text 500 for buttons, links, and large supporting values

@@ -94,33 +94,28 @@ const handlePodcastAnnouncement: Handle = async ({ event, resolve }) => {
 };
 
 /**
- * Add `Link` preload headers for the web fonts to HTML responses; see `$lib/server/font-preload`.
- */
-const handleFontPreload: Handle = async ({ event, resolve }) => {
-	const response = await resolve(event);
-	if (response.headers.get('content-type')?.startsWith('text/html')) {
-		response.headers.append('Link', getFontPreloadLinks(event.url.pathname));
-	}
-	return response;
-};
-
-/**
- * Keep generated image endpoints out of search indexes.
+ * Response headers that depend on the URL or content type:
  *
- * `og:image` URLs (`/social-card/…`, including its `?fallback=` redirects) and resized
- * protocol logos (`/metadata-logo/…`) get crawled like pages and made up ~45 % of the
- * "crawled – currently not indexed" report in the 2026-09 audit. Images cannot carry a
- * robots meta tag, so the header is the only signal; robots.txt must keep allowing them
- * because social scrapers (and Google's own og:image fetch) need to read them.
- *
- * Applied in a hook rather than per `Response` so the redirect and error branches of
- * the endpoints are covered too.
+ * - `Link` preloads for the web fonts on HTML responses (Cloudflare turns them into 103
+ *   Early Hints); see `$lib/server/font-preload`. Sitemaps, JSON and images get none.
+ * - `X-Robots-Tag: noindex` on the generated image endpoints. `og:image` URLs
+ *   (`/social-card/…`, including their `?fallback=` redirects) and resized protocol logos
+ *   (`/metadata-logo/…`) get crawled like pages and were 45 % of a 1,000-URL sample of the
+ *   "crawled – currently not indexed" report in the 2026-09 audit. Images cannot carry a robots meta tag, so the
+ *   header is the only signal; robots.txt must keep allowing them because social scrapers
+ *   (and Google's own og:image fetch) need to read them. Set here rather than per `Response`
+ *   so the redirect and error branches of the endpoints are covered too.
  */
 const NOINDEX_IMAGE_PATH_PATTERN = /^\/(social-card|metadata-logo)\//;
 
-const handleImageEndpointRobots: Handle = async ({ event, resolve }) => {
+const handleResponseHeaders: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
-	if (NOINDEX_IMAGE_PATH_PATTERN.test(event.url.pathname)) {
+	const { pathname } = event.url;
+
+	if (response.headers.get('content-type')?.startsWith('text/html')) {
+		response.headers.append('Link', getFontPreloadLinks(pathname));
+	}
+	if (NOINDEX_IMAGE_PATH_PATTERN.test(pathname)) {
 		response.headers.set('X-Robots-Tag', 'noindex');
 	}
 	return response;
@@ -149,6 +144,5 @@ export const handle = sequence(
 	handleAdminRole,
 	handlePodcastAnnouncement,
 	handleIpCountry,
-	handleImageEndpointRobots,
-	handleFontPreload
+	handleResponseHeaders
 );

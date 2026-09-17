@@ -1,3 +1,6 @@
+<!--
+	Top lists index: daily DEX gainers and losers
+-->
 <script lang="ts">
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';

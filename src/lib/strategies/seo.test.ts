@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH, getStrategyPageMeta, truncateAtWord } from './seo';
+import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH } from '$lib/helpers/seo';
+import { getStrategyPageMeta } from './seo';
 
 const base = { name: 'Vega', shortDescription: 'Momentum strategy trading ETH and BTC on Base.' };
 
@@ -62,19 +63,5 @@ describe('getStrategyPageMeta', () => {
 		const { description } = getStrategyPageMeta({ ...base, shortDescription });
 		expect(description.length).toBeLessThanOrEqual(DESCRIPTION_MAX_LENGTH);
 		expect(description.endsWith('word…')).toBe(true);
-	});
-});
-
-describe('truncateAtWord', () => {
-	it('returns short strings unchanged', () => {
-		expect(truncateAtWord('hello world', 20)).toBe('hello world');
-	});
-
-	it('cuts at the last space and strips trailing punctuation', () => {
-		expect(truncateAtWord('alpha beta, gamma delta', 16)).toBe('alpha beta…');
-	});
-
-	it('hard-cuts when there is no usable word boundary', () => {
-		expect(truncateAtWord('abcdefghijklmnopqrstuvwxyz', 10)).toBe('abcdefghi…');
 	});
 });

@@ -65,6 +65,21 @@ pnpm run test:integration
 - uses mock API data found in `tests/mocks`
 - loads `.env.test` for deterministic test configuration
 
+Everything the server fetches during a test must resolve to the mock server: `.env.test` points the
+backend, vault, stablecoin-metadata and Ghost blog URLs at `http://127.0.0.1:4173/api/...`, and the
+mocks mirror the upstream URL layout under that prefix (e.g. `tests/mocks/ghost/` serves the Ghost
+content API for `/blog` and blog posts). A page that reaches an unmocked upstream fails or, worse,
+passes against live data. The glossary is the one exception: it is scraped from the documentation
+site and still goes to the network.
+
+#### Search-snippet coverage
+
+`tests/integration/head-meta.test.ts` is the contract for what every indexable template puts in its
+`<head>` (one canonical, a branded title, a 70–155 character description, one `og:image`);
+`tests/integration/response-headers.test.ts` covers the font preload, `X-Robots-Tag` and cache
+headers; `tests/integration/layout-shift.test.ts` measures CLS on a phone viewport with the fonts
+delayed. See `docs/google-webmasters.md` for the reasoning behind each.
+
 #### Responsive navigation coverage
 
 `tests/integration/navigation.test.ts` covers the shared header at desktop, tablet and narrow-mobile

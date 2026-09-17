@@ -97,6 +97,8 @@ This project uses Svelte 5 with experimental features enabled in `svelte.config.
 - Lightweight admin authentication via password
 - Podcast announcement dismissal cookie parsing
 - IP country detection via Cloudflare headers
+- Response headers: font preload `Link` headers on HTML pages (`$lib/server/font-preload`) and
+  `X-Robots-Tag: noindex` on generated image endpoints (see `docs/google-webmasters.md`)
 
 ### Icons
 

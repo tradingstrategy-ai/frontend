@@ -17,8 +17,7 @@ import { getVaultCategorySlug, isVisibleVaultCategory } from '$lib/top-vaults/ca
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
 import {
 	buildStablecoinMetadataLookup,
-	findStablecoinMetadata,
-	OFFCHAIN_USD_STABLECOIN_SLUG,
+	findVaultStablecoinMetadata,
 	resolveStablecoinSlug
 } from '$lib/stablecoin-metadata/helpers';
 
@@ -64,17 +63,8 @@ export async function GET({ fetch, setHeaders, url }) {
 	// engines index (see `isVaultIndexable`; TVL is compared in USD, so the denomination
 	// rate is resolved the same way the detail loader does it).
 	for (const vault of listedVaults) {
-		const metadata =
-			vault.denomination_slug === OFFCHAIN_USD_STABLECOIN_SLUG
-				? undefined
-				: findStablecoinMetadata(
-						metadataLookup,
-						vault.denomination_slug,
-						vault.denomination,
-						vault.normalised_denomination
-					);
-		const vaultWithRates = withVaultDenominationTokenRate(vault, metadata, currencyUsdRates);
-		if (!isVaultIndexable(vaultWithRates)) continue;
+		const metadata = findVaultStablecoinMetadata(metadataLookup, vault);
+		if (!isVaultIndexable(withVaultDenominationTokenRate(vault, metadata, currencyUsdRates))) continue;
 		stream.write({ url: resolveVaultDetails(vault), priority });
 	}
 

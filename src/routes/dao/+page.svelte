@@ -1,3 +1,6 @@
+<!--
+	Trading Strategy DAO LLC member information
+-->
 <script lang="ts">
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import heroImage from '$lib/assets/illustrations/working-together.svg?raw';

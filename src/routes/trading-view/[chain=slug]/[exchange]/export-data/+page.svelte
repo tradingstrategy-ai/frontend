@@ -1,3 +1,6 @@
+<!--
+	Exchange trading pair data export (Excel download) — noindex
+-->
 <script lang="ts">
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { backendUrl } from '$lib/config';

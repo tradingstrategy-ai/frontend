@@ -1,3 +1,14 @@
+<!--
+@component
+Search, Open Graph and Twitter metadata plus `InvestmentFund` and `BreadcrumbList`
+structured data for a vault detail page.
+
+@example
+
+```svelte
+	<SocialMetaTags {vault} {chain} {protocolMetadata} {curatorMetadata} {stablecoinMetadata} />
+```
+-->
 <script lang="ts">
 	import { page } from '$app/state';
 	import type { Chain } from '$lib/helpers/chain';

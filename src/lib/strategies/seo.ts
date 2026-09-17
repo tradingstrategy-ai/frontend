@@ -10,8 +10,6 @@
 import { formatDollar, formatPercent, isNumber } from '$lib/helpers/formatters';
 import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH, truncateAtWord } from '$lib/helpers/seo';
 
-export { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH, truncateAtWord };
-
 export type StrategyPageMetaInput = {
 	name: string;
 	shortDescription?: string | null;
