@@ -20,6 +20,7 @@ test.describe('blog index page', () => {
 		const title = await heading.textContent();
 		await titleLink.click();
 		await expect(page).toHaveURL(url!);
-		await expect(page).toHaveTitle(title!);
+		// page titles carry the brand suffix, see SocialCardMetaTags
+		await expect(page).toHaveTitle(`${title!.trim()} | Trading Strategy`);
 	});
 });
