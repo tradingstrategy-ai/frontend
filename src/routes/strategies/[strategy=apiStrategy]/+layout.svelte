@@ -1,3 +1,6 @@
+<!--
+Strategy page frame: heading, warnings, side navigation and the active sub-page.
+-->
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { strategyMicrosite } from '$lib/config';
@@ -10,28 +13,26 @@
 		shouldDisplayError,
 		adminOnlyError
 	} from 'trade-executor/components/StrategyError.svelte';
-	import { getExchangeAccountInfo } from 'trade-executor/helpers/exchange-account';
 	import { menuOptions, default as StrategyNav } from './StrategyNav.svelte';
 	import WalletWidget from '$lib/wallet/WalletWidget.svelte';
 
-	export let data;
+	let { data, children } = $props();
 	const isBetaTag = (tag: string) => tag.toLowerCase() === 'beta';
 
-	$: ({ admin, strategy, vault, deferred } = data);
-	$: exchangeAccount = getExchangeAccountInfo(strategy);
+	let { admin, strategy, vault, deferred } = $derived(data);
 
-	$: tags = strategy.tags.filter((tag) => tag !== 'live');
-	$: isPrivate = !strategy.tags.includes('live');
-	$: isOverviewPage = page.url.pathname.endsWith(strategy.id);
-	$: hasError = shouldDisplayError(strategy, admin);
-	$: isOutdated = Boolean(strategy.newVersionId);
-	$: displayWarning = isOverviewPage && (hasError || isOutdated);
+	let tags = $derived(strategy.tags.filter((tag) => tag !== 'live'));
+	let isPrivate = $derived(!strategy.tags.includes('live'));
+	let isOverviewPage = $derived(page.url.pathname.endsWith(strategy.id));
+	let hasError = $derived(shouldDisplayError(strategy, admin));
+	let isOutdated = $derived(Boolean(strategy.newVersionId));
+	let displayWarning = $derived(isOverviewPage && (hasError || isOutdated));
 
-	$: breadcrumbs = {
+	let breadcrumbs = $derived({
 		[strategy.id]: strategy.name,
 		...Object.fromEntries(menuOptions.map(({ slug, label }) => [slug, label])),
 		...page.data.breadcrumbs
-	};
+	});
 </script>
 
 {#if !(strategyMicrosite || page.data.skipBreadcrumbs)}
@@ -39,7 +40,7 @@
 {/if}
 
 {#if page.data.skipSideNav && !strategyMicrosite}
-	<slot />
+	{@render children()}
 {:else}
 	<main class="strategy-layout ds-container ds-3" class:microsite={strategyMicrosite}>
 		<PageHeading description={strategy.short_description}>
@@ -71,7 +72,7 @@
 				{#if isPrivate}
 					<AlertList status="error" size="md" let:AlertItem>
 						<AlertItem title="Private strategy">
-							This strategies is only available to admins – please do not share.
+							This strategy is only available to admins – please do not share.
 						</AlertItem>
 					</AlertList>
 				{/if}
@@ -98,7 +99,7 @@
 			{#if strategyMicrosite}
 				<Breadcrumbs labels={breadcrumbs} startAt={2} />
 			{/if}
-			<slot />
+			{@render children()}
 		{:else}
 			<div class="subpage">
 				<StrategyNav
@@ -107,10 +108,9 @@
 					hasVault={vault.depositEnabled()}
 					backtestAvailable={strategy.backtest_available}
 					portfolioPromise={deferred.state.then((s) => s?.portfolio)}
-					{exchangeAccount}
-					onChainData={strategy.on_chain_data}
+					{strategy}
 				/>
-				<slot />
+				{@render children()}
 			</div>
 		{/if}
 	</main>

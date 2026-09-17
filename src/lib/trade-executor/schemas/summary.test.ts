@@ -22,9 +22,37 @@ describe('lagoonSmartContractSchema', () => {
 		});
 
 		expect(result.lagoon_guard_v0).toEqual({
-			daily_automatic_settlement_limit_enabled: true,
-			daily_automatic_settlement_limit: '5000',
-			settlement_cooldown_seconds: 86_400
+			automatic_settlement_window_limit_enabled: true,
+			automatic_settlement_window_limit: '5000',
+			settlement_window_seconds: 86_400
+		});
+	});
+
+	it('parses the settlement-window GuardV0 policy reported by newer executors', () => {
+		const result = lagoonSmartContractSchema.parse({
+			...lagoonContracts,
+			lagoon_guard_v0: {
+				guard_version: 'GuardV0',
+				automatic_settlement_window_limit_enabled: true,
+				automatic_settlement_window_limit: '5000',
+				automatic_settlement_window_limit_raw: 5_000_000_000,
+				settlement_window_seconds: 86_400,
+				settled_amount_in_window: '20',
+				settled_amount_in_window_raw: 20_000_000,
+				remaining_automatic_settlement_budget: '4980',
+				remaining_automatic_settlement_budget_raw: 4_980_000_000,
+				settlement_window_end_timestamp: 1_789_746_983
+			}
+		});
+
+		expect(result.lagoon_guard_v0).toEqual({
+			guard_version: 'GuardV0',
+			automatic_settlement_window_limit_enabled: true,
+			automatic_settlement_window_limit: '5000',
+			settlement_window_seconds: 86_400,
+			settled_amount_in_window: '20',
+			remaining_automatic_settlement_budget: '4980',
+			settlement_window_end_timestamp: 1_789_746_983
 		});
 	});
 

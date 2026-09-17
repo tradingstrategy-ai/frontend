@@ -4,11 +4,7 @@ Individual strategy position page.
 <script lang="ts">
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { Alert, Button, HashAddress, PageHeading, Section } from '$lib/components';
-	import {
-		getExchangeAccountInfo,
-		getExchangeAccountUrl,
-		getExchangeDisplayName
-	} from 'trade-executor/helpers/exchange-account';
+	import { getExchangeAccountInfo } from 'trade-executor/helpers/exchange-account';
 	import TradeTable from './TradeTable.svelte';
 	import PositionProfitability from './PositionProfitability.svelte';
 	import PositionSummary from './PositionSummary.svelte';
@@ -17,33 +13,25 @@ Individual strategy position page.
 	import PositionVaultAbout from './PositionVaultAbout.svelte';
 	import { resolve } from '$app/paths';
 
-	export let data;
-	const { position, positionVault, chain, strategy, status } = data;
+	let { data } = $props();
+	let { position, positionVault, chain, strategy, status } = $derived(data);
 
-	const isVaultPosition = position.pair.isVault;
-	const assetUrl = isVaultPosition
-		? position.pair.pool_address
-			? resolve(`/vaults/address/${position.pair.pool_address}`)
-			: undefined
-		: position.pricingPair.info_url;
-	const hyperliquidVaultUrl =
+	let isVaultPosition = $derived(position.pair.isVault);
+	let assetUrl = $derived(
+		isVaultPosition
+			? position.pair.pool_address
+				? resolve(`/vaults/address/${position.pair.pool_address}`)
+				: undefined
+			: position.pricingPair.info_url
+	);
+	let hyperliquidVaultUrl = $derived(
 		isVaultPosition && strategy.on_chain_data.chain_id === 9999
 			? `https://app.hyperliquid.xyz/vaults/${position.pair.pool_address}`
-			: undefined;
-	const isExchangeAccountPosition = position.pair.kind === 'exchange_account';
-	const exchangeProtocol = position.pair.other_data?.exchange_protocol;
-	const exchangeAccount = getExchangeAccountInfo(strategy);
-	// Fall back to position-level protocol detection when tags are missing
-	const exchangeUrl = isExchangeAccountPosition
-		? (exchangeAccount?.url ??
-			(exchangeProtocol && strategy.on_chain_data.asset_management_mode === 'lagoon'
-				? getExchangeAccountUrl(exchangeProtocol, strategy.on_chain_data.smart_contracts.safe)
-				: undefined))
-		: undefined;
-	const exchangeName = isExchangeAccountPosition
-		? (exchangeAccount?.name ?? (exchangeProtocol ? getExchangeDisplayName(exchangeProtocol) : undefined))
-		: undefined;
-	const tradePathBase = `./${position.position_id}`;
+			: undefined
+	);
+	let isExchangeAccountPosition = $derived(position.pair.kind === 'exchange_account');
+	let exchangeAccount = $derived(isExchangeAccountPosition ? getExchangeAccountInfo(strategy, [position]) : undefined);
+	let tradePathBase = $derived(`./${position.position_id}`);
 </script>
 
 <main class="position-page ds-3">
@@ -120,7 +108,7 @@ Individual strategy position page.
 
 	<Section class="position-info-section">
 		<div class="position-info">
-			<PositionProfitability {position} {exchangeUrl} {exchangeName} />
+			<PositionProfitability {position} exchangeUrl={exchangeAccount?.url} exchangeName={exchangeAccount?.name} />
 			<PositionSummary {position} />
 			{#if !isExchangeAccountPosition}
 				<div class="position-side-info">

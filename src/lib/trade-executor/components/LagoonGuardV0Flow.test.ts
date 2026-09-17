@@ -5,9 +5,9 @@ import LagoonGuardV0Flow from './LagoonGuardV0Flow.svelte';
 import { openAllTooltips } from '$lib/components/tooltip-test-utils';
 
 const guard = {
-	daily_automatic_settlement_limit_enabled: true,
-	daily_automatic_settlement_limit: '5000',
-	settlement_cooldown_seconds: 86_400
+	automatic_settlement_window_limit_enabled: true,
+	automatic_settlement_window_limit: '5000',
+	settlement_window_seconds: 86_400
 };
 
 afterEach(() => vi.useRealTimers());
@@ -116,10 +116,41 @@ describe('LagoonGuardV0Flow', () => {
 		expect(screen.getByText('Available now')).toBeInTheDocument();
 	});
 
+	it('prefers the window accounting reported by newer executors over state', async () => {
+		vi.useFakeTimers();
+		vi.setSystemTime(new Date('2023-11-15T00:00:00Z'));
+
+		render(LagoonGuardV0Flow, {
+			guard: {
+				...guard,
+				settled_amount_in_window: '20',
+				remaining_automatic_settlement_budget: '4980',
+				settlement_window_end_timestamp: 1_700_080_000
+			},
+			state: { portfolio: { reserves: {} } } as unknown as State
+		});
+		openAllTooltips();
+
+		const processedMetric = screen.getByText('Processed in 24h window so far').parentElement;
+		expect(processedMetric).toHaveTextContent('$20');
+		expect(screen.getByText('15/11/2023, 20:26:40 UTC')).toBeInTheDocument();
+	});
+
+	it('treats a zero window end from newer executors as no open window', async () => {
+		render(LagoonGuardV0Flow, {
+			guard: { ...guard, settled_amount_in_window: '0', settlement_window_end_timestamp: 0 }
+		});
+		openAllTooltips();
+
+		const processedMetric = screen.getByText('Processed in 24h window so far').parentElement;
+		expect(processedMetric).toHaveTextContent('$0');
+		expect(screen.getByText('Available now')).toBeInTheDocument();
+	});
+
 	it.each([
-		{ ...guard, daily_automatic_settlement_limit_enabled: false },
-		{ ...guard, daily_automatic_settlement_limit: '0' },
-		{ ...guard, settlement_cooldown_seconds: 3_600 },
+		{ ...guard, automatic_settlement_window_limit_enabled: false },
+		{ ...guard, automatic_settlement_window_limit: '0' },
+		{ ...guard, settlement_window_seconds: 3_600 },
 		null,
 		undefined
 	])('hides an unavailable or unsupported policy', (policy) => {

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Lighter logo</title>
+  <circle cx="256" cy="256" r="256" fill="#0b0e11" />
+  <g transform="translate(60 60) scale(0.7656)">
+    <path d="M173.422 420L245.095 352.948V92L173.422 162.681V420Z" fill="#fff" />
+    <path d="M266.908 420L338.581 353.108V249.168L266.908 319.647V420Z" fill="#fff" />
+  </g>
+</svg>

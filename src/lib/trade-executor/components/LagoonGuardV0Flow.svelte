@@ -1,9 +1,12 @@
 <!--
 @component
-Display GuardV0's daily automated settlement allowance for a Lagoon vault.
+Display GuardV0's automated settlement allowance per settlement window for a Lagoon vault.
 
 The card is hidden unless GuardV0 enables a positive limit with its expected
-24-hour cooldown, preventing the UI from misrepresenting a different policy.
+24-hour window, preventing the UI from misrepresenting a different policy.
+
+Newer executors report the amount settled in the active window and the window end
+directly in `/metadata`; for older executors these are derived from the strategy state.
 -->
 <script lang="ts">
 	import type { LagoonSmartContracts } from 'trade-executor/schemas/summary';
@@ -23,11 +26,11 @@ The card is hidden unless GuardV0 enables a positive limit with its expected
 	let { guard, treasury, treasuryPromise, state, statePromise }: Props = $props();
 
 	let automatedSettlementLimit = $derived(
-		guard?.daily_automatic_settlement_limit_enabled &&
-			guard.daily_automatic_settlement_limit != null &&
-			Number(guard.daily_automatic_settlement_limit) > 0 &&
-			guard.settlement_cooldown_seconds === 86_400
-			? guard.daily_automatic_settlement_limit
+		guard?.automatic_settlement_window_limit_enabled &&
+			guard.automatic_settlement_window_limit != null &&
+			Number(guard.automatic_settlement_window_limit) > 0 &&
+			guard.settlement_window_seconds === 86_400
+			? guard.automatic_settlement_window_limit
 			: undefined
 	);
 
@@ -39,14 +42,25 @@ The card is hidden unless GuardV0 enables a positive limit with its expected
 	}
 
 	/**
-	 * Get the gross amount processed by automatic settlement in GuardV0's cooldown window.
+	 * Get the gross amount processed by automatic settlement in GuardV0's active window.
 	 *
-	 * The state records the individual deposit and redemption amounts. Their sum matches the
-	 * Guard's gross-flow accounting, whereas the balance-update USD value is their net difference.
+	 * Prefer the executor's own on-chain accounting from `/metadata` when reported. Otherwise
+	 * (legacy executors) sum the individual deposit and redemption amounts recorded in the state:
+	 * their sum matches the Guard's gross-flow accounting, whereas the balance-update USD value
+	 * is their net difference.
 	 */
 	function getSettlementWindow(strategyState: State | undefined) {
-		const cooldown = guard?.settlement_cooldown_seconds;
-		if (!strategyState || !cooldown) return undefined;
+		const windowSeconds = guard?.settlement_window_seconds;
+		if (!windowSeconds) return undefined;
+
+		if (guard?.settled_amount_in_window != null && guard.settlement_window_end_timestamp != null) {
+			const resetAt = guard.settlement_window_end_timestamp;
+			// A zero window end means no settlement has opened a window yet
+			if (!resetAt || resetAt <= Date.now() / 1000) return { processed: 0, resetAt };
+			return { processed: Number(guard.settled_amount_in_window), resetAt };
+		}
+
+		if (!strategyState) return undefined;
 
 		const settlements = Object.values(strategyState.portfolio.reserves)
 			.flatMap((reserve) => Object.values(reserve.balance_updates))
@@ -57,7 +71,7 @@ The card is hidden unless GuardV0 enables a positive limit with its expected
 		const lastSettlementAt = Math.max(...settlements.map((update) => update.block_mined_at));
 		if (!Number.isFinite(lastSettlementAt)) return undefined;
 
-		const resetAt = lastSettlementAt + cooldown;
+		const resetAt = lastSettlementAt + windowSeconds;
 		if (resetAt <= Date.now() / 1000) return { processed: 0, resetAt };
 
 		return {
@@ -135,8 +149,8 @@ The card is hidden unless GuardV0 enables a positive limit with its expected
 			</Tooltip><span>/24h</span>
 		</p>
 		<p class="description">
-			Automated settlement is limited to this amount of combined deposit and redemption flow each day. Larger flows
-			require manual settlement by the vault's Safe and may take longer to process.
+			Automated settlement is limited to this amount of combined deposit and redemption flow in each 24-hour settlement
+			window. Larger flows require manual settlement by the vault's Safe and may take longer to process.
 		</p>
 	</MetricsBox>
 {/if}

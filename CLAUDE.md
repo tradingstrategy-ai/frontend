@@ -182,6 +182,7 @@ For detailed information on specific topics, see:
 - `docs/security.md` - CSP, geographic blocking, authentication, CAPTCHA
 - `docs/tests.md` - Test suites, frameworks, running tests
 - `docs/vault-data-source.md` - Vault data sources, R2 bucket config, known inconsistencies
+- `docs/exchange-account-strategies.md` - Strategies trading via an exchange account (GMX, Derive, Lighter): detection, account page links, icons, GuardV0 payload shapes
 - `docs/google-webmasters.md` - Google Search Console and Core Web Vitals API access, credential setup, `seo:*` scripts
 
 ## Pull requests

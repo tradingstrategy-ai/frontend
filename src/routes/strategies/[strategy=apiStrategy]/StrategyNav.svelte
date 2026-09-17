@@ -1,11 +1,17 @@
-<!-- Trade executor status
+<!--
+@component
+Strategy sub-page navigation: a left-side menu on desktop that collapses to a dropdown on mobile.
 
-- Left side nav
+Exchange account strategies (GMX, Lighter, …) link their position entries out to the exchange's
+own account page instead of the internal position lists; see `docs/exchange-account-strategies.md`.
 
-- Collapse to dropdown on mobile
+@example
 
+```svelte
+	<StrategyNav basePath="/strategies/{strategy.id}" currentPath={page.url.pathname} {strategy} {portfolioPromise} hasVault backtestAvailable />
+```
 -->
-<script context="module" lang="ts">
+<script module lang="ts">
 	type MenuOption = {
 		slug: string;
 		label: string;
@@ -69,10 +75,10 @@
 
 <script lang="ts">
 	import type { Portfolio } from 'trade-executor/schemas/portfolio';
-	import type { OnChainData } from 'trade-executor/schemas/summary';
 	import type { PositionStatus } from 'trade-executor/schemas/position';
-	import type { ExchangeAccountInfo } from 'trade-executor/helpers/exchange-account';
+	import type { ExchangeAccountInfo, ExchangeStrategy } from 'trade-executor/helpers/exchange-account';
 	import {
+		getExchangeAccountInfo,
 		getExchangeAccountInfoFromPortfolio,
 		exchangeSupportsPositionStatus
 	} from 'trade-executor/helpers/exchange-account';
@@ -80,53 +86,61 @@
 	import { Button, Menu, MenuItem } from '$lib/components';
 	import IconChevronDown from '~icons/local/chevron-down';
 
-	export let basePath: string;
-	export let currentPath: string;
-	export let hasVault: boolean;
-	export let backtestAvailable: boolean;
-	export let portfolioPromise: Promise<Portfolio | undefined>;
-	export let exchangeAccount: ExchangeAccountInfo | undefined = undefined;
-	export let onChainData: OnChainData;
-
-	let menuWrapper: HTMLElement;
-	let menuHeight = 'auto';
-
-	let hasFrozenPositions = false;
-	let resolvedExchangeAccount: ExchangeAccountInfo | undefined = exchangeAccount;
-
-	// Resolve exchange account from portfolio positions when tags don't provide it
-	if (!exchangeAccount) {
-		portfolioPromise.then((portfolio) => {
-			if (portfolio) {
-				resolvedExchangeAccount = getExchangeAccountInfoFromPortfolio(
-					{ tags: [], on_chain_data: onChainData },
-					portfolio
-				);
-			}
-		});
+	interface Props {
+		basePath: string;
+		currentPath: string;
+		hasVault: boolean;
+		backtestAvailable: boolean;
+		portfolioPromise: Promise<Portfolio | undefined>;
+		strategy: ExchangeStrategy;
 	}
 
-	getPositionCount('frozen').then((count) => {
-		hasFrozenPositions = Boolean(count);
+	let { basePath, currentPath, hasVault, backtestAvailable, portfolioPromise, strategy }: Props = $props();
+
+	let menuWrapper: HTMLElement | undefined = $state();
+	let menuHeight = $state('auto');
+
+	// Portfolio-derived values are filled in on the client once /state has loaded; the effects re-run
+	// when the layout is reused for another strategy so stale values are not carried over.
+	let hasFrozenPositions = $state(false);
+	let portfolioExchangeAccount: ExchangeAccountInfo | undefined = $state();
+
+	$effect(() => {
+		let stale = false;
+		portfolioPromise.then((portfolio) => {
+			if (stale) return;
+			hasFrozenPositions = Boolean(portfolio && Object.keys(portfolio.frozen_positions).length);
+			portfolioExchangeAccount = portfolio && getExchangeAccountInfoFromPortfolio(strategy, portfolio);
+		});
+		return () => {
+			stale = true;
+			hasFrozenPositions = false;
+			portfolioExchangeAccount = undefined;
+		};
 	});
 
-	$: currentSlug = currentPath.split('/')[3] ?? '';
-	$: currentOption = menuOptions.find(({ slug }) => slug === currentSlug);
+	// Tags resolve synchronously (so SSR gets the link); portfolio positions are the fallback
+	let resolvedExchangeAccount = $derived(getExchangeAccountInfo(strategy) ?? portfolioExchangeAccount);
 
-	$: visibleOptions = menuOptions.filter(({ slug, positionStatus }) => {
-		if (resolvedExchangeAccount && positionStatus) {
-			return exchangeSupportsPositionStatus(resolvedExchangeAccount.protocol, positionStatus);
-		}
-		// prettier-ignore
-		switch (slug) {
-			case currentOption?.slug : return true;
-			case 'frozen-positions'  : return hasFrozenPositions;
-			case 'info'              : return hasVault;
-			case 'fees'              : return hasVault;
-			case 'backtest'          : return backtestAvailable;
-			default                  : return true;
-		}
-	});
+	let currentSlug = $derived(currentPath.split('/')[3] ?? '');
+	let currentOption = $derived(menuOptions.find(({ slug }) => slug === currentSlug));
+
+	let visibleOptions = $derived(
+		menuOptions.filter(({ slug, positionStatus }) => {
+			if (resolvedExchangeAccount && positionStatus) {
+				return exchangeSupportsPositionStatus(resolvedExchangeAccount.protocol, positionStatus);
+			}
+			// prettier-ignore
+			switch (slug) {
+				case currentOption?.slug : return true;
+				case 'frozen-positions'  : return hasFrozenPositions;
+				case 'info'              : return hasVault;
+				case 'fees'              : return hasVault;
+				case 'backtest'          : return backtestAvailable;
+				default                  : return true;
+			}
+		})
+	);
 
 	function getTargetUrl(slug: string) {
 		return slug ? `${basePath}/${slug}` : basePath;
@@ -146,7 +160,7 @@
 			toggle: 'closed',
 			close: 'closed',
 			_enter() {
-				const clientHeight = menuWrapper.firstElementChild?.clientHeight;
+				const clientHeight = menuWrapper?.firstElementChild?.clientHeight;
 				menuHeight = clientHeight ? `${clientHeight}px` : 'auto';
 			}
 		}

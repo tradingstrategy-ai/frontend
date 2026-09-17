@@ -5,7 +5,7 @@ Left-side navigation for YAML-configured strategy pages.
 Sidebar on desktop, collapsible dropdown on mobile — same pattern as StrategyNav
 but with a static set of menu items (no conditional visibility or badges).
 -->
-<script context="module" lang="ts">
+<script module lang="ts">
 	type MenuOption = {
 		slug: string;
 		label: string;
@@ -41,19 +41,25 @@ but with a static set of menu items (no conditional visibility or badges).
 	import { getExchangeAccountUrl } from 'trade-executor/helpers/exchange-account';
 	import IconChevronDown from '~icons/local/chevron-down';
 
-	export let basePath: string;
-	export let currentPath: string;
-	export let backtestAvailable: boolean = false;
-	export let vaultAddress: string | undefined = undefined;
+	interface Props {
+		basePath: string;
+		currentPath: string;
+		backtestAvailable?: boolean;
+		vaultAddress?: string;
+	}
 
-	$: positionsUrl = vaultAddress ? getExchangeAccountUrl('hyperliquid', vaultAddress) : undefined;
+	let { basePath, currentPath, backtestAvailable = false, vaultAddress }: Props = $props();
 
-	let menuWrapper: HTMLElement;
-	let menuHeight = 'auto';
+	let positionsUrl = $derived(
+		vaultAddress ? getExchangeAccountUrl('hyperliquid', { address: vaultAddress }) : undefined
+	);
 
-	$: visibleOptions = getMenuOptions(backtestAvailable, positionsUrl);
-	$: currentSlug = currentPath.split('/')[3] ?? '';
-	$: currentOption = visibleOptions.find(({ slug }) => slug === currentSlug);
+	let menuWrapper: HTMLElement | undefined = $state();
+	let menuHeight = $state('auto');
+
+	let visibleOptions = $derived(getMenuOptions(backtestAvailable, positionsUrl));
+	let currentSlug = $derived(currentPath.split('/')[3] ?? '');
+	let currentOption = $derived(visibleOptions.find(({ slug }) => slug === currentSlug));
 
 	function getTargetUrl(slug: string) {
 		return slug ? `${basePath}/${slug}` : basePath;
@@ -67,7 +73,7 @@ but with a static set of menu items (no conditional visibility or badges).
 			toggle: 'closed',
 			close: 'closed',
 			_enter() {
-				const clientHeight = menuWrapper.firstElementChild?.clientHeight;
+				const clientHeight = menuWrapper?.firstElementChild?.clientHeight;
 				menuHeight = clientHeight ? `${clientHeight}px` : 'auto';
 			}
 		}
