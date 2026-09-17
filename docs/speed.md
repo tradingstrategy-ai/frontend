@@ -34,8 +34,9 @@ https://blog.cloudflare.com/early-hints/#testing-early-hints-with-web-page-test
 # Web fonts and layout shift
 
 The licensed Neue Haas Grotesk faces, Source Serif Pro and Source Code Pro are declared in
-`static/fonts/fonts6.css` (the file is renamed whenever its contents change because it is
-served with a long cache lifetime). Three mechanisms keep them from hurting Core Web Vitals:
+`static/fonts/fonts6.css` (the file is renamed whenever its contents change: the woff2 files it
+references are served with a one-year `Cache-Control` by `scripts/server.js`, see
+`scripts/static-cache-control.js`). Three mechanisms keep them from hurting Core Web Vitals:
 
 1. **Deferred stylesheet.** `src/app.html` loads the stylesheet with the `media="print"` →
    `onload="this.media='all'"` trick, so text paints immediately in the fallback face

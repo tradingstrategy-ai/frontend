@@ -4,6 +4,7 @@
 
 import { randomBytes } from 'node:crypto';
 import express from 'express';
+import { getStaticCacheControl } from './static-cache-control.js';
 
 const refreshIntervalMilliseconds = 20 * 60 * 1000;
 const refreshRequestTimeoutMilliseconds = 15 * 60 * 1000;
@@ -42,6 +43,17 @@ app.use((req, res, next) => {
 	if (req.path.endsWith('/__route.js')) {
 		res.setHeader('cache-control', 'private, no-cache');
 	}
+	next();
+});
+
+/**
+ * Cache lifetimes for fonts and avatars under `static/`. adapter-node's static file server
+ * runs before the SvelteKit `handle` hook and sets none, leaving Cloudflare's four-hour default;
+ * see scripts/static-cache-control.js for the policy. A header set here survives sirv.
+ */
+app.use((req, res, next) => {
+	const cacheControl = getStaticCacheControl(req.path);
+	if (cacheControl) res.setHeader('cache-control', cacheControl);
 	next();
 });
 
