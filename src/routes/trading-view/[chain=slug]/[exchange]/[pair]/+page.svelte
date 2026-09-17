@@ -11,6 +11,7 @@ Render the pair trading page
 	import { replaceState } from '$app/navigation';
 	import { captureException } from '@sentry/sveltekit';
 	import Alert from '$lib/components/Alert.svelte';
+	import AlertItem from '$lib/components/AlertItem.svelte';
 	import AlertList from '$lib/components/AlertList.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import EntitySymbol from '$lib/components/EntitySymbol.svelte';
@@ -101,24 +102,22 @@ Render the pair trading page
 
 		{#if isUniswapIncompatible || tokenTax.broken || ridiculousPrice}
 			<AlertList status="warning">
-				{#snippet children({ AlertItem })}
-					<AlertItem title="Incompatible exchange" displayWhen={isUniswapIncompatible}>
-						{summary.exchange_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data for
-						{summary.pair_symbol} may be inaccurate.
-					</AlertItem>
+				<AlertItem title="Incompatible exchange" displayWhen={isUniswapIncompatible}>
+					{summary.exchange_name} is not fully compatible with Uniswap v2 protocols. Price, volume and liquidity data for
+					{summary.pair_symbol} may be inaccurate.
+				</AlertItem>
 
-					<AlertItem displayWhen={tokenTax.broken}>
-						This token is unlikely to be tradeable.
-						<a
-							href="https://tradingstrategy.ai/docs/programming/market-data/token-tax.html#honeypots-and-other-rug-pull-risks"
-							rel="external">Read more about transfer fees being broken or malicious in the token tax documentation</a
-						>. Error code <strong>{tokenTax.sellTax}</strong>.
-					</AlertItem>
+				<AlertItem displayWhen={tokenTax.broken}>
+					This token is unlikely to be tradeable.
+					<a
+						href="https://tradingstrategy.ai/docs/programming/market-data/token-tax.html#honeypots-and-other-rug-pull-risks"
+						rel="external">Read more about transfer fees being broken or malicious in the token tax documentation</a
+					>. Error code <strong>{tokenTax.sellTax}</strong>.
+				</AlertItem>
 
-					<AlertItem displayWhen={ridiculousPrice}>
-						This trading pair is using low digit price units that may prevent displaying the price data properly.
-					</AlertItem>
-				{/snippet}
+				<AlertItem displayWhen={ridiculousPrice}>
+					This trading pair is using low digit price units that may prevent displaying the price data properly.
+				</AlertItem>
 			</AlertList>
 		{/if}
 	</section>

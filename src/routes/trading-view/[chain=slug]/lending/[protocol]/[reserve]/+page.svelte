@@ -61,18 +61,24 @@
 
 <main class="ds-3">
 	<PageHeader title={reserve.asset_name}>
-		<span slot="subtitle" class="subtitle">
-			{reserve.protocol_name}
-			reserve on
-			<EntitySymbol size="0.875em" label={reserve.chain_name} logoUrl={getLogoUrl('blockchain', reserve.chain_slug)} />
-		</span>
-		<svelte:fragment slot="cta">
+		{#snippet subtitle()}
+			<span class="subtitle">
+				{reserve.protocol_name}
+				reserve on
+				<EntitySymbol
+					size="0.875em"
+					label={reserve.chain_name}
+					logoUrl={getLogoUrl('blockchain', reserve.chain_slug)}
+				/>
+			</span>
+		{/snippet}
+		{#snippet cta()}
 			{#if reserveUrl}
 				<Button href={reserveUrl} target="_blank" rel="noreferrer">
 					View on {formatUrlAsDomain(reserveUrl)}
 				</Button>
 			{/if}
-		</svelte:fragment>
+		{/snippet}
 	</PageHeader>
 
 	<section class="ds-container info" data-testid="reserve-info">

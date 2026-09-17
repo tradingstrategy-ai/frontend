@@ -57,15 +57,19 @@
 
 <main class="ds-3">
 	<PageHeader title="{exchange.human_readable_name} exchange">
-		<span class="subtitle" slot="subtitle">
-			on
-			<EntitySymbol
-				size="0.875em"
-				label={exchange.chain_name}
-				logoUrl={getLogoUrl('blockchain', exchange.chain_slug)}
-			/>
-		</span>
-		<Button slot="cta" label="Visit {nameDetails.name}" href={exchange.homepage} target="_blank" rel="noreferrer" />
+		{#snippet subtitle()}
+			<span class="subtitle">
+				on
+				<EntitySymbol
+					size="0.875em"
+					label={exchange.chain_name}
+					logoUrl={getLogoUrl('blockchain', exchange.chain_slug)}
+				/>
+			</span>
+		{/snippet}
+		{#snippet cta()}
+			<Button label="Visit {nameDetails.name}" href={exchange.homepage} target="_blank" rel="noreferrer" />
+		{/snippet}
 	</PageHeader>
 
 	<section class="ds-container info" data-testid="exchange-info">

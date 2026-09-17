@@ -154,8 +154,8 @@ describe('getPositionVaultSparklines', () => {
 		await fetchPositionVaults(fetchFn as unknown as Fetch, positions);
 
 		expect(fetchFn).toHaveBeenCalledTimes(2);
-		const firstRequest = JSON.parse(fetchFn.mock.calls[0][1].body as string);
-		const secondRequest = JSON.parse(fetchFn.mock.calls[1][1].body as string);
+		const firstRequest = JSON.parse(fetchFn.mock.calls[0]![1]!.body as string);
+		const secondRequest = JSON.parse(fetchFn.mock.calls[1]![1]!.body as string);
 		expect(firstRequest.vaultIds).toHaveLength(100);
 		expect(secondRequest.vaultIds).toEqual(['vault-100']);
 	});

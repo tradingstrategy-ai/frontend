@@ -5,8 +5,9 @@
 	import { formatDollar } from '$lib/helpers/formatters';
 	import { formatDistanceToNowStrict } from 'date-fns';
 
-	export let summary: Record<string, string | number>;
-	export let details: Record<string, string | number>;
+	// pair-details payload has no schema yet; see UntypedApiRow
+	export let summary: UntypedApiRow;
+	export let details: UntypedApiRow;
 	export let pageUrl: string;
 
 	function formatTimeAgo(dateStr: string, options = {}) {

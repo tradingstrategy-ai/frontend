@@ -76,7 +76,7 @@ describe('LagoonGuardV0Flow', () => {
 					}
 				}
 			}
-		} as State;
+		} as unknown as State;
 
 		render(LagoonGuardV0Flow, { guard, state });
 		openAllTooltips();
@@ -107,7 +107,7 @@ describe('LagoonGuardV0Flow', () => {
 						}
 					}
 				}
-			} as State
+			} as unknown as State
 		});
 		openAllTooltips();
 

@@ -5,7 +5,7 @@
 	type Props = {
 		label: string;
 		title: string;
-		status?: ComponentProps<DataBadge>['status'];
+		status?: ComponentProps<typeof DataBadge>['status'];
 		children: Snippet;
 	};
 

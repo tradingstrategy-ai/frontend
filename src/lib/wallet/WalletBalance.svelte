@@ -15,9 +15,11 @@
 </script>
 
 <WalletInfo alignValues="right">
-	<WalletInfoItem label="Account">
-		<WalletAddress size="sm" wallet={$wallet} />
-	</WalletInfoItem>
+	{#if $wallet.status === 'connected'}
+		<WalletInfoItem label="Account">
+			<WalletAddress size="sm" wallet={$wallet} />
+		</WalletInfoItem>
+	{/if}
 
 	<WalletInfoItem>
 		<EntitySymbol slot="label" size="1.5rem" label={chainSymbol} logoUrl={getLogoUrl('token', chainSymbol)} />

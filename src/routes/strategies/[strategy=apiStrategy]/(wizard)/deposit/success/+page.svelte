@@ -25,7 +25,7 @@
 		in crypto / DeFi trading strategies carries significant risk. Click "Done" to return to the strategy.
 	</p>
 
-	{#if requiresSettlement}
+	{#if vault.requiresSettlement()}
 		<Alert size="sm" status="info" title="Settlement in progress">
 			Your deposit is now <i>pending</i>. Once settlement is complete, you'll be able to claim your deposited shares.
 			<a href={vault.settlementInfoUrl} target="_blank" rel="external noreferrer">Learn more about settlement</a>

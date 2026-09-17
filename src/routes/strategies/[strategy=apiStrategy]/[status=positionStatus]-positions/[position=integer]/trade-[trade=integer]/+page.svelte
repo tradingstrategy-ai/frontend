@@ -59,7 +59,7 @@
 			href="trade-{trade.trade_id}.json"
 			target="_blank"
 			rel="nofollow"
-			on:click={(e) => e.currentTarget.blur()}
+			on:click={(e) => (e.currentTarget as HTMLElement | null)?.blur()}
 		/>
 	</PageHeading>
 

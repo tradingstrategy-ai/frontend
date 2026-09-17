@@ -32,7 +32,7 @@ unknown props through to HTML input element.
 		{type}
 		{disabled}
 		{...$$restProps}
-		on:input={({ target }) => (value = target.value)}
+		on:input={({ currentTarget }) => (value = currentTarget.value)}
 		on:input
 		on:focus
 		on:blur

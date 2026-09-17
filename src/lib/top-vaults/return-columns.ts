@@ -91,8 +91,9 @@ function getTopLevelCoverage(
 		return null;
 	}
 
-	const resolvedTotalDays = totalDays ?? null;
-	if (hasAcceptableCoverage(resolvedTotalDays, expectedDays)) {
+	// without a sample count, fall back to the calendar span of the window
+	const resolvedTotalDays = totalDays ?? calculateTotalDays(startAt, endAt);
+	if (resolvedTotalDays == null || hasAcceptableCoverage(resolvedTotalDays, expectedDays)) {
 		return null;
 	}
 

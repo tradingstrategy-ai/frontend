@@ -56,10 +56,12 @@ Token detail page with token metadata and its tracked trading pairs.
 
 <main>
 	<PageHeader title={token.name}>
-		<span slot="subtitle" class="subtitle">
-			token trading as {token.symbol} on
-			<EntitySymbol size="0.875em" label={token.chain_name} logoUrl={getLogoUrl('blockchain', token.chain_slug)} />
-		</span>
+		{#snippet subtitle()}
+			<span class="subtitle">
+				token trading as {token.symbol} on
+				<EntitySymbol size="0.875em" label={token.chain_name} logoUrl={getLogoUrl('blockchain', token.chain_slug)} />
+			</span>
+		{/snippet}
 	</PageHeader>
 
 	<section class="ds-container ds-2-col info" data-testid="token-info">

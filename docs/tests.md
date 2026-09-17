@@ -72,6 +72,12 @@ content API for `/blog` and blog posts). A page that reaches an unmocked upstrea
 passes against live data. The glossary is the one exception: it is scraped from the documentation
 site and still goes to the network.
 
+The strategies page persists its snapshot to disk (`TS_PRIVATE_STRATEGIES_CACHE_DIR`). The test
+server uses its own directory (`.cache/strategies-test`, set in `.env.test`) and
+`webServerConfig()` empties it before every run, so a snapshot left behind by a dev session with
+real data cannot leak into the mocked suite — that was the cause of the strategy listing tests
+failing locally while passing in CI.
+
 #### Search-snippet coverage
 
 `tests/integration/head-meta.test.ts` is the contract for what the indexable templates put in their

@@ -1,5 +1,6 @@
 import type { LendingReserve } from '$lib/explorer/lending-reserve-client';
-import { formatReserveUSD } from '@aave/math-utils';
+import { formatReserveUSD, type FormatReserveUSDResponse, type ReserveDataWithPrice } from '@aave/math-utils';
+import { isNumber } from '$lib/helpers/formatters';
 
 /**
  * Return internal URL for a lending reserve
@@ -62,11 +63,15 @@ export function getFormattedReserveUSD({ additional_details }: LendingReserve) {
 	const marketReferenceCurrencyDecimals = Math.log10(baseCurrency.marketReferenceCurrencyUnit);
 
 	return formatReserveUSD({
-		reserve: reserveData,
+		// the API delivers the Aave reserve payload with numeric fields as strings; the
+		// conversion above makes it match the aave-utilities shape
+		reserve: reserveData as unknown as ReserveDataWithPrice,
 		currentTimestamp: Date.now() / 1000,
 		marketReferencePriceInUsd,
 		marketReferenceCurrencyDecimals
-	});
+		// formatReserveUSD spreads the input, so the pool data provider's `borrowingEnabled` flag
+		// (not part of the aave-utilities ReserveData type) is on the result at runtime
+	}) as FormatReserveUSDResponse & { borrowingEnabled?: boolean };
 }
 
 /***
@@ -86,9 +91,9 @@ export const SECONDS_PER_YEAR = SECONDS_PER_DAY * 365;
  * Calculate yield for a specified rate and period
  */
 export function yieldForPeriod(apr: MaybeNumber, seconds: MaybeNumber) {
-	if (seconds < 0) {
+	if (isNumber(seconds) && seconds < 0) {
 		throw new RangeError('seconds must be >= 0');
-	} else if (Number.isFinite(apr) && Number.isFinite(seconds)) {
+	} else if (isNumber(apr) && isNumber(seconds)) {
 		return (1 + apr / SECONDS_PER_YEAR) ** seconds - 1;
 	}
 }
@@ -106,9 +111,9 @@ export function aprToApy(apr: MaybeNumber) {
  * Calculate compound interest for a given principal, interest rate and period
  */
 export function compoundInterest(principal: MaybeNumber, apr: MaybeNumber, seconds: MaybeNumber) {
-	if (principal < 0) {
+	if (isNumber(principal) && principal < 0) {
 		throw new RangeError('principal must be >= 0');
-	} else if ([principal, apr, seconds].every(Number.isFinite)) {
+	} else if (isNumber(principal) && isNumber(apr) && isNumber(seconds)) {
 		const periodYield = yieldForPeriod(apr, seconds);
 		return periodYield && principal * periodYield;
 	}

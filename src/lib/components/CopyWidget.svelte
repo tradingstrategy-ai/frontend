@@ -21,6 +21,7 @@ a `copy` method – bind a variable to a component instance and call `copyWidget
 	const copier = fsm('idle', {
 		idle: {
 			copy(text: string) {
+				// @ts-expect-error svelte-fsm types actions as returning a state, not as void callbacks
 				navigator.clipboard.writeText(text).then(this.success);
 			},
 			success: 'copied'
@@ -28,6 +29,7 @@ a `copy` method – bind a variable to a component instance and call `copyWidget
 
 		copied: {
 			_enter() {
+				// @ts-expect-error svelte-fsm adds `.debounce()` to actions at runtime; it is not in the types
 				this.complete.debounce(2000);
 			},
 			complete: 'idle'

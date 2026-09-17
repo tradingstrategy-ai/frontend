@@ -20,7 +20,7 @@
 
 	// selected pair ids during editing, prior to committing (save) or reverting (cancel)
 	let multiPairIds = $derived(selectedPairIds);
-	let singlePairId = $derived(selectedPairIds[0]);
+	let singlePairId: number | null | undefined = $derived(selectedPairIds[0]);
 
 	let provisionalPairs = $derived(
 		tradingPairs.all_pairs.filter((p) => {
@@ -50,7 +50,7 @@
 			},
 
 			save() {
-				onchange?.([singlePairId]);
+				if (singlePairId != null) onchange?.([singlePairId]);
 				return 'ready';
 			},
 
