@@ -47,9 +47,20 @@ app.use((req, res, next) => {
 });
 
 /**
- * Cache lifetimes for fonts and avatars under `static/`. adapter-node's static file server
- * runs before the SvelteKit `handle` hook and sets none, leaving Cloudflare's four-hour default;
- * see scripts/static-cache-control.js for the policy. A header set here survives sirv.
+ * Cache lifetimes for the fonts and avatars under `static/`.
+ *
+ * These files are served by adapter-node's built-in static file server (`sirv`), which sits
+ * in front of the SvelteKit renderer inside `handler`. That has two effects worth knowing:
+ *
+ * - `src/hooks.server.ts` never sees these requests, so the header cannot be set there.
+ * - `sirv` only writes `Cache-Control` for the hashed `/_app/immutable/` build assets. For
+ *   the rest of `static/` it sends nothing, and Cloudflare then applies its four-hour zone
+ *   default — which meant every browser re-downloaded ~130 KB of never-changing font files
+ *   after four hours (flagged by PageSpeed Insights in the 2026-09 audit).
+ *
+ * Setting the header here, before `handler`, works because `sirv` leaves an existing
+ * `Cache-Control` untouched. The values and the reasoning behind each lifetime live in
+ * `scripts/static-cache-control.js`.
  */
 app.use((req, res, next) => {
 	const cacheControl = getStaticCacheControl(req.path);
