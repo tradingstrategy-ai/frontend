@@ -1,9 +1,14 @@
 import { expect, test } from '@playwright/test';
+import { BLOG_POST_SLUG } from '../mocks/ghost/posts.mock';
 
 /**
- * Every page must carry exactly one `<link rel="canonical">`, emitted by `AppHead`. Two
- * canonicals (or none) leave the choice to the search engine; query strings must be dropped
- * unless they identify the page.
+ * Search-snippet contract for every indexable template.
+ *
+ * - exactly one `<link rel="canonical">`, emitted by `AppHead`; two canonicals (or none)
+ *   leave the choice to the search engine, and query strings must be dropped unless they
+ *   identify the page
+ * - exactly one `<title>` carrying the brand suffix, one meta description of a length Google
+ *   shows in full, and one `og:image` — see `SocialCardMetaTags`
  */
 
 const samples: { path: string; canonical: string }[] = [
@@ -21,7 +26,11 @@ const samples: { path: string; canonical: string }[] = [
 		path: '/trading-view/ethereum/tokens/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
 		canonical: '/trading-view/ethereum/tokens/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
 	},
+	{ path: '/trading-view/ethereum/uniswap-v3', canonical: '/trading-view/ethereum/uniswap-v3' },
 	{ path: '/glossary', canonical: '/glossary' },
+	{ path: '/glossary/leverage', canonical: '/glossary/leverage' },
+	{ path: '/blog', canonical: '/blog' },
+	{ path: `/blog/${BLOG_POST_SLUG}`, canonical: `/blog/${BLOG_POST_SLUG}` },
 	{ path: '/search?q=keyring', canonical: '/search' },
 	{ path: '/about', canonical: '/about' },
 	{
@@ -31,7 +40,10 @@ const samples: { path: string; canonical: string }[] = [
 	}
 ];
 
-test.describe('canonical link', () => {
+const DESCRIPTION_MIN_LENGTH = 70;
+const DESCRIPTION_MAX_LENGTH = 155;
+
+test.describe('head metadata', () => {
 	for (const { path, canonical } of samples) {
 		test(`${path} declares exactly one canonical`, async ({ request }) => {
 			const response = await request.get(path);
@@ -43,6 +55,23 @@ test.describe('canonical link', () => {
 			// attribute values are HTML-escaped, so `&` between query params arrives as `&amp;`
 			const expectedCanonical = new URL(canonical, response.url()).href;
 			expect(links[0]?.replaceAll('&amp;', '&')).toContain(`href="${expectedCanonical}"`);
+		});
+
+		test(`${path} has a branded title, a full-length description and a social image`, async ({ request }) => {
+			const html = await (await request.get(path)).text();
+			const head = html.slice(0, html.indexOf('</head>'));
+
+			const titles = head.match(/<title>([\s\S]*?)<\/title>/g) ?? [];
+			expect(titles, 'title tags').toHaveLength(1);
+			expect(titles[0]!.replace(/\s+/g, ' ')).toMatch(/Trading Strategy<\/title>$/);
+
+			const descriptions = head.match(/<meta name="description" content="([^"]*)"/g) ?? [];
+			expect(descriptions, 'description tags').toHaveLength(1);
+			const description = descriptions[0]!.match(/content="([^"]*)"/)![1]!.replaceAll('&amp;', '&');
+			expect(description.length, `description: ${description}`).toBeGreaterThanOrEqual(DESCRIPTION_MIN_LENGTH);
+			expect(description.length, `description: ${description}`).toBeLessThanOrEqual(DESCRIPTION_MAX_LENGTH);
+
+			expect(head.match(/<meta property="og:image" content="/g) ?? [], 'og:image tags').toHaveLength(1);
 		});
 	}
 });

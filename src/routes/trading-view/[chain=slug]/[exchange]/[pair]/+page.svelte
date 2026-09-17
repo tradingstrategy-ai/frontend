@@ -6,6 +6,7 @@ Render the pair trading page
   be moved to SvelteKit routing query parameter
 -->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
 	import { captureException } from '@sentry/sveltekit';
@@ -21,7 +22,7 @@ Render the pair trading page
 	// so the heavy lightweight-charts bundle stays off the critical path.
 	import TimePeriodSummaryTable from './TimePeriodSummaryTable.svelte';
 	import { getTokenTaxInformation } from '$lib/helpers/tokentax';
-	import { formatSwapFee } from '$lib/helpers/formatters';
+	import { formatDollar, formatSwapFee } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
 	import { timeBucketEnum } from '$lib/schemas/utility';
 	import { OptionGroup } from '$lib/helpers/option-group.svelte';
@@ -54,15 +55,11 @@ Render the pair trading page
 	};
 </script>
 
-<svelte:head>
-	<title>
-		{summary.pair_symbol} ({swapFee}) token price on {details.exchange_name}
-	</title>
-	<meta
-		name="description"
-		content="Price and liquidity for {summary.pair_symbol} on {details.exchange_name} on {details.chain_name}"
-	/>
-</svelte:head>
+<MetaTags
+	titleParts={[`${summary.pair_symbol} (${swapFee}) price on ${details.exchange_name}`, details.chain_name]}
+	description={`${summary.pair_symbol} on ${details.exchange_name} (${details.chain_name}): price ${formatDollar(summary.usd_price_latest)}, 24h volume ${formatDollar(summary.usd_volume_24h, 1, 1)}, liquidity ${formatDollar(summary.usd_liquidity_latest ?? summary.pair_tvl, 1, 1)}. Live chart, OHLCV history and token tax.`}
+	image={`/social-card/blockchain/${summary.chain_slug}`}
+/>
 
 <Breadcrumbs labels={breadcrumbs} />
 

@@ -15,7 +15,7 @@ export async function GET({ params }) {
 
 	try {
 		data = (await import(`$lib/assets/logos/${type}/${slug}.svg?raw`)).default;
-	} catch (e) {
+	} catch {
 		error(404, 'File not found');
 	}
 

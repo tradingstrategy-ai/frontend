@@ -1,4 +1,5 @@
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { backendUrl } from '$lib/config';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -40,12 +41,10 @@
 	);
 </script>
 
-<svelte:head>
-	<title>
-		Export {exchangeName} data from {exchange.chain_name} blockchain
-	</title>
-	<meta name="description" content="Download {exchangeName} on {exchange.chain_name} trading pair data as Excel file" />
-</svelte:head>
+<MetaTags
+	titleParts={[`Export ${exchangeName} data`, exchange.chain_name]}
+	description={`Download ${exchangeName} on ${exchange.chain_name} trading pair data as an Excel file.`}
+/>
 
 <Breadcrumbs labels={breadcrumbs} />
 

@@ -2,7 +2,7 @@
 
 ## Status (2026-09-17)
 
-Planned; not started. Based on the live-site audit of 17 September 2026 run after PRs #1435–#1438 shipped (PageSpeed Insights API mobile runs on six templates, Search Console UI and API, and the SSR HTML of ~25 page types). Findings and figures below are from that audit; Search Console data still ends 2026-09-14, so the effect of the previous rounds is not visible in it yet. Reviewed twice by Codex (gpt-5.6-sol) on 2026-09-17; both passes' findings are folded in below.
+Implemented on branch `seo-round-3` (all eight workstreams; outcomes and the dry-run numbers are in `docs/google-webmasters.md`, "Round 3 — 2026-09-17"). Deviations from the plan: the unknown-protocol rule excludes only vaults whose _current_ TVL is confirmed below the threshold (896 of them; every one has a peak above it), the `media="print"` font-stylesheet measurement was deferred, breadcrumbs on vault pages are JSON-LD rather than the visible component (no design change), and the two infrastructure steps (Cloudflare purge of `/social-card/*` + `/metadata-logo/*`, cache rules for `/fonts/*.woff2` and `/avatars/*`) remain to be done after deploy. Originally: planned; not started. Based on the live-site audit of 17 September 2026 run after PRs #1435–#1438 shipped (PageSpeed Insights API mobile runs on six templates, Search Console UI and API, and the SSR HTML of ~25 page types). Findings and figures below are from that audit; Search Console data still ends 2026-09-14, so the effect of the previous rounds is not visible in it yet. Reviewed twice by Codex (gpt-5.6-sol) on 2026-09-17; both passes' findings are folded in below.
 
 ## Goal
 

@@ -79,7 +79,7 @@ test.describe('stablecoins index page', () => {
 	test('uses the updated metadata title and description', async ({ page }) => {
 		await page.goto('/vaults/stablecoins');
 
-		await expect(page).toHaveTitle('Vaults by stablecoin');
+		await expect(page).toHaveTitle('Vaults by stablecoin | Trading Strategy');
 		await expect(page.locator('meta[name="description"]')).toHaveAttribute(
 			'content',
 			'DeFi vaults for different stablecoins. TVL represents deposits of a stablecoin in vaults. APY represents the yield of last thirty days.'
@@ -94,7 +94,7 @@ test.describe('stablecoins index page', () => {
 	test('uses the updated international vault metadata title and description', async ({ page }) => {
 		await page.goto('/vaults/international');
 
-		await expect(page).toHaveTitle('International stablecoin vaults');
+		await expect(page).toHaveTitle('International stablecoin vaults | Trading Strategy');
 		await expect(page.locator('meta[name="description"]')).toHaveAttribute(
 			'content',
 			'DeFi vaults denominated in currencies such as CHF, EUR, GBP, JPY, SGD, and TRY.'

@@ -2,6 +2,7 @@
 Strategy overview dashboard.
 -->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import MyDeposits from '$lib/wallet/MyDeposits.svelte';
 	import SummaryMetrics from './SummaryMetrics.svelte';
@@ -32,10 +33,7 @@ Strategy overview dashboard.
 	);
 </script>
 
-<svelte:head>
-	<title>{meta.title}</title>
-	<meta name="description" content={meta.description} />
-</svelte:head>
+<MetaTags title={meta.title} description={meta.description} openGraph={{ title: strategy.name }} />
 
 <div class="strategy-overview-page">
 	<div class="sidebar-stack">

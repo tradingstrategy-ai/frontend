@@ -10,7 +10,8 @@ export interface VaultCompareMeta {
 }
 
 export const DEFAULT_COMPARE_TITLE = 'Compare and find best DeFi vault yield';
-export const DEFAULT_COMPARE_DESCRIPTION = 'Analyse more than 5000 vaults';
+export const DEFAULT_COMPARE_DESCRIPTION =
+	'Compare DeFi vaults side by side: returns over 1M, 3M, 6M and 1Y, TVL, fees, risk ratings and drawdown for more than 5,000 vaults.';
 
 /**
  * Build a human-readable comparison title from URL-selected vault names.
@@ -59,7 +60,10 @@ export function getVaultCompareMeta(searchParams: URLSearchParams, allVaults: Va
 
 	return {
 		title,
-		description: DEFAULT_COMPARE_DESCRIPTION,
+		description:
+			selectedVaults.length > 0
+				? `Compare ${selectedVaults.map(({ name }) => name).join(' and ')} side by side: returns over 1M, 3M, 6M and 1Y, TVL, fees, risk ratings and drawdown.`
+				: DEFAULT_COMPARE_DESCRIPTION,
 		selectedVaultIds: selectedVaults.map(({ id }) => id),
 		image: firstVault
 			? getVaultSocialCardImageUrl(firstVault, TRADING_STRATEGY_SOCIAL_IMAGE_PATH)

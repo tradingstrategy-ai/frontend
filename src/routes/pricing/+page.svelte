@@ -2,6 +2,7 @@
 Conversion-focused pricing page for professional DeFi vault market data.
 -->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { onMount } from 'svelte';
 	import { Button, Tooltip } from '$lib/components';
 	import { formatDollar } from '$lib/helpers/formatters';
@@ -177,13 +178,10 @@ Conversion-focused pricing page for professional DeFi vault market data.
 	];
 </script>
 
-<svelte:head>
-	<title>DeFi vault market data pricing | Trading Strategy</title>
-	<meta
-		name="description"
-		content="Normalised historical returns, TVL, liquidity, fees and risk metrics for DeFi vault research, backtesting and automated data workflows."
-	/>
-</svelte:head>
+<MetaTags
+	titleParts={['DeFi vault market data pricing']}
+	description="Normalised historical returns, TVL, liquidity, fees and risk metrics for DeFi vault research, backtesting and automated data workflows."
+/>
 
 <main>
 	<section class="hero-section">

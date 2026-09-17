@@ -2,6 +2,7 @@
 Search vaults and vault-related data about curators, protocols and stablecoins.
 -->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { Button, PageHeader } from '$lib/components';
 	import {
 		formatVaultAddressPrefix,
@@ -73,10 +74,10 @@ Search vaults and vault-related data about curators, protocols and stablecoins.
 	}
 </script>
 
-<svelte:head>
-	<title>Search vaults</title>
-	<meta name="description" content="Search vaults and vault-related data about curators, protocols and stablecoins." />
-</svelte:head>
+<MetaTags
+	titleParts={['Search vaults']}
+	description="Search DeFi vaults and vault-related data about curators, protocols, chains and stablecoins across the Trading Strategy database."
+/>
 
 <main>
 	<PageHeader

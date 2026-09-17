@@ -1,4 +1,5 @@
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import type { ComponentProps } from 'svelte';
 	import { page } from '$app/state';
 	import { replaceState } from '$app/navigation';
@@ -48,13 +49,10 @@
 	};
 </script>
 
-<svelte:head>
-	<title>{reserve.asset_symbol} {reserve.protocol_name} reserve on {reserve.chain_name}</title>
-	<meta
-		name="description"
-		content="{reserve.asset_name} lending reserve on {reserve.protocol_name} protocol on {reserve.chain_name}"
-	/>
-</svelte:head>
+<MetaTags
+	titleParts={[`${reserve.asset_symbol} ${reserve.protocol_name} lending reserve on ${reserve.chain_name}`]}
+	description={`${reserve.asset_name} (${reserve.asset_symbol}) lending reserve on ${reserve.protocol_name} on ${reserve.chain_name}: supply and borrow rates, utilisation and historical interest data.`}
+/>
 
 <Breadcrumbs labels={breadcrumbs} />
 

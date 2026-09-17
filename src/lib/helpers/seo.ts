@@ -29,8 +29,9 @@ export function truncateAtWord(text: string, max: number): string {
  * Build a page `<title>` from its parts, most specific first, with the brand suffix.
  *
  * Parts are joined with ` | ` and `Trading Strategy` is appended. When the result would
- * exceed `TITLE_MAX_LENGTH`, the least specific parts are dropped from the end (the first
- * part is always kept); the brand suffix is the last thing to go.
+ * exceed `TITLE_MAX_LENGTH`, the least specific parts are dropped from the end; the first
+ * part and the brand suffix are always kept, even if that overruns the limit (search
+ * engines truncate the tail, and the brand is what they usually keep anyway).
  *
  * @param parts title fragments, e.g. `['WETH', 'Ethereum token']`
  * @example getPageTitle(['ETH-USDC', 'Uniswap v3 on Ethereum']) → 'ETH-USDC | Uniswap v3 on Ethereum | Trading Strategy'
@@ -39,11 +40,11 @@ export function getPageTitle(parts: (string | null | undefined)[]): string {
 	const kept = parts.map((part) => part?.trim()).filter((part): part is string => Boolean(part));
 	if (kept.length === 0) return SITE_NAME;
 
-	for (let count = kept.length; count > 0; count--) {
+	for (let count = kept.length; count > 1; count--) {
 		const candidate = [...kept.slice(0, count), SITE_NAME].join(' | ');
 		if (candidate.length <= TITLE_MAX_LENGTH) return candidate;
 	}
-	return kept[0];
+	return `${kept[0]} | ${SITE_NAME}`;
 }
 
 /**

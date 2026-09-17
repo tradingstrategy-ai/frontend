@@ -2,6 +2,7 @@
 	Render listing of all available exchanges
 -->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import type { ComponentProps } from 'svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
@@ -26,10 +27,10 @@
 	};
 </script>
 
-<svelte:head>
-	<title>Decentralised exchanges</title>
-	<meta name="description" content="Top decentralised exchanges" />
-</svelte:head>
+<MetaTags
+	titleParts={['Decentralised exchanges']}
+	description="Top decentralised exchanges ranked by trading volume, with their pairs, tokens and historical market data."
+/>
 
 <Breadcrumbs />
 

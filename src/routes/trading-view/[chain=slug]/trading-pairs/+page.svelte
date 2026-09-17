@@ -2,6 +2,7 @@
 	Render listing of all available Pairs for specific chain
 -->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import type { ComponentProps } from 'svelte';
 	import { goto } from '$app/navigation';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
@@ -22,10 +23,11 @@
 	};
 </script>
 
-<svelte:head>
-	<title>{chain.name} Trading Pairs | Trading Strategy</title>
-	<meta name="description" content="Top trading pairs on {chain.name} blockchain" />
-</svelte:head>
+<MetaTags
+	titleParts={[`${chain.name} trading pairs`, 'DEX market data']}
+	description={`Top decentralised exchange trading pairs on ${chain.name} ranked by volume and liquidity, with price charts and OHLCV history.`}
+	image={`/social-card/blockchain/${chain.slug}`}
+/>
 
 <Breadcrumbs labels={{ [chain.slug]: chain.name, 'trading-pairs': 'Trading pairs' }} />
 

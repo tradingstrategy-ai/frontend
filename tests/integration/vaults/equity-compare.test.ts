@@ -375,7 +375,10 @@ test.describe('vault equity curve comparison page', () => {
 		await page.goto('/vaults/compare?comparison=empty');
 
 		await expect(page).toHaveTitle(/Compare and find best DeFi vault yield/);
-		await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', 'Analyse more than 5000 vaults');
+		await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+			'content',
+			/Compare DeFi vaults side by side/
+		);
 		await expect(page.getByRole('heading', { name: 'Compare vaults' })).toBeVisible();
 		await expect(page.getByRole('heading', { name: 'Add vaults to compare' })).toBeVisible();
 		await expect(page.getByRole('checkbox')).toHaveCount(3);

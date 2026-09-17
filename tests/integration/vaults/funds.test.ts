@@ -4,7 +4,7 @@ test.describe('funds page', () => {
 	test('lists tokenised funds and links to the glossary explanation', async ({ page }) => {
 		await page.goto('/vaults/funds');
 
-		await expect(page).toHaveTitle('Tokenised funds');
+		await expect(page).toHaveTitle('Tokenised funds | Trading Strategy');
 		await expect(page.locator('h1')).toHaveText('Tokenised funds');
 		await expect(page.locator('.vault-listings-selector a', { hasText: 'Tokenised funds' })).toHaveAttribute(
 			'href',

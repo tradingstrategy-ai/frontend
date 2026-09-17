@@ -1,4 +1,5 @@
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { backendUrl } from '$lib/config';
 	import { Alert, Button, Spinner, TextInput } from '$lib/components';
 
@@ -51,10 +52,10 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Sign up for free DEX data API key</title>
-	<meta name="description" content="DeFi markets API access and data download" />
-</svelte:head>
+<MetaTags
+	titleParts={['Sign up for a free DEX data API key']}
+	description="Register for free access to the Trading Strategy DeFi market data API and dataset downloads."
+/>
 
 <main>
 	<header class="ds-container">

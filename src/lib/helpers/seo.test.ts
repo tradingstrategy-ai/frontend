@@ -18,9 +18,9 @@ describe('getPageTitle', () => {
 		expect(title).toBe('Some very long trading pair name (0.05%) | Trading Strategy');
 	});
 
-	it('keeps the first part even when it alone is too long', () => {
+	it('keeps the first part and the brand even when that overruns the limit', () => {
 		const name = 'x'.repeat(70);
-		expect(getPageTitle([name])).toBe(name);
+		expect(getPageTitle([name])).toBe(`${name} | Trading Strategy`);
 	});
 
 	it('skips blank parts and falls back to the brand alone', () => {

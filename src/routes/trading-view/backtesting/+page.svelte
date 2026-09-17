@@ -1,4 +1,5 @@
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { backendUrl, backendInternalUrl } from '$lib/config';
 	import { formatByteUnits, formatNumber } from '$lib/helpers/formatters';
 	import {
@@ -66,10 +67,10 @@
 	}
 </script>
 
-<svelte:head>
-	<title>DEX spot data</title>
-	<meta name="description" content="Download price, OHLCV and liquidity backtesting data" />
-</svelte:head>
+<MetaTags
+	titleParts={['DEX spot data for backtesting']}
+	description="Download decentralised exchange price, OHLCV and liquidity datasets for backtesting algorithmic trading strategies."
+/>
 
 <Breadcrumbs />
 

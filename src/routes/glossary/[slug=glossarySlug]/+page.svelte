@@ -6,6 +6,7 @@
 
 -->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import type { GlossaryEntry } from '../glossary';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import { Section } from '$lib/components';
@@ -39,9 +40,9 @@
 	}
 </script>
 
+<MetaTags titleParts={[`What is ${entry.name}?`, 'DeFi and trading glossary']} description={entry.description} />
+
 <svelte:head>
-	<title>What is {entry.name}?</title>
-	<meta name="description" content={entry.description} />
 	{@html serializeSchema(getGoogleFAQPageSchema(entry))}
 </svelte:head>
 

@@ -6,7 +6,7 @@ test.describe('home page', () => {
 	});
 
 	test('should render the home page with correct title', async ({ page }) => {
-		await expect(page).toHaveTitle('Trading Strategy');
+		await expect(page).toHaveTitle('DeFi vault rankings, yields and risk data | Trading Strategy');
 	});
 
 	test('should display featured strategies section', async ({ page }) => {
@@ -19,6 +19,16 @@ test.describe('home page', () => {
 
 	test('should display blog section', async ({ page }) => {
 		await expect(page.getByRole('heading', { name: 'Blog' })).toBeVisible();
+	});
+
+	test('should preload exactly one hero background per viewport', async ({ request }) => {
+		const html = await (await request.get('/')).text();
+		// the media query contains an unescaped `>`, so match to the self-closing tag end
+		const preloads = html.match(/<link rel="preload" as="image".*?\/>/g) ?? [];
+		expect(preloads).toHaveLength(2);
+		const media = preloads.map((link) => link.match(/media="([^"]*)"/)?.[1]?.replaceAll('&lt;', '<'));
+		expect(media).toEqual(expect.arrayContaining(['(width <= 768px)', '(width > 768px)']));
+		expect(preloads.every((link) => link.includes('fetchpriority="high"'))).toBe(true);
 	});
 
 	test('should lazy-load the vault ecosystem widget without crashing', async ({ page }) => {

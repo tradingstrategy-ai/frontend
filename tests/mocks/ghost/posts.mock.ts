@@ -7,7 +7,17 @@ import postResponse from './post.data.json' with { type: 'json' };
  */
 export const BLOG_POST_SLUG = postResponse.posts[0].slug;
 
-const indexPost = (({ id, slug, title, feature_image, feature_image_alt, created_at, updated_at, published_at, excerpt }) => ({
+const indexPost = (({
+	id,
+	slug,
+	title,
+	feature_image,
+	feature_image_alt,
+	created_at,
+	updated_at,
+	published_at,
+	excerpt
+}) => ({
 	id,
 	slug,
 	title,

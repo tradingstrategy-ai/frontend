@@ -2,6 +2,7 @@
 Overview page for YAML-configured strategies — displays vault metrics and interactive price chart.
 -->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import VaultPriceChart from '$lib/top-vaults/VaultPriceChart.svelte';
 	import { formatDollar, formatNumber } from '$lib/helpers/formatters';
 	import { getLogoUrl } from '$lib/helpers/assets';
@@ -31,10 +32,7 @@ Overview page for YAML-configured strategies — displays vault metrics and inte
 	);
 </script>
 
-<svelte:head>
-	<title>{meta.title}</title>
-	<meta name="description" content={meta.description} />
-</svelte:head>
+<MetaTags title={meta.title} description={meta.description} openGraph={{ title: strategy.name }} />
 
 {#if vaultInfo}
 	<div class="strategy-overview">

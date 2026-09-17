@@ -10,6 +10,16 @@ Promotes Trading Strategy vault discovery and managed strategies on the home pag
 	import StrategyDifferentiator from './StrategyDifferentiator.svelte';
 </script>
 
+<svelte:head>
+	<!--
+		The hero background is the LCP element; as a CSS background it would only be discovered
+		after style resolution (2.5 s "resource load delay" in the 2026-09 audit). The media
+		queries mirror the `--viewport-sm-down` breakpoint so exactly one image is fetched.
+	-->
+	<link rel="preload" as="image" href={heroBackgroundMobile} media="(width <= 768px)" fetchpriority="high" />
+	<link rel="preload" as="image" href={heroBackground} media="(width > 768px)" fetchpriority="high" />
+</svelte:head>
+
 <section
 	class="home-hero-banner"
 	data-testid="home-hero-banner"

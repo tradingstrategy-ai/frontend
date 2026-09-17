@@ -1,5 +1,6 @@
 <!-- Render the glossary index page with a link to the each term -->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import type { GlossaryIndexEntry } from './glossary';
 	import { HeroBanner, Section } from '$lib/components';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
@@ -19,10 +20,10 @@
 	);
 </script>
 
-<svelte:head>
-	<title>DeFi and trading dictionary</title>
-	<meta name="description" content="What do different technical trading terms mean?" />
-</svelte:head>
+<MetaTags
+	titleParts={['DeFi and trading glossary']}
+	description="Plain-language definitions of DeFi, vault, yield and algorithmic trading terms, from APY and drawdown to ERC-7540 and Hyperliquid provider vaults."
+/>
 
 <main class="glossary-main">
 	<Section tag="header" padding="md">

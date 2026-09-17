@@ -261,8 +261,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 	{description}
 	image={data.compareMeta.image}
 	imageAlt={data.compareMeta.imageAlt}
-	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title: metaTitle, description, type: 'website' }}
-	twitter={{ site: '@TradingProtocol', cardType: 'summary_large_image', title: metaTitle, description }}
+	openGraph={{ url: pageUrl }}
 />
 
 <JsonLd

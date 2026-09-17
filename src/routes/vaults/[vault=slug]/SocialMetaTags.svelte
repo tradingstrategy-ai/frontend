@@ -147,18 +147,25 @@
 	{description}
 	image={imageUrl}
 	imageAlt={`${vault.name} preview image`}
-	openGraph={{
-		siteName: 'Trading Strategy',
-		url: pageUrl,
-		title: socialTitle,
-		description,
-		type: 'website'
-	}}
-	twitter={{
-		site: '@TradingProtocol',
-		cardType: 'summary_large_image',
-		title: socialTitle,
-		description
+	openGraph={{ url: pageUrl, title: socialTitle }}
+	twitter={{ cardType: 'summary_large_image', title: socialTitle }}
+/>
+
+<!-- vault pages render no visible breadcrumb trail, so the list is declared as JSON-LD -->
+<JsonLd
+	schema={{
+		'@context': 'https://schema.org',
+		'@type': 'BreadcrumbList',
+		itemListElement: [
+			{ '@type': 'ListItem', position: 1, name: 'Top vaults', item: new URL('/vaults', page.url.origin).href },
+			{
+				'@type': 'ListItem',
+				position: 2,
+				name: `${getChainDisplayName(vault.chain_id)} vaults`,
+				item: new URL(`/vaults/chains/${chain.slug}`, page.url.origin).href
+			},
+			{ '@type': 'ListItem', position: 3, name: vault.name, item: pageUrl }
+		]
 	}}
 />
 

@@ -2,6 +2,7 @@
 	Daily winners and losers pages
 -->
 <script lang="ts">
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import Breadcrumbs from '$lib/breadcrumb/Breadcrumbs.svelte';
 	import MomentumTable from '$lib/momentum/MomentumTable.svelte';
 	import { HeroBanner, Section } from '$lib/components';
@@ -10,10 +11,10 @@
 	let up = $derived(data.direction === 'up');
 </script>
 
-<svelte:head>
-	<title>DEX tokens with the highest daily {up ? 'profit' : 'losses'}</title>
-	<meta name="description" content="Trading pairs with most {up ? 'profit' : 'volatile losses'} for the last 24h" />
-</svelte:head>
+<MetaTags
+	titleParts={[`DEX tokens with the highest daily ${up ? 'gains' : 'losses'}`, 'Top list']}
+	description={`Decentralised exchange trading pairs with the biggest ${up ? 'price gains' : 'price losses'} over the last 24 hours, updated daily from on-chain data.`}
+/>
 
 <Breadcrumbs labels={{ 'top-list': 'Top lists', 'daily-up': 'Daily gainers', 'daily-down': 'Daily losers' }} />
 
