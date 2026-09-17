@@ -301,7 +301,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 					placeholder="Search by vault name, address, protocol or chain"
 					showAllResults={false}
 					minimumVaultTvlUsd={1_000}
-					vaultSort="tvl"
+					sort="tvl"
 					disabled={selectionLimitReached || comparisonPending}
 					addButton={addVaultButton}
 				/>

@@ -7,11 +7,11 @@ import { resolve } from 'node:path';
  *
  * The integration suite drives the whole app against a single-process `vite
  * preview` server whose APIs are served by an in-process mock middleware
- * (`vite-plugin-mock-dev-server`). Under the parallel worker load CI applies,
- * that shared server intermittently mishandles a request — e.g. the
- * vault-datasets API-key mock rejecting a *valid* key under contention — which
- * is environmental flakiness, not a real regression (the same tests pass
- * reliably with a single worker locally).
+ * (`vite-plugin-mock-dev-server`). The test environment pins browser and API
+ * URLs to the same 127.0.0.1 origin; mixing localhost and 127.0.0.1 makes
+ * authenticated browser requests cross-origin and can leave the mock pending.
+ * Under parallel worker load, that shared server can still intermittently
+ * mishandle a request, so retries cover remaining environmental flakiness.
  *
  * Retrying on CI lets these transient blips self-recover instead of failing the
  * whole run. Locally we keep 0 retries so genuine failures surface immediately

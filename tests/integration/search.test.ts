@@ -19,6 +19,37 @@ function parseCompactDollar(value: string) {
 }
 
 test.describe('site search typeahead', () => {
+	test('requests suggestions sorted by latest TVL with blacklisted vaults last', async ({ page }) => {
+		await page.goto('/vaults');
+		const search = page.getByTestId('nav-search').getByRole('combobox');
+		const isVaultSuggestionsRequest = (candidate: { url(): string }) => {
+			const url = new URL(candidate.url());
+			return url.pathname === '/search/suggestions' && url.searchParams.get('q') === 'vault';
+		};
+		const request = page.waitForRequest(isVaultSuggestionsRequest);
+		const response = page.waitForResponse((candidate) => isVaultSuggestionsRequest(candidate.request()));
+		await search.fill('vault');
+
+		expect(new URL((await request).url()).searchParams.get('sort')).toBe('tvl');
+		expect((await response).status()).toBe(200);
+		const suggestions = page.getByRole('dialog', { name: 'Search' }).locator('[role="option"]');
+		await expect(suggestions.first()).toBeVisible();
+		const rows = await suggestions.evaluateAll((elements) =>
+			elements.map((element) => ({
+				entityType: element.getAttribute('data-entity-type'),
+				tvl: element.querySelector('[aria-label="Latest TVL"]')?.textContent ?? ''
+			}))
+		);
+		const firstBlacklistedIndex = rows.findIndex(({ entityType }) => entityType === 'blacklisted-vault');
+		const healthyRows = firstBlacklistedIndex === -1 ? rows : rows.slice(0, firstBlacklistedIndex);
+		const blacklistedRows = firstBlacklistedIndex === -1 ? [] : rows.slice(firstBlacklistedIndex);
+		expect(blacklistedRows.every(({ entityType }) => entityType === 'blacklisted-vault')).toBe(true);
+		for (const partition of [healthyRows, blacklistedRows]) {
+			const tvls = partition.map(({ tvl }) => parseCompactDollar(tvl));
+			expect(tvls).toEqual([...tvls].toSorted((a, b) => b - a));
+		}
+	});
+
 	test('shows typeahead results and opens the selected entity', async ({ page }) => {
 		await page.goto('/vaults');
 		await page.waitForLoadState('networkidle');

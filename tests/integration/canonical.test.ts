@@ -6,8 +6,6 @@ import { expect, test } from '@playwright/test';
  * unless they identify the page.
  */
 
-const ORIGIN = 'http://localhost:4173';
-
 const samples: { path: string; canonical: string }[] = [
 	{ path: '/', canonical: '/' },
 	{ path: '/vaults', canonical: '/vaults' },
@@ -43,7 +41,8 @@ test.describe('canonical link', () => {
 			const links = html.match(/<link[^>]*rel="canonical"[^>]*>/g) ?? [];
 			expect(links, 'canonical links in HTML').toHaveLength(1);
 			// attribute values are HTML-escaped, so `&` between query params arrives as `&amp;`
-			expect(links[0]?.replaceAll('&amp;', '&')).toContain(`href="${ORIGIN}${canonical}"`);
+			const expectedCanonical = new URL(canonical, response.url()).href;
+			expect(links[0]?.replaceAll('&amp;', '&')).toContain(`href="${expectedCanonical}"`);
 		});
 	}
 });

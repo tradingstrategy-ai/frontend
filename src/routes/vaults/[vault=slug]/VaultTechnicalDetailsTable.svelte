@@ -177,6 +177,7 @@ Includes the source whitelist status and any source-provided whitelist notes.
 		},
 		{ label: 'Fees internalised', value: vault.fee_internalised, type: 'boolean' as const },
 		{ label: 'Features', value: vault.features, type: 'array' as const },
+		{ label: 'Strategy tags', value: vault.strategy_tags, type: 'array' as const },
 		{ label: 'Flags', value: vault.flags, type: 'array' as const },
 		{
 			label: 'Whitelist status',

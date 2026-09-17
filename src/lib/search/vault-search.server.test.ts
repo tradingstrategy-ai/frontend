@@ -52,9 +52,28 @@ describe('vault search', () => {
 		const response = await searchVaultEntities(vi.fn() as unknown as Fetch, 'vault', 10, { sort: 'tvl' });
 
 		expect(response.results.map(({ name }) => name)).toEqual([
-			'Largest blacklisted vault',
 			'Large vault',
-			'Small vault'
+			'Small vault',
+			'Largest blacklisted vault'
 		]);
+	});
+
+	test('orders matching vaults and aggregate entities by latest TVL', async () => {
+		mocks.getCachedTopVaults.mockResolvedValue({
+			generated_at: '2026-09-04T00:00:00.000Z',
+			vaults: [
+				createTestVault('Large Ethereum vault', { chain: 'ethereum', current_nav: 1_000_000 }),
+				createTestVault('Small Ethereum vault', { chain: 'ethereum', current_nav: 10_000 })
+			],
+			core3_protocols: {},
+			curators: {},
+			categories: {}
+		} satisfies TopVaults);
+
+		const response = await searchVaultEntities(vi.fn() as unknown as Fetch, 'ethereum', 10, { sort: 'tvl' });
+		const tvls = response.results.map((result) => result.latestTvl ?? -1);
+
+		expect(response.results.map((result) => result.entityType)).toEqual(expect.arrayContaining(['chain', 'vault']));
+		expect(tvls).toEqual([...tvls].toSorted((a, b) => b - a));
 	});
 });

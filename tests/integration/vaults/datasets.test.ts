@@ -4,6 +4,16 @@ import { expect, test } from '@playwright/test';
 const VALID_API_KEY = 'test-valid-api-key-12345';
 const INVALID_API_KEY = 'wrong-key-00000';
 
+async function submitApiKey(page: import('@playwright/test').Page, key: string, expectedStatus: number) {
+	await page.getByLabel('Enter API key to enable download').fill(key);
+	const responsePromise = page.waitForResponse((response) => {
+		const url = new URL(response.url());
+		return url.pathname === '/api/files' && response.request().method() === 'GET';
+	});
+	await page.getByRole('button', { name: 'Enter' }).click();
+	expect((await responsePromise).status()).toBe(expectedStatus);
+}
+
 // ---------------------------------------------------------------------------
 // Datasets page — UI & API-key flow
 // ---------------------------------------------------------------------------
@@ -11,6 +21,7 @@ const INVALID_API_KEY = 'wrong-key-00000';
 test.describe('vault datasets page', () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/vaults/datasets');
+		await page.waitForLoadState('networkidle');
 	});
 
 	// --- Page structure ---
@@ -102,42 +113,36 @@ test.describe('vault datasets page', () => {
 	// --- API key validation ---
 
 	test('shows error message for invalid API key', async ({ page }) => {
-		await page.getByLabel('Enter API key to enable download').fill(INVALID_API_KEY);
-		await page.getByRole('button', { name: 'Enter' }).click();
+		await submitApiKey(page, INVALID_API_KEY, 401);
 		await expect(page.getByText('The API key is not valid')).toBeVisible();
 	});
 
 	test('download links become active after valid API key entry', async ({ page }) => {
-		await page.getByLabel('Enter API key to enable download').fill(VALID_API_KEY);
-		await page.getByRole('button', { name: 'Enter' }).click();
+		await submitApiKey(page, VALID_API_KEY, 200);
 		// Active downloads render as <a> elements
 		const links = page.locator('td.links a.action-link').filter({ hasText: 'Download' });
 		await expect(links.first()).toBeVisible();
 	});
 
 	test('hides API key form after successful validation', async ({ page }) => {
-		await page.getByLabel('Enter API key to enable download').fill(VALID_API_KEY);
-		await page.getByRole('button', { name: 'Enter' }).click();
+		await submitApiKey(page, VALID_API_KEY, 200);
 		await expect(page.getByLabel('Enter API key to enable download')).not.toBeVisible();
 	});
 
 	test('displays validated API key in the page', async ({ page }) => {
-		await page.getByLabel('Enter API key to enable download').fill(VALID_API_KEY);
-		await page.getByRole('button', { name: 'Enter' }).click();
+		await submitApiKey(page, VALID_API_KEY, 200);
 		await expect(page.getByText(VALID_API_KEY, { exact: true })).toBeVisible();
 	});
 
 	test('curl example shows actual key after successful validation', async ({ page }) => {
-		await page.getByLabel('Enter API key to enable download').fill(VALID_API_KEY);
-		await page.getByRole('button', { name: 'Enter' }).click();
+		await submitApiKey(page, VALID_API_KEY, 200);
 		const code = page.locator('pre code');
 		await expect(code).toContainText(VALID_API_KEY);
 		await expect(code).not.toContainText('XXXXX-XXXXX-XXXXX-XXXXX-XXXXX');
 	});
 
 	test('download links include api-key query param after validation', async ({ page }) => {
-		await page.getByLabel('Enter API key to enable download').fill(VALID_API_KEY);
-		await page.getByRole('button', { name: 'Enter' }).click();
+		await submitApiKey(page, VALID_API_KEY, 200);
 		// Target a paid (gated) download link — free sample links use /api and carry no key
 		const link = page.locator('td.links a.action-link[href*="/datasets/download/"]').first();
 		const href = await link.getAttribute('href');

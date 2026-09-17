@@ -22,7 +22,6 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	import VaultCuratorInfo from './VaultCuratorInfo.svelte';
 	import VaultProtocolInfo from './VaultProtocolInfo.svelte';
 	import VaultRankings from './VaultRankings.svelte';
-	import VaultCategories from './VaultCategories.svelte';
 	import VaultTransactionStatus from './VaultTransactionStatus.svelte';
 	import Core3Ratings from '$lib/top-vaults/Core3Ratings.svelte';
 	import XerberusRisk from '$lib/top-vaults/XerberusRisk.svelte';
@@ -160,8 +159,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 			</div>
 		{/if}
 
-		<VaultRankings {vault} {chain} {protocolMetadata} />
-		<VaultCategories categories={categoryLinks} />
+		<VaultRankings {vault} {chain} {protocolMetadata} categories={categoryLinks} />
 
 		<ChartWithFeaturedMetrics {vault} {chartLogoUrl} />
 

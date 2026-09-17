@@ -25,9 +25,6 @@ export async function GET({ fetch, url }) {
 	if (sort !== 'relevance' && sort !== 'tvl') {
 		return json({ message: 'Sort must be relevance or tvl.' }, { status: 400 });
 	}
-	if (sort === 'tvl' && scope !== 'vaults') {
-		return json({ message: 'TVL sorting is available only for vault searches.' }, { status: 400 });
-	}
 	if (
 		minimumVaultTvlUsd !== undefined &&
 		(scope !== 'vaults' || !Number.isFinite(minimumVaultTvlUsd) || minimumVaultTvlUsd < 0)
@@ -37,7 +34,8 @@ export async function GET({ fetch, url }) {
 
 	try {
 		const response = await searchVaultEntities(fetch, query, limit, {
-			diversifyTypes: scope === 'all',
+			// Diversification deliberately changes ordering, so only use it for relevance results.
+			diversifyTypes: scope === 'all' && sort !== 'tvl',
 			entityTypes: scope === 'vaults' ? VAULT_ENTITY_TYPES : undefined,
 			minimumVaultTvlUsd,
 			sort

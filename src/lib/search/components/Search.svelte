@@ -41,8 +41,8 @@ underlying vault JSON index private.
 		disabled?: boolean;
 		/** Exclude vault suggestions below this latest TVL in USD. */
 		minimumVaultTvlUsd?: number;
-		/** Rank vault-scope results by latest TVL instead of textual relevance. */
-		vaultSort?: 'relevance' | 'tvl';
+		/** Order matching results by textual relevance or latest TVL. Defaults to TVL. */
+		sort?: 'relevance' | 'tvl';
 		/** Optional action rendered beside each result. Call onAction after accepting the result. */
 		addButton?: Snippet<[result: SearchResult, onAction: () => void]>;
 	}
@@ -59,7 +59,7 @@ underlying vault JSON index private.
 		showAllResults = true,
 		disabled = false,
 		minimumVaultTvlUsd,
-		vaultSort = 'relevance',
+		sort = 'tvl',
 		addButton
 	}: Props = $props();
 
@@ -125,7 +125,7 @@ underlying vault JSON index private.
 				if (minimumVaultTvlUsd !== undefined) {
 					params.set('minimumVaultTvlUsd', String(minimumVaultTvlUsd));
 				}
-				if (scope === 'vaults' && vaultSort === 'tvl') params.set('sort', 'tvl');
+				if (sort === 'tvl') params.set('sort', 'tvl');
 				const response = await fetch(`/search/suggestions?${params}`, { signal: controller.signal });
 				if (!response.ok) throw new Error('Search is temporarily unavailable.');
 				const data = (await response.json()) as Partial<SearchResponse>;
