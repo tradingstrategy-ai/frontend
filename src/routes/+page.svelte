@@ -21,7 +21,7 @@
 
 	const title = 'DeFi vault rankings, yields and risk data | Trading Strategy';
 	const description =
-		'Compare 3,000+ DeFi vaults by yield, TVL, risk and fees across every major chain and protocol, with on-chain performance history, curator and stablecoin data.';
+		'Compare 3,000+ DeFi vaults by yield, TVL, risk and fees across every major chain and protocol, with on-chain performance history and curator data.';
 </script>
 
 <MetaTags {title} {description} openGraph={{ title: 'Trading Strategy — DeFi vault rankings, yields and risk data' }} />

@@ -14,7 +14,7 @@
 </script>
 
 <MetaTags
-	titleParts={['About Trading Strategy']}
+	titleParts={['About us']}
 	description="Trading Strategy builds data-driven DeFi vault discovery and automated trading strategies. Learn who we are, what we build and how to get in touch."
 />
 
