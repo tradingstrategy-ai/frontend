@@ -136,6 +136,28 @@ const handleFontPreload: Handle = async ({ event, resolve }) => {
 };
 
 /**
+ * Keep generated image endpoints out of search indexes.
+ *
+ * `og:image` URLs (`/social-card/…`, including its `?fallback=` redirects) and resized
+ * protocol logos (`/metadata-logo/…`) get crawled like pages and made up ~45 % of the
+ * "crawled – currently not indexed" report in the 2026-09 audit. Images cannot carry a
+ * robots meta tag, so the header is the only signal; robots.txt must keep allowing them
+ * because social scrapers (and Google's own og:image fetch) need to read them.
+ *
+ * Applied in a hook rather than per `Response` so the redirect and error branches of
+ * the endpoints are covered too.
+ */
+const NOINDEX_IMAGE_PATH_PATTERN = /^\/(social-card|metadata-logo)\//;
+
+const handleImageEndpointRobots: Handle = async ({ event, resolve }) => {
+	const response = await resolve(event);
+	if (NOINDEX_IMAGE_PATH_PATTERN.test(event.url.pathname)) {
+		response.headers.set('X-Robots-Tag', 'noindex');
+	}
+	return response;
+};
+
+/**
  * Set ipCounry local based on Cloudflare request header
  */
 const handleIpCountry: Handle = async ({ event, resolve }) => {
@@ -158,5 +180,6 @@ export const handle = sequence(
 	handleAdminRole,
 	handlePodcastAnnouncement,
 	handleIpCountry,
+	handleImageEndpointRobots,
 	handleFontPreload
 );

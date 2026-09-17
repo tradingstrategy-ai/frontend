@@ -10,6 +10,7 @@ import { getVaultCategoryLinks } from '$lib/top-vaults/categories';
 import {
 	getCore3ProtocolForVault,
 	getCurrencyUsdRates,
+	isVaultIndexable,
 	resolveVaultDetails,
 	withVaultDenominationTokenRate
 } from '$lib/top-vaults/helpers.js';
@@ -57,6 +58,7 @@ export async function load({ params, fetch }) {
 	const curatorMetadata = vault.curator_slug ? curators[vault.curator_slug] : null;
 
 	return {
+		robots: isVaultIndexable(vaultWithRates) ? undefined : 'noindex,follow',
 		vault: vaultWithRates,
 		chain,
 		protocolMetadata,

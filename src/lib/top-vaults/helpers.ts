@@ -1,3 +1,4 @@
+import { isVaultIndexable as isVaultMetricsIndexable } from '$lib/explorer/indexing';
 import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
 import type {
 	Core3Pol,
@@ -274,6 +275,29 @@ export function resolveVaultDetails(vault: Pick<VaultInfo, 'vault_slug'>) {
  */
 export function isBlacklisted(vault: Pick<VaultInfo, 'risk_numeric'> & Partial<Pick<VaultInfo, 'risk'>>) {
 	return vault.risk_numeric === 999 || vault.risk?.toLowerCase() === 'blacklisted';
+}
+
+/**
+ * Should the detail page of this vault be indexed by search engines?
+ *
+ * Adapter over `isVaultMetricsIndexable`: converts TVL to USD (so the vault should already
+ * carry its denomination rate, see `withVaultDenominationTokenRate`) and classifies the
+ * protocol and blacklist status.
+ */
+export function isVaultIndexable(
+	vault: Pick<
+		VaultInfo,
+		'name' | 'current_nav' | 'peak_nav' | 'denomination_token_rate' | 'protocol' | 'risk_numeric'
+	> &
+		Partial<Pick<VaultInfo, 'protocol_slug' | 'risk'>>
+): boolean {
+	return isVaultMetricsIndexable({
+		name: vault.name,
+		current_tvl_usd: getVaultCurrentTvlUsd(vault),
+		peak_tvl_usd: getVaultPeakTvlUsd(vault),
+		unknown_protocol: isUnknownVaultProtocol(vault),
+		blacklisted: isBlacklisted(vault)
+	});
 }
 
 /** Whether the vault requires permission before deposits can be made. */

@@ -38,6 +38,8 @@ export async function load({ params, fetch, url }) {
 	const xerberus = getXerberusProtocolAssessment(protocolVaults, protocol);
 
 	return {
+		// the combined unknown-protocol group is a catch-all, not a page worth ranking
+		robots: isUnknownGroup ? 'noindex,follow' : undefined,
 		protocolSlug: protocol,
 		protocolName,
 		protocolMetadata,

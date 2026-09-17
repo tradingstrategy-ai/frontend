@@ -27,6 +27,7 @@ import {
 	getCurrencyUsdRates,
 	formatXerberusScore,
 	getVaultCurrentTvlUsd,
+	isVaultIndexable,
 	getVaultDenominationCurrency,
 	getVaultDenominationUsdRate,
 	getVaultPeakTvlUsd,
@@ -401,6 +402,46 @@ describe('meetsMinTvl', () => {
 		const vaultAbove = createTestVault('Vault below', { current_nav: 10_000 });
 		expect(meetsMinTvl(vaultBelow)).toBe(false);
 		expect(meetsMinTvl(vaultAbove)).toBe(true);
+	});
+});
+
+describe('isVaultIndexable', () => {
+	test('compares TVL in USD, not denomination units', () => {
+		// 4,000 EUR-pegged tokens are worth more than the $5,000 threshold
+		const eurVault = createTestVault('EUR vault', {
+			current_nav: 4_800,
+			peak_nav: 4_800,
+			denomination_token_rate: createDenominationTokenRate({ native_rate_currency: 'eur', usd_rate: 1.08 })
+		});
+		expect(isVaultIndexable(eurVault)).toBe(true);
+
+		// the same NAV in a token worth a cent is dust
+		const centVault = createTestVault('Cent vault', {
+			current_nav: 4_800,
+			peak_nav: 4_800,
+			denomination_token_rate: createDenominationTokenRate({ native_rate_currency: 'usd', usd_rate: 0.01 })
+		});
+		expect(isVaultIndexable(centVault)).toBe(false);
+	});
+
+	test('keeps a vault indexable when its denomination has no USD rate', () => {
+		const vault = createTestVault('WETH vault', {
+			denomination: 'WETH',
+			current_nav: 1,
+			peak_nav: 1,
+			denomination_token_rate: createDenominationTokenRate({ native_rate_currency: 'eth' })
+		});
+		expect(getVaultCurrentTvlUsd(vault)).toBeNull();
+		expect(isVaultIndexable(vault)).toBe(true);
+	});
+
+	test('excludes blacklisted, unknown-protocol dust and placeholder-named vaults', () => {
+		expect(isVaultIndexable(createTestVault('Blacklisted', { risk: 'Blacklisted' }))).toBe(false);
+		expect(
+			isVaultIndexable(createTestVault('Mystery', { protocol: '<unknown>', current_nav: 100, peak_nav: 100 }))
+		).toBe(false);
+		expect(isVaultIndexable(createTestVault('Mystery', { protocol: '<unknown>', current_nav: 50_000 }))).toBe(true);
+		expect(isVaultIndexable(createTestVault('<unnamed>', { current_nav: 50_000 }))).toBe(false);
 	});
 });
 

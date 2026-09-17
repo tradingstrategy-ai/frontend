@@ -106,7 +106,6 @@ test.describe('vaults sitemap', () => {
 	test('should include static vault sub-pages', async () => {
 		const expectedSubPages = [
 			'/vaults/all',
-			'/vaults/blacklisted',
 			'/vaults/high-tvl',
 			'/vaults/new-vaults',
 			'/vaults/whitelisted',
@@ -121,5 +120,40 @@ test.describe('vaults sitemap', () => {
 		for (const expected of expectedSubPages) {
 			expect(urls.some((url) => url.endsWith(expected))).toBe(true);
 		}
+	});
+
+	test('should not submit noindex pages', async () => {
+		// listed vault with real TVL
+		expect(urls.some((url) => url.endsWith('/vaults/return-leader-alpha'))).toBe(true);
+		// $1k current and peak TVL on a known protocol
+		expect(urls.some((url) => url.endsWith('/vaults/continuation-vault-000'))).toBe(false);
+		// $1k TVL on an unknown protocol
+		expect(urls.some((url) => url.endsWith('/vaults/summary-regression-high-return-vault-000'))).toBe(false);
+		// $49k TVL on an unknown protocol stays indexable
+		expect(urls.some((url) => url.endsWith('/vaults/summary-regression-large-low-return-vault'))).toBe(true);
+		// noindex listing pages
+		expect(urls.some((url) => url.endsWith('/vaults/blacklisted'))).toBe(false);
+		expect(urls.some((url) => url.endsWith('/vaults/protocols/unknown'))).toBe(false);
+	});
+});
+
+test.describe('vault page robots', () => {
+	const robotsMeta = 'head meta[name="robots"]';
+
+	test('indexable vault pages carry no robots tag', async ({ page }) => {
+		await page.goto('/vaults/return-leader-alpha');
+		await expect(page.locator(robotsMeta)).toHaveCount(0);
+	});
+
+	test('vaults below the TVL threshold are noindex', async ({ page }) => {
+		await page.goto('/vaults/continuation-vault-000');
+		await expect(page.locator(robotsMeta)).toHaveAttribute('content', 'noindex,follow');
+	});
+
+	test('the unknown-protocol and blacklisted listings are noindex', async ({ page }) => {
+		await page.goto('/vaults/protocols/unknown');
+		await expect(page.locator(robotsMeta)).toHaveAttribute('content', 'noindex,follow');
+		await page.goto('/vaults/blacklisted');
+		await expect(page.locator(robotsMeta)).toHaveAttribute('content', 'noindex,follow');
 	});
 });

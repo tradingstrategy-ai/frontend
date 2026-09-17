@@ -4,7 +4,8 @@ import {
 	INDEXABLE_MIN_VOLUME_USD,
 	hasBlockedName,
 	isPairIndexable,
-	isTokenIndexable
+	isTokenIndexable,
+	isVaultIndexable
 } from './indexing';
 
 describe('isTokenIndexable', () => {
@@ -126,5 +127,54 @@ describe('name blocklist on indexable pages', () => {
 		expect(isPairIndexable({ pair_symbol: 'ZEUS-WETH', pair_name: 'Zeus - Wrapped Ether', pair_tvl: 50_000 })).toBe(
 			true
 		);
+	});
+});
+
+describe('isVaultIndexable', () => {
+	const live = { name: 'Steakhouse USDC', current_tvl_usd: 800_000, peak_tvl_usd: 900_000 };
+
+	it('indexes vaults with TVL at or above the threshold', () => {
+		expect(isVaultIndexable(live)).toBe(true);
+		expect(isVaultIndexable({ name: 'Edge', current_tvl_usd: INDEXABLE_MIN_LIQUIDITY_USD, peak_tvl_usd: 0 })).toBe(
+			true
+		);
+	});
+
+	it('does not index vaults confirmed below the threshold now and at their peak', () => {
+		expect(isVaultIndexable({ name: 'Dust', current_tvl_usd: 0, peak_tvl_usd: 0 })).toBe(false);
+		expect(
+			isVaultIndexable({
+				name: 'Dust',
+				current_tvl_usd: INDEXABLE_MIN_LIQUIDITY_USD - 1,
+				peak_tvl_usd: INDEXABLE_MIN_LIQUIDITY_USD - 1
+			})
+		).toBe(false);
+	});
+
+	it('keeps vaults that once held real money', () => {
+		expect(isVaultIndexable({ name: 'Wound down', current_tvl_usd: 12, peak_tvl_usd: 2_000_000 })).toBe(true);
+	});
+
+	it('treats missing TVL as unknown and keeps the page indexable', () => {
+		expect(isVaultIndexable({ name: 'No data' })).toBe(true);
+		expect(isVaultIndexable({ name: 'No rate', current_tvl_usd: null, peak_tvl_usd: null })).toBe(true);
+		expect(isVaultIndexable({ name: 'Low now, unknown peak', current_tvl_usd: 1, peak_tvl_usd: null })).toBe(true);
+		expect(isVaultIndexable({ name: 'Unknown now, low peak', current_tvl_usd: null, peak_tvl_usd: 1 })).toBe(true);
+	});
+
+	it('excludes unknown-protocol vaults unless they hold real TVL now', () => {
+		expect(isVaultIndexable({ ...live, unknown_protocol: true })).toBe(true);
+		expect(
+			isVaultIndexable({ name: 'Mystery', current_tvl_usd: 1, peak_tvl_usd: 1_000_000, unknown_protocol: true })
+		).toBe(false);
+		expect(isVaultIndexable({ name: 'Mystery', unknown_protocol: true })).toBe(false);
+	});
+
+	it('never indexes blacklisted, unnamed or blocklisted vaults', () => {
+		expect(isVaultIndexable({ ...live, blacklisted: true })).toBe(false);
+		expect(isVaultIndexable({ ...live, name: '<unnamed>' })).toBe(false);
+		expect(isVaultIndexable({ ...live, name: '' })).toBe(false);
+		expect(isVaultIndexable({ ...live, name: null })).toBe(false);
+		expect(isVaultIndexable({ ...live, name: 'Casino Yield' })).toBe(false);
 	});
 });

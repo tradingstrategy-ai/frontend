@@ -4,18 +4,31 @@
  */
 import { SitemapStream } from 'sitemap';
 import { fetchTopVaults } from '$lib/top-vaults/client';
-import { isBlacklisted, resolveVaultDetails } from '$lib/top-vaults/helpers';
+import {
+	getCurrencyUsdRates,
+	isBlacklisted,
+	isUnknownVaultProtocol,
+	isVaultIndexable,
+	resolveVaultDetails,
+	withVaultDenominationTokenRate
+} from '$lib/top-vaults/helpers';
 import { getChain } from '$lib/helpers/chain';
 import { getVaultCategorySlug, isVisibleVaultCategory } from '$lib/top-vaults/categories';
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
-import { buildStablecoinMetadataLookup, resolveStablecoinSlug } from '$lib/stablecoin-metadata/helpers';
+import {
+	buildStablecoinMetadataLookup,
+	findStablecoinMetadata,
+	OFFCHAIN_USD_STABLECOIN_SLUG,
+	resolveStablecoinSlug
+} from '$lib/stablecoin-metadata/helpers';
 
 const basePath = 'vaults';
 const priority = 0.8;
 
+// `blacklisted` and `protocols/unknown` are deliberately absent: those listings are
+// `noindex` (see their loaders), and a sitemap must not submit noindex URLs.
 const staticSubPages = [
 	'all',
-	'blacklisted',
 	'high-tvl',
 	'international',
 	'new-vaults',
@@ -44,15 +57,31 @@ export async function GET({ fetch, setHeaders, url }) {
 	}
 
 	const listedVaults = vaults.filter((v) => !isBlacklisted(v));
+	const metadataLookup = buildStablecoinMetadataLookup(stablecoinIndex);
+	const currencyUsdRates = getCurrencyUsdRates(stablecoinIndex);
 
-	// Individual vault detail pages
+	// Individual vault detail pages — only the ones the detail page itself lets search
+	// engines index (see `isVaultIndexable`; TVL is compared in USD, so the denomination
+	// rate is resolved the same way the detail loader does it).
 	for (const vault of listedVaults) {
+		const metadata =
+			vault.denomination_slug === OFFCHAIN_USD_STABLECOIN_SLUG
+				? undefined
+				: findStablecoinMetadata(
+						metadataLookup,
+						vault.denomination_slug,
+						vault.denomination,
+						vault.normalised_denomination
+					);
+		const vaultWithRates = withVaultDenominationTokenRate(vault, metadata, currencyUsdRates);
+		if (!isVaultIndexable(vaultWithRates)) continue;
 		stream.write({ url: resolveVaultDetails(vault), priority });
 	}
 
 	// Protocol index + individual protocol pages. Protocol detail pages render
-	// for any protocol with at least one listed vault, regardless of TVL.
-	const protocolSlugs = new Set(listedVaults.map((v) => v.protocol_slug));
+	// for any protocol with at least one listed vault, regardless of TVL; the
+	// combined unknown-protocol page is `noindex` and therefore not submitted.
+	const protocolSlugs = new Set(listedVaults.filter((v) => !isUnknownVaultProtocol(v)).map((v) => v.protocol_slug));
 	stream.write({ url: `${basePath}/protocols`, priority });
 	for (const slug of protocolSlugs) {
 		stream.write({ url: `${basePath}/protocols/${slug}`, priority });
@@ -61,7 +90,6 @@ export async function GET({ fetch, setHeaders, url }) {
 	// Stablecoin index + individual stablecoin pages, using the same canonical
 	// slug resolution as the stablecoins index page links (raw denomination
 	// slugs may be aliases of a canonical metadata slug).
-	const metadataLookup = buildStablecoinMetadataLookup(stablecoinIndex);
 	const denominationSlugs = new Set<string>();
 	for (const vault of listedVaults) {
 		if (!vault.stablecoinish) continue;

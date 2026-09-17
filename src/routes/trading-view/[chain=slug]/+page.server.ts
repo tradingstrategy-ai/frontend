@@ -1,5 +1,5 @@
 import { getChain, getChainsBySlug, type Chain } from '$lib/helpers/chain';
-import type { ExchangeIndexResponse } from '$lib/helpers/exchange';
+import { type ExchangeIndexResponse, isUnknownExchangeName } from '$lib/helpers/exchange';
 import type { EntityData } from './TopEntities.svelte';
 import { fetchPublicApi, optionalDataError } from '$lib/helpers/public-api';
 import { chainDetailsSchema } from '$lib/schemas/chain.js';
@@ -45,7 +45,7 @@ async function fetchTopExchanges(fetch: Fetch, chainSlug: string): Promise<Entit
 		});
 		const rows = data.exchanges
 			.filter((row) => {
-				return !row.human_readable_name.startsWith('Unknown 0x');
+				return !isUnknownExchangeName(row.human_readable_name);
 			})
 			.slice(0, 5);
 		return { rows };

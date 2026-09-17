@@ -30,6 +30,16 @@ export function parseExchangeName(name: string): ExchangeNameInfo {
 	}
 }
 
+/**
+ * Does the backend have no real name for this exchange?
+ *
+ * Unnamed factories are reported as `Unknown` or `Unknown 0x…` with the contract address
+ * as the slug. Their pages render an "Unknown" title and are not worth indexing.
+ */
+export function isUnknownExchangeName(name: string | null | undefined): boolean {
+	return !name || /^unknown(\s|$)/i.test(name.trim());
+}
+
 const exchangeLabels = {
 	uniswap_v2: 'Uniswap v2 like',
 	uniswap_v2_incompatible: 'Uniswap v2 (incompatible)',

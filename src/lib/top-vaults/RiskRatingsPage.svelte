@@ -19,7 +19,8 @@ the score in a column beside each vault name.
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { MetaTags, JsonLd } from 'svelte-meta-tags';
+	import { JsonLd } from 'svelte-meta-tags';
+	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { riskRatingProviders, type RiskRatingProvider } from './risk-rating-providers';
 	import { type RiskRatingStatistics, type RiskRatingTvlBand } from './risk-rating-statistics';

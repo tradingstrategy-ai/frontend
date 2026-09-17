@@ -19,7 +19,10 @@ Facebook, LinkedIn, Telegram, and other Open Graph consumers.
 		imageAlt?: string;
 	}
 
-	let { image, imageAlt, openGraph, twitter, ...metaTags }: Props = $props();
+	// The robots directive is emitted by `AppHead` from `page.data.robots` (only when a page
+	// is noindex; absence means indexable), so the svelte-meta-tags default `index,follow`
+	// tag is suppressed — otherwise a noindex page would carry two contradicting tags.
+	let { image, imageAlt, openGraph, twitter, robots = false, ...metaTags }: Props = $props();
 
 	/** Resolve relative image paths and reject URL schemes social scrapers cannot fetch. */
 	function getAbsoluteImageUrl(candidate: string | null | undefined): string {
@@ -53,6 +56,7 @@ Facebook, LinkedIn, Telegram, and other Open Graph consumers.
 
 <MetaTags
 	{...metaTags}
+	{robots}
 	openGraph={{ ...openGraph, images: [openGraphImage] }}
 	twitter={{
 		...twitter,

@@ -9,7 +9,8 @@ const pages = [
 	'api/explorer/',
 	'blog',
 	'community',
-	'docs',
+	// `docs` is deliberately absent: it redirects to `/docs/`, and the documentation
+	// site submits its own sitemap through the sitemap index
 	'glossary',
 	'newsletter',
 	'podcast',
