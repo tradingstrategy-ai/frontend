@@ -8,7 +8,7 @@
 	let { data } = $props();
 	let { chain } = $derived(data);
 
-	let isComplete = $derived($wallet.isConnected && $wallet.chainId === chain.id);
+	let isComplete = $derived($wallet.status === 'connected' && $wallet.chainId === chain.id);
 
 	$effect(() => {
 		wizard.toggleComplete('connect', isComplete);

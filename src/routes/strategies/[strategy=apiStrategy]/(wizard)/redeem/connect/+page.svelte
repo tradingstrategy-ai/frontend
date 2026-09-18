@@ -9,7 +9,7 @@
 	const wizard = getWizardContext<RedeemWizardDataSchema>();
 
 	$effect(() => {
-		wizard.toggleComplete('connect', $wallet.isConnected && $wallet.chainId === chain.id);
+		wizard.toggleComplete('connect', $wallet.status === 'connected' && $wallet.chainId === chain.id);
 	});
 </script>
 

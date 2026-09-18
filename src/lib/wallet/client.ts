@@ -76,11 +76,55 @@ export const modal = createAppKit({
 export type Wallet = GetAccountReturnType;
 export type ConnectedWallet = Wallet & { status: 'connected' };
 
+/**
+ * How long to wait for `reconnect()` to replace the persisted connection stub with a live
+ * connector before treating the wallet as disconnected. Injected wallets answer in
+ * milliseconds; WalletConnect session restores can take a few seconds.
+ */
+export const RECONNECT_TIMEOUT = 10_000;
+
 const { subscribe, set }: Writable<Wallet> = writable(getAccount(config));
 watchAccount(config, { onChange: set });
 reconnect(config);
+resolveStalledReconnect();
 
 export const wallet = { subscribe };
+
+/**
+ * Whether the current wagmi connection is still the partial connector object rehydrated from
+ * `localStorage` (`{ id, name, type, uid }`) rather than a live connector instance.
+ *
+ * wagmi persists connections without their methods; `reconnect()` normally swaps the stub for a
+ * real connector, but if the wallet's injected provider never responds (e.g. a hung browser
+ * extension) `reconnect()` awaits `eth_accounts` forever. The stub then stays in state, so
+ * `getAccount()` reports an address while any write action fails with
+ * `connector.getChainId is not a function`.
+ */
+export function hasStubConnection(): boolean {
+	const { connections, current } = config.state;
+	const connector = current ? connections.get(current)?.connector : undefined;
+	return connector != null && typeof connector.getChainId !== 'function';
+}
+
+/**
+ * Give `reconnect()` a bounded amount of time to finish; if the connection under
+ * `state.current` is still a storage stub afterwards, reset wagmi to `disconnected` so the UI
+ * offers "Connect wallet" and the user can reconnect (a fresh `connect()` replaces the stub).
+ */
+function resolveStalledReconnect() {
+	if (!browser) return;
+
+	setTimeout(() => {
+		if (!hasStubConnection()) return;
+		console.warn(`Wallet reconnect did not complete within ${RECONNECT_TIMEOUT}ms; resetting to disconnected`);
+		config.setState((state) => ({
+			...state,
+			connections: new Map(),
+			current: null,
+			status: 'disconnected'
+		}));
+	}, RECONNECT_TIMEOUT);
+}
 
 /**
  * Request wallet to switch to a different chain id

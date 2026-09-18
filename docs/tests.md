@@ -86,6 +86,18 @@ failing locally while passing in CI.
 headers; `tests/integration/layout-shift.test.ts` measures CLS on a phone viewport with the fonts
 delayed. See `docs/google-webmasters.md` for the reasoning behind each.
 
+#### Wallet coverage
+
+`tests/integration/wallet/reconnect.test.ts` covers restoring a wallet session that wagmi persisted on
+a previous visit. Instead of loading a real browser-extension wallet (Rabby, MetaMask) — which needs a
+persistent browser profile, an unlock flow and network access, none of which is deterministic in CI —
+`tests/integration/wallet/mock-rabby.ts` installs a minimal EIP-1193 provider via
+`page.addInitScript()` that presents itself as Rabby (`window.ethereum` flags plus an EIP-6963
+announcement with rdns `io.rabby`, which is how wagmi/AppKit discover it) and optionally seeds the
+persisted `wagmi.store`. It can answer like a healthy extension or never answer at all (a hung
+extension), which is the case that used to leave the page half-connected. Balance reads that would
+reach a public RPC are aborted with `page.route()` so the test stays hermetic.
+
 #### Responsive navigation coverage
 
 `tests/integration/navigation.test.ts` covers the shared header at desktop, tablet and narrow-mobile
