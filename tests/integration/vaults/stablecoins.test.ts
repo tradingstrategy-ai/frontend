@@ -1,7 +1,10 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('stablecoins index page', () => {
-	test('renders the ECharts pie chart and stablecoins table', async ({ page }) => {
+	test('renders the ECharts pie chart and stablecoins table without JavaScript errors', async ({ page }) => {
+		const errors: string[] = [];
+		page.on('pageerror', (err) => errors.push(err.message));
+
 		await page.goto('/vaults/stablecoins');
 
 		const chart = page.locator('[data-testid="stablecoin-tvl-pie-chart"] canvas');
@@ -13,6 +16,7 @@ test.describe('stablecoins index page', () => {
 		await expect(page.locator('h1')).toHaveText(/Vaults by stablecoin/);
 		await expect(page.locator('table')).toBeVisible();
 		await expect(page.locator('table')).toContainText('Stablecoin');
+		expect(errors).toHaveLength(0);
 	});
 
 	test('marks depegged stablecoins in the table', async ({ page }) => {
@@ -107,17 +111,5 @@ test.describe('stablecoins index page', () => {
 			'content',
 			'DeFi vaults denominated in currencies such as CHF, EUR, GBP, JPY, SGD, and TRY.'
 		);
-	});
-
-	test('has no JavaScript errors after the chart loads', async ({ page }) => {
-		const errors: string[] = [];
-		page.on('pageerror', (err) => errors.push(err.message));
-
-		await page.goto('/vaults/stablecoins');
-
-		const chart = page.locator('[data-testid="stablecoin-tvl-pie-chart"] canvas');
-		await expect(chart).toBeVisible({ timeout: 15000 });
-
-		expect(errors).toHaveLength(0);
 	});
 });

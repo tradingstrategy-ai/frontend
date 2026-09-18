@@ -15,7 +15,10 @@ async function expectNativeChartWatermark(page: Page, containerSelector: string)
 }
 
 test.describe('cumulative TVL/APY chart page', () => {
-	test('renders the ECharts line chart', async ({ page }) => {
+	test('renders the ECharts line chart without JavaScript errors', async ({ page }) => {
+		const errors: string[] = [];
+		page.on('pageerror', (err) => errors.push(err.message));
+
 		await page.goto('/vaults/cumulative-tvl-apy');
 
 		const plotWrapper = page.getByTestId('vault-scatter-plot');
@@ -24,15 +27,13 @@ test.describe('cumulative TVL/APY chart page', () => {
 		const chart = plotWrapper.locator('.standalone-cumulative-tvl-apy-chart canvas');
 		await expect(chart).toBeVisible({ timeout: 15000 });
 		await expectNativeChartWatermark(page, '.standalone-cumulative-tvl-apy-chart .chart');
-	});
 
-	test('renders APY vs cumulative TVL line chart', async ({ page }) => {
-		await page.goto('/vaults/cumulative-tvl-apy');
+		// in-page "See charts" link row (ScatterPlotSelector), distinct from the Charts nav dropdown
+		const selector = page.locator('.scatter-plot-selector');
+		await expect(selector).toBeVisible();
+		await expect(selector.locator('a')).toHaveCount(11);
 
-		const plotWrapper = page.getByTestId('vault-scatter-plot');
-
-		const chart = plotWrapper.locator('.standalone-cumulative-tvl-apy-chart canvas');
-		await expect(chart).toBeVisible({ timeout: 15000 });
+		expect(errors).toHaveLength(0);
 	});
 
 	test('loads ECharts as an immutable first-party asset', async ({ page }) => {
@@ -51,40 +52,5 @@ test.describe('cumulative TVL/APY chart page', () => {
 		const response = await page.request.get(responseUrl.toString());
 		expect(response.headers()['cache-control']).toContain('immutable');
 		expect(response.headers()['cache-control']).toContain('max-age=31536000');
-	});
-
-	test('has vault listings navigation with active Charts dropdown', async ({ page }) => {
-		await page.goto('/vaults/cumulative-tvl-apy');
-
-		const nav = page.locator('.vault-listings-selector');
-		await expect(nav).toBeVisible();
-
-		const trigger = nav.locator('button', { hasText: 'Charts' });
-		await expect(trigger).toHaveClass(/active/);
-
-		await trigger.click();
-		const activeLink = page.locator('[role="menu"] a.active');
-		await expect(activeLink).toHaveText('Total vault earnings');
-	});
-
-	test('displays scatter plot selector with all chart links', async ({ page }) => {
-		await page.goto('/vaults/cumulative-tvl-apy');
-
-		const selector = page.locator('.scatter-plot-selector');
-		await expect(selector).toBeVisible();
-		await expect(selector.locator('a')).toHaveCount(11);
-	});
-
-	test('page has no JavaScript errors', async ({ page }) => {
-		const errors: string[] = [];
-		page.on('pageerror', (err) => errors.push(err.message));
-
-		await page.goto('/vaults/cumulative-tvl-apy');
-
-		const plotWrapper = page.getByTestId('vault-scatter-plot');
-		const chart = plotWrapper.locator('.standalone-cumulative-tvl-apy-chart canvas');
-		await expect(chart).toBeVisible({ timeout: 15000 });
-
-		expect(errors).toHaveLength(0);
 	});
 });

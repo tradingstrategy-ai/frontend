@@ -5,19 +5,10 @@ test.describe('home page', () => {
 		await page.goto('/');
 	});
 
-	test('should render the home page with correct title', async ({ page }) => {
+	test('should render the title and the main sections', async ({ page }) => {
 		await expect(page).toHaveTitle('DeFi vault rankings, yields and risk data | Trading Strategy');
-	});
-
-	test('should display featured strategies section', async ({ page }) => {
 		await expect(page.getByRole('heading', { name: 'Trading Strategy vaults' })).toBeVisible();
-	});
-
-	test('should display top vaults section', async ({ page }) => {
 		await expect(page.getByRole('heading', { name: 'Top DeFi Vaults' })).toBeVisible();
-	});
-
-	test('should display blog section', async ({ page }) => {
 		await expect(page.getByRole('heading', { name: 'Blog' })).toBeVisible();
 	});
 

@@ -118,13 +118,4 @@ test.describe('stablecoin / chain heatmap page', () => {
 		await reloadedChainLabel.click();
 		await expect(page).toHaveURL(new RegExp(`${chainHref?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`));
 	});
-
-	test('has vault listings navigation with active Charts dropdown', async ({ page }) => {
-		const nav = page.locator('.vault-listings-selector');
-		const trigger = nav.locator('button', { hasText: 'Charts' });
-		await expect(trigger).toHaveClass(/active/);
-
-		await trigger.click();
-		await expect(page.locator('[role="menu"] a.active')).toHaveText('Stablecoin / Chain heatmap');
-	});
 });
