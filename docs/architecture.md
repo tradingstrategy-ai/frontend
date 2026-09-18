@@ -100,6 +100,27 @@ This project uses Svelte 5 with experimental features enabled in `svelte.config.
 - Response headers: font preload `Link` headers on HTML pages (`$lib/server/font-preload`) and
   `X-Robots-Tag: noindex` on generated image endpoints (see `docs/google-webmasters.md`)
 
+### Wallet state (`$lib/wallet/client.ts`)
+
+- wagmi (through Reown AppKit's adapter) holds the wallet connection; `wallet` is a Svelte store
+  over wagmi's `getAccount()`.
+- On page load the persisted session is restored with `reconnect()`. wagmi persists only a stub
+  connector (`{ id, name, type, uid }`), so until the extension has answered the status is
+  `connecting`/`reconnecting` and `$wallet.address` is the _persisted_ address: fine for public
+  reads, not for signing. Only `$wallet.status === 'connected'` means a live connector.
+- `walletSettled` resolves once the status is `connected` or `disconnected`. If the extension does
+  not answer within `RECONNECT_TIMEOUT` (10 s) the state is settled by hand — a stub connection is
+  dropped so the user can reconnect from the modal, a live one is kept — and the still-running
+  `reconnect()` is defused for every connector that has not connected: a late success would either
+  replace the current connection (AppKit treats that as a wallet switch and disconnects the
+  previous one) or leave a stale connection behind for a later disconnect to switch over to.
+- The wizard layout awaits `walletSettled` and sends the user back to the connect step from any
+  later step when the wallet is not connected on the strategy's chain; wizard `load`s obtain the
+  address via `getWizardAccount()`, which redirects there when nothing is persisted.
+- `switchChain()` and `disconnect()` never reject: callers are click handlers.
+- Tests emulate the extension and the RPC node rather than loading real ones; see
+  `docs/tests.md`.
+
 ### Icons
 
 - Managed via unplugin-icons with custom local icon collection

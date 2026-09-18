@@ -36,7 +36,9 @@
 
 	let isOutdated = $derived(Boolean(strategy.newVersionId));
 	let connected = $derived($wallet.status === 'connected');
-	let address = $derived($wallet.address);
+	// only expose the address once connected: while wagmi is still restoring a persisted session it
+	// reports the persisted address, but the connector is a storage stub that cannot sign
+	let address = $derived(connected ? $wallet.address : undefined);
 	let wrongNetwork = $derived(connected && $wallet.chain?.id !== chain.id);
 	let buttonsDisabled = $derived(!vault.depositEnabled() || depositsDisabled || geoBlocked || wrongNetwork);
 
@@ -67,7 +69,10 @@
 	}
 </script>
 
-<div class={['my-deposits', mobileOpen ? 'open' : 'closed', desktop.current && 'desktop', adminOnly && 'admin-only']}>
+<div
+	class={['my-deposits', mobileOpen ? 'open' : 'closed', desktop.current && 'desktop', adminOnly && 'admin-only']}
+	data-wallet-status={$wallet.status}
+>
 	{#if adminOnly}
 		<div class="admin-only-label">Admin only</div>
 	{/if}

@@ -6,7 +6,7 @@
 	import type { HexString } from 'trade-executor/schemas/utility-types';
 	import fsm from 'svelte-fsm';
 	import { config } from './client';
-	import { waitForTransactionReceipt } from '@wagmi/core';
+	import { getAccount, waitForTransactionReceipt } from '@wagmi/core';
 	import { slide } from 'svelte/transition';
 	import { type RetryGenerator, retryCounter } from '$lib/helpers/retry-counter';
 	import Button from '$lib/components/Button.svelte';
@@ -105,6 +105,13 @@
 		// waiting for user action
 		ready: {
 			confirm() {
+				// guard against a stale wagmi connection (e.g. a persisted connector stub that was never
+				// reconnected); writing through it throws an opaque `connector.getChainId is not a function`
+				if (getAccount(config).status !== 'connected') {
+					error = new Error('Wallet is not connected. Please reconnect your wallet and try again.');
+					return 'failed';
+				}
+
 				const { settled, assets, shares } = pendingExchange!;
 				let request: Promise<HexString>;
 

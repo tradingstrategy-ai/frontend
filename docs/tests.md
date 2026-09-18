@@ -86,6 +86,39 @@ failing locally while passing in CI.
 headers; `tests/integration/layout-shift.test.ts` measures CLS on a phone viewport with the fonts
 delayed. See `docs/google-webmasters.md` for the reasoning behind each.
 
+#### Wallet coverage
+
+`tests/integration/wallet/` covers restoring a wallet session that wagmi persisted on a previous
+visit, and the deposit wizard's behaviour when that session is slow to come back or never does.
+`fixtures.ts` holds the shared strategy, account and balance constants.
+
+Instead of loading a real browser-extension wallet (Rabby, MetaMask) — which needs a persistent
+browser profile, an unlock flow and network access, none of which is deterministic in CI — two
+small emulations are installed per test:
+
+- `mock-rabby.ts` installs a minimal EIP-1193 provider via `page.addInitScript()` that presents
+  itself as Rabby (`window.ethereum` flags plus an EIP-6963 announcement with rdns `io.rabby`, which
+  is how wagmi/AppKit discover it) and optionally seeds the persisted `wagmi.store`. It answers like a
+  healthy extension (with a configurable delay, since a cold MV3 service worker is slow), switches
+  chains on request, can hang (`hang: true`, or `hangMockRabby()` mid-test — persisted across
+  reloads), be woken up later (`releaseMockRabby()`), reject network switches like a user
+  dismissing the prompt, and announce a second always-healthy wallet for tests that connect a
+  different wallet through the AppKit modal.
+- `mock-rpc.ts` answers the page's JSON-RPC traffic (`eth_getBalance`, Multicall3 `aggregate3`
+  batches, the Enzyme/ERC-20 reads the strategy page and wizard make) from canned values, so
+  wallet-connected pages render without a public RPC. Everything else external is aborted. Set
+  `MOCK_RPC_DEBUG=1` to log each intercepted request and its answer.
+
+`reconnect.test.ts` checks the strategy page's "My deposits" panel: a hung extension settles to
+`disconnected` (so "Connect wallet" is offered) instead of lingering half-connected, a healthy one
+restores the session, a declined network switch does not escape as an uncaught rejection, and an
+extension that wakes up after the timeout neither resurrects the dropped session (the user
+reconnects through the AppKit modal, which the test drives) nor displaces a wallet the user
+connected in the meantime, nor undoes an explicit disconnect, nor lingers as a stale connection
+behind a session that was restored in time. `wizard.test.ts` checks that a page
+refresh on the deposit wizard's balance step keeps the user there while a slow wallet reconnects,
+and sends them back to the connect step when the wallet does not come back.
+
 #### Responsive navigation coverage
 
 `tests/integration/navigation.test.ts` covers the shared header at desktop, tablet and narrow-mobile
