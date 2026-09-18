@@ -11,6 +11,13 @@
  * The stale value continues to be returned while the async refresh completes.
  * (stale-while-revalidate)
  *
+ * If a refresh attempt fails (the wrapped function rejects), the failure is not cached:
+ * the next call retries `fn` from scratch rather than replaying the same rejection
+ * forever. A caller with no cached value yet sees that rejection; a background refresh
+ * of an already-cached value fails quietly instead (logged, stale value kept), since
+ * nothing is awaiting that promise directly and rejecting it would be an unhandled
+ * rejection.
+ *
  * The cache function includes a getAge() method that returns the age of the
  * cached value in seconds. This is useful for including an `age` HTTP header.
  * Called with the same args as the original function (for cache lookup).
@@ -44,12 +51,31 @@ export default <T extends unknown[], U>(fn: (...args: T) => Promise<U>, ttl: num
 
 		// Async refresh cache if not yet loaded or expired (unless loading in progress)
 		if ((!hasValue || expired) && !cached.loading) {
-			cached.loading = fn(...args).then((value) => {
-				cached.value = value;
-				cached.updatedAt = Date.now();
-				delete cached.loading;
-				return value;
-			});
+			cached.loading = fn(...args).then(
+				(value) => {
+					cached.value = value;
+					cached.updatedAt = Date.now();
+					delete cached.loading;
+					return value;
+				},
+				(err) => {
+					// Clear the failed attempt so the next call retries `fn` instead of
+					// replaying this rejection forever - without this, a single failure
+					// (even a transient one) permanently breaks the cache until the
+					// process restarts, since `!cached.loading` would never be true again.
+					delete cached.loading;
+					if (hasValue) {
+						// A background revalidation failed; the stale value was already
+						// returned to the caller below, so nothing is awaiting this promise.
+						// Resolve it (to the still-valid stale value) rather than reject -
+						// rejecting a promise nobody awaits is an unhandled rejection, which
+						// by default crashes a Node process (`--unhandled-rejections=throw`).
+						console.error('swrCache: background refresh failed', err);
+						return cached.value as U;
+					}
+					throw err;
+				}
+			);
 		}
 
 		// Return cached value if available; or fallback to loading promise
