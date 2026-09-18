@@ -9,10 +9,22 @@ export type MockRabbyOptions = {
 	/** Chain the wallet reports it is on */
 	chainId: number;
 	/**
-	 * Never answer any JSON-RPC request. Emulates a hung browser extension (e.g. Rabby's service
-	 * worker asleep), which leaves wagmi's `reconnect()` awaiting `eth_accounts` forever.
+	 * Hold every JSON-RPC request unanswered. Emulates a hung browser extension (e.g. Rabby's
+	 * service worker asleep), which leaves wagmi's `reconnect()` awaiting `eth_accounts` forever.
+	 * Held requests are answered later if the test calls `releaseMockRabby()`, which emulates the
+	 * extension waking up.
 	 */
 	hang?: boolean;
+	/**
+	 * Reject `wallet_switchEthereumChain` with EIP-1193 code 4001 ("User rejected the request"),
+	 * as a wallet does when the user dismisses the network-switch prompt.
+	 */
+	rejectChainSwitch?: boolean;
+	/**
+	 * Time in ms the wallet takes to answer a request (default 50). A cold Chrome MV3 service worker
+	 * can take several hundred ms to spin up, so a slow wallet is a realistic reload scenario.
+	 */
+	responseDelay?: number;
 	/**
 	 * Seed wagmi's persisted store as if this wallet had been connected on a previous visit. wagmi
 	 * only persists a partial connector (`{ id, name, type, uid }`) and relies on `reconnect()` to
@@ -21,13 +33,25 @@ export type MockRabbyOptions = {
 	persistedConnection?: boolean;
 };
 
-type MockRabbyWindow = Window & { __mockRabbyRequests?: string[] };
+/** Test-side handle the init script leaves on `window` */
+type MockRabbyControl = {
+	/** JSON-RPC methods the page has sent, in order */
+	requests: string[];
+	/** While true, requests are queued instead of answered */
+	hang: boolean;
+	/** Answer every queued request and stop hanging */
+	release: () => void;
+};
+
+type MockRabbyWindow = Window & { __mockRabby?: MockRabbyControl };
 
 const RABBY_RDNS = 'io.rabby';
 const RABBY_NAME = 'Rabby Wallet';
 const CONNECTOR_UID = 'mock-rabby-uid';
-/** Emulated extension round-trip time in ms */
-const RESPONSE_DELAY = 50;
+/** Default emulated extension round-trip time in ms */
+const DEFAULT_RESPONSE_DELAY = 50;
+/** sessionStorage key that keeps a runtime `hangMockRabby()` in force across reloads */
+const HANG_KEY = 'mockRabby.hang';
 
 /**
  * Install a minimal EIP-1193 provider that presents itself as the Rabby browser extension.
@@ -42,14 +66,15 @@ const RESPONSE_DELAY = 50;
  *   persisted `io.rabby` connector id is matched on reconnect
  * - `request`, `on` and `removeListener`, the surface wagmi's `injected` connector uses
  *
- * Every JSON-RPC call is recorded on `window.__mockRabbyRequests` so tests can assert that wagmi
- * actually went through the wallet.
+ * Every JSON-RPC call is recorded on `window.__mockRabby.requests` so tests can assert that wagmi
+ * actually went through the wallet, and `window.__mockRabby.hang` / `release()` let a test change
+ * the extension's responsiveness mid-flight (see `hangMockRabby()` / `releaseMockRabby()`).
  *
  * Must be called before `page.goto()`.
  */
 export async function installMockRabby(page: Page, options: MockRabbyOptions): Promise<void> {
 	await page.addInitScript(
-		({ options, rdns, name, uid, responseDelay }) => {
+		({ options, rdns, name, uid, responseDelay, hangKey }) => {
 			if (options.persistedConnection) {
 				const connection = {
 					accounts: [options.address],
@@ -72,8 +97,39 @@ export async function installMockRabby(page: Page, options: MockRabbyOptions): P
 
 			type Listener = (...args: unknown[]) => void;
 			const listeners = new Map<string, Set<Listener>>();
-			const requests: string[] = [];
-			(window as unknown as MockRabbyWindow).__mockRabbyRequests = requests;
+
+			// requests received while hanging; answered on `release()`
+			const queued: (() => void)[] = [];
+
+			const control: MockRabbyControl = {
+				requests: [],
+				// `hangMockRabby()` persists the flag in sessionStorage so a "dead" extension stays dead
+				// across `page.reload()`, where this init script runs again with the original options
+				hang: Boolean(options.hang) || sessionStorage.getItem(hangKey) === '1',
+				release() {
+					control.hang = false;
+					sessionStorage.removeItem(hangKey);
+					for (const answer of queued.splice(0)) answer();
+				}
+			};
+			(window as unknown as MockRabbyWindow).__mockRabby = control;
+
+			function answer(method: string, resolve: (value: unknown) => void, reject: (reason: unknown) => void) {
+				switch (method) {
+					case 'eth_chainId':
+						return resolve(`0x${options.chainId.toString(16)}`);
+					case 'eth_accounts':
+					case 'eth_requestAccounts':
+						return resolve([options.address]);
+					case 'wallet_requestPermissions':
+						return resolve([{ parentCapability: 'eth_accounts' }]);
+					case 'wallet_switchEthereumChain':
+						if (options.rejectChainSwitch) return reject({ code: 4001, message: 'User rejected the request.' });
+						return resolve(null);
+					default:
+						return reject({ code: 4200, message: `mock Rabby: unsupported method ${method}` });
+				}
+			}
 
 			const provider = {
 				isRabby: true,
@@ -81,28 +137,15 @@ export async function installMockRabby(page: Page, options: MockRabbyOptions): P
 				isConnected: () => true,
 
 				request({ method }: { method: string; params?: unknown[] }): Promise<unknown> {
-					requests.push(method);
-					if (options.hang) return new Promise(() => {});
+					control.requests.push(method);
 
-					// a real extension answers over message passing, i.e. on a later macrotask, never in
-					// the same microtask as the request; resolving synchronously would let wagmi finish
-					// reconnecting while the app's module graph is still evaluating
 					return new Promise((resolve, reject) => {
-						setTimeout(() => {
-							switch (method) {
-								case 'eth_chainId':
-									return resolve(`0x${options.chainId.toString(16)}`);
-								case 'eth_accounts':
-								case 'eth_requestAccounts':
-									return resolve([options.address]);
-								case 'wallet_requestPermissions':
-									return resolve([{ parentCapability: 'eth_accounts' }]);
-								case 'wallet_switchEthereumChain':
-									return resolve(null);
-								default:
-									return reject({ code: 4200, message: `mock Rabby: unsupported method ${method}` });
-							}
-						}, responseDelay);
+						// a real extension answers over message passing, i.e. on a later macrotask, never in
+						// the same microtask as the request; resolving synchronously would let wagmi finish
+						// reconnecting while the app's module graph is still evaluating
+						const respond = () => setTimeout(() => answer(method, resolve, reject), responseDelay);
+						if (control.hang) queued.push(respond);
+						else respond();
 					});
 				},
 
@@ -131,7 +174,14 @@ export async function installMockRabby(page: Page, options: MockRabbyOptions): P
 			window.addEventListener('eip6963:requestProvider', announce);
 			announce();
 		},
-		{ options, rdns: RABBY_RDNS, name: RABBY_NAME, uid: CONNECTOR_UID, responseDelay: RESPONSE_DELAY }
+		{
+			options,
+			rdns: RABBY_RDNS,
+			name: RABBY_NAME,
+			uid: CONNECTOR_UID,
+			responseDelay: options.responseDelay ?? DEFAULT_RESPONSE_DELAY,
+			hangKey: HANG_KEY
+		}
 	);
 }
 
@@ -139,5 +189,26 @@ export async function installMockRabby(page: Page, options: MockRabbyOptions): P
  * JSON-RPC methods the page has sent to the emulated wallet so far.
  */
 export function getMockRabbyRequests(page: Page): Promise<string[]> {
-	return page.evaluate(() => (window as unknown as MockRabbyWindow).__mockRabbyRequests ?? []);
+	return page.evaluate(() => (window as unknown as MockRabbyWindow).__mockRabby?.requests ?? []);
+}
+
+/**
+ * Stop answering wallet requests from now on (the extension "dies"). Persists across
+ * `page.reload()` until `releaseMockRabby()` is called.
+ */
+export function hangMockRabby(page: Page): Promise<void> {
+	return page.evaluate((hangKey) => {
+		sessionStorage.setItem(hangKey, '1');
+		(window as unknown as MockRabbyWindow).__mockRabby!.hang = true;
+	}, HANG_KEY);
+}
+
+/**
+ * Answer every wallet request queued while hanging, and answer new ones normally (the extension
+ * "wakes up"). Lets a test start with `hang: true` and un-hang at a chosen moment.
+ */
+export function releaseMockRabby(page: Page): Promise<void> {
+	return page.evaluate(() => {
+		(window as unknown as MockRabbyWindow).__mockRabby!.release();
+	});
 }

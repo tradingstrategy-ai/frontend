@@ -43,6 +43,11 @@ const handleClientError: HandleClientError = ({ error, event, message }) => {
 		console.error('Page assets are unavailable and a reload did not help; showing the static page instead.', error);
 		throw error;
 	}
+	// Sentry (wrapped around this hook below) is the only other consumer of the error, and it is a
+	// no-op without a DSN (local dev, test builds). Without this line a failed client-side `load` or
+	// hydration shows the 500 page with no trace anywhere — the browser console stays empty, which
+	// makes wallet-flow bugs (async wagmi state, RPC failures) needlessly hard to diagnose.
+	console.error('Client-side error', error);
 	// Same shape SvelteKit produces by default when no hook is defined
 	return { message };
 };

@@ -1,10 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { installMockRabby, getMockRabbyRequests } from './mock-rabby';
+import { installMockRabby, getMockRabbyRequests, releaseMockRabby } from './mock-rabby';
 
 // Enzyme strategy from the mock API: deposits enabled, so the "My deposits" panel renders
 const STRATEGY = '/strategies/enzyme-polygon-matic-usdc';
 const ADDRESS = '0x0d7786000000000000000000000000000000beef';
 const POLYGON = 137;
+const MAINNET = 1;
 
 // wallet client resets a stalled reconnect after 10s (RECONNECT_TIMEOUT in $lib/wallet/client)
 const RECONNECT_SETTLE_TIMEOUT = 15_000;
@@ -68,5 +69,51 @@ test.describe('wallet reconnect from persisted Rabby connection', () => {
 		const requests = await getMockRabbyRequests(page);
 		expect(requests).toContain('eth_accounts');
 		expect(requests).toContain('eth_chainId');
+	});
+
+	test('connects when the wallet extension answers only after the reconnect timeout', async ({ page }) => {
+		await installMockRabby(page, { address: ADDRESS, chainId: POLYGON, persistedConnection: true, hang: true });
+		await page.goto(STRATEGY);
+
+		const myDeposits = page.locator('.my-deposits');
+		await expect(myDeposits).toHaveAttribute('data-wallet-status', 'disconnected', {
+			timeout: RECONNECT_SETTLE_TIMEOUT
+		});
+
+		// the extension wakes up and answers the `eth_accounts` request wagmi has been waiting on.
+		// wagmi's reconnect() then finishes and stores the live connection, but it only promotes
+		// `status` from `reconnecting`/`connecting` — after our reset to `disconnected` the page
+		// would otherwise keep saying "Wallet not connected" while a live connection sits in the store
+		await releaseMockRabby(page);
+		await expect(myDeposits).toHaveAttribute('data-wallet-status', 'connected');
+		await expect(myDeposits.getByText('Wallet not connected')).toHaveCount(0);
+	});
+
+	test('does not leave an unhandled rejection when the user declines a network switch', async ({ page }) => {
+		const pageErrors: string[] = [];
+		page.on('pageerror', (error) => pageErrors.push(error.message));
+
+		// session restored on Ethereum mainnet while the strategy lives on Polygon
+		await installMockRabby(page, {
+			address: ADDRESS,
+			chainId: MAINNET,
+			persistedConnection: true,
+			rejectChainSwitch: true
+		});
+		await page.goto(STRATEGY);
+
+		const myDeposits = page.locator('.my-deposits');
+		await expect(myDeposits).toHaveAttribute('data-wallet-status', 'connected', { timeout: RECONNECT_SETTLE_TIMEOUT });
+		await expect(myDeposits.getByText('Wrong network')).toBeVisible();
+
+		// the wallet prompts to switch and the user dismisses the prompt
+		await myDeposits.getByRole('button', { name: 'Switch network' }).click();
+		await expect.poll(() => getMockRabbyRequests(page)).toContain('wallet_switchEthereumChain');
+
+		// still on the wrong network, and the rejection was handled rather than escaping as an
+		// uncaught `UserRejectedRequestError`
+		await expect(myDeposits.getByText('Wrong network')).toBeVisible();
+		await page.waitForTimeout(500);
+		expect(pageErrors).toEqual([]);
 	});
 });

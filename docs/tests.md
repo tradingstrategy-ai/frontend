@@ -88,15 +88,30 @@ delayed. See `docs/google-webmasters.md` for the reasoning behind each.
 
 #### Wallet coverage
 
-`tests/integration/wallet/reconnect.test.ts` covers restoring a wallet session that wagmi persisted on
-a previous visit. Instead of loading a real browser-extension wallet (Rabby, MetaMask) — which needs a
-persistent browser profile, an unlock flow and network access, none of which is deterministic in CI —
-`tests/integration/wallet/mock-rabby.ts` installs a minimal EIP-1193 provider via
-`page.addInitScript()` that presents itself as Rabby (`window.ethereum` flags plus an EIP-6963
-announcement with rdns `io.rabby`, which is how wagmi/AppKit discover it) and optionally seeds the
-persisted `wagmi.store`. It can answer like a healthy extension or never answer at all (a hung
-extension), which is the case that used to leave the page half-connected. Balance reads that would
-reach a public RPC are aborted with `page.route()` so the test stays hermetic.
+`tests/integration/wallet/` covers restoring a wallet session that wagmi persisted on a previous
+visit, and the deposit wizard's behaviour when that session is slow to come back or never does.
+
+Instead of loading a real browser-extension wallet (Rabby, MetaMask) — which needs a persistent
+browser profile, an unlock flow and network access, none of which is deterministic in CI — two
+small emulations are installed per test:
+
+- `mock-rabby.ts` installs a minimal EIP-1193 provider via `page.addInitScript()` that presents
+  itself as Rabby (`window.ethereum` flags plus an EIP-6963 announcement with rdns `io.rabby`, which
+  is how wagmi/AppKit discover it) and optionally seeds the persisted `wagmi.store`. It answers like a
+  healthy extension (with a configurable delay, since a cold MV3 service worker is slow), can hang
+  (`hang: true`, or `hangMockRabby()` mid-test — persisted across reloads), be woken up later
+  (`releaseMockRabby()`), and can reject network switches like a user dismissing the prompt.
+- `mock-rpc.ts` answers the page's JSON-RPC traffic (`eth_getBalance`, Multicall3 `aggregate3`
+  batches, the Enzyme/ERC-20 reads the strategy page and wizard make) from canned values, so
+  wallet-connected pages render without a public RPC. Everything else external is aborted. Set
+  `MOCK_RPC_DEBUG=1` to log each intercepted request and its answer.
+
+`reconnect.test.ts` checks the strategy page's "My deposits" panel: a hung extension settles to
+`disconnected` (so "Connect wallet" is offered) instead of lingering half-connected, a healthy one
+restores the session, an extension that wakes up after the timeout still gets connected, and a
+declined network switch does not escape as an uncaught rejection. `wizard.test.ts` checks that a
+page refresh on the deposit wizard's balance step keeps the user there while a slow wallet
+reconnects, and sends them back to the connect step when the wallet does not come back.
 
 #### Responsive navigation coverage
 

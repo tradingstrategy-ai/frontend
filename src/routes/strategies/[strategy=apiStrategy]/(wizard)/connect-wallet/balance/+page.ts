@@ -1,10 +1,11 @@
 import type { TokenBalance } from '$lib/eth-defi/schemas/token.js';
 import { config } from '$lib/wallet/client';
-import { getAccount, getBalance } from '@wagmi/core';
+import { getBalance } from '@wagmi/core';
+import { getWizardAccount } from '$lib/wallet/wizard-account';
 
 export async function load({ parent }) {
-	const { chain, vault } = await parent();
-	const { address } = getAccount(config) as { address: Address };
+	const { chain, vault, strategy, slug } = await parent();
+	const address = getWizardAccount(strategy, slug);
 
 	let denominationTokenPromise: Promise<TokenBalance> | undefined;
 
