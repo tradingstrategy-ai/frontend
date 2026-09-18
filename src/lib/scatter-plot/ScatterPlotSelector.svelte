@@ -10,20 +10,7 @@ Selector linking between vault scatter plot chart pages.
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-
-	const charts = [
-		{ href: '/vaults/compare', label: 'Compare equity curves' },
-		{ href: '/vaults/cumulative-tvl-apy', label: 'Total vault earnings' },
-		{ href: '/vaults/yield-risk', label: 'Yield / Risk' },
-		{ href: '/vaults/yield-protocol', label: 'Yield / Protocol' },
-		{ href: '/vaults/yield-chain', label: 'Yield / Chain' },
-		{ href: '/vaults/current-peak-tvl', label: 'Current / Peak TVL' },
-		{ href: '/vaults/core3-risk', label: 'CORE3 risk' },
-		{ href: '/vaults/historical-tvl-chain', label: 'Historical TVL by chain' },
-		{ href: '/vaults/historical-tvl-stablecoin', label: 'Historical TVL by stablecoin' },
-		{ href: '/vaults/historical-tvl-protocol', label: 'Historical TVL by vault protocol' },
-		{ href: '/vaults/stablecoin-chain-heatmap', label: 'Stablecoin / Chain heatmap' }
-	] as const;
+	import { vaultChartLinks } from '$lib/top-vaults/vault-chart-links';
 
 	function isActive(href: string): boolean {
 		return page.url.pathname === href;
@@ -32,7 +19,7 @@ Selector linking between vault scatter plot chart pages.
 
 <nav class="scatter-plot-selector">
 	<span class="label">See charts:</span>
-	{#each charts as { href, label } (href)}
+	{#each vaultChartLinks as { href, label } (href)}
 		<a href={resolve(href)} class:active={isActive(href)}>{label}</a>
 	{/each}
 </nav>

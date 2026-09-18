@@ -1,12 +1,12 @@
 import { expect, test } from '@playwright/test';
+import { waitForHydration } from '../helpers';
 
 /** Must match VALID_API_KEY in tests/mocks/vault-api/files.mock.ts */
 const VALID_API_KEY = 'test-valid-api-key-12345';
 const INVALID_API_KEY = 'wrong-key-00000';
 
 async function submitApiKey(page: import('@playwright/test').Page, key: string, expectedStatus: number) {
-	// Wait for hydration: a key typed before the form hydrates is wiped when the component re-renders.
-	await expect(page.locator('#navigation-panel-toggle')).toHaveAttribute('data-navigation-hydrated', 'true');
+	await waitForHydration(page);
 	await page.getByLabel('Enter API key to enable download').fill(key);
 	const responsePromise = page.waitForResponse((response) => {
 		const url = new URL(response.url());

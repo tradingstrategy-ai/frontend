@@ -21,43 +21,43 @@ test.describe('vault detail page', () => {
 
 	// The tokenised-fund info alert on `/vaults/deposit-disabled-vault` is asserted in `funds.test.ts`.
 	test('explains deposit and withdrawal availability for each vault status', async ({ page }) => {
-		const cases: [slug: string, selector: string, text: string][] = [
-			['/vaults/withdrawal-disabled-vault', '.alert-list.warning', 'Withdrawals may be disabled for this vault'],
-			[
-				'/vaults/deposit-and-withdrawal-disabled-vault',
-				'.alert-list.warning',
-				'Deposits and withdrawals may be disabled for this vault'
-			],
-			[
-				'/vaults/capped-and-withdrawal-disabled-vault',
-				'.alert-list.warning',
-				'Deposits are capped and withdrawals may be disabled for this vault'
-			],
-			[
-				'/vaults/private-tokenised-fund',
-				'.notification-stack .alert-list.info',
-				'Private tokenised fund is a tokenised fund'
-			]
+		const warning = '.notification-stack .alert-list.warning';
+		const cases = [
+			{ path: '/vaults/withdrawal-disabled-vault', alert: warning, text: 'Withdrawals may be disabled for this vault' },
+			{
+				path: '/vaults/deposit-and-withdrawal-disabled-vault',
+				alert: warning,
+				text: 'Deposits and withdrawals may be disabled for this vault'
+			},
+			{
+				path: '/vaults/capped-and-withdrawal-disabled-vault',
+				alert: warning,
+				text: 'Deposits are capped and withdrawals may be disabled for this vault'
+			},
+			{
+				// a tokenised fund gets the fund disclaimer instead of the permissioned-vault warning
+				path: '/vaults/private-tokenised-fund',
+				alert: '.notification-stack .alert-list.info',
+				text: 'Private tokenised fund is a tokenised fund',
+				absent: warning
+			},
+			{
+				path: '/vaults/deposit-cap-reached-vault',
+				alert: '.transaction-status',
+				text: 'Deposits Capped',
+				absentText: 'Deposits Open'
+			}
 		];
 
-		for (const [slug, selector, text] of cases) {
-			await test.step(slug, async () => {
-				await page.goto(slug);
-				const alert = page.locator(selector).first();
-				await expect(alert).toBeVisible();
-				await expect(alert).toContainText(text);
+		for (const { path, alert, text, absent, absentText } of cases) {
+			await test.step(path, async () => {
+				await page.goto(path);
+				const element = page.locator(alert).first();
+				await expect(element).toBeVisible();
+				await expect(element).toContainText(text);
+				if (absent) await expect(page.locator(absent)).toHaveCount(0);
+				if (absentText) await expect(element).not.toContainText(absentText);
 			});
 		}
-
-		await test.step('/vaults/private-tokenised-fund shows no permissioned warning', async () => {
-			await expect(page.locator('.notification-stack .alert-list.warning')).toHaveCount(0);
-		});
-
-		await test.step('/vaults/deposit-cap-reached-vault shows deposits as capped, not open', async () => {
-			await page.goto('/vaults/deposit-cap-reached-vault');
-			const transactionStatus = page.locator('.transaction-status');
-			await expect(transactionStatus).toContainText('Deposits Capped');
-			await expect(transactionStatus).not.toContainText('Deposits Open');
-		});
 	});
 });

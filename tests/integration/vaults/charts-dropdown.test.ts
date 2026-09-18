@@ -1,42 +1,15 @@
 import { expect, test, type Page } from '@playwright/test';
+import { vaultChartLinks } from '../../../src/lib/top-vaults/vault-chart-links';
+import { waitForHydration } from '../helpers';
 
 async function openChartsMenu(page: Page) {
-	const nav = page.locator('.vault-listings-selector');
-	const trigger = nav.locator('button', { hasText: 'Charts' });
+	await waitForHydration(page);
+	await page.locator('.vault-listings-selector button', { hasText: 'Charts' }).click();
+
 	const menu = page.locator('[role="menu"][data-state="open"]');
-
-	await page.waitForLoadState('networkidle');
-	await expect(trigger).toBeVisible();
-
-	for (let attempt = 0; attempt < 2; attempt++) {
-		await trigger.click();
-
-		try {
-			await expect(menu).toBeVisible({ timeout: 10000 });
-			return { trigger, menu };
-		} catch (error) {
-			if (attempt === 1) throw error;
-			await page.waitForLoadState('networkidle');
-		}
-	}
-
-	throw new Error('Failed to open Charts dropdown');
+	await expect(menu).toBeVisible();
+	return menu;
 }
-
-/** Every page in the Charts menu and the label the menu must mark active there (see `VaultListingsSelector`). */
-const chartPages = [
-	['/vaults/compare', 'Compare equity curves'],
-	['/vaults/cumulative-tvl-apy', 'Total vault earnings'],
-	['/vaults/yield-risk', 'Yield / Risk'],
-	['/vaults/yield-protocol', 'Yield / Protocol'],
-	['/vaults/yield-chain', 'Yield / Chain'],
-	['/vaults/current-peak-tvl', 'Current / Peak TVL'],
-	['/vaults/core3-risk', 'CORE3 risk'],
-	['/vaults/historical-tvl-chain', 'Historical TVL by chain'],
-	['/vaults/historical-tvl-stablecoin', 'Historical TVL by stablecoin'],
-	['/vaults/historical-tvl-protocol', 'Historical TVL by vault protocol'],
-	['/vaults/stablecoin-chain-heatmap', 'Stablecoin / Chain heatmap']
-] as const;
 
 test.describe('charts dropdown in vault listings navigation', () => {
 	test.describe('desktop viewport', () => {
@@ -63,11 +36,11 @@ test.describe('charts dropdown in vault listings navigation', () => {
 					'More'
 				]);
 
-			const { menu } = await openChartsMenu(page);
+			const menu = await openChartsMenu(page);
 
 			const items = menu.locator('[role="menuitem"]');
-			await expect(items).toHaveCount(chartPages.length);
-			for (const [, label] of chartPages) {
+			await expect(items).toHaveCount(vaultChartLinks.length);
+			for (const { label } of vaultChartLinks) {
 				await expect(menu).toContainText(label);
 			}
 
@@ -88,7 +61,7 @@ test.describe('charts dropdown in vault listings navigation', () => {
 		});
 
 		test('clicking a chart link navigates to the chart page', async ({ page }) => {
-			const { menu } = await openChartsMenu(page);
+			const menu = await openChartsMenu(page);
 			await menu.locator('a', { hasText: 'Yield / Risk' }).click();
 
 			await expect(page).toHaveURL(/\/vaults\/yield-risk/);
@@ -98,16 +71,16 @@ test.describe('charts dropdown in vault listings navigation', () => {
 	// Single owner of the active-state behaviour for every chart page; the chart-page test files
 	// only assert their own chart rendering.
 	test('marks the Charts trigger and the current chart link active on every chart page', async ({ page }) => {
-		for (const [path, label] of chartPages) {
-			await test.step(path, async () => {
-				await page.goto(path);
+		for (const { href, label } of vaultChartLinks) {
+			await test.step(href, async () => {
+				await page.goto(href);
 
 				const nav = page.locator('.vault-listings-selector');
 				await expect(nav).toBeVisible();
 				const trigger = nav.locator('button', { hasText: 'Charts' });
 				await expect(trigger).toHaveClass(/active/);
 
-				const { menu } = await openChartsMenu(page);
+				const menu = await openChartsMenu(page);
 				await expect(menu.locator('a.active')).toHaveText(label);
 			});
 		}
@@ -119,17 +92,19 @@ test.describe('charts dropdown in vault listings navigation', () => {
 			await page.goto('/vaults');
 		});
 
-		test('opens, closes on outside click and navigates on mobile', async ({ page }) => {
-			const { menu } = await openChartsMenu(page);
+		test('opens and navigates on mobile', async ({ page }) => {
+			const menu = await openChartsMenu(page);
+			await menu.locator('a', { hasText: 'Yield / Chain' }).click();
+			await expect(page).toHaveURL(/\/vaults\/yield-chain/);
+		});
+
+		test('closes on outside click on mobile', async ({ page }) => {
+			const menu = await openChartsMenu(page);
 
 			// Click a named element outside the dropdown; force bypasses actionability
 			// checks in case the menu positioner layer overlaps it on mobile
 			await page.locator('h1').click({ force: true });
 			await expect(menu).toHaveCount(0);
-
-			const reopened = await openChartsMenu(page);
-			await reopened.menu.locator('a', { hasText: 'Yield / Chain' }).click();
-			await expect(page).toHaveURL(/\/vaults\/yield-chain/);
 		});
 	});
 });

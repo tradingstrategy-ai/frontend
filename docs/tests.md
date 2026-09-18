@@ -106,9 +106,9 @@ the component:
 
 Prefer one `test()` per page _state_ (initial, after an interaction, after a redirect) over one
 `test()` per assertion: every `test()` reloads the page, and a `beforeEach` `goto` multiplies that by
-the number of tests in the file. Forms that are filled right after `goto` must wait for hydration
-first — the header exposes `#navigation-panel-toggle[data-navigation-hydrated="true"]` for that — or
-the typed value is wiped when the component hydrates.
+the number of tests in the file. Tests that type into a form or open a menu right after `goto` must
+call `waitForHydration(page)` from `tests/integration/helpers.ts` first, or the input is wiped and
+the click is lost when the component hydrates.
 
 #### Wallet coverage
 

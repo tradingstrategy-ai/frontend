@@ -6,6 +6,7 @@ Renders navigation links for vault listing and chart pages.
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import DropdownMenu from '$lib/components/DropdownMenu.svelte';
+	import { vaultChartLinks } from './vault-chart-links';
 
 	const links = [
 		{ href: '/vaults', label: 'Top' },
@@ -29,20 +30,6 @@ Renders navigation links for vault listing and chart pages.
 		{ href: '/vaults/xerberus-ratings', label: 'Xerberus ratings' }
 	] as const;
 
-	const chartLinks = [
-		{ href: '/vaults/compare', label: 'Compare equity curves' },
-		{ href: '/vaults/cumulative-tvl-apy', label: 'Total vault earnings' },
-		{ href: '/vaults/yield-risk', label: 'Yield / Risk' },
-		{ href: '/vaults/yield-protocol', label: 'Yield / Protocol' },
-		{ href: '/vaults/yield-chain', label: 'Yield / Chain' },
-		{ href: '/vaults/current-peak-tvl', label: 'Current / Peak TVL' },
-		{ href: '/vaults/core3-risk', label: 'CORE3 risk' },
-		{ href: '/vaults/historical-tvl-chain', label: 'Historical TVL by chain' },
-		{ href: '/vaults/historical-tvl-stablecoin', label: 'Historical TVL by stablecoin' },
-		{ href: '/vaults/historical-tvl-protocol', label: 'Historical TVL by vault protocol' },
-		{ href: '/vaults/stablecoin-chain-heatmap', label: 'Stablecoin / Chain heatmap' }
-	] as const;
-
 	function isActive(href: string): boolean {
 		return page.url.pathname === href;
 	}
@@ -59,7 +46,13 @@ Renders navigation links for vault listing and chart pages.
 			{label}
 		</a>
 	{/each}
-	<DropdownMenu label="Charts" items={chartLinks} {isActive} resolveHref={resolveDropdownHref} class="nav-dropdown" />
+	<DropdownMenu
+		label="Charts"
+		items={vaultChartLinks}
+		{isActive}
+		resolveHref={resolveDropdownHref}
+		class="nav-dropdown"
+	/>
 	<DropdownMenu label="More" items={otherListLinks} {isActive} resolveHref={resolveDropdownHref} class="nav-dropdown" />
 </nav>
 
