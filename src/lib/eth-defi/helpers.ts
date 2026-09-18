@@ -136,9 +136,59 @@ export type ErrorInfo = {
 	shortMessage: string | undefined;
 	details: string | undefined;
 	functionName: string | undefined;
+	/** Decoded reason of a reverted contract call, see `getRevertReason` */
+	revertReason: string | undefined;
 	state: string | undefined;
 	cause: ErrorInfo | unknown | undefined;
 };
+
+/**
+ * The reason a contract call reverted, in the form the contract raised it, or `undefined` if the
+ * error is not a revert.
+ *
+ * viem reports a revert as a `ContractFunctionExecutionError` whose `shortMessage` only says that
+ * the function reverted; the reason is on the `ContractFunctionRevertedError` further down the
+ * `cause` chain — as a decoded custom error (`data.errorName` and `data.args`, when the ABI knows
+ * it), a `require`/`Error(string)` reason, or just the raw 4-byte selector. Return, respectively,
+ * e.g. `RequestNotCancelable(3)`, `insufficient balance`, or `unknown error 0x1234abcd`.
+ *
+ * @param error - an error thrown by a viem/wagmi contract action, or an `ErrorInfo` extracted from one
+ */
+export function getRevertReason(error: unknown): string | undefined {
+	for (let e = error; typeof e === 'object' && e !== null; e = (e as { cause?: unknown }).cause) {
+		const { name, data, reason, signature, revertReason } = e as Partial<{
+			name: string;
+			data: { errorName?: string; args?: readonly unknown[] };
+			reason: string;
+			signature: string;
+			revertReason: string;
+		}>;
+		// already extracted (an `ErrorInfo`)
+		if (revertReason) return revertReason;
+		if (name !== 'ContractFunctionRevertedError') continue;
+		// `Error(string)` and `Panic(uint256)` are Solidity's built-in reverts: show the reason, not the wrapper
+		if (data?.errorName === 'Error' || data?.errorName === 'Panic') return reason ?? String(data.args?.[0]);
+		if (data?.errorName) return `${data.errorName}(${(data.args ?? []).map(String).join(', ')})`;
+		if (reason) return reason;
+		return signature ? `unknown error ${signature}` : 'no reason given';
+	}
+}
+
+/**
+ * User-facing one-liner for an error from a wallet or contract action: viem's short message (or
+ * details, or the plain message), with the revert reason appended when there is one — e.g.
+ * `The contract function "cancelRequestDeposit" reverted: RequestNotCancelable(3)`.
+ *
+ * @param error - the error, or an `ErrorInfo` extracted from it
+ * @param fallback - used when the error carries no message at all
+ */
+export function describeError(error: unknown, fallback = 'Failure reason unknown.'): string {
+	const info = error instanceof Error ? extractErrorInfo(error) : (error as Partial<ErrorInfo> | null | undefined);
+	const base = info?.shortMessage ?? info?.details ?? info?.message;
+	const reason = info?.revertReason;
+	if (!base) return reason ?? fallback;
+	return reason ? `${base.replace(/\.$/, '')}: ${reason}` : base;
+}
 
 /**
  * Extract an ErrorInfo object from an error. This enables errors to be serialized
@@ -155,7 +205,8 @@ export function extractErrorInfo(error: unknown, state?: string | undefined): Pa
 	const { name, message, shortMessage, details, functionName } = error as Error &
 		Partial<Record<'shortMessage' | 'details' | 'functionName', string>>;
 	const cause = error.cause === undefined ? undefined : extractErrorInfo(error.cause);
-	return { name, message, shortMessage, details, functionName, state, cause };
+	const revertReason = getRevertReason(error);
+	return { name, message, shortMessage, details, functionName, revertReason, state, cause };
 }
 
 /**

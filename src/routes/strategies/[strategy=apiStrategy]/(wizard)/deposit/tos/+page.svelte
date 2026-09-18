@@ -10,7 +10,7 @@
 	import { signMessage, simulateContract, writeContract, waitForTransactionReceipt } from '@wagmi/core';
 	import { config, wallet } from '$lib/wallet/client';
 	import termsOfServiceABI from '$lib/eth-defi/abi/TermsOfService.json';
-	import { getExpectedBlockTime } from '$lib/eth-defi/helpers';
+	import { describeError, getExpectedBlockTime } from '$lib/eth-defi/helpers';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import { Alert, Button, CryptoAddressWidget, Dialog, SummaryBox } from '$lib/components';
 	import WalletAddress from '$lib/wallet/WalletAddress.svelte';
@@ -110,7 +110,7 @@
 				if (err.name === 'UserRejectedRequestError') {
 					errorMessage = 'Signature request rejected by user. Please try again and accept the request.';
 				} else {
-					errorMessage = err.message ?? String(err);
+					errorMessage = describeError(err);
 				}
 				return 'failed';
 			}
@@ -131,7 +131,9 @@
 				if (err.name === 'ContractFunctionExecutionError' && err.message.includes('User rejected')) {
 					errorMessage = 'Transaction request rejected by user. Please try again and accept the request.';
 				} else {
-					errorMessage = err.message ?? String(err);
+					// viem's `message` is a multi-line dump; the short message plus the decoded revert reason is
+					// what the user needs
+					errorMessage = describeError(err);
 				}
 				return 'failed';
 			}
@@ -159,7 +161,7 @@
 				const eventId = captureException(err);
 				console.error('waitForTransactionReceipt error:', eventId, err);
 				if (err.name === 'CallExecutionError') {
-					errorMessage = `${err.shortMessage} ${viewTransactionCopy}`;
+					errorMessage = `${describeError(err)} ${viewTransactionCopy}`;
 				} else {
 					errorMessage = `Unable to verify transaction status. ${viewTransactionCopy}`;
 				}

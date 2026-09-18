@@ -15,7 +15,7 @@
 	import IconHistory from '~icons/local/history';
 	import IconSuccess from '~icons/local/success';
 	import IconQuestionCircle from '~icons/local/question-circle';
-	import { errorCausedBy, formatBalance } from '$lib/eth-defi/helpers';
+	import { describeError, errorCausedBy, formatBalance } from '$lib/eth-defi/helpers';
 	import { capitalize } from '$lib/helpers/formatters';
 	import { type CycleDuration, getNextExpectedCycleTime } from 'trade-executor/helpers/date';
 	import { formatDistanceToNow } from 'date-fns';
@@ -274,7 +274,7 @@
 					</span>
 					<svelte:fragment slot="popup">
 						<h4>The following error occurred:</h4>
-						<p>{error.shortMessage ?? String(error)}</p>
+						<p>{describeError(error)}</p>
 						<p>
 							Click <strong>Try again</strong> to reset the form and retry your <strong>{buttonLabel}</strong> request.
 							Or visit the

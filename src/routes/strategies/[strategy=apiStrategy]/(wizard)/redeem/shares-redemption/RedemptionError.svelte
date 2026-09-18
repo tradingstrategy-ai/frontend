@@ -11,7 +11,7 @@ Displays relevant user-facing error message based on the type of redemption erro
 ```
 -->
 <script lang="ts">
-	import { type ErrorInfo, errorCausedBy } from '$lib/eth-defi/helpers';
+	import { type ErrorInfo, describeError, errorCausedBy } from '$lib/eth-defi/helpers';
 
 	type Props = {
 		error: Partial<ErrorInfo>;
@@ -32,12 +32,12 @@ Displays relevant user-facing error message based on the type of redemption erro
 		approve the request.
 	{:else}
 		Redemption confirmation from wallet account failed.
-		{error.shortMessage ?? error.details ?? 'Failure reason unknown.'}
+		{describeError(error)}
 	{/if}
 {:else if state === 'processing'}
-	{error.shortMessage ?? error.details ?? 'Unable to verify transaction status.'}
+	{describeError(error, 'Unable to verify transaction status.')}
 	{transactionCopy}
 {:else}
 	An unexpected error occurred during "{state}" step.
-	{error.name}: {error.shortMessage ?? error.details ?? 'Failure reason unknown.'}
+	{error.name}: {describeError(error)}
 {/if}
