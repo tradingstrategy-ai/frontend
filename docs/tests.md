@@ -53,7 +53,7 @@ pnpm run test:integration
 
 #### Options:
 
-- prefix with `CI=1` to skip some flaky tests that we skip in CI
+- prefix with `CI=1` to run with the CI retry policy (`ciRetries` in `tests/helpers.ts`); no test is skipped in CI
 - pass additional options to `playwright` after `--` – e.g.,
   - `pnpm run test:integration -- trading-view` to only run tests that match "trading-view"
   - `pnpm run test:integration -- --help` to see additional `playwright` options
@@ -85,6 +85,30 @@ failing locally while passing in CI.
 `tests/integration/response-headers.test.ts` covers the font preload, `X-Robots-Tag` and cache
 headers; `tests/integration/layout-shift.test.ts` measures CLS on a phone viewport with the fonts
 delayed. See `docs/google-webmasters.md` for the reasoning behind each.
+
+`tests/integration/vaults/social-meta-tags.test.ts` owns the social card itself: the Open Graph and
+Twitter tag values, which image URL each vault listing resolves to (sparkline, curator, protocol or
+chain logo, or the default card), and that the image decodes at 1200×630 with visible content. It
+does not re-check the title, description length or "exactly one `og:image`" that `head-meta` covers.
+
+#### One owner per shared behaviour
+
+Tests for behaviour that a shared component provides live in one file, not in every page that uses
+the component:
+
+- the vault listings navigation and its Charts dropdown — order, the 11 chart links, active state on
+  every chart page, mobile — is `tests/integration/vaults/charts-dropdown.test.ts`; the chart-page
+  files (`yield-*`, `historical-tvl-*`, `cumulative-tvl-apy`, …) assert only their own chart and the
+  in-page "See charts" link row;
+- the vault group index header (`protocols`, `stablecoins`, `chains`, `curators`, `funds`) is
+  laid out once at three viewports in `group-market-share-pages.test.ts`; each page keeps a single
+  render test.
+
+Prefer one `test()` per page _state_ (initial, after an interaction, after a redirect) over one
+`test()` per assertion: every `test()` reloads the page, and a `beforeEach` `goto` multiplies that by
+the number of tests in the file. Forms that are filled right after `goto` must wait for hydration
+first — the header exposes `#navigation-panel-toggle[data-navigation-hydrated="true"]` for that — or
+the typed value is wiped when the component hydrates.
 
 #### Wallet coverage
 

@@ -248,27 +248,13 @@ describe('calculateTotalTvl', () => {
 });
 
 describe('isEligibleFrontpageVault', () => {
-	test('returns true for known protocol vaults with severe risk or safer', () => {
-		const vault = createTestVault('Test vault', { protocol: 'Yearn', risk: 'Severe' });
-		expect(isEligibleFrontpageVault(vault)).toBe(true);
-	});
-
-	test('returns false for dangerous risk vaults', () => {
-		const vault = createTestVault('Test vault', { protocol: 'Yearn', risk: 'Dangerous' });
-		expect(isEligibleFrontpageVault(vault)).toBe(false);
-	});
-
-	test('returns false for unknown risk vaults', () => {
-		const vault = createTestVault('Test vault', { protocol: 'Yearn' });
-		expect(isEligibleFrontpageVault(vault)).toBe(false);
-	});
-
-	test('returns false for unknown protocol vaults', () => {
-		const vault = createTestVault('Test vault', {
-			protocol: '<protocol not yet identified>',
-			risk: 'Low'
-		});
-		expect(isEligibleFrontpageVault(vault)).toBe(false);
+	test.each([
+		['a known protocol with severe risk or safer', { protocol: 'Yearn', risk: 'Severe' }, true],
+		['a dangerous risk vault', { protocol: 'Yearn', risk: 'Dangerous' }, false],
+		['an unknown risk vault', { protocol: 'Yearn' }, false],
+		['an unknown protocol vault', { protocol: '<protocol not yet identified>', risk: 'Low' }, false]
+	] as const)('returns %s for %s', (_, props, expected) => {
+		expect(isEligibleFrontpageVault(createTestVault('Test vault', props))).toBe(expected);
 	});
 });
 
@@ -377,31 +363,18 @@ describe('isUnknownVaultProtocol', () => {
 });
 
 describe('meetsMinTvl', () => {
-	test('returns true when current_nav meets threshold', () => {
-		const vault = createTestVault('Test vault', { current_nav: 50_000 });
-		expect(meetsMinTvl(vault, 50_000)).toBe(true);
-	});
-
-	test('returns true when current_nav exceeds threshold', () => {
-		const vault = createTestVault('Test vault', { current_nav: 100_000 });
-		expect(meetsMinTvl(vault, 50_000)).toBe(true);
-	});
-
-	test('returns false when current_nav below threshold', () => {
-		const vault = createTestVault('Test vault', { current_nav: 49_999 });
-		expect(meetsMinTvl(vault, 50_000)).toBe(false);
-	});
-
-	test('returns false when current_nav is null', () => {
-		const vault = createTestVault('Test vault', { current_nav: null });
-		expect(meetsMinTvl(vault, 50_000)).toBe(false);
+	test.each([
+		['meets the threshold', 50_000, 50_000, true],
+		['exceeds the threshold', 100_000, 50_000, true],
+		['is below the threshold', 49_999, 50_000, false],
+		['is null', null, 50_000, false]
+	])('current_nav %s', (_, current_nav, threshold, expected) => {
+		expect(meetsMinTvl(createTestVault('Test vault', { current_nav }), threshold)).toBe(expected);
 	});
 
 	test('uses default threshold of 10,000', () => {
-		const vaultBelow = createTestVault('Vault above', { current_nav: 9_999 });
-		const vaultAbove = createTestVault('Vault below', { current_nav: 10_000 });
-		expect(meetsMinTvl(vaultBelow)).toBe(false);
-		expect(meetsMinTvl(vaultAbove)).toBe(true);
+		expect(meetsMinTvl(createTestVault('Test vault', { current_nav: 10_000 }))).toBe(true);
+		expect(meetsMinTvl(createTestVault('Test vault', { current_nav: 9_999 }))).toBe(false);
 	});
 });
 
@@ -772,54 +745,28 @@ describe('hasNetVaultFeeInformation', () => {
 });
 
 describe('getFeeModeLabel', () => {
-	test('returns "Unknown" for null', () => {
-		expect(getFeeModeLabel(null)).toBe('Unknown');
-	});
-
-	test('returns "Unknown" for undefined', () => {
-		expect(getFeeModeLabel(undefined)).toBe('Unknown');
-	});
-
-	test('returns label for internalised_skimming', () => {
-		expect(getFeeModeLabel('internalised_skimming')).toBe('Internalised (performance fee taken from closed positions)');
-	});
-
-	test('returns label for internalised_minting', () => {
-		expect(getFeeModeLabel('internalised_minting')).toBe('Internalised minting');
-	});
-
-	test('returns label for externalised', () => {
-		expect(getFeeModeLabel('externalised')).toBe('Externalised');
-	});
-
-	test('returns label for feeless', () => {
-		expect(getFeeModeLabel('feeless')).toBe('Feeless');
+	test.each([
+		[null, 'Unknown'],
+		[undefined, 'Unknown'],
+		['internalised_skimming', 'Internalised (performance fee taken from closed positions)'],
+		['internalised_minting', 'Internalised minting'],
+		['externalised', 'Externalised'],
+		['feeless', 'Feeless']
+	])('labels %s as %s', (mode, expected) => {
+		expect(getFeeModeLabel(mode)).toBe(expected);
 	});
 });
 
 describe('getFeeModeDescription', () => {
-	test('returns empty string for null', () => {
-		expect(getFeeModeDescription(null)).toBe('');
-	});
-
-	test('returns empty string for undefined', () => {
-		expect(getFeeModeDescription(undefined)).toBe('');
-	});
-
-	test('returns description for internalised_skimming', () => {
-		expect(getFeeModeDescription('internalised_skimming')).toContain('deducted from closed trades');
-	});
-
-	test('returns description for internalised_minting', () => {
-		expect(getFeeModeDescription('internalised_minting')).toContain('minting additional vault shares');
-	});
-
-	test('returns description for externalised', () => {
-		expect(getFeeModeDescription('externalised')).toContain('charged separately');
-	});
-
-	test('returns description for feeless', () => {
-		expect(getFeeModeDescription('feeless')).toContain('No fees');
+	test.each([
+		[null, ''],
+		[undefined, ''],
+		['internalised_skimming', 'deducted from closed trades'],
+		['internalised_minting', 'minting additional vault shares'],
+		['externalised', 'charged separately'],
+		['feeless', 'No fees']
+	])('describes %s', (mode, expected) => {
+		expect(getFeeModeDescription(mode)).toContain(expected);
 	});
 });
 

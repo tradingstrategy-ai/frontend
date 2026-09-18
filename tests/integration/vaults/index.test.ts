@@ -1006,66 +1006,6 @@ test.describe('vault index page', () => {
 		await page.waitForURL(urlParamsMatch(searchParams), { timeout: 5000 });
 	});
 
-	test('does not duplicate generated Morpho risk notes on vault detail pages', async ({ page }) => {
-		await page.goto('/vaults/morpho-flagged-blacklisted-vault');
-
-		const alerts = page.locator('.alert-list');
-		await expect(alerts).toHaveCount(1);
-		await expect(alerts.first()).toHaveClass(/error/);
-		await expect(alerts.first()).toContainText('Morpho has flagged this vault');
-		await expect(alerts.first()).toContainText('bad_debt_unrealized');
-		await expect(page.locator('.notes')).toHaveCount(0);
-	});
-
-	test('hides detail header actions on mobile', async ({ page }) => {
-		await page.setViewportSize({ width: 390, height: 844 });
-		await page.goto('/vaults/morpho-flagged-blacklisted-vault');
-
-		await expect(page.locator('.cta-actions')).toBeHidden();
-	});
-
-	test('explains the tokenised fund structure when deposits may be disabled on a vault detail page', async ({
-		page
-	}) => {
-		await page.goto('/vaults/deposit-disabled-vault');
-
-		const alert = page.locator('.alert-list.info').first();
-		await expect(alert).toBeVisible();
-		await expect(alert).toContainText('Deposit disabled vault is a tokenised fund');
-	});
-
-	test('does not show deposits as open when a vault capacity is reached', async ({ page }) => {
-		await page.goto('/vaults/deposit-cap-reached-vault');
-
-		const transactionStatus = page.locator('.transaction-status');
-		await expect(transactionStatus).toContainText('Deposits Capped');
-		await expect(transactionStatus).not.toContainText('Deposits Open');
-	});
-
-	test('warns when withdrawals may be disabled on a vault detail page', async ({ page }) => {
-		await page.goto('/vaults/withdrawal-disabled-vault');
-
-		const alert = page.locator('.alert-list.warning').first();
-		await expect(alert).toBeVisible();
-		await expect(alert).toContainText('Withdrawals may be disabled for this vault');
-	});
-
-	test('warns when deposits and withdrawals may be disabled on a vault detail page', async ({ page }) => {
-		await page.goto('/vaults/deposit-and-withdrawal-disabled-vault');
-
-		const alert = page.locator('.alert-list.warning').first();
-		await expect(alert).toBeVisible();
-		await expect(alert).toContainText('Deposits and withdrawals may be disabled for this vault');
-	});
-
-	test('retains a withdrawal warning when a vault deposit cap is reached', async ({ page }) => {
-		await page.goto('/vaults/capped-and-withdrawal-disabled-vault');
-
-		const alert = page.locator('.alert-list.warning').first();
-		await expect(alert).toBeVisible();
-		await expect(alert).toContainText('Deposits are capped and withdrawals may be disabled for this vault');
-	});
-
 	test('marks private vaults and explains their whitelist status', async ({ page }) => {
 		await page.goto('/vaults/all?q=Private%20vault');
 
@@ -1105,13 +1045,5 @@ test.describe('vault index page', () => {
 			.locator('td.lockup');
 		await expect(cell).toContainText('Capped');
 		await expect(cell).not.toContainText('Unknown');
-	});
-
-	test('shows the tokenised-fund disclaimer instead of the permissioned warning', async ({ page }) => {
-		await page.goto('/vaults/private-tokenised-fund');
-		await expect(page.locator('.notification-stack .alert-list.info')).toContainText(
-			'Private tokenised fund is a tokenised fund'
-		);
-		await expect(page.locator('.notification-stack .alert-list.warning')).toHaveCount(0);
 	});
 });

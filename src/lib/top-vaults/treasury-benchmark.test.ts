@@ -175,40 +175,18 @@ describe('fetchTreasuryBenchmarkSeries', () => {
 // --- isPerpetualFuturesVault ---
 
 describe('isPerpetualFuturesVault', () => {
-	test('detects perp via flag', () => {
-		expect(isPerpetualFuturesVault({ flags: ['perp_dex_trading_vault'], chain_id: 1 })).toBe(true);
-	});
-
-	test('detects HyperCore (9999) as perp', () => {
-		expect(isPerpetualFuturesVault({ flags: [], chain_id: 9999 })).toBe(true);
-	});
-
-	test('detects GRVT (325) as perp', () => {
-		expect(isPerpetualFuturesVault({ flags: [], chain_id: 325 })).toBe(true);
-	});
-
-	test('detects Lighter (9998) as perp', () => {
-		expect(isPerpetualFuturesVault({ flags: [], chain_id: 9998 })).toBe(true);
-	});
-
-	test('detects Hibachi (9997) as perp', () => {
-		expect(isPerpetualFuturesVault({ flags: [], chain_id: 9997 })).toBe(true);
-	});
-
-	test('detects ApeX (9995) as perp', () => {
-		expect(isPerpetualFuturesVault({ flags: [], chain_id: 9995 })).toBe(true);
-	});
-
-	test('HyperEVM (999) is NOT perp', () => {
-		expect(isPerpetualFuturesVault({ flags: [], chain_id: 999 })).toBe(false);
-	});
-
-	test('regular Ethereum vault is NOT perp', () => {
-		expect(isPerpetualFuturesVault({ flags: [], chain_id: 1 })).toBe(false);
-	});
-
-	test('flag takes priority over non-perp chain_id', () => {
-		expect(isPerpetualFuturesVault({ flags: ['perp_dex_trading_vault', 'beta'], chain_id: 1 })).toBe(true);
+	test.each([
+		['the perp flag on a non-perp chain', { flags: ['perp_dex_trading_vault'], chain_id: 1 }, true],
+		['the perp flag alongside other flags', { flags: ['perp_dex_trading_vault', 'beta'], chain_id: 1 }, true],
+		['HyperCore (9999)', { flags: [], chain_id: 9999 }, true],
+		['GRVT (325)', { flags: [], chain_id: 325 }, true],
+		['Lighter (9998)', { flags: [], chain_id: 9998 }, true],
+		['Hibachi (9997)', { flags: [], chain_id: 9997 }, true],
+		['ApeX (9995)', { flags: [], chain_id: 9995 }, true],
+		['HyperEVM (999)', { flags: [], chain_id: 999 }, false],
+		['a regular Ethereum vault', { flags: [], chain_id: 1 }, false]
+	])('returns %s for %s', (_, vault, expected) => {
+		expect(isPerpetualFuturesVault(vault)).toBe(expected);
 	});
 });
 

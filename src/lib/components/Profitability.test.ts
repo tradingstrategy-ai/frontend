@@ -99,16 +99,12 @@ describe('getProfitInfo', () => {
 	describe('getLabel() method', () => {
 		const labels = ['loss', 'no change', 'profit'];
 
-		test('should return first arg for negative values', () => {
-			expect(getProfitInfo(-0.01).getLabel(...labels)).toBe('loss');
-		});
-
-		test('should return second arg for negative values', () => {
-			expect(getProfitInfo(0).getLabel(...labels)).toBe('no change');
-		});
-
-		test('should return first arg for negative values', () => {
-			expect(getProfitInfo(0.01).getLabel(...labels)).toBe('profit');
+		test.each([
+			[-0.01, 'loss'],
+			[0, 'no change'],
+			[0.01, 'profit']
+		])('should return the matching label for %s', (value, expected) => {
+			expect(getProfitInfo(value).getLabel(...labels)).toBe(expected);
 		});
 	});
 });
