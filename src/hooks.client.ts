@@ -1,7 +1,32 @@
-import type { ClientInit } from '@sveltejs/kit';
+import type { ClientInit, HandleClientError } from '@sveltejs/kit';
 import * as Sentry from '@sentry/sveltekit';
+import { isModuleLoadError, shouldAbortReload } from '$lib/helpers/hydration-reload-guard';
 
-export const handleError = Sentry.handleErrorWithSentry();
+/**
+ * Client-side error hook.
+ *
+ * Besides producing the `App.Error` shape for the error page, this breaks the reload loop that
+ * an edge-cached page falls into when the origin is down and one of the page's JavaScript
+ * chunks is missing from the edge cache. SvelteKit calls this hook *before* its fallback
+ * (`location.href = url`), so it is the only place the loop can be interrupted. Throwing here
+ * rejects `_hydrate()`, which stops hydration and leaves the server-rendered HTML readable.
+ * Why this is needed and how the loop arises is documented in
+ * `$lib/helpers/hydration-reload-guard` and `docs/cache-invalidation.md`.
+ *
+ * The guard allows SvelteKit's first reload and only throws on a repeat failure of the same
+ * URL, so a transient chunk failure still recovers by itself.
+ */
+const handleClientError: HandleClientError = ({ error, event, message }) => {
+	if (isModuleLoadError(error) && shouldAbortReload(event.url.href, sessionStorage)) {
+		console.error('Page assets are unavailable and a reload did not help; showing the static page instead.', error);
+		throw error;
+	}
+	// Same shape SvelteKit produces by default when no hook is defined
+	return { message };
+};
+
+// Sentry captures the error first, then delegates to our handler (throws propagate).
+export const handleError = Sentry.handleErrorWithSentry(handleClientError);
 
 // Sentry.init must run inside `init` with a dynamic import of $env/dynamic/public.
 // A static top-level import causes the env module to be evaluated at hook module

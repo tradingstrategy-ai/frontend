@@ -127,6 +127,31 @@ curl -sI https://tradingstrategy.ai/ | grep -i cf-cache-status
 
 The `Cache-Control: public, max-age=N` header tells Cloudflare how long to cache. The origin server (SvelteKit) sends uncompressed HTML; Cloudflare compresses at the edge.
 
+## Edge-cached pages when the origin is down
+
+An edge-cached page keeps being served by Cloudflare while the Node origin is unreachable, but
+only the resources already in that edge's cache are available. Hydration needs the page's
+JavaScript chunks (`/_app/immutable/nodes/*.js`); if one of them is not cached at that edge the
+request reaches the dead origin and fails.
+
+SvelteKit's reaction to a failed chunk import during hydration is to render its error page,
+which needs the root layout's server data (`/__data.json`). That fails too, and SvelteKit falls
+back to a full reload of the same URL on the assumption that the origin will render an error
+page. With a cached page and a dead origin the reload serves the same HTML, which fails to
+hydrate the same way — an infinite reload loop. The chain, as seen in the origin log:
+
+```text
+GET /                                          ← cached HTML
+GET /_app/immutable/nodes/19.<hash>.js         ← 502
+GET /__data.json?x-sveltekit-invalidated=1     ← 502
+GET /                                          ← location.href = url, repeat
+```
+
+`src/hooks.client.ts` breaks the loop with `$lib/helpers/hydration-reload-guard`: SvelteKit's
+first reload is allowed (it resolves transient failures), and a repeat module-load failure of
+the same URL within a minute aborts hydration instead, leaving the server-rendered HTML readable
+with plain links. Nothing else, including `/_app/version.json`, is fetched during hydration.
+
 ## Data freshness
 
 - **Vault data**: The backend API updates vault metrics roughly hourly. The landing page caches for 30 minutes, so vault data is at most ~1.5 hours stale in the worst case.

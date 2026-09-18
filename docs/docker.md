@@ -66,11 +66,11 @@ docker-compose logs frontend
 
 Check out the `master` branch locally.
 
-Then run [../scripts/release.bash](release.bash).
+Then run [scripts/release.sh](../scripts/release.sh).
 
 #### Creating production tag manually
 
-Any tag starting with `v` is consired a production tag.
+Any tag starting with `v` is considered a production tag.
 [You can view existing tags here](https://github.com/tradingstrategy-ai/frontend/pkgs/container/frontend).
 
 Production tags are a sequential series of versions:
@@ -294,3 +294,21 @@ For more information, see [host.docker.internal on Linux](https://stackoverflow.
 ```shell
 docker build .
 ```
+
+The serve stage of the `Dockerfile` copies an explicit list of files from the build stage:
+`package.json`, `node_modules`, `build/` and the runtime scripts under `scripts/`. If
+`scripts/server.js` gains a new import, add that file to the `COPY` list as well — the image
+builds fine without it and only fails at container start with
+`ERR_MODULE_NOT_FOUND … /app/scripts/<file>.js`. Smoke-test a new image by starting it:
+
+```shell
+docker run --rm -p 3000:3000 \
+  -e TS_PUBLIC_STRATEGIES='[]' \
+  -e TS_PUBLIC_BACKEND_URL=https://tradingstrategy.ai/api \
+  -e TS_PUBLIC_BACKEND_INTERNAL_URL=https://tradingstrategy.ai/api \
+  <image>
+```
+
+and checking that `Listening on port 3000` appears (after a few "not configured" warnings) instead
+of a module error, and that `curl -sI http://localhost:3000/diagnostics` returns `200`. The repo
+`.env` cannot be passed as `--env-file`: Docker's env-file parser rejects its multi-line JSON values.
