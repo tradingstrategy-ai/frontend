@@ -9,13 +9,7 @@ test.describe('vault yield / chain scatter plot page', () => {
 		// Page title
 		await expect(page.locator('h1')).toContainText('scatter plot');
 
-		// Vault listings navigation with active Charts dropdown
-		const nav = page.locator('.vault-listings-selector');
-		await expect(nav).toBeVisible();
-		const trigger = nav.locator('button', { hasText: 'Charts' });
-		await expect(trigger).toHaveClass(/active/);
-
-		// Scatter plot selector links
+		// in-page "See charts" link row (ScatterPlotSelector), distinct from the Charts nav dropdown
 		const selector = page.locator('.scatter-plot-selector');
 		await expect(selector).toBeVisible();
 		await expect(selector.locator('a')).toHaveCount(11);

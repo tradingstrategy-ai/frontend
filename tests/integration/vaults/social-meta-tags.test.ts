@@ -64,109 +64,50 @@ async function imageHasCardContent(page: Page, src: string) {
 	);
 }
 
+/** Every page must carry the same site-wide Open Graph and Twitter card scaffolding. */
+async function expectSiteSocialTags(page: Page) {
+	await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /.+/);
+	await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', /.+/);
+	await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', /.+/);
+	await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute('content', 'Trading Strategy');
+	await expect(page.locator('meta[property="og:type"]')).toHaveAttribute('content', 'website');
+	await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
+	await expect(page.locator('meta[name="twitter:site"]')).toHaveAttribute('content', '@TradingProtocol');
+	await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute('content', /.+/);
+	await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute('content', /.+/);
+}
+
+// `head-meta.test.ts` owns the title, description length and "exactly one og:image" contract; this
+// file owns the social card itself — tag values, image URL, decode and card content.
 test.describe('vault social meta tags', () => {
-	test.describe('vault index page', () => {
-		test.beforeEach(async ({ page }) => {
-			await page.goto('/vaults');
-		});
+	test('vault index page uses the Trading Strategy card with a decodable 1200×630 image', async ({ page }) => {
+		await page.goto('/vaults');
 
-		test('has open graph meta tags', async ({ page }) => {
-			await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /.+/);
-			await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', /.+/);
-			await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', /.+/);
-			await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute('content', 'Trading Strategy');
-			await expect(page.locator('meta[property="og:type"]')).toHaveAttribute('content', 'website');
-		});
+		await expectSiteSocialTags(page);
+		await expectSocialCardImage(page, /\/social-card\/trading-strategy$/);
+		await expect(page.locator('meta[property="og:image:type"]')).toHaveAttribute('content', 'image/png');
+		await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute('content', '1200');
+		await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute('content', '630');
+		const src = await page.locator('meta[property="og:image"]').getAttribute('content');
 
-		test('uses the Trading Strategy image for social card previews', async ({ page }) => {
-			await expectSocialCardImage(page, /\/social-card\/trading-strategy$/);
-			await expect(page.locator('meta[property="og:image:type"]')).toHaveAttribute('content', 'image/png');
-			await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute('content', '1200');
-			await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute('content', '630');
-			const src = await page.locator('meta[property="og:image"]').getAttribute('content');
-
-			expect(await getImageDimensions(page, src!)).toEqual({ width: 1200, height: 630 });
-			expect(await imageHasCardContent(page, src!)).toBe(true);
-		});
-
-		test('has twitter card meta tags', async ({ page }) => {
-			await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
-			await expect(page.locator('meta[name="twitter:site"]')).toHaveAttribute('content', '@TradingProtocol');
-			await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute('content', /.+/);
-			await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute('content', /.+/);
-		});
+		expect(await getImageDimensions(page, src!)).toEqual({ width: 1200, height: 630 });
+		expect(await imageHasCardContent(page, src!)).toBe(true);
 	});
 
-	test.describe('high TVL listing page', () => {
-		test.beforeEach(async ({ page }) => {
-			await page.goto('/vaults/high-tvl');
-		});
+	// the same generated card as `/vaults`, so only the tags and image URL are checked here
+	for (const path of ['/vaults/high-tvl', '/vaults/new-vaults', '/vaults/stablecoins']) {
+		test(`${path} carries social tags and never leaves the card image empty`, async ({ page }) => {
+			await page.goto(path);
 
-		test('has open graph meta tags', async ({ page }) => {
-			await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /.+/);
-			await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', /.+/);
-			await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute('content', 'Trading Strategy');
-		});
-
-		test('has twitter card meta tags', async ({ page }) => {
-			await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
-			await expect(page.locator('meta[name="twitter:site"]')).toHaveAttribute('content', '@TradingProtocol');
-		});
-
-		test('never leaves the social card preview image empty', async ({ page }) => {
+			await expectSiteSocialTags(page);
 			await expectSocialCardImage(page, /\/social-card\/trading-strategy$/);
 		});
-	});
-
-	test.describe('new vaults listing page', () => {
-		test.beforeEach(async ({ page }) => {
-			await page.goto('/vaults/new-vaults');
-		});
-
-		test('has open graph meta tags', async ({ page }) => {
-			await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /.+/);
-			await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', /.+/);
-			await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute('content', 'Trading Strategy');
-		});
-
-		test('has twitter card meta tags', async ({ page }) => {
-			await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
-			await expect(page.locator('meta[name="twitter:site"]')).toHaveAttribute('content', '@TradingProtocol');
-		});
-
-		test('never leaves the social card preview image empty', async ({ page }) => {
-			await expectSocialCardImage(page, /\/social-card\/trading-strategy$/);
-		});
-	});
-
-	test.describe('stablecoin listing page', () => {
-		test.beforeEach(async ({ page }) => {
-			await page.goto('/vaults/stablecoins');
-		});
-
-		test('has open graph meta tags', async ({ page }) => {
-			await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /.+/);
-			await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', /.+/);
-			await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute('content', 'Trading Strategy');
-			await expect(page.locator('meta[property="og:type"]')).toHaveAttribute('content', 'website');
-		});
-
-		test('has twitter card meta tags', async ({ page }) => {
-			await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
-			await expect(page.locator('meta[name="twitter:site"]')).toHaveAttribute('content', '@TradingProtocol');
-		});
-
-		test('never leaves the social card preview image empty', async ({ page }) => {
-			await expectSocialCardImage(page, /\/social-card\/trading-strategy$/);
-		});
-	});
+	}
 
 	test.describe('stablecoin detail page', () => {
-		test.beforeEach(async ({ page }) => {
+		test('uses the stablecoin metadata for tags, logo image, JSON-LD and description box', async ({ page }) => {
 			await page.goto('/vaults/stablecoins/usdc');
-		});
 
-		test('has open graph meta tags with metadata description', async ({ page }) => {
 			await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
 				'content',
 				'USD Coin (Circle) USDC stablecoin vaults | Trading Strategy'
@@ -176,25 +117,10 @@ test.describe('vault social meta tags', () => {
 				/fully-reserved|stablecoin/i
 			);
 			await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute('content', 'Trading Strategy');
-		});
-
-		test('has open graph image from stablecoin logo', async ({ page }) => {
-			await expectSocialCardImage(page, stablecoinLogoUrlPattern);
-		});
-
-		test('has twitter card with large image when logo available', async ({ page }) => {
 			await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
 			await expect(page.locator('meta[name="twitter:site"]')).toHaveAttribute('content', '@TradingProtocol');
-			await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', stablecoinLogoUrlPattern);
-		});
+			await expectSocialCardImage(page, stablecoinLogoUrlPattern);
 
-		test('uses the Trading Strategy image when no stablecoin logo is available', async ({ page }) => {
-			await page.goto('/vaults/stablecoins/usd-offchain');
-
-			await expectSocialCardImage(page, /\/social-card\/trading-strategy$/);
-		});
-
-		test('has JSON-LD structured data with FinancialProduct about block', async ({ page }) => {
 			const jsonLd = page.locator('script[type="application/ld+json"]');
 			const content = await jsonLd.textContent();
 			expect(content).toBeTruthy();
@@ -206,13 +132,29 @@ test.describe('vault social meta tags', () => {
 			expect(data.about.name).toContain('USDC');
 			expect(data.about.category).toBe('stablecoin');
 			expect(data.about.sameAs).toEqual(expect.arrayContaining([expect.stringContaining('coingecko')]));
-		});
 
-		test('renders stablecoin description box', async ({ page }) => {
 			await expect(page).toHaveTitle('USD Coin (Circle) USDC stablecoin vaults | Trading Strategy');
 			await expect(page.locator('h1')).toContainText('USD Coin (Circle) USDC stablecoin vaults');
 			await expect(page.locator('text=About USD Coin')).toBeVisible();
 			await expect(page.locator('text=fully-reserved')).toBeVisible();
+		});
+
+		test('uses the Trading Strategy image when no stablecoin logo is available', async ({ page }) => {
+			await page.goto('/vaults/stablecoins/usd-offchain');
+
+			await expectSocialCardImage(page, /\/social-card\/trading-strategy$/);
+		});
+
+		test('renders a zero-vault stablecoin from metadata instead of a 404', async ({ page }) => {
+			await page.goto('/vaults/stablecoins/frax');
+
+			await expect(page).not.toHaveTitle(/404|not found/i);
+			await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /Frax/i);
+			await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
+				'content',
+				/fractional-algorithmic/i
+			);
+			await expect(page.locator('text=About Frax')).toBeVisible();
 		});
 	});
 
@@ -230,12 +172,17 @@ test.describe('vault social meta tags', () => {
 			expect(response?.headers()['content-type']).toMatch(/^image\/png/);
 		});
 
-		test('rejects external fallback redirects', async ({ page }) => {
-			const response = await page.request.get('/social-card/vault/missing?fallback=https://example.com/image.png', {
-				maxRedirects: 0
-			});
+		test('rejects external fallback redirects and malformed vault IDs', async ({ page }) => {
+			const externalFallback = await page.request.get(
+				'/social-card/vault/missing?fallback=https://example.com/image.png',
+				{ maxRedirects: 0 }
+			);
+			expect(externalFallback.status()).toBe(400);
 
-			expect(response.status()).toBe(400);
+			const malformedId = await page.request.get(
+				'/social-card/vault/not.a-vault?fallback=/social-card/trading-strategy'
+			);
+			expect(malformedId.status()).toBe(400);
 		});
 
 		test('accepts normalised curator and protocol fallbacks for their vaults', async ({ page }) => {
@@ -262,12 +209,6 @@ test.describe('vault social meta tags', () => {
 
 			expect(curatorResponse.headers()['content-type']).toMatch(/^image\/png/);
 			expect(protocolResponse.headers()['content-type']).toMatch(/^image\/png/);
-		});
-
-		test('rejects malformed vault IDs', async ({ page }) => {
-			const response = await page.request.get('/social-card/vault/not.a-vault?fallback=/social-card/trading-strategy');
-
-			expect(response.status()).toBe(400);
 		});
 
 		test('serves sparklines for colon-containing vault IDs', async ({ page }) => {
@@ -305,28 +246,6 @@ test.describe('vault social meta tags', () => {
 			const src = await page.locator('meta[property="og:image"]').getAttribute('content');
 
 			expect(await imageHasCardContent(page, src!)).toBe(true);
-		});
-	});
-
-	test.describe('zero-vault stablecoin detail page', () => {
-		test.beforeEach(async ({ page }) => {
-			await page.goto('/vaults/stablecoins/frax');
-		});
-
-		test('renders without 404', async ({ page }) => {
-			await expect(page).not.toHaveTitle(/404|not found/i);
-		});
-
-		test('has open graph meta tags from metadata', async ({ page }) => {
-			await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /Frax/i);
-			await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
-				'content',
-				/fractional-algorithmic/i
-			);
-		});
-
-		test('renders stablecoin description box', async ({ page }) => {
-			await expect(page.locator('text=About Frax')).toBeVisible();
 		});
 	});
 });

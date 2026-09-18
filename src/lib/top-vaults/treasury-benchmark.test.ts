@@ -175,40 +175,26 @@ describe('fetchTreasuryBenchmarkSeries', () => {
 // --- isPerpetualFuturesVault ---
 
 describe('isPerpetualFuturesVault', () => {
-	test('detects perp via flag', () => {
-		expect(isPerpetualFuturesVault({ flags: ['perp_dex_trading_vault'], chain_id: 1 })).toBe(true);
-	});
-
-	test('detects HyperCore (9999) as perp', () => {
-		expect(isPerpetualFuturesVault({ flags: [], chain_id: 9999 })).toBe(true);
-	});
-
-	test('detects GRVT (325) as perp', () => {
-		expect(isPerpetualFuturesVault({ flags: [], chain_id: 325 })).toBe(true);
-	});
-
-	test('detects Lighter (9998) as perp', () => {
-		expect(isPerpetualFuturesVault({ flags: [], chain_id: 9998 })).toBe(true);
-	});
-
-	test('detects Hibachi (9997) as perp', () => {
-		expect(isPerpetualFuturesVault({ flags: [], chain_id: 9997 })).toBe(true);
-	});
-
-	test('detects ApeX (9995) as perp', () => {
-		expect(isPerpetualFuturesVault({ flags: [], chain_id: 9995 })).toBe(true);
-	});
-
-	test('HyperEVM (999) is NOT perp', () => {
-		expect(isPerpetualFuturesVault({ flags: [], chain_id: 999 })).toBe(false);
-	});
-
-	test('regular Ethereum vault is NOT perp', () => {
-		expect(isPerpetualFuturesVault({ flags: [], chain_id: 1 })).toBe(false);
-	});
-
-	test('flag takes priority over non-perp chain_id', () => {
-		expect(isPerpetualFuturesVault({ flags: ['perp_dex_trading_vault', 'beta'], chain_id: 1 })).toBe(true);
+	test.each([
+		{
+			vault: 'the perp flag on a non-perp chain',
+			input: { flags: ['perp_dex_trading_vault'], chain_id: 1 },
+			expected: true
+		},
+		{
+			vault: 'the perp flag alongside other flags',
+			input: { flags: ['perp_dex_trading_vault', 'beta'], chain_id: 1 },
+			expected: true
+		},
+		{ vault: 'HyperCore (9999)', input: { flags: [], chain_id: 9999 }, expected: true },
+		{ vault: 'GRVT (325)', input: { flags: [], chain_id: 325 }, expected: true },
+		{ vault: 'Lighter (9998)', input: { flags: [], chain_id: 9998 }, expected: true },
+		{ vault: 'Hibachi (9997)', input: { flags: [], chain_id: 9997 }, expected: true },
+		{ vault: 'ApeX (9995)', input: { flags: [], chain_id: 9995 }, expected: true },
+		{ vault: 'HyperEVM (999)', input: { flags: [], chain_id: 999 }, expected: false },
+		{ vault: 'a regular Ethereum vault', input: { flags: [], chain_id: 1 }, expected: false }
+	])('returns $expected for $vault', ({ input, expected }) => {
+		expect(isPerpetualFuturesVault(input)).toBe(expected);
 	});
 });
 

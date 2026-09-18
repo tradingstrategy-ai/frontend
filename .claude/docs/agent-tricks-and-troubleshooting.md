@@ -17,19 +17,61 @@ review or debug work produced by another.
 
 Use Grok as an independent reviewer with a single, read-only prompt. Prefer
 headless `grok -p` invocations with `--permission-mode dontAsk`, explicitly
-allow only read-only tools, disable subagents, and use a 15-minute timeout for
-non-trivial reviews. Do not ask Grok to edit the worktree during a review.
+allow only read-only tools, disable subagents, and run it in the background
+under the 45-minute hard cap with the inactivity watcher from
+[Streaming, monitoring and timeouts](#streaming-monitoring-and-timeouts). Do not
+ask Grok to edit the worktree during a review.
 
 ```shell
-timeout 900 grok -p "Review the current PR diff for correctness bugs only. Do not edit files or run tests. Return findings first with file:line references." \
+timeout 2700 grok -p "Review the current PR diff for correctness bugs only. Do not edit files or run tests. Return findings first with file:line references." \
   --cwd . \
   --permission-mode dontAsk \
   --allow "Read,Grep,Glob,Bash(git status:*),Bash(git diff:*),Bash(sed:*),Bash(rg:*)" \
   --no-subagents \
   --no-memory \
+  --max-turns 80 \
   --output-format streaming-json \
-  < /dev/null > /tmp/grok-review.jsonl
+  < /dev/null > /tmp/grok-review.jsonl 2> /tmp/grok-review.err &
 ```
+
+Pass `-m grok-4.6` (or `grok-4.5`) to pin the model and `--reasoning-effort
+xhigh` (alias `--effort`) for a deeper review; `grok models` lists what is
+available. An xhigh review of a 30-file diff takes 15–25 minutes and 80–100
+tool calls, so a fixed 15-minute `timeout` kills it mid-review — hence the
+45-minute cap and the inactivity rule.
+
+In the prompt, tell Grok to use only its `read_file`, `grep` and `list_dir`
+tools and to avoid pipes, `;`, `&&` and multi-line shell commands (see the
+`cancelled` failure mode below), and give it a tool-call budget.
+
+Progress and the result are read from the JSONL stream:
+
+```shell
+wc -l /tmp/grok-review.jsonl                                   # growing = working
+grep -o '"toolName":"[a-z_]*"' /tmp/grok-review.jsonl | sort | uniq -c
+grep -c '"type":"end"' /tmp/grok-review.jsonl                  # 1 = finished
+grep -o '"stopReason":"[a-z_]*"' /tmp/grok-review.jsonl        # end_turn = clean finish
+```
+
+The final answer is the `type: "text"` events emitted after the last
+`tool_call_update`; there is no separate `content`/`result` event. Concatenate
+their `data` fields.
+
+### A Grok review ends with `stopReason: "cancelled"` and no findings
+
+Under `--permission-mode dontAsk`, any tool call that the `--allow` list does not
+match is treated as a user cancellation and **terminates the whole session**: the
+JSONL stream ends with `{"type":"end","stopReason":"cancelled",...}` and the
+exit code is still 0. The usual trigger is Grok composing a compound shell
+command (`rg ... | awk ...; echo ...` or a multi-line script) through
+`run_terminal_command`, which no `Bash(rg:*)`-style rule matches.
+
+Avoid it by telling Grok in the prompt to use only its `read_file`, `grep` and
+`list_dir` tools and never pipes, `;`, `&&` or multi-line commands, and by
+giving it a tool-call budget. Check the last `tool_call_update` in the JSONL for
+`"User cancelled the execution"` to confirm this was the cause. A single denial
+does not always end the session — Grok sometimes falls back to `read_file` —
+but a run whose stream ends right after one has been cancelled, not completed.
 
 ## Codex CLI
 
@@ -143,11 +185,12 @@ Claude CLI is useful for independent second opinions, code reviews, background a
 
 ### Review timeout policy
 
-Every Claude CLI or Codex CLI review request must have an execution timeout of
-**at least 15 minutes**. Large diffs may take several minutes to inspect, and
-streaming output can remain quiet while the reviewer reads targeted files. Do
-not terminate a review merely because it has produced no final answer within a
-minute; check its stream or raw output file while allowing the full timeout.
+Every Claude CLI or Codex CLI review follows
+[Streaming, monitoring and timeouts](#streaming-monitoring-and-timeouts): stream
+to a file, treat the run as hung only after **15 minutes without new output**,
+and hard-cap it at **45 minutes**. Large diffs take several minutes to inspect
+and the stream can be quiet for a while as the reviewer reads targeted files;
+do not terminate a review merely because it has produced no final answer yet.
 
 For review tools that expose their own timeout option, pass a value of 15
 minutes or greater, for example:
@@ -291,9 +334,11 @@ claude -p "Review .claude/plans/my-plan.md for correctness and completeness. Foc
   --verbose
 ```
 
-If a grounded review has not produced output, inspect its stream or raw output
-file while allowing the required 15-minute timeout. Only then switch to the
-no-tools inline review unless fresh repository inspection is strictly required.
+If a grounded review has not produced a final answer, inspect its stream or raw
+output file: while the file is still growing the review is working. Switch to the
+no-tools inline review only after the stream has been silent for 15 minutes (or
+the 45-minute cap has fired) and fresh repository inspection is not strictly
+required.
 
 Notes:
 
@@ -335,6 +380,61 @@ Avoid asking for broad "thoughts" on a large diff. Ask for a scoped review:
 - security or money-movement risks
 - repository instruction compliance
 
+## Streaming, monitoring and timeouts
+
+These rules apply to every Grok, Claude or Codex CLI run from another agent.
+
+**Stream to a file, in the background.** Use the CLI's streaming JSON mode and
+redirect stdout to a raw file; never pipe through `tail`/`head` (buffering) and
+never run text mode in the background (the file stays at 0 bytes until the end).
+
+| CLI    | Streaming flag                          |
+| ------ | --------------------------------------- |
+| Grok   | `--output-format streaming-json`        |
+| Claude | `--output-format stream-json --verbose` |
+| Codex  | `codex exec --json`                     |
+
+**Monitor the stream, not the exit.** Progress is the file growing with new
+tool-call, reasoning or text events. Check its line count or modification time,
+not whether a final answer has appeared.
+
+**Two timers.**
+
+1. _Inactivity timeout — 15 minutes._ A run is hung only when its output file
+   has not changed for 15 minutes. A run that is still emitting events is
+   working, however long it has been going; leave it alone.
+2. _Hard cap — 45 minutes._ Wrap the process in `timeout 2700` so a genuinely
+   stuck or runaway agent cannot hold the session indefinitely. If the cap
+   fires, read the partial stream (findings are often already present in
+   `thought`/reasoning events), then re-run with a tighter tool-call budget or a
+   narrower prompt.
+
+Do not use a fixed short `timeout` (e.g. `timeout 900`) as the only control: it
+kills productive long reviews and cannot tell a slow reviewer from a stuck one.
+
+Watcher loop for the inactivity timer (macOS `stat -f %m`; on Linux use
+`stat -c %Y`):
+
+```shell
+f=/tmp/grok-review.jsonl
+last=$(stat -f %m "$f")
+while pgrep -f "grok -p" > /dev/null; do
+  sleep 30
+  now=$(stat -f %m "$f")
+  if [ "$now" != "$last" ]; then last=$now; continue; fi
+  if [ $(( $(date +%s) - last )) -ge 900 ]; then
+    echo "stalled: no output for 15 minutes"
+    pkill -f "grok -p"
+    break
+  fi
+done
+grep -q '"type":"end"' "$f" && echo finished
+```
+
+Substitute `claude -p` or `codex exec` in `pgrep`/`pkill` for the other CLIs.
+From Claude Code, run the agent with `run_in_background` and use the same
+`until`-loop or a `Monitor` on the file instead of foreground `sleep`.
+
 ## Common failure modes
 
 ### The command looks hung
@@ -350,6 +450,10 @@ Causes:
 - The model is doing a long review or reading a large diff.
 - The prompt caused the agent to paste a huge diff into context.
 - A subprocess is waiting for input or a permission decision.
+
+Tell the two apart with the inactivity rule in
+[Streaming, monitoring and timeouts](#streaming-monitoring-and-timeouts): a
+stream that is still growing is not hung.
 
 Avoid it:
 

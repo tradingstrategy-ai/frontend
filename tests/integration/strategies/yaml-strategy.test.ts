@@ -3,15 +3,10 @@ import { expect, test } from '@playwright/test';
 const BASE = '/strategies/trading-strategy-ichiv3-ls-2';
 
 test.describe('YAML-configured strategy', () => {
-	test('should appear in the strategies listing', async ({ page }) => {
+	test('should appear in the strategies listing with vault metrics in the tile', async ({ page }) => {
 		await page.goto('/strategies');
 
-		const heading = page.getByRole('heading', { name: 'ICHI v3 Liquidity Strategy' });
-		await expect(heading).toBeVisible();
-	});
-
-	test('should display vault metrics in the strategy tile', async ({ page }) => {
-		await page.goto('/strategies');
+		await expect(page.getByRole('heading', { name: 'ICHI v3 Liquidity Strategy' })).toBeVisible();
 
 		const tile = page.locator('[data-testid="strategy-tiles"]').filter({ hasText: 'ICHI v3 Liquidity Strategy' });
 		await expect(tile).toBeVisible();
@@ -21,39 +16,24 @@ test.describe('YAML-configured strategy', () => {
 		await expect(tile).toContainText('Sharpe');
 	});
 
-	test('should render the overview page', async ({ page }) => {
+	test('should render the overview page with vault metrics, navigation and freshness debug data', async ({ page }) => {
 		const response = await page.goto(BASE);
 		expect(response?.status()).toBe(200);
 
 		await expect(page.getByRole('heading', { name: 'ICHI v3 Liquidity Strategy' })).toBeVisible();
-	});
+		await expect(page.getByText('Total value locked')).toBeVisible();
+		await expect(page.getByText('$500')).toBeVisible();
+		await expect(page.getByText('Annual return')).toBeVisible();
 
-	test('should expose hidden freshness debug data on the strategy page', async ({ page }) => {
-		await page.goto(BASE);
+		const menu = page.locator('nav.strategy-nav .menu-wrapper');
+		for (const label of ['Overview', 'Performance', 'Description', 'Vault info', 'Fees']) {
+			await expect(menu.getByText(label)).toBeVisible();
+		}
 
 		const debugData = page.locator('[data-debug-freshness="yaml-strategy:trading-strategy-ichiv3-ls-2"]');
 		await expect(debugData).toHaveCount(1);
 		await expect(debugData).toContainText('topVaultsFeed');
 		await expect(debugData).toContainText('vaultChart');
-	});
-
-	test('should display vault metrics on the overview page', async ({ page }) => {
-		await page.goto(BASE);
-
-		await expect(page.getByText('Total value locked')).toBeVisible();
-		await expect(page.getByText('$500')).toBeVisible();
-		await expect(page.getByText('Annual return')).toBeVisible();
-	});
-
-	test('should show left-side navigation with all pages', async ({ page }) => {
-		await page.goto(BASE);
-
-		const menu = page.locator('nav.strategy-nav .menu-wrapper');
-		await expect(menu.getByText('Overview')).toBeVisible();
-		await expect(menu.getByText('Performance')).toBeVisible();
-		await expect(menu.getByText('Description')).toBeVisible();
-		await expect(menu.getByText('Vault info')).toBeVisible();
-		await expect(menu.getByText('Fees')).toBeVisible();
 	});
 
 	test('should render the performance page with period metrics table', async ({ page }) => {

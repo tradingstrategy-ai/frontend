@@ -55,45 +55,23 @@ test.describe('historical vault TVL by chain chart data endpoint', () => {
 });
 
 test.describe('historical vault TVL by chain page', () => {
-	test.beforeEach(async ({ page }) => {
-		await page.goto('/vaults/historical-tvl-chain');
-	});
+	test('renders the ECharts chart canvas without JavaScript errors', async ({ page }) => {
+		const errors: string[] = [];
+		page.on('pageerror', (err) => errors.push(err.message));
 
-	test('renders the ECharts chart canvas', async ({ page }) => {
+		await page.goto('/vaults/historical-tvl-chain');
+
 		const plotWrapper = page.getByTestId('vault-scatter-plot');
 		await expect(plotWrapper).toBeVisible();
 
 		const chart = plotWrapper.locator('.chart-canvas canvas');
 		await expect(chart).toBeVisible({ timeout: 15000 });
 		await expectNativeHistoricalWatermark(page);
-	});
 
-	test('has vault listings navigation with active Charts dropdown', async ({ page }) => {
-		const nav = page.locator('.vault-listings-selector');
-		await expect(nav).toBeVisible();
-
-		const trigger = nav.locator('button', { hasText: 'Charts' });
-		await expect(trigger).toHaveClass(/active/);
-
-		await trigger.click();
-		const activeLink = page.locator('[role="menu"] a.active');
-		await expect(activeLink).toHaveText('Historical TVL by chain');
-	});
-
-	test('displays scatter plot selector with all chart links', async ({ page }) => {
+		// in-page "See charts" link row (ScatterPlotSelector), distinct from the Charts nav dropdown
 		const selector = page.locator('.scatter-plot-selector');
 		await expect(selector).toBeVisible();
 		await expect(selector.locator('a')).toHaveCount(11);
-	});
-
-	test('page has no JavaScript errors', async ({ page }) => {
-		const errors: string[] = [];
-		page.on('pageerror', (err) => errors.push(err.message));
-
-		await page.goto('/vaults/historical-tvl-chain');
-
-		const chart = page.getByTestId('vault-scatter-plot').locator('.chart-canvas canvas');
-		await expect(chart).toBeVisible({ timeout: 15000 });
 
 		expect(errors).toHaveLength(0);
 	});

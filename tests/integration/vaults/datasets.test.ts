@@ -1,10 +1,12 @@
 import { expect, test } from '@playwright/test';
+import { waitForHydration } from '../helpers';
 
 /** Must match VALID_API_KEY in tests/mocks/vault-api/files.mock.ts */
 const VALID_API_KEY = 'test-valid-api-key-12345';
 const INVALID_API_KEY = 'wrong-key-00000';
 
 async function submitApiKey(page: import('@playwright/test').Page, key: string, expectedStatus: number) {
+	await waitForHydration(page);
 	await page.getByLabel('Enter API key to enable download').fill(key);
 	const responsePromise = page.waitForResponse((response) => {
 		const url = new URL(response.url());
@@ -19,68 +21,57 @@ async function submitApiKey(page: import('@playwright/test').Page, key: string, 
 // ---------------------------------------------------------------------------
 
 test.describe('vault datasets page', () => {
-	test.beforeEach(async ({ page }) => {
+	test('lists the dataset catalogue and the unauthenticated download state', async ({ page }) => {
 		await page.goto('/vaults/datasets');
-		await page.waitForLoadState('networkidle');
-	});
 
-	// --- Page structure ---
-
-	test('renders with correct title', async ({ page }) => {
 		await expect(page).toHaveTitle('Vault datasets | Trading Strategy');
-	});
-
-	test('links to the vault file and data description', async ({ page }) => {
 		await expect(page.getByRole('link', { name: 'file and data description here' })).toHaveAttribute(
 			'href',
 			'https://tradingstrategy.ai/docs/overview/defi-vault-data.html'
 		);
-	});
 
-	test('shows dataset catalogue table with all expected columns', async ({ page }) => {
 		for (const col of ['Plan', 'Name', 'Description', 'Format', 'Size', 'Last updated', 'Links']) {
 			await expect(page.getByRole('columnheader', { name: col })).toBeVisible();
 		}
-	});
 
-	test('lists vault metadata and vault prices datasets', async ({ page }) => {
-		await expect(page.getByText('Vault metadata', { exact: true })).toBeVisible();
-		await expect(page.getByText('Vault prices', { exact: true })).toBeVisible();
-	});
+		for (const name of [
+			'Vault metadata',
+			'Vault prices',
+			'Crypto cleaned prices',
+			'Crypto metadata',
+			'Exchange rates',
+			'Vault metadata (sample)',
+			'Vault prices (sample)'
+		]) {
+			await expect(page.getByText(name, { exact: true })).toBeVisible();
+		}
 
-	test('lists Crypto and exchange-rate datasets', async ({ page }) => {
-		await expect(page.getByText('Crypto cleaned prices', { exact: true })).toBeVisible();
-		await expect(page.getByText('Crypto metadata', { exact: true })).toBeVisible();
-		await expect(page.getByText('Exchange rates', { exact: true })).toBeVisible();
-	});
-
-	test('lists free sample datasets', async ({ page }) => {
-		await expect(page.getByText('Vault metadata (sample)', { exact: true })).toBeVisible();
-		await expect(page.getByText('Vault prices (sample)', { exact: true })).toBeVisible();
-	});
-
-	test('marks Free and Pro datasets with coloured badges', async ({ page }) => {
 		await expect(page.locator('td.plan .data-badge.success').first()).toHaveText('Free');
 		await expect(page.locator('td.plan .data-badge.warning').first()).toHaveText('Pro');
-	});
 
-	test('shows expected filenames in dataset table', async ({ page }) => {
-		await expect(page.getByText('vault-metadata.json', { exact: true })).toBeVisible();
-		await expect(page.getByText('vault-historical.parquet', { exact: true })).toBeVisible();
-		await expect(page.getByText('crypto-cleaned-vault-prices-1d.parquet', { exact: true })).toBeVisible();
-		await expect(page.getByText('crypto-vault-metadata.json', { exact: true })).toBeVisible();
-		await expect(page.getByText('exchange-rates.parquet', { exact: true })).toBeVisible();
-	});
-
-	test('shows JSON and Parquet format labels', async ({ page }) => {
+		for (const filename of [
+			'vault-metadata.json',
+			'vault-historical.parquet',
+			'crypto-cleaned-vault-prices-1d.parquet',
+			'crypto-vault-metadata.json',
+			'exchange-rates.parquet'
+		]) {
+			await expect(page.getByText(filename, { exact: true })).toBeVisible();
+		}
 		await expect(page.getByRole('cell', { name: 'JSON', exact: true }).first()).toBeVisible();
 		await expect(page.getByRole('cell', { name: 'Parquet', exact: true }).first()).toBeVisible();
-	});
 
-	// --- Creem checkout redirect ---
-
-	test('does not show purchase message on a plain visit', async ({ page }) => {
+		// no purchase message on a plain visit
 		await expect(page.getByText('Thank you for your purchase')).toHaveCount(0);
+
+		// API key form before a key is entered; disabled downloads render as <span> elements, not <a>
+		await expect(page.getByLabel('Enter API key to enable download')).toBeVisible();
+		await expect(page.getByRole('button', { name: 'Enter' })).toBeVisible();
+		await expect(page.locator('td.links span.action-link').filter({ hasText: 'Download' }).first()).toBeVisible();
+
+		const code = page.locator('pre code');
+		await expect(code).toContainText('TRADING_STRATEGY_API_KEY');
+		await expect(code).toContainText('XXXXX-XXXXX-XXXXX-XXXXX-XXXXX');
 	});
 
 	test('shows "check your email" message after Creem checkout redirect', async ({ page }) => {
@@ -91,62 +82,28 @@ test.describe('vault datasets page', () => {
 		await expect(page.getByLabel('Enter API key to enable download')).toBeVisible();
 	});
 
-	// --- API key form (unauthenticated state) ---
-
-	test('shows API key form before a key is entered', async ({ page }) => {
-		await expect(page.getByLabel('Enter API key to enable download')).toBeVisible();
-		await expect(page.getByRole('button', { name: 'Enter' })).toBeVisible();
-	});
-
-	test('download links are disabled without API key', async ({ page }) => {
-		// Disabled downloads render as <span> elements, not <a>
-		const disabled = page.locator('td.links span.action-link').filter({ hasText: 'Download' });
-		await expect(disabled.first()).toBeVisible();
-	});
-
-	test('shows curl example with placeholder key before validation', async ({ page }) => {
-		const code = page.locator('pre code');
-		await expect(code).toContainText('TRADING_STRATEGY_API_KEY');
-		await expect(code).toContainText('XXXXX-XXXXX-XXXXX-XXXXX-XXXXX');
-	});
-
-	// --- API key validation ---
-
 	test('shows error message for invalid API key', async ({ page }) => {
+		await page.goto('/vaults/datasets');
 		await submitApiKey(page, INVALID_API_KEY, 401);
 		await expect(page.getByText('The API key is not valid')).toBeVisible();
 	});
 
-	test('download links become active after valid API key entry', async ({ page }) => {
+	test('enables downloads after valid API key entry', async ({ page }) => {
+		await page.goto('/vaults/datasets');
 		await submitApiKey(page, VALID_API_KEY, 200);
-		// Active downloads render as <a> elements
-		const links = page.locator('td.links a.action-link').filter({ hasText: 'Download' });
-		await expect(links.first()).toBeVisible();
-	});
 
-	test('hides API key form after successful validation', async ({ page }) => {
-		await submitApiKey(page, VALID_API_KEY, 200);
+		// active downloads render as <a> elements
+		await expect(page.locator('td.links a.action-link').filter({ hasText: 'Download' }).first()).toBeVisible();
 		await expect(page.getByLabel('Enter API key to enable download')).not.toBeVisible();
-	});
-
-	test('displays validated API key in the page', async ({ page }) => {
-		await submitApiKey(page, VALID_API_KEY, 200);
 		await expect(page.getByText(VALID_API_KEY, { exact: true })).toBeVisible();
-	});
 
-	test('curl example shows actual key after successful validation', async ({ page }) => {
-		await submitApiKey(page, VALID_API_KEY, 200);
 		const code = page.locator('pre code');
 		await expect(code).toContainText(VALID_API_KEY);
 		await expect(code).not.toContainText('XXXXX-XXXXX-XXXXX-XXXXX-XXXXX');
-	});
 
-	test('download links include api-key query param after validation', async ({ page }) => {
-		await submitApiKey(page, VALID_API_KEY, 200);
-		// Target a paid (gated) download link — free sample links use /api and carry no key
+		// target a paid (gated) download link — free sample links use /api and carry no key
 		const link = page.locator('td.links a.action-link[href*="/datasets/download/"]').first();
-		const href = await link.getAttribute('href');
-		expect(href).toContain(`api-key=${VALID_API_KEY}`);
+		expect(await link.getAttribute('href')).toContain(`api-key=${VALID_API_KEY}`);
 	});
 });
 
@@ -170,12 +127,15 @@ test.describe('vault dataset download endpoint', () => {
 		expect(res.status()).toBe(403);
 	});
 
-	test('returns vault-metadata JSON with correct headers for valid key', async ({ request }) => {
+	test('returns vault-metadata JSON with correct headers and body for valid key', async ({ request }) => {
 		const res = await request.get(`/vaults/datasets/download/vault-metadata?api-key=${VALID_API_KEY}`);
 		expect(res.status()).toBe(200);
 		expect(res.headers()['content-type']).toContain('application/json');
 		expect(res.headers()['content-disposition']).toContain('vault-metadata.json');
 		expect(res.headers()['cache-control']).toBe('private, no-store');
+		// content-length is proxied from upstream
+		expect(Number(res.headers()['content-length'])).toBeGreaterThan(0);
+		expect(await res.json()).toHaveProperty('vaults');
 	});
 
 	test('returns vault-prices parquet with correct headers for valid key', async ({ request }) => {
@@ -207,17 +167,4 @@ test.describe('vault dataset download endpoint', () => {
 			expect(res.headers()['cache-control']).toBe('private, no-store');
 		});
 	}
-
-	test('proxies content-length from upstream in download response', async ({ request }) => {
-		const res = await request.get(`/vaults/datasets/download/vault-metadata?api-key=${VALID_API_KEY}`);
-		expect(res.status()).toBe(200);
-		const length = res.headers()['content-length'];
-		expect(Number(length)).toBeGreaterThan(0);
-	});
-
-	test('download response body is non-empty for vault-metadata', async ({ request }) => {
-		const res = await request.get(`/vaults/datasets/download/vault-metadata?api-key=${VALID_API_KEY}`);
-		const body = await res.json();
-		expect(body).toHaveProperty('vaults');
-	});
 });

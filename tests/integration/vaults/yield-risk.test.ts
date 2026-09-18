@@ -6,6 +6,8 @@ test.describe('vault yield / risk scatter plot page', () => {
 	});
 
 	test('renders the scatter plot chart', async ({ page }) => {
+		await expect(page.locator('h1')).toContainText('scatter plot');
+
 		const plotWrapper = page.getByTestId('vault-scatter-plot');
 		await expect(plotWrapper).toBeVisible();
 		await expect(plotWrapper.getByTestId('chart-watermark')).toBeVisible();
@@ -13,6 +15,14 @@ test.describe('vault yield / risk scatter plot page', () => {
 		// Wait for Plotly to render (adds .js-plotly-plot class to the chart div)
 		const plotlyChart = plotWrapper.locator('.js-plotly-plot');
 		await expect(plotlyChart).toBeVisible({ timeout: 15000 });
+
+		// risk levels appear in the legend
+		const legend = plotWrapper.locator('.legend');
+		await expect(legend).toBeVisible();
+		const legendText = await legend.textContent();
+		expect(legendText).toContain('Negligible');
+		expect(legendText).toContain('Minimal');
+		expect(legendText).toContain('Low');
 	});
 
 	test('keeps Plotly legend interaction working with the watermark in place', async ({ page }) => {
@@ -29,39 +39,5 @@ test.describe('vault yield / risk scatter plot page', () => {
 				)
 			)
 			.toContain('legendonly');
-	});
-
-	test('displays risk level legend entries', async ({ page }) => {
-		const plotWrapper = page.getByTestId('vault-scatter-plot');
-
-		const plotlyChart = plotWrapper.locator('.js-plotly-plot');
-		await expect(plotlyChart).toBeVisible({ timeout: 15000 });
-
-		// Verify risk levels appear in the legend
-		const legend = plotWrapper.locator('.legend');
-		await expect(legend).toBeVisible();
-
-		const legendText = await legend.textContent();
-		expect(legendText).toContain('Negligible');
-		expect(legendText).toContain('Minimal');
-		expect(legendText).toContain('Low');
-	});
-
-	test('has vault listings navigation with active Charts dropdown', async ({ page }) => {
-		const nav = page.locator('.vault-listings-selector');
-		await expect(nav).toBeVisible();
-
-		// Charts trigger should show active state
-		const trigger = nav.locator('button', { hasText: 'Charts' });
-		await expect(trigger).toHaveClass(/active/);
-
-		// Open dropdown and verify active link
-		await trigger.click();
-		const activeLink = page.locator('[role="menu"] a.active');
-		await expect(activeLink).toHaveText('Yield / Risk');
-	});
-
-	test('displays page title and hero banner', async ({ page }) => {
-		await expect(page.locator('h1')).toContainText('scatter plot');
 	});
 });
