@@ -7,6 +7,7 @@ import {
 	numberToHex,
 	parseAbi,
 	toFunctionSelector,
+	type Abi,
 	type Address,
 	type Hex
 } from 'viem';
@@ -23,105 +24,67 @@ export type MockRpcOptions = {
 	token: { address: Address; symbol: string; decimals: number; balance: bigint };
 };
 
+type RpcRequest = { id: number; method: string; params?: unknown[] };
+type RpcResult = { result: unknown } | { error: { code: number; message: string } };
+
 /** Set `MOCK_RPC_DEBUG=1` to log every intercepted request and the canned answer */
 const DEBUG = Boolean(process.env.MOCK_RPC_DEBUG);
 
 /** Multicall3 is deployed at the same address on every chain viem knows about */
 const MULTICALL3 = '0xca11bde05977b3631167028862be2a173976ca11';
 
-/** ABI fragments of everything the strategy page and deposit wizard read on-chain */
+/** Contract reads the strategy page and deposit wizard make, besides ERC-20 */
 const vaultAbi = parseAbi([
+	// Multicall3 helper wagmi's `getBalance` uses when the client batches through multicall
+	'function getEthBalance(address addr) view returns (uint256)',
 	// Enzyme ComptrollerLib
 	'function getDenominationAsset() view returns (address)',
 	// Enzyme FundValueCalculator
 	'function calcNetValueForSharesHolder(address vault, address holder) returns (address, uint256)',
 	'function calcGrossShareValue(address vault) returns (address, uint256)',
 	// TermedVaultUSDCPaymentForwarder
-	'function isTermsOfServiceEnabled() view returns (bool)',
-	// Multicall3 helper wagmi's `getBalance` uses when the client batches calls through multicall
-	'function getEthBalance(address addr) view returns (uint256)'
+	'function isTermsOfServiceEnabled() view returns (bool)'
 ]);
 
 /**
- * Intercept every JSON-RPC request the page makes to any host other than the test server and
- * answer it from a canned in-memory "chain", so wallet-connected pages render deterministically
- * without touching a public RPC.
+ * Intercept every JSON-RPC request the page makes to a host other than the test server and answer
+ * it from canned values, so wallet-connected pages render without a public RPC.
  *
- * Why this exists: once a wallet is connected, the strategy page and the deposit wizard read the
- * user's balances through wagmi's public client (`readContract(s)`, `getBalance`, `simulateContract`).
- * AppKit's wagmi adapter sends those to `rpc.walletconnect.org` (or the chain's default RPC), which
- * is off-limits in CI. Aborting the requests is not enough: a `+page.ts` load that throws renders
- * the error page, so the tests could not tell "the wallet was handled correctly" apart from "the
- * RPC was unreachable".
+ * Once a wallet is connected the strategy page and the deposit wizard read the user's balances
+ * through wagmi's public client, which AppKit's adapter points at `rpc.walletconnect.org`.
+ * Aborting those requests is not enough: a `+page.ts` load that throws renders the error page,
+ * which makes "the wallet was handled correctly" indistinguishable from "the RPC was unreachable".
  *
- * The node understands the handful of read paths the app uses:
- *
- * - `eth_chainId`, `eth_blockNumber`, `eth_gasPrice`, `eth_estimateGas` — constants
- * - `eth_getBalance` and Multicall3 `getEthBalance(address)` — `nativeBalance`
- * - `eth_call` to Multicall3 `aggregate3` — decoded and answered call by call (wagmi batches
- *   `readContracts` this way)
- * - `eth_call` to any other contract — answered by function selector (ERC-20 metadata/balance,
- *   Enzyme comptroller and value calculator)
- *
- * Unknown selectors return `execution reverted`, which viem maps to a contract error and which
- * `readContracts({ allowFailure: true })` tolerates. Non-JSON-RPC requests to external hosts are
- * still aborted.
+ * Supported: `eth_chainId`, `eth_blockNumber`, `eth_gasPrice`, `eth_estimateGas`, `eth_getBalance`,
+ * and `eth_call` — both direct and batched through Multicall3 `aggregate3` (how wagmi sends
+ * `readContracts`) — for the ERC-20 and vault functions listed in this file. Unknown functions
+ * revert, which `readContracts({ allowFailure: true })` tolerates. Other external requests (AppKit
+ * config, analytics) are aborted.
  */
 export async function installMockRpc(page: Page, options: MockRpcOptions): Promise<void> {
 	const { chainId, nativeBalance, token } = options;
 
-	/** Answer a single contract call by its 4-byte selector */
-	function call(data: Hex): Hex | undefined {
-		const selector = data.slice(0, 10).toLowerCase();
+	/** Return data for each supported contract function, keyed by 4-byte selector */
+	const functions = new Map<Hex, Hex>();
+	const answer = (abi: Abi, functionName: string, result: unknown) => {
+		const item = abi.find((x) => x.type === 'function' && x.name === functionName);
+		if (item?.type !== 'function') throw new Error(`${functionName} not in ABI`);
+		functions.set(toFunctionSelector(item), encodeFunctionResult({ abi, functionName, result }));
+	};
+	answer(erc20Abi, 'decimals', token.decimals);
+	answer(erc20Abi, 'symbol', token.symbol);
+	answer(erc20Abi, 'name', `${token.symbol} token`);
+	answer(erc20Abi, 'balanceOf', token.balance);
+	answer(erc20Abi, 'allowance', 0n);
+	answer(vaultAbi, 'getEthBalance', nativeBalance);
+	answer(vaultAbi, 'getDenominationAsset', token.address);
+	answer(vaultAbi, 'calcNetValueForSharesHolder', [token.address, 0n]);
+	answer(vaultAbi, 'calcGrossShareValue', [token.address, 10n ** BigInt(token.decimals)]);
+	answer(vaultAbi, 'isTermsOfServiceEnabled', false);
 
-		const is = (signature: string) => selector === toFunctionSelector(signature).toLowerCase();
+	const call = (data: Hex) => functions.get(data.slice(0, 10).toLowerCase() as Hex);
 
-		if (is('function decimals()')) {
-			return encodeFunctionResult({ abi: erc20Abi, functionName: 'decimals', result: token.decimals });
-		}
-		if (is('function symbol()')) {
-			return encodeFunctionResult({ abi: erc20Abi, functionName: 'symbol', result: token.symbol });
-		}
-		if (is('function name()')) {
-			return encodeFunctionResult({ abi: erc20Abi, functionName: 'name', result: `${token.symbol} token` });
-		}
-		if (is('function balanceOf(address)')) {
-			return encodeFunctionResult({ abi: erc20Abi, functionName: 'balanceOf', result: token.balance });
-		}
-		if (is('function allowance(address,address)')) {
-			return encodeFunctionResult({ abi: erc20Abi, functionName: 'allowance', result: 0n });
-		}
-		if (is('function getDenominationAsset()')) {
-			return encodeFunctionResult({ abi: vaultAbi, functionName: 'getDenominationAsset', result: token.address });
-		}
-		if (is('function calcNetValueForSharesHolder(address,address)')) {
-			return encodeFunctionResult({
-				abi: vaultAbi,
-				functionName: 'calcNetValueForSharesHolder',
-				result: [token.address, 0n]
-			});
-		}
-		if (is('function calcGrossShareValue(address)')) {
-			return encodeFunctionResult({
-				abi: vaultAbi,
-				functionName: 'calcGrossShareValue',
-				result: [token.address, 10n ** BigInt(token.decimals)]
-			});
-		}
-		if (is('function getEthBalance(address)')) {
-			return encodeFunctionResult({ abi: vaultAbi, functionName: 'getEthBalance', result: nativeBalance });
-		}
-		if (is('function isTermsOfServiceEnabled()')) {
-			return encodeFunctionResult({ abi: vaultAbi, functionName: 'isTermsOfServiceEnabled', result: false });
-		}
-		return undefined;
-	}
-
-	/** Answer one JSON-RPC request object; returns the `result` or an `error` payload */
-	function handle(
-		method: string,
-		params: unknown[]
-	): { result: unknown } | { error: { code: number; message: string } } {
+	function handle({ method, params = [] }: RpcRequest): RpcResult {
 		switch (method) {
 			case 'eth_chainId':
 				return { result: numberToHex(chainId) };
@@ -137,11 +100,12 @@ export async function installMockRpc(page: Page, options: MockRpcOptions): Promi
 				const { to, data } = params[0] as { to?: string; data?: Hex };
 				if (!data) return { error: { code: -32602, message: 'mock rpc: missing call data' } };
 
-				// wagmi's readContracts batches through Multicall3; answer each inner call separately
 				if (to?.toLowerCase() === MULTICALL3) {
-					const { args } = decodeFunctionData({ abi: multicall3Abi, data });
-					const calls = args[0] as { target: Address; allowFailure: boolean; callData: Hex }[];
-					const results = calls.map(({ callData }) => {
+					const decoded = decodeFunctionData({ abi: multicall3Abi, data });
+					if (decoded.functionName !== 'aggregate3') {
+						return { error: { code: -32000, message: `mock rpc: unsupported multicall ${decoded.functionName}` } };
+					}
+					const results = decoded.args[0].map(({ callData }) => {
 						const returnData = call(callData);
 						return { success: returnData !== undefined, returnData: returnData ?? '0x' };
 					});
@@ -156,24 +120,21 @@ export async function installMockRpc(page: Page, options: MockRpcOptions): Promi
 		}
 	}
 
+	const isJsonRpc = (value: unknown): value is RpcRequest =>
+		typeof value === 'object' && value !== null && 'jsonrpc' in value;
+
 	await page.route(
 		(url) => url.hostname !== '127.0.0.1',
 		async (route: Route) => {
-			type RpcRequest = { id: number; method: string; params?: unknown[] };
-			const isJsonRpc = (value: unknown): value is RpcRequest =>
-				typeof value === 'object' && value !== null && 'jsonrpc' in value;
-
 			const request = route.request();
 			const body: unknown = request.method() === 'POST' ? request.postDataJSON() : undefined;
 
-			// only JSON-RPC traffic is served; everything else external (AppKit config, analytics) is
-			// dropped so the test never depends on the network
 			if (!(isJsonRpc(body) || (Array.isArray(body) && body.every(isJsonRpc)))) {
 				if (DEBUG) console.log('RPC abort', request.method(), request.url());
 				return route.abort();
 			}
 
-			const respond = ({ id, method, params = [] }: RpcRequest) => ({ jsonrpc: '2.0', id, ...handle(method, params) });
+			const respond = (rpc: RpcRequest) => ({ jsonrpc: '2.0', id: rpc.id, ...handle(rpc) });
 			const payload = Array.isArray(body) ? body.map(respond) : respond(body);
 			if (DEBUG)
 				console.log(

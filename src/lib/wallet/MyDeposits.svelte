@@ -36,8 +36,8 @@
 
 	let isOutdated = $derived(Boolean(strategy.newVersionId));
 	let connected = $derived($wallet.status === 'connected');
-	// only expose the address once fully connected: while wagmi is `reconnecting` it reports the
-	// persisted address, but the connector is a storage stub that cannot sign or send transactions
+	// only expose the address once connected: while wagmi is still restoring a persisted session it
+	// reports the persisted address, but the connector is a storage stub that cannot sign
 	let address = $derived(connected ? $wallet.address : undefined);
 	let wrongNetwork = $derived(connected && $wallet.chain?.id !== chain.id);
 	let buttonsDisabled = $derived(!vault.depositEnabled() || depositsDisabled || geoBlocked || wrongNetwork);

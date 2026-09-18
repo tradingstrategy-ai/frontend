@@ -1,25 +1,21 @@
 import { expect, test } from '@playwright/test';
 import { installMockRabby, getMockRabbyRequests, releaseMockRabby } from './mock-rabby';
-
-// Enzyme strategy from the mock API: deposits enabled, so the "My deposits" panel renders
-const STRATEGY = '/strategies/enzyme-polygon-matic-usdc';
-const ADDRESS = '0x0d7786000000000000000000000000000000beef';
-const POLYGON = 137;
-const MAINNET = 1;
-
-// wallet client resets a stalled reconnect after 10s (RECONNECT_TIMEOUT in $lib/wallet/client)
-const RECONNECT_SETTLE_TIMEOUT = 15_000;
+import { ADDRESS, MAINNET, POLYGON, RECONNECT_SETTLE_TIMEOUT, STRATEGY, installStrategyRpc } from './fixtures';
 
 /**
- * Regression tests for a wallet that was connected on a previous visit.
+ * Regression tests for restoring a wallet session persisted on a previous visit.
  *
- * wagmi persists the connection to localStorage with a partial connector (`{ id, name, type, uid }`)
- * and swaps in a live connector on `reconnect()`. When the injected provider never answers,
- * `reconnect()` never finishes: the page kept reporting the persisted address (rendering
- * "Pending deposit" / "Cancel deposit") while every write failed with
- * `connector.getChainId is not a function`, and the user had no way to reconnect.
+ * wagmi persists the connection with a partial connector (`{ id, name, type, uid }`) and swaps in
+ * a live one on `reconnect()`. When the extension never answered, `reconnect()` never finished:
+ * the page kept reporting the persisted address (rendering "Pending deposit" with a "Cancel
+ * deposit" button) while every write failed with `connector.getChainId is not a function`, and
+ * nothing offered the user a way to reconnect.
  */
 test.describe('wallet reconnect from persisted Rabby connection', () => {
+	test.beforeEach(async ({ page }) => {
+		await installStrategyRpc(page);
+	});
+
 	test('resets to disconnected when the wallet extension never responds, so the user can reconnect', async ({
 		page
 	}) => {
@@ -32,7 +28,7 @@ test.describe('wallet reconnect from persisted Rabby connection', () => {
 		// wagmi tried to restore the session through the (hung) Rabby provider
 		await expect.poll(() => getMockRabbyRequests(page)).toContain('eth_accounts');
 
-		// the stale connection is dropped instead of lingering in `reconnecting` forever
+		// the stale connection is dropped instead of lingering unsettled forever
 		await expect(myDeposits).toHaveAttribute('data-wallet-status', 'disconnected', {
 			timeout: RECONNECT_SETTLE_TIMEOUT
 		});
@@ -50,12 +46,6 @@ test.describe('wallet reconnect from persisted Rabby connection', () => {
 	});
 
 	test('restores the connection when the wallet extension responds', async ({ page }) => {
-		// keep the test hermetic: on-chain balance reads must not reach a public RPC
-		await page.route(
-			(url) => url.hostname !== '127.0.0.1',
-			(route) => route.abort()
-		);
-
 		await installMockRabby(page, { address: ADDRESS, chainId: POLYGON, persistedConnection: true });
 		await page.goto(STRATEGY);
 
@@ -81,9 +71,9 @@ test.describe('wallet reconnect from persisted Rabby connection', () => {
 		});
 
 		// the extension wakes up and answers the `eth_accounts` request wagmi has been waiting on.
-		// wagmi's reconnect() then finishes and stores the live connection, but it only promotes
-		// `status` from `reconnecting`/`connecting` — after our reset to `disconnected` the page
-		// would otherwise keep saying "Wallet not connected" while a live connection sits in the store
+		// wagmi's reconnect() then finishes and stores the live connection, but on its own it only
+		// promotes the status from `reconnecting`/`connecting` — after the reset to `disconnected`
+		// the page would keep saying "Wallet not connected" while a live connection sits in the store
 		await releaseMockRabby(page);
 		await expect(myDeposits).toHaveAttribute('data-wallet-status', 'connected');
 		await expect(myDeposits.getByText('Wallet not connected')).toHaveCount(0);

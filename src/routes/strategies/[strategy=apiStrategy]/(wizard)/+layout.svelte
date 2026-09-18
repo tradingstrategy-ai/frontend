@@ -1,3 +1,7 @@
+<!--
+Strategy wizard frame (deposit, redeem, connect-wallet): wizard state, step navigation and the
+wallet guard that returns the user to the connect step when the wallet is unusable.
+-->
 <script lang="ts">
 	import type { WizardStep } from '$lib/wizard/WizardActions.svelte';
 	import { navigating, page } from '$app/state';
@@ -13,42 +17,35 @@
 
 	const returnTo = navigating.from?.url.pathname;
 
-	let wizard: WizardState<typeof dataSchema> | undefined;
-
 	try {
-		wizard = new WizardState(slug, returnTo, dataSchema);
-		setWizardContext(wizard);
+		setWizardContext(new WizardState(slug, returnTo, dataSchema));
 	} catch {
 		goto(`/strategies/${strategy.id}/error`, { replaceState: true });
 	}
 
-	// Steps after "connect" need a live, correctly-networked wallet (they read balances with the
-	// account and sign transactions with the connector). The connect step only completes once that
-	// holds, but completion is remembered in sessionStorage, so on a page refresh — or if the wallet
-	// disconnects / switches chain mid-flow — the user can be sitting on a step that cannot work.
+	// Steps after "connect" (bar the final one, which only reports a finished transaction) need a
+	// wallet connected on the strategy's chain. The connect step checks that before it completes,
+	// but completion is remembered in sessionStorage: after a page refresh, or if the wallet
+	// disconnects or switches chain mid-flow, the user can be sitting on a step that cannot work.
 	// Send them back to the connect step, which shows "Connect wallet" / "Wrong network" as needed.
 	//
-	// The last step is exempt: it reports an already-completed transaction, so a wallet change at
-	// that point is irrelevant and bouncing off a success page would be confusing.
+	// Wait for the wallet to settle first: right after a reload wagmi is still restoring the
+	// persisted session, which can take a while with a slow extension, and that window must not be
+	// mistaken for "disconnected" (see tests/integration/wallet/wizard.test.ts).
 	const connectIndex = steps.findIndex((step: WizardStep) => step.slug === 'connect');
 
-	// `walletSettled` matters: right after a reload wagmi is `connecting`/`reconnecting` while it
-	// restores the persisted session, and may take a while if the extension is slow to wake up. That
-	// window is not "disconnected" and must not redirect (see tests/integration/wallet/wizard.test.ts).
 	let settled = $state(false);
 	walletSettled.then(() => (settled = true));
 
 	$effect(() => {
-		if (!settled || !wizard || connectIndex < 0) return;
+		if (!settled || connectIndex < 0) return;
 
 		const stepSlug = page.route.id?.split('/').at(-1);
 		const stepIndex = steps.findIndex((step: WizardStep) => step.slug === stepSlug);
 		const guarded = stepIndex > connectIndex && stepIndex < steps.length - 1;
 		const usable = $wallet.status === 'connected' && $wallet.chainId === chain.id;
-		if (!guarded || usable) return;
 
-		wizard.toggleComplete('connect', false);
-		goto(`/strategies/${strategy.id}/${slug}/connect`, { replaceState: true });
+		if (guarded && !usable) goto(`/strategies/${strategy.id}/${slug}/connect`, { replaceState: true });
 	});
 </script>
 

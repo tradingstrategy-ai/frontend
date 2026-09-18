@@ -78,9 +78,9 @@ export type Wallet = GetAccountReturnType;
 export type ConnectedWallet = Wallet & { status: 'connected' };
 
 /**
- * How long to wait for `reconnect()` to finish before forcing the wallet into a settled state.
- * Injected wallets answer in milliseconds (a cold Chrome MV3 service worker in a few hundred);
- * WalletConnect session restores can take a few seconds.
+ * How long `reconnect()` gets to restore a persisted session before the wallet is forced into a
+ * settled state. Injected wallets answer in milliseconds (a cold Chrome MV3 service worker in a
+ * few hundred); WalletConnect session restores can take a few seconds.
  */
 export const RECONNECT_TIMEOUT = 10_000;
 
@@ -90,46 +90,60 @@ watchAccount(config, { onChange: set });
 export const wallet = { subscribe };
 
 /**
- * Resolves once the wallet has reached a settled status (`connected` or `disconnected`) after the
- * page-load reconnect — either because wagmi finished, or because `RECONNECT_TIMEOUT` elapsed and
- * the state was forced (see `settleStalledReconnect`).
+ * Resolves once the wallet status is settled (`connected` or `disconnected`) after the page-load
+ * reconnect, either because wagmi finished or because `RECONNECT_TIMEOUT` forced it.
  *
- * `$wallet.status` is `connecting`/`reconnecting` until then, and during that window wagmi still
- * reports the *persisted* address (see `getAccount()`): enough for public reads, but not for
- * signing. Code that must decide "is the user connected or not" (the wizard's step guard, for
- * instance) awaits this promise so that "not connected yet" is not mistaken for "not connected".
- * Resolves immediately on the server, where there is no wallet.
+ * Until then `$wallet.status` is `connecting` or `reconnecting` and wagmi still reports the
+ * *persisted* address — enough for public reads, not for signing. Code that must decide "is the
+ * user connected" (the wizard step guard) awaits this so that "not yet" is not mistaken for "no".
+ * Resolves immediately on the server.
  */
-export const walletSettled: Promise<void> = startReconnect();
+export const walletSettled: Promise<void> = restoreSession();
+
+function isSettled(status: Wallet['status']) {
+	return status === 'connected' || status === 'disconnected';
+}
 
 /**
- * Restore a persisted wallet session and return a promise for `walletSettled`.
- *
- * wagmi persists the last connection to storage with a partial connector (`{ id, name, type,
- * uid }`, no methods) and `reconnect()` swaps a live connector in. Two things can go wrong, both
- * of which left the app permanently half-connected before this existed:
- *
- * - the wallet's provider never answers `eth_accounts` (hung extension): `reconnect()` awaits it
- *   forever, `status` stays `reconnecting`/`connecting`, the stub stays under `state.current`,
- *   `getAccount()` keeps reporting the persisted address and any write fails with the opaque
- *   `connector.getChainId is not a function`;
- * - AppKit's wagmi adapter *also* calls `reconnect()` (its `syncConnections()`), and wagmi guards
- *   the action with a module-level `isReconnecting` flag, so whichever call comes second is a
- *   silent no-op. Ours runs first because AppKit initialises asynchronously; nothing here relies
- *   on the order beyond that.
- *
- * Note: whether `status` becomes `connecting` or `reconnecting` depends on a race — wagmi's
- * persisted state is hydrated asynchronously, so `reconnect()` may start before `state.current`
- * is restored. Code below therefore never keys on one of the two.
+ * Whether the connection under `state.current` is still the partial connector wagmi rehydrated
+ * from storage (`{ id, name, type, uid }`, no methods) rather than a live connector instance.
  */
-function startReconnect(): Promise<void> {
+function hasStubConnection() {
+	const { connections, current } = config.state;
+	const connector = current ? connections.get(current)?.connector : undefined;
+	return connector != null && typeof connector.getChainId !== 'function';
+}
+
+/** Drop any connection and report the wallet as disconnected */
+function resetWalletState() {
+	config.setState((state) => ({ ...state, connections: new Map(), current: null, status: 'disconnected' }));
+}
+
+/**
+ * Restore a persisted wallet session, bounded by `RECONNECT_TIMEOUT`.
+ *
+ * wagmi persists the last connection with a stub connector and `reconnect()` swaps a live one in.
+ * If the wallet's provider never answers `eth_accounts` (a hung extension), `reconnect()` awaits it
+ * forever: the status never settles, the stub stays under `state.current`, `getAccount()` keeps
+ * reporting the persisted address, and any write fails with the opaque
+ * `connector.getChainId is not a function`. So after the timeout the state is settled by hand
+ * (`settleStalledReconnect`), and a reconnect that completes after that is still honoured
+ * (`promoteLateReconnect`).
+ *
+ * Whether the status is `connecting` or `reconnecting` meanwhile depends on a race — wagmi
+ * hydrates its persisted state asynchronously, so `reconnect()` may start before `state.current`
+ * is restored — which is why the code here keys on the connection, never on one of those two.
+ * AppKit's wagmi adapter also calls `reconnect()`; wagmi runs whichever call comes first and
+ * ignores the other, and nothing here depends on which that is.
+ */
+function restoreSession(): Promise<void> {
 	if (!browser) return Promise.resolve();
 
 	reconnect(config);
+	promoteLateReconnect();
+	setTimeout(settleStalledReconnect, RECONNECT_TIMEOUT);
 
 	return new Promise((resolve) => {
-		const isSettled = (status: Wallet['status']) => status === 'connected' || status === 'disconnected';
-
 		const unsubscribe = config.subscribe(
 			(state) => state.status,
 			(status) => {
@@ -138,72 +152,50 @@ function startReconnect(): Promise<void> {
 				resolve();
 			}
 		);
-
-		setTimeout(() => settleStalledReconnect(), RECONNECT_TIMEOUT);
 	});
 }
 
 /**
- * Whether the current wagmi connection is still the partial connector object rehydrated from
- * `localStorage` (`{ id, name, type, uid }`) rather than a live connector instance.
- */
-export function hasStubConnection(): boolean {
-	const { connections, current } = config.state;
-	const connector = current ? connections.get(current)?.connector : undefined;
-	return connector != null && typeof connector.getChainId !== 'function';
-}
-
-/**
- * Force a settled status if `reconnect()` has not produced one within `RECONNECT_TIMEOUT`.
+ * Force a settled status if `reconnect()` has not produced one in time, based on what sits under
+ * `state.current`:
  *
- * Three cases, decided by what sits under `state.current` rather than by `status` (see the race
- * note in `startReconnect`):
+ * - a storage stub — the wallet never answered: drop it and go `disconnected`, so the UI offers
+ *   "Connect wallet" and a fresh `connect()` replaces the stub;
+ * - a live connector — the wallet answered but `reconnect()` is still probing the other connectors
+ *   (MetaMask SDK and WalletConnect initialise slowly): go `connected` now, as wagmi would once its
+ *   loop ends;
+ * - nothing — no session to restore: go `disconnected`.
  *
- * - a storage stub: the wallet never answered. Drop it and go `disconnected`, so the UI offers
- *   "Connect wallet" and a fresh `connect()` replaces the stub. wagmi's own `reconnect()` may still
- *   complete later — `promoteLateReconnect` handles that;
- * - a live connector: the wallet answered but `reconnect()` is still busy probing *other*
- *   connectors (MetaMask SDK and WalletConnect initialise slowly, and can stall). wagmi would set
- *   `connected` when the loop ends; do it now so the page is not stuck on a spinner. wagmi's
- *   final status write is guarded (`reconnecting`/`connecting` only), so it will not undo this;
- * - nothing: no persisted session, `reconnect()` is probing connectors for an authorised one and
- *   has not found any. Go `disconnected` — a wallet that shows up later goes through `connect()`.
- *
- * A user-initiated `connect()` that happens to be in flight at the 10s mark is unaffected: wagmi's
- * `connect` action writes `connected` unconditionally when it completes.
+ * wagmi's own final status write only applies while still `connecting`/`reconnecting`, so it
+ * cannot undo this, and a user-initiated `connect()` in flight at this moment is unaffected because
+ * the `connect` action writes `connected` unconditionally when it completes.
  */
 function settleStalledReconnect() {
-	const { status, connections, current } = config.state;
-	if (status === 'connected' || status === 'disconnected') return;
+	const { status, current } = config.state;
+	if (isSettled(status)) return;
 
 	if (hasStubConnection()) {
 		console.warn(`Wallet did not answer within ${RECONNECT_TIMEOUT}ms; dropping the persisted connection`);
-		config.setState((state) => ({ ...state, connections: new Map(), current: null, status: 'disconnected' }));
-		promoteLateReconnect();
-		return;
+		resetWalletState();
+	} else {
+		config.setState((state) => ({ ...state, status: current ? 'connected' : 'disconnected' }));
 	}
-
-	const live = current ? connections.get(current) : undefined;
-	config.setState((state) => ({ ...state, status: live ? 'connected' : 'disconnected' }));
 }
 
 /**
- * After a stalled reconnect was forced to `disconnected`, the hung `reconnect()` may still finish
- * (the extension's service worker woke up). wagmi then stores the live connection and sets
- * `state.current`, but only promotes `status` when it is still `reconnecting`/`connecting` — so
- * without this the store would hold a live connection while the page keeps saying "Wallet not
- * connected". Promote to `connected` when a live connection appears under `current` while
- * `disconnected`.
+ * Honour a `reconnect()` that completes after `settleStalledReconnect` gave up on it (the
+ * extension's service worker woke up). wagmi then stores the live connection under `state.current`
+ * but only promotes the status while it is still `connecting`/`reconnecting`; without this the
+ * store would hold a live connection behind a "Wallet not connected" panel.
  *
- * Only that exact combination is promoted: `connect()` goes through `connecting` and writes
- * `connected` itself, and `disconnect()` clears `current`, so neither is affected.
+ * A live connection appearing under `current` while `disconnected` happens in no other flow:
+ * `connect()` writes `current` and `connected` together, `disconnect()` clears `current`.
  */
 function promoteLateReconnect() {
-	const unsubscribe = config.subscribe(
+	config.subscribe(
 		(state) => state.current,
 		(current) => {
 			if (!current || config.state.status !== 'disconnected' || hasStubConnection()) return;
-			unsubscribe();
 			console.info('Wallet answered after the reconnect timeout; restoring the connection');
 			config.setState((state) => ({ ...state, status: 'connected' }));
 		}
@@ -213,19 +205,15 @@ function promoteLateReconnect() {
 /**
  * Request wallet to switch to a different chain id.
  *
- * Resolves (rather than rejects) when the user dismisses the wallet's switch prompt: every caller
- * is a fire-and-forget click handler and would otherwise leave an uncaught
- * `UserRejectedRequestError`. The UI already shows "Wrong network" for as long as the chain does
- * not match, so there is nothing further to do. Other failures are logged and swallowed for the
- * same reason. `wagmi` also invokes `wallet_switchEthereumChain` when the wallet is already on
- * the requested chain; wallets answer that immediately without a prompt.
+ * Every caller is a fire-and-forget click handler, so a dismissed wallet prompt must not surface
+ * as an uncaught `UserRejectedRequestError`; the UI keeps showing "Wrong network" while the chain
+ * does not match, which is all the feedback needed. Other failures are logged.
  */
 export async function switchChain(chainId: number): Promise<void> {
 	try {
 		await _switchChain(config, { chainId });
 	} catch (e) {
-		if (errorCausedBy(e, 'UserRejectedRequestError')) return;
-		console.error('Failed to switch chain', e);
+		if (!errorCausedBy(e, 'UserRejectedRequestError')) console.error('Failed to switch chain', e);
 	}
 }
 
@@ -259,15 +247,14 @@ export function connect(chainId?: number) {
 /**
  * Disconnect the user's wallet.
  *
- * wagmi's `disconnect` calls `connector.disconnect()`; if the connection is a storage stub (a
- * persisted session that never finished reconnecting) that is not a function and the action
- * throws. The user asked to be disconnected, so on any failure clear the state directly.
+ * wagmi's `disconnect` calls `connector.disconnect()`, which a storage stub does not have. The
+ * user asked to be disconnected, so on any failure clear the state directly.
  */
 export async function disconnect(): Promise<void> {
 	try {
 		await _disconnect(config);
 	} catch (e) {
 		console.error('Failed to disconnect wallet cleanly; clearing wallet state', e);
-		config.setState((state) => ({ ...state, connections: new Map(), current: null, status: 'disconnected' }));
+		resetWalletState();
 	}
 }

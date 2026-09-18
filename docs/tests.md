@@ -90,6 +90,7 @@ delayed. See `docs/google-webmasters.md` for the reasoning behind each.
 
 `tests/integration/wallet/` covers restoring a wallet session that wagmi persisted on a previous
 visit, and the deposit wizard's behaviour when that session is slow to come back or never does.
+`fixtures.ts` holds the shared strategy, account and balance constants.
 
 Instead of loading a real browser-extension wallet (Rabby, MetaMask) — which needs a persistent
 browser profile, an unlock flow and network access, none of which is deterministic in CI — two
