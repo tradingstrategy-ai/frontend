@@ -109,10 +109,11 @@ This project uses Svelte 5 with experimental features enabled in `svelte.config.
   `connecting`/`reconnecting` and `$wallet.address` is the _persisted_ address: fine for public
   reads, not for signing. Only `$wallet.status === 'connected'` means a live connector.
 - `walletSettled` resolves once the status is `connected` or `disconnected`. If the extension does
-  not answer within `RECONNECT_TIMEOUT` (10 s) the state is settled by hand: a stub connection is
-  dropped so the user can reconnect from the modal, and the hung `reconnect()` is prevented from
-  landing later — AppKit treats a connection that appears as a wallet switch and disconnects the
-  previous one, so a late restore would clobber whatever the user connected in the meantime.
+  not answer within `RECONNECT_TIMEOUT` (10 s) the state is settled by hand — a stub connection is
+  dropped so the user can reconnect from the modal, a live one is kept — and the still-running
+  `reconnect()` is defused for every connector that has not connected: a late success would either
+  replace the current connection (AppKit treats that as a wallet switch and disconnects the
+  previous one) or leave a stale connection behind for a later disconnect to switch over to.
 - The wizard layout awaits `walletSettled` and sends the user back to the connect step from any
   later step when the wallet is not connected on the strategy's chain; wizard `load`s obtain the
   address via `getWizardAccount()`, which redirects there when nothing is persisted.

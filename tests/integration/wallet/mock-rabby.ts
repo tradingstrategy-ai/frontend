@@ -32,11 +32,12 @@ export type MockRabbyOptions = {
 	 */
 	secondWalletAddress?: `0x${string}`;
 	/**
-	 * Seed wagmi's persisted store as if this wallet had been connected on a previous visit (only on
-	 * the first load of the test; reloads keep whatever wagmi persisted since). wagmi only persists a
-	 * partial connector (`{ id, name, type, uid }`) and relies on `reconnect()` to swap in a live one.
+	 * Seed wagmi's persisted store as if Rabby (`true`) or the second wallet (`'second'`) had been
+	 * connected on a previous visit (only on the first load of the test; reloads keep whatever wagmi
+	 * persisted since). wagmi only persists a partial connector (`{ id, name, type, uid }`) and
+	 * relies on `reconnect()` to swap in a live one.
 	 */
-	persistedConnection?: boolean;
+	persistedConnection?: boolean | 'second';
 };
 
 /** Test-side handle the init script leaves on `window` */
@@ -55,7 +56,9 @@ type MockRabbyWindow = Window & { __mockRabby?: MockRabbyControl };
 
 const RABBY_RDNS = 'io.rabby';
 const RABBY_NAME = 'Rabby Wallet';
-const CONNECTOR_UID = 'mock-rabby-uid';
+const SECOND_RDNS = 'test.wallet';
+const SECOND_NAME = 'Test Wallet';
+const CONNECTOR_UID = 'mock-wallet-uid';
 /** Default emulated extension round-trip time in ms */
 const DEFAULT_RESPONSE_DELAY = 50;
 /** sessionStorage key that keeps a runtime `hangMockRabby()` in force across reloads */
@@ -82,14 +85,17 @@ const HANG_KEY = 'mockRabby.hang';
  */
 export async function installMockRabby(page: Page, options: MockRabbyOptions): Promise<void> {
 	await page.addInitScript(
-		({ options, rdns, name, uid, responseDelay, hangKey }) => {
+		({ options, rdns, name, secondRdns, secondName, uid, responseDelay, hangKey }) => {
 			// seed once: on a reload wagmi's own persisted state (possibly a different wallet the test
 			// connected meanwhile) must win, as it would for a real user
 			if (options.persistedConnection && !localStorage.getItem('wagmi.store')) {
+				const second = options.persistedConnection === 'second';
 				const connection = {
-					accounts: [options.address],
+					accounts: [second ? options.secondWalletAddress : options.address],
 					chainId: options.chainId,
-					connector: { id: rdns, name, type: 'injected', uid }
+					connector: second
+						? { id: secondRdns, name: secondName, type: 'injected', uid }
+						: { id: rdns, name, type: 'injected', uid }
 				};
 				localStorage.setItem(
 					'wagmi.store',
@@ -102,7 +108,7 @@ export async function installMockRabby(page: Page, options: MockRabbyOptions): P
 						version: 2
 					})
 				);
-				localStorage.setItem('wagmi.recentConnectorId', JSON.stringify(rdns));
+				localStorage.setItem('wagmi.recentConnectorId', JSON.stringify(second ? secondRdns : rdns));
 			}
 
 			type Listener = (...args: unknown[]) => void;
@@ -210,7 +216,7 @@ export async function installMockRabby(page: Page, options: MockRabbyOptions): P
 
 			if (options.secondWalletAddress) {
 				announce(
-					{ uuid: '6d2b0a7c-0e1a-4c6e-9d2f-mockother000', name: 'Test Wallet', rdns: 'test.wallet' },
+					{ uuid: '6d2b0a7c-0e1a-4c6e-9d2f-mockother000', name: secondName, rdns: secondRdns },
 					createProvider(options.secondWalletAddress, false)
 				);
 			}
@@ -219,6 +225,8 @@ export async function installMockRabby(page: Page, options: MockRabbyOptions): P
 			options,
 			rdns: RABBY_RDNS,
 			name: RABBY_NAME,
+			secondRdns: SECOND_RDNS,
+			secondName: SECOND_NAME,
 			uid: CONNECTOR_UID,
 			responseDelay: options.responseDelay ?? DEFAULT_RESPONSE_DELAY,
 			hangKey: HANG_KEY

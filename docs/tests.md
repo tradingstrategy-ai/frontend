@@ -114,7 +114,8 @@ small emulations are installed per test:
 restores the session, a declined network switch does not escape as an uncaught rejection, and an
 extension that wakes up after the timeout neither resurrects the dropped session (the user
 reconnects through the AppKit modal, which the test drives) nor displaces a wallet the user
-connected in the meantime, nor undoes an explicit disconnect. `wizard.test.ts` checks that a page
+connected in the meantime, nor undoes an explicit disconnect, nor lingers as a stale connection
+behind a session that was restored in time. `wizard.test.ts` checks that a page
 refresh on the deposit wizard's balance step keeps the user there while a slow wallet reconnects,
 and sends them back to the connect step when the wallet does not come back.
 

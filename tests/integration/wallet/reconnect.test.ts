@@ -24,11 +24,22 @@ test.describe('wallet reconnect from persisted Rabby connection', () => {
 		await installStrategyRpc(page);
 	});
 
-	/** Let the wallet answer what it has queued and give the page a moment to react */
+	/**
+	 * Let Rabby answer what it has queued, then give the page time to react. The assertions that
+	 * follow are negative ("nothing changed"), so this has to be a bounded wait: first until the
+	 * wallet has answered everything it was asked — a reconnect that did land would issue further
+	 * requests, so this only settles once the flow is idle — then a fixed grace period for wagmi and
+	 * AppKit to process the last answer.
+	 */
 	async function wakeRabby(page: Page) {
 		await releaseMockRabby(page);
-		await expect.poll(() => getMockRabbyAnswers(page)).toContain('eth_accounts');
-		await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 200)));
+		await expect
+			.poll(async () => {
+				const [requests, answers] = await Promise.all([getMockRabbyRequests(page), getMockRabbyAnswers(page)]);
+				return answers.includes('eth_accounts') && answers.length === requests.length;
+			})
+			.toBe(true);
+		await page.waitForTimeout(500);
 	}
 
 	test('resets to disconnected when the wallet extension never responds, so the user can reconnect', async ({
@@ -195,5 +206,45 @@ test.describe('wallet reconnect from persisted Rabby connection', () => {
 		// not land
 		await wakeRabby(page);
 		await expect(myDeposits).toHaveAttribute('data-wallet-status', 'disconnected');
+	});
+
+	test('does not keep a stale connection from a connector that answers after a live session was settled', async ({
+		page
+	}) => {
+		await page.setViewportSize({ width: 390, height: 844 });
+		// Test Wallet's session is restored at once; wagmi then probes hung Rabby and never finishes,
+		// so the timeout settles the live Test Wallet connection as connected
+		await installMockRabby(page, {
+			address: ADDRESS,
+			chainId: POLYGON,
+			persistedConnection: 'second',
+			secondWalletAddress: OTHER_ADDRESS,
+			hang: true
+		});
+		await page.goto(STRATEGY);
+		const myDeposits = page.locator('.my-deposits');
+		await expect(myDeposits).toHaveAttribute('data-wallet-status', 'connected', { timeout: RECONNECT_SETTLE_TIMEOUT });
+
+		const disconnect = async () => {
+			await myDeposits.getByRole('button', { name: 'My deposits' }).click();
+			await myDeposits.getByRole('button', { name: 'Disconnect wallet' }).click();
+			await expect(myDeposits).toHaveAttribute('data-wallet-status', 'disconnected');
+		};
+		await disconnect();
+
+		// Rabby wakes up. Left alone, wagmi's still-running reconnect() would append Rabby as a
+		// non-current connection; wagmi's disconnect() "switches over" to whatever connection is left,
+		// so the next connect/disconnect cycle would end up connected to Rabby instead of disconnected
+		await wakeRabby(page);
+
+		await myDeposits.getByRole('button', { name: 'Connect wallet' }).click();
+		await page.getByRole('button', { name: 'Next' }).click();
+		await page.getByRole('button', { name: 'Connect wallet' }).click();
+		await page.getByText('Test Wallet', { exact: true }).click();
+		await expect(page.locator('.connect-wallet .is-connected')).toContainText(OTHER_ADDRESS.slice(-6));
+		await page.getByRole('button', { name: 'Cancel' }).click();
+		await expect(myDeposits).toHaveAttribute('data-wallet-status', 'connected');
+
+		await disconnect();
 	});
 });
