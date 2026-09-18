@@ -3,7 +3,10 @@ import { installMockRpc } from './mock-rpc';
 
 /** Enzyme strategy from the mock API: deposits enabled, on Polygon */
 export const STRATEGY = '/strategies/enzyme-polygon-matic-usdc';
-export const ADDRESS = '0x0d7786000000000000000000000000000000beef';
+// digit-only tails, so assertions on the rendered (checksummed) address stay case-safe
+export const ADDRESS = '0x0d77860000000000000000000000000000001111';
+/** Account of the second ("Test Wallet") emulated wallet */
+export const OTHER_ADDRESS = '0x0d77860000000000000000000000000000002222';
 export const POLYGON = 137;
 export const MAINNET = 1;
 /** Polygon bridged USDC — the strategy's denomination token, labelled "USDC.e" by the app */

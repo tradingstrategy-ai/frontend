@@ -127,8 +127,7 @@ function resetWalletState() {
  * forever: the status never settles, the stub stays under `state.current`, `getAccount()` keeps
  * reporting the persisted address, and any write fails with the opaque
  * `connector.getChainId is not a function`. So after the timeout the state is settled by hand
- * (`settleStalledReconnect`), and a reconnect that completes after that is still honoured
- * (`promoteLateReconnect`).
+ * (`settleStalledReconnect`).
  *
  * Whether the status is `connecting` or `reconnecting` meanwhile depends on a race — wagmi
  * hydrates its persisted state asynchronously, so `reconnect()` may start before `state.current`
@@ -140,7 +139,6 @@ function restoreSession(): Promise<void> {
 	if (!browser) return Promise.resolve();
 
 	reconnect(config);
-	promoteLateReconnect();
 	setTimeout(settleStalledReconnect, RECONNECT_TIMEOUT);
 
 	return new Promise((resolve) => {
@@ -160,7 +158,8 @@ function restoreSession(): Promise<void> {
  * `state.current`:
  *
  * - a storage stub — the wallet never answered: drop it and go `disconnected`, so the UI offers
- *   "Connect wallet" and a fresh `connect()` replaces the stub;
+ *   "Connect wallet" and a fresh `connect()` replaces the stub. The hung `reconnect()` is also
+ *   stopped from landing later (`abandonReconnect`);
  * - a live connector — the wallet answered but `reconnect()` is still probing the other connectors
  *   (MetaMask SDK and WalletConnect initialise slowly): go `connected` now, as wagmi would once its
  *   loop ends;
@@ -171,11 +170,12 @@ function restoreSession(): Promise<void> {
  * the `connect` action writes `connected` unconditionally when it completes.
  */
 function settleStalledReconnect() {
-	const { status, current } = config.state;
+	const { status, connections, current } = config.state;
 	if (isSettled(status)) return;
 
 	if (hasStubConnection()) {
 		console.warn(`Wallet did not answer within ${RECONNECT_TIMEOUT}ms; dropping the persisted connection`);
+		abandonReconnect(connections.get(current!)!.connector.id);
 		resetWalletState();
 	} else {
 		config.setState((state) => ({ ...state, status: current ? 'connected' : 'disconnected' }));
@@ -183,23 +183,28 @@ function settleStalledReconnect() {
 }
 
 /**
- * Honour a `reconnect()` that completes after `settleStalledReconnect` gave up on it (the
- * extension's service worker woke up). wagmi then stores the live connection under `state.current`
- * but only promotes the status while it is still `connecting`/`reconnecting`; without this the
- * store would hold a live connection behind a "Wallet not connected" panel.
+ * Make sure a `reconnect()` that `settleStalledReconnect` gave up on never takes effect, even if
+ * the extension's service worker wakes up minutes later.
  *
- * A live connection appearing under `current` while `disconnected` happens in no other flow:
- * `connect()` writes `current` and `connected` together, `disconnect()` clears `current`.
+ * wagmi's `reconnect()` cannot be cancelled, and if it completed late it would *replace*
+ * `state.connections` with that one connection and make it `current`. AppKit's adapter then treats
+ * that as the user switching wallets and disconnects whatever they had connected in the meantime
+ * (`handlePreviousConnectorConnection`), and an explicit disconnect would be undone as well. Since
+ * AppKit's listeners run before any of ours, that cannot be repaired after the fact — so it is
+ * prevented instead: `reconnect()` calls `connector.connect({ isReconnecting: true })` and skips
+ * the connector when that rejects, which is what the abandoned connector now does. A user-initiated
+ * `connect()` (no `isReconnecting`) still goes through, so the wallet can be reconnected from the
+ * modal as soon as it answers again; the next page load starts with a fresh connector.
  */
-function promoteLateReconnect() {
-	config.subscribe(
-		(state) => state.current,
-		(current) => {
-			if (!current || config.state.status !== 'disconnected' || hasStubConnection()) return;
-			console.info('Wallet answered after the reconnect timeout; restoring the connection');
-			config.setState((state) => ({ ...state, status: 'connected' }));
-		}
-	);
+function abandonReconnect(connectorId: string) {
+	const connector = config.connectors.find((c) => c.id === connectorId);
+	if (!connector) return;
+
+	const connect = connector.connect.bind(connector);
+	connector.connect = (parameters) =>
+		parameters?.isReconnecting
+			? Promise.reject(new Error(`${connectorId}: reconnect abandoned after ${RECONNECT_TIMEOUT}ms`))
+			: connect(parameters);
 }
 
 /**
