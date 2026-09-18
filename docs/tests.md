@@ -98,8 +98,8 @@ the component:
 
 - the vault listings navigation and its Charts dropdown — order, the 11 chart links, active state on
   every chart page, mobile — is `tests/integration/vaults/charts-dropdown.test.ts`; the chart-page
-  files (`yield-*`, `historical-tvl-*`, `cumulative-tvl-apy`, …) assert only their own chart and the
-  in-page "See charts" link row;
+  files (`yield-*`, `historical-tvl-*`, `cumulative-tvl-apy`, …) assert only their own chart, plus
+  the in-page "See charts" link row on the pages that render it;
 - the vault group index header (`protocols`, `stablecoins`, `chains`, `curators`, `funds`) is
   laid out once at three viewports in `group-market-share-pages.test.ts`; each page keeps a single
   render test.

@@ -249,11 +249,19 @@ describe('calculateTotalTvl', () => {
 
 describe('isEligibleFrontpageVault', () => {
 	test.each([
-		['a known protocol with severe risk or safer', { protocol: 'Yearn', risk: 'Severe' }, true],
-		['a dangerous risk vault', { protocol: 'Yearn', risk: 'Dangerous' }, false],
-		['an unknown risk vault', { protocol: 'Yearn' }, false],
-		['an unknown protocol vault', { protocol: '<protocol not yet identified>', risk: 'Low' }, false]
-	] as const)('returns %s for %s', (_, props, expected) => {
+		{
+			vault: 'a known protocol with severe risk or safer',
+			props: { protocol: 'Yearn', risk: 'Severe' },
+			expected: true
+		},
+		{ vault: 'a dangerous risk vault', props: { protocol: 'Yearn', risk: 'Dangerous' }, expected: false },
+		{ vault: 'an unknown risk vault', props: { protocol: 'Yearn' }, expected: false },
+		{
+			vault: 'an unknown protocol vault',
+			props: { protocol: '<protocol not yet identified>', risk: 'Low' },
+			expected: false
+		}
+	] as const)('returns $expected for $vault', ({ props, expected }) => {
 		expect(isEligibleFrontpageVault(createTestVault('Test vault', props))).toBe(expected);
 	});
 });
@@ -364,13 +372,16 @@ describe('isUnknownVaultProtocol', () => {
 
 describe('meetsMinTvl', () => {
 	test.each([
-		['meets the threshold', 50_000, 50_000, true],
-		['exceeds the threshold', 100_000, 50_000, true],
-		['is below the threshold', 49_999, 50_000, false],
-		['is null', null, 50_000, false]
-	])('current_nav %s', (_, current_nav, threshold, expected) => {
-		expect(meetsMinTvl(createTestVault('Test vault', { current_nav }), threshold)).toBe(expected);
-	});
+		{ current_nav: 50_000, threshold: 50_000, expected: true },
+		{ current_nav: 100_000, threshold: 50_000, expected: true },
+		{ current_nav: 49_999, threshold: 50_000, expected: false },
+		{ current_nav: null, threshold: 50_000, expected: false }
+	])(
+		'returns $expected for current_nav $current_nav against a $threshold threshold',
+		({ current_nav, threshold, expected }) => {
+			expect(meetsMinTvl(createTestVault('Test vault', { current_nav }), threshold)).toBe(expected);
+		}
+	);
 
 	test('uses default threshold of 10,000', () => {
 		expect(meetsMinTvl(createTestVault('Test vault', { current_nav: 10_000 }))).toBe(true);
@@ -758,9 +769,11 @@ describe('getFeeModeLabel', () => {
 });
 
 describe('getFeeModeDescription', () => {
+	test.each([null, undefined])('returns an empty string for %s', (mode) => {
+		expect(getFeeModeDescription(mode)).toBe('');
+	});
+
 	test.each([
-		[null, ''],
-		[undefined, ''],
 		['internalised_skimming', 'deducted from closed trades'],
 		['internalised_minting', 'minting additional vault shares'],
 		['externalised', 'charged separately'],

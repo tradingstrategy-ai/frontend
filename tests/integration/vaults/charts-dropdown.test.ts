@@ -69,16 +69,15 @@ test.describe('charts dropdown in vault listings navigation', () => {
 	});
 
 	// Single owner of the active-state behaviour for every chart page; the chart-page test files
-	// only assert their own chart rendering.
-	test('marks the Charts trigger and the current chart link active on every chart page', async ({ page }) => {
+	// only assert their own chart rendering. One test per page so each keeps its own timeout.
+	test.describe('active state on chart pages', () => {
 		for (const { href, label } of vaultChartLinks) {
-			await test.step(href, async () => {
+			test(`marks the Charts trigger and "${label}" active on ${href}`, async ({ page }) => {
 				await page.goto(href);
 
 				const nav = page.locator('.vault-listings-selector');
 				await expect(nav).toBeVisible();
-				const trigger = nav.locator('button', { hasText: 'Charts' });
-				await expect(trigger).toHaveClass(/active/);
+				await expect(nav.locator('button', { hasText: 'Charts' })).toHaveClass(/active/);
 
 				const menu = await openChartsMenu(page);
 				await expect(menu.locator('a.active')).toHaveText(label);

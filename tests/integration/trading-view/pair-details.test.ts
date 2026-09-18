@@ -27,7 +27,6 @@ test.describe('trading pair details page', () => {
 	test('should include TradingView chart canvas elements', async ({ page }) => {
 		const tvChart = page.getByTestId('tv-chart');
 		await expect(tvChart).toBeVisible();
-		const count = await tvChart.locator('canvas').count();
-		expect(count).toBeGreaterThan(0);
+		await expect(tvChart.locator('canvas').first()).toBeVisible();
 	});
 });

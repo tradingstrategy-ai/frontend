@@ -176,17 +176,25 @@ describe('fetchTreasuryBenchmarkSeries', () => {
 
 describe('isPerpetualFuturesVault', () => {
 	test.each([
-		['the perp flag on a non-perp chain', { flags: ['perp_dex_trading_vault'], chain_id: 1 }, true],
-		['the perp flag alongside other flags', { flags: ['perp_dex_trading_vault', 'beta'], chain_id: 1 }, true],
-		['HyperCore (9999)', { flags: [], chain_id: 9999 }, true],
-		['GRVT (325)', { flags: [], chain_id: 325 }, true],
-		['Lighter (9998)', { flags: [], chain_id: 9998 }, true],
-		['Hibachi (9997)', { flags: [], chain_id: 9997 }, true],
-		['ApeX (9995)', { flags: [], chain_id: 9995 }, true],
-		['HyperEVM (999)', { flags: [], chain_id: 999 }, false],
-		['a regular Ethereum vault', { flags: [], chain_id: 1 }, false]
-	])('returns %s for %s', (_, vault, expected) => {
-		expect(isPerpetualFuturesVault(vault)).toBe(expected);
+		{
+			vault: 'the perp flag on a non-perp chain',
+			input: { flags: ['perp_dex_trading_vault'], chain_id: 1 },
+			expected: true
+		},
+		{
+			vault: 'the perp flag alongside other flags',
+			input: { flags: ['perp_dex_trading_vault', 'beta'], chain_id: 1 },
+			expected: true
+		},
+		{ vault: 'HyperCore (9999)', input: { flags: [], chain_id: 9999 }, expected: true },
+		{ vault: 'GRVT (325)', input: { flags: [], chain_id: 325 }, expected: true },
+		{ vault: 'Lighter (9998)', input: { flags: [], chain_id: 9998 }, expected: true },
+		{ vault: 'Hibachi (9997)', input: { flags: [], chain_id: 9997 }, expected: true },
+		{ vault: 'ApeX (9995)', input: { flags: [], chain_id: 9995 }, expected: true },
+		{ vault: 'HyperEVM (999)', input: { flags: [], chain_id: 999 }, expected: false },
+		{ vault: 'a regular Ethereum vault', input: { flags: [], chain_id: 1 }, expected: false }
+	])('returns $expected for $vault', ({ input, expected }) => {
+		expect(isPerpetualFuturesVault(input)).toBe(expected);
 	});
 });
 

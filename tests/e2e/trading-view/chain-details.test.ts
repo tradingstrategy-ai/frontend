@@ -19,10 +19,13 @@ test.describe('chain details page', () => {
 			['Highest TVL trading pairs', 'trading-pairs']
 		]) {
 			const box = page.locator('.summary-box').filter({ has: page.getByRole('heading', { name: title }) });
-			// rows render as loading placeholders until the client-side entity request resolves
-			const rows = box.locator('table.trading-entities-table:not(.loading) tbody tr.targetable');
-			await expect(rows.first()).toBeVisible();
-			expect(await rows.count()).toBeGreaterThanOrEqual(5);
+			// five placeholder rows render until the client-side entity request resolves; real rows
+			// carry a "View details" link, placeholders do not
+			const table = box.locator('table.trading-entities-table');
+			await expect(table).not.toHaveClass(/loading/);
+			const rows = table.locator('tbody tr.targetable');
+			await expect(rows).toHaveCount(5);
+			await expect(rows.first().getByRole('link', { name: 'View details' })).toBeAttached();
 			await expect(box.getByRole('link', { name: /View all Ethereum/ })).toHaveAttribute(
 				'href',
 				`/trading-view/ethereum/${type}`
