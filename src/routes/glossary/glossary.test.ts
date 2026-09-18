@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import { fetchAndParseGlossary, getGlossaryEntry, getGlossarySlug } from './glossary';
 
 describe('glossary slugs', () => {
@@ -35,5 +35,29 @@ describe('glossary slugs', () => {
 		const glossary = await fetchAndParseGlossary(fetch as Fetch);
 
 		expect(glossary['relative-strength-index-rsi'].html).toContain('href="stochastic-rsi-indicator"');
+	});
+
+	test('keeps the first term when two source terms collide on the same slug', async () => {
+		// A hyphen vs. a space is the difference seen live between "Gain to pain ratio" and
+		// "Gain-to-pain ratio" on the documentation site: both slugify to the same value.
+		const source = `
+			<dl class="glossary">
+				<dt id="term-Gain-to-pain-ratio">Gain to pain ratio<a href="#term-Gain-to-pain-ratio">#</a></dt>
+				<dd><p>First definition.</p></dd>
+				<dt id="term-Gain-to-pain-ratio-2">Gain-to-pain ratio<a href="#term-Gain-to-pain-ratio-2">#</a></dt>
+				<dd><p>Second, colliding definition.</p></dd>
+			</dl>
+		`;
+		const fetch = async () => new Response(source);
+		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+		const glossary = await fetchAndParseGlossary(fetch as Fetch);
+
+		expect(Object.keys(glossary)).toEqual(['gain-to-pain-ratio']);
+		expect(glossary['gain-to-pain-ratio'].name).toBe('Gain to pain ratio');
+		expect(glossary['gain-to-pain-ratio'].html).toContain('First definition');
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining('Duplicate glossary slug'));
+
+		warn.mockRestore();
 	});
 });

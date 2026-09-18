@@ -102,11 +102,17 @@ function getDefinitionElem(dt: HTMLElement) {
  *
  * Transform links.
  *
+ * Two source terms that slugify to the same value (e.g. "Gain to pain ratio" and
+ * "Gain-to-pain ratio") keep the first occurrence and drop the rest with a warning,
+ * rather than failing the whole glossary: one editing slip on the documentation site
+ * should not 503 every `/glossary/*` page and the glossary sitemap.
+ *
  * @param fetch - SvelteKit's fetch function
  *
  * @throws GlossaryParseError
  *	In the case the source Sphinx HTML is badly formatted due
- *	to broken manual edits.
+ *	to broken manual edits (an unreadable term name, or a `<dt>` with no
+ *	matching `<dd>`).
  *
  */
 export async function fetchAndParseGlossary(fetch: Fetch) {
@@ -127,7 +133,10 @@ export async function fetchAndParseGlossary(fetch: Fetch) {
 			);
 
 			const slug = getGlossarySlug(name);
-			assert(!glossary[slug], new GlossaryParseError(`Duplicate glossary slug: ${slug}`));
+			if (slug in glossary) {
+				console.warn(`Duplicate glossary slug "${slug}" for "${name}"; keeping "${glossary[slug].name}"`);
+				return glossary;
+			}
 
 			const dd = getDefinitionElem(dt);
 			assert(dd, new GlossaryParseError(`Sibling <dd> for <dt> "${name}" not found`));

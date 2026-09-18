@@ -9,14 +9,23 @@ import { BLOG_POST_SLUG } from '../mocks/ghost/posts.mock';
  *   identify the page
  * - exactly one `<title>` carrying the brand suffix, one meta description of a length Google
  *   shows in full, and one `og:image` — see `SocialCardMetaTags`
+ *
+ * The description floor is skipped for `verbatimDescription` samples: `getStrategyPageMeta`
+ * (`src/lib/strategies/seo.ts`) ships a vault's curator-supplied short description as-is,
+ * deliberately without padding it with generated return/TVL or generic vault copy, so it can
+ * land under `DESCRIPTION_MIN_LENGTH` when the curator's own text is short.
  */
 
-const samples: { path: string; canonical: string }[] = [
+const samples: { path: string; canonical: string; verbatimDescription?: boolean }[] = [
 	{ path: '/', canonical: '/' },
 	{ path: '/vaults', canonical: '/vaults' },
 	{ path: '/vaults?sort=tvl&direction=desc', canonical: '/vaults' },
 	{ path: '/vaults/return-leader-alpha', canonical: '/vaults/return-leader-alpha' },
-	{ path: '/strategies/trading-strategy-ichiv3-ls-2', canonical: '/strategies/trading-strategy-ichiv3-ls-2' },
+	{
+		path: '/strategies/trading-strategy-ichiv3-ls-2',
+		canonical: '/strategies/trading-strategy-ichiv3-ls-2',
+		verbatimDescription: true
+	},
 	{ path: '/trading-view/ethereum', canonical: '/trading-view/ethereum' },
 	{
 		path: '/trading-view/ethereum/uniswap-v2/eth-usdc?timeBucket=1h',
@@ -48,7 +57,7 @@ const DESCRIPTION_MIN_LENGTH = 70;
 const DESCRIPTION_MAX_LENGTH = 155;
 
 test.describe('head metadata', () => {
-	for (const { path, canonical } of samples) {
+	for (const { path, canonical, verbatimDescription } of samples) {
 		test(`${path} declares exactly one canonical`, async ({ request }) => {
 			const response = await request.get(path);
 			expect(response.status()).toBe(200);
@@ -72,7 +81,9 @@ test.describe('head metadata', () => {
 			const descriptions = head.match(/<meta name="description" content="([^"]*)"/g) ?? [];
 			expect(descriptions, 'description tags').toHaveLength(1);
 			const description = descriptions[0]!.match(/content="([^"]*)"/)![1]!.replaceAll('&amp;', '&');
-			expect(description.length, `description: ${description}`).toBeGreaterThanOrEqual(DESCRIPTION_MIN_LENGTH);
+			if (!verbatimDescription) {
+				expect(description.length, `description: ${description}`).toBeGreaterThanOrEqual(DESCRIPTION_MIN_LENGTH);
+			}
 			expect(description.length, `description: ${description}`).toBeLessThanOrEqual(DESCRIPTION_MAX_LENGTH);
 
 			expect(head.match(/<meta property="og:image" content="/g) ?? [], 'og:image tags').toHaveLength(1);
