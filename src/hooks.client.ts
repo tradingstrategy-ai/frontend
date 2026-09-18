@@ -1,6 +1,20 @@
 import type { ClientInit, HandleClientError } from '@sveltejs/kit';
 import * as Sentry from '@sentry/sveltekit';
+import { navigating } from '$app/state';
 import { isModuleLoadError, shouldAbortReload } from '$lib/helpers/hydration-reload-guard';
+
+/**
+ * `sessionStorage`, or undefined where merely touching it throws (site data blocked).
+ *
+ * The guard fails open without storage, so this must not throw out of the hook itself.
+ */
+function getSessionStorage(): Storage | undefined {
+	try {
+		return window.sessionStorage;
+	} catch {
+		return undefined;
+	}
+}
 
 /**
  * Client-side error hook.
@@ -13,11 +27,19 @@ import { isModuleLoadError, shouldAbortReload } from '$lib/helpers/hydration-rel
  * Why this is needed and how the loop arises is documented in
  * `$lib/helpers/hydration-reload-guard` and `docs/cache-invalidation.md`.
  *
- * The guard allows SvelteKit's first reload and only throws on a repeat failure of the same
- * URL, so a transient chunk failure still recovers by itself.
+ * The breaker is deliberately narrow, because `HandleClientError` is not meant to throw:
+ *
+ * - only for a browser module-load failure, never for application errors;
+ * - only during initial hydration. `navigating.type` is null then and is set before any
+ *   client-side navigation's `load_route` runs, so a chunk failure while navigating keeps
+ *   SvelteKit's normal handling (nearest error page, or its own single reload). Comparing
+ *   `location.href` would not do: on back/forward the browser has already changed it;
+ * - only on a repeat failure of the same URL, so a transient failure still recovers through
+ *   SvelteKit's first reload.
  */
 const handleClientError: HandleClientError = ({ error, event, message }) => {
-	if (isModuleLoadError(error) && shouldAbortReload(event.url.href, sessionStorage)) {
+	const hydrating = navigating.type === null;
+	if (hydrating && isModuleLoadError(error) && shouldAbortReload(event.url.href, getSessionStorage())) {
 		console.error('Page assets are unavailable and a reload did not help; showing the static page instead.', error);
 		throw error;
 	}

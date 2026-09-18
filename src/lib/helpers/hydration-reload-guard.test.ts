@@ -47,7 +47,12 @@ describe('shouldAbortReload', () => {
 		expect(shouldAbortReload(href, storage, 1000 + RELOAD_LOOP_WINDOW_MS)).toBe(false);
 	});
 
-	it('falls back to reloading when storage is unavailable', () => {
+	it('falls back to reloading when there is no storage at all', () => {
+		expect(shouldAbortReload(href, undefined, 1000)).toBe(false);
+		expect(shouldAbortReload(href, undefined, 1200)).toBe(false);
+	});
+
+	it('falls back to reloading when storage access throws', () => {
 		const storage = {
 			getItem: () => {
 				throw new Error('SecurityError');

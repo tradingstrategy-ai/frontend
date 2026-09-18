@@ -71,6 +71,8 @@ type FailureRecord = {
  * - Chromium: "Failed to fetch dynamically imported module: …"
  * - Firefox:  "error loading dynamically imported module: …"
  * - Safari:   "Importing a module script failed."
+ *
+ * @param error - the value SvelteKit passed to `handleError`
  */
 export function isModuleLoadError(error: unknown): boolean {
 	const message = error instanceof Error ? error.message : String(error);
@@ -82,15 +84,20 @@ export function isModuleLoadError(error: unknown): boolean {
  * instead of letting SvelteKit reload the page again.
  *
  * @param href - URL of the page that failed to hydrate
- * @param storage - `sessionStorage`; only `getItem`/`setItem` are used so tests can pass a stub
+ * @param storage - `sessionStorage`, or undefined where it is unavailable; only
+ *   `getItem`/`setItem` are used so tests can pass a stub
  * @param now - current time in milliseconds, injectable for tests
  * @returns true when this URL already failed the same way within the window
  */
 export function shouldAbortReload(
 	href: string,
-	storage: Pick<Storage, 'getItem' | 'setItem'>,
+	storage: Pick<Storage, 'getItem' | 'setItem'> | undefined,
 	now = Date.now()
 ): boolean {
+	// Without storage the count cannot survive a reload, so the loop cannot be detected;
+	// keep SvelteKit's default reload rather than aborting on every first failure.
+	if (!storage) return false;
+
 	// Read the previous record. Storage access can throw (browsers set to block site data,
 	// private windows on some engines) and the value may be corrupt; either counts as no history.
 	let previous: FailureRecord | undefined;
@@ -109,8 +116,7 @@ export function shouldAbortReload(
 	try {
 		storage.setItem(RELOAD_LOOP_STORAGE_KEY, JSON.stringify({ href, failures, at: now } satisfies FailureRecord));
 	} catch {
-		// Without storage the count cannot survive a reload, so the loop cannot be detected;
-		// keep SvelteKit's default reload rather than aborting on every first failure.
+		// Same as no storage: the failure cannot be remembered, so do not abort.
 		return false;
 	}
 
