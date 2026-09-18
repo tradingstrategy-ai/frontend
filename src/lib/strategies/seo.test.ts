@@ -27,23 +27,21 @@ describe('getStrategyPageMeta', () => {
 
 	it('omits the chain when unknown', () => {
 		expect(getStrategyPageMeta(base).title).toBe('Vega — DeFi vault | Trading Strategy');
-		expect(getStrategyPageMeta(base).description).toBe(`${base.shortDescription} Automated DeFi trading vault.`);
+		expect(getStrategyPageMeta(base).description).toBe(base.shortDescription);
 	});
 
-	it('leads the description with return and TVL when both are positive', () => {
+	it('uses the short description without generated copy or metrics', () => {
 		const { description } = getStrategyPageMeta({
 			...base,
 			chainName: 'Base',
 			annualReturn: 0.1234,
 			tvlUsd: 1_234_567
 		});
-		expect(description).toBe(
-			'Vega: 12.3% annualised return, $1.2M TVL. Automated DeFi trading vault on Base. Momentum strategy trading ETH and BTC on Base.'
-		);
+		expect(description).toBe(base.shortDescription);
 	});
 
-	it('falls back to the short description when a metric is missing, zero or negative', () => {
-		const fallback = `${base.shortDescription} Automated DeFi trading vault on Base.`;
+	it('generates a description when no short description is set', () => {
+		const fallback = 'Automated DeFi trading vault on Base.';
 		for (const metrics of [
 			{ annualReturn: null, tvlUsd: 1_000 },
 			{ annualReturn: 0.1, tvlUsd: undefined },
@@ -52,15 +50,26 @@ describe('getStrategyPageMeta', () => {
 			{ annualReturn: Number.NaN, tvlUsd: 1_000 },
 			{ annualReturn: 0.1, tvlUsd: 0 }
 		]) {
-			const { description } = getStrategyPageMeta({ ...base, chainName: 'Base', ...metrics });
+			const { description } = getStrategyPageMeta({
+				name: base.name,
+				shortDescription: null,
+				chainName: 'Base',
+				...metrics
+			});
 			expect(description, JSON.stringify(metrics)).toBe(fallback);
 			expect(description).not.toContain('NaN');
 		}
 	});
 
-	it('truncates long descriptions at a word boundary', () => {
-		const shortDescription = 'word '.repeat(60).trim();
-		const { description } = getStrategyPageMeta({ ...base, shortDescription });
+	it('truncates generated descriptions at a word boundary', () => {
+		const name = 'word '.repeat(60).trim();
+		const { description } = getStrategyPageMeta({
+			name,
+			shortDescription: null,
+			chainName: 'Base',
+			annualReturn: 0.1234,
+			tvlUsd: 1_234_567
+		});
 		expect(description.length).toBeLessThanOrEqual(DESCRIPTION_MAX_LENGTH);
 		expect(description.endsWith('word…')).toBe(true);
 	});
