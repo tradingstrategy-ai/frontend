@@ -655,39 +655,17 @@ describe('shouldShowVaultTvlDownMoreThan95PercentWarning', () => {
 });
 
 describe('getFormattedLockup', () => {
-	test('returns "No lockup" for 0 seconds', () => {
-		const vault = createTestVault('Test vault', { lockup: 0 });
-		expect(getFormattedLockup(vault)).toBe('Instant');
-	});
-
-	test('returns "Unknown" for null lockup', () => {
-		const vault = createTestVault('Test vault', { lockup: null });
-		expect(getFormattedLockup(vault)).toBe('Unknown');
-	});
-
-	test('formats minutes correctly', () => {
-		const vault = createTestVault('Test vault', { lockup: 300 }); // 5 minutes
-		expect(getFormattedLockup(vault)).toBe('5m');
-	});
-
-	test('formats hours correctly', () => {
-		const vault = createTestVault('Test vault', { lockup: 7200 }); // 2 hours
-		expect(getFormattedLockup(vault)).toBe('2h');
-	});
-
-	test('formats days correctly', () => {
-		const vault = createTestVault('Test vault', { lockup: 86400 }); // 1 day
-		expect(getFormattedLockup(vault)).toBe('1d');
-	});
-
-	test('formats days and hours correctly', () => {
-		const vault = createTestVault('Test vault', { lockup: 90000 }); // 1 day, 1 hour
-		expect(getFormattedLockup(vault)).toBe('1d 1h');
-	});
-
-	test('uses abbreviated unit for 1 unit', () => {
-		const vault = createTestVault('Test vault', { lockup: 60 }); // 1 minute
-		expect(getFormattedLockup(vault)).toBe('1m');
+	test.each([
+		[null, 'Unknown'],
+		[0, 'Instant'],
+		[59, 'Instant'], // sub-minute lockups round down to no lockup
+		[60, '1m'],
+		[300, '5m'],
+		[7200, '2h'],
+		[86400, '1d'],
+		[90000, '1d 1h']
+	])('formats a lockup of %s seconds as %s', (lockup, expected) => {
+		expect(getFormattedLockup(createTestVault('Test vault', { lockup }))).toBe(expected);
 	});
 });
 

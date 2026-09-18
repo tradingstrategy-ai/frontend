@@ -31,6 +31,27 @@ timeout 900 grok -p "Review the current PR diff for correctness bugs only. Do no
   < /dev/null > /tmp/grok-review.jsonl
 ```
 
+Pass `-m grok-4.6` (or `grok-4.5`) to pin the model; `grok models` lists what is
+available.
+
+### A Grok review ends with `stopReason: "cancelled"` and no findings
+
+Under `--permission-mode dontAsk`, any tool call that the `--allow` list does not
+match is treated as a user cancellation and **terminates the whole session**: the
+JSONL stream ends with `{"type":"end","stopReason":"cancelled",...}` and the
+exit code is still 0. The usual trigger is Grok composing a compound shell
+command (`rg ... | awk ...; echo ...` or a multi-line script) through
+`run_terminal_command`, which no `Bash(rg:*)`-style rule matches.
+
+Avoid it by telling Grok in the prompt to use only its `read_file`, `grep` and
+`list_dir` tools and never pipes, `;`, `&&` or multi-line commands, and by
+giving it a tool-call budget. Check the last `tool_call_update` in the JSONL for
+`"User cancelled the execution"` to confirm this was the cause.
+
+The final answer is the `type: "text"` events emitted after the last
+`tool_call_update`; there is no separate `content`/`result` event. Concatenate
+their `data` fields.
+
 ## Codex CLI
 
 Codex is useful for local repository work where the agent should inspect files, edit code, run tests, and keep working until a task is complete.

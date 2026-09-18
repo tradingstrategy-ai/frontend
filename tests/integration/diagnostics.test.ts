@@ -11,8 +11,9 @@ test.describe('diagnostics page', () => {
 	});
 
 	test('should acquire admin role via admin pw submission', async ({ page }) => {
-		test.skip(!!process.env.CI, 'Skipping on CI runs for now');
-
+		// Wait for hydration: a value typed into the password field before the component hydrates is
+		// wiped when it re-renders, and the form then submits an empty `pw`.
+		await expect(page.locator('#navigation-panel-toggle')).toHaveAttribute('data-navigation-hydrated', 'true');
 		await page.getByPlaceholder('Enter admin pw').fill('secret');
 		await page.getByRole('button', { name: 'Save' }).click();
 		await page.waitForURL('/diagnostics?pw=secret');
