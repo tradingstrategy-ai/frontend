@@ -12,7 +12,7 @@ Displays relevant user-facing error message based on the type of payment error e
 ```
 -->
 <script lang="ts">
-	import { type ErrorInfo, errorCausedBy } from '$lib/eth-defi/helpers';
+	import { type ErrorInfo, describeError, errorCausedBy } from '$lib/eth-defi/helpers';
 
 	type Props = {
 		error: Partial<ErrorInfo>;
@@ -37,7 +37,7 @@ Displays relevant user-facing error message based on the type of payment error e
 		or a browser extension wallet like MetaMask.
 	{:else}
 		Authorization to transfer {symbol} tokens from your wallet failed.
-		{error.shortMessage ?? error.details ?? 'Failure reason unknown.'}
+		{describeError(error)}
 	{/if}
 {:else if state === 'confirming'}
 	{#if causedBy('GetSharePriceError')}
@@ -47,12 +47,12 @@ Displays relevant user-facing error message based on the type of payment error e
 		approve the request.
 	{:else}
 		Payment confirmation from wallet account failed.
-		{error.shortMessage ?? error.details ?? 'Failure reason unknown.'}
+		{describeError(error)}
 	{/if}
 {:else if state.startsWith('processing')}
-	{error.shortMessage ?? error.details ?? 'Unable to verify transaction status.'}
+	{describeError(error, 'Unable to verify transaction status.')}
 	{transactionCopy}
 {:else}
 	An unexpected error occurred during "{state}" step.
-	{error.name}: {error.shortMessage ?? error.details ?? 'Failure reason unknown.'}
+	{error.name}: {describeError(error)}
 {/if}
