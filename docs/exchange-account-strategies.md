@@ -71,6 +71,10 @@ legacy shape to the current field names. `LagoonGuardV0Flow.svelte` uses the exe
 accounting when present and otherwise derives it from settlement balance updates in `/state`. Keep the
 legacy branch until every production executor has been upgraded.
 
+A request larger than the window budget is never settled automatically and, once the executor has
+posted the next NAV, can no longer be cancelled by the user either; see
+[lagoon-deposits.md](lagoon-deposits.md) for the lifecycle and the manual Safe settlement procedure.
+
 ## Adding a new exchange
 
 1. Add the URL builder, display name and visible position statuses to `exchange-account.ts`.
