@@ -13,7 +13,7 @@ Primary site navigation and the site-wide vault search entry point.
 <Section tag="header">
 	<div class="nav-bar" style:overflow="visible">
 		{#snippet menu(mobile: boolean)}
-			<MenuItem label="Top vaults" targetUrl="/vaults" active={currentPage === '/vaults'} />
+			<MenuItem label="Vault ranking" targetUrl="/vaults" active={currentPage === '/vaults'} />
 			<MenuItem label="Our vaults" targetUrl="/strategies" active={currentPage === '/strategies'} />
 			<MenuItem label="Compare" targetUrl="/vaults/compare" active={currentPage === '/vaults/compare'} />
 			<MenuItem label="Pricing" targetUrl="/pricing" active={currentPage === '/pricing'} />

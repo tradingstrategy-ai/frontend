@@ -83,7 +83,8 @@ export default defineConfig(({ mode }) => {
 		resolve: process.env.VITEST ? { conditions: ['browser'] } : undefined,
 
 		server: {
-			// Lets users open an agent-hosted dev server via e.g. brian.tailnet.ts.net.
+			// Keep Tailscale hostnames allowed for compatibility; preview URLs use the numeric IP
+			// to avoid DNS resolution conflicts on the viewer's network.
 			allowedHosts: [TAILSCALE_ALLOWED_HOST],
 			fs: {
 				// Worktrees can symlink node_modules from their main checkout. Vite serves
