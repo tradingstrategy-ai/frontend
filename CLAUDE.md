@@ -145,26 +145,23 @@ When a user needs to preview an agent-hosted dev server from their own browser, 
 pnpm run dev --host 0.0.0.0
 ```
 
-Find the Tailscale URL:
+Find the Tailscale IPv4 address:
 
 ```shell
 tailscale ip -4
-tailscale status --json | jq -r '.Self.DNSName'
 ```
 
-Share the `*.ts.net` URL with the route being tested, for example:
-
-```text
-http://brian.tail71b97.ts.net:5173/trading-view/vaults/stablecoins/frax
-```
-
-If the DNS name is unavailable, share the Tailscale IP fallback:
+Always share a URL built from the numeric Tailscale IP. Do not use the `*.ts.net` DNS
+name: local DNS resolution can send users to the wrong machine or fail altogether.
+For example:
 
 ```text
 http://100.x.y.z:5173/trading-view/vaults/stablecoins/frax
 ```
 
-`vite.config.ts` allows `.ts.net` in `server.allowedHosts` and `preview.allowedHosts` so remote agent previews are not blocked by Vite host validation. Keep this allowlist scoped to Tailscale hostnames; do not set `allowedHosts: true`.
+`vite.config.ts` retains `.ts.net` in `server.allowedHosts` and `preview.allowedHosts`
+for compatibility, but remote preview URLs must use the numeric Tailscale IP. Keep this
+allowlist scoped to Tailscale hostnames; do not set `allowedHosts: true`.
 
 Use Chrome remote debugging MCP only when you specifically need to attach to an already running Chrome session, inspect the live DevTools state, or reuse a signed-in/manual browser context.
 

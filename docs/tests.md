@@ -201,17 +201,18 @@ available in that worktree; see [worktree setup](../.claude/docs/worktree.md).
 pnpm run dev --host 0.0.0.0
 ```
 
-Then share the Tailscale DNS name or IP with the route being reviewed:
+Then share a URL using the numeric Tailscale IPv4 address with the route being reviewed.
+Do not use the Tailscale DNS name (`*.ts.net`), because local DNS resolution can conflict
+with the viewer's network:
 
 ```shell
-tailscale status --json | jq -r '.Self.DNSName'
 tailscale ip -4
 ```
 
 Example:
 
 ```text
-http://brian.tail71b97.ts.net:5173/vaults/stablecoins/frax
+http://100.x.y.z:5173/vaults/stablecoins/frax
 ```
 
 The Vite config allows `.ts.net` hosts so agent-hosted remote dev previews work without disabling host validation globally.

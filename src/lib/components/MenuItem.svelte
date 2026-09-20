@@ -6,7 +6,7 @@ and usable) and is marked with `aria-current="page"`, which also drives its styl
 @example
 
 ```svelte
-	<MenuItem label="Top vaults" targetUrl="/vaults" active={currentPage === '/vaults'} />
+	<MenuItem label="Vault ranking" targetUrl="/vaults" active={currentPage === '/vaults'} />
 ```
 -->
 <script lang="ts">
