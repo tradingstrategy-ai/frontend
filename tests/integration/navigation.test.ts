@@ -8,7 +8,7 @@ test('shows Compare and Pricing in desktop navigation and moves secondary links 
 
 	const primaryNavigation = page.getByRole('navigation', { name: 'Primary navigation' });
 	await expect(primaryNavigation.locator('menu > li > a')).toHaveText([
-		'Top vaults',
+		'Vault ranking',
 		'Our vaults',
 		'Compare',
 		'Pricing'
@@ -32,7 +32,7 @@ test('keeps every navigation link in the mobile menu', async ({ page }) => {
 
 	const navigation = page.getByRole('navigation', { name: 'Mobile navigation' });
 	await expect(navigation.locator(':scope > menu > li > a')).toHaveText([
-		'Top vaults',
+		'Vault ranking',
 		'Our vaults',
 		'Compare',
 		'Pricing',
@@ -128,7 +128,7 @@ async function searchFromNavigation(page: import('@playwright/test').Page, query
 		if ((await page.evaluate(() => window.innerWidth)) >= 768) {
 			search = page.getByTestId('mobile-menu-search').getByRole('combobox', { name: searchName });
 			await expect(search).toBeVisible();
-			await expect(navigation.getByRole('link', { name: 'Top vaults' })).toBeVisible();
+			await expect(navigation.getByRole('link', { name: 'Vault ranking' })).toBeVisible();
 		} else {
 			await expect(menuSearch).toBeVisible();
 			await menuSearch.click();
