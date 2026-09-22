@@ -6,8 +6,12 @@ const TOP_VAULTS_JSON = 'top_vaults_by_chain.json';
 const CRYPTO_CLEANED_PRICES_PARQUET = 'crypto-cleaned-vault-prices-1d.parquet';
 const CRYPTO_VAULT_METADATA_JSON = 'crypto-vault-metadata.json';
 const EXCHANGE_RATES_PARQUET = 'exchange-rates.parquet';
+const VAULT_SCAN_MANIFEST_JSON = 'vault-scan-manifest.json';
 
-/** Map public dataset IDs to their Worker file key and download metadata. */
+/**
+ * Restrict downloads to known Worker keys; callers cannot select arbitrary R2 objects.
+ * The download handler also uses this mapping for the public attachment name.
+ */
 function resolveDataset(datasetId: string): { fileKey: string; filename: string; contentType: string } | null {
 	switch (datasetId) {
 		case 'vault-metadata':
@@ -36,11 +40,22 @@ function resolveDataset(datasetId: string): { fileKey: string; filename: string;
 				filename: EXCHANGE_RATES_PARQUET,
 				contentType: 'application/vnd.apache.parquet'
 			};
+		case 'vault-scan-manifest':
+			return {
+				fileKey: VAULT_SCAN_MANIFEST_JSON,
+				filename: VAULT_SCAN_MANIFEST_JSON,
+				contentType: 'application/json'
+			};
 		default:
 			return null;
 	}
 }
 
+/**
+ * Stream licensed datasets without using the chart caches or buffering parquet files.
+ * Readiness pollers need fresh manifest bytes and the original price ETag to detect
+ * an intervening publication; this proxy deliberately does not interpret the JSON.
+ */
 export async function GET({ params, url, fetch }) {
 	const apiKey = url.searchParams.get('api-key');
 	if (!apiKey) error(401, 'Missing api-key query parameter');
@@ -49,7 +64,10 @@ export async function GET({ params, url, fetch }) {
 	if (!dataset) error(404, 'Unknown dataset');
 
 	const upstream = await fetch(`${vaultApiUrl}/files/${dataset.fileKey}`, {
-		headers: { Authorization: `Bearer ${apiKey}` }
+		headers: {
+			Authorization: `Bearer ${apiKey}`,
+			'Cache-Control': 'no-cache'
+		}
 	});
 
 	if (upstream.status === 401 || upstream.status === 403) error(403, 'Invalid API key');
@@ -62,8 +80,11 @@ export async function GET({ params, url, fetch }) {
 		'cache-control': 'private, no-store'
 	};
 
-	const contentLength = upstream.headers.get('content-length');
-	if (contentLength) headers['content-length'] = contentLength;
+	// Preserve the storage version, not an ETag computed for the proxy response.
+	for (const name of ['content-length', 'etag']) {
+		const value = upstream.headers.get(name);
+		if (value) headers[name] = value;
+	}
 
 	return new Response(upstream.body, { headers });
 }

@@ -1,5 +1,7 @@
 # Weblog of stuff
 
+- Add the authenticated, uncached vault scan manifest download and preserve source ETags for verified price downloads (2026-09-22).
+
 - Stop edge-cached pages from reload-looping when the origin is down and a page chunk is missing; ship `static-cache-control.js` in the Docker image so the production server starts (2026-09-18)
 - Add the Lighter multistrategy vault: link its open positions to the Lighter account explorer page, add its avatars, support the new Lagoon GuardV0 settlement-window metadata alongside the legacy shape, fix the dead Lighter explorer URL (2026-09-17)
 - SEO round 3: noindex empty vault pages and crawl-waste endpoints, metric-matched font fallbacks against layout shift, click-to-load YouTube embeds on blog posts, branded titles, full descriptions and social images on every template, Organization and BlogPosting structured data, asset caching (2026-09-17)

@@ -66,6 +66,47 @@ export default defineMock([
 				res.statusCode = 200;
 				res.setHeader('content-type', 'application/octet-stream');
 				res.setHeader('content-length', String(body.byteLength));
+				res.setHeader('etag', '"prices-etag-v1"');
+				res.end(body);
+			} else {
+				res.statusCode = 403;
+				res.setHeader('content-type', 'application/json');
+				res.end(JSON.stringify({ error: 'Forbidden' }));
+			}
+		}
+	},
+
+	/**
+	 * HyperCore readiness manifest — proxied server-side by the download endpoint.
+	 */
+	{
+		url: '/api/files/vault-scan-manifest.json',
+		method: 'GET',
+		response(req, res) {
+			// Make the blackbox test fail if the proxy stops requesting revalidation.
+			if (req.headers['cache-control'] !== 'no-cache') {
+				res.statusCode = 400;
+				res.end('Readiness requests must bypass cached responses');
+				return;
+			}
+			if (isAuthorised(req)) {
+				const body = JSON.stringify({
+					schema_version: 1,
+					published_at: '2026-09-22T03:20:00Z',
+					price_file: { key: 'cleaned-vault-prices-1h.parquet', etag: 'prices-etag-v1' },
+					chains: {
+						'9999': {
+							name: 'Hypercore',
+							last_successful_price_scan_ended_at: '2026-09-22T02:55:00Z',
+							last_candle_at: '2026-09-22T00:30:00Z'
+						}
+					}
+				});
+				res.statusCode = 200;
+				res.setHeader('content-type', 'application/json');
+				res.setHeader('content-length', String(Buffer.byteLength(body)));
+				res.setHeader('cache-control', 'no-store');
+				res.setHeader('etag', '"manifest-etag-v1"');
 				res.end(body);
 			} else {
 				res.statusCode = 403;
