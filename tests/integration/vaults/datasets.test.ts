@@ -144,6 +144,20 @@ test.describe('vault dataset download endpoint', () => {
 		expect(res.headers()['content-type']).toBe('application/octet-stream');
 		expect(res.headers()['content-disposition']).toContain('vault-historical.parquet');
 		expect(res.headers()['cache-control']).toBe('private, no-store');
+		expect(res.headers()['etag']).toBe('"prices-etag-v1"');
+	});
+
+	test('returns the uncached HyperCore scan manifest with the price ETag', async ({ request }) => {
+		const res = await request.get(`/vaults/datasets/download/vault-scan-manifest?api-key=${VALID_API_KEY}`);
+		expect(res.status()).toBe(200);
+		expect(res.headers()['content-type']).toContain('application/json');
+		expect(res.headers()['cache-control']).toBe('private, no-store');
+		expect(res.headers()['etag']).toBe('"manifest-etag-v1"');
+		expect(await res.json()).toMatchObject({
+			schema_version: 1,
+			price_file: { etag: 'prices-etag-v1' },
+			chains: { '9999': { last_candle_at: '2026-09-22T00:30:00Z' } }
+		});
 	});
 
 	for (const dataset of [

@@ -6,6 +6,7 @@ const TOP_VAULTS_JSON = 'top_vaults_by_chain.json';
 const CRYPTO_CLEANED_PRICES_PARQUET = 'crypto-cleaned-vault-prices-1d.parquet';
 const CRYPTO_VAULT_METADATA_JSON = 'crypto-vault-metadata.json';
 const EXCHANGE_RATES_PARQUET = 'exchange-rates.parquet';
+const VAULT_SCAN_MANIFEST_JSON = 'vault-scan-manifest.json';
 
 /** Map public dataset IDs to their Worker file key and download metadata. */
 function resolveDataset(datasetId: string): { fileKey: string; filename: string; contentType: string } | null {
@@ -36,6 +37,12 @@ function resolveDataset(datasetId: string): { fileKey: string; filename: string;
 				filename: EXCHANGE_RATES_PARQUET,
 				contentType: 'application/vnd.apache.parquet'
 			};
+		case 'vault-scan-manifest':
+			return {
+				fileKey: VAULT_SCAN_MANIFEST_JSON,
+				filename: VAULT_SCAN_MANIFEST_JSON,
+				contentType: 'application/json'
+			};
 		default:
 			return null;
 	}
@@ -49,7 +56,10 @@ export async function GET({ params, url, fetch }) {
 	if (!dataset) error(404, 'Unknown dataset');
 
 	const upstream = await fetch(`${vaultApiUrl}/files/${dataset.fileKey}`, {
-		headers: { Authorization: `Bearer ${apiKey}` }
+		headers: {
+			Authorization: `Bearer ${apiKey}`,
+			'Cache-Control': 'no-cache'
+		}
 	});
 
 	if (upstream.status === 401 || upstream.status === 403) error(403, 'Invalid API key');
@@ -64,6 +74,8 @@ export async function GET({ params, url, fetch }) {
 
 	const contentLength = upstream.headers.get('content-length');
 	if (contentLength) headers['content-length'] = contentLength;
+	const etag = upstream.headers.get('etag');
+	if (etag) headers.etag = etag;
 
 	return new Response(upstream.body, { headers });
 }
