@@ -83,6 +83,12 @@ export default defineMock([
 		url: '/api/files/vault-scan-manifest.json',
 		method: 'GET',
 		response(req, res) {
+			// Make the blackbox test fail if the proxy stops requesting revalidation.
+			if (req.headers['cache-control'] !== 'no-cache') {
+				res.statusCode = 400;
+				res.end('Readiness requests must bypass cached responses');
+				return;
+			}
 			if (isAuthorised(req)) {
 				const body = JSON.stringify({
 					schema_version: 1,

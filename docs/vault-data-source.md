@@ -200,6 +200,44 @@ The US 3-month constant-maturity Treasury market yield is used as a reference be
 
 This authenticated download endpoint proxies requests through a separate Vault API service (`TS_PUBLIC_VAULT_API_URL`), not through R2 or the local cache. It requires an API key and intentionally streams the complete licensed dataset as a file download.
 
+The readiness route is `GET /vaults/datasets/download/vault-scan-manifest?api-key=…`.
+It maps to the Worker's `/files/vault-scan-manifest.json`, alongside the existing
+`vault-prices` route mapping to `/files/cleaned-vault-prices-1h.parquet`. The Worker
+must serve both objects from the same private bucket and publication prefix
+(normally `vaults-pro-data` with an empty prefix). These downloads use the caller's
+API key as a Worker bearer token, not the frontend's private R2 credentials. Never
+log or paste a credential-bearing request URL.
+
+Every dataset download sends `Cache-Control: no-cache` upstream, and successful
+responses have `Cache-Control: private, no-store`. The proxy passes the storage
+`ETag` through unchanged and streams the body. It does not use the chart's one-hour
+cache, calculate indicators, or parse/validate the receipt. Worker and CDN rules
+must also honour this uncached delivery; the proxy headers alone cannot guarantee
+that a misconfigured upstream cache is fresh.
+
+The eth-defi scanner publishes the manifest **after** its cleaned price upload.
+The v1 receipt contains `schema_version`, `published_at`, `price_file.key`,
+`price_file.etag` and `chains` keyed by numeric chain-ID strings (`9999` is HyperCore,
+not HyperEVM's `999`). Each chain has `name`,
+`last_successful_price_scan_ended_at` and `last_candle_at`; timestamps are UTC strings
+ending in `Z`, with unknown chain timestamps represented by `null`.
+The candle timestamp is the latest observation, **not** proof that every vault has
+complete daily candles. Four-hour observations and gaps are expected.
+
+The trading-strategy client validates these fields and compares the manifest's
+unquoted `price_file.etag` with the price download's quoted HTTP ETag. The manifest
+response's own ETag identifies the JSON object, not the price object. A publication
+between the two requests can produce a mismatch; the consumer must retry without
+using the unverified price file. The frontend deliberately leaves this policy to
+the consumer. The producer and consumer schemas are documented in
+`eth_defi/vault/scan_manifest.py` and `tradingstrategy/vault_scan_manifest.py`.
+
+Missing API keys return 401; rejected Worker credentials return 403; unknown dataset
+IDs return 404. Other Worker errors (including a missing R2 object) return 502.
+Before enabling manifest-gated trading, deploy the producer and this route, then
+verify the real Worker bucket binding, cache behaviour and price ETag agreement.
+The mocked endpoint tests do not establish that production deployment is ready.
+
 The datasets listing page (`src/routes/vaults/datasets/+page.server.ts`) reads top-vault file metadata from R2 or the configured private URL fallback. Historical parquet file metadata is available only through R2. The actual downloads use the separate Vault API in both cases.
 
 ## Data flow diagram

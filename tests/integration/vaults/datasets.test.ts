@@ -147,7 +147,7 @@ test.describe('vault dataset download endpoint', () => {
 		expect(res.headers()['etag']).toBe('"prices-etag-v1"');
 	});
 
-	test('returns the uncached HyperCore scan manifest with the price ETag', async ({ request }) => {
+	test('returns the uncached manifest with its own ETag and the price ETag in its body', async ({ request }) => {
 		const res = await request.get(`/vaults/datasets/download/vault-scan-manifest?api-key=${VALID_API_KEY}`);
 		expect(res.status()).toBe(200);
 		expect(res.headers()['content-type']).toContain('application/json');
