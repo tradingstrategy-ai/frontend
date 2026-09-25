@@ -21,9 +21,11 @@ Performance metrics table for a vault across multiple lookback periods.
 		vault: VaultInfo;
 		chain: Chain;
 		showRankings?: boolean;
+		/** Section heading; vault pages pass "<name> APY and returns" to match "<vault> apy" searches */
+		title?: string;
 	}
 
-	let { vault, chain, showRankings = true }: Props = $props();
+	let { vault, chain, showRankings = true, title = 'Returns and period details' }: Props = $props();
 
 	// Ordered list of periods to display as columns
 	const periodOrder = ['1w', '1m', '3m', '6m', '1y', 'lifetime'] as const;
@@ -216,7 +218,7 @@ Performance metrics table for a vault across multiple lookback periods.
 
 {#if vault.period_results?.length}
 	<div class="periodic-metrics">
-		<MetricsBox title="Returns and period details">
+		<MetricsBox {title}>
 			<div class="table-wrapper">
 				<table class="period-table">
 					<thead>

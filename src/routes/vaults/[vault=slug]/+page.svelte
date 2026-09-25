@@ -13,6 +13,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 	import SocialMediaTags from './SocialMetaTags.svelte';
 	import VaultPageHeader from './VaultPageHeader.svelte';
+	import SimilarVaults from './SimilarVaults.svelte';
 	import ChartWithFeaturedMetrics from './ChartWithFeaturedMetrics.svelte';
 	// Vault protocols do not report useful utilisation data.
 	// import VaultUtilisationChart from '$lib/top-vaults/VaultUtilisationChart.svelte';
@@ -40,8 +41,17 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
 
 	let { data } = $props();
-	let { vault, chain, protocolMetadata, curatorMetadata, stablecoinMetadata, generated_at, core3, categoryLinks } =
-		$derived(data);
+	let {
+		vault,
+		chain,
+		protocolMetadata,
+		curatorMetadata,
+		stablecoinMetadata,
+		generated_at,
+		core3,
+		categoryLinks,
+		similarVaults
+	} = $derived(data);
 	let morphoFlags = $derived(getMorphoFlags(vault));
 	let notesDuplicateMorphoFlags = $derived(
 		morphoFlags.length > 0 && vault.notes?.startsWith('Morpho has flagged this vault with the following issues:')
@@ -206,7 +216,9 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 			</MetricsBox>
 		{/if}
 
-		<VaultPeriodicMetrics {vault} {chain} />
+		<VaultPeriodicMetrics {vault} {chain} title={`${vault.name} APY and returns`} />
+
+		<SimilarVaults {vault} vaults={similarVaults} />
 
 		<VaultTechnicalDetailsTable {vault} {chain} {stablecoinMetadata} {generated_at} />
 	</Section>

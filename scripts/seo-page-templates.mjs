@@ -8,7 +8,7 @@
 
 /** Vault listing and tool routes directly under `/vaults/` that are not vault detail pages. */
 const VAULT_LISTINGS =
-	/^\/vaults\/(all|high-tvl|new-vaults|negative|whitelisted|blacklisted|funds|international|core3-ratings|xerberus-ratings|compare|datasets|api|sitemap\.xml|tokenised-funds|treasury-benchmark|coinbase-candles|yield-[a-z-]+|current-peak-tvl|core3-risk|historical-tvl-[a-z-]+|cumulative-tvl-apy|stablecoin-chain-heatmap)$/;
+	/^\/vaults\/(all|high-tvl|new-vaults|negative|whitelisted|blacklisted|funds|international|core3-ratings|xerberus-ratings|compare|datasets|api|sitemap\.xml|tokenised-funds|treasury-benchmark|coinbase-candles|methodology|yield-[a-z-]+|current-peak-tvl|core3-risk|historical-tvl-[a-z-]+|cumulative-tvl-apy|stablecoin-chain-heatmap)$/;
 
 /** @type {[template: string, pattern: RegExp][]} */
 const TEMPLATES = [

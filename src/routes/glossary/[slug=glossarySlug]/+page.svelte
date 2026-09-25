@@ -12,9 +12,11 @@
 	import { Section } from '$lib/components';
 	import { serializeSchema } from '$lib/helpers/google-meta';
 	import NewsletterOptInBanner from '$lib/newsletter/OptInBanner.svelte';
+	import { getRelatedVaultLinks } from '../related-vault-links';
 
 	let { data } = $props();
 	let { entry } = $derived(data);
+	let relatedVaultLinks = $derived(getRelatedVaultLinks(entry.slug));
 
 	/**
 	 * Generate LD JSON markup
@@ -56,6 +58,17 @@
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -- glossary definition HTML scraped from the documentation site -->
 			{@html entry.html}
 		</div>
+		{#if relatedVaultLinks.length}
+			<nav class="related-vaults" aria-label="Vault data">
+				<h2>Vault data</h2>
+				<ul>
+					{#each relatedVaultLinks as link (link.href)}
+						<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- static internal vault paths -->
+						<li><a href={link.href}>{link.label}</a></li>
+					{/each}
+				</ul>
+			</nav>
+		{/if}
 	</Section>
 
 	<Section padding="sm">
@@ -67,6 +80,29 @@
 	h1 {
 		font: var(--f-h1-medium);
 		text-transform: capitalize;
+	}
+
+	.related-vaults {
+		display: grid;
+		gap: var(--space-sm);
+
+		h2 {
+			font: var(--f-heading-sm-medium);
+		}
+
+		ul {
+			display: flex;
+			flex-wrap: wrap;
+			gap: var(--space-sm) var(--space-lg);
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		a {
+			font: var(--f-ui-lg-medium);
+			text-decoration: underline;
+		}
 	}
 
 	.answer {

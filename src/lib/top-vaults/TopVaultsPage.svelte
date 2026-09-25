@@ -11,6 +11,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 ```
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { Snippet } from 'svelte';
 	import type { Chain } from '$lib/helpers/chain';
 	import type { VaultListingTopVaults } from './schemas';
@@ -332,6 +333,11 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 					{listingSummary}
 				/>
 			{/if}
+
+			<p class="methodology-link">
+				<a href={resolve('/vaults/methodology')}>How we rank vaults</a>: data sources, APY and TVL definitions and the
+				vaults hidden by default.
+			</p>
 		</div>
 	</Section>
 
@@ -341,6 +347,16 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 </main>
 
 <style>
+	.methodology-link {
+		margin: 0;
+		font: var(--f-ui-sm-roman);
+		color: var(--c-text-extra-light);
+
+		a {
+			text-decoration: underline;
+		}
+	}
+
 	.top-vaults-page {
 		.top-vaults-header {
 			display: grid;
