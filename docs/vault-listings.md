@@ -57,32 +57,23 @@ describes whether its initial rows have a continuation. A short listing can
 therefore gain continuation pages later when hidden blacklisted rows are
 revealed.
 
-## Stablecoin yield comparison, similar vaults and methodology
+## Search wording
 
-`/vaults/stablecoins` leads with "Best stablecoin yields right now"
-(`getStablecoinYieldComparison()` in `src/lib/top-vaults/listing/stablecoin-yields.ts`): the eight
-largest stablecoins by USD TVL, each with its highest-APY vault under the leader rules in
-`getYieldLeaders()` (`src/lib/top-vaults/listing/insights.ts`). A stablecoin whose vaults do not
-qualify keeps its row as "No vault meets the rules above"; the table is left out when no stablecoin
-qualifies.
+Hub and vault page titles and descriptions use the words people search
+("Morpho vaults", "best USDC yield"): `src/lib/top-vaults/hub-seo.ts` and
+`src/lib/top-vaults/vault-seo.ts`; see `docs/google-webmasters.md`, "Round 4".
+Glossary terms that rank for vault searches link to the matching vault pages
+(`src/routes/glossary/related-vault-links.ts`).
 
-Leaders are chosen more strictly than the table rows, because they are presented as an answer to
-"best … yield": yield vaults only (no AMM-like pools, tokenised funds or trading-strategy tags),
-indexable, rated Low risk or safer (`risk_numeric ≤ 20`), at least $100,000 TVL, three months of
-history (`years ≥ 0.25`) and an APY no higher than 100 %. The risk rating is protocol technical risk;
-it does not screen out a discretionary trading fund on a low-risk protocol, which is why the
-strategy-tag rule exists. The rules are stated on the page and on `/vaults/methodology`; keep all
-three in step.
-
-A generated "top vaults" paragraph and comparison table on every hub was tried in round 4 and
-removed before release: it repeated rows already in the listing below it in a sentence full of
-qualifiers, and did not explain anything a visitor could act on.
-
-Vault detail pages show "Similar <protocol> vaults" (`getSimilarVaults()` in
-`src/lib/top-vaults/similar-vaults.ts`): the largest indexable vaults on the same protocol,
-same denomination first. Search wording for titles and descriptions lives in
-`src/lib/top-vaults/hub-seo.ts` and `src/lib/top-vaults/vault-seo.ts`; see
-`docs/google-webmasters.md`, "Round 4".
+Round 4 also built, and removed before release, content generated for search: a
+"top vaults" paragraph and comparison table on every hub, a "Best stablecoin
+yields right now" table, "Similar <protocol> vaults" on vault pages and a
+`/vaults/methodology` page linked below the listings. The hub block repeated
+rows the listing already shows; on live data the "best" picks were 600–850 %
+trading vaults until the exclusion rules grew too long to read; the HLP page's
+similar vaults were −78 % and 801 % trading vaults; and the methodology link sat
+below an infinitely scrolling table. Don't bring them back without a reason a
+visitor would recognise.
 
 ## Ordering and filtering
 

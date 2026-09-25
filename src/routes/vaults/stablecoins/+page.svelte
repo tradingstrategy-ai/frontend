@@ -21,10 +21,9 @@ Vault stablecoins index page.
 	import VaultGroupIndexHeader from '../VaultGroupIndexHeader.svelte';
 	import MarketSharePieChart from '../MarketSharePieChart.svelte';
 	import MarketShareWidgetBox from '../MarketShareWidgetBox.svelte';
-	import StablecoinYieldComparison from './StablecoinYieldComparison.svelte';
 
 	let { data } = $props();
-	let { stablecoins, chartStablecoins, yieldComparison, generatedAt, options } = $derived(data);
+	let { stablecoins, chartStablecoins, options } = $derived(data);
 	let totalTvl = $derived(stablecoins.reduce((total, stablecoin) => total + stablecoin.tvl, 0));
 	let totalTvlLabel = $derived(`${formatDollar(totalTvl / 1_000_000_000, 1, 1, { notation: 'standard' })} billion`);
 
@@ -103,10 +102,6 @@ Vault stablecoins index page.
 				</div>
 			</VaultGroupIndexHeader>
 		</div>
-	</Section>
-
-	<Section padding="sm">
-		<StablecoinYieldComparison rows={yieldComparison} updatedAt={generatedAt} />
 	</Section>
 
 	<Section padding="sm">

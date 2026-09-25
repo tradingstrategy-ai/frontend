@@ -27,7 +27,6 @@ const priority = 0.8;
 // `blacklisted` and `protocols/unknown` are deliberately absent: those listings are
 // `noindex` (see their loaders), and a sitemap must not submit noindex URLs.
 const staticSubPages = [
-	'methodology',
 	'all',
 	'high-tvl',
 	'international',

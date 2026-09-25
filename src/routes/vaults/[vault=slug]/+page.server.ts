@@ -11,7 +11,6 @@ import {
 	withVaultDenominationTokenRate
 } from '$lib/top-vaults/helpers.js';
 import { fetchVaultProtocolMetadata } from '$lib/vault-protocol/client';
-import { getSimilarVaults } from '$lib/top-vaults/similar-vaults';
 import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ params, fetch }) {
@@ -37,10 +36,12 @@ export async function load({ params, fetch }) {
 		fetchVaultProtocolMetadata(fetch, vault.protocol_slug, vault.protocol),
 		fetchStablecoinMetadataIndex(fetch)
 	]);
-	const stablecoinLookup = buildStablecoinMetadataLookup(stablecoinMetadataIndex);
-	const usdRates = getCurrencyUsdRates(stablecoinMetadataIndex);
-	const stablecoinMetadata = findVaultStablecoinMetadata(stablecoinLookup, vault);
-	const vaultWithRates = withVaultDenominationTokenRate(vault, stablecoinMetadata, usdRates);
+	const stablecoinMetadata = findVaultStablecoinMetadata(buildStablecoinMetadataLookup(stablecoinMetadataIndex), vault);
+	const vaultWithRates = withVaultDenominationTokenRate(
+		vault,
+		stablecoinMetadata,
+		getCurrencyUsdRates(stablecoinMetadataIndex)
+	);
 	const curatorMetadata = vault.curator_slug ? curators[vault.curator_slug] : null;
 
 	return {
@@ -52,10 +53,6 @@ export async function load({ params, fetch }) {
 		stablecoinMetadata,
 		generated_at,
 		core3,
-		categoryLinks: getVaultCategoryLinks(vault, categories),
-		similarVaults: getSimilarVaults(vault, vaults, {
-			withRates: (candidate) =>
-				withVaultDenominationTokenRate(candidate, findVaultStablecoinMetadata(stablecoinLookup, candidate), usdRates)
-		})
+		categoryLinks: getVaultCategoryLinks(vault, categories)
 	};
 }
