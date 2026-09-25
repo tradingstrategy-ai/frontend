@@ -25,7 +25,7 @@ DeFi vault rankings — the landing page for "defi vaults" / "best defi vaults" 
 	);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let rankingDescription = $derived(getVaultSortDescription(page.url.searchParams.get('sort')));
-	let subtitle = $derived(`The best-performing DeFi vaults. Ranked by ${rankingDescription}.`);
+	let subtitle = $derived(`The best-performing DeFi vaults for stablecoins. Ranked by ${rankingDescription}.`);
 </script>
 
 <MetaTags
@@ -46,7 +46,7 @@ DeFi vault rankings — the landing page for "defi vaults" / "best defi vaults" 
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: data.totalVaultCount,
+			numberOfItems: data.listingSummary.matchingCount,
 			itemListElement: getItemListElements(data.initialTopVaults.vaults, page.url.origin)
 		}
 	}}

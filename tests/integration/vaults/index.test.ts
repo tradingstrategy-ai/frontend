@@ -271,7 +271,7 @@ test.describe('vault index page', () => {
 
 	test('describes the default return ranking', async ({ page }) => {
 		await expect(page.locator('.hero-banner .subtitle')).toHaveText(
-			'The best-performing DeFi vaults. Ranked by one-month annualised returns.'
+			'The best-performing DeFi vaults for stablecoins. Ranked by one-month annualised returns.'
 		);
 	});
 
@@ -350,7 +350,7 @@ test.describe('vault index page', () => {
 
 		await expect(page).toHaveURL(/sort=tvl/);
 		await expect(page.locator('.hero-banner .subtitle')).toHaveText(
-			'The best-performing DeFi vaults. Ranked by total value locked.'
+			'The best-performing DeFi vaults for stablecoins. Ranked by total value locked.'
 		);
 	});
 

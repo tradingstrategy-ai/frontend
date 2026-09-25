@@ -1,7 +1,7 @@
 import type { VaultGroup, VaultInfo } from '$lib/top-vaults/schemas.js';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { calculateTvlWeightedApy, isBlacklisted, meetsMinTvl } from '$lib/top-vaults/helpers.js';
-import { getListingInsights, type ListingLeader } from '$lib/top-vaults/listing/insights';
+import { getStablecoinYieldComparison } from '$lib/top-vaults/listing/stablecoin-yields';
 import { sortOptions } from '$lib/top-vaults/VaultGroupTable.svelte';
 import { getNumberParam, getStringParam } from '$lib/helpers/url-params';
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
@@ -14,18 +14,6 @@ import {
 } from '$lib/stablecoin-metadata/helpers.js';
 import type { MarketShareChartItem } from '../market-share-pie';
 import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas.js';
-
-/** How many stablecoins the "best stablecoin yields" comparison covers */
-const COMPARISON_STABLECOIN_COUNT = 8;
-
-export type StablecoinYieldRow = {
-	slug: string;
-	symbol: string;
-	name: string | undefined;
-	best: ListingLeader;
-	medianApy: number | null;
-	compared: number;
-};
 
 function getStablecoinRateFields(metadata: StablecoinMetadata | undefined) {
 	return {
@@ -65,16 +53,18 @@ export async function load({ fetch, url: { searchParams } }) {
 	const metadataLookup = buildStablecoinMetadataLookup(metadataIndex);
 	const metadataBySlug = new Map(metadataIndex.map((m) => [m.slug, m]));
 
+	const resolveSlug = (vault: VaultInfo) =>
+		resolveStablecoinSlug(
+			{
+				slug: vault.denomination_slug,
+				symbol: vault.denomination,
+				name: vault.normalised_denomination
+			},
+			metadataLookup
+		) ?? vault.denomination_slug;
+
 	const stablecoins = eligibleVaults.reduce<Record<string, VaultGroup>>((acc, vault) => {
-		const slug =
-			resolveStablecoinSlug(
-				{
-					slug: vault.denomination_slug,
-					symbol: vault.denomination,
-					name: vault.normalised_denomination
-				},
-				metadataLookup
-			) ?? vault.denomination_slug;
+		const slug = resolveSlug(vault);
 		const metadata = metadataBySlug.get(slug);
 
 		acc[slug] ??= {
@@ -123,33 +113,12 @@ export async function load({ fetch, url: { searchParams } }) {
 		href: getStablecoinDetailsHref(group.slug)
 	}));
 
-	// "best stablecoin yield" comparison: the leading vault of each of the largest stablecoins,
-	// chosen with the same rules as the hub insights (minimum TVL and age, no blacklisted vaults)
-	const vaultsByStablecoin = new Map<string, VaultInfo[]>();
-	for (const vault of eligibleVaults) {
-		const group = vaultsByStablecoin.get(vault.denomination_slug) ?? [];
-		group.push(vault);
-		vaultsByStablecoin.set(vault.denomination_slug, group);
-	}
-	const yieldComparison: StablecoinYieldRow[] = stablecoinGroups
-		.filter((group) => group.vault_count > 0)
-		.toSorted((a, b) => b.tvl - a.tvl)
-		.flatMap((group) => {
-			const insights = getListingInsights(vaultsByStablecoin.get(group.slug) ?? [], 'protocol');
-			const best = insights.leaders[0];
-			if (!best) return [];
-			return [
-				{
-					slug: group.slug,
-					symbol: group.name,
-					name: group.fullName ?? undefined,
-					best,
-					medianApy: insights.medianApy,
-					compared: insights.eligibleCount
-				}
-			];
-		})
-		.slice(0, COMPARISON_STABLECOIN_COUNT);
+	// "best stablecoin yield" comparison: the leading vault of each of the largest stablecoins by
+	// USD TVL, chosen with the same rules as the hub insights
+	const yieldComparison = getStablecoinYieldComparison(eligibleVaults, {
+		resolveSlug,
+		getName: (slug) => metadataBySlug.get(slug)?.name
+	});
 
 	const options = {
 		page: getNumberParam(searchParams, 'page', 0),

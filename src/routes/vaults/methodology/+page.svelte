@@ -19,7 +19,7 @@ and exclusions. Linked from every vault listing ("How we rank vaults").
 		<VaultListingsSelector />
 	</Section>
 
-	<Section tag="article" padding="sm" gap="md">
+	<Section tag="article" padding="sm" gap="sm">
 		<h1>How we rank DeFi vaults</h1>
 		<p class="lead">
 			This page explains where the vault data comes from, how APY and TVL are calculated, which vaults are left out of
@@ -58,6 +58,13 @@ and exclusions. Linked from every vault listing ("How we rank vaults").
 			token. Stablecoins pegged to other currencies, such as euro stablecoins, are converted at their own rate rather
 			than counted as one dollar each. When a denomination token is not recognised and has no exchange rate, one token
 			is counted as one dollar in listing totals.
+		</p>
+
+		<h2>Which vaults are listed</h2>
+		<p>
+			The rankings list stablecoin-denominated vaults only: vaults whose deposits and returns are in USD, euro or other
+			stablecoins. Vaults denominated in ETH, BTC or other cryptocurrencies are not ranked, because their returns are
+			not comparable with stablecoin yields.
 		</p>
 
 		<h2>Which vaults are hidden by default</h2>
@@ -104,7 +111,7 @@ and exclusions. Linked from every vault listing ("How we rank vaults").
 
 		h2 {
 			font: var(--f-h3-medium);
-			margin-top: var(--space-md);
+			margin-top: var(--space-lg);
 		}
 
 		.lead,

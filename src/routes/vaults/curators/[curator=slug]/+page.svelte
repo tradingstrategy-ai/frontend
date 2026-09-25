@@ -13,7 +13,7 @@ with an "about" panel and a TVL/return mini chart.
 	import { getItemListElements, getHubTitleParts } from '$lib/top-vaults/hub-seo';
 
 	let { data } = $props();
-	let { curatorSlug, curatorName, curator, vaultCount, tvl, averageApy, initialTopVaults } = $derived(data);
+	let { curatorSlug, curatorName, curator, initialTopVaults } = $derived(data);
 
 	/** Google truncates search snippets around this length; keep the meta description within it */
 	const META_DESCRIPTION_MAX_LENGTH = 160;
@@ -36,10 +36,12 @@ with an "about" panel and a TVL/return mini chart.
 	let heading = $derived(`${curatorName} vaults`);
 	let titleParts = $derived(getHubTitleParts(heading, ['APY, TVL and risk', 'APY and TVL']));
 	let fullDescription = $derived.by(() => {
+		// same figures as the listing the page shows (default filters applied)
+		const { matchingCount: listedCount, totalTvl: listedTvl, avgTvlWeightedApy1M: listedApy } = data.listingSummary;
 		const stats =
-			vaultCount > 0
-				? `${curatorName} has ${vaultCount} ${vaultCount === 1 ? 'vault' : 'vaults'} with ${formatDollar(tvl, 1)} TVL${
-						averageApy == null ? '' : ` and a ${formatPercent(averageApy, 1)} APY over the last 30 days`
+			listedCount > 0
+				? `${curatorName} has ${listedCount} listed ${listedCount === 1 ? 'vault' : 'vaults'} with ${formatDollar(listedTvl, 1)} TVL${
+						listedApy == null ? '' : ` and a ${formatPercent(listedApy, 1)} average APY over the last 30 days`
 					}. The curator may have more vaults outside supported blockchains and vault protocols.`
 				: `Vaults curated by ${curatorName}, with their APY and TVL.`;
 		const about = curator.short_description ? ` ${asSentence(curator.short_description)}` : '';

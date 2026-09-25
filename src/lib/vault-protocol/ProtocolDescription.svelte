@@ -1,6 +1,16 @@
 <!--
-  Expandable protocol description widget with social/documentation links.
-  Used on vault protocol detail pages to display protocol metadata.
+@component
+Expandable protocol description widget with social/documentation links.
+Used on vault protocol detail pages to display protocol metadata.
+
+The long description is always server-rendered (collapsed with `hidden` until "View more") so
+search engines index it.
+
+@example
+
+```svelte
+	<ProtocolDescription metadata={protocolMetadata} />
+```
 -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';

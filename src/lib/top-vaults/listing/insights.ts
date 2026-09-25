@@ -13,7 +13,8 @@ import {
 	getVaultAssetType,
 	getVaultCurrentTvlUsd,
 	getVaultProtocolDisplayName,
-	isBlacklisted
+	isBlacklisted,
+	isVaultIndexable
 } from '../helpers';
 import type { VaultInfo } from '../schemas';
 
@@ -54,12 +55,12 @@ const TRADING_STRATEGY_TAGS = new Set([
 ]);
 
 /**
- * Yield vaults only: no liquidity pools, no trading strategies.
+ * Yield vaults only: no liquidity pools, no tokenised funds, no trading strategies.
  *
  * @param vault listed vault
  */
 function isYieldVault(vault: VaultInfo): boolean {
-	if (getVaultAssetType(vault) === 'pool') return false;
+	if (getVaultAssetType(vault) !== 'vault') return false;
 	return !(vault.strategy_tags ?? []).some((tag) => TRADING_STRATEGY_TAGS.has(tag));
 }
 
@@ -123,6 +124,7 @@ export function getListingInsights(vaults: VaultInfo[], groupBy: ListingInsights
 		.filter(
 			(vault) =>
 				!isBlacklisted(vault) &&
+				isVaultIndexable(vault) &&
 				isYieldVault(vault) &&
 				(vault.years ?? 0) >= LEADER_MIN_AGE_YEARS &&
 				vault.risk_numeric != null &&
@@ -164,8 +166,11 @@ export function getListingInsights(vaults: VaultInfo[], groupBy: ListingInsights
 		if (group) tvlByGroup.set(group, (tvlByGroup.get(group) ?? 0) + tvl);
 	}
 	const [topName, topTvl] = [...tvlByGroup].toSorted((a, b) => b[1] - a[1])[0] ?? [];
-	// a group that is the whole listing (every Morpho vault on a Morpho hub) says nothing
-	const topGroup = topName && totalTvl > 0 && tvlByGroup.size > 1 ? { name: topName, share: topTvl! / totalTvl } : null;
+	// a group that holds (practically) the whole listing — every Morpho vault on a Morpho hub — says
+	// nothing; vaults without a curator still count towards the total, so a single named curator can
+	// hold only part of it
+	const share = topName && totalTvl > 0 ? topTvl! / totalTvl : null;
+	const topGroup = topName && share != null && share < 0.995 ? { name: topName, share } : null;
 
 	return {
 		leaders,

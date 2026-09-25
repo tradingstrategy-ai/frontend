@@ -16,7 +16,7 @@ the median APY it is compared against. Server-rendered for the "best stablecoin 
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { formatDataDate } from '$lib/top-vaults/hub-seo';
 	import { LEADER_MIN_TVL_USD } from '$lib/top-vaults/listing/insights';
-	import type { StablecoinYieldRow } from './+page.server';
+	import type { StablecoinYieldRow } from '$lib/top-vaults/listing/stablecoin-yields';
 
 	interface Props {
 		rows: StablecoinYieldRow[];
@@ -29,7 +29,8 @@ the median APY it is compared against. Server-rendered for the "best stablecoin 
 	const minTvlLabel = `$${LEADER_MIN_TVL_USD / 1000}k`;
 </script>
 
-{#if rows.length}
+<!-- a table in which no stablecoin has a qualifying vault answers nothing: leave it out -->
+{#if rows.some((row) => row.best)}
 	<section class="stablecoin-yield-comparison">
 		<h2>Best stablecoin yields right now</h2>
 		<p class="intro">
@@ -50,6 +51,7 @@ the median APY it is compared against. Server-rendered for the "best stablecoin 
 						<th scope="col" class="number">APY</th>
 						<th scope="col" class="number">TVL</th>
 						<th scope="col">Protocol</th>
+						<th scope="col">Fees</th>
 						<th scope="col">Lock-up</th>
 						<th scope="col">Risk</th>
 						<th scope="col" class="number">Median APY</th>
@@ -63,12 +65,17 @@ the median APY it is compared against. Server-rendered for the "best stablecoin 
 									>{row.symbol} vaults</a
 								>
 							</th>
-							<td><a href={resolve('/vaults/[vault=slug]', { vault: row.best.slug })}>{row.best.name}</a></td>
-							<td class="number">{formatPercent(row.best.apy, 1)}</td>
-							<td class="number">{formatDollar(row.best.tvlUsd, 1, 1)}</td>
-							<td>{row.best.protocol}</td>
-							<td>{row.best.lockup}</td>
-							<td>{row.best.risk ?? 'Not rated'}</td>
+							{#if row.best}
+								<td><a href={resolve('/vaults/[vault=slug]', { vault: row.best.slug })}>{row.best.name}</a></td>
+								<td class="number">{formatPercent(row.best.apy, 1)}</td>
+								<td class="number">{formatDollar(row.best.tvlUsd, 1, 1)}</td>
+								<td>{row.best.protocol}</td>
+								<td>{row.best.feeLabel ?? 'Unknown'}</td>
+								<td>{row.best.lockup}</td>
+								<td>{row.best.risk ?? 'Not rated'}</td>
+							{:else}
+								<td colspan="7" class="none">No vault meets the rules above</td>
+							{/if}
 							<td class="number" title="Median across {row.compared} vaults">
 								{row.medianApy == null ? '—' : formatPercent(row.medianApy, 1)}
 							</td>
@@ -122,6 +129,10 @@ the median APY it is compared against. Server-rendered for the "best stablecoin 
 
 	.number {
 		text-align: right;
+	}
+
+	.none {
+		color: var(--c-text-extra-light);
 	}
 
 	a {

@@ -35,6 +35,8 @@ describe('getListingInsights', () => {
 				vault('Too good', { one_month_cagr: 1.5 }),
 				vault('Trading fund', { one_month_cagr: 0.7, strategy_tags: ['discretionary_trading'] }),
 				vault('AMM pool', { one_month_cagr: 0.6, features: ['amm_pool_like'] }),
+				vault('Tokenised fund', { one_month_cagr: 0.5, flags: ['tokenised_fund'] }),
+				vault('NewBet', { one_month_cagr: 0.45 }),
 				vault('Blacklisted', { one_month_cagr: 0.4, risk: 'Blacklisted' })
 			],
 			'protocol'
@@ -62,6 +64,14 @@ describe('getListingInsights', () => {
 			'curator'
 		);
 		expect(insights.topGroup).toEqual({ name: 'Steakhouse', share: 0.75 });
+	});
+
+	test('reports a single curator that holds only part of the TVL next to uncurated vaults', () => {
+		const insights = getListingInsights(
+			[vault('A', { curator_name: 'Steakhouse', current_nav: 1_000_000 }), vault('B', { current_nav: 1_000_000 })],
+			'curator'
+		);
+		expect(insights.topGroup).toEqual({ name: 'Steakhouse', share: 0.5 });
 	});
 
 	test('says nothing about a group that is the whole listing, or when there is no data', () => {
