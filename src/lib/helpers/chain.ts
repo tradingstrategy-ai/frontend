@@ -143,6 +143,16 @@ export const chains = (() => {
 			nativeCurrency: 'MON',
 			hasBackendData: false
 		},
+		// Arc: Circle's stablecoin L1, uses USDC as the native gas token
+		{
+			id: 5042,
+			slug: 'arc',
+			name: 'Arc',
+			homepage: 'https://www.arc.io/',
+			explorer: 'https://explorer.arc.io',
+			nativeCurrency: 'USDC',
+			hasBackendData: false
+		},
 		{
 			id: 4217,
 			slug: 'tempo',

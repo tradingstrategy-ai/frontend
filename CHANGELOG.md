@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add Arc (Circle stablecoin chain, chain ID 5042) support so Arc vaults appear in vault listings and on the by-chain page (2026-09-25)
 - Add the authenticated, uncached vault scan manifest download and preserve source ETags for verified price downloads (2026-09-22).
 
 - Stop edge-cached pages from reload-looping when the origin is down and a page chunk is missing; ship `static-cache-control.js` in the Docker image so the production server starts (2026-09-18)
