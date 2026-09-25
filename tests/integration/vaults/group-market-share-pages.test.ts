@@ -4,14 +4,14 @@ const pages = [
 	{
 		name: 'protocols index page',
 		url: '/vaults/protocols',
-		heading: /Vault protocols/,
+		heading: /DeFi vaults by protocol/,
 		chartHeading: /Market share by TVL/i,
 		widgetTestId: 'protocol-tvl-pie-chart'
 	},
 	{
 		name: 'stablecoins index page',
 		url: '/vaults/stablecoins',
-		heading: /Vaults by stablecoin/,
+		heading: /Stablecoin yields/,
 		chartHeading: /Market share by TVL/i,
 		widgetTestId: 'stablecoin-tvl-pie-chart'
 	},
@@ -25,7 +25,7 @@ const pages = [
 	{
 		name: 'curators index page',
 		url: '/vaults/curators',
-		heading: /Stablecoin vault curators/,
+		heading: /DeFi vault curators/,
 		chartHeading: /Market share by TVL/i,
 		widgetTestId: 'curator-tvl-pie-chart'
 	},

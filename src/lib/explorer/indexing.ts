@@ -30,9 +30,12 @@ export const INDEXABLE_MIN_VOLUME_USD = 1_000;
  * occur inside legitimate names are word-start bounded ("Essex", "Peacock") or whole-word
  * bounded ("Alphabet", "analysis", "slotted"). The list is English-only by design;
  * obfuscated or non-Latin names are out of scope.
+ *
+ * Gambling brand names that fuse "bet" into one word (`newbet`) are listed whole-word, one by
+ * one: a word-start `bet` would also catch "Beta", "Better" and "Bethany".
  */
 export const NOINDEX_NAME_PATTERN =
-	/porn|xxx|nude|fuck|pussy|boob|tits|milf|hentai|bokep|xhamster|xnxx|brazzers|onlyfans|casino|poker|jackpot|lottery|gacor|togel|\b(?:sex|cock)|\b(?:slot|bet|cum|anal)\b/;
+	/porn|xxx|nude|fuck|pussy|boob|tits|milf|hentai|bokep|xhamster|xnxx|brazzers|onlyfans|casino|poker|jackpot|lottery|gacor|togel|\b(?:sex|cock)|\b(?:slot|bet|cum|anal|newbet)\b/;
 
 export type TokenIndexingMetrics = {
 	liquidity_latest?: MaybeNumber;

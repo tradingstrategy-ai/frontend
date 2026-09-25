@@ -261,7 +261,7 @@ test.describe('vault index page', () => {
 	});
 
 	test('shows the default return columns', async ({ page }) => {
-		await expect(page.getByRole('heading', { name: 'Top stablecoin vaults' })).toBeVisible();
+		await expect(page.getByRole('heading', { name: 'Best DeFi vaults' })).toBeVisible();
 
 		const header = page.locator('thead');
 		await expect(header).toContainText(/1M\s*return ann\./);
@@ -271,7 +271,7 @@ test.describe('vault index page', () => {
 
 	test('describes the default return ranking', async ({ page }) => {
 		await expect(page.locator('.hero-banner .subtitle')).toHaveText(
-			'The best-performing stablecoin vaults. Ranked by one-month annualised returns.'
+			'The best-performing DeFi vaults. Ranked by one-month annualised returns.'
 		);
 	});
 
@@ -350,7 +350,7 @@ test.describe('vault index page', () => {
 
 		await expect(page).toHaveURL(/sort=tvl/);
 		await expect(page.locator('.hero-banner .subtitle')).toHaveText(
-			'The best-performing stablecoin vaults. Ranked by total value locked.'
+			'The best-performing DeFi vaults. Ranked by total value locked.'
 		);
 	});
 

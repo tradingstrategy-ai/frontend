@@ -81,6 +81,10 @@ describe('hasBlockedName', () => {
 		expect(hasBlockedName(['BET-USDT'])).toBe(true);
 		expect(hasBlockedName(['CUM/WETH'])).toBe(true);
 		expect(hasBlockedName(['slot_machine'])).toBe(true);
+		// gambling brand fused into one word; `New Bet` is already caught by the whole-word `bet`
+		expect(hasBlockedName(['NewBet'])).toBe(true);
+		expect(hasBlockedName(['newbet'])).toBe(true);
+		expect(hasBlockedName(['New Bet'])).toBe(true);
 	});
 
 	it('strips diacritics before matching', () => {
@@ -102,7 +106,10 @@ describe('hasBlockedName', () => {
 			'Betelgeuse',
 			'Cumulus',
 			'Slotted',
-			'Analysis'
+			'Analysis',
+			'Beta',
+			'Better yield',
+			'Newbeta Fund'
 		]) {
 			expect(hasBlockedName([name]), name).toBe(false);
 		}
@@ -168,6 +175,10 @@ describe('isVaultIndexable', () => {
 			isVaultIndexable({ name: 'Mystery', current_tvl_usd: 1, peak_tvl_usd: 1_000_000, unknown_protocol: true })
 		).toBe(false);
 		expect(isVaultIndexable({ name: 'Mystery', unknown_protocol: true })).toBe(false);
+	});
+
+	it('does not index the NewBet vault despite its TVL', () => {
+		expect(isVaultIndexable({ ...live, name: 'NewBet' })).toBe(false);
 	});
 
 	it('never indexes blacklisted, unnamed or blocklisted vaults', () => {

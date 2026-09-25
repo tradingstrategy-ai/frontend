@@ -31,14 +31,16 @@ with an "about" panel and a TVL/return mini chart.
 		return `${clipped.slice(0, lastSpace > 0 ? lastSpace : maxLength - 1).replace(/[,;:.]$/, '')}…`;
 	}
 
-	let title = $derived(`${curatorName} curated stablecoin vaults | Trading Strategy`);
+	// search wording: "<curator> vaults" (see .claude/plans/seo-round-4-vault-rankings.md)
+	let heading = $derived(`${curatorName} vaults`);
+	let titleParts = $derived([heading, 'APY, TVL and risk']);
 	let fullDescription = $derived.by(() => {
 		const stats =
 			vaultCount > 0
 				? `${curatorName} has ${vaultCount} ${vaultCount === 1 ? 'vault' : 'vaults'} with ${formatDollar(tvl, 1)} TVL${
 						averageApy == null ? '' : ` and a ${formatPercent(averageApy, 1)} APY over the last 30 days`
 					}. The curator may have more vaults outside supported blockchains and vault protocols.`
-				: `Stablecoin vaults curated by ${curatorName}, ranked by returns and TVL.`;
+				: `Vaults curated by ${curatorName}, ranked by APY and TVL.`;
 		const about = curator.short_description ? ` ${asSentence(curator.short_description)}` : '';
 		return `${stats}${about}`;
 	});
@@ -51,21 +53,21 @@ with an "about" panel and a TVL/return mini chart.
 </script>
 
 <MetaTags
-	{title}
+	{titleParts}
 	description={metaDescription}
 	image={logoUrl}
 	imageAlt={`${curatorName} logo`}
 	openGraph={{
 		siteName: 'Trading Strategy',
 		url: pageUrl,
-		title,
+		title: heading,
 		description: fullDescription,
 		type: 'website'
 	}}
 	twitter={{
 		site: '@TradingProtocol',
 		cardType: logoUrl ? 'summary_large_image' : 'summary',
-		title,
+		title: heading,
 		description: fullDescription
 	}}
 />
@@ -74,7 +76,7 @@ with an "about" panel and a TVL/return mini chart.
 	schema={{
 		'@context': 'http://schema.org',
 		'@type': 'CollectionPage',
-		name: title,
+		name: heading,
 		description: fullDescription,
 		url: pageUrl,
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
@@ -101,7 +103,7 @@ with an "about" panel and a TVL/return mini chart.
 	listingScope={data.listingScope}
 	listingSummary={data.listingSummary}
 	curatorMetadata={curator}
-	title="{curatorName} curated stablecoin vaults"
+	title={heading}
 	showFilters
 	defaultTvlKey="10k"
 	defaultHideUnknown={0}

@@ -13,6 +13,7 @@ Vault listing and overview for one stablecoin denomination.
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
 	import VaultGroupDescription from '../../VaultGroupDescription.svelte';
+	import { getHubDescription } from '$lib/top-vaults/hub-seo';
 
 	let { data } = $props();
 	let {
@@ -24,8 +25,19 @@ Vault listing and overview for one stablecoin denomination.
 		initialTopVaults
 	} = $derived(data);
 
-	let title = $derived(`${denominationName} stablecoin vaults | Trading Strategy`);
-	let description = $derived(shortDescription ?? `Top ${denominationName} DeFi vaults ranked by performance.`);
+	// search wording: "usdc vault", "usdc yield", "best usdc yield" (see .claude/plans/seo-round-4-vault-rankings.md)
+	let heading = $derived(`${denominationSymbol} vaults`);
+	let titleParts = $derived([heading, `best ${denominationSymbol} yield`]);
+	let description = $derived(
+		getHubDescription({
+			subject: `${denominationSymbol} vaults`,
+			count: data.listingSummary.matchingCount,
+			totalTvl: data.listingSummary.totalTvl,
+			apy: data.listingSummary.avgTvlWeightedApy1M,
+			updatedAt: initialTopVaults.generated_at,
+			about: shortDescription
+		})
+	);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived.by(() => {
 		const logoPath = stablecoinMetadata?.logos.light
@@ -38,21 +50,21 @@ Vault listing and overview for one stablecoin denomination.
 </script>
 
 <MetaTags
-	{title}
+	{titleParts}
 	{description}
 	image={logoUrl}
 	imageAlt={`${denominationName} logo`}
 	openGraph={{
 		siteName: 'Trading Strategy',
 		url: pageUrl,
-		title,
+		title: heading,
 		description,
 		type: 'website'
 	}}
 	twitter={{
 		site: '@TradingProtocol',
 		cardType: logoUrl ? 'summary_large_image' : 'summary',
-		title,
+		title: heading,
 		description
 	}}
 />
@@ -61,7 +73,7 @@ Vault listing and overview for one stablecoin denomination.
 	schema={{
 		'@context': 'http://schema.org',
 		'@type': 'CollectionPage',
-		name: title,
+		name: heading,
 		description,
 		url: pageUrl,
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
@@ -92,7 +104,7 @@ Vault listing and overview for one stablecoin denomination.
 	listingSummary={data.listingSummary}
 	{stablecoinMetadata}
 	stablecoinLogoSlug={denominationSlug}
-	title="{denominationName} stablecoin vaults"
+	title={heading}
 	showFilters
 	defaultTvlKey="10k"
 	defaultHideUnknown={0}

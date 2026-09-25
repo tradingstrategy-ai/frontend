@@ -32,9 +32,9 @@ Vault chains index page.
 		return resolve(`/vaults/chains/${slug}`);
 	}
 
-	const title = 'DeFi stablecoin vaults by chain';
+	const title = 'DeFi vaults by chain';
 	const description =
-		'DeFi stablecoin vaults on each blockchain. TVL represents stablecoin deposits in vaults on a particular chain. APY represents the yield of last thirty days.';
+		'Compare DeFi vaults on each blockchain by TVL and APY. TVL represents stablecoin deposits in vaults on a particular chain. APY represents the yield of the last thirty days.';
 	const glossaryLinks = {
 		defi: resolve('/glossary/defi'),
 		vault: resolve('/glossary/vault'),

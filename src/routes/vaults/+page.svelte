@@ -1,20 +1,31 @@
 <!--
-Top stablecoin vault listing page.
+DeFi vault rankings — the landing page for "defi vaults" / "best defi vaults" searches.
 -->
 <script lang="ts">
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { getVaultSortDescription } from '$lib/top-vaults/vault-sort-description';
+	import { getHubDescription } from '$lib/top-vaults/hub-seo';
 	import { JsonLd } from 'svelte-meta-tags';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
 	let { data } = $props();
 
-	const title = 'Top stablecoin vaults';
-	const description = 'Stablecoin vault rankings by yield, risk, and other performance criteria.';
+	// search wording: "defi vaults", "best defi vaults" (see .claude/plans/seo-round-4-vault-rankings.md)
+	const title = 'Best DeFi vaults by APY and risk';
+	const heading = 'Best DeFi vaults';
+	let description = $derived(
+		getHubDescription({
+			subject: 'DeFi vaults',
+			count: data.listingSummary.matchingCount,
+			totalTvl: data.listingSummary.totalTvl,
+			apy: data.listingSummary.avgTvlWeightedApy1M,
+			updatedAt: data.initialTopVaults.generated_at
+		})
+	);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let rankingDescription = $derived(getVaultSortDescription(page.url.searchParams.get('sort')));
-	let subtitle = $derived(`The best-performing stablecoin vaults. Ranked by ${rankingDescription}.`);
+	let subtitle = $derived(`The best-performing DeFi vaults. Ranked by ${rankingDescription}.`);
 </script>
 
 <MetaTags
@@ -45,7 +56,7 @@ Top stablecoin vault listing page.
 	initialHasMore={data.initialHasMore}
 	listingKey={data.listingKey}
 	listingSummary={data.listingSummary}
-	{title}
+	title={heading}
 	{subtitle}
 	showFilters
 />

@@ -32,9 +32,11 @@ Vault stablecoins index page.
 		scrollToTop();
 	};
 
-	const pageTitle = 'Vaults by stablecoin';
+	// search wording: "stablecoin yields", "best stablecoin yield", "stablecoin yield comparison"
+	const pageTitle = 'Compare stablecoin yields';
+	const heading = 'Stablecoin yields';
 	const description =
-		'DeFi vaults for different stablecoins. TVL represents deposits of a stablecoin in vaults. APY represents the yield of last thirty days.';
+		'Compare stablecoin yields: DeFi vault APY and TVL for USDC, USDT, USDe and other stablecoins. TVL represents deposits of a stablecoin in vaults. APY represents the yield of the last thirty days.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
@@ -69,7 +71,7 @@ Vault stablecoins index page.
 				<div class="intro-column">
 					<HeroBanner>
 						{#snippet title()}
-							<span>{pageTitle}</span>
+							<span>{heading}</span>
 						{/snippet}
 						{#snippet subtitle()}
 							<p>

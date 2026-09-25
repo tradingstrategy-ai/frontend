@@ -10,12 +10,24 @@ Vault listing and overview for one blockchain or perpetual DEX venue.
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
 	import VaultGroupDescription from '../../VaultGroupDescription.svelte';
 	import { getBlockchainSocialLogoUrl } from '$lib/social-card/helpers';
+	import { getHubDescription } from '$lib/top-vaults/hub-seo';
 
 	let { data } = $props();
-	let { chain, chainSlug, chainName, initialTopVaults } = $derived(data);
+	let { chain, chainSlug, chainName, initialTopVaults, hasSameNameProtocol } = $derived(data);
 
-	let title = $derived(`${chainName} stablecoin vaults`);
-	let description = $derived(`Top stablecoin vaults on ${chainName} blockchain ranked by performance.`);
+	// "<chain> vaults" is the search phrase; when a protocol shares the chain's name its hub owns
+	// that phrase, so this page says "Vaults on <chain>" instead of competing for it
+	let heading = $derived(hasSameNameProtocol ? `Vaults on ${chainName}` : `${chainName} vaults`);
+	let titleParts = $derived([heading, 'APY, TVL and risk']);
+	let description = $derived(
+		getHubDescription({
+			subject: hasSameNameProtocol ? `vaults on ${chainName}` : `${chainName} vaults`,
+			count: data.listingSummary.matchingCount,
+			totalTvl: data.listingSummary.totalTvl,
+			apy: data.listingSummary.avgTvlWeightedApy1M,
+			updatedAt: initialTopVaults.generated_at
+		})
+	);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived(getBlockchainSocialLogoUrl(chainSlug));
 	let defaultTvlKey = $derived(chainSlug === 'robinhood' ? 'any' : '10k');
@@ -28,19 +40,19 @@ Vault listing and overview for one blockchain or perpetual DEX venue.
 </script>
 
 <MetaTags
-	{title}
+	{titleParts}
 	{description}
 	image={logoUrl}
 	imageAlt={`${chainName} blockchain logo`}
-	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title, description, type: 'website' }}
-	twitter={{ site: '@TradingProtocol', title, description }}
+	openGraph={{ siteName: 'Trading Strategy', url: pageUrl, title: heading, description, type: 'website' }}
+	twitter={{ site: '@TradingProtocol', title: heading, description }}
 />
 
 <JsonLd
 	schema={{
 		'@context': 'http://schema.org',
 		'@type': 'CollectionPage',
-		name: title,
+		name: heading,
 		description,
 		url: pageUrl,
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
@@ -59,7 +71,7 @@ Vault listing and overview for one blockchain or perpetual DEX venue.
 	listingKey={data.listingKey}
 	listingScope={data.listingScope}
 	listingSummary={data.listingSummary}
-	title="{chainName} stablecoin vaults"
+	title={heading}
 	showFilters
 	{defaultTvlKey}
 >
@@ -78,7 +90,7 @@ Vault listing and overview for one blockchain or perpetual DEX venue.
 
 	{#snippet detailAside()}
 		<VaultGroupMiniChart
-			title="{chainName} stablecoin vaults: TVL and returns"
+			title="{heading}: TVL and returns"
 			dataUrl="/vaults/chains/{chainSlug}/chart-data"
 			compareLabel="Compare all chains"
 			compareHref="/vaults/historical-tvl-chain"

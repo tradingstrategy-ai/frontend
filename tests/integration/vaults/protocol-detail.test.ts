@@ -22,8 +22,8 @@ test.describe('vault protocol detail pages', () => {
 	test('shows GMX AMM pools by default and identifies an AMM vault as a pool', async ({ page }) => {
 		await page.goto('/vaults/protocols/gmx');
 
-		await expect(page).toHaveTitle('GMX pools and yields | Trading Strategy');
-		await expect(page.getByRole('heading', { name: 'GMX powered pools', level: 1 })).toBeVisible();
+		await expect(page).toHaveTitle('GMX pools | APY and TVL | Trading Strategy');
+		await expect(page.getByRole('heading', { name: 'GMX pools', level: 1 })).toBeVisible();
 		const gmxPoolRows = page.locator('tbody tr.targetable').filter({ hasText: 'GMX USDC pool' });
 		await expect(gmxPoolRows).toHaveCount(1);
 		await openFilters(page);
@@ -31,7 +31,7 @@ test.describe('vault protocol detail pages', () => {
 
 		await page.goto('/vaults/gmx-usdc-pool');
 
-		await expect(page).toHaveTitle('GMX USDC pool | DeFi pool | Trading Strategy');
+		await expect(page).toHaveTitle('GMX USDC pool | GMX pool on Arbitrum One | Trading Strategy');
 		await expect(page.getByText('About the pool', { exact: true })).toBeVisible();
 		await expect(page.getByText('This pool is running on GMX:', { exact: true })).toBeVisible();
 		await expect(page.getByText('Pool name', { exact: true })).toBeVisible();
