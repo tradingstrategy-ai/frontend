@@ -16,7 +16,6 @@ the vault protocol description widget. Sourced from the top-vaults dataset
 <script lang="ts">
 	import type { CuratorInfo, VaultListingRow } from '$lib/top-vaults/schemas';
 	import type { VaultListingSummary } from '$lib/top-vaults/listing/types';
-	import { slide } from 'svelte/transition';
 	import { micromark } from 'micromark';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -98,8 +97,9 @@ the vault protocol description widget. Sourced from the top-vaults dataset
 				{/if}
 			</div>
 
-			{#if expanded}
-				<div transition:slide>
+			<!-- always server-rendered so search engines see the full description; collapsed until "View more" -->
+			{#if hasExpandableContent}
+				<div hidden={!expanded}>
 					{#if curator.long_description}
 						<div class="long-description">
 							<!-- eslint-disable-next-line svelte/no-at-html-tags -->

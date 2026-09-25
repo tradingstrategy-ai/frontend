@@ -14,7 +14,7 @@ Vault listing and overview for one protocol.
 	import { JsonLd } from 'svelte-meta-tags';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
-	import { getHubDescription } from '$lib/top-vaults/hub-seo';
+	import { getHubDescription, getItemListElements, getHubTitleParts } from '$lib/top-vaults/hub-seo';
 
 	let { data } = $props();
 	let { protocolSlug, protocolName, protocolMetadata, core3, xerberus, initialTopVaults } = $derived(data);
@@ -35,7 +35,7 @@ Vault listing and overview for one protocol.
 	let titleParts = $derived(
 		isUnknownVaultProtocolGroup
 			? [heroTitle]
-			: [heroTitle, isPoolProtocolGroup ? 'APY and TVL' : 'APY, TVL and curators']
+			: getHubTitleParts(heroTitle, isPoolProtocolGroup ? ['APY and TVL'] : ['APY, TVL and curators', 'APY and TVL'])
 	);
 	let description = $derived(
 		isUnknownVaultProtocolGroup
@@ -122,6 +122,7 @@ Vault listing and overview for one protocol.
 	schema={{
 		'@context': 'http://schema.org',
 		'@type': 'CollectionPage',
+		dateModified: initialTopVaults.generated_at,
 		name: heroTitle,
 		description,
 		url: pageUrl,
@@ -129,7 +130,8 @@ Vault listing and overview for one protocol.
 		image: logoUrl ?? undefined,
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: data.listingSummary.matchingCount
+			numberOfItems: data.listingSummary.matchingCount,
+			itemListElement: getItemListElements(initialTopVaults.vaults, page.url.origin)
 		}
 	}}
 />
@@ -141,6 +143,9 @@ Vault listing and overview for one protocol.
 	listingKey={data.listingKey}
 	listingScope={data.listingScope}
 	listingSummary={data.listingSummary}
+	listingInsights={data.listingInsights}
+	insightsSubject={isUnknownVaultProtocolGroup ? undefined : `${protocolName} ${listingAssetTypePlural}`}
+	insightsGroupBy="curator"
 	{protocolMetadata}
 	protocolDescriptionExtra={averageMonthlyReturn != null || isHyperliquidProtocolGroup
 		? protocolDescriptionExtra

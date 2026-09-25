@@ -5,7 +5,7 @@ DeFi vault rankings — the landing page for "defi vaults" / "best defi vaults" 
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
 	import { getVaultSortDescription } from '$lib/top-vaults/vault-sort-description';
-	import { getHubDescription } from '$lib/top-vaults/hub-seo';
+	import { getHubDescription, getItemListElements } from '$lib/top-vaults/hub-seo';
 	import { JsonLd } from 'svelte-meta-tags';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 
@@ -39,13 +39,15 @@ DeFi vault rankings — the landing page for "defi vaults" / "best defi vaults" 
 	schema={{
 		'@context': 'http://schema.org',
 		'@type': 'CollectionPage',
+		dateModified: data.initialTopVaults.generated_at,
 		name: title,
 		description,
 		url: pageUrl,
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: data.totalVaultCount
+			numberOfItems: data.totalVaultCount,
+			itemListElement: getItemListElements(data.initialTopVaults.vaults, page.url.origin)
 		}
 	}}
 />
@@ -56,6 +58,9 @@ DeFi vault rankings — the landing page for "defi vaults" / "best defi vaults" 
 	initialHasMore={data.initialHasMore}
 	listingKey={data.listingKey}
 	listingSummary={data.listingSummary}
+	listingInsights={data.listingInsights}
+	insightsSubject="DeFi vaults"
+	insightsGroupBy="protocol"
 	title={heading}
 	{subtitle}
 	showFilters

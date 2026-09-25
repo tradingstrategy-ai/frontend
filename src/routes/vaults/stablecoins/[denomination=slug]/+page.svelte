@@ -13,7 +13,7 @@ Vault listing and overview for one stablecoin denomination.
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
 	import VaultGroupDescription from '../../VaultGroupDescription.svelte';
-	import { getHubDescription } from '$lib/top-vaults/hub-seo';
+	import { getHubDescription, getItemListElements, getHubTitleParts } from '$lib/top-vaults/hub-seo';
 
 	let { data } = $props();
 	let {
@@ -27,7 +27,7 @@ Vault listing and overview for one stablecoin denomination.
 
 	// search wording: "usdc vault", "usdc yield", "best usdc yield" (see .claude/plans/seo-round-4-vault-rankings.md)
 	let heading = $derived(`${denominationSymbol} vaults`);
-	let titleParts = $derived([heading, `best ${denominationSymbol} yield`]);
+	let titleParts = $derived(getHubTitleParts(heading, [`best ${denominationSymbol} yield`, 'APY and TVL']));
 	let description = $derived(
 		getHubDescription({
 			subject: `${denominationSymbol} vaults`,
@@ -73,6 +73,7 @@ Vault listing and overview for one stablecoin denomination.
 	schema={{
 		'@context': 'http://schema.org',
 		'@type': 'CollectionPage',
+		dateModified: initialTopVaults.generated_at,
 		name: heading,
 		description,
 		url: pageUrl,
@@ -91,7 +92,8 @@ Vault listing and overview for one stablecoin denomination.
 			: undefined,
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: data.listingSummary.matchingCount
+			numberOfItems: data.listingSummary.matchingCount,
+			itemListElement: getItemListElements(initialTopVaults.vaults, page.url.origin)
 		}
 	}}
 />
@@ -102,6 +104,9 @@ Vault listing and overview for one stablecoin denomination.
 	listingKey={data.listingKey}
 	listingScope={data.listingScope}
 	listingSummary={data.listingSummary}
+	listingInsights={data.listingInsights}
+	insightsSubject={`${denominationSymbol} vaults`}
+	insightsGroupBy="protocol"
 	{stablecoinMetadata}
 	stablecoinLogoSlug={denominationSlug}
 	title={heading}

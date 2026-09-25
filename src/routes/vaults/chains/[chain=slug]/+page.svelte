@@ -10,7 +10,7 @@ Vault listing and overview for one blockchain or perpetual DEX venue.
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
 	import VaultGroupDescription from '../../VaultGroupDescription.svelte';
 	import { getBlockchainSocialLogoUrl } from '$lib/social-card/helpers';
-	import { getHubDescription } from '$lib/top-vaults/hub-seo';
+	import { getHubDescription, getItemListElements, getHubTitleParts } from '$lib/top-vaults/hub-seo';
 
 	let { data } = $props();
 	let { chain, chainSlug, chainName, initialTopVaults, hasSameNameProtocol } = $derived(data);
@@ -18,7 +18,7 @@ Vault listing and overview for one blockchain or perpetual DEX venue.
 	// "<chain> vaults" is the search phrase; when a protocol shares the chain's name its hub owns
 	// that phrase, so this page says "Vaults on <chain>" instead of competing for it
 	let heading = $derived(hasSameNameProtocol ? `Vaults on ${chainName}` : `${chainName} vaults`);
-	let titleParts = $derived([heading, 'APY, TVL and risk']);
+	let titleParts = $derived(getHubTitleParts(heading, ['APY, TVL and risk', 'APY and TVL']));
 	let description = $derived(
 		getHubDescription({
 			subject: hasSameNameProtocol ? `vaults on ${chainName}` : `${chainName} vaults`,
@@ -52,13 +52,15 @@ Vault listing and overview for one blockchain or perpetual DEX venue.
 	schema={{
 		'@context': 'http://schema.org',
 		'@type': 'CollectionPage',
+		dateModified: initialTopVaults.generated_at,
 		name: heading,
 		description,
 		url: pageUrl,
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: data.listingSummary.matchingCount
+			numberOfItems: data.listingSummary.matchingCount,
+			itemListElement: getItemListElements(initialTopVaults.vaults, page.url.origin)
 		}
 	}}
 />
@@ -71,6 +73,9 @@ Vault listing and overview for one blockchain or perpetual DEX venue.
 	listingKey={data.listingKey}
 	listingScope={data.listingScope}
 	listingSummary={data.listingSummary}
+	listingInsights={data.listingInsights}
+	insightsSubject={hasSameNameProtocol ? `vaults on ${chainName}` : `${chainName} vaults`}
+	insightsGroupBy="protocol"
 	title={heading}
 	showFilters
 	{defaultTvlKey}

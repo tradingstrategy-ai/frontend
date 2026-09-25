@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { formatDataDate, getHubDescription } from './hub-seo';
+import { formatDataDate, getHubDescription, getHubTitleParts, getItemListElements } from './hub-seo';
 
 describe('formatDataDate', () => {
 	test('formats a dataset timestamp in UK day-month-year order', () => {
@@ -37,5 +37,42 @@ describe('getHubDescription', () => {
 
 	test('keeps a negative average APY, which is a real figure', () => {
 		expect(getHubDescription({ subject: 'Lighter vaults', count: 3, apy: -0.02 })).toContain('-2.0% average APY');
+	});
+});
+
+describe('getItemListElements', () => {
+	test('lists the rendered rows in order with absolute vault URLs', () => {
+		expect(
+			getItemListElements(
+				[
+					{ name: 'Alpha', vault_slug: 'alpha' },
+					{ name: 'Beta', vault_slug: 'beta' }
+				],
+				'https://tradingstrategy.ai'
+			)
+		).toEqual([
+			{ '@type': 'ListItem', position: 1, name: 'Alpha', url: 'https://tradingstrategy.ai/vaults/alpha' },
+			{ '@type': 'ListItem', position: 2, name: 'Beta', url: 'https://tradingstrategy.ai/vaults/beta' }
+		]);
+	});
+});
+
+describe('getHubTitleParts', () => {
+	test('keeps the most descriptive qualifier that fits', () => {
+		expect(getHubTitleParts('Morpho vaults', ['APY, TVL and curators', 'APY and TVL'])).toEqual([
+			'Morpho vaults',
+			'APY, TVL and curators'
+		]);
+		// 'Hyperliquid vaults | APY, TVL and curators | Trading Strategy' is 61 characters
+		expect(getHubTitleParts('Hyperliquid vaults', ['APY, TVL and curators', 'APY and TVL'])).toEqual([
+			'Hyperliquid vaults',
+			'APY and TVL'
+		]);
+	});
+
+	test('falls back to the heading alone', () => {
+		expect(getHubTitleParts('An unusually long curator name for vaults', ['APY and TVL'])).toEqual([
+			'An unusually long curator name for vaults'
+		]);
 	});
 });

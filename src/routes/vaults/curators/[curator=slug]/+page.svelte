@@ -10,6 +10,7 @@ with an "about" panel and a TVL/return mini chart.
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { getCuratorSocialLogoUrl } from '$lib/social-card/helpers';
+	import { getItemListElements, getHubTitleParts } from '$lib/top-vaults/hub-seo';
 
 	let { data } = $props();
 	let { curatorSlug, curatorName, curator, vaultCount, tvl, averageApy, initialTopVaults } = $derived(data);
@@ -33,7 +34,7 @@ with an "about" panel and a TVL/return mini chart.
 
 	// search wording: "<curator> vaults" (see .claude/plans/seo-round-4-vault-rankings.md)
 	let heading = $derived(`${curatorName} vaults`);
-	let titleParts = $derived([heading, 'APY, TVL and risk']);
+	let titleParts = $derived(getHubTitleParts(heading, ['APY, TVL and risk', 'APY and TVL']));
 	let fullDescription = $derived.by(() => {
 		const stats =
 			vaultCount > 0
@@ -76,6 +77,7 @@ with an "about" panel and a TVL/return mini chart.
 	schema={{
 		'@context': 'http://schema.org',
 		'@type': 'CollectionPage',
+		dateModified: initialTopVaults.generated_at,
 		name: heading,
 		description: fullDescription,
 		url: pageUrl,
@@ -90,7 +92,8 @@ with an "about" panel and a TVL/return mini chart.
 		},
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: data.listingSummary.matchingCount
+			numberOfItems: data.listingSummary.matchingCount,
+			itemListElement: getItemListElements(initialTopVaults.vaults, page.url.origin)
 		}
 	}}
 />
@@ -102,6 +105,9 @@ with an "about" panel and a TVL/return mini chart.
 	listingKey={data.listingKey}
 	listingScope={data.listingScope}
 	listingSummary={data.listingSummary}
+	listingInsights={data.listingInsights}
+	insightsSubject={`${curatorName} vaults`}
+	insightsGroupBy="protocol"
 	curatorMetadata={curator}
 	title={heading}
 	showFilters

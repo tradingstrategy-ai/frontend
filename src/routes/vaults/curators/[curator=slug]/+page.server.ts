@@ -31,6 +31,6 @@ export async function load({ params, fetch, url }) {
 		vaultCount: eligibleVaults.length,
 		tvl,
 		averageApy,
-		...(await loadVaultListing(fetch, url, 'curator', curator))
+		...(await loadVaultListing(fetch, url, 'curator', curator, 'protocol'))
 	};
 }

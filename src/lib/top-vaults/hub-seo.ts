@@ -8,6 +8,7 @@
  * come from.
  */
 import { formatDollar, formatPercent, isNumber } from '$lib/helpers/formatters';
+import { SITE_NAME, TITLE_MAX_LENGTH } from '$lib/helpers/seo';
 
 export type HubDescriptionInput = {
 	/** What is being compared, in search wording: `Morpho vaults`, `USDC vaults`, `DeFi vaults` */
@@ -62,4 +63,35 @@ export function getHubDescription({ subject, count, totalTvl, apy, updatedAt, ab
 	if (aboutText) sentences.push(aboutText);
 
 	return sentences.join(' ');
+}
+
+/**
+ * `ItemList` entries for a hub's JSON-LD: the server-rendered rows, in the order the table shows
+ * them. Only rows the page actually renders are listed, so the markup matches the visible list.
+ *
+ * @param vaults the listing rows rendered on the server (first batch)
+ * @param origin site origin for absolute URLs, e.g. `https://tradingstrategy.ai`
+ */
+export function getItemListElements(vaults: { name: string; vault_slug: string }[], origin: string) {
+	return vaults.map((vault, index) => ({
+		'@type': 'ListItem',
+		position: index + 1,
+		name: vault.name,
+		url: new URL(`/vaults/${vault.vault_slug}`, origin).href
+	}));
+}
+
+/**
+ * `titleParts` for a hub: the heading plus the first qualifier that fits `TITLE_MAX_LENGTH` with
+ * the brand suffix, or the heading alone. `getPageTitle()` would otherwise drop the qualifier
+ * entirely as soon as the preferred one is a few characters too long for a long name.
+ *
+ * @param heading entity phrase in search wording, e.g. `Hyperliquid vaults`
+ * @param qualifiers qualifiers from most to least descriptive, e.g. `['APY, TVL and curators', 'APY and TVL']`
+ */
+export function getHubTitleParts(heading: string, qualifiers: string[]): string[] {
+	const qualifier = qualifiers.find(
+		(candidate) => `${heading} | ${candidate} | ${SITE_NAME}`.length <= TITLE_MAX_LENGTH
+	);
+	return qualifier ? [heading, qualifier] : [heading];
 }

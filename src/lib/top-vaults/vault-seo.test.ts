@@ -29,6 +29,17 @@ describe('getVaultTitleParts', () => {
 		expect(getPageTitle(parts).length).toBeLessThanOrEqual(TITLE_MAX_LENGTH);
 	});
 
+	test('appends the asset type to a long name that does not say it, as for HLP', () => {
+		const hlp = createTestVault('Hyperliquidity Provider (HLP)', { protocol: 'Hyperliquid', chain_id: 9999 });
+		expect(getVaultTitleParts(hlp)).toEqual(['Hyperliquidity Provider (HLP) vault']);
+
+		const named = createTestVault('Hyperliquid Delta Neutral USDC Vault Two', {
+			protocol: 'Hyperliquid',
+			chain_id: 9999
+		});
+		expect(getVaultTitleParts(named)).toEqual(['Hyperliquid Delta Neutral USDC Vault Two']);
+	});
+
 	test('says "DeFi vault" when the protocol is unknown', () => {
 		const vault = createTestVault('Mystery yield', { protocol: '<protocol not yet identified>', chain_id: 1 });
 		expect(getVaultTitleParts(vault)).toEqual(['Mystery yield', 'DeFi vault']);

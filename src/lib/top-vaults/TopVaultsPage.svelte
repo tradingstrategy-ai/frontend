@@ -17,6 +17,8 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 	import type { VaultListingTopVaults } from './schemas';
 	import type { RiskRatingProvider } from './risk-rating-providers';
 	import type { VaultProtocolMetadata } from '$lib/vault-protocol/schemas';
+	import type { ListingInsights, ListingInsightsGroupBy } from './listing/insights';
+	import VaultHubInsights from './VaultHubInsights.svelte';
 	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
 	import type { CuratorInfo } from './schemas';
 	import type { VaultListingSummary } from './listing/types';
@@ -103,6 +105,11 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		listingKey?: VaultListingKey;
 		listingScope?: string;
 		listingSummary?: VaultListingSummary;
+		/** Hub pages: findings over the full listing, shown above the table (see `VaultHubInsights`) */
+		listingInsights?: ListingInsights;
+		/** What the hub lists, in search wording ("Morpho vaults"), for the insights paragraph */
+		insightsSubject?: string;
+		insightsGroupBy?: ListingInsightsGroupBy;
 	}
 
 	let {
@@ -144,7 +151,10 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		initialHasMore = false,
 		listingKey = 'top',
 		listingScope,
-		listingSummary
+		listingSummary,
+		listingInsights,
+		insightsSubject,
+		insightsGroupBy = 'protocol'
 	}: Props = $props();
 
 	let renderDetailAsideInHero = $derived(
@@ -272,6 +282,15 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 						{@render detailAside()}
 					</aside>
 				</div>
+			{/if}
+
+			{#if listingInsights && insightsSubject}
+				<VaultHubInsights
+					insights={listingInsights}
+					subject={insightsSubject}
+					groupBy={insightsGroupBy}
+					updatedAt={topVaults?.generated_at}
+				/>
 			{/if}
 
 			{@render beforeTable?.()}

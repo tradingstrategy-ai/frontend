@@ -45,6 +45,6 @@ export async function load({ params, fetch, url }) {
 		protocolMetadata,
 		core3,
 		xerberus,
-		...(await loadVaultListing(fetch, url, 'protocol', protocol))
+		...(await loadVaultListing(fetch, url, 'protocol', protocol, 'curator'))
 	};
 }

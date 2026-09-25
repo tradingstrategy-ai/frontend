@@ -134,7 +134,8 @@ test.describe('vault social meta tags', () => {
 			await expect(page).toHaveTitle('USDC vaults | best USDC yield | Trading Strategy');
 			await expect(page.locator('h1')).toContainText('USDC vaults');
 			await expect(page.locator('text=About USD Coin')).toBeVisible();
-			await expect(page.locator('text=fully-reserved')).toBeVisible();
+			// the long description is also in the HTML (collapsed until "View more"), so match the visible short one
+			await expect(page.locator('text=fully-reserved').first()).toBeVisible();
 		});
 
 		test('uses the Trading Strategy image when no stablecoin logo is available', async ({ page }) => {

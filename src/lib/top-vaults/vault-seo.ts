@@ -34,7 +34,9 @@ type VaultSeoInput = Parameters<typeof getVaultCurrentTvlUsd>[0] &
 /**
  * `titleParts` for a vault detail page: the vault name, then the most descriptive qualifier
  * that fits `TITLE_MAX_LENGTH` with the brand suffix — `<Protocol> vault on <Chain>`,
- * `<Protocol> vault`, `DeFi vault`. When even the shortest does not fit, only the name is kept.
+ * `<Protocol> vault`, `DeFi vault`. When even the shortest does not fit, the name with the asset
+ * type appended (`<Name> vault`) is used if it fits and the name does not already say it, otherwise
+ * the name alone.
  *
  * @param vault vault identity (name, protocol, chain, flags)
  */
@@ -51,7 +53,12 @@ export function getVaultTitleParts(vault: VaultSeoInput): string[] {
 	].filter((qualifier): qualifier is string => Boolean(qualifier));
 
 	const fits = qualifiers.find((qualifier) => `${name} | ${qualifier} | ${SITE_NAME}`.length <= TITLE_MAX_LENGTH);
-	return fits ? [name, fits] : [name];
+	if (fits) return [name, fits];
+
+	// a long name still says what it is ("Hyperliquidity Provider (HLP) vault"): searches are "<name> vault"
+	const suffixed = `${name} ${assetType}`;
+	const namesAssetType = name.toLowerCase().includes(assetType);
+	return !namesAssetType && `${suffixed} | ${SITE_NAME}`.length <= TITLE_MAX_LENGTH ? [suffixed] : [name];
 }
 
 /**
