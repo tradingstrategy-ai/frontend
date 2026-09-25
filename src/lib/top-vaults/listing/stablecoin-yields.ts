@@ -1,12 +1,12 @@
 /**
  * The "best stablecoin yields right now" comparison on `/vaults/stablecoins`: for each of the
- * largest stablecoins by USD TVL, its leading vault under the same rules as the hub insights.
+ * largest stablecoins by USD TVL, its leading vault under the rules in `insights.ts`.
  *
  * See `.claude/plans/seo-round-4-vault-rankings.md`, workstream 7.
  */
 import { getVaultCurrentTvlUsd } from '../helpers';
 import type { VaultInfo } from '../schemas';
-import { getListingInsights, type ListingLeader } from './insights';
+import { getYieldLeaders, type ListingLeader } from './insights';
 
 export type StablecoinYieldRow = {
 	/** Canonical stablecoin slug, as used by the stablecoin hub URL */
@@ -58,7 +58,7 @@ export function getStablecoinYieldComparison(
 		.toSorted(([, a], [, b]) => b.tvlUsd - a.tvlUsd)
 		.slice(0, limit)
 		.map(([slug, group]) => {
-			const insights = getListingInsights(group.vaults, 'protocol');
+			const insights = getYieldLeaders(group.vaults);
 			return {
 				slug,
 				symbol: group.symbol,

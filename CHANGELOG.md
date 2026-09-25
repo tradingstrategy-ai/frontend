@@ -1,6 +1,6 @@
 # Weblog of stuff
 
-- SEO round 4: vault hub and vault page titles in the words people search, page-specific APY leaders and comparison tables on every hub, a stablecoin yield comparison, crawlable hub descriptions, similar-vault and glossary links, a ranking methodology page, NewBet out of the index, and Search Console template/query reports (2026-09-25)
+- SEO round 4: vault hub and vault page titles in the words people search, a stablecoin yield comparison, crawlable hub descriptions, similar-vault and glossary links, a ranking methodology page, NewBet out of the index, and Search Console template/query reports (2026-09-25)
 - Add Arc (Circle stablecoin chain, chain ID 5042) support so Arc vaults appear in vault listings and on the by-chain page (2026-09-25)
 - Add the authenticated, uncached vault scan manifest download and preserve source ETags for verified price downloads (2026-09-22).
 

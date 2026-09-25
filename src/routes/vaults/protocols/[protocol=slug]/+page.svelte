@@ -143,9 +143,6 @@ Vault listing and overview for one protocol.
 	listingKey={data.listingKey}
 	listingScope={data.listingScope}
 	listingSummary={data.listingSummary}
-	listingInsights={data.listingInsights}
-	insightsSubject={isUnknownVaultProtocolGroup ? undefined : `${protocolName} ${listingAssetTypePlural}`}
-	insightsGroupBy="curator"
 	{protocolMetadata}
 	protocolDescriptionExtra={averageMonthlyReturn != null || isHyperliquidProtocolGroup
 		? protocolDescriptionExtra

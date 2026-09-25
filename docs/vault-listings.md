@@ -57,22 +57,26 @@ describes whether its initial rows have a continuation. A short listing can
 therefore gain continuation pages later when hidden blacklisted rows are
 revealed.
 
-## Hub pages: findings, similar vaults and methodology
+## Stablecoin yield comparison, similar vaults and methodology
 
-`/vaults` and the chain, protocol, stablecoin and curator hubs pass a fifth argument to
-`loadVaultListing()` (`insightsGroupBy`) and get `listingInsights` computed over the **whole**
-filtered listing, not the 75 rendered rows (`src/lib/top-vaults/listing/insights.ts`). `TopVaultsPage`
-renders them with `VaultHubInsights.svelte` above the table: the three highest-APY vaults, the
-median APY, the curator or protocol holding most of the TVL, the dataset date, and a
-"Why the top … differ" table. `/vaults/stablecoins` applies the same rules per stablecoin for its
-"Best stablecoin yields right now" table.
+`/vaults/stablecoins` leads with "Best stablecoin yields right now"
+(`getStablecoinYieldComparison()` in `src/lib/top-vaults/listing/stablecoin-yields.ts`): the eight
+largest stablecoins by USD TVL, each with its highest-APY vault under the leader rules in
+`getYieldLeaders()` (`src/lib/top-vaults/listing/insights.ts`). A stablecoin whose vaults do not
+qualify keeps its row as "No vault meets the rules above"; the table is left out when no stablecoin
+qualifies.
 
 Leaders are chosen more strictly than the table rows, because they are presented as an answer to
-"best … yield": yield vaults only (no AMM-like pools, no trading-strategy tags), rated Low risk or
-safer (`risk_numeric ≤ 20`), at least $100,000 TVL, three months of history (`years ≥ 0.25`) and an
-APY no higher than 100 %. The risk rating is protocol technical risk; it does not screen out a
-discretionary trading fund on a low-risk protocol, which is why the strategy-tag rule exists. The
-rules are stated on the page and on `/vaults/methodology`; keep all three in step.
+"best … yield": yield vaults only (no AMM-like pools, tokenised funds or trading-strategy tags),
+indexable, rated Low risk or safer (`risk_numeric ≤ 20`), at least $100,000 TVL, three months of
+history (`years ≥ 0.25`) and an APY no higher than 100 %. The risk rating is protocol technical risk;
+it does not screen out a discretionary trading fund on a low-risk protocol, which is why the
+strategy-tag rule exists. The rules are stated on the page and on `/vaults/methodology`; keep all
+three in step.
+
+A generated "top vaults" paragraph and comparison table on every hub was tried in round 4 and
+removed before release: it repeated rows already in the listing below it in a sentence full of
+qualifiers, and did not explain anything a visitor could act on.
 
 Vault detail pages show "Similar <protocol> vaults" (`getSimilarVaults()` in
 `src/lib/top-vaults/similar-vaults.ts`): the largest indexable vaults on the same protocol,

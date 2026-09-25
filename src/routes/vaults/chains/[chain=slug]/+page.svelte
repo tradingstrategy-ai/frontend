@@ -73,9 +73,6 @@ Vault listing and overview for one blockchain or perpetual DEX venue.
 	listingKey={data.listingKey}
 	listingScope={data.listingScope}
 	listingSummary={data.listingSummary}
-	listingInsights={data.listingInsights}
-	insightsSubject={hasSameNameProtocol ? `vaults on ${chainName}` : `${chainName} vaults`}
-	insightsGroupBy="protocol"
 	title={heading}
 	showFilters
 	{defaultTvlKey}

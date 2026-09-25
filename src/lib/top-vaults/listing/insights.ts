@@ -1,11 +1,9 @@
 /**
- * Page-specific findings for a vault hub, computed over the whole filtered listing (not only the
- * rows the browser receives): which vaults lead on APY, the median APY, and which curator or
- * protocol holds most of the TVL.
+ * Yield leaders for the "best stablecoin yields right now" comparison on `/vaults/stablecoins`:
+ * the highest-APY vaults of a group, and the median APY, under stricter rules than the listing
+ * table because they are presented as an answer to "best … yield".
  *
- * These answer "best <protocol> vaults" in a sentence that differs on every hub, instead of a
- * template sentence repeated across hundreds of pages. See
- * `.claude/plans/seo-round-4-vault-rankings.md`, workstream 3.
+ * See `.claude/plans/seo-round-4-vault-rankings.md`, workstream 7.
  */
 import {
 	getFormattedLockup,
@@ -77,18 +75,14 @@ export type ListingLeader = {
 	risk: string | null;
 };
 
-export type ListingInsights = {
+export type YieldLeaders = {
 	/** Up to three highest-APY vaults that pass the minimum TVL, age and risk and the APY ceiling */
 	leaders: ListingLeader[];
 	/** Median APY of the vaults that pass the same rules */
 	medianApy: number | null;
 	/** Number of vaults the leaders and median were chosen from */
 	eligibleCount: number;
-	/** The curator or protocol with the largest share of the listing's TVL */
-	topGroup: { name: string; share: number } | null;
 };
-
-export type ListingInsightsGroupBy = 'curator' | 'protocol';
 
 /**
  * Median of a list of numbers, or `null` when the list is empty.
@@ -103,23 +97,11 @@ function median(values: number[]): number | null {
 }
 
 /**
- * Name of the group a vault's TVL counts towards: its curator or its protocol.
+ * The highest-APY yield vaults of a group and its median APY.
  *
- * @param vault listed vault
- * @param groupBy which grouping the hub reports
+ * @param vaults the vaults to choose from, e.g. all listed vaults of one stablecoin
  */
-function getGroupName(vault: VaultInfo, groupBy: ListingInsightsGroupBy): string | null {
-	if (groupBy === 'curator') return vault.curator_name?.trim() || null;
-	return getVaultProtocolDisplayName(vault);
-}
-
-/**
- * Findings for a hub page.
- *
- * @param vaults the complete filtered listing (the rows the hub's table would show, all of them)
- * @param groupBy what to report the largest TVL share of: curators on protocol hubs, protocols elsewhere
- */
-export function getListingInsights(vaults: VaultInfo[], groupBy: ListingInsightsGroupBy): ListingInsights {
+export function getYieldLeaders(vaults: VaultInfo[]): YieldLeaders {
 	const eligible = vaults
 		.filter(
 			(vault) =>
@@ -155,27 +137,9 @@ export function getListingInsights(vaults: VaultInfo[], groupBy: ListingInsights
 			risk: vault.risk ?? null
 		}));
 
-	const tvlByGroup = new Map<string, number>();
-	let totalTvl = 0;
-	for (const vault of vaults) {
-		if (isBlacklisted(vault)) continue;
-		const tvl = getVaultCurrentTvlUsd(vault);
-		if (tvl == null || !Number.isFinite(tvl) || tvl <= 0) continue;
-		totalTvl += tvl;
-		const group = getGroupName(vault, groupBy);
-		if (group) tvlByGroup.set(group, (tvlByGroup.get(group) ?? 0) + tvl);
-	}
-	const [topName, topTvl] = [...tvlByGroup].toSorted((a, b) => b[1] - a[1])[0] ?? [];
-	// a group that holds (practically) the whole listing — every Morpho vault on a Morpho hub — says
-	// nothing; vaults without a curator still count towards the total, so a single named curator can
-	// hold only part of it
-	const share = topName && totalTvl > 0 ? topTvl! / totalTvl : null;
-	const topGroup = topName && share != null && share < 0.995 ? { name: topName, share } : null;
-
 	return {
 		leaders,
 		medianApy: median(eligible.map((row) => row.apy)),
-		eligibleCount: eligible.length,
-		topGroup
+		eligibleCount: eligible.length
 	};
 }

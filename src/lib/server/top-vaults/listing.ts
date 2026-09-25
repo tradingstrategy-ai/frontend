@@ -23,7 +23,6 @@ import { queryVaultListing } from '$lib/top-vaults/listing/query';
 import type { VaultListingOptions, VaultListingQuery, VaultListingResult } from '$lib/top-vaults/listing/query';
 import { parseVaultListingQuery } from '$lib/top-vaults/listing/state';
 import { INITIAL_VAULT_LISTING_LIMIT, type VaultListingSummary } from '$lib/top-vaults/listing/types';
-import { getListingInsights, type ListingInsightsGroupBy } from '$lib/top-vaults/listing/insights';
 import type { TopVaults } from '$lib/top-vaults/schemas';
 
 async function resolveListingVaults(fetchFn: typeof fetch, topVaults: TopVaults, key: VaultListingKey, scope?: string) {
@@ -88,16 +87,8 @@ export function createVaultListingSummary(listing: VaultListingResult): VaultLis
  * @param url - Listing URL containing the active filters and sort.
  * @param key - Fixed listing definition key.
  * @param scope - Optional route scope such as a chain or protocol slug.
- * @param insightsGroupBy - Hub pages only: compute `listingInsights` (APY leaders, median APY and
- *   the curator or protocol with the largest TVL share) over the complete filtered listing.
  */
-export async function loadVaultListing(
-	fetchFn: typeof fetch,
-	url: URL,
-	key: VaultListingKey,
-	scope?: string,
-	insightsGroupBy?: ListingInsightsGroupBy
-) {
+export async function loadVaultListing(fetchFn: typeof fetch, url: URL, key: VaultListingKey, scope?: string) {
 	const definition = getVaultListingDefinition(key);
 	const topVaults = await getCachedTopVaults(fetchFn);
 	const scopedVaults = await resolveListingVaults(fetchFn, topVaults, key, scope);
@@ -119,7 +110,6 @@ export async function loadVaultListing(
 		},
 		initialHasMore: initialVaults.length < listing.vaults.length,
 		listingSummary: createVaultListingSummary(listing),
-		listingInsights: insightsGroupBy ? getListingInsights(listing.vaults, insightsGroupBy) : undefined,
 		listingCurrencies:
 			key === 'international'
 				? [

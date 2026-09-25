@@ -14,6 +14,6 @@ export async function load({ params, fetch, url }) {
 		curatorName: curatorInfo.name,
 		curator: curatorInfo,
 		// the page's description quotes this listing's summary, so its figures match the table
-		...(await loadVaultListing(fetch, url, 'curator', curator, 'protocol'))
+		...(await loadVaultListing(fetch, url, 'curator', curator))
 	};
 }

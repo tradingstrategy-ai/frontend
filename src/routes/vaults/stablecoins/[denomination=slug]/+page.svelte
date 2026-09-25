@@ -104,9 +104,6 @@ Vault listing and overview for one stablecoin denomination.
 	listingKey={data.listingKey}
 	listingScope={data.listingScope}
 	listingSummary={data.listingSummary}
-	listingInsights={data.listingInsights}
-	insightsSubject={`${denominationSymbol} vaults`}
-	insightsGroupBy="protocol"
 	{stablecoinMetadata}
 	stablecoinLogoSlug={denominationSlug}
 	title={heading}

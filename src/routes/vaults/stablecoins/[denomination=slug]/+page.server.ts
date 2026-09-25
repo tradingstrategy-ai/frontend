@@ -57,6 +57,6 @@ export async function load({ params, fetch, url }) {
 				? OFFCHAIN_USD_SHORT_DESCRIPTION
 				: (stablecoinMetadata?.short_description ?? null),
 		stablecoinMetadata,
-		...(await loadVaultListing(fetch, url, 'stablecoin', denomination, 'protocol'))
+		...(await loadVaultListing(fetch, url, 'stablecoin', denomination))
 	};
 }

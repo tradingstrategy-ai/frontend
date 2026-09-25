@@ -114,7 +114,7 @@ export async function load({ fetch, url: { searchParams } }) {
 	}));
 
 	// "best stablecoin yield" comparison: the leading vault of each of the largest stablecoins by
-	// USD TVL, chosen with the same rules as the hub insights
+	// USD TVL, chosen with the leader rules in `$lib/top-vaults/listing/insights`
 	const yieldComparison = getStablecoinYieldComparison(eligibleVaults, {
 		resolveSlug,
 		getName: (slug) => metadataBySlug.get(slug)?.name

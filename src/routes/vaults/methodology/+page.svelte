@@ -89,12 +89,11 @@ and exclusions. Linked from every vault listing ("How we rank vaults").
 			come from very young or very small vaults.
 		</p>
 		<p>
-			The vaults named at the top of a listing, and the best vault per stablecoin on the
-			<a href={resolve('/vaults/stablecoins')}>stablecoin yield comparison</a>, are chosen more strictly than the table:
-			they must be yield vaults rather than trading strategies or liquidity pools, be rated Low risk or safer, hold at
-			least $100,000, have three months of history and show an APY no higher than 100 %. Figures above that usually come
-			from trading vaults, liquidity pools or very young vaults and should not be read as a yield you can expect to
-			earn.
+			The best vault per stablecoin on the
+			<a href={resolve('/vaults/stablecoins')}>stablecoin yield comparison</a> is chosen more strictly than the listing tables:
+			it must be a yield vault rather than a trading strategy or liquidity pool, be rated Low risk or safer, hold at least
+			$100,000, have three months of history and show an APY no higher than 100 %. Figures above that usually come from trading
+			vaults, liquidity pools or very young vaults and should not be read as a yield you can expect to earn.
 		</p>
 		<p>
 			A ranking is a comparison of reported figures, not a recommendation. Check a vault’s risk ratings, fees, lock-up

@@ -58,9 +58,6 @@ DeFi vault rankings — the landing page for "defi vaults" / "best defi vaults" 
 	initialHasMore={data.initialHasMore}
 	listingKey={data.listingKey}
 	listingSummary={data.listingSummary}
-	listingInsights={data.listingInsights}
-	insightsSubject="DeFi vaults"
-	insightsGroupBy="protocol"
 	title={heading}
 	{subtitle}
 	showFilters

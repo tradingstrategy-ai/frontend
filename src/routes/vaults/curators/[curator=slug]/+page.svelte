@@ -107,9 +107,6 @@ with an "about" panel and a TVL/return mini chart.
 	listingKey={data.listingKey}
 	listingScope={data.listingScope}
 	listingSummary={data.listingSummary}
-	listingInsights={data.listingInsights}
-	insightsSubject={`${curatorName} vaults`}
-	insightsGroupBy="protocol"
 	curatorMetadata={curator}
 	title={heading}
 	showFilters
