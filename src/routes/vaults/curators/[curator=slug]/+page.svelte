@@ -41,7 +41,7 @@ with an "about" panel and a TVL/return mini chart.
 				? `${curatorName} has ${vaultCount} ${vaultCount === 1 ? 'vault' : 'vaults'} with ${formatDollar(tvl, 1)} TVL${
 						averageApy == null ? '' : ` and a ${formatPercent(averageApy, 1)} APY over the last 30 days`
 					}. The curator may have more vaults outside supported blockchains and vault protocols.`
-				: `Vaults curated by ${curatorName}, ranked by APY and TVL.`;
+				: `Vaults curated by ${curatorName}, with their APY and TVL.`;
 		const about = curator.short_description ? ` ${asSentence(curator.short_description)}` : '';
 		return `${stats}${about}`;
 	});

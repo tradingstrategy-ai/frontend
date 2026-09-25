@@ -57,6 +57,29 @@ describes whether its initial rows have a continuation. A short listing can
 therefore gain continuation pages later when hidden blacklisted rows are
 revealed.
 
+## Hub pages: findings, similar vaults and methodology
+
+`/vaults` and the chain, protocol, stablecoin and curator hubs pass a fifth argument to
+`loadVaultListing()` (`insightsGroupBy`) and get `listingInsights` computed over the **whole**
+filtered listing, not the 75 rendered rows (`src/lib/top-vaults/listing/insights.ts`). `TopVaultsPage`
+renders them with `VaultHubInsights.svelte` above the table: the three highest-APY vaults, the
+median APY, the curator or protocol holding most of the TVL, the dataset date, and a
+"Why the top … differ" table. `/vaults/stablecoins` applies the same rules per stablecoin for its
+"Best stablecoin yields right now" table.
+
+Leaders are chosen more strictly than the table rows, because they are presented as an answer to
+"best … yield": yield vaults only (no AMM-like pools, no trading-strategy tags), rated Low risk or
+safer (`risk_numeric ≤ 20`), at least $100,000 TVL, three months of history (`years ≥ 0.25`) and an
+APY no higher than 100 %. The risk rating is protocol technical risk; it does not screen out a
+discretionary trading fund on a low-risk protocol, which is why the strategy-tag rule exists. The
+rules are stated on the page and on `/vaults/methodology`; keep all three in step.
+
+Vault detail pages show "Similar <protocol> vaults" (`getSimilarVaults()` in
+`src/lib/top-vaults/similar-vaults.ts`): the largest indexable vaults on the same protocol,
+same denomination first. Search wording for titles and descriptions lives in
+`src/lib/top-vaults/hub-seo.ts` and `src/lib/top-vaults/vault-seo.ts`; see
+`docs/google-webmasters.md`, "Round 4".
+
 ## Ordering and filtering
 
 `src/lib/top-vaults/listing/` is the shared, browser-safe implementation of

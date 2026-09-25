@@ -53,7 +53,11 @@ const TRADING_STRATEGY_TAGS = new Set([
 	'venture_funding'
 ]);
 
-/** Yield vaults only: no liquidity pools, no trading strategies. */
+/**
+ * Yield vaults only: no liquidity pools, no trading strategies.
+ *
+ * @param vault listed vault
+ */
 function isYieldVault(vault: VaultInfo): boolean {
 	if (getVaultAssetType(vault) === 'pool') return false;
 	return !(vault.strategy_tags ?? []).some((tag) => TRADING_STRATEGY_TAGS.has(tag));
@@ -85,6 +89,11 @@ export type ListingInsights = {
 
 export type ListingInsightsGroupBy = 'curator' | 'protocol';
 
+/**
+ * Median of a list of numbers, or `null` when the list is empty.
+ *
+ * @param values numbers in any order
+ */
 function median(values: number[]): number | null {
 	if (values.length === 0) return null;
 	const sorted = values.toSorted((a, b) => a - b);
@@ -92,6 +101,12 @@ function median(values: number[]): number | null {
 	return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
 }
 
+/**
+ * Name of the group a vault's TVL counts towards: its curator or its protocol.
+ *
+ * @param vault listed vault
+ * @param groupBy which grouping the hub reports
+ */
 function getGroupName(vault: VaultInfo, groupBy: ListingInsightsGroupBy): string | null {
 	if (groupBy === 'curator') return vault.curator_name?.trim() || null;
 	return getVaultProtocolDisplayName(vault);

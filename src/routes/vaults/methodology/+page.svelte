@@ -30,11 +30,11 @@ and exclusions. Linked from every vault listing ("How we rank vaults").
 		<h2>Where the data comes from</h2>
 		<ul>
 			<li>
-				Share prices, TVL and deposit status are read from each vault’s own smart contracts, or from the exchange API
-				for perpetual DEX vaults such as Hyperliquid, by Trading Strategy’s open-source vault scanners. The dataset is
-				regenerated regularly; every listing shows when its data was last updated.
+				Share prices, TVL and deposit status are collected by Trading Strategy from each vault’s smart contracts, or
+				from the venue for perpetual DEX vaults such as Hyperliquid. The dataset is regenerated regularly; every listing
+				shows when its data was last updated.
 			</li>
-			<li>Protocol, curator and stablecoin descriptions are maintained by Trading Strategy.</li>
+			<li>Protocol, curator and stablecoin descriptions come from Trading Strategy’s vault metadata.</li>
 			<li>
 				Risk ratings from <a href={resolve('/vaults/core3-ratings')}>CORE3</a> and
 				<a href={resolve('/vaults/xerberus-ratings')}>Xerberus</a> are shown as published by those providers.
@@ -48,45 +48,46 @@ and exclusions. Linked from every vault listing ("How we rank vaults").
 		<p>
 			APY on the listings is the vault’s return over the last 30 days, annualised on a 365.25-day year. It is the
 			<strong>net</strong> return after the vault’s fees when the net figure is available, otherwise the gross share-price
-			return. Vault pages also show 1-week, 3-month, 6-month, 1-year and lifetime returns, both absolute and annualised. Past
-			returns are not an indication of future returns, and an annualised 30-day figure can move a lot from one month to the
-			next.
+			return. Vault pages also show returns over 1 week, 3 and 6 months, 1 year and the vault’s lifetime. Past returns are
+			not an indication of future returns, and an annualised 30-day figure can move a lot from one month to the next.
 		</p>
 
 		<h2>How TVL is calculated</h2>
 		<p>
 			TVL is the vault’s current net asset value converted to US dollars with the exchange rate of its denomination
 			token. Stablecoins pegged to other currencies, such as euro stablecoins, are converted at their own rate rather
-			than counted as one dollar each.
+			than counted as one dollar each. When a denomination token is not recognised and has no exchange rate, one token
+			is counted as one dollar in listing totals.
 		</p>
 
 		<h2>Which vaults are hidden by default</h2>
 		<ul>
 			<li>
 				Small vaults: the main listing shows vaults with at least $50,000 TVL (at least $1M for native Hyperliquid
-				vaults); chain, protocol, stablecoin and curator pages show vaults with at least $10,000 TVL.
+				vaults); most chain, protocol, stablecoin and curator pages show vaults with at least $10,000 TVL.
 			</li>
 			<li>
 				Blacklisted vaults, rated under the
 				<a href={resolve('/blog/announcing-vault-technical-risk-framework-beta')}>vault technical risk framework</a>.
 			</li>
-			<li>AMM-like liquidity pools on the main listing; protocol and stablecoin pages include them.</li>
+			<li>AMM-like liquidity pools, except on protocol and strategy pages, which include them.</li>
 		</ul>
 		<p>Every one of these defaults can be changed with the listing filters.</p>
 
 		<h2>What “best” means</h2>
 		<p>
-			By default vaults are ordered by APY, highest first, after the filters above have been applied. Listings can also
-			be sorted by TVL, by longer-period returns or by risk rating. Averages shown on a listing are weighted by TVL and
-			leave out blacklisted vaults and APY figures above 1,000 %, which are almost always accounting artefacts of very
-			young or very small vaults.
+			Most listings order vaults by APY, highest first, after the filters above have been applied; curator pages order
+			them by TVL. Every listing can also be sorted by TVL, by longer-period returns or by risk rating. Averages shown
+			on a listing are weighted by TVL and leave out blacklisted vaults and APY figures above 1,000 %, which usually
+			come from very young or very small vaults.
 		</p>
 		<p>
 			The vaults named at the top of a listing, and the best vault per stablecoin on the
 			<a href={resolve('/vaults/stablecoins')}>stablecoin yield comparison</a>, are chosen more strictly than the table:
 			they must be yield vaults rather than trading strategies or liquidity pools, be rated Low risk or safer, hold at
-			least $100,000, have three months of history and show an APY no higher than 100 %. Higher figures come from
-			trading vaults, liquidity pools or very young vaults and are not a yield you can expect to earn.
+			least $100,000, have three months of history and show an APY no higher than 100 %. Figures above that usually come
+			from trading vaults, liquidity pools or very young vaults and should not be read as a yield you can expect to
+			earn.
 		</p>
 		<p>
 			A ranking is a comparison of reported figures, not a recommendation. Check a vault’s risk ratings, fees, lock-up

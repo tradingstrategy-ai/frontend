@@ -100,6 +100,11 @@ the component:
   every chart page, mobile — is `tests/integration/vaults/charts-dropdown.test.ts`; the chart-page
   files (`yield-*`, `historical-tvl-*`, `cumulative-tvl-apy`, …) assert only their own chart, plus
   the in-page "See charts" link row on the pages that render it;
+- the SEO links added in round 4 — "Similar <protocol> vaults", the "<name> APY and returns"
+  heading and the "How we rank vaults" methodology link — are
+  `tests/integration/vaults/seo-links.test.ts`; hub insights and leader rules are unit-tested in
+  `src/lib/top-vaults/listing/insights.test.ts`, because the mock vaults carry no `years` and so
+  never qualify as leaders;
 - the vault group index header (`protocols`, `stablecoins`, `chains`, `curators`, `funds`) is
   laid out once at three viewports in `group-market-share-pages.test.ts`; each page keeps a single
   render test.
