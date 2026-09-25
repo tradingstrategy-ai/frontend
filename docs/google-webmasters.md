@@ -114,15 +114,33 @@ Note that origin-level CrUX data can be "good" while Search Console flags many U
 
 ### `pnpm run seo:search-console <command>`
 
-| Command         | Description                                                        |
-| --------------- | ------------------------------------------------------------------ |
-| `sites`         | Properties the service account can access and its permission level |
-| `pages`         | Top pages by clicks (`--days`, `--limit`)                          |
-| `queries`       | Top search queries by clicks (`--days`, `--limit`)                 |
-| `sitemaps`      | Submitted sitemaps with counts, errors and last download time      |
-| `inspect <url>` | Index status, canonical, last crawl and robots verdict for one URL |
+| Command         | Description                                                                                                                                                                                                                                                    |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sites`         | Properties the service account can access and its permission level                                                                                                                                                                                             |
+| `pages`         | Top pages by clicks (`--days`, `--limit`)                                                                                                                                                                                                                      |
+| `queries`       | Top search queries by clicks (`--days`, `--limit`)                                                                                                                                                                                                             |
+| `sitemaps`      | Submitted sitemaps with counts, errors and last download time                                                                                                                                                                                                  |
+| `inspect <url>` | Index status, canonical, last crawl and robots verdict for one URL                                                                                                                                                                                             |
+| `templates`     | Clicks, impressions, CTR and position per page template (`scripts/seo-page-templates.mjs`) for the window and an equal-length baseline window before it, as daily rates                                                                                        |
+| `terms`         | The fixed category and navigational query sets in `scripts/seo-target-terms.json`: impressions, clicks and position per query, the page Google showed and the intended landing page's position; `--inspect` adds each landing page's Google-selected canonical |
 
-All commands accept `--json` for the raw response. Search analytics windows end three days ago because Search Console data lags by two to three days.
+| Option                                                   | Description                                                                      |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `--days <n>`                                             | Window length ending three days ago (default 28)                                 |
+| `--start <date>`, `--end <date>`                         | Explicit window, `YYYY-MM-DD`; overrides `--days`                                |
+| `--baseline-end <date>`                                  | `templates` only: end of the baseline window (default: the day before `--start`) |
+| `--page-regex <re>`, `--exclude-page-regex <re>`         | Include or exclude pages by RE2 regex                                            |
+| `--country <iso3>`, `--device <desktop\|mobile\|tablet>` | Restrict to one country (`idn`, `usa` …) or device                               |
+| `--limit <n>`                                            | Rows to print for `pages` and `queries` (all rows are fetched)                   |
+
+All commands accept `--json` for the raw response. Search analytics windows end three days ago because Search Console data lags by two to three days. Query-level rows omit anonymised queries, so per-query sums are below the page totals — compare like with like.
+
+Example — vault templates before and after a release, without one page:
+
+```shell
+pnpm run seo:search-console templates --start 2026-09-16 --end 2026-09-24 --baseline-end 2026-09-15 \
+  --page-regex '/vaults' --exclude-page-regex '/vaults/newbet'
+```
 
 ## Frontend SEO controls
 
@@ -469,3 +487,29 @@ Dead code removed on the way: `serializePost()`, the unused Display font faces, 
 - Rich Results Test on the home page (Organization) and a blog post (BlogPosting).
 - Search Console after the next recrawl: social-card URLs leave "Crawled – currently not indexed"; export-data duplicates fall; indexed `/vaults/` URLs stay within ~10 % of today's.
 - `pnpm run seo:cwv --history` after 28 days for the field CLS/LCP.
+
+## Round 4 — 2026-09-25
+
+Plan: `.claude/plans/seo-round-4-vault-rankings.md` — rank vault pages for category searches ("defi vaults", "morpho vaults", "hyperliquid vaults", "best stablecoin yield"), not only for vault names.
+
+### Baseline (before any round 4 change)
+
+Measured with the `templates` and `terms` commands above.
+
+Vault templates, 2026-09-07…15 vs 2026-09-16…24 (9 days each, `/vaults/newbet` excluded):
+
+| Template             | Impressions/day | Clicks/day | CTR           | Position  |
+| -------------------- | --------------- | ---------- | ------------- | --------- |
+| vault detail         | 420 → 484       | 6.6 → 7.0  | 1.56 → 1.45 % | 6.2 → 8.9 |
+| vault curator hub    | 60 → 80         | 0.9 → 0.3  | 1.47 → 0.42 % | 6.7 → 8.5 |
+| vault protocol hub   | 43 → 28         | 0.1 → 0.2  | 0.26 → 0.80 % | 5.9 → 5.8 |
+| vaults index         | 37 → 33         | 0.2 → 0.4  | 0.60 → 1.37 % | 9.4 → 8.7 |
+| vault chain hub      | 29 → 15         | 0.0 → 0.3  | 0 → 2.16 %    | 5.8 → 5.3 |
+| vault stablecoin hub | 21 → 29         | 0.1 → 0.2  | 0.54 → 0.78 % | 6.8 → 7.9 |
+
+Category queries, 90 days to 2026-09-24: **15 of 28 have any impressions**. "best defi vaults", "top defi vaults", all four "stablecoin yield" phrases, "usdc yield", "morpho vaults", "morpho vault apy" and "euler vaults" have none. "defi vaults" ranks 48.9, "crypto vaults" 64.6. "lighter vaults" (4.7) is the only protocol query where the intended hub ranks on page 1.
+
+Findings that changed the plan:
+
+- **`/vaults/protocols/morpho` and `/vaults/stablecoins/usdc` are "Crawled – currently not indexed"** (URL inspection, 2026-09-25) — the two hubs for the largest protocol and stablecoin are not in the index at all, so no title change can make them rank for "morpho vaults" or "usdc vault". Every other intent-map landing page is indexed with a matching Google-selected canonical.
+- **Hyperliquid and HLP demand lands on the glossary.** "hyperliquid vault(s)" (1,690 impressions) and "hlp vault" (179) are answered by `/glossary/hyperliquid-provider-vault` (2,280 impressions over all such queries, position 12.9) and the blog post `hyperliquid-vault-of-vaults`; the intended hubs sit at 35–40 and the HLP vault page is barely shown. The legacy `/trading-view/vaults/curators/hyperliquid` URL still collects 285 impressions at position 40.7 behind its 301.
