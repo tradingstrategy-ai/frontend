@@ -1,10 +1,19 @@
 <!--
-  Expandable protocol description widget with social/documentation links.
-  Used on vault protocol detail pages to display protocol metadata.
+@component
+Expandable protocol description widget with social/documentation links.
+Used on vault protocol detail pages to display protocol metadata.
+
+The long description is always server-rendered (collapsed with `hidden` until "View more") so
+search engines index it.
+
+@example
+
+```svelte
+	<ProtocolDescription metadata={protocolMetadata} />
+```
 -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { slide } from 'svelte/transition';
 	import { micromark } from 'micromark';
 	import type { VaultProtocolMetadata } from './schemas';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
@@ -66,8 +75,9 @@
 			</div>
 		{/if}
 
-		{#if expanded}
-			<div transition:slide>
+		<!-- always server-rendered so search engines see the full description; collapsed until "View more" -->
+		{#if hasExpandableContent}
+			<div hidden={!expanded}>
 				<div class="long-description">
 					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 					{@html micromark(metadata.long_description)}

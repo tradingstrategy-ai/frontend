@@ -108,10 +108,7 @@ test.describe('vault social meta tags', () => {
 		test('uses the stablecoin metadata for tags, logo image, JSON-LD and description box', async ({ page }) => {
 			await page.goto('/vaults/stablecoins/usdc');
 
-			await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
-				'content',
-				'USD Coin (Circle) USDC stablecoin vaults | Trading Strategy'
-			);
+			await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', 'USDC vaults');
 			await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
 				'content',
 				/fully-reserved|stablecoin/i
@@ -133,10 +130,12 @@ test.describe('vault social meta tags', () => {
 			expect(data.about.category).toBe('stablecoin');
 			expect(data.about.sameAs).toEqual(expect.arrayContaining([expect.stringContaining('coingecko')]));
 
-			await expect(page).toHaveTitle('USD Coin (Circle) USDC stablecoin vaults | Trading Strategy');
-			await expect(page.locator('h1')).toContainText('USD Coin (Circle) USDC stablecoin vaults');
+			// search wording: "usdc vault", "best usdc yield"
+			await expect(page).toHaveTitle('USDC vaults | best USDC yield | Trading Strategy');
+			await expect(page.locator('h1')).toContainText('USDC vaults');
 			await expect(page.locator('text=About USD Coin')).toBeVisible();
-			await expect(page.locator('text=fully-reserved')).toBeVisible();
+			// the long description is also in the HTML (collapsed until "View more"), so match the visible short one
+			await expect(page.locator('text=fully-reserved').first()).toBeVisible();
 		});
 
 		test('uses the Trading Strategy image when no stablecoin logo is available', async ({ page }) => {

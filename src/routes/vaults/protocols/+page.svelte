@@ -29,9 +29,9 @@ Vault protocols index page.
 		scrollToTop();
 	};
 
-	const title = 'DeFi stablecoin vault protocols | Trading Strategy';
+	const title = 'DeFi vaults by protocol';
 	const description =
-		'DeFi stablecoin vaults grouped by protocol. Vaults are built on different digital asset management protocols, and this listing shows the relative popularity of each. TVL represents stablecoin deposits in a protocol’s vaults. APY represents the yield of the last thirty days.';
+		'Compare DeFi vault protocols by TVL and APY. Vaults are built on different digital asset management protocols, and this listing shows the relative popularity of each. TVL represents stablecoin deposits in a protocol’s vaults. APY represents the yield of the last thirty days.';
 	const glossaryLinks = {
 		stablecoin: resolve('/glossary/stablecoin'),
 		tvl: resolve('/glossary/total-value-locked-tvl'),
@@ -71,7 +71,7 @@ Vault protocols index page.
 				<div class="intro-column">
 					<HeroBanner>
 						{#snippet title()}
-							<span>Vault protocols</span>
+							<span>DeFi vaults by protocol</span>
 						{/snippet}
 						{#snippet subtitle()}
 							<p>

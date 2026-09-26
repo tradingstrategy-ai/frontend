@@ -32,9 +32,9 @@ aggregate TVL, vault count and average APY, plus a market-share pie chart.
 		return resolve(`/vaults/curators/${slug}`);
 	}
 
-	const title = 'Stablecoin vault curators';
+	const title = 'DeFi vault curators';
 	const description =
-		'Curator rankings for DeFi stablecoin vaults. Curators select and manage vault strategies. TVL represents stablecoin deposits across a curator’s vaults. APY represents the yield of last thirty days.';
+		'Compare DeFi vault curators by TVL and APY. Curators select and manage vault strategies. TVL represents stablecoin deposits across a curator’s vaults. APY represents the yield of the last thirty days.';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 </script>
 
@@ -69,7 +69,7 @@ aggregate TVL, vault count and average APY, plus a market-share pie chart.
 				<div class="intro-column">
 					<HeroBanner>
 						{#snippet title()}
-							<span>Stablecoin vault curators</span>
+							<span>DeFi vault curators</span>
 						{/snippet}
 						{#snippet subtitle()}
 							<p>

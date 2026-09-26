@@ -10,9 +10,10 @@ with an "about" panel and a TVL/return mini chart.
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import { getCuratorSocialLogoUrl } from '$lib/social-card/helpers';
+	import { getItemListElements, getHubTitleParts } from '$lib/top-vaults/hub-seo';
 
 	let { data } = $props();
-	let { curatorSlug, curatorName, curator, vaultCount, tvl, averageApy, initialTopVaults } = $derived(data);
+	let { curatorSlug, curatorName, curator, initialTopVaults } = $derived(data);
 
 	/** Google truncates search snippets around this length; keep the meta description within it */
 	const META_DESCRIPTION_MAX_LENGTH = 160;
@@ -31,14 +32,18 @@ with an "about" panel and a TVL/return mini chart.
 		return `${clipped.slice(0, lastSpace > 0 ? lastSpace : maxLength - 1).replace(/[,;:.]$/, '')}…`;
 	}
 
-	let title = $derived(`${curatorName} curated stablecoin vaults | Trading Strategy`);
+	// search wording: "<curator> vaults" (see .claude/plans/seo-round-4-vault-rankings.md)
+	let heading = $derived(`${curatorName} vaults`);
+	let titleParts = $derived(getHubTitleParts(heading, ['APY, TVL and risk', 'APY and TVL']));
 	let fullDescription = $derived.by(() => {
+		// same figures as the listing the page shows (default filters applied)
+		const { matchingCount: listedCount, totalTvl: listedTvl, avgTvlWeightedApy1M: listedApy } = data.listingSummary;
 		const stats =
-			vaultCount > 0
-				? `${curatorName} has ${vaultCount} ${vaultCount === 1 ? 'vault' : 'vaults'} with ${formatDollar(tvl, 1)} TVL${
-						averageApy == null ? '' : ` and a ${formatPercent(averageApy, 1)} APY over the last 30 days`
+			listedCount > 0
+				? `${curatorName} has ${listedCount} listed ${listedCount === 1 ? 'vault' : 'vaults'} with ${formatDollar(listedTvl, 1)} TVL${
+						listedApy == null ? '' : ` and a ${formatPercent(listedApy, 1)} average APY over the last 30 days`
 					}. The curator may have more vaults outside supported blockchains and vault protocols.`
-				: `Stablecoin vaults curated by ${curatorName}, ranked by returns and TVL.`;
+				: `Vaults curated by ${curatorName}, with their APY and TVL.`;
 		const about = curator.short_description ? ` ${asSentence(curator.short_description)}` : '';
 		return `${stats}${about}`;
 	});
@@ -51,21 +56,21 @@ with an "about" panel and a TVL/return mini chart.
 </script>
 
 <MetaTags
-	{title}
+	{titleParts}
 	description={metaDescription}
 	image={logoUrl}
 	imageAlt={`${curatorName} logo`}
 	openGraph={{
 		siteName: 'Trading Strategy',
 		url: pageUrl,
-		title,
+		title: heading,
 		description: fullDescription,
 		type: 'website'
 	}}
 	twitter={{
 		site: '@TradingProtocol',
 		cardType: logoUrl ? 'summary_large_image' : 'summary',
-		title,
+		title: heading,
 		description: fullDescription
 	}}
 />
@@ -74,7 +79,8 @@ with an "about" panel and a TVL/return mini chart.
 	schema={{
 		'@context': 'http://schema.org',
 		'@type': 'CollectionPage',
-		name: title,
+		dateModified: initialTopVaults.generated_at,
+		name: heading,
 		description: fullDescription,
 		url: pageUrl,
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
@@ -88,7 +94,8 @@ with an "about" panel and a TVL/return mini chart.
 		},
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: data.listingSummary.matchingCount
+			numberOfItems: data.listingSummary.matchingCount,
+			itemListElement: getItemListElements(initialTopVaults.vaults, page.url.origin)
 		}
 	}}
 />
@@ -101,7 +108,7 @@ with an "about" panel and a TVL/return mini chart.
 	listingScope={data.listingScope}
 	listingSummary={data.listingSummary}
 	curatorMetadata={curator}
-	title="{curatorName} curated stablecoin vaults"
+	title={heading}
 	showFilters
 	defaultTvlKey="10k"
 	defaultHideUnknown={0}

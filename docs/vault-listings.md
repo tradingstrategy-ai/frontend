@@ -57,6 +57,24 @@ describes whether its initial rows have a continuation. A short listing can
 therefore gain continuation pages later when hidden blacklisted rows are
 revealed.
 
+## Search wording
+
+Hub and vault page titles and descriptions use the words people search
+("Morpho vaults", "best USDC yield"): `src/lib/top-vaults/hub-seo.ts` and
+`src/lib/top-vaults/vault-seo.ts`; see `docs/google-webmasters.md`, "Round 4".
+Glossary terms that rank for vault searches link to the matching vault pages
+(`src/routes/glossary/related-vault-links.ts`).
+
+Round 4 also built, and removed before release, content generated for search: a
+"top vaults" paragraph and comparison table on every hub, a "Best stablecoin
+yields right now" table, "Similar <protocol> vaults" on vault pages and a
+`/vaults/methodology` page linked below the listings. The hub block repeated
+rows the listing already shows; on live data the "best" picks were 600–850 %
+trading vaults until the exclusion rules grew too long to read; the HLP page's
+similar vaults were −78 % and 801 % trading vaults; and the methodology link sat
+below an infinitely scrolling table. Don't bring them back without a reason a
+visitor would recognise.
+
 ## Ordering and filtering
 
 `src/lib/top-vaults/listing/` is the shared, browser-safe implementation of

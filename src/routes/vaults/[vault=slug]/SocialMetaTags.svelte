@@ -12,7 +12,6 @@ structured data for a vault detail page.
 <script lang="ts">
 	import { page } from '$app/state';
 	import type { Chain } from '$lib/helpers/chain';
-	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
 	import {
 		getBlockchainSocialLogoUrl,
 		getCuratorSocialLogoUrl,
@@ -21,7 +20,8 @@ structured data for a vault detail page.
 	} from '$lib/social-card/helpers';
 	import { getStablecoinLogoUrl } from '$lib/stablecoin-metadata/helpers';
 	import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
-	import { getVaultAssetType, getVaultProtocolDisplayName } from '$lib/top-vaults/helpers';
+	import { getVaultCurrentTvlUsd, getVaultPeakTvlUsd, getVaultProtocolDisplayName } from '$lib/top-vaults/helpers';
+	import { getGeneratedVaultDescription, getVaultTitleParts } from '$lib/top-vaults/vault-seo';
 	import { getChainDisplayName } from '$lib/helpers/chain';
 	import type { CuratorInfo, VaultInfo } from '$lib/top-vaults/schemas';
 	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers.js';
@@ -38,24 +38,12 @@ structured data for a vault detail page.
 	}
 
 	let { vault, chain, protocolMetadata, curatorMetadata, stablecoinMetadata }: Props = $props();
-	let assetType = $derived(getVaultAssetType(vault));
-	let socialTitle = $derived(`${vault.name} | DeFi ${assetType} | Trading Strategy`);
+	// search wording: "<vault> <protocol> vault" (see .claude/plans/seo-round-4-vault-rankings.md)
+	let titleParts = $derived(getVaultTitleParts(vault));
+	let socialTitle = $derived(titleParts.join(' | '));
 
-	let generatedDescription = $derived.by(() => {
-		const parts = [`${vault.name} on ${getVaultProtocolDisplayName(vault)} on ${getChainDisplayName(vault.chain_id)}`];
-		if (vault.current_nav != null) {
-			parts.push(`TVL: ${formatDollar(vault.current_nav, 0)}`);
-		}
-		if (vault.one_month_returns != null) {
-			parts.push(`1M return: ${formatPercent(vault.one_month_returns)}`);
-		}
-		if (vault.risk) {
-			parts.push(`Risk: ${vault.risk}`);
-		}
-		return parts.join(' | ');
-	});
-
-	let description = $derived(vault.short_description ?? generatedDescription);
+	// the vault's own description, verbatim, as for strategy pages (39ee8e1e)
+	let description = $derived(vault.short_description ?? getGeneratedVaultDescription(vault));
 
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let protocolLogoUrl = $derived.by(() => {
@@ -83,11 +71,14 @@ structured data for a vault detail page.
 	let additionalProperty = $derived.by(() => {
 		const props: Array<Record<string, unknown>> = [];
 
-		if (vault.current_nav != null) {
-			props.push({ '@type': 'PropertyValue', name: 'totalValueLocked', value: vault.current_nav, unitText: 'USD' });
+		// NAV is in denomination units; only a USD figure may be labelled USD
+		const tvlUsd = getVaultCurrentTvlUsd(vault);
+		if (tvlUsd != null) {
+			props.push({ '@type': 'PropertyValue', name: 'totalValueLocked', value: tvlUsd, unitText: 'USD' });
 		}
-		if (vault.peak_nav != null) {
-			props.push({ '@type': 'PropertyValue', name: 'peakTVL', value: vault.peak_nav, unitText: 'USD' });
+		const peakTvlUsd = getVaultPeakTvlUsd(vault);
+		if (peakTvlUsd != null) {
+			props.push({ '@type': 'PropertyValue', name: 'peakTVL', value: peakTvlUsd, unitText: 'USD' });
 		}
 		if (vault.risk) {
 			props.push({ '@type': 'PropertyValue', name: 'riskLevel', value: vault.risk });
@@ -154,7 +145,7 @@ structured data for a vault detail page.
 </script>
 
 <MetaTags
-	title={socialTitle}
+	{titleParts}
 	{description}
 	image={imageUrl}
 	imageAlt={`${vault.name} preview image`}
@@ -168,7 +159,7 @@ structured data for a vault detail page.
 		'@context': 'https://schema.org',
 		'@type': 'BreadcrumbList',
 		itemListElement: [
-			{ '@type': 'ListItem', position: 1, name: 'Top vaults', item: new URL('/vaults', page.url.origin).href },
+			{ '@type': 'ListItem', position: 1, name: 'DeFi vaults', item: new URL('/vaults', page.url.origin).href },
 			{
 				'@type': 'ListItem',
 				position: 2,

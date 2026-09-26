@@ -390,6 +390,11 @@ describe('meetsMinTvl', () => {
 });
 
 describe('isVaultIndexable', () => {
+	test('keeps the NewBet vault out of the index through the VaultInfo adapter', () => {
+		const newBet = createTestVault('NewBet', { current_nav: 3_000_000, peak_nav: 3_000_000 });
+		expect(isVaultIndexable(newBet)).toBe(false);
+	});
+
 	test('compares TVL in USD, not denomination units', () => {
 		// 4,000 EUR-pegged tokens are worth more than the $5,000 threshold
 		const eurVault = createTestVault('EUR vault', {

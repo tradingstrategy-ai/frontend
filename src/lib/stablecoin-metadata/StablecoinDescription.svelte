@@ -9,7 +9,6 @@ with optional expandable long description and external links (homepage, Twitter,
 ```
 -->
 <script lang="ts">
-	import { slide } from 'svelte/transition';
 	import { micromark } from 'micromark';
 	import type { StablecoinMetadata } from './schemas';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
@@ -133,8 +132,9 @@ with optional expandable long description and external links (homepage, Twitter,
 			</div>
 		{/if}
 
-		{#if expanded}
-			<div transition:slide>
+		<!-- always server-rendered so search engines see the full description; collapsed until "View more" -->
+		{#if hasExpandableContent}
+			<div hidden={!expanded}>
 				<div class="long-description">
 					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 					{@html micromark(metadata.long_description!)}

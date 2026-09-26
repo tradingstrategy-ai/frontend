@@ -13,7 +13,7 @@ test.describe('stablecoins index page', () => {
 			0
 		);
 
-		await expect(page.locator('h1')).toHaveText(/Vaults by stablecoin/);
+		await expect(page.locator('h1')).toHaveText(/Stablecoin yields/);
 		await expect(page.locator('table')).toBeVisible();
 		await expect(page.locator('table')).toContainText('Stablecoin');
 		expect(errors).toHaveLength(0);
@@ -83,15 +83,15 @@ test.describe('stablecoins index page', () => {
 	test('uses the updated metadata title and description', async ({ page }) => {
 		await page.goto('/vaults/stablecoins');
 
-		await expect(page).toHaveTitle('Vaults by stablecoin | Trading Strategy');
+		await expect(page).toHaveTitle('Compare stablecoin yields | Trading Strategy');
 		await expect(page.locator('meta[name="description"]')).toHaveAttribute(
 			'content',
-			'DeFi vaults for different stablecoins. TVL represents deposits of a stablecoin in vaults. APY represents the yield of last thirty days.'
+			/^Compare stablecoin yields: DeFi vault APY and TVL for USDC, USDT, USDe and other stablecoins\./
 		);
-		await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', 'Vaults by stablecoin');
+		await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', 'Compare stablecoin yields');
 		await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
 			'content',
-			'DeFi vaults for different stablecoins. TVL represents deposits of a stablecoin in vaults. APY represents the yield of last thirty days.'
+			/^Compare stablecoin yields: DeFi vault APY and TVL/
 		);
 	});
 

@@ -14,6 +14,7 @@ Vault listing and overview for one protocol.
 	import { JsonLd } from 'svelte-meta-tags';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
+	import { getHubDescription, getItemListElements, getHubTitleParts } from '$lib/top-vaults/hub-seo';
 
 	let { data } = $props();
 	let { protocolSlug, protocolName, protocolMetadata, core3, xerberus, initialTopVaults } = $derived(data);
@@ -27,26 +28,26 @@ Vault listing and overview for one protocol.
 	const unknownVaultDescription =
 		'These vaults are listed, but their underlying protocols have not been identified in the source dataset.';
 
-	let title = $derived(
-		isUnknownVaultProtocolGroup
-			? 'Vaults with unidentified protocols'
-			: isPoolProtocolGroup
-				? `${protocolName} pools and yields`
-				: `${protocolName} vaults and yields`
-	);
+	// search wording: "<protocol> vaults", "<protocol> vault apy" (see .claude/plans/seo-round-4-vault-rankings.md)
 	let heroTitle = $derived(
+		isUnknownVaultProtocolGroup ? 'Vaults with unidentified protocols' : `${protocolName} ${listingAssetTypePlural}`
+	);
+	let titleParts = $derived(
 		isUnknownVaultProtocolGroup
-			? 'Vaults with unidentified protocols'
-			: isPoolProtocolGroup
-				? `${protocolName} powered pools`
-				: `${protocolName} powered stablecoin vaults`
+			? [heroTitle]
+			: getHubTitleParts(heroTitle, isPoolProtocolGroup ? ['APY and TVL'] : ['APY, TVL and curators', 'APY and TVL'])
 	);
 	let description = $derived(
 		isUnknownVaultProtocolGroup
 			? unknownVaultDescription
-			: isPoolProtocolGroup
-				? `Explore ${protocolName} pools and yields, including TVL and performance metrics.`
-				: (protocolMetadata?.short_description ?? `Top stablecoin vaults on ${protocolName}`)
+			: getHubDescription({
+					subject: `${protocolName} ${listingAssetTypePlural}`,
+					count: data.listingSummary.matchingCount,
+					totalTvl: data.listingSummary.totalTvl,
+					apy: data.listingSummary.avgTvlWeightedApy1M,
+					updatedAt: initialTopVaults.generated_at,
+					about: protocolMetadata?.short_description
+				})
 	);
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 	let logoUrl = $derived.by(() => {
@@ -77,7 +78,7 @@ Vault listing and overview for one protocol.
 				>{data.listingSummary.matchingCount}
 				{data.listingSummary.matchingCount === 1 ? listingAssetType : listingAssetTypePlural}</strong
 			>
-			with a TVL-weighted average monthly return of <strong>{formatPercent(averageMonthlyReturn, 1)}</strong>.
+			with a TVL-weighted average APY of <strong>{formatPercent(averageMonthlyReturn, 1)}</strong> (annualised, last 30 days).
 		</p>
 	{/if}
 	{#if isHyperliquidProtocolGroup}
@@ -98,21 +99,21 @@ Vault listing and overview for one protocol.
 {/snippet}
 
 <MetaTags
-	{title}
+	{titleParts}
 	{description}
 	image={logoUrl}
 	imageAlt={`${protocolName} logo`}
 	openGraph={{
 		siteName: 'Trading Strategy',
 		url: pageUrl,
-		title,
+		title: heroTitle,
 		description,
 		type: 'website'
 	}}
 	twitter={{
 		site: '@TradingProtocol',
 		cardType: logoUrl ? 'summary_large_image' : 'summary',
-		title,
+		title: heroTitle,
 		description
 	}}
 />
@@ -121,14 +122,16 @@ Vault listing and overview for one protocol.
 	schema={{
 		'@context': 'http://schema.org',
 		'@type': 'CollectionPage',
-		name: title,
+		dateModified: initialTopVaults.generated_at,
+		name: heroTitle,
 		description,
 		url: pageUrl,
 		provider: { '@type': 'Organization', name: 'Trading Strategy' },
 		image: logoUrl ?? undefined,
 		mainEntity: {
 			'@type': 'ItemList',
-			numberOfItems: data.listingSummary.matchingCount
+			numberOfItems: data.listingSummary.matchingCount,
+			itemListElement: getItemListElements(initialTopVaults.vaults, page.url.origin)
 		}
 	}}
 />
