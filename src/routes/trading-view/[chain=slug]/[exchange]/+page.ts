@@ -1,10 +1,6 @@
 import { type ExchangeDetails, isUnknownExchangeName } from '$lib/helpers/exchange';
 import { fetchPublicApi } from '$lib/helpers/public-api';
 
-/**
- * NOTE: this `load` function is reused by `./export-data/+page.ts`
- * If it changes to require additional data, this may no longer make sense.
- */
 export async function load({ params, fetch }) {
 	const exchange_slug = params.exchange;
 	const chain_slug = params.chain;
