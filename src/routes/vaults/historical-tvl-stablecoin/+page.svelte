@@ -7,6 +7,7 @@ Historical vault TVL by stablecoin page with a server-side aggregated weekly sta
 	import { JsonLd } from 'svelte-meta-tags';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import { onMount } from 'svelte';
+	import { fetchHistoricalTvl } from '$lib/echarts/fetch-historical-tvl';
 	import Alert from '$lib/components/Alert.svelte';
 	import HeroBanner from '$lib/components/HeroBanner.svelte';
 	import Section from '$lib/components/Section.svelte';
@@ -22,21 +23,22 @@ Historical vault TVL by stablecoin page with a server-side aggregated weekly sta
 
 	const title = 'Historical vault TVL by stablecoin';
 	const description = 'Explore how stablecoin vault TVL has evolved across different stablecoins over time.';
-	const chartDataVersion = 'offchain-usd-v2';
+	const chartDataVersion = 'usd-rates-v3';
 	let pageUrl = $derived(new URL(page.url.pathname, page.url.origin).href);
 
 	onMount(() => {
 		let cancelled = false;
+		const controller = new AbortController();
 
 		(async () => {
 			try {
 				chartLoading = true;
 				chartError = null;
 
-				const response = await fetch(resolve(`/vaults/historical-tvl-stablecoin/chart-data?v=${chartDataVersion}`));
-				if (!response.ok) throw new Error(`Failed to fetch historical chart data: ${response.status}`);
-
-				const payload = (await response.json()) as HistoricalTvlByStablecoinPayload;
+				const payload = await fetchHistoricalTvl<HistoricalTvlByStablecoinPayload>(
+					resolve(`/vaults/historical-tvl-stablecoin/chart-data?v=${chartDataVersion}`),
+					controller.signal
+				);
 				if (!cancelled) chartData = payload;
 			} catch (loadError) {
 				if (cancelled) return;
@@ -48,6 +50,7 @@ Historical vault TVL by stablecoin page with a server-side aggregated weekly sta
 
 		return () => {
 			cancelled = true;
+			controller.abort();
 		};
 	});
 </script>

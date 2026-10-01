@@ -1,3 +1,4 @@
+import { vaultChartLinks } from '../../../src/lib/top-vaults/vault-chart-links';
 import { expect, test, type Page } from '@playwright/test';
 
 async function expectNativeHistoricalWatermark(page: Page) {
@@ -55,6 +56,22 @@ test.describe('historical vault TVL by chain chart data endpoint', () => {
 });
 
 test.describe('historical vault TVL by chain page', () => {
+	test('recovers from a transient chart-data 500 without a page reload', async ({ page }) => {
+		let requests = 0;
+		await page.route('**/vaults/historical-tvl-chain/chart-data?*', async (route) => {
+			requests += 1;
+			if (requests === 1) {
+				await route.fulfill({ status: 500, body: 'Internal error' });
+			} else {
+				await route.continue();
+			}
+		});
+		await page.goto('/vaults/historical-tvl-chain');
+		await expect(page.locator('.chart-canvas canvas')).toBeVisible({ timeout: 15000 });
+		expect(requests).toBe(2);
+		await expect(page.getByTestId('vault-scatter-plot')).not.toContainText('Failed to fetch');
+	});
+
 	test('renders the ECharts chart canvas without JavaScript errors', async ({ page }) => {
 		const errors: string[] = [];
 		page.on('pageerror', (err) => errors.push(err.message));
@@ -71,7 +88,7 @@ test.describe('historical vault TVL by chain page', () => {
 		// in-page "See charts" link row (ScatterPlotSelector), distinct from the Charts nav dropdown
 		const selector = page.locator('.scatter-plot-selector');
 		await expect(selector).toBeVisible();
-		await expect(selector.locator('a')).toHaveCount(11);
+		await expect(selector.locator('a')).toHaveCount(vaultChartLinks.length);
 
 		expect(errors).toHaveLength(0);
 	});

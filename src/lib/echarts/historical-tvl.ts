@@ -2,7 +2,7 @@ import { getChain } from '$lib/helpers/chain';
 import { parseDate } from '$lib/helpers/date';
 import { slugify } from '$lib/helpers/slugify';
 import { formatStablecoinDisplayName, resolveStablecoinSlug } from '$lib/stablecoin-metadata/helpers';
-import { getProtocolDisplayName } from '$lib/top-vaults/helpers';
+import { getProtocolDisplayName, getVaultDenominationUsdRate } from '$lib/top-vaults/helpers';
 import type { VaultInfo } from '$lib/top-vaults/schemas';
 import { VAULT_TVL_OUTLIER_THRESHOLD } from './tvl-outliers';
 
@@ -76,7 +76,8 @@ type HistoricalVaultMetadata = Pick<
 	| 'denomination_slug'
 	| 'protocol'
 	| 'protocol_slug'
->;
+> &
+	Partial<Pick<VaultInfo, 'denomination_token_rate'>>;
 
 interface DisplayChainGroup {
 	key: string;
@@ -191,6 +192,12 @@ function prepareHistoricalRows(
 	vaults: HistoricalVaultMetadata[]
 ): PreparedHistoricalRows {
 	const metadataById = new Map(vaults.map((vault) => [vault.id, vault]));
+	const usdRateById = new Map(
+		vaults.map((vault) => [
+			vault.id,
+			getVaultDenominationUsdRate({ ...vault, denomination_token_rate: vault.denomination_token_rate ?? null })
+		])
+	);
 	const includedVaultIds = new Set(vaults.filter((vault) => vault.risk_numeric !== 999).map((vault) => vault.id));
 	const blacklistedVaultIds = new Set(vaults.filter((vault) => vault.risk_numeric === 999).map((vault) => vault.id));
 
@@ -201,8 +208,12 @@ function prepareHistoricalRows(
 
 	for (const row of rows) {
 		if (!Number.isFinite(row.tvl) || row.tvl < 0) continue;
+		const metadata = metadataById.get(row.id);
+		const usdRate = usdRateById.get(row.id);
+		if (usdRate == null) continue;
+		const tvl = row.tvl * usdRate;
 
-		if (row.tvl > HISTORICAL_TVL_OUTLIER_THRESHOLD) {
+		if (!Number.isFinite(tvl) || tvl > HISTORICAL_TVL_OUTLIER_THRESHOLD) {
 			excludedOutlierPoints += 1;
 			continue;
 		}
@@ -212,12 +223,11 @@ function prepareHistoricalRows(
 			continue;
 		}
 
-		const metadata = metadataById.get(row.id);
 		includedRows.push({
 			id: row.id,
 			chainId: metadata?.chain_id ?? row.chainId,
 			week: normaliseWeek(row.week),
-			tvl: row.tvl
+			tvl
 		});
 		includedIds.add(row.id);
 	}
@@ -453,6 +463,49 @@ export function buildHistoricalTvlByProtocolPayload(
 			const rightLatest = latestWeekIndex >= 0 ? (right.values[latestWeekIndex] ?? 0) : 0;
 			return rightLatest - leftLatest || left.label.localeCompare(right.label);
 		});
+
+	return createPayload(prepared.weeks, series, prepared.meta, durationMs, generatedAt);
+}
+
+/**
+ * Split the same historical TVL universe as the chain and protocol charts into two categories.
+ *
+ * @param rows Historical weekly or daily vault TVL observations.
+ * @param vaults Vault metadata, including the tokenised fund classification flag.
+ * @param durationMs Time spent preparing the source data.
+ * @param generatedAt Payload generation time.
+ */
+export function buildHistoricalTvlByAssetTypePayload(
+	rows: HistoricalWeeklyVaultRow[],
+	vaults: Array<HistoricalVaultMetadata & Pick<VaultInfo, 'flags'>>,
+	durationMs: number,
+	generatedAt = new Date()
+): HistoricalTvlPayload {
+	const prepared = prepareHistoricalRows(rows, vaults);
+	const fundIds = new Set(vaults.filter((vault) => vault.flags.includes('tokenised_fund')).map((vault) => vault.id));
+	const fundTotals = new Map<string, number>();
+	const vaultTotals = new Map<string, number>();
+
+	for (const row of prepared.filledRows) {
+		const totals = fundIds.has(row.id) ? fundTotals : vaultTotals;
+		const week = normaliseWeek(row.week);
+		totals.set(week, (totals.get(week) ?? 0) + row.tvl);
+	}
+
+	const series = prepared.weeks.length
+		? [
+				{
+					key: 'tokenised-funds',
+					label: 'Tokenised funds',
+					values: prepared.weeks.map((week) => fundTotals.get(week) ?? 0)
+				},
+				{
+					key: 'vaults',
+					label: 'Vaults',
+					values: prepared.weeks.map((week) => vaultTotals.get(week) ?? 0)
+				}
+			]
+		: [];
 
 	return createPayload(prepared.weeks, series, prepared.meta, durationMs, generatedAt);
 }

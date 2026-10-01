@@ -15,5 +15,6 @@ export const vaultChartLinks = [
 	{ href: '/vaults/historical-tvl-chain', label: 'Historical TVL by chain' },
 	{ href: '/vaults/historical-tvl-stablecoin', label: 'Historical TVL by stablecoin' },
 	{ href: '/vaults/historical-tvl-protocol', label: 'Historical TVL by vault protocol' },
+	{ href: '/vaults/historical-tvl-asset-type', label: 'Tokenised funds vs. vaults TVL' },
 	{ href: '/vaults/stablecoin-chain-heatmap', label: 'Stablecoin / Chain heatmap' }
 ] as const;

@@ -38,6 +38,9 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		watermarkInset?: 'default' | 'relaxed';
 		watermarkOpacity?: number;
 		getSeriesLogoUrl?: ((series: TSeries) => string | undefined) | undefined;
+		showSeriesLines?: boolean;
+		seriesColours?: readonly string[];
+		centreSelector?: boolean;
 	}
 
 	type HistoricalTvlChartMode = 'tvl' | 'market-share';
@@ -67,7 +70,10 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		watermarkCorner = null,
 		watermarkInset = 'default',
 		watermarkOpacity = 0.07,
-		getSeriesLogoUrl
+		getSeriesLogoUrl,
+		showSeriesLines = false,
+		seriesColours = protocolPalette,
+		centreSelector = false
 	}: Props = $props();
 
 	let chartContainer = $state<HTMLDivElement | null>(null);
@@ -82,8 +88,8 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 	const axisTitleFontSize = 16;
 	const axisLabelFontSize = 13;
 	const tooltipFontSize = 14;
-	const gridDesktop = { top: 36, right: 88, bottom: 84, left: 52 };
-	const gridMobile = { top: 28, right: 24, bottom: 72, left: 18 };
+	const gridDesktop = { top: 36, right: 88, bottom: 36, left: 52 };
+	const gridMobile = { top: 28, right: 24, bottom: 36, left: 18 };
 	const watermarkDesktopWidth = 224;
 	const watermarkMobileWidth = 176;
 	const watermarkAspectRatio = 314 / 60;
@@ -100,9 +106,6 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		'1y': '1y',
 		'3m': '3m'
 	};
-	const historicalWatermarkUrl = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(
-		logoSvg.replace('fill="#0B0B14"', 'fill="#d5deea"')
-	)}`;
 	let lastViewportMode = $state<'mobile' | 'desktop' | null>(null);
 
 	function getSearchParamsSchema() {
@@ -139,7 +142,10 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 
 	function formatWeekLabel(value: string) {
 		const date = new Date(`${value}T00:00:00Z`);
-		if (historyRange !== 'all') {
+		const first = visibleWeeks[0];
+		const last = visibleWeeks.at(-1);
+		const shortHistory = first && last && Date.parse(last) - Date.parse(first) < 365 * 24 * 60 * 60 * 1000;
+		if (historyRange !== 'all' || shortHistory) {
 			return new Intl.DateTimeFormat('en-GB', {
 				day: 'numeric',
 				month: 'short'
@@ -150,6 +156,15 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 			month: 'short',
 			year: 'numeric'
 		}).format(date);
+	}
+
+	function formatObservationDate(value: string) {
+		return new Intl.DateTimeFormat('en-GB', {
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric',
+			timeZone: 'UTC'
+		}).format(new Date(`${value}T00:00:00Z`));
 	}
 
 	function getHistoryStartIndex(weeks: string[], range: HistoricalTvlHistoryRange) {
@@ -179,6 +194,8 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 			const blue = Number.parseInt(hex.slice(4, 6), 16);
 			return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 		}
+		const rgb = normalized.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+		if (rgb) return `rgba(${rgb[1]}, ${rgb[2]}, ${rgb[3]}, ${alpha})`;
 
 		return normalized;
 	}
@@ -200,7 +217,7 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 	}
 
 	function getSeriesColour(index: number) {
-		return protocolPalette[index % protocolPalette.length];
+		return seriesColours[index % seriesColours.length] ?? protocolPalette[index % protocolPalette.length];
 	}
 
 	function getViewportMode() {
@@ -217,7 +234,8 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 
 	function buildWatermarkGraphic(
 		grid: typeof gridDesktop,
-		isMobile: boolean
+		isMobile: boolean,
+		textColour: string
 	):
 		| {
 				elements: Array<{
@@ -248,7 +266,7 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 					top: grid.top + inset,
 					...(watermarkCorner === 'top-left' ? { left: grid.left + inset } : { right: grid.right + inset }),
 					style: {
-						image: historicalWatermarkUrl,
+						image: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(logoSvg.replace('fill="#0B0B14"', `fill="${textColour}"`))}`,
 						width,
 						height,
 						opacity: watermarkOpacity
@@ -390,12 +408,15 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		const viewportMode = getViewportMode();
 		const isMobile = viewportMode === 'mobile';
 		const grid = isMobile ? gridMobile : gridDesktop;
+		const textColour = getComputedStyle(chartContainer).color;
+		const borderColour = withAlpha(textColour, 0.4);
 		lastViewportMode = viewportMode;
 		const weekTotals = visibleWeeks.map((_, weekIndex) =>
 			visibleHistorySeries.reduce((sum, item) => sum + (item.values[weekIndex] ?? 0), 0)
 		);
 		const series = visibleHistorySeries.map((item, index) => {
-			const colour = getSeriesColour(index);
+			const seriesIndex = data.series.findIndex((series) => series.key === item.key);
+			const colour = getSeriesColour(seriesIndex >= 0 ? seriesIndex : index);
 			return {
 				name: item.label,
 				type: 'line',
@@ -405,8 +426,8 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 				symbol: 'circle',
 				symbolSize: 5,
 				lineStyle: {
-					width: 0,
-					opacity: 0,
+					width: showSeriesLines ? 1.5 : 0,
+					opacity: showSeriesLines ? 1 : 0,
 					color: colour
 				},
 				itemStyle: {
@@ -442,7 +463,7 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 				right: grid.right,
 				bottom: grid.bottom,
 				left: grid.left,
-				borderColor: '#64748b',
+				borderColor: borderColour,
 				borderWidth: 1,
 				containLabel: true
 			},
@@ -454,7 +475,7 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 				appendToBody: true,
 				axisPointer: {
 					type: 'line',
-					lineStyle: { color: 'rgba(248, 250, 252, 0.35)' }
+					lineStyle: { color: withAlpha(textColour, 0.35) }
 				},
 				backgroundColor: '#111827',
 				borderColor: '#1f2937',
@@ -474,13 +495,14 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 				type: 'category',
 				boundaryGap: false,
 				data: visibleWeeks,
-				axisLine: { lineStyle: { color: '#64748b' } },
+				axisLine: { lineStyle: { color: borderColour } },
 				axisLabel: {
-					color: '#e2e8f0',
+					color: textColour,
 					fontFamily: axisFontStack,
 					fontSize: axisLabelFontSize,
 					fontWeight: 600,
 					showMinLabel: !isMobile,
+					hideOverlap: true,
 					formatter: (value: string) => formatWeekLabel(value)
 				},
 				splitLine: { show: false }
@@ -494,24 +516,24 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 				min: 0,
 				max: chartMode === 'market-share' ? 100 : undefined,
 				nameTextStyle: {
-					color: '#ffffff',
+					color: textColour,
 					fontFamily: axisFontStack,
 					fontSize: axisTitleFontSize,
 					fontWeight: 600
 				},
-				axisLine: { lineStyle: { color: '#64748b' } },
+				axisLine: { lineStyle: { color: borderColour } },
 				axisLabel: {
-					color: '#e2e8f0',
+					color: textColour,
 					fontFamily: axisFontStack,
 					fontSize: axisLabelFontSize,
 					fontWeight: 600,
 					formatter: (value: number) => (chartMode === 'market-share' ? `${Math.round(value)}%` : formatUsd(value))
 				},
 				splitLine: {
-					lineStyle: { color: 'rgba(148, 163, 184, 0.18)' }
+					lineStyle: { color: withAlpha(textColour, 0.12) }
 				}
 			},
-			graphic: buildWatermarkGraphic(grid, isMobile),
+			graphic: buildWatermarkGraphic(grid, isMobile, textColour),
 			series
 		});
 
@@ -529,6 +551,13 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 			}
 		};
 		window.addEventListener('resize', handleWindowResize);
+		const themeObserver = new MutationObserver(() => {
+			if (runtimeReady) void renderChart();
+		});
+		themeObserver.observe(document.documentElement, {
+			attributes: true,
+			attributeFilter: ['class', 'data-color-mode']
+		});
 
 		(async () => {
 			try {
@@ -549,6 +578,7 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		return () => {
 			disposed = true;
 			window.removeEventListener('resize', handleWindowResize);
+			themeObserver.disconnect();
 			destroyChart();
 		};
 	});
@@ -558,6 +588,7 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		dataLoading;
 		error;
 		urlState;
+		seriesColours;
 		if (!runtimeReady || !echartsApi || !chartContainer || dataLoading || error) return;
 
 		let cancelled = false;
@@ -629,26 +660,37 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 
 	{#if data && !dataLoading && !effectiveError && visibleHistorySeries.length > 0}
 		<p class="chart-summary">
-			Today selected {selectorLabelPlural.toLowerCase()} have total {formatUsd(latestSelectedTvl)} TVL
+			{#if visibleWeeks.at(-1)}
+				{historyRange === 'all' || !data.daily ? 'Week of' : 'As of'}
+				{formatObservationDate(visibleWeeks.at(-1)!)}:
+			{/if}
+			selected {selectorLabelPlural.toLowerCase()} total {formatUsd(latestSelectedTvl)} TVL
+			{#if historyRange === 'all' || !data.daily}(weekly average){/if}
+			<span class="currency-note">Currency conversion uses the latest available USD rates.</span>
 		</p>
 	{/if}
 
 	{#if data && !dataLoading && !effectiveError && hasSeries}
-		<div class="group-selector" aria-label={`${selectorLabel} selector`}>
+		<div class="group-selector" class:centred={centreSelector} aria-label={`${selectorLabel} selector`}>
 			{#each data.series as item, index (item.key)}
 				<button
 					type="button"
 					class="group-chip"
 					class:active={isSeriesSelected(item.key)}
+					aria-pressed={isSeriesSelected(item.key)}
 					onclick={() => toggleSeries(item.key)}
 				>
 					{#if getSeriesLogoUrl?.(item)}
 						<img class="group-chip-logo" src={getSeriesLogoUrl(item)} alt="" loading="lazy" use:removeOnError />
-					{:else}
+					{:else if getSeriesLogoUrl}
 						<span class="group-chip-logo group-chip-logo-fallback" aria-hidden="true"></span>
+					{:else}
+						<span class="group-chip-dot" aria-hidden="true" style={`background: ${getSeriesColour(index)};`}></span>
 					{/if}
 					<span class="group-chip-label">{item.label}</span>
-					<span class="group-chip-dot" aria-hidden="true" style={`background: ${getSeriesColour(index)};`}></span>
+					{#if getSeriesLogoUrl}
+						<span class="group-chip-dot" aria-hidden="true" style={`background: ${getSeriesColour(index)};`}></span>
+					{/if}
 				</button>
 			{/each}
 		</div>
@@ -660,7 +702,7 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		--chart-height-desktop: 620px;
 		--chart-height-mobile: 560px;
 		display: grid;
-		gap: 0.85rem;
+		gap: var(--space-md);
 		position: relative;
 		width: 100%;
 	}
@@ -670,6 +712,10 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 		flex-wrap: wrap;
 		gap: 0.5rem 0.625rem;
 		align-items: center;
+
+		&.centred {
+			justify-content: center;
+		}
 	}
 
 	.chart-controls {
@@ -721,6 +767,11 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 			color: var(--c-text);
 			border-color: color-mix(in srgb, var(--c-text-light), transparent 48%);
 			background: color-mix(in srgb, var(--c-box-3), var(--c-text-inverted) 78%);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--c-text);
+			outline-offset: 3px;
 		}
 	}
 
@@ -830,8 +881,15 @@ Reusable client-side ECharts stacked area chart for historical vault TVL groupin
 	.chart-summary {
 		margin: 0;
 		color: var(--c-text-light);
-		font: var(--f-body-sm-medium);
+		font: var(--f-ui-sm-medium);
 		text-align: center;
+	}
+
+	.currency-note {
+		display: block;
+		margin-top: var(--space-sm);
+		color: var(--c-text-extra-light);
+		font: var(--f-ui-xs-roman);
 	}
 
 	@media (--viewport-sm-down) {

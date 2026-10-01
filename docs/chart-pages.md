@@ -16,6 +16,7 @@ The vault chart pages linked from the top `Charts` menu are:
 - `/vaults/historical-tvl-chain` - historical vault TVL grouped by chain.
 - `/vaults/historical-tvl-stablecoin` - historical vault TVL grouped by stablecoin.
 - `/vaults/historical-tvl-protocol` - historical vault TVL grouped by vault protocol.
+- `/vaults/historical-tvl-asset-type` - historical TVL split between tokenised funds and all other vaults.
 - `/vaults/stablecoin-chain-heatmap` - current stablecoin vault TVL by stablecoin and chain.
 
 Related vault list pages also include charts:
@@ -90,9 +91,15 @@ Current cached chart-data endpoints include:
 - `historical-tvl-chain/chart-data/+server.ts`
 - `historical-tvl-stablecoin/chart-data/+server.ts`
 - `historical-tvl-protocol/chart-data/+server.ts`
+- `historical-tvl-asset-type/chart-data/+server.ts`
 - `stablecoin-chain-heatmap/chart-data/+server.ts`
 
 These endpoints cache their derived JSON in memory and may serve Brotli-compressed responses.
+
+The historical TVL endpoints share concurrent requests for the same chart build, including
+after cache expiry. Failed builds are cleared so the next request can recover. Their pages
+retry transient network failures and HTTP 500/502/503/504 responses up to three times,
+and cancel pending requests and retry delays when navigating away.
 
 The five migrated Plotly/cumulative pages have purpose-built route-local endpoints:
 
@@ -147,26 +154,30 @@ iPads.
 
 ## Chart page navigation
 
-There are two separate vault chart navigation surfaces.
+Both vault chart navigation surfaces use the shared `vaultChartLinks` array in
+`src/lib/top-vaults/vault-chart-links.ts`:
 
-The top vault listings navigation lives in:
+- `src/lib/top-vaults/VaultListingsSelector.svelte` renders the `Charts` dropdown near the vault listings navigation.
+- `src/lib/scatter-plot/ScatterPlotSelector.svelte` renders the in-page `See charts:` link row.
 
-- `src/lib/top-vaults/VaultListingsSelector.svelte`
+Add new chart pages to the shared array so both menus stay in sync. The navigation integration
+tests import the same array for menu contents, link counts, and active state checks.
 
-Its `chartLinks` array controls the `Charts` dropdown shown near the `Vaults by:` navigation. Add new user-facing chart pages here when they should be discoverable from the global vault listings nav.
+### Tokenised funds and vaults TVL
 
-The in-page chart selector lives in:
-
-- `src/lib/scatter-plot/ScatterPlotSelector.svelte`
-
-Its `charts` array controls the `See charts:` link row displayed within chart pages. Add new chart pages here when users should be able to move laterally between chart pages.
-
-When adding or removing a chart page, update both arrays unless there is a deliberate reason for the page to appear in only one navigation surface. Also update integration tests that assert menu or selector counts:
-
-- `tests/integration/vaults/charts-dropdown.test.ts`
-- chart-page tests that assert `.scatter-plot-selector a` counts
-
-The dropdown and in-page selector can intentionally have different counts. For example, a page can be present in the in-page selector before it is added to the top dropdown, but this should be explicit in the change.
+`/vaults/historical-tvl-asset-type` reuses the historical TVL stacked area renderer, including
+TVL / market share modes, all-time / 1y / 3m history, and URL-backed category selection.
+Assets with the `tokenised_fund` flag belong to **Tokenised funds**; all other assets belong
+to **Vaults**, including pools and unknown protocols. Both categories use the same historical
+observations, blacklist/outlier exclusions, and forward filling as the chain and protocol charts,
+so their sum preserves total TVL. Classification uses the current vault metadata.
+The headline breakdown uses reported current NAV converted to USD and the export's timestamp.
+The chart summary dates the last plotted observation instead of calling a completed weekly average
+"Today". Historical NAV is also converted using the latest available denomination USD rates;
+unpriced non-USD vaults are excluded. Historical exchange rates are not available in the parquet,
+so these USD values are estimates at the latest rates, as stated beneath the chart.
+Series colours stay attached to their categories when filtering, and short histories include the
+day in axis labels to avoid repeating the same month.
 
 ## Testing
 

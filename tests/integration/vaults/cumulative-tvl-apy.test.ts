@@ -1,3 +1,4 @@
+import { vaultChartLinks } from '../../../src/lib/top-vaults/vault-chart-links';
 import { expect, test, type Page } from '@playwright/test';
 
 async function expectNativeChartWatermark(page: Page, containerSelector: string) {
@@ -31,7 +32,7 @@ test.describe('cumulative TVL/APY chart page', () => {
 		// in-page "See charts" link row (ScatterPlotSelector), distinct from the Charts nav dropdown
 		const selector = page.locator('.scatter-plot-selector');
 		await expect(selector).toBeVisible();
-		await expect(selector.locator('a')).toHaveCount(11);
+		await expect(selector.locator('a')).toHaveCount(vaultChartLinks.length);
 
 		expect(errors).toHaveLength(0);
 	});

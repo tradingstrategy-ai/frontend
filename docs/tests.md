@@ -96,7 +96,7 @@ does not re-check the title, description length or "exactly one `og:image`" that
 Tests for behaviour that a shared component provides live in one file, not in every page that uses
 the component:
 
-- the vault listings navigation and its Charts dropdown — order, the 11 chart links, active state on
+- the vault listings navigation and its Charts dropdown — order, the shared chart links, active state on
   every chart page, mobile — is `tests/integration/vaults/charts-dropdown.test.ts`; the chart-page
   files (`yield-*`, `historical-tvl-*`, `cumulative-tvl-apy`, …) assert only their own chart, plus
   the in-page "See charts" link row on the pages that render it;
