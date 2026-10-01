@@ -89,10 +89,6 @@
 	<section class="ds-container trading-pairs">
 		<header>
 			<h2>Trading Pairs</h2>
-			<Button
-				label="Download as Excel"
-				href="/trading-view/{exchange.chain_slug}/{exchange.exchange_slug}/export-data"
-			/>
 		</header>
 
 		{#if !$pairsClient.error}

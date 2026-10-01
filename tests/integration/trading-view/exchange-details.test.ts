@@ -15,8 +15,8 @@ test.describe('exchange details page', () => {
 		await expect(page.locator(robotsMeta)).toHaveAttribute('content', 'noindex,follow');
 	});
 
-	test('export-data pages are never indexed', async ({ page }) => {
+	test('export-data pages redirect to the exchange page', async ({ page }) => {
 		await page.goto('/trading-view/ethereum/uniswap-v3/export-data');
-		await expect(page.locator(robotsMeta)).toHaveAttribute('content', 'noindex,follow');
+		await expect(page).toHaveURL('/trading-view/ethereum/uniswap-v3');
 	});
 });
