@@ -256,7 +256,7 @@ for the real player.
 			overflow-y: hidden;
 		}
 
-		:global(table) {
+		:global(table:not(.podcast-episodes)) {
 			margin-block: 1.5rem;
 			border-collapse: collapse;
 			color: inherit;
@@ -302,6 +302,105 @@ for the real player.
 			:global(th) {
 				background: var(--c-box-3);
 				font-weight: 900;
+			}
+		}
+
+		/* Ghost HTML cards can opt into this layout for podcast episode summaries. */
+		:global(table.podcast-episodes) {
+			width: 100%;
+			margin-block: var(--space-lg);
+			border-collapse: collapse;
+			table-layout: fixed;
+			font: var(--f-ui-md-roman);
+			line-height: 1.5;
+			color: var(--c-text-light);
+			background: var(--c-box-1);
+
+			:global(td) {
+				padding: var(--space-lg);
+				border-block: 1px solid var(--c-box-3);
+				vertical-align: top;
+
+				&:first-child {
+					width: 5.5rem;
+					padding-right: 0;
+				}
+			}
+
+			:global(td:first-child img) {
+				display: block;
+				width: 3rem;
+				height: 3rem;
+				object-fit: contain;
+				border-radius: var(--radius-xxs);
+			}
+
+			:global(strong) {
+				display: block;
+				margin-bottom: var(--space-xs);
+				font: var(--f-heading-xs-medium);
+				color: var(--c-text);
+			}
+
+			:global(.podcast-episode-description) {
+				margin: 0;
+				font: inherit;
+			}
+
+			:global(a) {
+				text-decoration: underline;
+				text-underline-offset: 0.15em;
+				text-decoration-thickness: 1px;
+
+				&:hover {
+					text-decoration-thickness: 2px;
+				}
+
+				&:focus-visible {
+					outline: 2px solid var(--c-text);
+					outline-offset: 3px;
+					border-radius: var(--radius-xxs);
+				}
+			}
+
+			:global(.podcast-episode-links) {
+				display: flex;
+				flex-wrap: wrap;
+				gap: var(--space-xxs) var(--space-lg);
+				margin-top: var(--space-sm);
+				font: var(--f-ui-sm-medium);
+
+				:global(a) {
+					display: inline-flex;
+					align-items: center;
+					gap: var(--space-xs);
+					min-height: 2.75rem;
+					white-space: nowrap;
+				}
+
+				:global(img) {
+					width: 1rem;
+					height: 1rem;
+					flex-shrink: 0;
+				}
+			}
+
+			@media (--viewport-xs) {
+				font: var(--f-ui-sm-roman);
+				line-height: 1.5;
+
+				:global(td) {
+					padding: var(--space-md);
+
+					&:first-child {
+						width: 4rem;
+						padding-right: 0;
+					}
+				}
+
+				:global(strong) {
+					font: var(--f-ui-md-medium);
+				}
 			}
 		}
 
