@@ -1,4 +1,8 @@
-import { buildHistoricalTvlByChainPayload, type HistoricalTvlByChainPayload } from '$lib/echarts/historical-tvl';
+import { buildHistoricalTvlByAssetTypePayload } from '$lib/echarts/historical-tvl';
+import {
+	buildCurrentAssetTypeTvlSnapshot,
+	type HistoricalTvlByAssetTypePayload
+} from '$lib/echarts/historical-tvl-asset-type';
 import {
 	getHistoricalDailyVaultRows,
 	getHistoricalWeeklyVaultRows,
@@ -17,12 +21,11 @@ export const GET = createHistoricalTvlEndpoint(async (fetch) => {
 			? [getMockWeeklyVaultRows(topVaults.vaults), getMockDailyVaultRows(topVaults.vaults)]
 			: await Promise.all([getHistoricalWeeklyVaultRows(), getHistoricalDailyVaultRows()]);
 
-	const payload: HistoricalTvlByChainPayload = buildHistoricalTvlByChainPayload(
-		weeklyRows,
-		topVaults.vaults,
-		performance.now() - startedAt
-	);
-	const dailyPayload = buildHistoricalTvlByChainPayload(dailyRows, topVaults.vaults, 0);
+	const payload: HistoricalTvlByAssetTypePayload = {
+		...buildHistoricalTvlByAssetTypePayload(weeklyRows, topVaults.vaults, performance.now() - startedAt),
+		current: buildCurrentAssetTypeTvlSnapshot(topVaults.vaults, topVaults.generated_at)
+	};
+	const dailyPayload = buildHistoricalTvlByAssetTypePayload(dailyRows, topVaults.vaults, 0);
 	payload.daily = {
 		weeks: dailyPayload.weeks,
 		series: dailyPayload.series
