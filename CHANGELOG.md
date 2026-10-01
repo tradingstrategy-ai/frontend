@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Improve blog podcast episode table readability with dedicated typography, padding and mobile-friendly listening links (2026-10-01)
 - SEO round 4: vault hub and vault page titles in the words people search, crawlable hub descriptions, glossary links to vault pages, NewBet out of the index, and Search Console template/query reports (2026-09-25)
 - Add Arc (Circle stablecoin chain, chain ID 5042) support so Arc vaults appear in vault listings and on the by-chain page (2026-09-25)
 - Add the authenticated, uncached vault scan manifest download and preserve source ETags for verified price downloads (2026-09-22).
