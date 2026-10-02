@@ -46,9 +46,10 @@ RUN mkdir -p /app/cache/strategies
 
 EXPOSE 3000
 
-# See if increase libuv thread pool size makes performance better
-# The default value 4
+# libuv threadpool size (default 4). dns.lookup, fs and the native image/DuckDB jobs all
+# share this pool; the code caps native jobs at 2 + 2 concurrent (see docs/server-threadpool.md),
+# so 32 leaves ample headroom for DNS and file reads even under a burst of slow native work.
 # http://docs.libuv.org/en/v1.x/threadpool.html
-ENV UV_THREADPOOL_SIZE=8
+ENV UV_THREADPOOL_SIZE=32
 
 CMD ["node", "scripts/server.js"]
