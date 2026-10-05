@@ -1,17 +1,23 @@
 /**
- * Server-side rewrite of the embeds in a Ghost post body.
+ * Server-side rewrite of the embeds and sparkline images in a Ghost post body.
  *
  * Ghost emits third-party players as plain `<iframe>`s. A YouTube embed alone pulls ~1.6 MB
  * of player JavaScript before the article's own cover image paints (lab LCP 16.7 s in the
  * 2026-09 audit), so YouTube iframes are replaced with a facade — a poster image and a
  * play button inside a fixed 16:9 box — that `BlogPostContent.svelte` swaps for the real
  * player on click. Every other iframe (Spotify, Apple Podcasts, …) is lazy-loaded.
+ * Square vault sparkline PNGs are replaced with the native 4:1 SVGs used on `/vaults`,
+ * keeping chart lines legible at the blog table's compact size.
  *
  * The input is Ghost's own markup, so a tag-level regex is enough; a full HTML parser is
  * not warranted for this.
  */
 
 const IFRAME_PATTERN = /<iframe\b([^>]*)>(?:\s*<\/iframe>)?/gi;
+const IMG_PATTERN = /<img\b[^>]*>/gi;
+const IMAGE_SRC_PATTERN = /(\s+src\s*=\s*)(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i;
+const SPARKLINE_PNG_URL_PATTERN =
+	/^(https:\/\/vault-sparklines\.tradingstrategy\.ai\/sparkline-90d-[^/?#]+)\.png(?=[?#]|$)/;
 const SRC_PATTERN = /\bsrc\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i;
 const TITLE_PATTERN = /\btitle\s*=\s*(?:"([^"]*)"|'([^']*)')/i;
 const YOUTUBE_EMBED_PATTERN =
@@ -63,12 +69,22 @@ export function renderYouTubeFacade(videoId: string, title = 'YouTube video'): s
 }
 
 /**
- * Rewrite the embeds of a Ghost post body; see the module comment.
+ * Rewrite the embeds and sparkline images of a Ghost post body; see the module comment.
  *
  * @param html post `html` as returned by the Ghost content API
  */
 export function transformPostHtml(html: string): string {
-	return html.replace(IFRAME_PATTERN, (tag: string, attributes: string) => {
+	const withSparklines = html.replace(IMG_PATTERN, (tag) =>
+		tag.replace(IMAGE_SRC_PATTERN, (attribute, prefix, doubleQuoted, singleQuoted, unquoted) => {
+			const src: string = doubleQuoted ?? singleQuoted ?? unquoted;
+			const svgSrc = src.replace(SPARKLINE_PNG_URL_PATTERN, '$1.svg');
+			if (svgSrc === src) return attribute;
+			const quote = doubleQuoted !== undefined ? '"' : singleQuoted !== undefined ? "'" : '';
+			return `${prefix}${quote}${svgSrc}${quote}`;
+		})
+	);
+
+	return withSparklines.replace(IFRAME_PATTERN, (tag: string, attributes: string) => {
 		const srcMatch = attributes.match(SRC_PATTERN);
 		const src = srcMatch?.[1] ?? srcMatch?.[2] ?? srcMatch?.[3];
 		const videoId = getYouTubeVideoId(src);

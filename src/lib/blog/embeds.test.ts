@@ -19,6 +19,37 @@ describe('getYouTubeVideoId', () => {
 });
 
 describe('transformPostHtml', () => {
+	const sparklineBase = 'https://vault-sparklines.tradingstrategy.ai/sparkline-90d-1-0x123';
+
+	it('uses the native SVG sparkline without changing the table image attributes', () => {
+		const attributes =
+			'width="72" height="18" alt="" style="width:72px;max-width:none;height:18px;vertical-align:middle"';
+		const html = `<table><tr><td><img src="${sparklineBase}.png" ${attributes}></td></tr></table>`;
+		const expected = `<table><tr><td><img src="${sparklineBase}.svg" ${attributes}></td></tr></table>`;
+		expect(transformPostHtml(html)).toBe(expected);
+		expect(transformPostHtml(expected)).toBe(expected);
+	});
+
+	it.each(['"', "'", ''])('handles image source quoting (%s) and preserves query strings', (quote) => {
+		const suffix = '?v=1&amp;theme=dark#history';
+		const html = `<img data-src="/placeholder.png" width="72" src = ${quote}${sparklineBase}.png${suffix}${quote}>`;
+		const expected = `<img data-src="/placeholder.png" width="72" src = ${quote}${sparklineBase}.svg${suffix}${quote}>`;
+		expect(transformPostHtml(html)).toBe(expected);
+	});
+
+	it('leaves other images, image attributes and links untouched', () => {
+		const html = [
+			'<img src="https://storage.ghost.io/content/images/chart.png">',
+			'<img src="https://example.com/sparkline-90d-1-0x123.png">',
+			'<img src="https://vault-sparklines.tradingstrategy.ai.example.com/sparkline-90d-1-0x123.png">',
+			'<img src="https://vault-sparklines.tradingstrategy.ai/logo.png">',
+			`<img data-src="${sparklineBase}.png" src="/placeholder.png">`,
+			`<img src="${sparklineBase}.svg?fallback=image.png">`,
+			`<a href="${sparklineBase}.png">Download PNG</a>`
+		].join('');
+		expect(transformPostHtml(html)).toBe(html);
+	});
+
 	it('replaces a Ghost YouTube embed with a facade inside its figure', () => {
 		const html = transformPostHtml(ghostYouTube);
 		expect(html).not.toContain('<iframe');

@@ -303,6 +303,14 @@ for the real player.
 				background: var(--c-box-3);
 				font-weight: 900;
 			}
+
+			/* Keep vault sparklines compact and prevent table layout from shrinking them. */
+			:global(img[src^='https://vault-sparklines.tradingstrategy.ai/']) {
+				width: 72px;
+				height: 18px;
+				max-width: none;
+				vertical-align: middle;
+			}
 		}
 
 		/* Ghost HTML cards can opt into this layout for podcast episode summaries. */
