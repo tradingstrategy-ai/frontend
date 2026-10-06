@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Preserve vault equity curve and share-price chart ranges in shared URLs (2026-10-06).
 - Add tokenised funds vs. vaults TVL charts, correct historical USD totals and improve recovery from transient chart-data failures (2026-10-01).
 - Improve blog podcast episode table readability with dedicated typography, padding and mobile-friendly listening links (2026-10-01)
 - SEO round 4: vault hub and vault page titles in the words people search, crawlable hub descriptions, glossary links to vault pages, NewBet out of the index, and Search Console template/query reports (2026-09-25)

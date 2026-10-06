@@ -1,6 +1,47 @@
 import { expect, test } from '@playwright/test';
+import { waitForHydration } from '../helpers';
 
 test.describe('vault detail page', () => {
+	test('preserves the chart period when copying or reloading the URL', async ({ page }) => {
+		await page.goto('/vaults/morpho-flagged-blacklisted-vault?ref=shared#performance');
+		await waitForHydration(page);
+
+		const chart = page.locator('.vault-price-chart');
+		await expect(chart.locator('input[value="3M"]')).toBeChecked();
+
+		for (const [period, metricLabel] of [
+			['1M', '1M ann.'],
+			['Max', 'Lifetime ann.'],
+			['3M', '3M ann.']
+		]) {
+			await chart.getByText(period, { exact: true }).click();
+			await expect.poll(() => new URL(page.url()).searchParams.get('period')).toBe(period);
+			expect(new URL(page.url()).searchParams.get('ref')).toBe('shared');
+			expect(new URL(page.url()).hash).toBe('#performance');
+			await expect(page.locator('.featured-metrics')).toContainText(metricLabel);
+
+			const sharedUrl = page.url();
+			await page.goto('about:blank');
+			await page.goto(sharedUrl);
+			await waitForHydration(page);
+			await expect(chart.locator(`input[value="${period}"]`)).toBeChecked();
+			await expect(page.locator('.featured-metrics')).toContainText(metricLabel);
+
+			await page.reload();
+			await waitForHydration(page);
+			await expect(chart.locator(`input[value="${period}"]`)).toBeChecked();
+			await expect(page.locator('.featured-metrics')).toContainText(metricLabel);
+		}
+	});
+
+	test('uses the default chart period for an unsupported URL value', async ({ page }) => {
+		await page.goto('/vaults/morpho-flagged-blacklisted-vault?period=invalid');
+		await waitForHydration(page);
+
+		await expect(page.locator('.vault-price-chart input[value="3M"]')).toBeChecked();
+		await expect(page.locator('.featured-metrics')).toContainText('3M ann.');
+	});
+
 	test('does not duplicate generated Morpho risk notes', async ({ page }) => {
 		await page.goto('/vaults/morpho-flagged-blacklisted-vault');
 
