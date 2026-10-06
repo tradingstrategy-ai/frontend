@@ -56,11 +56,13 @@ so relative performance is comparable on a single axis.
 		vault: VaultInfo;
 		/** Optional logo URL for the vault legend item, preferring curator over protocol logos. */
 		chartLogoUrl?: string;
+		/** Range selected when the chart is opened or the URL changes. */
+		initialTimeSpan?: TimeSpanKey;
 		/** Called when the chart range selector changes. */
 		onTimeSpanChange?: (timeSpan: TimeSpanKey) => void;
 	}
 
-	let { vault, chartLogoUrl, onTimeSpanChange }: Props = $props();
+	let { vault, chartLogoUrl, initialTimeSpan = '3M', onTimeSpanChange }: Props = $props();
 
 	let benchmarkTokens = $derived(getVaultPriceBenchmarkTokens(vault));
 	let showCryptoBenchmarks = $derived(benchmarkTokens.length > 0);
@@ -189,6 +191,7 @@ so relative performance is comparable on a single axis.
 <div class={['vault-price-chart', showDrawdown && 'has-drawdown']}>
 	<ChartContainer
 		timeSpanOptions={['1M', '3M', 'Max']}
+		{initialTimeSpan}
 		{onTimeSpanChange}
 		{loading}
 		data={priceData}

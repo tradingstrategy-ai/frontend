@@ -6,6 +6,8 @@ For non-USD vaults, hovering over the TVL metric reveals the equivalent
 amounts in the denomination's native currency.
 -->
 <script lang="ts">
+	import { replaceState } from '$app/navigation';
+	import { page } from '$app/state';
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import VaultPriceChart from '$lib/top-vaults/VaultPriceChart.svelte';
@@ -38,7 +40,11 @@ amounts in the denomination's native currency.
 	const EXAMPLE_CAPITAL_IN = 10_000;
 
 	let { vault, chartLogoUrl }: Props = $props();
-	let selectedReturnPeriod = $state<FeaturedPerformancePeriodKey>('3M');
+	let selectedReturnPeriod = $derived.by((): FeaturedPerformancePeriodKey => {
+		const period = page.url.searchParams.get('period')?.toUpperCase();
+		if (period === '1M' || period === '3M') return period;
+		return period === 'MAX' ? 'Max' : '3M';
+	});
 	let featuredPerformance = $derived(getFeaturedPerformancePeriod(vault, selectedReturnPeriod));
 
 	let hasNetFeeInformation = $derived(hasNetVaultFeeInformation(vault));
@@ -78,13 +84,22 @@ amounts in the denomination's native currency.
 	}
 
 	function handleTimeSpanChange(timeSpan: TimeSpanKey): void {
+		// Shallow routing updates browser history without updating page.url.
 		selectedReturnPeriod = timeSpan === '1M' || timeSpan === '3M' ? timeSpan : 'Max';
+		const url = new URL(window.location.href);
+		url.searchParams.set('period', selectedReturnPeriod);
+		replaceState(url, page.state);
 	}
 </script>
 
 <MetricsBox>
 	<div class="chart-area">
-		<VaultPriceChart {vault} {chartLogoUrl} onTimeSpanChange={handleTimeSpanChange} />
+		<VaultPriceChart
+			{vault}
+			{chartLogoUrl}
+			initialTimeSpan={selectedReturnPeriod}
+			onTimeSpanChange={handleTimeSpanChange}
+		/>
 
 		<div class="divider"></div>
 

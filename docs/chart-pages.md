@@ -25,6 +25,10 @@ Related vault list pages also include charts:
 - Group detail pages use `VaultGroupMiniChart.svelte`.
 - Vault detail pages use lightweight-charts components for share price, utilisation, and benchmark series.
 
+Vault detail pages store the selected share-price/equity-curve range in the `period`
+URL parameter (`1M`, `3M`, or `Max`). Shared links and reloads restore both the chart
+range and its featured performance metrics; missing or unsupported values default to `3M`.
+
 The home page vault ecosystem chart reuses the cumulative TVL / APY ECharts renderer through `src/routes/_components/VaultEcosystemChartECharts.svelte`.
 
 ### Vault comparison
