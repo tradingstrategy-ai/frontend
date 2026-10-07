@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add Plume and World Chain as vault-only chains with chain metadata and logos (2026-10-07).
 - Preserve vault equity curve and share-price chart ranges in shared URLs (2026-10-06).
 - Add tokenised funds vs. vaults TVL charts, correct historical USD totals and improve recovery from transient chart-data failures (2026-10-01).
 - Improve blog podcast episode table readability with dedicated typography, padding and mobile-friendly listening links (2026-10-01)

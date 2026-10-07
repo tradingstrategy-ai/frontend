@@ -190,6 +190,15 @@ export const chains = (() => {
 			hasBackendData: false
 		},
 		{
+			id: 480,
+			slug: 'worldchain',
+			name: 'World Chain',
+			homepage: 'https://world.org/world-chain',
+			explorer: 'https://worldscan.org',
+			nativeCurrency: 'ETH',
+			hasBackendData: false
+		},
+		{
 			id: 957,
 			slug: 'derive',
 			name: 'Derive',
@@ -309,6 +318,15 @@ export const chains = (() => {
 			homepage: 'https://blast.io',
 			explorer: 'https://blastscan.io',
 			nativeCurrency: 'ETH',
+			hasBackendData: false
+		},
+		{
+			id: 98866,
+			slug: 'plume',
+			name: 'Plume',
+			homepage: 'https://www.plume.org',
+			explorer: 'https://explorer.plume.org',
+			nativeCurrency: 'PLUME',
 			hasBackendData: false
 		},
 		{
