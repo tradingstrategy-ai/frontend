@@ -6,7 +6,7 @@ A frontend for [Trading Strategy protocol](https://tradingstrategy.ai).
 
 ## Install NPM dependencies
 
-Node >=20.19 required.
+Node 24 LTS required (see `.nvmrc`; `nvm use` picks it up).
 
 ### Setup pnpm
 
