@@ -6,23 +6,18 @@
 	import { page } from '$app/state';
 	import AppHead from '$lib/header/AppHead.svelte';
 	import PageLoadProgressBar from '$lib/header/PageLoadProgressBar.svelte';
-	import AnnouncementBanner from './_components/AnnouncementBanner.svelte';
 	import Navbar from '$lib/header/Navbar.svelte';
 	import SiteMode from '$lib/header/SiteMode.svelte';
 	import MaintenanceNotice from './_components/MaintenanceNotice.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import '$lib/components/css/index.css';
 
-	let { data, children } = $props();
-	let { podcastAnnouncementDismissedAt } = $derived(data);
+	let { children } = $props();
 </script>
 
 <AppHead />
 <PageLoadProgressBar />
 {#if !(page.data.skipNavbar || strategyMicrosite)}
-	{#if page.url.pathname !== '/'}
-		<AnnouncementBanner dismissedAt={podcastAnnouncementDismissedAt} />
-	{/if}
 	<Navbar />
 {/if}
 <MaintenanceNotice />

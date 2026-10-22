@@ -4,7 +4,6 @@ import * as Sentry from '@sentry/sveltekit';
 import { env } from '$env/dynamic/private';
 import { backendUrl, backendInternalUrl, sentryDsn, siteMode, strategyMicrosite, version } from '$lib/config';
 import { countryCodeSchema } from '$lib/helpers/geo';
-import { parseDate } from '$lib/helpers/date';
 import { diagnoseFetch } from '$lib/diagnostics/server';
 import { signozSentryOptions, installConsoleLogBridge } from '$lib/server/signoz-telemetry';
 import { getFontPreloadLinks } from '$lib/server/font-preload';
@@ -85,15 +84,6 @@ const handleAdminRole: Handle = async ({ event, resolve }) => {
 };
 
 /**
- * Set podcastAnnouncementDismissedAt local based on cookie
- */
-const handlePodcastAnnouncement: Handle = async ({ event, resolve }) => {
-	const dismissedAtStr = event.cookies.get('podcast-announcement-dismissed-at');
-	event.locals.podcastAnnouncementDismissedAt = parseDate(dismissedAtStr);
-	return resolve(event);
-};
-
-/**
  * Response headers that depend on the URL or content type:
  *
  * - `Link` preloads for the web fonts on HTML responses (Cloudflare turns them into 103
@@ -142,7 +132,6 @@ export const handle = sequence(
 	Sentry.sentryHandle(),
 	handleColorMode,
 	handleAdminRole,
-	handlePodcastAnnouncement,
 	handleIpCountry,
 	handleResponseHeaders
 );

@@ -9,13 +9,13 @@ test.describe('vault detail page', () => {
 		const chart = page.locator('.vault-price-chart');
 		await expect(chart.locator('input[value="3M"]')).toBeChecked();
 
-		for (const [period, metricLabel] of [
-			['1M', '1M ann.'],
-			['Max', 'Lifetime ann.'],
-			['3M', '3M ann.']
+		for (const [period, urlPeriod, metricLabel] of [
+			['1M', '1M', '1M ann.'],
+			['Max', 'max', 'Lifetime ann.'],
+			['3M', '3M', '3M ann.']
 		]) {
 			await chart.getByText(period, { exact: true }).click();
-			await expect.poll(() => new URL(page.url()).searchParams.get('period')).toBe(period);
+			await expect.poll(() => new URL(page.url()).searchParams.get('period')).toBe(urlPeriod);
 			expect(new URL(page.url()).searchParams.get('ref')).toBe('shared');
 			expect(new URL(page.url()).hash).toBe('#performance');
 			await expect(page.locator('.featured-metrics')).toContainText(metricLabel);

@@ -225,6 +225,6 @@ describe('VaultMetrics', () => {
 		openAllTooltips();
 
 		expect(screen.getAllByText(INTERNALISED_FEE_TOOLTIP)).toHaveLength(6);
-		expect(screen.getByText(INTERNALISED_FEE_DISCLAIMER)).toBeInTheDocument();
+		expect(screen.getByText(`* ${INTERNALISED_FEE_DISCLAIMER}`)).toBeInTheDocument();
 	});
 });

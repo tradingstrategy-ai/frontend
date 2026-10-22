@@ -101,15 +101,15 @@ Displays supplementary vault information, performance, fees, and risk metrics.
 	]);
 	let feeRows = $derived([
 		{
-			label: 'Performance fee',
-			mobileLabel: 'Performance',
+			label: `Performance fee${hasInternalisedFees ? '*' : ''}`,
+			mobileLabel: `Performance${hasInternalisedFees ? '*' : ''}`,
 			value: vault.gross_fees?.performance,
 			tooltip: '<strong>Performance fee</strong> is charged against investment profits.',
 			shortTermWarning: false
 		},
 		{
-			label: 'Management fee',
-			mobileLabel: 'Management',
+			label: `Management fee${hasInternalisedFees ? '*' : ''}`,
+			mobileLabel: `Management${hasInternalisedFees ? '*' : ''}`,
 			value: vault.gross_fees?.management,
 			tooltip: '<strong>Management fee</strong> is charged annually for managing the vault.',
 			shortTermWarning: false
@@ -389,7 +389,7 @@ Displays supplementary vault information, performance, fees, and risk metrics.
 			</table>
 		</div>
 		{#if hasInternalisedFees}
-			<p class="fee-disclaimer">{INTERNALISED_FEE_DISCLAIMER}</p>
+			<p class="fee-disclaimer">* {INTERNALISED_FEE_DISCLAIMER}</p>
 		{/if}
 	</MetricsBox>
 </div>

@@ -18,9 +18,9 @@ export async function load({ locals, route, url, cookies }) {
 		});
 	}
 
-	// Make admin, ipCountry and podcastAnnouncementDismissedAt available to all layouts/pages
-	const { admin, ipCountry, podcastAnnouncementDismissedAt } = locals;
-	return { admin, ipCountry, podcastAnnouncementDismissedAt };
+	// Make admin and ipCountry available to all layouts/pages
+	const { admin, ipCountry } = locals;
+	return { admin, ipCountry };
 }
 
 function restrictMicrositeRoutes(routeId: string, strategyId: string) {
