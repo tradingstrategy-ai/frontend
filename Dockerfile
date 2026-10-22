@@ -1,7 +1,10 @@
 #######################################
 # Build stage
 #######################################
-FROM node:20.19 AS builder
+# Keep the Node.js version in step with .nvmrc, package.json engines and
+# .github/workflows/javascript.yml. Pinned to the full patch release so security
+# fixes are deliberate and auditable rather than picked up by drift.
+FROM node:24.22.1 AS builder
 
 WORKDIR /app
 
@@ -28,7 +31,7 @@ RUN pnpm prune --prod
 #######################################
 # Serve stage
 #######################################
-FROM node:20.19-slim
+FROM node:24.22.1-slim
 
 WORKDIR /app
 
