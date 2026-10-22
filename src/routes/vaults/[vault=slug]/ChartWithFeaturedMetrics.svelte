@@ -87,7 +87,7 @@ amounts in the denomination's native currency.
 		// Shallow routing updates browser history without updating page.url.
 		selectedReturnPeriod = timeSpan === '1M' || timeSpan === '3M' ? timeSpan : 'Max';
 		const url = new URL(window.location.href);
-		url.searchParams.set('period', selectedReturnPeriod);
+		url.searchParams.set('period', selectedReturnPeriod === 'Max' ? 'max' : selectedReturnPeriod);
 		replaceState(url, page.state);
 	}
 </script>
