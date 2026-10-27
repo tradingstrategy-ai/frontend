@@ -150,7 +150,7 @@ describe('compareStrategiesForFrontend', () => {
 
 	it('keeps frontpage strategies in the requested order', () => {
 		const strategies = [
-			createStrategy({ id: 'vega', name: 'Premium Harvest Vault', sort_priority: 999 }),
+			createStrategy({ id: 'vega', name: 'Premium Harvest Vault', sort_priority: 1 }),
 			createStrategy({ id: 'other-high', name: 'Other high', sort_priority: 100 }),
 			createStrategy({ id: 'hyper-ai', name: 'HyperAI', sort_priority: 1 }),
 			createStrategy({ id: 'master-vault', name: 'Master Vault', sort_priority: 1 })
@@ -158,6 +158,6 @@ describe('compareStrategiesForFrontend', () => {
 
 		const sortedIds = strategies.sort(compareStrategiesForFrontpage).map((strategy) => strategy.id);
 
-		expect(sortedIds).toEqual(['master-vault', 'hyper-ai', 'vega', 'other-high']);
+		expect(sortedIds).toEqual(['master-vault', 'hyper-ai', 'other-high', 'vega']);
 	});
 });

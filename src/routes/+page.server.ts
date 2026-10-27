@@ -41,7 +41,7 @@ export async function load({ fetch }) {
 		]);
 
 		const frontpageStrategies = strategies
-			.filter((s) => s.frontpage)
+			.filter((s) => s.frontpage && !s.tags?.includes('archived'))
 			.map((strategy) => compactStrategyTileChartData(strategy));
 		const yamlTileFreshness: {
 			strategyId: string;
