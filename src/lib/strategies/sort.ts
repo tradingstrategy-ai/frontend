@@ -2,7 +2,7 @@ import type { StrategyInfo } from 'trade-executor/models/strategy-info';
 import { getMetricsWithAltCAGR } from 'trade-executor/helpers/metrics';
 import { relativeReturn } from '$lib/helpers/financial';
 
-const frontpagePinnedStrategyOrder = ['master-vault', 'hyper-ai', 'vega'] as const;
+const frontpagePinnedStrategyOrder = ['master-vault', 'hyper-ai'] as const;
 
 function createPinnedRankMap(strategyIds: readonly string[]) {
 	return new Map<string, number>(strategyIds.map((strategyId, index) => [strategyId, strategyIds.length - index]));
