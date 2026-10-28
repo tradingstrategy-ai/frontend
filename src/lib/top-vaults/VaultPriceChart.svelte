@@ -72,6 +72,7 @@ so relative performance is comparable on a single axis.
 	let chartTitle = $derived(isSharePriceEquivalent ? 'Equity curve' : 'Share token price');
 
 	let loading = $state(true);
+	let chartError = $state<string>();
 	let priceData = $state<[number, number][]>();
 	let tvlData = $state<[number, number][]>();
 
@@ -131,13 +132,25 @@ so relative performance is comparable on a single axis.
 
 	async function fetchMetrics(vaultId: string) {
 		loading = true;
+		chartError = undefined;
 		priceData = undefined;
 		tvlData = undefined;
 		try {
 			const resp = await fetch(`/vaults/${vaultId}/metrics`);
+			if (!resp.ok) throw new Error(`Vault metrics request failed: ${resp.status}`);
 			const data = await resp.json();
-			priceData = data.price;
+			priceData = data.price.filter(
+				([timestamp, price]: [number, number | null]) =>
+					Number.isFinite(timestamp) && typeof price === 'number' && Number.isFinite(price)
+			);
 			tvlData = data.tvl;
+			if (!priceData?.length) {
+				chartError = vault.stablecoinish
+					? `Stablecoin exchange rate missing for ${vault.denomination} stablecoin`
+					: 'Share token price data unavailable';
+			}
+		} catch {
+			chartError = 'Unable to load share token price data';
 		} finally {
 			loading = false;
 		}
@@ -194,6 +207,7 @@ so relative performance is comparable on a single axis.
 		{initialTimeSpan}
 		{onTimeSpanChange}
 		{loading}
+		error={chartError}
 		data={priceData}
 		{formatValue}
 		options={{

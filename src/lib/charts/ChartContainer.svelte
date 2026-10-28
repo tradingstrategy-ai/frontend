@@ -23,6 +23,8 @@ Shared time-series chart shell with range controls, loading state, tooltip and o
 
 	interface Props extends Omit<ComponentProps<typeof TvChart>, 'tooltip'> {
 		data: [number, number][] | undefined;
+		/** Error shown in place of the chart and legend. */
+		error?: string;
 		formatValue: Formatter<number>;
 		boxed?: boolean;
 		timeSpanOptions?: readonly TimeSpanKey[];
@@ -38,6 +40,7 @@ Shared time-series chart shell with range controls, loading state, tooltip and o
 
 	let {
 		data,
+		error,
 		formatValue,
 		boxed = false,
 		timeSpanOptions = TimeSpans.defaultKeys,
@@ -111,19 +114,23 @@ Shared time-series chart shell with range controls, loading state, tooltip and o
 		{/if}
 	{/snippet}
 
-	<TvChart options={merge({ ...chartOptions }, options)} {...restProps} tooltip={tooltipWithTimeSpan}>
-		{@render series({
-			data: resampledData,
-			timeSpan,
-			range
-		})}
+	{#if error}
+		<div class="chart-error" role="alert">{error}</div>
+	{:else}
+		<TvChart options={merge({ ...chartOptions }, options)} {...restProps} tooltip={tooltipWithTimeSpan}>
+			{@render series({
+				data: resampledData,
+				timeSpan,
+				range
+			})}
 
-		{#if range}
-			<BaselineSeries interval={timeSpan.interval} {range} setChartVisibleRange />
-		{/if}
-	</TvChart>
+			{#if range}
+				<BaselineSeries interval={timeSpan.interval} {range} setChartVisibleRange />
+			{/if}
+		</TvChart>
 
-	{@render footer?.()}
+		{@render footer?.()}
+	{/if}
 </div>
 
 <style>
@@ -206,5 +213,16 @@ Shared time-series chart shell with range controls, loading state, tooltip and o
 			color: var(--c-text);
 			text-align: right;
 		}
+	}
+
+	.chart-error {
+		display: grid;
+		place-content: center;
+		min-height: var(--chart-height, 16rem);
+		padding: var(--space-lg);
+		color: var(--c-error);
+		font: var(--f-ui-md-roman);
+		text-align: center;
+		overflow-wrap: anywhere;
 	}
 </style>

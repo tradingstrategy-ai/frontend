@@ -2,6 +2,52 @@ import { expect, test } from '@playwright/test';
 import { waitForHydration } from '../helpers';
 
 test.describe('vault detail page', () => {
+	for (const price of [[], [[1767225600, null]]]) {
+		test(`explains missing stablecoin chart data for ${price.length ? 'null prices' : 'empty history'}`, async ({
+			page
+		}) => {
+			await page.route('**/vaults/*/metrics', (route) => route.fulfill({ json: { price, tvl: [], utilisation: [] } }));
+			await page.goto('/vaults/morpho-flagged-blacklisted-vault');
+
+			const chart = page.locator('.vault-price-chart');
+			await expect(chart.getByRole('heading', { name: 'Share token price' })).toBeVisible();
+			await expect(chart.getByRole('alert')).toHaveText('Stablecoin exchange rate missing for USDC stablecoin');
+			await expect(chart.getByTestId('tv-chart')).toHaveCount(0);
+		});
+	}
+
+	test('renders available share token prices without a missing-rate error', async ({ page }) => {
+		await page.route('**/vaults/*/metrics', (route) =>
+			route.fulfill({
+				json: {
+					price: [
+						[1767225600, 1],
+						[1767312000, 1.01]
+					],
+					tvl: [],
+					utilisation: []
+				}
+			})
+		);
+		await page.goto('/vaults/morpho-flagged-blacklisted-vault');
+		await waitForHydration(page);
+
+		const chart = page.locator('.vault-price-chart');
+		await expect(chart.getByTestId('tv-chart').locator('canvas').first()).toBeVisible();
+		await expect(chart.getByRole('alert')).toHaveCount(0);
+	});
+
+	test('distinguishes a failed chart request from missing stablecoin rates', async ({ page }) => {
+		await page.route('**/vaults/*/metrics', (route) =>
+			route.fulfill({ status: 500, json: { message: 'Unavailable' } })
+		);
+		await page.goto('/vaults/morpho-flagged-blacklisted-vault');
+
+		await expect(page.locator('.vault-price-chart').getByRole('alert')).toHaveText(
+			'Unable to load share token price data'
+		);
+	});
+
 	test('preserves the chart period when copying or reloading the URL', async ({ page }) => {
 		await page.goto('/vaults/morpho-flagged-blacklisted-vault?ref=shared#performance');
 		await waitForHydration(page);
