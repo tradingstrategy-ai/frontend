@@ -268,6 +268,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 
 	:global(:is(.description, .notes)) {
 		color: var(--c-text-extra-light);
+		overflow-wrap: anywhere;
 
 		:global(.markdown :is(h1, h2, h3)) {
 			font: var(--f-heading-xs-medium);
