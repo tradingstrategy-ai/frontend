@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waitForHydration } from './helpers';
 
 const entityQueries = [
 	['vault', 'Savings USDS'],
@@ -19,8 +20,72 @@ function parseCompactDollar(value: string) {
 }
 
 test.describe('site search typeahead', () => {
+	for (const width of [1440, 1024, 390]) {
+		test(`keeps result metrics beside the name with valid, absent and broken logos at ${width}px`, async ({ page }) => {
+			await page.setViewportSize({ width, height: 900 });
+			const logo =
+				'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="16" fill="green"/></svg>';
+			await page.route('**/search/suggestions?*', (route) =>
+				route.fulfill({
+					json: {
+						query: 'layout',
+						total: 3,
+						results: [logo, null, '/broken-search-logo.svg'].map((logoUrl, index) => ({
+							id: `layout-${index}`,
+							name: `Layout vault ${index}`,
+							entityType: 'vault',
+							vaultId: `layout-${index}`,
+							address: null,
+							protocolName: null,
+							chainName: null,
+							averageApy1m: 0.146,
+							latestTvl: 11700,
+							href: `/vaults/layout-${index}`,
+							logoUrl
+						}))
+					}
+				})
+			);
+			await page.route('**/broken-search-logo.svg', (route) => route.fulfill({ status: 404, body: '' }));
+			await page.goto('/search');
+			await waitForHydration(page);
+
+			let search = page.getByTestId('nav-search').getByRole('combobox');
+			if (width < 1170) {
+				await page.getByTestId('navigation-toggle').click();
+				search = page.getByTestId('mobile-menu-search').getByRole('combobox').first();
+				if (width <= 576) {
+					await page.getByTestId('mobile-menu-search').getByRole('button', { name: 'Search vaults' }).click();
+					search = page.getByRole('dialog', { name: 'Search' }).getByRole('combobox');
+				}
+			}
+			await search.fill('layout');
+			const rows = page.getByRole('dialog', { name: 'Search' }).getByRole('option');
+			await expect(rows).toHaveCount(3);
+			await expect(rows.nth(0).locator('.logo-slot')).toBeVisible();
+			await expect(rows.nth(1).locator('.logo-slot')).toBeHidden();
+			await expect(rows.nth(2).locator('.logo-slot')).toBeHidden();
+
+			for (const row of await rows.all()) {
+				const main = (await row.locator('.result-main').boundingBox())!;
+				const metrics = (await row.locator('.metrics').boundingBox())!;
+				const chart = (await row.locator('.result-sparkline').boundingBox())!;
+				expect(metrics.x).toBeGreaterThanOrEqual(main.x + main.width);
+				expect(metrics.y).toBeLessThan(main.y + main.height);
+				expect(metrics.y + metrics.height).toBeGreaterThan(main.y);
+				if (width > 576) {
+					expect(chart.x).toBeGreaterThanOrEqual(main.x + main.width);
+					expect(metrics.x).toBeGreaterThanOrEqual(chart.x + chart.width);
+				} else {
+					expect(chart.y).toBeGreaterThanOrEqual(metrics.y + metrics.height);
+				}
+			}
+		});
+	}
+
 	test('requests suggestions sorted by latest TVL with blacklisted vaults last', async ({ page }) => {
 		await page.goto('/vaults');
+		await waitForHydration(page);
 		const search = page.getByTestId('nav-search').getByRole('combobox');
 		const isVaultSuggestionsRequest = (candidate: { url(): string }) => {
 			const url = new URL(candidate.url());
@@ -52,7 +117,7 @@ test.describe('site search typeahead', () => {
 
 	test('shows typeahead results and opens the selected entity', async ({ page }) => {
 		await page.goto('/vaults');
-		await page.waitForLoadState('networkidle');
+		await waitForHydration(page);
 
 		const search = page.getByTestId('nav-search').getByRole('combobox');
 		await expect(search).toHaveAttribute('placeholder', 'Search vaults');
@@ -78,7 +143,7 @@ test.describe('site search typeahead', () => {
 
 	test('closes quick results when Enter opens the full search page', async ({ page }) => {
 		await page.goto('/vaults');
-		await page.waitForLoadState('networkidle');
+		await waitForHydration(page);
 
 		const search = page.getByTestId('nav-search').getByRole('combobox');
 		await search.fill('Euler');
@@ -92,7 +157,7 @@ test.describe('site search typeahead', () => {
 
 	test('closes desktop quick results when interacting outside search', async ({ page }) => {
 		await page.goto('/vaults');
-		await page.waitForLoadState('networkidle');
+		await waitForHydration(page);
 
 		const search = page.getByTestId('nav-search').getByRole('combobox');
 		await search.fill('Euler');
@@ -105,7 +170,7 @@ test.describe('site search typeahead', () => {
 
 	test('opens a vault result from a nested page without a route-relative 404', async ({ page }) => {
 		await page.goto('/vaults/curators/steakhouse-financial');
-		await page.waitForLoadState('networkidle');
+		await waitForHydration(page);
 
 		const search = page.getByTestId('nav-search').getByRole('combobox');
 		await search.fill('Savings USDS');
@@ -127,7 +192,7 @@ test.describe('site search typeahead', () => {
 	test('opens the full-screen compact-navigation search dialog', async ({ page }) => {
 		await page.setViewportSize({ width: 390, height: 844 });
 		await page.goto('/vaults');
-		await page.waitForLoadState('networkidle');
+		await waitForHydration(page);
 
 		await page.getByTestId('navigation-toggle').click();
 		const navigation = page.getByRole('navigation', { name: 'Mobile navigation' });
@@ -146,7 +211,7 @@ test.describe('site search typeahead', () => {
 	test('searches and opens a result from the mobile navigation drawer', async ({ page }) => {
 		await page.setViewportSize({ width: 390, height: 844 });
 		await page.goto('/vaults');
-		await page.waitForLoadState('networkidle');
+		await waitForHydration(page);
 
 		await page.getByTestId('navigation-toggle').click();
 		const mobileNavigation = page.getByRole('navigation', { name: 'Mobile navigation' });
@@ -173,7 +238,7 @@ test.describe('site search typeahead', () => {
 
 	test('finds a vault by address without case sensitivity and shows its address prefix', async ({ page }) => {
 		await page.goto('/vaults');
-		await page.waitForLoadState('networkidle');
+		await waitForHydration(page);
 
 		const search = page.getByTestId('nav-search').getByRole('combobox');
 		await search.focus();
@@ -186,7 +251,7 @@ test.describe('site search typeahead', () => {
 
 	test('marks blacklisted vault suggestions as a separate struck-through entity type', async ({ page }) => {
 		await page.goto('/vaults');
-		await page.waitForLoadState('networkidle');
+		await waitForHydration(page);
 
 		const search = page.getByTestId('nav-search').getByRole('combobox');
 		await search.fill('Abnormal TVL blacklisted vault');
@@ -198,7 +263,7 @@ test.describe('site search typeahead', () => {
 
 	test('renders suggestions on an opaque layer above page content', async ({ page }) => {
 		await page.goto('/search');
-		await page.waitForLoadState('networkidle');
+		await waitForHydration(page);
 
 		const search = page.getByTestId('nav-search').getByRole('combobox');
 		await search.focus();
@@ -268,6 +333,7 @@ test.describe('search results page', () => {
 		await expect(vaultRow.locator('td.sparkline .vault-sparkline')).toBeVisible();
 
 		await page.goto('/search?q=Steakhouse');
+		await waitForHydration(page);
 		const curatorRow = page
 			.locator('tbody tr')
 			.filter({ has: page.locator('td.full_name', { hasText: 'Curator' }) })
@@ -317,6 +383,7 @@ test.describe('search results page', () => {
 	test('sorts results by entity type', async ({ page }) => {
 		await page.setViewportSize({ width: 1440, height: 900 });
 		await page.goto('/search?q=Morpho');
+		await waitForHydration(page);
 
 		const entityTypeHeader = page.getByRole('columnheader', { name: 'Entity type' });
 		await entityTypeHeader.click();
@@ -372,7 +439,7 @@ test.describe('search results page', () => {
 
 	test('submits a search from the results page and preserves the query when navigating back', async ({ page }) => {
 		await page.goto('/search');
-		await page.waitForLoadState('networkidle');
+		await waitForHydration(page);
 		const search = page.locator('#search-page-input');
 		await search.fill('Savings USDS');
 		await search.press('Enter');
