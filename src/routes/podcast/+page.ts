@@ -9,6 +9,7 @@ export async function load({ fetch, setHeaders }) {
 	const posts = await getAllPosts(fetch);
 
 	return {
-		posts: posts.filter(({ title }) => title.toLowerCase().includes('episode'))
+		// The first four episodes used "Podcast #" before the series switched to "Episode #".
+		posts: posts.filter(({ title }) => /\b(?:episode|podcast)\s*#\d+\b/i.test(title))
 	};
 }
