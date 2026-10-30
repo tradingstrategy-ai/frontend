@@ -352,7 +352,6 @@ underlying vault JSON index private.
 								<a
 									id={`${listboxId}-${index}`}
 									class:active={selectedIndex === index}
-									class:no-logo={!result.logoUrl}
 									data-entity-type={result.entityType}
 									href={resolve(result.href as `/vaults/${string}`)}
 									role="option"
@@ -523,12 +522,6 @@ underlying vault JSON index private.
 		border-radius: var(--radius-sm);
 		color: inherit;
 		text-decoration: none;
-	}
-	.result-link:is(.no-logo, :has(.logo-slot:empty)) {
-		grid-template-columns: minmax(0, 1fr) auto;
-	}
-	.result-link:is(.no-logo, :has(.logo-slot:empty)) .logo-slot {
-		display: none;
 	}
 	.result-link:is(:hover, :focus-visible, .active) {
 		outline: none;
@@ -788,9 +781,6 @@ underlying vault JSON index private.
 		.dialog .result-link {
 			grid-template-columns: 2rem minmax(0, 1fr) 6rem auto;
 		}
-		.dialog .result-link:is(.no-logo, :has(.logo-slot:empty)) {
-			grid-template-columns: minmax(0, 1fr) 6rem auto;
-		}
 		.dialog .result-sparkline {
 			display: grid;
 			justify-content: end;
@@ -805,12 +795,6 @@ underlying vault JSON index private.
 				'. . sparkline';
 			align-items: start;
 			row-gap: var(--space-xs);
-		}
-		.dialog .result-link:is(.no-logo, :has(.logo-slot:empty)) {
-			grid-template-columns: minmax(0, 1fr) max-content;
-			grid-template-areas:
-				'main metrics'
-				'. sparkline';
 		}
 		.dialog .logo-slot {
 			grid-area: logo;
@@ -846,9 +830,6 @@ underlying vault JSON index private.
 		}
 		.result-link {
 			grid-template-columns: 2rem minmax(0, 1fr) 7rem auto;
-		}
-		.result-link:is(.no-logo, :has(.logo-slot:empty)) {
-			grid-template-columns: minmax(0, 1fr) 7rem auto;
 		}
 	}
 </style>

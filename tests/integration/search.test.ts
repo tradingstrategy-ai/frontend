@@ -21,7 +21,7 @@ function parseCompactDollar(value: string) {
 
 test.describe('site search typeahead', () => {
 	for (const width of [1440, 1024, 390]) {
-		test(`keeps result metrics beside the name with valid, absent and broken logos at ${width}px`, async ({ page }) => {
+		test(`aligns result names and metrics with valid, absent and broken logos at ${width}px`, async ({ page }) => {
 			await page.setViewportSize({ width, height: 900 });
 			const logo =
 				'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="16" fill="green"/></svg>';
@@ -63,13 +63,22 @@ test.describe('site search typeahead', () => {
 			const rows = page.getByRole('dialog', { name: 'Search' }).getByRole('option');
 			await expect(rows).toHaveCount(3);
 			await expect(rows.nth(0).locator('.logo-slot')).toBeVisible();
-			await expect(rows.nth(1).locator('.logo-slot')).toBeHidden();
-			await expect(rows.nth(2).locator('.logo-slot')).toBeHidden();
+			await expect(rows.nth(1).locator('.logo-slot')).toBeVisible();
+			await expect(rows.nth(2).locator('.logo-slot')).toBeVisible();
+			await expect(rows.nth(1).locator('.logo-slot img')).toHaveCount(0);
+			await expect(rows.nth(2).locator('.logo-slot img')).toHaveCount(0);
+			const firstMain = (await rows.nth(0).locator('.result-main').boundingBox())!;
+			const firstLogo = (await rows.nth(0).locator('.logo-slot').boundingBox())!;
 
 			for (const row of await rows.all()) {
 				const main = (await row.locator('.result-main').boundingBox())!;
 				const metrics = (await row.locator('.metrics').boundingBox())!;
 				const chart = (await row.locator('.result-sparkline').boundingBox())!;
+				const logoSlot = (await row.locator('.logo-slot').boundingBox())!;
+				expect(main.x).toBeCloseTo(firstMain.x);
+				expect(logoSlot.x).toBeCloseTo(firstLogo.x);
+				expect(logoSlot.width).toBe(firstLogo.width);
+				expect(logoSlot.height).toBe(firstLogo.height);
 				expect(metrics.x).toBeGreaterThanOrEqual(main.x + main.width);
 				expect(metrics.y).toBeLessThan(main.y + main.height);
 				expect(metrics.y + metrics.height).toBeGreaterThan(main.y);
