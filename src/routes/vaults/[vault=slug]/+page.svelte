@@ -13,6 +13,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 	import SocialMediaTags from './SocialMetaTags.svelte';
 	import VaultPageHeader from './VaultPageHeader.svelte';
+	import VaultDescription from './VaultDescription.svelte';
 	import ChartWithFeaturedMetrics from './ChartWithFeaturedMetrics.svelte';
 	// Vault protocols do not report useful utilisation data.
 	// import VaultUtilisationChart from '$lib/top-vaults/VaultUtilisationChart.svelte';
@@ -172,7 +173,9 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 		<div class="vault-information" class:single-card={vaultInformationCardCount === 1}>
 			{#if vault.description}
 				<MetricsBox class="description" title={`About the ${assetType}`}>
-					<Markdown content={vault.description} />
+					{#key vault.id}
+						<VaultDescription content={vault.description} />
+					{/key}
 				</MetricsBox>
 			{/if}
 
@@ -248,6 +251,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 
 	.vault-information {
 		display: grid;
+		align-items: start;
 		gap: var(--gap);
 
 		@media (--viewport-lg-up) {
