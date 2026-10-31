@@ -105,7 +105,7 @@ export const vaultListingDefinitions: Record<VaultListingKey, VaultListingDefini
 	},
 	curator: {
 		key: 'curator',
-		defaults: { tvl: '10k', sort: 'tvl', unknown: false },
+		defaults: { tvl: 'any', sort: 'tvl', unknown: false },
 		options: commonOptions,
 		requiresScope: true
 	},
