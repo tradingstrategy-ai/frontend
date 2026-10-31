@@ -273,7 +273,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 		color: var(--c-text-extra-light);
 		overflow-wrap: anywhere;
 
-		:global(.markdown :is(h1, h2, h3)) {
+		:global(.markdown :is(h1, h2, h3, h4, h5, h6)) {
 			font: var(--f-heading-xs-medium);
 			font-size: 1rem;
 			letter-spacing: 0.06em;
