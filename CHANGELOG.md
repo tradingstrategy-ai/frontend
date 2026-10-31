@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Default curator vault listings to a zero minimum TVL (2026-10-31).
 - Keep long vault descriptions compact with a faded preview and View more control (2026-10-30).
 - Add Plume and World Chain as vault-only chains with chain metadata and logos (2026-10-07).
 - Preserve vault equity curve and share-price chart ranges in shared URLs (2026-10-06).

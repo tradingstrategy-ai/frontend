@@ -110,7 +110,7 @@ with an "about" panel and a TVL/return mini chart.
 	curatorMetadata={curator}
 	title={heading}
 	showFilters
-	defaultTvlKey="10k"
+	defaultTvlKey="any"
 	defaultHideUnknown={0}
 	defaultSort="tvl"
 >
