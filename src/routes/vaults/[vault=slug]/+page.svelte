@@ -251,7 +251,6 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 
 	.vault-information {
 		display: grid;
-		align-items: start;
 		gap: var(--gap);
 
 		@media (--viewport-lg-up) {

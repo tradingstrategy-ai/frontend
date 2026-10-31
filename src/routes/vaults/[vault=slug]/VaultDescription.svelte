@@ -15,7 +15,7 @@ Short descriptions and pages without JavaScript show the complete text.
 
 	let { content }: { content: string } = $props();
 	const id = $props.id();
-	const previewLines = 16;
+	const previewLines = 8 * 1.2;
 	let preview: HTMLDivElement;
 	let body: HTMLDivElement;
 	let expandable = $state(false);
