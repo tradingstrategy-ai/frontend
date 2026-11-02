@@ -1,10 +1,12 @@
 <!--
 @component
 Displays a vault's technical metadata in a two-column table.
+Shows the first four rows with a fading fold; expand to see all details.
 
 Includes the source whitelist status and any source-provided whitelist notes.
 -->
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { resolve } from '$app/paths';
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import type { Chain } from '$lib/helpers/chain';
@@ -41,6 +43,56 @@ Includes the source whitelist status and any source-provided whitelist notes.
 	}
 
 	let { vault, chain, stablecoinMetadata = null, generated_at = null }: Props = $props();
+	const id = $props.id();
+	const previewRows = 4;
+	let preview = $state<HTMLDivElement>();
+	let table = $state<HTMLTableElement>();
+	let previewHeight = $state(0);
+	let expanded = $state(false);
+	let collapsed = $derived(previewHeight > 0 && !expanded);
+
+	$effect(() => {
+		// Reset the fold when navigating to another vault.
+		vault;
+		expanded = false;
+	});
+
+	$effect(() => {
+		if (!table) return;
+		const element = table;
+		const measure = () => {
+			const lastPreviewRow = element.rows[previewRows - 1];
+			previewHeight =
+				lastPreviewRow && element.rows.length > previewRows
+					? lastPreviewRow.getBoundingClientRect().bottom - element.getBoundingClientRect().top
+					: 0;
+		};
+		const observer = new ResizeObserver(measure);
+		observer.observe(element);
+		measure();
+		return () => observer.disconnect();
+	});
+
+	function toggle() {
+		expanded = !expanded;
+		if (!expanded && preview && preview.getBoundingClientRect().top < 0) {
+			preview.scrollIntoView({ block: 'start' });
+		}
+	}
+
+	/**
+	 * Reveal clipped rows before scrolling keyboard focus into view.
+	 * @param event Focus entering the table.
+	 */
+	async function revealFocusedContent(event: FocusEvent) {
+		if (!collapsed || !(event.target instanceof HTMLElement)) return;
+		const row = event.target.closest('tr');
+		if (!row || row.rowIndex < previewRows) return;
+		expanded = true;
+		await tick();
+		event.target.scrollIntoView({ block: 'nearest' });
+	}
+
 	let technicalAssetType = $derived(getVaultAssetType(vault).replace(/^./, (character) => character.toUpperCase()));
 
 	let copyWidget = $state<CopyWidget>();
@@ -223,9 +275,16 @@ Includes the source whitelist status and any source-provided whitelist notes.
 	}
 </script>
 
-<MetricsBox title="Technical Details">
-	<div class="table-wrapper">
-		<table class="details-table">
+<MetricsBox title="Technical details">
+	<div
+		{id}
+		class="table-wrapper"
+		class:collapsed
+		style:--preview-height={`${previewHeight}px`}
+		bind:this={preview}
+		onfocusin={revealFocusedContent}
+	>
+		<table class="details-table" bind:this={table}>
 			<tbody>
 				{#each rows as row (row.label)}
 					<tr>
@@ -387,6 +446,11 @@ Includes the source whitelist status and any source-provided whitelist notes.
 			</tbody>
 		</table>
 	</div>
+	{#if previewHeight > 0}
+		<button class="fold-toggle" type="button" aria-expanded={expanded} aria-controls={id} onclick={toggle}>
+			{expanded ? 'View less' : 'View more'}
+		</button>
+	{/if}
 
 	{#if mobileOstiumHref}
 		<div class="mobile-ostium-link">
@@ -400,6 +464,41 @@ Includes the source whitelist status and any source-provided whitelist notes.
 <style>
 	.table-wrapper {
 		overflow-x: auto;
+		scroll-margin-block-start: var(--space-xl);
+
+		&.collapsed {
+			max-block-size: var(--preview-height);
+			overflow-y: hidden;
+			mask-image: linear-gradient(to bottom, black calc(100% - 3lh), transparent);
+
+			/* Let fixed-position tooltips escape the mask while they are open. */
+			&:has(:global(.popup[data-open='true'])) {
+				mask-image: none;
+			}
+		}
+	}
+
+	.fold-toggle {
+		display: block;
+		justify-self: start;
+		margin-block-start: var(--space-md);
+		padding: var(--space-xs) 0;
+		border: 0;
+		background: transparent;
+		color: var(--c-text-light);
+		font: var(--f-ui-md-medium);
+		text-decoration: underline;
+		text-underline-offset: 0.2em;
+		cursor: pointer;
+
+		&:hover {
+			color: var(--c-text);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--c-text-light);
+			outline-offset: var(--space-xxs);
+		}
 	}
 
 	.mobile-ostium-link {
