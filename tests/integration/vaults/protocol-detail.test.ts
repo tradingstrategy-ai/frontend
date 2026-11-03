@@ -16,7 +16,7 @@ test.describe('vault protocol detail pages', () => {
 		await expect(page).toHaveURL('/vaults/protocols/unknown?sort=tvl');
 		await expect(page).toHaveTitle('Vaults with unidentified protocols | Trading Strategy');
 		await expect(page.getByRole('heading', { level: 1 })).toHaveText('Vaults with unidentified protocols');
-		await expect(page.getByText('No chart data available.')).not.toBeVisible();
+		await expect(page.getByTestId('vault-group-mini-chart')).not.toBeVisible();
 	});
 
 	test('shows GMX AMM pools by default and identifies an AMM vault as a pool', async ({ page }) => {

@@ -120,6 +120,7 @@ with an "about" panel and a TVL/return mini chart.
 			dataUrl="/vaults/curators/{curatorSlug}/chart-data"
 			compareLabel="Compare all curators"
 			compareHref="/vaults/curators"
+			emptyDataSubject="Curator data"
 		/>
 	{/snippet}
 </TopVaultsPage>
