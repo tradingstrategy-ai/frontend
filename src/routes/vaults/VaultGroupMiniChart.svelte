@@ -15,13 +15,14 @@ the tooltip states the included vault count.
 ```
 -->
 <script lang="ts">
-	import { base } from '$app/paths';
+	import { base, resolve } from '$app/paths';
 	import Alert from '$lib/components/Alert.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { formatRate, formatUsd } from '$lib/echarts/cumulative-tvl-apy';
 	import type { ProtocolMiniChartPayload } from '$lib/echarts/protocol-mini-chart';
 	import { type EChartsStatic, loadECharts } from '$lib/echarts/runtime';
 	import { chartFontFamily } from '$lib/scatter-plot/helpers';
+	import { MIN_TVL_THRESHOLD } from '$lib/top-vaults/helpers';
 	import { onMount, tick } from 'svelte';
 
 	interface Props {
@@ -32,6 +33,7 @@ the tooltip states the included vault count.
 		returnTooltipLabel?: string;
 		returnWindowLabel?: string;
 		returnHistoryMonthsRequired?: number;
+		emptyDataSubject?: string;
 	}
 
 	interface TooltipParam {
@@ -48,7 +50,8 @@ the tooltip states the included vault count.
 		compareHref,
 		returnTooltipLabel = 'Average TVL-weighted return',
 		returnWindowLabel = 'trailing 1 month',
-		returnHistoryMonthsRequired
+		returnHistoryMonthsRequired,
+		emptyDataSubject = 'Chart data'
 	}: Props = $props();
 
 	let chartContainer = $state<HTMLDivElement | null>(null);
@@ -398,7 +401,16 @@ the tooltip states the included vault count.
 			</div>
 		{:else if !hasPoints}
 			<div class="chart-state">
-				<p>No chart data available.</p>
+				<p>
+					{emptyDataSubject} is not displayed yet because
+					{#if chartData?.meta.vaultCount === 0}
+						no vaults meet the chart’s eligibility requirements: at least {formatUsd(MIN_TVL_THRESHOLD)}
+						TVL, a known protocol and the default risk limits.
+					{:else}
+						historical data is not yet available for eligible vaults.
+					{/if}
+					For any questions, contact us on <a href={resolve('/community')}>Discord</a>.
+				</p>
 			</div>
 		{:else}
 			<div bind:this={chartContainer} class="chart-canvas"></div>
