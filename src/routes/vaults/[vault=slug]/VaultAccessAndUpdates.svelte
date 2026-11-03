@@ -9,10 +9,13 @@ Provides the vault's deposit venue and a Discord contact for information updates
 ```
 -->
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import Button from '$lib/components/Button.svelte';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import { discordUrl } from '$lib/config';
+	import { removeOnError } from '$lib/actions/image';
+	import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers';
 	import { getVaultProtocolDisplayName, isUnknownVaultProtocol } from '$lib/top-vaults/helpers';
 
 	let { vault }: { vault: VaultInfo } = $props();
@@ -38,6 +41,7 @@ Provides the vault's deposit venue and a Discord contact for information updates
 		// Unknown-protocol vaults fall back to the hostname of their external destination.
 		if (externalVaultUrl) return new URL(externalVaultUrl).host;
 	});
+	let venueLogoUrl = $derived(getVaultProtocolLogoUrl(externalSiteName === 'Fira' ? 'fira' : vault.protocol_slug));
 </script>
 
 <MetricsBox title="Access and updates">
@@ -45,17 +49,40 @@ Provides the vault's deposit venue and a Discord contact for information updates
 		{#if externalVaultUrl}
 			<div class="action">
 				<p>You can deposit to this vault on {externalSiteName}.</p>
-				<Button href={externalVaultUrl} target="_blank" rel="noreferrer">View on {externalSiteName}</Button>
+				<Button href={externalVaultUrl} target="_blank" rel="noreferrer">
+					<span class="venue-label">
+						{#if venueLogoUrl}
+							<img src={venueLogoUrl} alt="" width="20" height="20" use:removeOnError />
+						{/if}
+						View on {externalSiteName}
+					</span>
+				</Button>
 			</div>
 		{/if}
 		<div class="action">
 			<p>If any information is incorrect or needs updating, contact the Trading Strategy team.</p>
-			<Button secondary href={discordUrl} target="_blank" rel="noreferrer">Contact on Discord</Button>
+			<Button
+				secondary
+				href={discordUrl || resolve('/community')}
+				target={discordUrl ? '_blank' : undefined}
+				rel={discordUrl ? 'noreferrer' : undefined}>Contact on Discord</Button
+			>
 		</div>
 	</div>
 </MetricsBox>
 
 <style>
+	.venue-label {
+		display: flex;
+		align-items: center;
+		gap: var(--space-sm);
+
+		img {
+			object-fit: contain;
+			flex-shrink: 0;
+		}
+	}
+
 	.access-and-updates {
 		display: grid;
 		gap: var(--space-xl);
