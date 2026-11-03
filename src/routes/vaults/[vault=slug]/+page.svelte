@@ -13,6 +13,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	import TopVaultsOptIn from '$lib/top-vaults/TopVaultsOptIn.svelte';
 	import SocialMediaTags from './SocialMetaTags.svelte';
 	import VaultPageHeader from './VaultPageHeader.svelte';
+	import VaultAccessAndUpdates from './VaultAccessAndUpdates.svelte';
 	import VaultDescription from './VaultDescription.svelte';
 	import ChartWithFeaturedMetrics from './ChartWithFeaturedMetrics.svelte';
 	// Vault protocols do not report useful utilisation data.
@@ -210,6 +211,8 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 		{/if}
 
 		<VaultPeriodicMetrics {vault} {chain} />
+
+		<VaultAccessAndUpdates {vault} />
 
 		<VaultTechnicalDetailsTable {vault} {chain} {stablecoinMetadata} {generated_at} />
 	</Section>

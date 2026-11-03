@@ -11,7 +11,6 @@ Includes the source whitelist status and any source-provided whitelist notes.
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import type { Chain } from '$lib/helpers/chain';
 	import { getExplorerUrl } from '$lib/helpers/chain';
-	import Button from '$lib/components/Button.svelte';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import { CopyWidget, HashAddress, Timestamp, Tooltip } from '$lib/components';
 	import { formatAmount, formatDollar, notFilledMarker } from '$lib/helpers/formatters';
@@ -119,9 +118,6 @@ Includes the source whitelist status and any source-provided whitelist notes.
 	let denominationLogoUrl = $derived(denominationSlug ? getStablecoinLogoUrl(denominationSlug) : undefined);
 	let denominationHref = $derived(stablecoinMetadata ? getStablecoinDetailsHref(denominationSlug) : undefined);
 	let showExchangeRateRow = $derived(vault.protocol_slug !== 'kinexys');
-	let mobileOstiumHref = $derived(
-		getVaultProtocolDisplayName(vault) === 'Ostium' ? (vault.link ?? undefined) : undefined
-	);
 	let exchangeRateFetchedAt = $derived(
 		vault.denomination_token_rate?.usd_rate_fetched_at ??
 			vault.denomination_token_rate?.source_currency_usd_rate_fetched_at ??
@@ -451,14 +447,6 @@ Includes the source whitelist status and any source-provided whitelist notes.
 			{expanded ? 'View less' : 'View more'}
 		</button>
 	{/if}
-
-	{#if mobileOstiumHref}
-		<div class="mobile-ostium-link">
-			<Button class="mobile-ostium-button" href={mobileOstiumHref} target="_blank" rel="noreferrer"
-				>Open vault on Ostium</Button
-			>
-		</div>
-	{/if}
 </MetricsBox>
 
 <style>
@@ -498,19 +486,6 @@ Includes the source whitelist status and any source-provided whitelist notes.
 		&:focus-visible {
 			outline: 2px solid var(--c-text-light);
 			outline-offset: var(--space-xxs);
-		}
-	}
-
-	.mobile-ostium-link {
-		display: none;
-		margin-top: 1rem;
-
-		@media (--viewport-sm-down) {
-			display: block;
-		}
-
-		:global(.mobile-ostium-button) {
-			--button-width: 100%;
 		}
 	}
 

@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Move vault venue and contact actions into a responsive Access and updates box (2026-11-03).
 - Add a four-row faded preview with expand and collapse controls to vault technical details (2026-11-02).
 - Default curator vault listings to a zero minimum TVL (2026-10-31).
 - Keep long vault descriptions compact with a faded preview and View more control (2026-10-30).
