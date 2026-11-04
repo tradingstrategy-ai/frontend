@@ -17,6 +17,12 @@ export interface MetadataLogoOptions {
 const DEFAULT_WEBP_QUALITY = 72;
 const DEFAULT_AVIF_QUALITY = 58;
 const MAX_DIMENSION = 1024;
+/**
+ * Bounding box applied when a logo is re-encoded without an explicit `w`/`h`. Encoding at
+ * the source's native size costs seconds of CPU per job on a large PNG; every on-page use
+ * of these logos is far smaller than this.
+ */
+export const DEFAULT_TRANSFORM_DIMENSION = 512;
 const DEFAULT_CACHE_SECONDS = 60 * 60 * 24;
 const VERSIONED_CACHE_SECONDS = 60 * 60 * 24 * 365;
 
