@@ -1,5 +1,6 @@
-import type { ClientInit, HandleClientError } from '@sveltejs/kit';
-import * as Sentry from '@sentry/sveltekit';
+import type { HandleClientError } from '@sveltejs/kit';
+// import type { ClientInit } from '@sveltejs/kit';
+// import * as Sentry from '@sentry/sveltekit';
 import { navigating } from '$app/state';
 import { isModuleLoadError, shouldAbortReload } from '$lib/helpers/hydration-reload-guard';
 
@@ -43,29 +44,31 @@ const handleClientError: HandleClientError = ({ error, event, message }) => {
 		console.error('Page assets are unavailable and a reload did not help; showing the static page instead.', error);
 		throw error;
 	}
-	// Sentry (wrapped around this hook below) is the only other consumer of the error, and it is a
-	// no-op without a DSN (local dev, test builds). Without this line a failed client-side `load` or
-	// hydration shows the 500 page with no trace anywhere — the browser console stays empty, which
-	// makes wallet-flow bugs (async wagmi state, RPC failures) needlessly hard to diagnose.
+	// Without this line a failed client-side `load` or hydration shows the 500 page with no trace
+	// anywhere — the browser console stays empty, which makes wallet-flow bugs (async wagmi state,
+	// RPC failures) needlessly hard to diagnose.
 	console.error('Client-side error', error);
 	// Same shape SvelteKit produces by default when no hook is defined
 	return { message };
 };
 
-// Sentry captures the error first, then delegates to our handler (throws propagate).
-export const handleError = Sentry.handleErrorWithSentry(handleClientError);
+export const handleError = handleClientError;
+
+// TODO: Re-enable browser Sentry once its network problems are resolved. The ingestion hostname
+// resolves to a Tailscale address, triggering Chrome's local network access permission prompt.
+// export const handleError = Sentry.handleErrorWithSentry(handleClientError);
 
 // Sentry.init must run inside `init` with a dynamic import of $env/dynamic/public.
 // A static top-level import causes the env module to be evaluated at hook module
 // load time, before SvelteKit sets up globalThis.__sveltekit_*, which throws:
 // "TypeError: can't access property 'env', globalThis.__sveltekit_* is undefined".
-export const init: ClientInit = async () => {
-	const { env } = await import('$env/dynamic/public');
-	Sentry.init({
-		dsn: env['TS_PUBLIC_SENTRY_DSN'],
-		sendDefaultPii: true,
-		environment: env['TS_PUBLIC_SITE_MODE'] || 'local',
-		release: `frontend@${env['TS_PUBLIC_FRONTEND_VERSION_TAG']}`,
-		tracesSampleRate: 0.1
-	});
-};
+// export const init: ClientInit = async () => {
+// 	const { env } = await import('$env/dynamic/public');
+// 	Sentry.init({
+// 		dsn: env['TS_PUBLIC_SENTRY_DSN'],
+// 		sendDefaultPii: true,
+// 		environment: env['TS_PUBLIC_SITE_MODE'] || 'local',
+// 		release: `frontend@${env['TS_PUBLIC_FRONTEND_VERSION_TAG']}`,
+// 		tracesSampleRate: 0.1
+// 	});
+// };
