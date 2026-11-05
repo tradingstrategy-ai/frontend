@@ -379,6 +379,7 @@ The current custom strategy SVGs are:
 - `static/avatars/gmx-ai.svg`
 - `static/avatars/hyper-ai.svg`
 - `static/avatars/lighter-ai.svg`
+- `static/avatars/lix.svg`
 
 These follow a shared pattern:
 
