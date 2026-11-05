@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-labelledby="title desc">
+  <title id="title">Lighter multistrategy logo</title>
+  <desc id="desc">A large Lighter mark with a smaller branching multistrategy badge inset inside a rounded square for the Lighter multistrategy vault.</desc>
+  <defs>
+    <radialGradient id="bg-glow" cx="50%" cy="36%" r="74%">
+      <stop offset="0" stop-color="#2a2a30" />
+      <stop offset="1" stop-color="#161619" />
+    </radialGradient>
+    <radialGradient id="inner-glow" cx="50%" cy="30%" r="70%">
+      <stop offset="0" stop-color="#2f2f36" stop-opacity="0.95" />
+      <stop offset="1" stop-color="#101013" stop-opacity="0.92" />
+    </radialGradient>
+    <linearGradient id="mark-gradient" x1="0.18" y1="0.12" x2="0.84" y2="0.92" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ffffff" />
+      <stop offset="0.6" stop-color="#ececf0" />
+      <stop offset="1" stop-color="#b9b9c4" />
+    </linearGradient>
+    <linearGradient id="square-gradient" x1="0.18" y1="0.14" x2="0.84" y2="0.88" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#34343c" />
+      <stop offset="1" stop-color="#141417" />
+    </linearGradient>
+    <filter id="main-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="26" stdDeviation="24" flood-color="#000000" flood-opacity="0.35" />
+    </filter>
+    <filter id="square-shadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="22" stdDeviation="18" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <circle cx="540" cy="540" r="540" fill="url(#bg-glow)" />
+  <circle cx="540" cy="540" r="396" fill="url(#inner-glow)" stroke="#ffffff" stroke-opacity="0.08" stroke-width="10" />
+  <circle cx="540" cy="540" r="350" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="8" />
+
+  <!-- Lighter brand mark, from src/lib/assets/logos/blockchains/lighter.svg -->
+  <g filter="url(#main-shadow)" transform="translate(28 8) scale(2)">
+    <path d="M173.422 420L245.095 352.948V92L173.422 162.681V420Z" fill="url(#mark-gradient)" />
+    <path d="M266.908 420L338.581 353.108V249.168L266.908 319.647V420Z" fill="url(#mark-gradient)" />
+  </g>
+
+  <!-- Multistrategy badge: one stem branching into three strategies -->
+  <g filter="url(#square-shadow)">
+    <rect x="690" y="690" width="240" height="240" rx="62" fill="url(#square-gradient)" stroke="#ffffff" stroke-opacity="0.24" stroke-width="16" />
+    <rect x="718" y="718" width="184" height="184" rx="42" fill="#1b1b20" />
+
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M752 810H790" stroke="#ececf0" stroke-width="18" />
+      <path d="M790 810C820 810 820 762 850 762" stroke="#22B554" stroke-width="18" />
+      <path d="M790 810H850" stroke="#ececf0" stroke-width="18" />
+      <path d="M790 810C820 810 820 858 850 858" stroke="#F62F2F" stroke-width="18" />
+    </g>
+    <circle cx="752" cy="810" r="16" fill="#ececf0" />
+    <circle cx="862" cy="762" r="18" fill="#22B554" />
+    <circle cx="862" cy="810" r="18" fill="#ececf0" />
+    <circle cx="862" cy="858" r="18" fill="#F62F2F" />
+  </g>
+</svg>

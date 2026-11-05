@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add the Lighter strategy portfolio (LIX) as an active strategy with its avatar (2026-11-05).
 - Move vault venue and contact actions into a responsive Access and updates box (2026-11-03).
 - Add a four-row faded preview with expand and collapse controls to vault technical details (2026-11-02).
 - Default curator vault listings to a zero minimum TVL (2026-10-31).

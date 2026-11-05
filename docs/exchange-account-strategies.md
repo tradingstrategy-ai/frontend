@@ -5,7 +5,7 @@ account on an external perpetuals exchange (GMX, Derive, Hyperliquid, Lighter) a
 that account as a single `exchange_account` position. The frontend links such strategies to the
 exchange's own public account page instead of rendering per-position detail pages.
 
-Live examples: `gmx-ai` (GMX on Arbitrum) and `lighter-ai` (Lighter, settled on Ethereum).
+Live examples: `gmx-ai` (GMX on Arbitrum), and `lighter-ai` and `lix` (Lighter, settled on Ethereum).
 
 ## How a strategy is detected
 
