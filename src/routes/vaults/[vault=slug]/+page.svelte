@@ -58,6 +58,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	let isCapped = $derived(isVaultDepositCapped(vault));
 	let showTvlWarning = $derived(shouldShowVaultTvlDownMoreThan95PercentWarning(vault));
 	let showLongDurationWarning = $derived(vault.flags.includes('long_duration'));
+	let showFortyAcresWithdrawalWarning = $derived(vault.flags.includes('forty_acres_withdrawal_risk'));
 	let hasUnknownProtocol = $derived(isUnknownVaultProtocol(vault));
 	let depositMayBeDisabled = $derived(vault.deposit_closed_reason != null);
 	let redemptionMayBeDisabled = $derived(vault.redemption_closed_reason != null);
@@ -80,6 +81,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 			morphoFlags.length > 0 ||
 			showTvlWarning ||
 			showLongDurationWarning ||
+			showFortyAcresWithdrawalWarning ||
 			showBlacklistedAlert ||
 			hasUnknownProtocol
 	);
@@ -132,6 +134,15 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 					<Alert size="md" status="error">
 						This {assetType} may have especially long duration redemption periods. Make sure you check the redemptions before
 						depositing.
+					</Alert>
+				{/if}
+
+				{#if showFortyAcresWithdrawalWarning}
+					<Alert size="md" status="warning" title="40acres withdrawal risk">
+						USDC lent to borrowers is unavailable for withdrawal until repaid, with no fixed repayment date.
+						<a href="https://docs.40acres.finance/risk-disclosure" target="_blank" rel="noreferrer"
+							>Read 40acres’ risk disclosure.</a
+						>
 					</Alert>
 				{/if}
 
