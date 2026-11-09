@@ -830,11 +830,11 @@ export function getFeeModeDescription(mode: string | null | undefined): string {
 	return feeModeDetails[mode as FeeMode]?.description ?? '';
 }
 
-/** Maximum APY to include in weighted average calculation (1000% = 10.0)
- *
- * Consider vaults with higher APY sa broken.
+/**
+ * Maximum APY included in rankings and weighted averages (1000% = 10.0).
+ * Higher reported returns are treated as outliers.
  */
-const MAX_APY_THRESHOLD = 10;
+export const MAX_APY_THRESHOLD = 10;
 
 type TvlWeightedApyVault = Pick<VaultInfo, 'current_nav' | 'one_month_cagr_net' | 'one_month_cagr' | 'risk_numeric'> &
 	Partial<Pick<VaultInfo, 'risk'>>;

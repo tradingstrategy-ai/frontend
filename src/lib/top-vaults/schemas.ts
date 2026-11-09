@@ -583,7 +583,7 @@ export interface SlimTopVaults {
  * Computed server-side from the full vault dataset to avoid shipping all vaults to the client.
  */
 export interface VaultAggregates {
-	/** Sum of current_nav across all eligible vaults (USD) */
+	/** Sum of current_nav across all non-blacklisted vaults (USD) */
 	totalTvl: number;
 	/** TVL-weighted average three-month annualised return across eligible vaults */
 	weightedAvgApy: number;

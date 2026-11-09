@@ -1,3 +1,7 @@
+<!--
+@component
+Headline vault TVL and weighted returns, with an explanation of APY eligibility.
+-->
 <script lang="ts">
 	import type { VaultAggregates } from '$lib/top-vaults/schemas';
 	import { formatDollar, formatPercent } from '$lib/helpers/formatters';
@@ -30,7 +34,7 @@
 				</span>
 				<span slot="popup">
 					TVL-weighted average of {aggregates.rankedVaultCount} known-protocol vaults with severe or safer risk and minimum
-					$50k TVL.
+					$50k TVL. Excludes AMM pools, unavailable returns and APY above 1,000%.
 				</span>
 			</Tooltip>
 		</dt>

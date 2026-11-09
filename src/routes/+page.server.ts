@@ -4,21 +4,13 @@ import { compareStrategiesForFrontpage } from '$lib/strategies/sort';
 import { toListingStrategy } from '$lib/strategies/yaml/adapter';
 import { fetchTopVaults } from '$lib/top-vaults/client';
 import { type SlimVaultInfo, type VaultAggregates } from '$lib/top-vaults/schemas';
-import {
-	calculateTotalTvl,
-	isEligibleFrontpageVault,
-	meetsDefaultTvl,
-	meetsMinTvl,
-	rankVaultsBy,
-	slimVault
-} from '$lib/top-vaults/helpers';
+import { getFrontpageVaults } from '$lib/top-vaults/frontpage';
 import { getCachedSharePriceReturns } from '$lib/strategies/yaml/share-price';
 import { compactStrategyTileChartData } from 'trade-executor/helpers/chart';
 import { fetchLatestFredValue, fetchLatestTreasuryRate } from '$lib/reference-rates';
 import { diagnose } from '$lib/diagnostics/server';
 
 const HOME_PAGE_EDGE_CACHE_TTL_SECONDS = 30 * 60;
-const FRONT_PAGE_VAULT_COUNT = 5;
 
 function getAgeSeconds(dateValue: Date | string | null | undefined) {
 	if (!dateValue) return null;
@@ -88,33 +80,9 @@ export async function load({ fetch }) {
 		let topVaults: { generated_at: Date | string; vaults: SlimVaultInfo[]; aggregates: VaultAggregates } | undefined;
 
 		if (topVaultsResult) {
-			const allSlim = topVaultsResult.vaults.map(slimVault);
-			const baseVaults = allSlim.filter((v) => isEligibleFrontpageVault(v) && meetsMinTvl(v));
-			const rankedVaults = baseVaults
-				.filter(meetsDefaultTvl)
-				.sort(rankVaultsBy(['three_months_cagr', 'three_months_cagr_net']))
-				.reverse();
-
-			const totalTvl = calculateTotalTvl(baseVaults);
-			const rankedTvl = calculateTotalTvl(rankedVaults);
-			const weightedAvgApy =
-				rankedTvl > 0
-					? rankedVaults.reduce((acc, v) => {
-							const weight = (v.current_nav ?? 0) / rankedTvl;
-							return acc + weight * (v.three_months_cagr_net ?? v.three_months_cagr ?? 0);
-						}, 0)
-					: 0;
-
 			topVaults = {
 				generated_at: topVaultsResult.generated_at,
-				// TopVaults renders five cards. Avoid serialising the unused 25 vaults
-				// into the initial HTML response.
-				vaults: rankedVaults.slice(0, FRONT_PAGE_VAULT_COUNT),
-				aggregates: {
-					totalTvl,
-					weightedAvgApy,
-					rankedVaultCount: rankedVaults.length
-				}
+				...getFrontpageVaults(topVaultsResult.vaults)
 			};
 		}
 
