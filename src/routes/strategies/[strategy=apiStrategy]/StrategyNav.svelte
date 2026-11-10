@@ -2,8 +2,8 @@
 @component
 Strategy sub-page navigation: a left-side menu on desktop that collapses to a dropdown on mobile.
 
-Exchange account strategies (GMX, Lighter, …) link their position entries out to the exchange's
-own account page instead of the internal position lists; see `docs/exchange-account-strategies.md`.
+Lighter accounts use internal position pages. Other exchange account strategies link to the
+exchange account page; see `docs/exchange-account-strategies.md`.
 
 @example
 
@@ -122,13 +122,17 @@ own account page instead of the internal position lists; see `docs/exchange-acco
 	// Tags resolve synchronously (so SSR gets the link); portfolio positions are the fallback
 	let resolvedExchangeAccount = $derived(getExchangeAccountInfo(strategy) ?? portfolioExchangeAccount);
 
+	let externalPositionAccount = $derived(
+		resolvedExchangeAccount?.protocol === 'lighter' ? undefined : resolvedExchangeAccount
+	);
+
 	let currentSlug = $derived(currentPath.split('/')[3] ?? '');
 	let currentOption = $derived(menuOptions.find(({ slug }) => slug === currentSlug));
 
 	let visibleOptions = $derived(
 		menuOptions.filter(({ slug, positionStatus }) => {
-			if (resolvedExchangeAccount && positionStatus) {
-				return exchangeSupportsPositionStatus(resolvedExchangeAccount.protocol, positionStatus);
+			if (externalPositionAccount && positionStatus) {
+				return exchangeSupportsPositionStatus(externalPositionAccount.protocol, positionStatus);
 			}
 			// prettier-ignore
 			switch (slug) {
@@ -179,9 +183,9 @@ own account page instead of the internal position lists; see `docs/exchange-acco
 		<Menu onclick={mobileMenu.close}>
 			{#each visibleOptions as { slug, label, positionStatus } (slug)}
 				{@const active = slug === currentOption?.slug}
-				{@const isExchangePosition = !!(resolvedExchangeAccount && positionStatus)}
+				{@const isExchangePosition = !!(externalPositionAccount && positionStatus)}
 				<MenuItem
-					targetUrl={isExchangePosition ? (resolvedExchangeAccount?.url ?? '') : getTargetUrl(slug)}
+					targetUrl={isExchangePosition ? (externalPositionAccount?.url ?? '') : getTargetUrl(slug)}
 					external={isExchangePosition}
 					{active}
 				>
@@ -192,7 +196,7 @@ own account page instead of the internal position lists; see `docs/exchange-acco
 							{label}
 						{/if}
 					</span>
-					{#if positionStatus && !resolvedExchangeAccount}
+					{#if positionStatus && !externalPositionAccount}
 						{#await getPositionCount(positionStatus)}
 							<span class="count skeleton"></span>
 						{:then count}

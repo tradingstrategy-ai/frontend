@@ -51,7 +51,13 @@ export const createTradingPairInfo = <T extends TradingPairIdentifier>(base: T) 
 				return this.other_data?.vault_name ?? base.token_symbol;
 			case 'exchange_account': {
 				const name = this.exchange_name ?? this.other_data?.exchange_protocol;
-				return name ? name.charAt(0).toUpperCase() + name.slice(1) : '<Unknown exchange>';
+				const displayName = name ? name.charAt(0).toUpperCase() + name.slice(1) : '<Unknown exchange>';
+				if (this.other_data?.exchange_protocol === 'lighter') {
+					const book = this.other_data.lighter_sub_account_id;
+					if (book) return `${displayName}: ${book}`;
+					if (this.other_data.lighter_account_role === 'master') return `${displayName}: master`;
+				}
+				return displayName;
 			}
 			default:
 				return `${base.token_symbol}-${quote.token_symbol}`;
@@ -69,6 +75,13 @@ export const createTradingPairInfo = <T extends TradingPairIdentifier>(base: T) 
 	},
 
 	get kindShortLabel() {
+		if (
+			this.kind === 'exchange_account' &&
+			this.other_data?.exchange_protocol === 'lighter' &&
+			this.other_data.lighter_account_role === 'sub_account'
+		) {
+			return 'sleeve';
+		}
 		return kindShortLabels[this.kind];
 	}
 });
