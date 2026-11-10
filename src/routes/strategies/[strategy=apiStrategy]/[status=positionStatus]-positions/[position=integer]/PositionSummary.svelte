@@ -29,7 +29,20 @@ Summary metrics for an individual strategy position.
 
 	const VALUE_REALIZATION_GAP_THRESHOLD = 0.01;
 
-	let currentPrice = $derived(position.stillOpen ? position.currentPrice : position.closePrice);
+	let isExchangeAccount = $derived(position.pair.kind === 'exchange_account');
+
+	let openPrice = $derived(
+		isExchangeAccount
+			? position.stats.find((sample) => isNumber(sample.internal_share_price))?.internal_share_price
+			: position.openPrice
+	);
+	let currentPrice = $derived(
+		isExchangeAccount
+			? position.latestStats?.internal_share_price
+			: position.stillOpen
+				? position.currentPrice
+				: position.closePrice
+	);
 	let currentQuantity = $derived(position.stillOpen ? position.currentQuantity : position.quantityAtClose);
 	let currentValue = $derived(position.stillOpen ? position.currentValue : position.valueAtClose);
 	let rebalanceCount = $derived(position.rebalanceCount);
@@ -38,7 +51,7 @@ Summary metrics for an individual strategy position.
 </script>
 
 <div class="position-summary">
-	<h2>Position Summary</h2>
+	<h2>Position summary</h2>
 
 	<table class="metrics-table">
 		<thead>
@@ -166,14 +179,16 @@ Summary metrics for an individual strategy position.
 				</tr>
 			{:else}
 				<tr>
-					<td>Price</td>
+					<td>{isExchangeAccount ? 'Internal share price' : 'Price'}</td>
 					<td>
 						<Tooltip>
 							<span slot="trigger" class="underline">
-								{formatPrice(position.openPrice)}
+								{formatPrice(openPrice)}
 							</span>
 							<span slot="popup">
-								{positionTooltips.openPrice}
+								{isExchangeAccount
+									? 'The internal share price when capital first entered this account.'
+									: positionTooltips.openPrice}
 							</span>
 						</Tooltip>
 					</td>
@@ -183,13 +198,17 @@ Summary metrics for an individual strategy position.
 								{formatPrice(currentPrice)}
 							</span>
 							<span slot="popup">
-								{position.stillOpen ? positionTooltips.currentPrice : positionTooltips.closePrice}
+								{isExchangeAccount
+									? 'Account equity per internal share, as recorded by the executor. Deposits and withdrawals adjust the share count.'
+									: position.stillOpen
+										? positionTooltips.currentPrice
+										: positionTooltips.closePrice}
 							</span>
 						</Tooltip>
 					</td>
 					<td>
-						{#if isNumber(currentPrice) && isNumber(position.openPrice)}
-							{formatPrice(currentPrice - position.openPrice, undefined, undefined, changeOptions)}
+						{#if isNumber(currentPrice) && isNumber(openPrice)}
+							{formatPrice(currentPrice - openPrice, undefined, undefined, changeOptions)}
 						{:else}
 							{notFilledMarker}
 						{/if}
@@ -219,7 +238,7 @@ Summary metrics for an individual strategy position.
 						</span>
 					</Tooltip>
 					<!-- value realization gap info/warning icon and tooltip -->
-					{#if position.stillOpen && !position.isCreditPosition}
+					{#if position.stillOpen && !position.isCreditPosition && !isExchangeAccount}
 						{@const { value, formatted, direction } = getProfitInfo(position.valueRealizationGap)}
 						{@const exceedsThreshold = -(value ?? 0) > VALUE_REALIZATION_GAP_THRESHOLD}
 						<span class={['value-realization-gap', exceedsThreshold && 'warning']}>

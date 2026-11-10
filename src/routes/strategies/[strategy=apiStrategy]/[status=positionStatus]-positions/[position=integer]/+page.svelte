@@ -54,6 +54,12 @@ Individual strategy position page.
 									: 'View trading pair'}
 						</Button>
 					{/if}
+					{#if exchangeAccount}
+						<Button size="sm" target="_blank" rel="noreferrer" href={exchangeAccount.url}>
+							View {exchangeAccount.name}
+							{position.pair.other_data?.lighter_account_role === 'sub_account' ? 'subaccount' : 'account'}
+						</Button>
+					{/if}
 					{#if hyperliquidVaultUrl}
 						<Button size="sm" target="_blank" rel="noreferrer" href={hyperliquidVaultUrl}>
 							View vault on Hyperliquid

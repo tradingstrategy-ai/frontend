@@ -60,7 +60,7 @@ Strategy position listing page.
 			hasPagination={positions.length > 5}
 			hasSearch={positions.length > 5}
 			hiddenPositions={strategy.hiddenPositions}
-			{exchangeAccount}
+			exchangeAccount={exchangeAccount?.protocol === 'lighter' ? undefined : exchangeAccount}
 			{positionVaultSparklines}
 			{reserves}
 			{onChange}

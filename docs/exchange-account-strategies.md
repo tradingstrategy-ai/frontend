@@ -2,8 +2,9 @@
 
 Some trade-executor strategies do not trade on-chain pairs directly. Instead the vault's Safe owns an
 account on an external perpetuals exchange (GMX, Derive, Hyperliquid, Lighter) and the executor tracks
-that account as a single `exchange_account` position. The frontend links such strategies to the
-exchange's own public account page instead of rendering per-position detail pages.
+each account as an `exchange_account` position. Lighter uses internal position lists and detail
+pages, including internal share prices and a button linking to that position's Lighter account.
+Other exchanges link to their own public account pages.
 
 Live examples: `gmx-ai` (GMX on Arbitrum), and `lighter-ai` and `lix` (Lighter, settled on Ethereum).
 
@@ -39,8 +40,14 @@ shows no link rather than a broken one.
 ## Which position lists link out
 
 `exchangeSupportsPositionStatus(protocol, status)` controls which "positions" navigation entries are
-replaced by the external link. GMX and Lighter only show open positions on their account pages, so
-their "Closed positions" entry is hidden. Derive and Hyperliquid expose both.
+replaced by the external link for exchanges other than Lighter. GMX only shows open positions on its
+account page, so its "Closed positions" entry is hidden. Derive and Hyperliquid expose both.
+Lighter keeps internal open, closed and frozen position pages: each account has its own position
+and `exchange_subaccount_id`, so a strategy-wide URL must not be used for individual rows.
+
+The Lix local test fixtures in `tests/mocks/strategies/lix-*.mock.json` snapshot the deployed
+metadata (including the full description), state and position charts from 2026-11-10.
+`.env.test` uses these fixtures; `.env.development` connects to the live executor.
 
 ## Icons
 
