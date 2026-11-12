@@ -4,6 +4,7 @@
  * Both SvelteKit loaders and browser compatibility consumers use this module so
  * a page boundary can never sort a different prefix from the server.
  */
+import { SOLANA_CHAIN_ID } from '$lib/helpers/solana';
 import { getChainDisplayName } from '$lib/helpers/chain';
 import type { Core3Protocol, VaultInfo, VaultListingRow } from '../schemas';
 import {
@@ -91,7 +92,9 @@ function compareStrings(value: (vault: VaultListingRow) => string) {
 }
 
 function canonicalKey(vault: Pick<VaultListingRow, 'id' | 'chain_id' | 'address'>): string {
-	return vault.id || `${vault.chain_id}:${vault.address.toLowerCase()}`;
+	return (
+		vault.id || `${vault.chain_id}:${vault.chain_id === SOLANA_CHAIN_ID ? vault.address : vault.address.toLowerCase()}`
+	);
 }
 
 /**

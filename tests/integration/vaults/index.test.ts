@@ -234,9 +234,12 @@ async function expectLifetimeDataTooltip(
 	endDate: string,
 	totalDays: number
 ) {
-	await cell.hover();
 	const popup = cell.locator('.popup');
-	await expect(popup).toBeVisible();
+	// Loading continuation rows can move the target during Playwright's initial scroll.
+	await expect(async () => {
+		await cell.locator('.trigger').hover();
+		await expect(popup).toBeVisible({ timeout: 1000 });
+	}).toPass({ timeout: 10_000 });
 	await expect(popup).toContainText(`Data starts: ${startDate}`);
 	await expect(popup).toContainText(`Data ends: ${endDate}`);
 	await expect(popup).toContainText(`Days of data: ${totalDays}`);

@@ -34,3 +34,14 @@ describe('vaultId param matcher', () => {
 		expect(match('9997-unknown-format')).toBe(false);
 	});
 });
+
+describe('Solana vault routes', () => {
+	test('accepts complete dataset keys only on Solana', () => {
+		expect(match(`9992-solana-vault-${'ab'.repeat(32)}`)).toBe(true);
+		expect(match(`1-solana-vault-${'ab'.repeat(32)}`)).toBe(false);
+		expect(match(`9992-solana-vault-${'a'.repeat(63)}`)).toBe(false);
+		expect(match(`9992-solana-vault-${'g'.repeat(64)}`)).toBe(false);
+		expect(match(`9992-0x${'ab'.repeat(20)}`)).toBe(false);
+		expect(match('9992-lighter-pool-123')).toBe(false);
+	});
+});

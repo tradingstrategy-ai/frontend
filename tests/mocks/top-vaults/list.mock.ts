@@ -1,3 +1,4 @@
+import { makeSolanaVaultAddress } from '$lib/helpers/solana';
 import type { VaultInfo } from '$lib/top-vaults/schemas';
 import { type TestVaultProps, createTestVault } from '$lib/top-vaults/test-utils';
 import { defineMock } from 'vite-plugin-mock-dev-server';
@@ -798,6 +799,25 @@ const categories = {
 	}
 };
 
+const solanaAccount = 'J7qhMAKnB6G5dvoAN9281ufabajKbyGQxxd2bq6R7fPJ';
+const neutralTradeVault = createTestVault('Neutral Autopilot', {
+	chain: 'solana',
+	chain_id: 9992,
+	address: makeSolanaVaultAddress(solanaAccount),
+	protocol: 'Neutral Trade',
+	// Keep below the default listing threshold so pagination fixtures stay stable.
+	current_nav: 1_000,
+	other_data: {
+		morpho_vault_flags: [],
+		morpho_market_flags: [],
+		neutral_trade: {
+			vault_address: solanaAccount,
+			source_chain: 'solana',
+			explorer_url: `https://solscan.io/account/${solanaAccount}`
+		}
+	}
+});
+
 export default defineMock({
 	url: '/api/top-vaults/vaults.json',
 	body: {
@@ -806,6 +826,7 @@ export default defineMock({
 		categories,
 		vaults: [
 			yamlStrategyVault,
+			neutralTradeVault,
 			abnormalTvlBlacklistedVault,
 			morphoFlaggedBlacklistedVault,
 			providerRatedVault,

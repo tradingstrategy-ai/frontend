@@ -1,3 +1,4 @@
+import { makeSolanaVaultAddress } from '$lib/helpers/solana';
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { createTestVault } from '$lib/top-vaults/test-utils';
 import type { TopVaults } from '$lib/top-vaults/schemas';
@@ -24,6 +25,26 @@ describe('vault search', () => {
 			categories: {}
 		} satisfies TopVaults);
 		mocks.fetchStablecoinMetadataIndex.mockResolvedValue([]);
+	});
+
+	test('finds a Solana vault by its native account and returns the original case', async () => {
+		const account = 'J7qhMAKnB6G5dvoAN9281ufabajKbyGQxxd2bq6R7fPJ';
+		mocks.getCachedTopVaults.mockResolvedValue({
+			generated_at: '2026-11-12T00:00:00.000Z',
+			vaults: [
+				createTestVault('Neutral Autopilot', {
+					chain: 'solana',
+					chain_id: 9992,
+					address: makeSolanaVaultAddress(account),
+					protocol: 'Neutral Trade'
+				})
+			],
+			core3_protocols: {},
+			curators: {},
+			categories: {}
+		} satisfies TopVaults);
+		const result = await searchVaultEntities(vi.fn() as unknown as Fetch, account);
+		expect(result.results[0]).toMatchObject({ address: account, chainName: 'Solana' });
 	});
 
 	test('finds a vault by its share token symbol without case sensitivity', async () => {
