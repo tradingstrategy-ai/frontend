@@ -40,7 +40,10 @@ Displays supplementary vault information, performance, fees, and risk metrics.
 
 	let hasLimitedHistory = $derived(LIMITED_HISTORY_CHAINS.includes(vault.chain_id));
 	let hasNetFeeInformation = $derived(hasNetVaultFeeInformation(vault));
-	let hasInternalisedFees = $derived(hasInternalisedVaultFees(vault));
+	let hasInternalisedFees = $derived(
+		hasInternalisedVaultFees(vault) &&
+			(isPositiveFee(vault.gross_fees?.performance) || isPositiveFee(vault.gross_fees?.management))
+	);
 	let denominationSlug = $derived(
 		resolveStablecoinSlug({
 			slug: vault.denomination_slug,
@@ -101,15 +104,15 @@ Displays supplementary vault information, performance, fees, and risk metrics.
 	]);
 	let feeRows = $derived([
 		{
-			label: `Performance fee${hasInternalisedFees ? '*' : ''}`,
-			mobileLabel: `Performance${hasInternalisedFees ? '*' : ''}`,
+			label: `Performance fee${hasInternalisedFees && isPositiveFee(vault.gross_fees?.performance) ? '*' : ''}`,
+			mobileLabel: `Performance${hasInternalisedFees && isPositiveFee(vault.gross_fees?.performance) ? '*' : ''}`,
 			value: vault.gross_fees?.performance,
 			tooltip: '<strong>Performance fee</strong> is charged against investment profits.',
 			shortTermWarning: false
 		},
 		{
-			label: `Management fee${hasInternalisedFees ? '*' : ''}`,
-			mobileLabel: `Management${hasInternalisedFees ? '*' : ''}`,
+			label: `Management fee${hasInternalisedFees && isPositiveFee(vault.gross_fees?.management) ? '*' : ''}`,
+			mobileLabel: `Management${hasInternalisedFees && isPositiveFee(vault.gross_fees?.management) ? '*' : ''}`,
 			value: vault.gross_fees?.management,
 			tooltip: '<strong>Management fee</strong> is charged annually for managing the vault.',
 			shortTermWarning: false
