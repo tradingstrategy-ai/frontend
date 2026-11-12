@@ -6,6 +6,7 @@ Perpetual futures and crypto-exposed GMX pools show BTC/ETH benchmarks. GMX GM B
 pools show their respective market asset only, while stable-stable GM swap pools use the U.S.
 Treasury benchmark. Perpetual futures vaults also include an underwater
 drawdown pane (equity curve tearsheet style); remaining vaults show a US 3M T-bill instead.
+The tooltip includes current and maximum drawdown up to the hovered date in the selected range.
 
 Benchmark lines are rebased to the vault share price for the selected range
 so relative performance is comparable on a single axis.
@@ -28,6 +29,7 @@ so relative performance is comparable on a single axis.
 	import { isPerpetualFuturesVault } from './isPerpetualFuturesVault';
 	import { getVaultAssetType } from './helpers';
 	import { getVaultPriceBenchmarkTokens } from './vault-price-benchmarks';
+	import { computeDrawdownSeries, computeMaxDrawdownSeries } from './drawdown';
 	import type { PriceScaleCalculator, SimpleDataItem } from '$lib/charts/types';
 	import {
 		formatDollar,
@@ -79,7 +81,7 @@ so relative performance is comparable on a single axis.
 	type ChartSeriesKind = 'vault-price' | 'drawdown' | 'tvl';
 	type ChartSeriesPoint = {
 		value: number;
-		customValues?: { annualizedReturn?: number; series?: ChartSeriesKind; period?: string };
+		customValues?: { annualizedReturn?: number; series?: ChartSeriesKind; period?: string; maxDrawdown?: number };
 	};
 
 	function withChartSeriesKind(data: SimpleDataItem[], series: ChartSeriesKind) {
@@ -265,12 +267,17 @@ so relative performance is comparable on a single axis.
 						{@const rangeStart = range ? Math.floor(range[0].getTime() / 1000) : 0}
 						{@const windowData = range ? data.filter((d) => d.time >= rangeStart) : data}
 						{@const drawdownSeriesData = (() => {
-							let peak = -Infinity;
-							return windowData.map((item) => {
-								if (item.value > peak) peak = item.value;
-								const dd = peak > 0 ? (item.value - peak) / peak : 0;
-								return { time: item.time, value: dd, customValues: { series: 'drawdown' as const, period: ddPeriod } };
-							});
+							const drawdowns = computeDrawdownSeries(windowData.map(({ time, value }) => [time, value]));
+							const maxDrawdowns = computeMaxDrawdownSeries(drawdowns);
+							return drawdowns.map(([, value], index) => ({
+								time: windowData[index].time,
+								value,
+								customValues: {
+									series: 'drawdown' as const,
+									period: ddPeriod,
+									maxDrawdown: maxDrawdowns[index][1]
+								}
+							}));
 						})()}
 						<Series
 							type={BaselineSeriesType}
@@ -350,6 +357,8 @@ so relative performance is comparable on a single axis.
 							{#if showDrawdown}
 								<dt>Drawdown {drawdown?.customValues?.period ?? ''}:</dt>
 								<dd>{formatPercent(drawdown?.value, 2, 2)}</dd>
+								<dt>Max drawdown:</dt>
+								<dd>{formatPercent(drawdown?.customValues?.maxDrawdown, 2, 2)}</dd>
 							{/if}
 							<dt>TVL:</dt>
 							<dd>{tvl ? formatValue(tvl.value) : notFilledMarker}</dd>
