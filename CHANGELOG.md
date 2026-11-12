@@ -1,6 +1,7 @@
 # Weblog of stuff
 
 - Show maximum drawdown alongside current drawdown in vault chart tooltips for the selected period (2026-11-12).
+- Add Solana vault-only support for Neutral Trade with case-sensitive address validation and Solscan links (2026-11-12).
 - Show Lighter account sleeves as internal positions with share prices and links to their subaccounts (2026-11-10).
 - Add the Lighter strategy portfolio (LIX) as an active strategy with its avatar (2026-11-05).
 - Move vault venue and contact actions into a responsive Access and updates box (2026-11-03).

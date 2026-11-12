@@ -10,6 +10,7 @@ Includes the source whitelist status and any source-provided whitelist notes.
 	import { resolve } from '$app/paths';
 	import type { VaultInfo } from '$lib/top-vaults/schemas';
 	import type { Chain } from '$lib/helpers/chain';
+	import { SOLANA_CHAIN_ID, decodeSolanaVaultAddress, isSolanaVaultAddress } from '$lib/helpers/solana';
 	import { getExplorerUrl } from '$lib/helpers/chain';
 	import MetricsBox from '$lib/components/MetricsBox.svelte';
 	import { CopyWidget, HashAddress, Timestamp, Tooltip } from '$lib/components';
@@ -134,7 +135,10 @@ Includes the source whitelist status and any source-provided whitelist notes.
 		{ label: `${technicalAssetType} name`, value: vault.name },
 		{
 			label: `${technicalAssetType} address`,
-			value: vault.address,
+			value:
+				chain.id === SOLANA_CHAIN_ID && isSolanaVaultAddress(vault.address)
+					? decodeSolanaVaultAddress(vault.address)
+					: vault.address,
 			type: 'address' as const
 		},
 		{ label: 'Chain', value: chain, type: 'chain' as const },

@@ -22,10 +22,10 @@ export async function load({ fetch, params }) {
 			.then(({ vaults }) => summariseChainVaults(vaults, chainIds))
 			.catch(optionalDataError('top vaults')),
 		entities: {
-			exchanges: fetchTopExchanges(fetch, chain.slug),
-			tokens: fetchTopTokens(fetch, chain.slug),
-			pairs: fetchTopPairs(fetch, chain.slug),
-			reserves: fetchTopReserves(fetch, chain.slug)
+			exchanges: chain.hasBackendData ? fetchTopExchanges(fetch, chain.slug) : Promise.resolve({ rows: [] }),
+			tokens: chain.hasBackendData ? fetchTopTokens(fetch, chain.slug) : Promise.resolve({ rows: [] }),
+			pairs: chain.hasBackendData ? fetchTopPairs(fetch, chain.slug) : Promise.resolve({ rows: [] }),
+			reserves: chain.hasBackendData ? fetchTopReserves(fetch, chain.slug) : Promise.resolve({ rows: [] })
 		}
 	};
 }

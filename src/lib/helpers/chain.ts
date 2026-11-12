@@ -1,3 +1,5 @@
+import { SOLANA_CHAIN_ID, decodeSolanaVaultAddress, isSolanaAddress, isSolanaVaultAddress } from './solana';
+
 /**
  * Blockchain network metadata used for routing, display and explorer links.
  *
@@ -116,6 +118,16 @@ export const chains = (() => {
 			sortOrder: 7
 		},
 		// Partially supported chains (indexed vaults, logos)
+		// Reserved native Solana dataset; vault discovery only.
+		{
+			id: SOLANA_CHAIN_ID,
+			slug: 'solana',
+			name: 'Solana',
+			homepage: 'https://solana.com',
+			explorer: 'https://solscan.io',
+			nativeCurrency: 'SOL',
+			hasBackendData: false
+		},
 		{
 			id: 10,
 			slug: 'optimism',
@@ -393,10 +405,10 @@ export function getChainsBySlug(slug: string): ChainData[] {
  *
  * Synthetic perp DEX "chains" (e.g. HyperCore 9999, Lighter 9998, Hibachi 9997,
  * ApeX 9995) are modelled in the reserved 9900–9999 chain ID range rather than
- * being real blockchains.
+ * being real blockchains. The native Solana dataset (9992) is excluded.
  */
 export function isPerpDexChainId(chainId: Maybe<number>): boolean {
-	return chainId != null && chainId >= 9900 && chainId <= 9999;
+	return chainId != null && chainId !== SOLANA_CHAIN_ID && chainId >= 9900 && chainId <= 9999;
 }
 
 /**
@@ -404,6 +416,11 @@ export function isPerpDexChainId(chainId: Maybe<number>): boolean {
  */
 export function getExplorerUrl(chain: Maybe<Chain>, hash: string) {
 	const baseUrl = chain?.explorer ?? 'https://blockscan.com';
+
+	if (chain?.id === SOLANA_CHAIN_ID) {
+		const account = isSolanaVaultAddress(hash) ? decodeSolanaVaultAddress(hash) : hash;
+		return isSolanaAddress(account) ? `${baseUrl}/account/${account}` : baseUrl;
+	}
 
 	let path = '';
 	if (hash.startsWith('0x') && hash.length === 42) {

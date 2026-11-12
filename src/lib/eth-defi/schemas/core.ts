@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isSolanaAddress, isSolanaVaultAddress } from '$lib/helpers/solana';
 
 export const blockNumber = z.int().nonnegative();
 export type BlockNumber = z.infer<typeof blockNumber>;
@@ -14,12 +15,22 @@ export const hexString = z.custom<`0x${string}`>((arg) => {
 });
 export type HexString = z.infer<typeof hexString>;
 
+export const solanaAddress = z.string().refine(isSolanaAddress, 'Invalid Solana account address');
+export type SolanaAddress = z.infer<typeof solanaAddress>;
+
 /**
  * Vault address schema supporting multiple address formats:
  * - EVM hex addresses: 0x-prefixed hex strings (e.g., 0x1234...abcd)
  * - GRVT vault identifiers: vlt:-prefixed strings (e.g., vlt:2zqosukicgltfcjdet4kpmecvfg)
  * - Hibachi vault identifiers: hibachi-vault-{id} (e.g., hibachi-vault-2)
+ * - Solana: case-sensitive base58 accounts or solana-vault-{64 hex digits} storage keys
  * - ApeX vault identifiers: apex-vault-{id} (e.g., apex-vault-1856279848381710336)
  */
-export const vaultAddress = z.string().min(1);
+export const vaultAddress = z
+	.string()
+	.min(1)
+	.refine(
+		(address) => !/^solana-vault-/i.test(address) || isSolanaVaultAddress(address),
+		'Invalid Solana vault identity'
+	);
 export type VaultAddress = z.infer<typeof vaultAddress>;

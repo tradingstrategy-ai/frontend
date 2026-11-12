@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { blockNumber, chainId, vaultAddress } from '$lib/eth-defi/schemas/core';
+import { blockNumber, chainId, vaultAddress, solanaAddress } from '$lib/eth-defi/schemas/core';
 import { isoDateTime } from '$lib/schemas/utility';
 
 const nullableNumber = z.number().nullable();
@@ -457,9 +457,17 @@ export const vaultInfoSchema = z.object({
 	other_data: z
 		.object({
 			/** Morpho vault-level warning flags (e.g. "not_whitelisted", "short_timelock") */
-			morpho_vault_flags: z.string().array(),
+			morpho_vault_flags: z.string().array().default([]),
 			/** Morpho market-level warning flags */
-			morpho_market_flags: z.string().array()
+			morpho_market_flags: z.string().array().default([]),
+			/** Original native Solana identity and source metadata from Neutral Trade. */
+			neutral_trade: z
+				.looseObject({
+					vault_address: solanaAddress,
+					source_chain: z.literal('solana'),
+					explorer_url: z.url()
+				})
+				.optional()
 		})
 		.nullable()
 		.optional(),

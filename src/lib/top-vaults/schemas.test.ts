@@ -126,3 +126,23 @@ describe('topVaultsSchema resilience', () => {
 		).toBeNull();
 	});
 });
+
+describe('Neutral Trade native Solana metadata', () => {
+	it('retains native identity and source fields without requiring Morpho metadata', () => {
+		const neutral_trade = {
+			vault_address: 'J7qhMAKnB6G5dvoAN9281ufabajKbyGQxxd2bq6R7fPJ',
+			source_chain: 'solana' as const,
+			explorer_url: 'https://solscan.io/account/J7qhMAKnB6G5dvoAN9281ufabajKbyGQxxd2bq6R7fPJ',
+			category: 'Curated'
+		};
+		const vault = createTestVault('Neutral Autopilot', {
+			chain: 'solana',
+			chain_id: 9992,
+			address: 'solana-vault-' + 'ab'.repeat(32),
+			protocol: 'Neutral Trade',
+			other_data: { neutral_trade, morpho_vault_flags: [], morpho_market_flags: [] }
+		});
+		const result = topVaultsSchema.parse({ ...basePayload, vaults: [{ ...vault, other_data: { neutral_trade } }] });
+		expect(result.vaults[0].other_data?.neutral_trade).toEqual(neutral_trade);
+	});
+});

@@ -1,3 +1,4 @@
+import { SOLANA_CHAIN_ID, decodeSolanaVaultAddress, isSolanaVaultAddress } from '$lib/helpers/solana';
 import { getLogoUrl } from '$lib/helpers/assets';
 import { getChain, getChainDisplayName } from '$lib/helpers/chain';
 import { fetchStablecoinMetadataIndex } from '$lib/stablecoin-metadata/client';
@@ -122,6 +123,10 @@ function buildIndex(topVaults: TopVaults, stablecoins: StablecoinMetadata[]): In
 	const records: IndexedSearchRecord[] = [];
 
 	for (const vault of vaults) {
+		const address =
+			vault.chain_id === SOLANA_CHAIN_ID && isSolanaVaultAddress(vault.address)
+				? decodeSolanaVaultAddress(vault.address)
+				: vault.address;
 		addRecord(
 			records,
 			{
@@ -133,7 +138,7 @@ function buildIndex(topVaults: TopVaults, stablecoins: StablecoinMetadata[]): In
 						? 'tokenised-fund'
 						: 'vault',
 				vaultId: vault.id,
-				address: vault.address,
+				address,
 				protocolName: getVaultProtocolDisplayName(vault),
 				chainName: getChainDisplayName(vault.chain_id),
 				averageApy1m: getMonthlyReturn(vault),
@@ -143,6 +148,7 @@ function buildIndex(topVaults: TopVaults, stablecoins: StablecoinMetadata[]): In
 			},
 			[
 				vault.vault_slug,
+				address,
 				vault.address,
 				vault.share_token,
 				vault.protocol,
