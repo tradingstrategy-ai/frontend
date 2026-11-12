@@ -1,5 +1,41 @@
 import { describe, it, expect } from 'vitest';
-import { computeDrawdownSeries } from './drawdown';
+import { computeDrawdownSeries, computeMaxDrawdownSeries } from './drawdown';
+
+describe('computeMaxDrawdownSeries', () => {
+	it('returns no values for an empty period', () => {
+		expect(computeMaxDrawdownSeries([])).toEqual([]);
+	});
+
+	it('retains the worst loss after recovery and only includes losses reached by that date', () => {
+		const prices: [number, number][] = [
+			[1, 100],
+			[2, 80],
+			[3, 120],
+			[4, 60],
+			[5, 120]
+		];
+		expect(computeMaxDrawdownSeries(computeDrawdownSeries(prices))).toEqual([
+			[1, 0],
+			[2, -0.2],
+			[3, -0.2],
+			[4, -0.5],
+			[5, -0.5]
+		]);
+	});
+
+	it('starts afresh when the selected period excludes an earlier loss', () => {
+		const periodPrices: [number, number][] = [
+			[3, 120],
+			[4, 108],
+			[5, 132]
+		];
+		expect(computeMaxDrawdownSeries(computeDrawdownSeries(periodPrices))).toEqual([
+			[3, 0],
+			[4, -0.1],
+			[5, -0.1]
+		]);
+	});
+});
 
 describe('computeDrawdownSeries', () => {
 	it('returns empty array for empty input', () => {

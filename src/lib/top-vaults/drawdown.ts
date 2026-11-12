@@ -11,3 +11,16 @@ export function computeDrawdownSeries(priceData: [number, number][]): [number, n
 		return [ts, drawdown];
 	});
 }
+
+/**
+ * Track the worst peak-to-trough loss reached by each timestamp.
+ * Recovery and new price highs do not erase an earlier maximum drawdown.
+ * @param drawdownData Drawdowns for the selected period, in chronological order.
+ */
+export function computeMaxDrawdownSeries(drawdownData: [number, number][]): [number, number][] {
+	let maxDrawdown = 0;
+	return drawdownData.map(([ts, drawdown]) => {
+		maxDrawdown = Math.min(maxDrawdown, drawdown);
+		return [ts, maxDrawdown];
+	});
+}
