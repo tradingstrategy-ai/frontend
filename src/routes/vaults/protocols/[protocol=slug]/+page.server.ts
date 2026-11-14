@@ -5,6 +5,7 @@ import { fetchVaultProtocolMetadata } from '$lib/vault-protocol/client';
 import {
 	getCore3ProtocolForVault,
 	getProtocolDisplayName,
+	hasNetVaultFeeInformation,
 	isUnknownVaultProtocol,
 	UNKNOWN_VAULT_PROTOCOL_DISPLAY_NAME,
 	UNKNOWN_VAULT_PROTOCOL_SLUG
@@ -42,6 +43,7 @@ export async function load({ params, fetch, url }) {
 		robots: isUnknownGroup ? 'noindex,follow' : undefined,
 		protocolSlug: protocol,
 		protocolName,
+		protocolFeesAvailable: !isUnknownGroup && protocolVaults.every(hasNetVaultFeeInformation),
 		protocolMetadata,
 		core3,
 		xerberus,
