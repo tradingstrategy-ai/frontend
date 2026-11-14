@@ -78,7 +78,8 @@ Vault listing and overview for one protocol.
 				>{data.listingSummary.matchingCount}
 				{data.listingSummary.matchingCount === 1 ? listingAssetType : listingAssetTypePlural}</strong
 			>
-			with a TVL-weighted average APY of <strong>{formatPercent(averageMonthlyReturn, 1)}</strong> (annualised, last 30 days).
+			with a TVL-weighted {data.protocolFeesAvailable ? 'fees-inclusive ' : ''}average APY of
+			<strong>{formatPercent(averageMonthlyReturn, 1)}</strong> (annualised, last 30 days).
 		</p>
 	{/if}
 	{#if isHyperliquidProtocolGroup}
