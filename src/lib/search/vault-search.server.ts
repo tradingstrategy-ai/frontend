@@ -8,6 +8,7 @@ import {
 	resolveStablecoinSlug
 } from '$lib/stablecoin-metadata/helpers';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
+import { getVaultCategorySlug, isVisibleVaultCategory } from '$lib/top-vaults/categories';
 import {
 	calculateTotalTvl,
 	calculateTvlWeightedApy,
@@ -272,6 +273,27 @@ function buildIndex(topVaults: TopVaults, stablecoins: StablecoinMetadata[]): In
 				logoUrl: getLogoUrl('blockchain', slug) ?? null
 			},
 			[slug, fallbackVault.chain]
+		);
+	}
+
+	for (const [tag, category] of Object.entries(topVaults.categories)) {
+		if (!isVisibleVaultCategory(tag)) continue;
+		addRecord(
+			records,
+			{
+				id: `strategy-category:${tag}`,
+				name: category.label,
+				entityType: 'strategy-category',
+				vaultId: null,
+				address: null,
+				protocolName: null,
+				chainName: null,
+				averageApy1m: category.one_month_apy,
+				latestTvl: category.tvl_usd,
+				href: `/vaults/strategies/${getVaultCategorySlug(tag)}`,
+				logoUrl: null
+			},
+			[tag]
 		);
 	}
 

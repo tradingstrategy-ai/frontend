@@ -97,4 +97,110 @@ describe('vault search', () => {
 		expect(response.results.map((result) => result.entityType)).toEqual(expect.arrayContaining(['chain', 'vault']));
 		expect(tvls).toEqual([...tvls].toSorted((a, b) => b - a));
 	});
+
+	describe('strategy categories', () => {
+		let fixtureVersion = 0;
+		beforeEach(() => {
+			mocks.getCachedTopVaults.mockResolvedValue({
+				generated_at: new Date(Date.UTC(2026, 10, 16, 0, 0, fixtureVersion++)).toISOString(),
+				vaults: [
+					createTestVault('Directional trading vault', {
+						current_nav: 1_000_000,
+						strategy_tags: ['directional_trading']
+					}),
+					createTestVault('Directional trading blacklisted vault', {
+						current_nav: 2_000_000,
+						risk: 'Blacklisted'
+					})
+				],
+				core3_protocols: {},
+				curators: {},
+				categories: {
+					directional_trading: {
+						label: 'Directional trading',
+						description: 'Momentum exposure.',
+						vault_count: 1,
+						tvl_usd: 750_000,
+						one_month_apy: 0.08
+					},
+					zero_vault: {
+						label: 'Empty category',
+						description: 'A registered category with no member vaults.',
+						vault_count: 0,
+						tvl_usd: 0,
+						one_month_apy: null
+					},
+					unknown: {
+						label: 'Unknown strategy',
+						description: 'Hidden category.',
+						vault_count: 0,
+						tvl_usd: 0,
+						one_month_apy: null
+					}
+				}
+			} satisfies TopVaults);
+		});
+
+		test.each(['Directional trading', 'DIRECTIONAL_TRADING', 'directional-trading'])(
+			'finds categories by label and normalised tag: %s',
+			async (query) => {
+				const response = await searchVaultEntities(vi.fn() as unknown as Fetch, query);
+				expect(response.results.find((result) => result.entityType === 'strategy-category')).toEqual({
+					id: 'strategy-category:directional_trading',
+					name: 'Directional trading',
+					entityType: 'strategy-category',
+					averageApy1m: 0.08,
+					latestTvl: 750_000,
+					href: '/vaults/strategies/directional-trading',
+					vaultId: null,
+					address: null,
+					protocolName: null,
+					chainName: null,
+					logoUrl: null
+				});
+			}
+		);
+
+		test('finds a zero-vault category by its source tag with null APY', async () => {
+			const response = await searchVaultEntities(vi.fn() as unknown as Fetch, 'zero-vault');
+			expect(response.results).toHaveLength(1);
+			expect(response.results[0]).toMatchObject({
+				name: 'Empty category',
+				entityType: 'strategy-category',
+				latestTvl: 0,
+				averageApy1m: null,
+				href: '/vaults/strategies/zero-vault'
+			});
+		});
+
+		test('hides unknown categories and does not index descriptions', async () => {
+			for (const query of ['Unknown strategy', 'Momentum']) {
+				const response = await searchVaultEntities(vi.fn() as unknown as Fetch, query);
+				expect(response.results).toEqual([]);
+			}
+		});
+
+		test('keeps categories in TVL order and blacklisted vaults last', async () => {
+			const response = await searchVaultEntities(vi.fn() as unknown as Fetch, 'directional trading', 10, {
+				sort: 'tvl'
+			});
+			expect(response.results.map(({ entityType, latestTvl }) => [entityType, latestTvl])).toEqual([
+				['vault', 1_000_000],
+				['strategy-category', 750_000],
+				['blacklisted-vault', 2_000_000]
+			]);
+		});
+
+		test('excludes categories from vault-only selector results', async () => {
+			const response = await searchVaultEntities(vi.fn() as unknown as Fetch, 'directional trading', 10, {
+				entityTypes: ['vault', 'tokenised-fund', 'blacklisted-vault']
+			});
+			expect(response.results.map(({ entityType }) => entityType)).toEqual(['vault', 'blacklisted-vault']);
+		});
+	});
+
+	test('handles an empty category registry', async () => {
+		const response = await searchVaultEntities(vi.fn() as unknown as Fetch, 'directional trading');
+		expect(response.results).toEqual([]);
+	});
 });

@@ -400,7 +400,7 @@ underlying vault JSON index private.
 				{:else if hasQuery}
 					<p>No results found. Try another name or symbol.</p>
 				{:else}
-					<p>Search vaults, curators, protocols, stablecoins and chains.</p>
+					<p>Search vaults, strategy categories, curators, protocols, stablecoins and chains.</p>
 				{/if}
 			</div>
 

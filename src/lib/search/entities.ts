@@ -11,7 +11,8 @@ export type SearchEntityType =
 	| 'curator'
 	| 'protocol'
 	| 'stablecoin'
-	| 'chain';
+	| 'chain'
+	| 'strategy-category';
 
 export const searchEntityColours: Record<SearchEntityType, string> = {
 	vault: 'var(--c-search-entity-vault)',
@@ -20,7 +21,8 @@ export const searchEntityColours: Record<SearchEntityType, string> = {
 	curator: 'var(--c-search-entity-curator)',
 	protocol: 'var(--c-search-entity-protocol)',
 	stablecoin: 'var(--c-search-entity-stablecoin)',
-	chain: 'var(--c-search-entity-chain)'
+	chain: 'var(--c-search-entity-chain)',
+	'strategy-category': 'var(--c-search-entity-strategy-category)'
 };
 
 export const searchEntityLabels: Record<SearchEntityType, string> = {
@@ -30,7 +32,8 @@ export const searchEntityLabels: Record<SearchEntityType, string> = {
 	curator: 'Curator',
 	protocol: 'Protocol',
 	stablecoin: 'Stablecoin',
-	chain: 'Chain'
+	chain: 'Chain',
+	'strategy-category': 'Strategy category'
 };
 
 export interface SearchResult {
