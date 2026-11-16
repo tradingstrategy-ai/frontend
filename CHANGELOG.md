@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Add strategy categories to sitewide search with category links, TVL and one-month APY (2026-11-16).
 - Show maximum drawdown alongside current drawdown in vault chart tooltips for the selected period (2026-11-12).
 - Add Solana vault-only support for Neutral Trade with case-sensitive address validation and Solscan links (2026-11-12).
 - Show Lighter account sleeves as internal positions with share prices and links to their subaccounts (2026-11-10).

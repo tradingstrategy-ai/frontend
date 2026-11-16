@@ -1,5 +1,5 @@
 <!--
-Search vaults and vault-related data about curators, protocols and stablecoins.
+Search vaults and vault-related data about strategy categories, curators, protocols, chains and stablecoins.
 -->
 <script lang="ts">
 	import { resolve } from '$app/paths';
@@ -75,13 +75,13 @@ Search vaults and vault-related data about curators, protocols and stablecoins.
 
 <MetaTags
 	titleParts={['Search vaults']}
-	description="Search DeFi vaults and vault-related data about curators, protocols, chains and stablecoins across the Trading Strategy database."
+	description="Search DeFi vaults and vault-related data about strategy categories, curators, protocols, chains and stablecoins across the Trading Strategy database."
 />
 
 <main>
 	<PageHeader
 		title="Search vaults"
-		subtitle="Search vaults and vault-related data about curators, protocols and stablecoins."
+		subtitle="Search vaults and vault-related data about strategy categories, curators, protocols, chains and stablecoins."
 	/>
 
 	<section class="ds-container search-page">
@@ -92,7 +92,7 @@ Search vaults and vault-related data about curators, protocols and stablecoins.
 				bind:value={query}
 				name="q"
 				type="search"
-				placeholder="Search by name, symbol, address, chain or curator"
+				placeholder="Search by name, symbol, address, chain, curator or strategy category"
 				autocomplete="off"
 				autocapitalize="none"
 				spellcheck="false"
@@ -107,7 +107,9 @@ Search vaults and vault-related data about curators, protocols and stablecoins.
 				<a href={retryHref}>Try again</a>
 			</div>
 		{:else if !data.query}
-			<div class="message">Enter a name, symbol, address, chain or curator to search the vault index.</div>
+			<div class="message">
+				Enter a name, symbol, address, chain, curator or strategy category to search the vault index.
+			</div>
 		{:else if !data.total}
 			<div class="message">No results found for “{data.query}”. Try another name or symbol.</div>
 		{:else}

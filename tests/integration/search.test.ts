@@ -7,6 +7,7 @@ const entityQueries = [
 	['stablecoin', 'USDC'],
 	['curator', 'Steakhouse'],
 	['protocol', 'Aave'],
+	['strategy-category', 'Directional trading'],
 	['blacklisted-vault', 'Abnormal TVL blacklisted vault']
 ] as const;
 const savingsUsdsAddressQuery = '0xA3931D71';
@@ -89,6 +90,35 @@ test.describe('site search typeahead', () => {
 					expect(chart.y).toBeGreaterThanOrEqual(metrics.y + metrics.height);
 				}
 			}
+		});
+	}
+
+	for (const width of [1440, 390]) {
+		test(`opens a strategy category from typeahead at ${width}px`, async ({ page }) => {
+			await page.setViewportSize({ width, height: 900 });
+			await page.goto('/search');
+			await waitForHydration(page);
+			let search = page.getByTestId('nav-search').getByRole('combobox');
+			if (width < 1170) {
+				await page.getByTestId('navigation-toggle').click();
+				await page.getByTestId('mobile-menu-search').getByRole('button', { name: 'Search vaults' }).click();
+				search = page.getByRole('dialog', { name: 'Search' }).getByRole('combobox');
+			}
+			await search.fill('directional_trading');
+			const suggestion = page.locator('[role="option"][data-entity-type="strategy-category"]');
+			await expect(suggestion).toContainText('Directional trading');
+			await expect(suggestion).toContainText('Strategy category');
+			await expect(suggestion).toHaveAttribute('href', '/vaults/strategies/directional-trading');
+			await expect(suggestion.locator('.vault-sparkline')).toHaveCount(0);
+			await expect(suggestion.locator('[aria-label="Latest TVL"]')).toHaveText('$750.0K');
+			if (width >= 1170) {
+				await search.press('ArrowDown');
+				await search.press('Enter');
+			} else {
+				await suggestion.click();
+			}
+			await expect(page).toHaveURL(/\/vaults\/strategies\/directional-trading$/);
+			await expect(page.getByRole('heading', { name: 'Directional trading vaults', level: 1 })).toBeVisible();
 		});
 	}
 
@@ -419,11 +449,13 @@ test.describe('search results page', () => {
 			await expect(page.getByRole('searchbox')).toHaveValue(query);
 
 			const entityLabel =
-				entityType === 'stablecoin'
-					? 'Stablecoin'
-					: entityType === 'blacklisted-vault'
-						? 'Blacklisted vault'
-						: entityType[0].toUpperCase() + entityType.slice(1);
+				entityType === 'strategy-category'
+					? 'Strategy category'
+					: entityType === 'stablecoin'
+						? 'Stablecoin'
+						: entityType === 'blacklisted-vault'
+							? 'Blacklisted vault'
+							: entityType[0].toUpperCase() + entityType.slice(1);
 			const result = page
 				.locator('tbody tr')
 				.filter({ has: page.locator('td.full_name', { hasText: entityLabel }) })
@@ -444,6 +476,16 @@ test.describe('search results page', () => {
 			}
 		}
 		expect(entityColours.size).toBe(entityQueries.length);
+	});
+
+	test('links category results to their canonical strategy page', async ({ page }) => {
+		await page.goto('/search?q=directional+trading');
+		const row = page
+			.locator('tbody tr')
+			.filter({ has: page.locator('td.full_name', { hasText: 'Strategy category' }) });
+		await expect(row).toContainText('Directional trading');
+		await expect(row.locator('a.row-link')).toHaveAttribute('href', '/vaults/strategies/directional-trading');
+		await expect(row.locator('.vault-sparkline')).toHaveCount(0);
 	});
 
 	test('submits a search from the results page and preserves the query when navigating back', async ({ page }) => {

@@ -13,12 +13,15 @@ The server-only index in `src/lib/search/vault-search.server.ts` creates records
 - vaults, including case-insensitive contract-address matching;
 - curators;
 - protocols;
-- stablecoins; and
-- chains.
+- stablecoins;
+- chains; and
+- strategy categories.
 
 Blacklisted vaults remain findable but are shown as the distinct **Blacklisted vault** type, with a struck-through name. Relevance-based searches place them after non-blacklisted matches. Vault names show the first eight hexadecimal digits of the address after `0x`.
 
-Every result provides a name, entity type, one-month APY, latest TVL, canonical destination and logo URL. Aggregate entity metrics use eligible, non-blacklisted vaults and USD-normalised TVL. One-month APY is TVL-weighted and excludes invalid or extreme values through the same helper used by vault listings.
+Every result provides a name, entity type, one-month APY, latest TVL, canonical destination and logo URL. Curator, protocol, stablecoin and chain metrics use eligible, non-blacklisted vaults and USD-normalised TVL. Their one-month APY is TVL-weighted and excludes invalid or extreme values through the same helper used by vault listings.
+
+Strategy categories match their display labels and source tags, with case, spaces, underscores and dashes normalised. Results link to canonical `/vaults/strategies/<dash-slug>` pages and use the source-provided category TVL and one-month APY, matching those pages. Visible categories with no vaults remain searchable; the hidden `unknown` category is excluded. Category metrics can overlap and are not additive. Category matching terms are not added to individual vault records.
 
 The full results page selects matches by relevance, then latest TVL descending and name ascending. Its table starts sorted by latest TVL, with blacklisted vaults still placed last.
 
