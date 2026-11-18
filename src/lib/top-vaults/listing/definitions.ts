@@ -155,6 +155,9 @@ export function getVaultListingDefaults(key: VaultListingKey, scope?: string): V
 	if (key === 'protocol' && scope === 'apex') {
 		return { ...vaultListingDefinitions[key].defaults, tvl: 'any', sort: 'tvl', direction: 'desc' };
 	}
+	// Lower floor so small Curve LlamaLend markets are listed, e.g.
+	// https://www.curve.finance/lend/ethereum/markets/0x195c8aBf5253bf53ed4476997c7F7069566F2373
+	if (key === 'protocol' && scope === 'llama-lend') return { ...vaultListingDefinitions[key].defaults, tvl: '5k' };
 	return vaultListingDefinitions[key].defaults;
 }
 
