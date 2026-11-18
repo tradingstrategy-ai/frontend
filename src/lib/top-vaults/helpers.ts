@@ -121,6 +121,7 @@ export interface TvlFilterOption {
 
 export const tvlFilterOptions: TvlFilterOption[] = [
 	{ key: 'any', label: 'Any', optionLabel: 'Any', value: 0 },
+	{ key: '5k', label: '$5k', optionLabel: '$5k', value: 5_000 },
 	{ key: '10k', label: '$10k', optionLabel: '$10k', value: 10_000 },
 	{
 		key: '50k-hl',
