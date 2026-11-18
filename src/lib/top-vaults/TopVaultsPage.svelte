@@ -102,6 +102,8 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		listingKey?: VaultListingKey;
 		listingScope?: string;
 		listingSummary?: VaultListingSummary;
+		/** What the secondary line under each vault name shows; see `TopVaultsTable`. */
+		vaultSubtitle?: 'protocol' | 'curator';
 	}
 
 	let {
@@ -143,7 +145,8 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		initialHasMore = false,
 		listingKey = 'top',
 		listingScope,
-		listingSummary
+		listingSummary,
+		vaultSubtitle
 	}: Props = $props();
 
 	let renderDetailAsideInHero = $derived(
@@ -295,6 +298,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 					{listingKey}
 					{listingScope}
 					{listingSummary}
+					{vaultSubtitle}
 				/>
 			{:else if !topVaults}
 				{#if stablecoinMetadata}
@@ -330,6 +334,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 					{listingKey}
 					{listingScope}
 					{listingSummary}
+					{vaultSubtitle}
 				/>
 			{/if}
 		</div>

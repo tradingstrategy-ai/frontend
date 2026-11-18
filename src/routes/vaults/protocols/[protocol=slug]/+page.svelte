@@ -157,6 +157,7 @@ Vault listing and overview for one protocol.
 	defaultSort={listingDefaults.sort}
 	defaultDirection={listingDefaults.direction}
 	defaultHideUnknown={(listingDefaults.unknown ?? true) ? 1 : 0}
+	vaultSubtitle="curator"
 >
 	{#snippet beforeTable()}
 		{#if core3}

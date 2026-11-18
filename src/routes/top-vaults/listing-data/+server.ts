@@ -35,7 +35,9 @@ export async function GET({ fetch, url }) {
 			? listing.vaults
 			: listing.vaults.filter((vault) => !matchesVaultRisk(vault, riskFilterOptions[previousRiskIndex]));
 	// project rows to the listing shape so continuation pages match the SSR batch
-	const vaults = matchingVaults.slice(offset, offset + VAULT_LISTING_PAGE_SIZE).map(toVaultListingRow);
+	const vaults = matchingVaults
+		.slice(offset, offset + VAULT_LISTING_PAGE_SIZE)
+		.map((vault) => toVaultListingRow(vault, topVaults.curators));
 	return json(
 		{
 			vaults,

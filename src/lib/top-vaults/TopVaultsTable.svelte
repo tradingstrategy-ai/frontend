@@ -7,6 +7,8 @@ Permissioned vaults are marked as Private, except tokenised funds, which are mar
 The Private checkbox in the Hide vaults group excludes all permissioned vaults.
 The AMM checkbox hides AMM pools and AMM-like vaults on listings with Filters.
 Set `allowVaultComparison={false}` for read-only or embedded tables.
+Set `vaultSubtitle="curator"` on single-protocol listings so the line under each vault
+name shows its curator instead of repeating the protocol name.
 
 @example
 
@@ -67,6 +69,7 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 		getLockupTooltip,
 		getLifetimeMaxDrawdown,
 		getMonthlyReturn,
+		getCuratorLogoUrl,
 		getVaultProtocolDisplayName,
 		getVaultCurrentTvlUsd,
 		getVaultDenominationNativeRate,
@@ -193,6 +196,11 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 		showStablecoinOnlyMeta?: boolean;
 		/** Allow selecting vault rows for the equity comparison page. */
 		allowVaultComparison?: boolean;
+		/**
+		 * What the secondary line under each vault name shows. Use `curator` on
+		 * single-protocol listings, where the protocol name would repeat on every row.
+		 */
+		vaultSubtitle?: 'protocol' | 'curator';
 	}
 
 	interface ListingDataResponse {
@@ -242,7 +250,8 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 		listingSummary,
 		preserveSearchParams = [],
 		showStablecoinOnlyMeta = true,
-		allowVaultComparison = true
+		allowVaultComparison = true,
+		vaultSubtitle = 'protocol'
 	}: Props = $props();
 	const defaultHideAmm = untrack(() => ((getVaultListingDefaults(listingKey, listingScope).amm ?? true) ? 1 : 0));
 	let listingAssetType = $derived(listingKey === 'protocol' && isPoolProtocol(listingScope) ? 'pool' : 'vault');
@@ -325,6 +334,35 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 	}
 
 	// --- Sort column registry ---
+
+	/**
+	 * Join a short trailing word (an emoji, "V2", "X1") to the previous word with a
+	 * non-breaking space so it never wraps onto a line of its own, e.g. "HyperGrowth ♾️".
+	 * Longer trailing words wrap normally, so narrow columns don't strand the first word.
+	 *
+	 * @param name vault name
+	 */
+	function keepLastWordTogether(name: string): string {
+		const trimmed = name.trim();
+		const index = trimmed.lastIndexOf(' ');
+		if (index <= 0 || [...trimmed.slice(index + 1)].length > 3) return trimmed;
+		return `${trimmed.slice(0, index)}\u00a0${trimmed.slice(index + 1)}`;
+	}
+
+	/**
+	 * Text for the secondary line under a vault name. In curator mode, uncurated and
+	 * self-curated vaults get no line rather than repeating the protocol name.
+	 *
+	 * @param vault listing row
+	 * @param protocolName display name of the vault's protocol
+	 */
+	function getVaultSubtitle(vault: VaultListingRow, protocolName: string): string | undefined {
+		if (vaultSubtitle === 'protocol') return protocolName;
+		const curatorName =
+			vault.curator_name ?? (vault.curator_slug ? topVaults.curators[vault.curator_slug]?.name : null);
+		if (!curatorName || curatorName.toLowerCase() === protocolName.toLowerCase()) return undefined;
+		return curatorName;
+	}
 
 	function getXerberusRiskRating(vault: VaultListingRow): string {
 		const score = vault.xerberus?.score;
@@ -798,6 +836,7 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 				getChainDisplayName(v.chain_id),
 				v.name,
 				getVaultProtocolDisplayName(v),
+				v.curator_name ?? '',
 				v.denomination,
 				v.risk ?? '',
 				v.address
@@ -1580,9 +1619,11 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 					{@const isCapped = isVaultDepositCapped(vault)}
 					{@const depositStatusLabel = isTokenisedFund ? 'Fund' : 'Private'}
 					{@const protocolName = getVaultProtocolDisplayName(vault)}
-					{@const curatorLogos = vault.curator_slug ? topVaults.curators[vault.curator_slug]?.logos : undefined}
-					{@const curatorLogoUrl = curatorLogos?.generic ?? curatorLogos?.light ?? curatorLogos?.dark}
+					{@const curatorLogoUrl =
+						vault.curator_logo_url ??
+						(vault.curator_slug ? getCuratorLogoUrl(topVaults.curators[vault.curator_slug]) : null)}
 					{@const vaultLogoUrl = curatorLogoUrl ?? getVaultProtocolLogoUrl(vault.protocol_slug)}
+					{@const vaultSubtitleText = getVaultSubtitle(vault, protocolName)}
 					{@const statusReason = [vault.deposit_closed_reason, vault.redemption_closed_reason]
 						.filter(Boolean)
 						.join('; ')}
@@ -1620,9 +1661,9 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 									<img class="vault-logo" src={vaultLogoUrl} alt="" />
 								{/if}
 								<div class="multiline">
-									<strong>{vault.name}</strong>
-									{#if protocolName}
-										<span class="secondary">{protocolName}</span>
+									<strong>{keepLastWordTogether(vault.name)}</strong>
+									{#if vaultSubtitleText}
+										<span class="secondary">{vaultSubtitleText}</span>
 									{/if}
 								</div>
 							</div>
@@ -2276,8 +2317,14 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 				}
 			}
 
-			:is(td, th) {
+			th {
 				vertical-align: top;
+			}
+
+			/* centre every cell on the row so names (with or without a curator line),
+			   single-value and two-line value cells share one centre line */
+			td {
+				vertical-align: middle;
 			}
 
 			th {
@@ -2327,7 +2374,7 @@ Set `allowVaultComparison={false}` for read-only or embedded tables.
 
 			td {
 				border-block: 1px solid var(--c-text-ultra-light);
-				padding: 0.25em 0.5em;
+				padding: 0.5em;
 
 				@media (--viewport-sm-down) {
 					padding: 0.125em 0.25em;
