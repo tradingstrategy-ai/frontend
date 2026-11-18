@@ -3,6 +3,7 @@ import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
 import type {
 	Core3Pol,
 	Core3Protocol,
+	CuratorInfo,
 	DenominationTokenRate,
 	FeeMode,
 	SlimVaultInfo,
@@ -27,17 +28,30 @@ export function slimVault(vault: VaultInfo): SlimVaultInfo {
 const listingPeriods: ReadonlySet<string> = new Set(vaultListingPeriods);
 
 /**
+ * Pick the logo URL to show for a curator, preferring the theme-neutral variant.
+ *
+ * @param curator curator metadata record, if any
+ */
+export function getCuratorLogoUrl(curator: Pick<CuratorInfo, 'logos'> | undefined): string | null {
+	const logos = curator?.logos;
+	return logos?.generic ?? logos?.light ?? logos?.dark ?? null;
+}
+
+/**
  * Project a full vault record to the fields the listing table renders.
  *
  * Applied server-side to the initial listing batch and to every continuation page
  * so the browser never receives the full record per row (see `vaultListingRowKeys`
- * for what is kept and why).
+ * for what is kept and why). The curator registry is not shipped to listing pages,
+ * so the curator logo is resolved here and carried on the row.
  *
  * @param vault complete vault record from the server-cached export
+ * @param curators curator registry keyed by slug, from the same export
  */
-export function toVaultListingRow(vault: VaultInfo): VaultListingRow {
+export function toVaultListingRow(vault: VaultInfo, curators: Record<string, CuratorInfo> = {}): VaultListingRow {
 	return {
 		...pick(vault, vaultListingRowKeys),
+		curator_logo_url: vault.curator_slug ? getCuratorLogoUrl(curators[vault.curator_slug]) : null,
 		period_results: vault.period_results
 			.filter((metrics) => listingPeriods.has(metrics.period.toLowerCase()))
 			.map((metrics) => pick(metrics, vaultListingPeriodMetricKeys))

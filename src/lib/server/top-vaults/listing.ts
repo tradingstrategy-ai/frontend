@@ -94,7 +94,9 @@ export async function loadVaultListing(fetchFn: typeof fetch, url: URL, key: Vau
 	const scopedVaults = await resolveListingVaults(fetchFn, topVaults, key, scope);
 	const query = parseVaultListingQuery(url.searchParams, getVaultListingDefaults(key, scope));
 	const listing = queryVaultListing(scopedVaults, query, await getListingOptions(definition.options, query));
-	const initialVaults = listing.vaults.slice(0, INITIAL_VAULT_LISTING_LIMIT).map(toVaultListingRow);
+	const initialVaults = listing.vaults
+		.slice(0, INITIAL_VAULT_LISTING_LIMIT)
+		.map((vault) => toVaultListingRow(vault, topVaults.curators));
 
 	return {
 		totalVaultCount: topVaults.vaults.length,

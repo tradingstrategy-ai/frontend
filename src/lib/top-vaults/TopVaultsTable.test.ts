@@ -21,7 +21,10 @@ vi.mock('$lib/vault-protocol/helpers', () => ({
 }));
 
 function getRenderedVaultNames() {
-	return Array.from(document.querySelectorAll('tbody tr td.vault strong')).map((element) => element.textContent);
+	return Array.from(document.querySelectorAll('tbody tr td.vault strong')).map((element) =>
+		// names join their last two words with a non-breaking space
+		element.textContent?.replaceAll('\u00a0', ' ')
+	);
 }
 
 function getTopVaults(...vaults: ReturnType<typeof createTestVault>[]) {
@@ -201,6 +204,43 @@ describe('TopVaultsTable risk rating column', () => {
 
 		expect(curatorLogo?.src).toBe('https://example.com/curator-logo.svg');
 		expect(protocolLogo?.src).toBe('https://example.com/protocol/aave.svg');
+	});
+});
+
+describe('TopVaultsTable vault subtitle', () => {
+	const vaults = [
+		createTestVault('Curated vault', { protocol: 'Aave', curator_name: 'Example Capital' }),
+		createTestVault('Self-curated vault', { protocol: 'Aave', curator_name: 'Aave' }),
+		createTestVault('Uncurated vault', { protocol: 'Aave' })
+	];
+	const topVaults = { generated_at: '2026-07-30T11:30:40Z', vaults, core3_protocols: {}, curators: {}, categories: {} };
+
+	function getSubtitle(name: string) {
+		return screen.getByText(name).closest('td')?.querySelector('.secondary')?.textContent ?? null;
+	}
+
+	it('shows the protocol name by default', () => {
+		render(TopVaultsTable, { props: { topVaults } });
+		expect(getSubtitle('Curated vault')).toBe('Aave');
+		expect(getSubtitle('Uncurated vault')).toBe('Aave');
+	});
+
+	it('keeps a short trailing word of a vault name from wrapping onto its own line', () => {
+		const names = ['HyperGrowth ♾️', 'Dragon X1', 'Delta Neutral Arbitrage'];
+		render(TopVaultsTable, {
+			props: { topVaults: { ...topVaults, vaults: names.map((name) => createTestVault(name)) } }
+		});
+		const rendered = Array.from(document.querySelectorAll('td.vault strong')).map((el) => el.textContent);
+		expect(rendered).toEqual(
+			expect.arrayContaining(['HyperGrowth\u00a0♾️', 'Dragon\u00a0X1', 'Delta Neutral Arbitrage'])
+		);
+	});
+
+	it('shows only distinct curator names in curator mode', () => {
+		render(TopVaultsTable, { props: { topVaults, vaultSubtitle: 'curator' } });
+		expect(getSubtitle('Curated vault')).toBe('Example Capital');
+		expect(getSubtitle('Self-curated vault')).toBeNull();
+		expect(getSubtitle('Uncurated vault')).toBeNull();
 	});
 });
 

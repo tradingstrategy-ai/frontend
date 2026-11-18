@@ -13,7 +13,29 @@ describe('toVaultListingRow', () => {
 	const row = toVaultListingRow(vault);
 
 	it('keeps exactly the listing row keys plus period results', () => {
-		expect(Object.keys(row).sort()).toEqual([...vaultListingRowKeys, 'period_results'].sort());
+		expect(Object.keys(row).sort()).toEqual([...vaultListingRowKeys, 'curator_logo_url', 'period_results'].sort());
+	});
+
+	it('resolves the curator logo and keeps the curator name', () => {
+		const curated = createTestVault('Curated vault', { curator_slug: 'example', curator_name: 'Example Capital' });
+		const curators = {
+			example: {
+				slug: 'example',
+				name: 'Example Capital',
+				website: null,
+				twitter: null,
+				linkedin: null,
+				rss: null,
+				protocol_curator: false,
+				canonical_feeder_id: null,
+				logos: { generic: null, light: 'https://example.com/light.svg', dark: null },
+				recent_posts: []
+			}
+		};
+		const projected = toVaultListingRow(curated, curators);
+		expect(projected.curator_name).toBe('Example Capital');
+		expect(projected.curator_logo_url).toBe('https://example.com/light.svg');
+		expect(toVaultListingRow(vault, curators).curator_logo_url).toBeNull();
 	});
 
 	it('drops detail-only fields', () => {

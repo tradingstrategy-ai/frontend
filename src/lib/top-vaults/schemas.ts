@@ -663,6 +663,7 @@ export const vaultListingRowKeys = [
 	'protocol',
 	'protocol_slug',
 	'curator_slug',
+	'curator_name',
 	'chain',
 	'chain_id',
 	'address',
@@ -716,6 +717,11 @@ export const vaultListingRowKeys = [
 /** A vault as rendered by the listing table: the `vaultListingRowKeys` subset of `VaultInfo` plus slimmed period metrics. */
 export type VaultListingRow = Pick<VaultInfo, (typeof vaultListingRowKeys)[number]> & {
 	period_results: VaultListingPeriodMetrics[];
+	/**
+	 * Curator logo resolved server-side from the `curators` registry, which listing
+	 * pages do not ship to the browser. Null when uncurated or the curator has no logo.
+	 */
+	curator_logo_url?: string | null;
 };
 
 /** Runtime schema for the public slim chart payload. */
