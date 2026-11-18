@@ -1,4 +1,4 @@
-import { DuckDBConnection } from '@duckdb/node-api';
+import { withDuckDb } from '$lib/server/duckdb';
 import type { ProtocolMiniChartDailyRow, ProtocolMiniChartLatestApyRow } from './protocol-mini-chart';
 import type { VaultInfo } from '$lib/top-vaults/schemas';
 import { ensureVaultPricesParquet } from '$lib/top-vaults/vault-prices-parquet';
@@ -51,12 +51,11 @@ export function getMockVaultGroupMiniChartRows(vaults: VaultInfo[]): ProtocolMin
 export async function getVaultGroupMiniChartRows(vaultIds: string[]): Promise<ProtocolMiniChartDailyRow[]> {
 	if (vaultIds.length === 0) return [];
 
-	const connection = await DuckDBConnection.create();
 	const parquetFile = await ensureVaultPricesParquet();
 	const idPlaceholders = vaultIds.map((_, index) => `$id${index}`).join(', ');
 	const params = Object.fromEntries(vaultIds.map((id, index) => [`id${index}`, id]));
 
-	try {
+	const rows = await withDuckDb(async (connection) => {
 		const reader = await connection.runAndReadAll(
 			`
 				SELECT
@@ -78,14 +77,13 @@ export async function getVaultGroupMiniChartRows(vaultIds: string[]): Promise<Pr
 			`,
 			{ parquetFile, ...params }
 		);
+		return reader.getRows();
+	});
 
-		return reader.getRows().map(([id, day, tvl, sharePrice]) => ({
-			id: String(id),
-			day: day as string | Date,
-			tvl: Number(tvl),
-			sharePrice: sharePrice == null ? null : Number(sharePrice)
-		}));
-	} finally {
-		connection.closeSync();
-	}
+	return rows.map(([id, day, tvl, sharePrice]) => ({
+		id: String(id),
+		day: day as string | Date,
+		tvl: Number(tvl),
+		sharePrice: sharePrice == null ? null : Number(sharePrice)
+	}));
 }

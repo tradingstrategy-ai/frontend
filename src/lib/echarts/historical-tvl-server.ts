@@ -1,4 +1,4 @@
-import { DuckDBConnection } from '@duckdb/node-api';
+import { withDuckDb } from '$lib/server/duckdb';
 import type { VaultInfo } from '$lib/top-vaults/schemas';
 import type { HistoricalWeeklyVaultRow } from './historical-tvl';
 import { VAULT_PRICES_PARQUET_PATH } from '$lib/top-vaults/constants';
@@ -48,9 +48,8 @@ export async function getHistoricalWeeklyVaultRows(
 ): Promise<HistoricalWeeklyVaultRow[]> {
 	const resolvedParquetFile =
 		parquetFile === HISTORICAL_TVL_PARQUET_FILE ? await ensureVaultPricesParquet() : parquetFile;
-	const connection = await DuckDBConnection.create();
 
-	try {
+	const rows = await withDuckDb(async (connection) => {
 		const reader = await connection.runAndReadAll(
 			`
 				WITH daily AS (
@@ -83,16 +82,15 @@ export async function getHistoricalWeeklyVaultRows(
 			`,
 			{ parquetFile: resolvedParquetFile }
 		);
+		return reader.getRows();
+	});
 
-		return reader.getRows().map(([id, chainId, week, tvl]) => ({
-			id: String(id),
-			chainId: Number(chainId),
-			week: week as string | Date,
-			tvl: Number(tvl)
-		}));
-	} finally {
-		connection.closeSync();
-	}
+	return rows.map(([id, chainId, week, tvl]) => ({
+		id: String(id),
+		chainId: Number(chainId),
+		week: week as string | Date,
+		tvl: Number(tvl)
+	}));
 }
 
 export async function getHistoricalDailyVaultRows(
@@ -100,9 +98,8 @@ export async function getHistoricalDailyVaultRows(
 ): Promise<HistoricalWeeklyVaultRow[]> {
 	const resolvedParquetFile =
 		parquetFile === HISTORICAL_TVL_PARQUET_FILE ? await ensureVaultPricesParquet() : parquetFile;
-	const connection = await DuckDBConnection.create();
 
-	try {
+	const rows = await withDuckDb(async (connection) => {
 		const reader = await connection.runAndReadAll(
 			`
 				SELECT
@@ -118,14 +115,13 @@ export async function getHistoricalDailyVaultRows(
 			`,
 			{ parquetFile: resolvedParquetFile }
 		);
+		return reader.getRows();
+	});
 
-		return reader.getRows().map(([id, chainId, day, tvl]) => ({
-			id: String(id),
-			chainId: Number(chainId),
-			week: day as string | Date,
-			tvl: Number(tvl)
-		}));
-	} finally {
-		connection.closeSync();
-	}
+	return rows.map(([id, chainId, day, tvl]) => ({
+		id: String(id),
+		chainId: Number(chainId),
+		week: day as string | Date,
+		tvl: Number(tvl)
+	}));
 }

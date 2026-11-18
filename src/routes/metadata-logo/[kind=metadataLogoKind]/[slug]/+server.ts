@@ -1,6 +1,7 @@
-import sharp from 'sharp';
 import { error } from '@sveltejs/kit';
+import { createImagePipeline, runImageJob } from '$lib/server/image-pipeline';
 import {
+	DEFAULT_TRANSFORM_DIMENSION,
 	getMetadataLogoCacheControl,
 	getMetadataLogoSourceUrl,
 	isMetadataLogoKind,
@@ -55,16 +56,16 @@ export async function GET({ params, url, fetch }) {
 	}
 
 	const image = Buffer.from(await resp.arrayBuffer());
-	let pipeline = sharp(image, { failOn: 'none' });
 
-	if (width || height) {
-		pipeline = pipeline.resize({
-			width,
-			height,
-			fit: 'inside',
-			withoutEnlargement: true
-		});
-	}
+	// Re-encoding always happens inside a bounding box: a logo requested without a size
+	// would otherwise be encoded at the source's native resolution.
+	const boundingBox =
+		width || height ? { width, height } : { width: DEFAULT_TRANSFORM_DIMENSION, height: DEFAULT_TRANSFORM_DIMENSION };
+	let pipeline = createImagePipeline(image).resize({
+		...boundingBox,
+		fit: 'inside',
+		withoutEnlargement: true
+	});
 
 	switch (format) {
 		case 'avif':
@@ -85,5 +86,6 @@ export async function GET({ params, url, fetch }) {
 			break;
 	}
 
-	return new Response(new Uint8Array(await pipeline.toBuffer()), { headers });
+	const transformed = await runImageJob(() => pipeline.toBuffer());
+	return new Response(new Uint8Array(transformed), { headers });
 }

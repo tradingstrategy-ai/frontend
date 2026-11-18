@@ -1,4 +1,4 @@
-import { DuckDBConnection } from '@duckdb/node-api';
+import { withDuckDb } from '$lib/server/duckdb';
 import { ensureVaultPricesParquet } from '$lib/top-vaults/vault-prices-parquet';
 
 export interface VaultPriceQueryRow {
@@ -29,15 +29,14 @@ export async function queryVaultPriceRows(
 	if (!vaultIds.length) return [];
 
 	const parquetFile = options.parquetFile ?? (await (options.resolveParquetFile ?? ensureVaultPricesParquet)());
-	const connection = await DuckDBConnection.create();
-
-	try {
-		const idParameters = Object.fromEntries(vaultIds.map((vaultId, index) => [`vaultId${index}`, vaultId]));
-		const placeholders = vaultIds.map((_, index) => `$vaultId${index}`).join(', ');
-		const optionalColumns = options.includeVaultMetrics
-			? `, total_assets,
+	const idParameters = Object.fromEntries(vaultIds.map((vaultId, index) => [`vaultId${index}`, vaultId]));
+	const placeholders = vaultIds.map((_, index) => `$vaultId${index}`).join(', ');
+	const optionalColumns = options.includeVaultMetrics
+		? `, total_assets,
               CASE WHEN utilisation >= 0 AND utilisation <= 2 THEN utilisation ELSE NULL END as utilisation`
-			: '';
+		: '';
+
+	const rows = await withDuckDb(async (connection) => {
 		const reader = await connection.runAndReadAll(
 			`SELECT id, EXTRACT(EPOCH FROM timestamp) as ts, share_price${optionalColumns}
        FROM parquet_scan($parquetFile)
@@ -45,23 +44,22 @@ export async function queryVaultPriceRows(
        ORDER BY id, timestamp`,
 			{ parquetFile, ...idParameters }
 		);
+		return reader.getRows();
+	});
 
-		return reader.getRows().map((row) => {
-			const [id, timestamp, sharePrice, totalAssets, utilisation] = row as [
-				string,
-				number,
-				number,
-				number | undefined,
-				number | null | undefined
-			];
-			return {
-				id,
-				timestamp,
-				sharePrice,
-				...(options.includeVaultMetrics ? { totalAssets, utilisation } : {})
-			};
-		});
-	} finally {
-		connection.closeSync();
-	}
+	return rows.map((row) => {
+		const [id, timestamp, sharePrice, totalAssets, utilisation] = row as [
+			string,
+			number,
+			number,
+			number | undefined,
+			number | null | undefined
+		];
+		return {
+			id,
+			timestamp,
+			sharePrice,
+			...(options.includeVaultMetrics ? { totalAssets, utilisation } : {})
+		};
+	});
 }

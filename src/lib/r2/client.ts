@@ -11,6 +11,9 @@ import { env } from '$env/dynamic/private';
 import { S3Client, GetObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
 import { diagnose } from '$lib/diagnostics/server';
 
+const R2_CONNECTION_TIMEOUT_MS = 5_000;
+const R2_SOCKET_IDLE_TIMEOUT_MS = 30_000;
+
 function createClient(): S3Client | undefined {
 	const accountId = env.TS_PRIVATE_R2_ACCOUNT_ID;
 	const accessKeyId = env.TS_PRIVATE_R2_ACCESS_KEY_ID;
@@ -23,7 +26,15 @@ function createClient(): S3Client | undefined {
 	return new S3Client({
 		region: 'auto',
 		endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
-		credentials: { accessKeyId, secretAccessKey }
+		credentials: { accessKeyId, secretAccessKey },
+		// The SDK's default NodeHttpHandler has no connect or socket timeout, so a stalled R2
+		// connection would hold its caller (and any single-flight promise waiting on it) forever.
+		// `requestTimeout` is a socket idle timeout: a healthy 300 MB download keeps streaming
+		// and is not cut off by it.
+		requestHandler: {
+			connectionTimeout: R2_CONNECTION_TIMEOUT_MS,
+			requestTimeout: R2_SOCKET_IDLE_TIMEOUT_MS
+		}
 	});
 }
 

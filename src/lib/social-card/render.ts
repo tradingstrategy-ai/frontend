@@ -1,4 +1,4 @@
-import sharp from 'sharp';
+import { createImagePipeline, runImageJob } from '$lib/server/image-pipeline';
 
 export const SOCIAL_CARD_WIDTH = 1200;
 export const SOCIAL_CARD_HEIGHT = 630;
@@ -23,26 +23,33 @@ function makeLogoVisibleOnDarkBackground(logo: string): string {
 /**
  * Render an SVG logo centred on a social-preview PNG canvas.
  *
+ * The SVGs come from `$lib/assets` (bundled, not user supplied); the shared pipeline guards
+ * still apply so this route counts against the same image-job budget as the proxies.
+ *
  * @param logo SVG logo source
  * @param size Maximum rendered logo dimensions
  */
-export async function renderSocialCard(logo: string, size: SocialCardLogoSize): Promise<Buffer> {
-	const resizedLogo = await sharp(Buffer.from(makeLogoVisibleOnDarkBackground(logo)), { density: 288 })
-		.resize({ ...size, fit: 'inside' })
-		.png()
-		.toBuffer();
+export function renderSocialCard(logo: string, size: SocialCardLogoSize): Promise<Buffer> {
+	return runImageJob(async () => {
+		const resizedLogo = await createImagePipeline(Buffer.from(makeLogoVisibleOnDarkBackground(logo)), {
+			density: 288
+		})
+			.resize({ ...size, fit: 'inside' })
+			.png()
+			.toBuffer();
 
-	return sharp({
-		create: {
-			width: SOCIAL_CARD_WIDTH,
-			height: SOCIAL_CARD_HEIGHT,
-			channels: 4,
-			background: SOCIAL_CARD_BACKGROUND
-		}
-	})
-		.composite([{ input: resizedLogo, gravity: 'centre' }])
-		.png()
-		.toBuffer();
+		return createImagePipeline(undefined, {
+			create: {
+				width: SOCIAL_CARD_WIDTH,
+				height: SOCIAL_CARD_HEIGHT,
+				channels: 4,
+				background: SOCIAL_CARD_BACKGROUND
+			}
+		})
+			.composite([{ input: resizedLogo, gravity: 'centre' }])
+			.png()
+			.toBuffer();
+	});
 }
 
 /**

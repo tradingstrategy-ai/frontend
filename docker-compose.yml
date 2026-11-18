@@ -16,6 +16,22 @@ services:
     command: node --require dd-trace/init scripts/server.js
     # Restart node service if it crashes
     restart: unless-stopped
+    # /health probes DNS and the filesystem through the libuv threadpool, so a process whose
+    # pool is starved by native jobs turns unhealthy (and gets restarted by autoheal) instead
+    # of staying "up" while every server-side fetch fails. The probe targets an IP literal so
+    # it never depends on DNS itself. See docs/server-threadpool.md.
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/health').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     # See https://stackoverflow.com/a/67158212/315168
     extra_hosts:
       - 'host.docker.internal:host-gateway'
@@ -27,6 +43,8 @@ services:
       - TS_PUBLIC_SITE_MODE
       - TS_PUBLIC_FRONTEND_VERSION_TAG
       - TS_PUBLIC_BACKEND_URL
+      # Prefer an IP literal here (e.g. http://172.17.0.1:3456) over host.docker.internal:
+      # a hostname costs one dns.lookup per connection on the threadpool, an IP costs nothing.
       - TS_PUBLIC_BACKEND_INTERNAL_URL
       - TS_PUBLIC_SENTRY_DSN
       - TS_PUBLIC_GHOST_CONTENT_API_KEY

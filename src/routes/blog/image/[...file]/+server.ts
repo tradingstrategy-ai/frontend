@@ -3,9 +3,9 @@
  * render preview images correctly, and blog roll images can be resized
  * and aggressively cached without hotlinking Ghost directly.
  */
-import sharp from 'sharp';
 import { error } from '@sveltejs/kit';
 import { ghostConfig } from '$lib/config';
+import { createImagePipeline, runImageJob } from '$lib/server/image-pipeline';
 
 const DEFAULT_CACHE_SECONDS = 60 * 60;
 const VERSIONED_CACHE_SECONDS = 60 * 60 * 24 * 365;
@@ -73,7 +73,7 @@ export async function GET({ params, url, fetch }) {
 	}
 
 	const image = Buffer.from(await resp.arrayBuffer());
-	let pipeline = sharp(image, { failOn: 'none' });
+	let pipeline = createImagePipeline(image);
 
 	if (width || height) {
 		pipeline = pipeline.resize({
@@ -92,7 +92,7 @@ export async function GET({ params, url, fetch }) {
 		});
 	}
 
-	const transformed = await pipeline.toBuffer();
+	const transformed = await runImageJob(() => pipeline.toBuffer());
 	headers.set('content-type', format === 'webp' ? 'image/webp' : contentType);
 
 	return new Response(new Uint8Array(transformed), { headers });
