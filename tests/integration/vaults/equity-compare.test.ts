@@ -89,7 +89,7 @@ async function hoverChartDate(page: Page, chart: Locator, formattedDate: string,
  */
 async function mockResponsiveChartData(page: Page) {
 	const requests: Array<{ vaults: string[]; benchmarks: string[] }> = [];
-	await page.route('**/vaults/compare/chart-data?*', async (route) => {
+	await page.route('**/vaults/compare/chart-data.bin?*', async (route) => {
 		const params = new URL(route.request().url()).searchParams;
 		const vaults = params.getAll('vault');
 		const benchmarks = params.getAll('benchmark');
@@ -194,7 +194,7 @@ test.describe('vault equity curve comparison page', () => {
 			5
 		);
 
-		await page.route('**/vaults/compare/chart-data?*', async (route) => {
+		await page.route('**/vaults/compare/chart-data.bin?*', async (route) => {
 			const requestedVaults = new URL(route.request().url()).searchParams.getAll('vault');
 			const pointsByVaultId = new Map([
 				[vaults[0], firstVaultPoints],
@@ -314,7 +314,7 @@ test.describe('vault equity curve comparison page', () => {
 		const suggestionSorts: string[] = [];
 		const pageErrors: string[] = [];
 		page.on('pageerror', (error) => pageErrors.push(error.message));
-		await page.route('**/vaults/compare/chart-data?*', async (route) => {
+		await page.route('**/vaults/compare/chart-data.bin?*', async (route) => {
 			const searchParams = new URL(route.request().url()).searchParams;
 			const vaultIds = searchParams.getAll('vault');
 			const benchmarks = searchParams.getAll('benchmark');

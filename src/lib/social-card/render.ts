@@ -1,3 +1,4 @@
+import { EDGE_CACHE_DEFAULT_CONTROL } from '$lib/helpers/edge-cache';
 import sharp from 'sharp';
 
 export const SOCIAL_CARD_WIDTH = 1200;
@@ -53,7 +54,8 @@ export async function renderSocialCard(logo: string, size: SocialCardLogoSize): 
 export function socialCardResponse(image: Buffer): Response {
 	return new Response(new Uint8Array(image), {
 		headers: {
-			'cache-control': 'public, max-age=31536000, immutable',
+			// The URLs are keyed by name, not content, so a changed logo must show up within a day
+			'cache-control': EDGE_CACHE_DEFAULT_CONTROL,
 			'content-type': 'image/png',
 			'content-length': String(image.byteLength),
 			'x-content-type-options': 'nosniff'

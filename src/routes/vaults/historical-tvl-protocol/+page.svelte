@@ -2,6 +2,7 @@
 Historical vault TVL by vault protocol page with a server-side aggregated weekly stacked line chart.
 -->
 <script lang="ts">
+	import { chartDataUrl } from '$lib/helpers/edge-cache';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 	import { JsonLd } from 'svelte-meta-tags';
@@ -36,7 +37,7 @@ Historical vault TVL by vault protocol page with a server-side aggregated weekly
 				chartError = null;
 
 				const payload = await fetchHistoricalTvl<HistoricalTvlByProtocolPayload>(
-					resolve(`/vaults/historical-tvl-protocol/chart-data?v=${chartDataVersion}`),
+					chartDataUrl(resolve(`/vaults/historical-tvl-protocol/chart-data?v=${chartDataVersion}`)),
 					controller.signal
 				);
 				if (!cancelled) chartData = payload;

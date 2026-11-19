@@ -132,7 +132,7 @@ Compare selected vault equity curves and fixed market benchmarks on one indexed 
 		for (const vaultId of vaultIds) params.append('vault', vaultId);
 		for (const benchmark of benchmarks) params.append('benchmark', benchmark);
 
-		void fetch(`/vaults/compare/chart-data?${params}`, {
+		void fetch(`/vaults/compare/chart-data.bin?${params}`, {
 			signal: controller.signal,
 			cache: forceReload ? 'reload' : 'default'
 		})

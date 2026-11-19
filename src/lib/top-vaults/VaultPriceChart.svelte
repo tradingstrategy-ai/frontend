@@ -138,7 +138,7 @@ so relative performance is comparable on a single axis.
 		priceData = undefined;
 		tvlData = undefined;
 		try {
-			const resp = await fetch(`/vaults/${vaultId}/metrics`);
+			const resp = await fetch(`/vaults/${vaultId}/metrics.bin`);
 			if (!resp.ok) throw new Error(`Vault metrics request failed: ${resp.status}`);
 			const data = await resp.json();
 			priceData = data.price.filter(

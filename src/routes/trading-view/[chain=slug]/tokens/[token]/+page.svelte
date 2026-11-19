@@ -49,7 +49,7 @@ Token detail page with token metadata and its tracked trading pairs.
 <MetaTags
 	titleParts={[`${token.symbol} price and trading pairs on ${token.chain_name}`, token.name]}
 	description={`${token.name} (${token.symbol}) ${getTokenStandardName(token.chain_slug)} token on ${token.chain_name}: ${formatAmount(token.pair_count)} DEX trading pairs, ${formatDollar(token.liquidity_latest, 1, 1)} liquidity, ${formatDollar(token.volume_24h, 1, 1)} 24h volume. Live prices and historical data.`}
-	image={`/social-card/blockchain/${token.chain_slug}`}
+	image={`/social-card/blockchain/${token.chain_slug}.png`}
 />
 
 <Breadcrumbs labels={breadcrumbs} />

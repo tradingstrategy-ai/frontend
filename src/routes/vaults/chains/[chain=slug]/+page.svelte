@@ -93,7 +93,7 @@ Vault listing and overview for one blockchain or perpetual DEX venue.
 	{#snippet detailAside()}
 		<VaultGroupMiniChart
 			title="{heading}: TVL and returns"
-			dataUrl="/vaults/chains/{chainSlug}/chart-data"
+			dataUrl="/vaults/chains/{chainSlug}/chart-data.bin"
 			compareLabel="Compare all chains"
 			compareHref="/vaults/historical-tvl-chain"
 		/>

@@ -15,7 +15,7 @@ preview image for Twitter/X, Facebook, LinkedIn, Telegram and other Open Graph c
 
 ```svelte
 <SocialCardMetaTags titleParts={['WETH', 'Ethereum token']} description="…" />
-<SocialCardMetaTags title="Vaults" image="/social-card/trading-strategy" />
+<SocialCardMetaTags title="Vaults" image="/social-card/trading-strategy.png" />
 ```
 -->
 <script lang="ts">
@@ -85,7 +85,7 @@ preview image for Twitter/X, Facebook, LinkedIn, Telegram and other Open Graph c
 		imageAlt ?? suppliedOpenGraphImage?.alt ?? twitter?.imageAlt ?? plainTitle ?? SITE_NAME
 	);
 	let isGeneratedSocialCard = $derived(
-		/^\/social-card\/(trading-strategy|blockchain)(?:\/|$)/.test(new URL(selectedImageUrl).pathname)
+		/^\/social-card\/(trading-strategy|blockchain)(?:\/|\.png$|$)/.test(new URL(selectedImageUrl).pathname)
 	);
 	let openGraphImage = $derived({
 		...suppliedOpenGraphImage,

@@ -2,6 +2,7 @@
 ECharts diagnostics page for experimenting with the vault ecosystem chart.
 -->
 <script lang="ts">
+	import { chartDataUrl } from '$lib/helpers/edge-cache';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import Alert from '$lib/components/Alert.svelte';
@@ -150,7 +151,7 @@ ECharts diagnostics page for experimenting with the vault ecosystem chart.
 	}
 
 	async function fetchChartData(signal?: AbortSignal): Promise<SlimVaultInfo[]> {
-		const response = await fetch(resolve('/top-vaults/chart-data'), {
+		const response = await fetch(chartDataUrl(resolve('/top-vaults/chart-data')), {
 			headers: { accept: 'application/json' },
 			signal
 		});

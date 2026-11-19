@@ -58,7 +58,7 @@ test.describe('historical vault TVL by chain chart data endpoint', () => {
 test.describe('historical vault TVL by chain page', () => {
 	test('recovers from a transient chart-data 500 without a page reload', async ({ page }) => {
 		let requests = 0;
-		await page.route('**/vaults/historical-tvl-chain/chart-data?*', async (route) => {
+		await page.route('**/vaults/historical-tvl-chain/chart-data.bin?*', async (route) => {
 			requests += 1;
 			if (requests === 1) {
 				await route.fulfill({ status: 500, body: 'Internal error' });

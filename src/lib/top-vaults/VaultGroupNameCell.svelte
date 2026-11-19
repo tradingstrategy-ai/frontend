@@ -7,7 +7,7 @@ Used by group listing tables for protocol, chain, curator and stablecoin rows.
 @example
 
 ```svelte
-  <VaultGroupNameCell label="USDC" logoUrl="/metadata-logo/stablecoin/usdc" />
+  <VaultGroupNameCell label="USDC" logoUrl="/metadata-logo/stablecoin/usdc.webp" />
 ```
 -->
 <script lang="ts">

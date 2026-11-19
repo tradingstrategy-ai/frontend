@@ -90,7 +90,7 @@ Vault listing and overview for one protocol.
 {#snippet protocolMiniChart()}
 	<VaultGroupMiniChart
 		title={`All ${protocolName} ${listingAssetTypePlural}: TVL and TVL-weighted 3-month annualised return`}
-		dataUrl="/vaults/protocols/{protocolSlug}/chart-data"
+		dataUrl="/vaults/protocols/{protocolSlug}/chart-data.bin"
 		compareLabel="Compare all protocols"
 		compareHref="/vaults/historical-tvl-protocol"
 		returnTooltipLabel="TVL-weighted 3-month ann. return"

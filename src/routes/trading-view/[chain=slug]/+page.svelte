@@ -21,7 +21,7 @@ Blockchain overview with market entities and a server-calculated vault summary.
 <MetaTags
 	titleParts={[`${chain.name} DEX trading data`, 'Exchanges, pairs, tokens and vaults']}
 	description={`Explore decentralised exchanges, trading pairs, tokens, lending markets and tracked DeFi vaults on ${chain.name}, with live prices and historical market data.`}
-	image={`/social-card/blockchain/${chain.slug}`}
+	image={`/social-card/blockchain/${chain.slug}.png`}
 />
 
 <Breadcrumbs labels={{ [chain.slug]: chain.name }} />

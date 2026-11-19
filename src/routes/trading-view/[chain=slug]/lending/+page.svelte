@@ -33,7 +33,7 @@
 <MetaTags
 	titleParts={[`${chain.name} lending reserves`]}
 	description={`Top decentralised lending reserves on ${chain.name} with supply and borrow rates and historical data.`}
-	image={`/social-card/blockchain/${chain.slug}`}
+	image={`/social-card/blockchain/${chain.slug}.png`}
 />
 
 <Breadcrumbs labels={{ [chain.slug]: chain.name, lending: 'Lending reserves' }} />

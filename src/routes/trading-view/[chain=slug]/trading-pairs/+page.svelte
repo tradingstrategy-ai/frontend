@@ -27,7 +27,7 @@
 <MetaTags
 	titleParts={[`${chain.name} trading pairs`, 'DEX market data']}
 	description={`Top decentralised exchange trading pairs on ${chain.name} ranked by volume and liquidity, with price charts and OHLCV history.`}
-	image={`/social-card/blockchain/${chain.slug}`}
+	image={`/social-card/blockchain/${chain.slug}.png`}
 />
 
 <Breadcrumbs labels={{ [chain.slug]: chain.name, 'trading-pairs': 'Trading pairs' }} />

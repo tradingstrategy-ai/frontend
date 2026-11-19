@@ -6,6 +6,7 @@ import { backendUrl, backendInternalUrl, sentryDsn, siteMode, strategyMicrosite,
 import { countryCodeSchema } from '$lib/helpers/geo';
 import { diagnoseFetch } from '$lib/diagnostics/server';
 import { signozSentryOptions, installConsoleLogBridge } from '$lib/server/signoz-telemetry';
+import { EDGE_CACHE_DEFAULT_CONTROL, stripEdgeCacheExtension } from '$lib/helpers/edge-cache';
 import { getFontPreloadLinks } from '$lib/server/font-preload';
 
 const defaultColorMode = 'dark';
@@ -96,6 +97,9 @@ const handleAdminRole: Handle = async ({ event, resolve }) => {
  *   scrapers. Googlebot kept recrawling the cards regardless (65 % of the same report in
  *   2026-11), so robots.txt disallows `/social-card/` for Googlebot only. Set here rather
  *   than per `Response` so the redirect and error branches of the endpoints are covered too.
+ * - A 24-hour `Cache-Control` on successful responses to edge-cacheable URLs (chart data,
+ *   share images and metadata logos with a cache extension; see `$lib/helpers/edge-cache`)
+ *   that do not set their own, so Cloudflare and browsers cache them.
  */
 const NOINDEX_IMAGE_PATH_PATTERN = /^\/(social-card|metadata-logo)\//;
 
@@ -108,6 +112,9 @@ const handleResponseHeaders: Handle = async ({ event, resolve }) => {
 	}
 	if (NOINDEX_IMAGE_PATH_PATTERN.test(pathname)) {
 		response.headers.set('X-Robots-Tag', 'noindex');
+	}
+	if (response.status === 200 && !response.headers.has('cache-control') && stripEdgeCacheExtension(pathname)) {
+		response.headers.set('cache-control', EDGE_CACHE_DEFAULT_CONTROL);
 	}
 	return response;
 };

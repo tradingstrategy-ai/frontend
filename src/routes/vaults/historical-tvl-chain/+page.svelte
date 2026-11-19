@@ -5,6 +5,7 @@ Benchmark the matching server-side aggregation with
 `pnpm run benchmark:historical-tvl-chain`.
 -->
 <script lang="ts">
+	import { chartDataUrl } from '$lib/helpers/edge-cache';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 	import { JsonLd } from 'svelte-meta-tags';
@@ -39,7 +40,7 @@ Benchmark the matching server-side aggregation with
 				chartError = null;
 
 				const payload = await fetchHistoricalTvl<HistoricalTvlByChainPayload>(
-					resolve(`/vaults/historical-tvl-chain/chart-data?v=${chartDataVersion}`),
+					chartDataUrl(resolve(`/vaults/historical-tvl-chain/chart-data?v=${chartDataVersion}`)),
 					controller.signal
 				);
 				if (!cancelled) chartData = payload;

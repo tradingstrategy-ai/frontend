@@ -62,7 +62,7 @@ Render the pair trading page
 		details.chain_name
 	]}
 	description={`${summary.pair_symbol} on ${details.exchange_name} (${details.chain_name}): price ${formatDollar(summary.usd_price_latest)}, 24h volume ${formatDollar(summary.usd_volume_24h, 1, 1)}, liquidity ${formatDollar(summary.usd_liquidity_latest ?? summary.pair_tvl, 1, 1)}. Live chart, OHLCV history and token tax.`}
-	image={`/social-card/blockchain/${summary.chain_slug}`}
+	image={`/social-card/blockchain/${summary.chain_slug}.png`}
 />
 
 <Breadcrumbs labels={breadcrumbs} />
