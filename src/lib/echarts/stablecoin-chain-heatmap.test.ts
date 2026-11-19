@@ -167,7 +167,7 @@ describe('buildStablecoinChainHeatmapPayload', () => {
 				totalTvl: 250,
 				chainIds: [9999],
 				href: '/vaults/chains/hyperliquid',
-				logoUrl: '/logos/blockchains/hyperliquid'
+				logoUrl: '/logos/blockchains/hyperliquid.svg'
 			}),
 			expect.objectContaining({
 				key: 'ethereum',
@@ -175,7 +175,7 @@ describe('buildStablecoinChainHeatmapPayload', () => {
 				totalTvl: 100,
 				chainIds: [1],
 				href: '/vaults/chains/ethereum',
-				logoUrl: '/logos/blockchains/ethereum'
+				logoUrl: '/logos/blockchains/ethereum.svg'
 			}),
 			expect.objectContaining({
 				key: 'base',
@@ -183,7 +183,7 @@ describe('buildStablecoinChainHeatmapPayload', () => {
 				totalTvl: 80,
 				chainIds: [8453],
 				href: '/vaults/chains/base',
-				logoUrl: '/logos/blockchains/base'
+				logoUrl: '/logos/blockchains/base.svg'
 			})
 		]);
 		expect(payload.stablecoins).toEqual([

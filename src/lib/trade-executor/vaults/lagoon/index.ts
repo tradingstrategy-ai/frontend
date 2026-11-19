@@ -14,7 +14,7 @@ import vaultAbi_v0_5_0 from './abi/v0.5.0/Vault.json';
 export class LagoonVault extends VaultWithInternalDeposits<LagoonSmartContracts> implements SettlementRequired {
 	readonly type = 'lagoon';
 	readonly label = 'Lagoon';
-	readonly logoUrl = '/logos/tokens/lagoon';
+	readonly logoUrl = '/logos/tokens/lagoon.svg';
 	readonly address = this.contracts.address;
 	readonly payee = this.address;
 	readonly inKindRedemption = false;

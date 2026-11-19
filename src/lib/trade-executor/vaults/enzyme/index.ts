@@ -15,7 +15,7 @@ const SLIPPAGE_TOLERANCE = 0.02;
 export class EnzymeVault extends VaultWithInternalDeposits<EnzymeSmartContracts> {
 	readonly type = 'enzyme';
 	readonly label = 'Enzyme';
-	readonly logoUrl = '/logos/tokens/enzyme';
+	readonly logoUrl = '/logos/tokens/enzyme.svg';
 	readonly address = this.contracts.vault;
 	readonly payee = this.contracts.comptroller;
 	readonly paymentForwarder = this.contracts.payment_forwarder;

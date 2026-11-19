@@ -148,16 +148,25 @@ Protocol pages and the protocol listing also resolve Xerberus scores from these 
 
 **Code:** `src/lib/top-vaults/vault-prices-parquet.ts` → `ensureVaultPricesParquet()`
 
-1. If the local file (`data/cleaned-vault-prices-1h.parquet`) exists and is less than 1 hour old → use it directly
-2. If the file is stale or missing → resolve a remote source and download:
+1. If the local file (`data/cleaned-vault-prices-1h.parquet`) exists, it is returned straight away. When it is more than 1 hour old, a refresh starts in the background; the request does not wait for it.
+2. A refresh resolves a remote source:
    - `TS_PRIVATE_VAULT_PRICES_PARQUET_URL` if set (takes precedence — also used by tests to inject a mock)
    - Otherwise R2 if credentials are configured
-3. If neither URL nor R2 is available → throws error (unless a local file already exists, in which case the stale copy is used)
-4. Change detection uses ETag / Last-Modified / Content-Length from HEAD requests (URL path) or HeadObject (R2 path)
-5. Downloads are atomic (write to temp file, then rename)
-6. Concurrent callers share a single in-flight download
+3. If the file is missing, the request waits for the download for at most 90 seconds (`DATA_TIMEOUT_MS`) and then gets a 503; the download carries on for later requests. If neither URL nor R2 is available, it throws.
+4. Nothing is refreshed when the `data/` directory is not writable. Production mounts it read-only (`docker-compose.yml`) and keeps the file current from the host.
+5. Change detection uses ETag / Last-Modified / Content-Length from HEAD requests (URL path) or HeadObject (R2 path)
+6. Downloads are atomic (write to temp file, then rename)
+7. Concurrent callers share a single in-flight refresh
 
-R2 downloads stream the object body via the AWS SDK (`getR2Object`) and pipe it to disk using Node.js `stream.pipeline`. URL downloads use `fetch` with a 5-minute timeout.
+R2 downloads stream the object body via the AWS SDK (`getR2Object`) and pipe it to disk using Node.js `stream.pipeline`. The R2 client has a 90-second connection timeout and a 90-second socket idle timeout, and HeadObject is aborted after 90 seconds. URL downloads use `fetch` with a 5-minute timeout, URL HEAD requests 90 seconds.
+
+#### Query limits
+
+`withDuckDbConnection()` in `src/lib/server/data-limits.ts` runs every DuckDB query against the parquet (vault metrics, hub mini charts, historical TVL, vault comparison). At most 4 queries run at once, and each has a 90-second deadline that includes waiting for a slot. A query that misses it is interrupted, and the endpoint answers 503.
+
+DuckDB's Node bindings run on the libuv thread pool (`UV_THREADPOOL_SIZE=8`), which file-system calls, DNS lookups and static file serving share. On 2026-11-19 work that never finished held all eight threads: every chart endpoint and every static file that missed the Cloudflare cache returned 504, and the glossary 404'd because its server-side `fetch` could not resolve DNS. SSR pages without file-system work still rendered.
+
+`/vaults/<id>/metrics` is cached in memory for 1 hour (the 100 most recently loaded vaults, concurrent requests share one query), is sent with `Cache-Control: public, max-age=3600`, and is disallowed in `robots.txt`.
 
 ### Treasury benchmark (FRED DGS3MO)
 
@@ -286,7 +295,7 @@ FRED (fred.stlouisfed.org)
 For local development, ensure R2 credentials are set in `.env.local`. All data sources will work automatically:
 
 - Top vaults JSON is fetched on first page load and cached in memory for 1 hour
-- Vault prices parquet (~150 MB) is downloaded on first metrics request and cached locally with a 1-hour refresh interval
+- Vault prices parquet (~260 MB) is downloaded on first metrics request and cached locally; once it is more than an hour old, it is refreshed in the background
 - Treasury benchmark data is fetched from FRED on demand (no credentials needed) and cached for 24 hours
 
 When developing from a git worktree, `.env.local` and `data/` are ignored local files and are not

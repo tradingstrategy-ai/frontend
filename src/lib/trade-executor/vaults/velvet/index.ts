@@ -7,7 +7,7 @@ import { getTokenInfo } from '$lib/eth-defi/helpers';
 export class VelvetVault extends BaseVault<VelvetSmartContracts> {
 	readonly type = 'velvet';
 	readonly label = 'Velvet Capital';
-	readonly logoUrl = '/logos/tokens/velvet';
+	readonly logoUrl = '/logos/tokens/velvet.svg';
 	readonly address = this.contracts.portfolio;
 	readonly inKindRedemption = true;
 
