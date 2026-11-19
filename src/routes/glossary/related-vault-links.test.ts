@@ -9,6 +9,11 @@ describe('getRelatedVaultLinks', () => {
 		]);
 	});
 
+	test('links protocol and stablecoin terms to their vault hub', () => {
+		expect(getRelatedVaultLinks('morpho').map((link) => link.href)).toEqual(['/vaults/protocols/morpho']);
+		expect(getRelatedVaultLinks('usdc').map((link) => link.href)).toEqual(['/vaults/stablecoins/usdc']);
+	});
+
 	test('returns nothing for unrelated terms', () => {
 		expect(getRelatedVaultLinks('stop-loss')).toEqual([]);
 	});

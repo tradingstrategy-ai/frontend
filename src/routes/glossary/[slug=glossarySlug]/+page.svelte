@@ -42,7 +42,8 @@
 	}
 </script>
 
-<MetaTags titleParts={[`What is ${entry.name}?`, 'DeFi and trading glossary']} description={entry.description} />
+<!-- No section label: at 60 characters it fitted only 37 of 438 terms, so titles were inconsistent -->
+<MetaTags titleParts={[`What is ${entry.name}?`]} description={entry.description} />
 
 <svelte:head>
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -- JSON-LD serialised from the glossary entry -->

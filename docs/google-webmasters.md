@@ -150,7 +150,7 @@ Where the search-facing behaviour lives in this codebase (added in response to t
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `noindex` for dead / spam token and pair pages | `src/lib/explorer/indexing.ts` — thresholds `INDEXABLE_MIN_LIQUIDITY_USD` and `INDEXABLE_MIN_VOLUME_USD`; the token and pair loaders return `robots`. Missing metrics keep a page indexable; only confirmed low values exclude it.                                                                                                                                                                                                                            |
 | `noindex` for empty vault pages                | `isVaultIndexable()` in `src/lib/explorer/indexing.ts` (pure rule) and the `VaultInfo` adapter of the same name in `src/lib/top-vaults/helpers.ts` (USD conversion, protocol and blacklist classification); used by the vault detail loader and `vaults/sitemap.xml`. Blacklisted and unknown-protocol listings are `noindex` and not in the sitemap.                                                                                                         |
-| `noindex` for generated images                 | `handleResponseHeaders` in `src/hooks.server.ts` sets `X-Robots-Tag: noindex` on `/social-card/*` and `/metadata-logo/*`, including their redirects. Export-data pages and unnamed exchanges (`isUnknownExchangeName`) return `robots` from their loaders.                                                                                                                                                                                                    |
+| `noindex` for generated images                 | `handleResponseHeaders` in `src/hooks.server.ts` sets `X-Robots-Tag: noindex` on `/social-card/*` and `/metadata-logo/*`, including their redirects; `static/robots.txt` also disallows `/social-card/` for Googlebot only (its group repeats the `*` rules, because Googlebot obeys only the most specific group). Export-data pages and unnamed exchanges (`isUnknownExchangeName`) return `robots` from their loaders.                                     |
 | Titles, descriptions, `og:image`               | `SocialCardMetaTags` (`titleParts` → `getPageTitle()` in `src/lib/helpers/seo.ts`, description cut by `getMetaDescription()`, default social image); every indexable template uses it. `tests/integration/head-meta.test.ts` asserts one canonical, one branded title, a 70–155 character description and one `og:image` on a sample URL of each template; `api/explorer/` in the static sitemap is the backend's own Swagger page and outside this contract. |
 | Structured data                                | `organizationSchema()` (home), `BlogPosting` (blog post), `BreadcrumbList` as JSON-LD on vault detail pages and as microdata via `Breadcrumbs.svelte` elsewhere — never both on one page.                                                                                                                                                                                                                                                                     |
 | Font layout shift                              | Metric-matched fallback faces in `src/lib/components/css/font-fallbacks.css` (render-blocking; see `docs/speed.md`); `src/lib/server/font-preload.ts` sends the `Link` preload headers on HTML responses only; `scripts/static-cache-control.js` gives the font files their one-year `Cache-Control` from `scripts/server.js`.                                                                                                                                |
@@ -531,3 +531,37 @@ Built and removed before release: a generated "top vaults" block on every hub, a
 Deferred by the plan until measured: protocol × stablecoin pilot pages (workstream 4) and crawlable pagination (workstream 9).
 
 After release: request removal of `/vaults/newbet` in Search Console; request indexing of `/vaults/protocols/morpho` and `/vaults/stablecoins/usdc`; rerun `pnpm run seo:search-console terms --inspect` and `templates` at 4 and 8 weeks.
+
+## Round 5 — 2026-11-18
+
+Search Console UI (page indexing, crawl stats, Core Web Vitals), the `templates` and `terms` commands and PageSpeed Insights, eight weeks after round 4.
+
+### Round 4 outcome
+
+49 days after release (2026-09-27…11-14) against the 49 days before:
+
+- Vault detail pages: 5.7 → 7.5 clicks/day, CTR 1.14 → 1.65 %, position 7.6 → 6.8. Glossary: position 30.7 → 23.2, 2.4 → 4.4 clicks/day.
+- "defi vaults" position 48.9 → 18.0; 13 of 28 category queries have impressions (15 at baseline).
+- Token template 53 → 10 clicks/day: the spam-token `noindex` from the first round, as intended.
+- Mobile field CLS 0.10 → 0.00; Search Console lists no CLS issue. "Crawled – currently not indexed" 35K → 21.2K.
+- `/vaults/protocols/morpho` and `/vaults/stablecoins/usdc` are still "Crawled – currently not indexed", and `/vaults/protocols/hyperliquid` has joined them. URL inspection shows their last crawl as 2026-08-07, 2026-08-10 and 2026-10-01: Google has not fetched them since the round 4 titles shipped.
+
+### Findings
+
+- **Social cards**: `/social-card/vault/*` was 65 % of a 1,000-URL sample of "Crawled – currently not indexed" (468 of the sample fetched in November). The `noindex` header is live, but it does not stop the crawling.
+- **404s**: in a 1,000-URL sample of the 1,560 "Not found" URLs, about a third are vault pages whose slug changed in the dataset (`gmx-market-weth-usdc-arbitrum-0x…` → `gm-wtioil-weth-usdc`, `…-vault-3` → `…-vault-6`, plus the legacy `/trading-view/vaults/<old slug>` redirects that now land on them), and about 35 % are `/strategies/<s>/open-positions/<n>` pages of positions that have since closed. Neither is redirected yet.
+- **Crawl stats**: 10 % of Googlebot requests are `__data.json` and `/vaults/<id>/metrics` JSON (renderer page-resource loads). `Disallow: /*.json$` does not match `__data.json?x-sveltekit-invalidated=…`.
+- **Mobile LCP**: one Search Console group, 132 URLs (home and vault pages), 2.7 s. Measured with Playwright (412 px, 4× CPU, 1.6 Mbit/s, 150 ms RTT) against production: on vault and hub pages LCP is text and equals FCP (2.1–2.4 s). FCP waits for the 5–6 external CSS files, which finish at 1.9–2.1 s although the HTML is complete at 0.6–0.8 s, because they share bandwidth with ~115 `modulepreload` JS chunks, the fonts and images. On the home page the 27 KB hero image is requested at 0.4 s but arrives at 2.8 s for the same reason.
+- **`inlineStyleThreshold` 8192 → 40960, measured and not shipped.** Inlining every stylesheet adds 17–19 KB gzipped per HTML page. Local A/B (both builds behind a gzip proxy, five cold loads each) improved FCP by 70–310 ms on a vault page, the Morpho hub and a glossary term, but the Lighter hub's LCP moved from 0.9 s to 5.1 s in every run: the hub summary paragraph is reported as a new LCP entry at ~5 s, with or without web fonts, and the screenshots at 2 s are identical. The local server is HTTP/1.1 and does not reproduce the production contention, so the result is not conclusive either way.
+- Glossary titles kept "DeFi and trading glossary" only when the title fitted in 60 characters: 37 of 438 terms.
+- The web3-ethereum-defi docs site answers `/robots.txt` and `/sitemap.xml` with a 1.5 MB HTML page and status 200 (docs repository); its submitted `sitemap-generated.xml` is fine but was last read on 2026-02-04.
+
+### What changed
+
+1. `static/robots.txt`: `Disallow: /social-card/` for Googlebot only. Twitterbot and Facebook's crawler honour robots.txt and still read the cards through the `*` group. Trade-off: Google can no longer use a vault card as the page's thumbnail.
+2. Glossary → vault hub links for the protocol and stablecoin terms that have a hub: Hyperliquid, Morpho, Aave, Euler, Ethena, GMX, GRVT and USDC.
+3. Glossary term titles are `What is <term>? | Trading Strategy` for every term.
+
+Search Console, 2026-11-18: indexing requested for `/vaults/protocols/morpho`, `/vaults/stablecoins/usdc` and `/vaults/protocols/hyperliquid` (URL inspection showed "Temporary processing error" and "No referring sitemaps detected" as the sitemap status, from the August crawl); `web3-ethereum-defi.tradingstrategy.ai/sitemap-generated.xml` resubmitted.
+
+Not done: the 404 redirects (vault slug history, open → closed positions), the `__data.json` crawl and the LCP contention (candidates: fewer initial JS chunks, or lower-priority module preloads, measured over HTTP/2).

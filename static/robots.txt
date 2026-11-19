@@ -10,3 +10,15 @@ Allow: /api/explorer/
 Disallow: /*.json$
 Disallow: /*.ipynb$
 Disallow: /strategies/tvl
+
+# Googlebot obeys only its own group, so the rules above are repeated here.
+# Generated og:image cards are noindex (X-Robots-Tag) but Googlebot kept recrawling
+# them; social scrapers (Twitterbot, facebookexternalhit, …) still use the group above.
+User-agent: Googlebot
+Disallow: /api/
+Allow: /api/sitemap/
+Allow: /api/explorer/
+Disallow: /*.json$
+Disallow: /*.ipynb$
+Disallow: /strategies/tvl
+Disallow: /social-card/
