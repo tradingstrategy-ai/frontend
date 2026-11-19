@@ -92,9 +92,10 @@ const handleAdminRole: Handle = async ({ event, resolve }) => {
  *   (`/social-card/…`, including their `?fallback=` redirects) and resized protocol logos
  *   (`/metadata-logo/…`) get crawled like pages and were 45 % of a 1,000-URL sample of the
  *   "crawled – currently not indexed" report in the 2026-09 audit. Images cannot carry a robots meta tag, so the
- *   header is the only signal; robots.txt must keep allowing them because social scrapers
- *   (and Google's own og:image fetch) need to read them. Set here rather than per `Response`
- *   so the redirect and error branches of the endpoints are covered too.
+ *   header is the signal for most crawlers; robots.txt must keep allowing them for social
+ *   scrapers. Googlebot kept recrawling the cards regardless (65 % of the same report in
+ *   2026-11), so robots.txt disallows `/social-card/` for Googlebot only. Set here rather
+ *   than per `Response` so the redirect and error branches of the endpoints are covered too.
  */
 const NOINDEX_IMAGE_PATH_PATTERN = /^\/(social-card|metadata-logo)\//;
 
