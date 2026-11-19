@@ -1,15 +1,26 @@
 import { env } from '$env/dynamic/private';
 import { createWriteStream } from 'node:fs';
-import { mkdir, readFile, rename, rm, stat, utimes, writeFile } from 'node:fs/promises';
+import {
+	access,
+	constants as fsConstants,
+	mkdir,
+	readFile,
+	rename,
+	rm,
+	stat,
+	utimes,
+	writeFile
+} from 'node:fs/promises';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { once } from 'node:events';
 import { dirname } from 'node:path';
 import { VAULT_PRICES_PARQUET, VAULT_PRICES_PARQUET_PATH } from './constants';
 import { getR2Object, headR2Object, isR2Configured } from '$lib/r2/client';
+import { DATA_TIMEOUT_MS, withDataTimeout } from '$lib/server/data-limits';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
-const HEAD_TIMEOUT_MS = 20_000;
+// A full download of the ~260 MB file may legitimately take longer than a request deadline
 const DOWNLOAD_TIMEOUT_MS = 5 * 60 * 1000;
 
 type RemoteFileMetadata = {
@@ -24,6 +35,10 @@ type EnsureVaultPricesParquetOptions = {
 	checkIntervalMs?: number;
 	fetchFn?: typeof fetch;
 	now?: () => Date;
+	/** Deadline for a caller waiting on the first download of a missing file */
+	timeoutMs?: number;
+	/** Whether refreshed files can be written next to `localPath`; injectable for tests */
+	isWritable?: (directory: string) => Promise<boolean>;
 };
 
 const refreshInFlight = new Map<string, Promise<string>>();
@@ -91,7 +106,7 @@ async function touchFile(path: string, now: Date): Promise<void> {
 async function headRemoteFile(fetchFn: typeof fetch, upstreamUrl: string): Promise<RemoteFileMetadata> {
 	const response = await fetchFn(upstreamUrl, {
 		method: 'HEAD',
-		signal: AbortSignal.timeout(HEAD_TIMEOUT_MS)
+		signal: AbortSignal.timeout(DATA_TIMEOUT_MS)
 	});
 
 	if (!response.ok) {
@@ -222,12 +237,85 @@ async function downloadRemote(
 
 // --- Main logic ---
 
-async function ensureVaultPricesParquetInner({
+async function isDirectoryWritable(directory: string): Promise<boolean> {
+	return access(directory, fsConstants.W_OK).then(
+		() => true,
+		() => false
+	);
+}
+
+const writableDirectories = new Map<string, Promise<boolean>>();
+
+/**
+ * Whether the cache directory accepts writes. Production mounts `data/` read-only and keeps
+ * the file fresh from the host, so the app must not try to refresh it there. Checked once
+ * per directory and process.
+ */
+function canRefresh(localPath: string, isWritable = isDirectoryWritable): Promise<boolean> {
+	const directory = dirname(localPath);
+	let writable = writableDirectories.get(directory);
+	if (!writable) {
+		writable = isWritable(directory).then((result) => {
+			if (!result) console.info(`${directory} is read-only; serving ${VAULT_PRICES_PARQUET} without refreshing it`);
+			return result;
+		});
+		writableDirectories.set(directory, writable);
+	}
+	return writable;
+}
+
+async function downloadMissingFile(source: RemoteSource & object, localPath: string, now: Date): Promise<string> {
+	const metadata = await downloadRemote(source, localPath, now);
+	await writeCachedMetadata(localPath, metadata);
+	return localPath;
+}
+
+async function refreshExistingFile(source: RemoteSource & object, localPath: string, now: Date): Promise<string> {
+	try {
+		const remoteMetadata = await headRemote(source);
+		const cachedMetadata = await readCachedMetadata(localPath);
+
+		if (hasRemoteFileChanged(remoteMetadata, cachedMetadata)) {
+			const downloadedMetadata = await downloadRemote(source, localPath, now);
+			await writeCachedMetadata(localPath, downloadedMetadata);
+		} else {
+			await touchFile(localPath, now);
+		}
+	} catch (error) {
+		console.warn(`Failed to refresh ${VAULT_PRICES_PARQUET} cache`, error);
+	}
+	return localPath;
+}
+
+/** Run `refresh` unless one is already in flight for `localPath`, and return the shared promise. */
+function runRefreshOnce(localPath: string, refresh: () => Promise<string>): Promise<string> {
+	let inFlight = refreshInFlight.get(localPath);
+	if (!inFlight) {
+		inFlight = refresh().finally(() => {
+			refreshInFlight.delete(localPath);
+		});
+		refreshInFlight.set(localPath, inFlight);
+	}
+	return inFlight;
+}
+
+/**
+ * Resolve the local vault prices Parquet file, refreshing it from R2 (preferred)
+ * or a direct URL when the cache check interval has expired.
+ *
+ * An existing file is returned straight away and refreshed in the background, so a slow or
+ * stalled refresh never holds up a request. Only a missing file is waited for, and then for
+ * at most `timeoutMs` (the download carries on for later callers). Nothing is refreshed when
+ * the cache directory is read-only.
+ */
+export async function ensureVaultPricesParquet({
 	localPath = VAULT_PRICES_PARQUET_PATH,
 	upstreamUrl = getConfiguredUpstreamUrl(),
 	checkIntervalMs = ONE_HOUR_MS,
 	fetchFn = fetch,
-	now = () => new Date()
+	now = () => new Date(),
+	timeoutMs = DATA_TIMEOUT_MS,
+	isWritable
 }: EnsureVaultPricesParquetOptions = {}): Promise<string> {
 	const localStat = await stat(localPath).catch(() => null);
 	const currentTime = now();
@@ -239,47 +327,30 @@ async function ensureVaultPricesParquetInner({
 				`Vault prices parquet is missing at ${localPath} and neither R2 nor TS_PRIVATE_VAULT_PRICES_PARQUET_URL is configured`
 			);
 		}
-
-		const metadata = await downloadRemote(source, localPath, currentTime);
-		await writeCachedMetadata(localPath, metadata);
-		return localPath;
-	}
-
-	if (currentTime.getTime() - localStat.mtimeMs < checkIntervalMs || !source) {
-		return localPath;
-	}
-
-	try {
-		const remoteMetadata = await headRemote(source);
-		const cachedMetadata = await readCachedMetadata(localPath);
-
-		if (hasRemoteFileChanged(remoteMetadata, cachedMetadata)) {
-			const downloadedMetadata = await downloadRemote(source, localPath, currentTime);
-			await writeCachedMetadata(localPath, downloadedMetadata);
-		} else {
-			await touchFile(localPath, currentTime);
+		if (!(await canRefresh(localPath, isWritable))) {
+			throw new Error(`Vault prices parquet is missing at ${localPath} and its directory is read-only`);
 		}
-	} catch (error) {
-		console.warn(`Failed to refresh ${VAULT_PRICES_PARQUET} cache`, error);
+
+		const download = runRefreshOnce(localPath, () => downloadMissingFile(source, localPath, currentTime));
+		return withDataTimeout(download, timeoutMs, `${VAULT_PRICES_PARQUET} download`);
+	}
+
+	if (
+		source &&
+		currentTime.getTime() - localStat.mtimeMs >= checkIntervalMs &&
+		(await canRefresh(localPath, isWritable))
+	) {
+		void runRefreshOnce(localPath, () => refreshExistingFile(source, localPath, currentTime));
 	}
 
 	return localPath;
 }
 
 /**
- * Resolve the local vault prices Parquet file, refreshing it from R2 (preferred)
- * or a direct URL when the cache check interval has expired.
+ * Wait for the background refresh of `localPath`, if one is running. For tests.
+ *
+ * @param localPath cache file path, the production path by default
  */
-export async function ensureVaultPricesParquet(options: EnsureVaultPricesParquetOptions = {}): Promise<string> {
-	const localPath = options.localPath ?? VAULT_PRICES_PARQUET_PATH;
-	const existingRefresh = refreshInFlight.get(localPath);
-
-	if (existingRefresh) return existingRefresh;
-
-	const refresh = ensureVaultPricesParquetInner(options).finally(() => {
-		refreshInFlight.delete(localPath);
-	});
-
-	refreshInFlight.set(localPath, refresh);
-	return refresh;
+export async function waitForVaultPricesRefresh(localPath: string = VAULT_PRICES_PARQUET_PATH): Promise<void> {
+	await refreshInFlight.get(localPath);
 }

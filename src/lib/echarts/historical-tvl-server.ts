@@ -1,4 +1,4 @@
-import { DuckDBConnection } from '@duckdb/node-api';
+import { withDuckDbConnection } from '$lib/server/data-limits';
 import type { VaultInfo } from '$lib/top-vaults/schemas';
 import type { HistoricalWeeklyVaultRow } from './historical-tvl';
 import { VAULT_PRICES_PARQUET_PATH } from '$lib/top-vaults/constants';
@@ -48,9 +48,8 @@ export async function getHistoricalWeeklyVaultRows(
 ): Promise<HistoricalWeeklyVaultRow[]> {
 	const resolvedParquetFile =
 		parquetFile === HISTORICAL_TVL_PARQUET_FILE ? await ensureVaultPricesParquet() : parquetFile;
-	const connection = await DuckDBConnection.create();
 
-	try {
+	return withDuckDbConnection('historical weekly vault TVL', async (connection) => {
 		const reader = await connection.runAndReadAll(
 			`
 				WITH daily AS (
@@ -90,9 +89,7 @@ export async function getHistoricalWeeklyVaultRows(
 			week: week as string | Date,
 			tvl: Number(tvl)
 		}));
-	} finally {
-		connection.closeSync();
-	}
+	});
 }
 
 export async function getHistoricalDailyVaultRows(
@@ -100,9 +97,8 @@ export async function getHistoricalDailyVaultRows(
 ): Promise<HistoricalWeeklyVaultRow[]> {
 	const resolvedParquetFile =
 		parquetFile === HISTORICAL_TVL_PARQUET_FILE ? await ensureVaultPricesParquet() : parquetFile;
-	const connection = await DuckDBConnection.create();
 
-	try {
+	return withDuckDbConnection('historical daily vault TVL', async (connection) => {
 		const reader = await connection.runAndReadAll(
 			`
 				SELECT
@@ -125,7 +121,5 @@ export async function getHistoricalDailyVaultRows(
 			week: day as string | Date,
 			tvl: Number(tvl)
 		}));
-	} finally {
-		connection.closeSync();
-	}
+	});
 }

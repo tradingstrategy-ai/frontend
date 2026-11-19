@@ -6,15 +6,17 @@ The frontend uses Cloudflare CDN caching with TTL-based expiration. There is no 
 
 ## Cache durations by route
 
-| Route                       | TTL     | Notes                              |
-| --------------------------- | ------- | ---------------------------------- |
-| `/` (landing page)          | 30 min  | Vault data, strategies, blog posts |
-| `/trading-view`             | 5 min   |                                    |
-| `/trading-view/.../[pair]`  | 30 min  | Trading pair details               |
-| `/trading-view/.../[token]` | 30 min  | Token details                      |
-| `/blog`, `/blog/[slug]`     | 5 min   | Ghost CMS content                  |
-| `/glossary`                 | Dynamic | TTL from server-side cache         |
-| Sitemaps (`sitemap*.xml`)   | 10 min  |                                    |
+| Route                       | TTL     | Notes                                                                                                                     |
+| --------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `/` (landing page)          | 30 min  | Vault data, strategies, blog posts                                                                                        |
+| `/trading-view`             | 5 min   |                                                                                                                           |
+| `/trading-view/.../[pair]`  | 30 min  | Trading pair details                                                                                                      |
+| `/trading-view/.../[token]` | 30 min  | Token details                                                                                                             |
+| `/blog`, `/blog/[slug]`     | 5 min   | Ghost CMS content                                                                                                         |
+| `/glossary`                 | Dynamic | TTL from server-side cache                                                                                                |
+| Sitemaps (`sitemap*.xml`)   | 10 min  |                                                                                                                           |
+| `/logos/<type>/<slug>.svg`  | 24 h    | Bundled SVG logos; the `.svg` extension makes Cloudflare cache them (extensionless URLs are never edge-cached by default) |
+| `/vaults/<id>/metrics`      | 1 h     | Vault chart data; also cached in server memory                                                                            |
 
 ## Static build assets
 

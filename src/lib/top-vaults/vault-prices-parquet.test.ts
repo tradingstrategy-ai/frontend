@@ -2,7 +2,8 @@ import { mkdtemp, readFile, rm, stat, utimes, writeFile } from 'node:fs/promises
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { ensureVaultPricesParquet } from './vault-prices-parquet';
+import { isHttpError } from '@sveltejs/kit';
+import { ensureVaultPricesParquet, waitForVaultPricesRefresh } from './vault-prices-parquet';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
 const REMOTE_URL = 'https://vault-prices.example/cleaned-vault-prices-1h.parquet';
@@ -77,6 +78,7 @@ describe('ensureVaultPricesParquet', () => {
 			fetchFn,
 			now: () => now
 		});
+		await waitForVaultPricesRefresh(localPath);
 
 		const fileStat = await stat(localPath);
 		expect(fetchFn).toHaveBeenCalledTimes(1);
@@ -126,12 +128,15 @@ describe('ensureVaultPricesParquet', () => {
 				})
 			);
 
-		await ensureVaultPricesParquet({
+		const result = await ensureVaultPricesParquet({
 			localPath,
 			upstreamUrl: REMOTE_URL,
 			fetchFn,
 			now: () => now
 		});
+		// The stale file is served while the refresh runs in the background
+		expect(result).toBe(localPath);
+		await waitForVaultPricesRefresh(localPath);
 
 		expect(fetchFn).toHaveBeenCalledTimes(2);
 		expect(await readFile(localPath, 'utf8')).toBe('new-data');
@@ -167,5 +172,66 @@ describe('ensureVaultPricesParquet', () => {
 		expect(JSON.parse(await readFile(`${localPath}.cache.json`, 'utf8'))).toMatchObject({
 			etag: '"fresh-etag"'
 		});
+	});
+
+	it('serves the stale file without waiting for a refresh that never answers', async () => {
+		const dir = await makeTempDir();
+		const localPath = join(dir, 'cleaned-vault-prices-1h.parquet');
+		const oldTime = new Date('2026-04-10T09:00:00.000Z');
+		const now = new Date(oldTime.getTime() + ONE_HOUR_MS + 5_000);
+
+		await writeFile(localPath, 'old-data');
+		await utimes(localPath, oldTime, oldTime);
+
+		const fetchFn = vi.fn<typeof fetch>().mockReturnValue(new Promise<Response>(() => {}));
+
+		const result = await ensureVaultPricesParquet({
+			localPath,
+			upstreamUrl: REMOTE_URL,
+			fetchFn,
+			now: () => now
+		});
+
+		expect(result).toBe(localPath);
+		expect(fetchFn).toHaveBeenCalledTimes(1);
+	});
+
+	it('does not try to refresh a file in a read-only directory', async () => {
+		const dir = await makeTempDir();
+		const localPath = join(dir, 'cleaned-vault-prices-1h.parquet');
+		const oldTime = new Date('2026-04-10T09:00:00.000Z');
+		const now = new Date(oldTime.getTime() + ONE_HOUR_MS + 5_000);
+
+		await writeFile(localPath, 'old-data');
+		await utimes(localPath, oldTime, oldTime);
+
+		const fetchFn = vi.fn<typeof fetch>();
+
+		const result = await ensureVaultPricesParquet({
+			localPath,
+			upstreamUrl: REMOTE_URL,
+			fetchFn,
+			now: () => now,
+			isWritable: async () => false
+		});
+		await waitForVaultPricesRefresh(localPath);
+
+		expect(result).toBe(localPath);
+		expect(fetchFn).not.toHaveBeenCalled();
+	});
+
+	it('answers 503 when the first download misses its deadline', async () => {
+		const dir = await makeTempDir();
+		const localPath = join(dir, 'cleaned-vault-prices-1h.parquet');
+		const fetchFn = vi.fn<typeof fetch>().mockReturnValue(new Promise<Response>(() => {}));
+
+		const result = ensureVaultPricesParquet({
+			localPath,
+			upstreamUrl: REMOTE_URL,
+			fetchFn,
+			timeoutMs: 20
+		});
+
+		await expect(result).rejects.toSatisfy((e) => isHttpError(e, 503));
 	});
 });

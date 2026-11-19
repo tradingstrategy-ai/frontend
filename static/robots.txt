@@ -10,6 +10,8 @@ Allow: /api/explorer/
 Disallow: /*.json$
 Disallow: /*.ipynb$
 Disallow: /strategies/tvl
+# Chart data for vault pages: each request scans the vault price parquet
+Disallow: /vaults/*/metrics
 
 # Googlebot obeys only its own group, so the rules above are repeated here.
 # Generated og:image cards are noindex (X-Robots-Tag) but Googlebot kept recrawling
@@ -21,4 +23,5 @@ Allow: /api/explorer/
 Disallow: /*.json$
 Disallow: /*.ipynb$
 Disallow: /strategies/tvl
+Disallow: /vaults/*/metrics
 Disallow: /social-card/

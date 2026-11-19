@@ -25,10 +25,13 @@ test.describe('font preload headers', () => {
 });
 
 test.describe('logo caching', () => {
-	test('bundled SVG logos are cacheable for a week', async ({ request }) => {
-		const response = await request.get('/logos/blockchains/ethereum');
-		expect(response.status()).toBe(200);
-		expect(response.headers()['cache-control']).toBe('public, max-age=604800, stale-while-revalidate=86400');
+	test('bundled SVG logos are cacheable for 24 hours, with or without the .svg extension', async ({ request }) => {
+		for (const path of ['/logos/blockchains/ethereum.svg', '/logos/blockchains/ethereum']) {
+			const response = await request.get(path);
+			expect(response.status()).toBe(200);
+			expect(response.headers()['content-type']).toContain('image/svg+xml');
+			expect(response.headers()['cache-control']).toBe('public, max-age=86400, stale-while-revalidate=86400');
+		}
 	});
 });
 

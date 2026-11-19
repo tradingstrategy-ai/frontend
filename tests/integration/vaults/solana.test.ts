@@ -8,7 +8,7 @@ test('lists Solana vaults and displays the native account with its explorer link
 	await page.goto('/vaults/neutral-autopilot');
 	const address = page.locator(`a[href="https://solscan.io/account/${account}"]`);
 	await expect(address).toHaveText(account);
-	await expect(page.locator('img[src="/logos/blockchains/solana"]').first()).toBeVisible();
+	await expect(page.locator('img[src="/logos/blockchains/solana.svg"]').first()).toBeVisible();
 });
 
 test('keeps Solana token exploration unavailable', async ({ page }) => {

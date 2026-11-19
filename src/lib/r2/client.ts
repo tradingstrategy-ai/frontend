@@ -10,6 +10,7 @@
 import { env } from '$env/dynamic/private';
 import { S3Client, GetObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
 import { diagnose } from '$lib/diagnostics/server';
+import { DATA_TIMEOUT_MS } from '$lib/server/data-limits';
 
 function createClient(): S3Client | undefined {
 	const accountId = env.TS_PRIVATE_R2_ACCOUNT_ID;
@@ -23,7 +24,11 @@ function createClient(): S3Client | undefined {
 	return new S3Client({
 		region: 'auto',
 		endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
-		credentials: { accessKeyId, secretAccessKey }
+		credentials: { accessKeyId, secretAccessKey },
+		// The SDK has no timeouts by default, so one stalled request could hang every caller
+		// waiting on the shared parquet refresh. `requestTimeout` is a socket idle timeout:
+		// a large download may take longer than this in total, as long as data keeps arriving.
+		requestHandler: { connectionTimeout: DATA_TIMEOUT_MS, requestTimeout: DATA_TIMEOUT_MS }
 	});
 }
 
@@ -85,7 +90,9 @@ export async function headR2Object(key: string) {
 	if (!client || !bucket) return null;
 
 	const command = new HeadObjectCommand({ Bucket: bucket, Key: key });
-	const response = await diagnose(`R2 HEAD ${key}`, () => client.send(command));
+	const response = await diagnose(`R2 HEAD ${key}`, () =>
+		client.send(command, { abortSignal: AbortSignal.timeout(DATA_TIMEOUT_MS) })
+	);
 
 	return {
 		contentLength: response.ContentLength ?? null,
