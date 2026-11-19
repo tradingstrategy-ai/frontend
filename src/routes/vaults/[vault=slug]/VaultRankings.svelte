@@ -1,6 +1,6 @@
 <!--
 @component
-Shows one-month vault return rankings alongside linked strategy categories.
+Shows one-month vault return rankings or a zero-return message alongside linked strategy categories.
 -->
 <script lang="ts">
 	import type { Chain } from '$lib/helpers/chain';
@@ -28,46 +28,54 @@ Shows one-month vault return rankings alongside linked strategy categories.
 			(period1m?.ranking_chain != null && chain != null) ||
 			period1m?.ranking_protocol != null
 	);
+	let hasZeroMonthlyReturn = $derived(
+		period1m?.error_reason === null && (period1m.cagr_net ?? period1m.cagr_gross) === 0
+	);
+	let showRank = $derived(hasRankings || hasZeroMonthlyReturn);
 </script>
 
-{#if hasRankings || categories.length > 0}
-	<div class="vault-metadata" class:has-rankings={hasRankings}>
-		{#if hasRankings}
+{#if showRank || categories.length > 0}
+	<div class="vault-metadata" class:has-rankings={showRank}>
+		{#if showRank}
 			<div class="metadata-group rankings">
 				<span class="metadata-label">Rank</span>
-				<ul>
-					{#if period1m?.ranking_overall != null}
-						<li>
-							<span class="rank">#{period1m.ranking_overall}</span>
-							<a href={resolve('/vaults')}>overall</a>
-						</li>
-					{/if}
-					{#if period1m?.ranking_chain != null && chain}
-						<li>
-							<span class="rank">#{period1m.ranking_chain}</span>
-							on
-							<EntitySymbol size="0.875em" logoUrl={getLogoUrl('blockchain', chain.slug)}>
-								<a href={resolve('/vaults/chains/[chain=slug]', { chain: chain.slug })}>
-									{chain.name}
-								</a>
-							</EntitySymbol>
-						</li>
-					{/if}
-					{#if period1m?.ranking_protocol != null}
-						<li>
-							<span class="rank">#{period1m.ranking_protocol}</span>
-							on
-							<EntitySymbol
-								size="0.875em"
-								logoUrl={protocolMetadata ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined}
-							>
-								<a href={resolve(`/vaults/protocols/${vault.protocol_slug}`)}>
-									{vault.protocol}
-								</a>
-							</EntitySymbol>
-						</li>
-					{/if}
-				</ul>
+				{#if hasRankings}
+					<ul>
+						{#if period1m?.ranking_overall != null}
+							<li>
+								<span class="rank">#{period1m.ranking_overall}</span>
+								<a href={resolve('/vaults')}>overall</a>
+							</li>
+						{/if}
+						{#if period1m?.ranking_chain != null && chain}
+							<li>
+								<span class="rank">#{period1m.ranking_chain}</span>
+								on
+								<EntitySymbol size="0.875em" logoUrl={getLogoUrl('blockchain', chain.slug)}>
+									<a href={resolve('/vaults/chains/[chain=slug]', { chain: chain.slug })}>
+										{chain.name}
+									</a>
+								</EntitySymbol>
+							</li>
+						{/if}
+						{#if period1m?.ranking_protocol != null}
+							<li>
+								<span class="rank">#{period1m.ranking_protocol}</span>
+								on
+								<EntitySymbol
+									size="0.875em"
+									logoUrl={protocolMetadata ? getVaultProtocolLogoUrl(protocolMetadata.slug) : undefined}
+								>
+									<a href={resolve(`/vaults/protocols/${vault.protocol_slug}`)}>
+										{vault.protocol}
+									</a>
+								</EntitySymbol>
+							</li>
+						{/if}
+					</ul>
+				{:else}
+					<p class="rank-status">Unranked (0% annualised return over one month)</p>
+				{/if}
 			</div>
 		{/if}
 
@@ -119,6 +127,10 @@ Shows one-month vault return rankings alongside linked strategy categories.
 		.metadata-label {
 			color: var(--c-text-extra-light);
 			font: var(--metadata-label-font);
+		}
+
+		.rank-status {
+			margin: 0;
 		}
 
 		ul {
