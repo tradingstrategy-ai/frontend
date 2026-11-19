@@ -32,7 +32,7 @@
 <MetaTags
 	titleParts={[`${chain.name} decentralised exchanges`]}
 	description={`Top decentralised exchanges on ${chain.name} ranked by trading volume, with their trading pairs, tokens and historical market data.`}
-	image={`/social-card/blockchain/${chain.slug}`}
+	image={`/social-card/blockchain/${chain.slug}.png`}
 />
 
 <Breadcrumbs labels={{ [chain.slug]: chain.name }} />

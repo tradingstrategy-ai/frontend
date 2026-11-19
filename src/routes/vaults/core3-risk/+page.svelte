@@ -2,6 +2,7 @@
 CORE3 stablecoin vault risk chart page.
 -->
 <script lang="ts">
+	import { chartDataUrl } from '$lib/helpers/edge-cache';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { formatUsd } from '$lib/echarts/cumulative-tvl-apy';
@@ -42,7 +43,7 @@ CORE3 stablecoin vault risk chart page.
 				chartLoading = true;
 				chartError = null;
 
-				const response = await fetch(resolve('/vaults/core3-risk/chart-data') + `?v=${chartDataVersion}`);
+				const response = await fetch(chartDataUrl(resolve('/vaults/core3-risk/chart-data')) + `?v=${chartDataVersion}`);
 				if (!response.ok) throw new Error(`Failed to fetch CORE3 chart data: ${response.status}`);
 
 				const payload = (await response.json()) as Core3RiskPayload;

@@ -29,7 +29,7 @@ chart component only when needed.
 		try {
 			const [module, response] = await Promise.all([
 				import('./VaultEcosystemChartECharts.svelte'),
-				fetch('/top-vaults/chart-data')
+				fetch('/top-vaults/chart-data.bin')
 			]);
 			if (!response.ok) throw new Error(`Chart data request failed: ${response.status}`);
 			ChartComponent = module.default;

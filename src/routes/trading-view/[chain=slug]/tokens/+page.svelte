@@ -27,7 +27,7 @@
 <MetaTags
 	titleParts={[`${chain.name} tokens`, 'DEX prices and liquidity']}
 	description={`Top tokens on ${chain.name} ranked by liquidity and volume, with DEX prices, trading pairs and historical market data.`}
-	image={`/social-card/blockchain/${chain.slug}`}
+	image={`/social-card/blockchain/${chain.slug}.png`}
 />
 
 <Breadcrumbs labels={{ [chain.slug]: chain.name }} />

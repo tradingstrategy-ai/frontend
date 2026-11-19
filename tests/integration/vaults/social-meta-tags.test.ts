@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-const stablecoinLogoUrlPattern = /metadata-logo\/stablecoin\/usdc\?format=original/;
+const stablecoinLogoUrlPattern = /metadata-logo\/stablecoin\/usdc\.bin\?format=original/;
 
 async function expectSocialCardImage(page: Page, expectedImage: RegExp) {
 	const openGraphImage = page.locator('meta[property="og:image"]');
@@ -84,7 +84,7 @@ test.describe('vault social meta tags', () => {
 		await page.goto('/vaults');
 
 		await expectSiteSocialTags(page);
-		await expectSocialCardImage(page, /\/social-card\/trading-strategy$/);
+		await expectSocialCardImage(page, /\/social-card\/trading-strategy\.png$/);
 		await expect(page.locator('meta[property="og:image:type"]')).toHaveAttribute('content', 'image/png');
 		await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute('content', '1200');
 		await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute('content', '630');
@@ -100,7 +100,7 @@ test.describe('vault social meta tags', () => {
 			await page.goto(path);
 
 			await expectSiteSocialTags(page);
-			await expectSocialCardImage(page, /\/social-card\/trading-strategy$/);
+			await expectSocialCardImage(page, /\/social-card\/trading-strategy\.png$/);
 		});
 	}
 
@@ -141,7 +141,7 @@ test.describe('vault social meta tags', () => {
 		test('uses the Trading Strategy image when no stablecoin logo is available', async ({ page }) => {
 			await page.goto('/vaults/stablecoins/usd-offchain');
 
-			await expectSocialCardImage(page, /\/social-card\/trading-strategy$/);
+			await expectSocialCardImage(page, /\/social-card\/trading-strategy\.png$/);
 		});
 
 		test('renders a zero-vault stablecoin from metadata instead of a 404', async ({ page }) => {
@@ -161,13 +161,13 @@ test.describe('vault social meta tags', () => {
 		test('uses a sparkline before every logo fallback on a vault', async ({ page }) => {
 			await page.goto('/vaults/return-leader-alpha');
 
-			await expectSocialCardImage(page, /\/social-card\/vault\/.+\?fallback=.+$/);
+			await expectSocialCardImage(page, /\/social-card\/vault\/.+\.png\?fallback=.+$/);
 		});
 
 		test('uses the contextual fallback when a sparkline is unavailable', async ({ page }) => {
-			const response = await page.goto('/social-card/vault/missing?fallback=/social-card/trading-strategy');
+			const response = await page.goto('/social-card/vault/missing.png?fallback=/social-card/trading-strategy.png');
 
-			expect(page.url()).toMatch(/\/social-card\/trading-strategy$/);
+			expect(page.url()).toMatch(/\/social-card\/trading-strategy\.png$/);
 			expect(response?.headers()['content-type']).toMatch(/^image\/png/);
 		});
 
@@ -227,13 +227,13 @@ test.describe('vault social meta tags', () => {
 		test('uses a protocol logo on a protocol listing', async ({ page }) => {
 			await page.goto('/vaults/protocols/yearn');
 
-			await expectSocialCardImage(page, /\/metadata-logo\/protocol\/yearn\?format=original$/);
+			await expectSocialCardImage(page, /\/metadata-logo\/protocol\/yearn\.bin\?format=original$/);
 		});
 
 		test('uses a blockchain logo on a blockchain listing', async ({ page }) => {
 			await page.goto('/vaults/chains/ethereum');
 
-			await expectSocialCardImage(page, /\/social-card\/blockchain\/ethereum$/);
+			await expectSocialCardImage(page, /\/social-card\/blockchain\/ethereum\.png$/);
 			const src = await page.locator('meta[property="og:image"]').getAttribute('content');
 
 			expect(await getImageDimensions(page, src!)).toEqual({ width: 1200, height: 630 });
@@ -241,7 +241,7 @@ test.describe('vault social meta tags', () => {
 
 		test('renders dark blockchain logos with visible card content', async ({ page }) => {
 			await page.goto('/vaults/chains/megaeth');
-			await expectSocialCardImage(page, /\/social-card\/blockchain\/megaeth$/);
+			await expectSocialCardImage(page, /\/social-card\/blockchain\/megaeth\.png$/);
 			const src = await page.locator('meta[property="og:image"]').getAttribute('content');
 
 			expect(await imageHasCardContent(page, src!)).toBe(true);

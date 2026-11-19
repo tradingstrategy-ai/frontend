@@ -58,7 +58,7 @@ Renders the server-derived current versus peak TVL chart.
 		let cancelled = false;
 		loading = true;
 		error = null;
-		fetch(`/vaults/current-peak-tvl/chart-data?minTvl=${minTvl}&colourBy=${colourBy}`)
+		fetch(`/vaults/current-peak-tvl/chart-data.bin?minTvl=${minTvl}&colourBy=${colourBy}`)
 			.then((response) =>
 				response.ok
 					? (response.json() as Promise<VaultScatterChartData>)

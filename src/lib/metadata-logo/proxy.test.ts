@@ -11,7 +11,7 @@ import {
 describe('metadata logo proxy helpers', () => {
 	test('builds proxied stablecoin URLs with default format parameters', () => {
 		expect(buildMetadataLogoProxyPath('stablecoin', 'usdc', { format: 'webp' })).toBe(
-			'/metadata-logo/stablecoin/usdc?format=webp'
+			'/metadata-logo/stablecoin/usdc.webp?format=webp'
 		);
 	});
 
@@ -24,7 +24,13 @@ describe('metadata logo proxy helpers', () => {
 				quality: 61,
 				version: '2026-03-18'
 			})
-		).toBe('/metadata-logo/protocol/lagoon-finance?format=avif&w=96&h=96&q=61&v=2026-03-18');
+		).toBe('/metadata-logo/protocol/lagoon-finance.avif?format=avif&w=96&h=96&q=61&v=2026-03-18');
+	});
+
+	test('gives original-format logos the neutral .bin extension', () => {
+		expect(buildMetadataLogoProxyPath('protocol', 'morpho', { format: 'original' })).toBe(
+			'/metadata-logo/protocol/morpho.bin?format=original'
+		);
 	});
 
 	test('parses supported formats only', () => {

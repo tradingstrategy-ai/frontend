@@ -1,3 +1,4 @@
+import { CHART_DATA_EXTENSION } from '$lib/helpers/edge-cache';
 import { error, json, redirect } from '@sveltejs/kit';
 import { buildProtocolMiniChartPayload, type ProtocolMiniChartPayload } from '$lib/echarts/protocol-mini-chart';
 import {
@@ -44,7 +45,10 @@ export async function GET({ params, fetch, url }) {
 	if (!isVisibleVaultCategory(categoryTag)) error(404, 'Vault category not found');
 	const canonicalSlug = getVaultCategorySlug(categoryTag);
 	if (params.category !== canonicalSlug) {
-		redirect(301, `/vaults/strategies/${canonicalSlug}/chart-data${url.search}`);
+		redirect(
+			301,
+			`/vaults/strategies/${canonicalSlug}/chart-data${url.pathname.endsWith(CHART_DATA_EXTENSION) ? CHART_DATA_EXTENSION : ''}${url.search}`
+		);
 	}
 
 	return json(await getCachedChartData(canonicalSlug, fetch), {

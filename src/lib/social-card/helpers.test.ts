@@ -29,7 +29,7 @@ describe('selectSocialCardImage', () => {
 
 describe('getBlockchainSocialLogoUrl', () => {
 	test('only returns a card URL for a blockchain with a local logo', () => {
-		expect(getBlockchainSocialLogoUrl('ethereum')).toBe('/social-card/blockchain/ethereum');
+		expect(getBlockchainSocialLogoUrl('ethereum')).toBe('/social-card/blockchain/ethereum.png');
 		expect(getBlockchainSocialLogoUrl('not-a-blockchain')).toBeUndefined();
 	});
 });

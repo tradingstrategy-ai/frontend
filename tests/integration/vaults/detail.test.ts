@@ -6,7 +6,9 @@ test.describe('vault detail page', () => {
 		test(`explains missing stablecoin chart data for ${price.length ? 'null prices' : 'empty history'}`, async ({
 			page
 		}) => {
-			await page.route('**/vaults/*/metrics', (route) => route.fulfill({ json: { price, tvl: [], utilisation: [] } }));
+			await page.route('**/vaults/*/metrics.bin', (route) =>
+				route.fulfill({ json: { price, tvl: [], utilisation: [] } })
+			);
 			await page.goto('/vaults/morpho-flagged-blacklisted-vault');
 
 			const chart = page.locator('.vault-price-chart');
@@ -17,7 +19,7 @@ test.describe('vault detail page', () => {
 	}
 
 	test('renders available share token prices without a missing-rate error', async ({ page }) => {
-		await page.route('**/vaults/*/metrics', (route) =>
+		await page.route('**/vaults/*/metrics.bin', (route) =>
 			route.fulfill({
 				json: {
 					price: [
@@ -38,7 +40,7 @@ test.describe('vault detail page', () => {
 	});
 
 	test('distinguishes a failed chart request from missing stablecoin rates', async ({ page }) => {
-		await page.route('**/vaults/*/metrics', (route) =>
+		await page.route('**/vaults/*/metrics.bin', (route) =>
 			route.fulfill({ status: 500, json: { message: 'Unavailable' } })
 		);
 		await page.goto('/vaults/morpho-flagged-blacklisted-vault');

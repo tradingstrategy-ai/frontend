@@ -1,7 +1,8 @@
 import { getVaultSparklineUrl } from '$lib/top-vaults/helpers';
 import type { CuratorInfo, VaultInfo } from '$lib/top-vaults/schemas';
 
-export const TRADING_STRATEGY_SOCIAL_IMAGE_PATH = '/social-card/trading-strategy';
+// Social-card URLs end in `.png` so Cloudflare caches them; see `$lib/helpers/edge-cache`
+export const TRADING_STRATEGY_SOCIAL_IMAGE_PATH = '/social-card/trading-strategy.png';
 const blockchainLogoModules = import.meta.glob('/src/lib/assets/logos/blockchains/*.svg', {
 	eager: true,
 	query: '?url',
@@ -40,7 +41,7 @@ export function getVaultSocialCardImageUrl(vault: Pick<VaultInfo, 'id'>, fallbac
 	if (!getVaultSparklineUrl(vault, 'png')) return fallbackImage;
 
 	const query = new URLSearchParams({ fallback: fallbackImage });
-	return `/social-card/vault/${encodeURIComponent(vault.id)}?${query}`;
+	return `/social-card/vault/${encodeURIComponent(vault.id)}.png?${query}`;
 }
 
 /**
@@ -60,5 +61,5 @@ export function getCuratorSocialLogoUrl(curator?: CuratorInfo | null): string | 
 export function getBlockchainSocialLogoUrl(slug?: string | null): string | undefined {
 	if (!slug || !blockchainLogoModules[`/src/lib/assets/logos/blockchains/${slug}.svg`]) return undefined;
 
-	return `/social-card/blockchain/${encodeURIComponent(slug)}`;
+	return `/social-card/blockchain/${encodeURIComponent(slug)}.png`;
 }

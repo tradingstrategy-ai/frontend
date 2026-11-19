@@ -26,7 +26,7 @@ Vault listing for a source-defined investment strategy category.
 {#snippet detailAside()}
 	<VaultGroupMiniChart
 		title={`${category.label} vaults: TVL and returns`}
-		dataUrl={`/vaults/strategies/${categorySlug}/chart-data`}
+		dataUrl={`/vaults/strategies/${categorySlug}/chart-data.bin`}
 		compareLabel="Compare strategies"
 		compareHref="/vaults/strategies"
 	/>

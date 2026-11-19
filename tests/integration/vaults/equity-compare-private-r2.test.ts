@@ -35,7 +35,7 @@ test.describe('live vault equity curve comparison', () => {
 
 		const chartResponsePromise = page.waitForResponse((response) => {
 			const url = new URL(response.url());
-			return url.pathname === '/vaults/compare/chart-data' && url.searchParams.getAll('vault').length === 2;
+			return url.pathname === '/vaults/compare/chart-data.bin' && url.searchParams.getAll('vault').length === 2;
 		});
 
 		const selection = new URLSearchParams();

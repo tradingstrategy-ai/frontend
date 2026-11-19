@@ -77,7 +77,7 @@ Server-derived cumulative TVL and annualised-return chart.
 			window: selectedWindow,
 			protocols: selectedProtocols.join(',')
 		});
-		fetch(`/vaults/cumulative-tvl-apy/chart-data?${query}`)
+		fetch(`/vaults/cumulative-tvl-apy/chart-data.bin?${query}`)
 			.then((response) =>
 				response.ok
 					? (response.json() as Promise<CumulativeChartData>)

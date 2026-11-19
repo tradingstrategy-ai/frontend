@@ -16,7 +16,7 @@ export async function fetchSharePriceReturns90d(
 	vaultId: string
 ): Promise<[number, number][] | undefined> {
 	try {
-		const resp = await fetch(`/vaults/${vaultId}/metrics`);
+		const resp = await fetch(`/vaults/${vaultId}/metrics.bin`);
 		if (!resp.ok) return undefined;
 
 		const data: { price: [number, number][] } = await resp.json();

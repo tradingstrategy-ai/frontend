@@ -1,3 +1,4 @@
+import { CHART_DATA_EXTENSION } from '$lib/helpers/edge-cache';
 import { error, redirect } from '@sveltejs/kit';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { getVaultCategoryTag, isVisibleVaultCategory } from '$lib/top-vaults/categories';
@@ -8,5 +9,8 @@ export async function GET({ params, fetch, url }) {
 	if (!isVisibleVaultCategory(categoryTag) || !Object.hasOwn(categories, categoryTag)) {
 		error(404, 'Vault category not found');
 	}
-	redirect(308, `/vaults/strategies/${params.category}/chart-data${url.search}`);
+	redirect(
+		308,
+		`/vaults/strategies/${params.category}/chart-data${url.pathname.endsWith(CHART_DATA_EXTENSION) ? CHART_DATA_EXTENSION : ''}${url.search}`
+	);
 }

@@ -126,7 +126,7 @@ Vault listing and overview for one stablecoin denomination.
 	{#snippet detailAside()}
 		<VaultGroupMiniChart
 			title="All {denominationSymbol} vaults: TVL and returns"
-			dataUrl="/vaults/stablecoins/{denominationSlug}/chart-data"
+			dataUrl="/vaults/stablecoins/{denominationSlug}/chart-data.bin"
 			compareLabel="Compare all stablecoins"
 			compareHref="/vaults/historical-tvl-stablecoin"
 		/>

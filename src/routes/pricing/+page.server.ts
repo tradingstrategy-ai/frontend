@@ -3,7 +3,7 @@ import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { calculateTotalTvl, isEligibleFrontpageVault, meetsMinTvl } from '$lib/top-vaults/helpers';
 import { slimVaultChartDataSchema, type SlimVaultInfo } from '$lib/top-vaults/schemas';
 
-const LIVE_TOP_VAULTS_URL = 'https://tradingstrategy.ai/top-vaults/chart-data';
+const LIVE_TOP_VAULTS_URL = 'https://tradingstrategy.ai/top-vaults/chart-data.bin';
 
 interface PricingStats {
 	chains: number;

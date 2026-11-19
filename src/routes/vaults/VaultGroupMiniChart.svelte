@@ -11,7 +11,7 @@ the tooltip states the included vault count.
 @example
 
 ```svelte
-	<VaultGroupMiniChart title="All Spark vaults" dataUrl="/vaults/protocols/spark/chart-data" />
+	<VaultGroupMiniChart title="All Spark vaults" dataUrl="/vaults/protocols/spark/chart-data.bin" />
 ```
 -->
 <script lang="ts">

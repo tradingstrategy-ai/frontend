@@ -2,6 +2,7 @@
 ECharts heatmap page showing current vault TVL by stablecoin and chain.
 -->
 <script lang="ts">
+	import { chartDataUrl } from '$lib/helpers/edge-cache';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { JsonLd } from 'svelte-meta-tags';
@@ -31,7 +32,7 @@ ECharts heatmap page showing current vault TVL by stablecoin and chain.
 			try {
 				chartLoading = true;
 				chartError = null;
-				const response = await fetch(resolve('/vaults/stablecoin-chain-heatmap/chart-data'));
+				const response = await fetch(chartDataUrl(resolve('/vaults/stablecoin-chain-heatmap/chart-data')));
 				if (!response.ok) throw new Error(`Failed to fetch heatmap data: ${response.status}`);
 
 				const payload = (await response.json()) as StablecoinChainHeatmapPayload;

@@ -21,6 +21,12 @@ const DEFAULT_CACHE_SECONDS = 60 * 60 * 24;
 const VERSIONED_CACHE_SECONDS = 60 * 60 * 24 * 365;
 
 /**
+ * Path extension per output format, so Cloudflare caches the logo (see `$lib/helpers/edge-cache`).
+ * `original` is whatever the upstream bucket holds, so it gets the neutral `.bin`.
+ */
+const FORMAT_EXTENSIONS: Record<MetadataLogoFormat, string> = { webp: '.webp', avif: '.avif', original: '.bin' };
+
+/**
  * Build the local proxy URL for a stablecoin or protocol logo.
  *
  * @param kind Logo source type served by the proxy route
@@ -44,7 +50,8 @@ export function buildMetadataLogoProxyPath(
 	if (Number.isFinite(options.quality) && options.quality! > 0) query.set('q', String(options.quality));
 	if (options.version) query.set('v', options.version);
 
-	const path = `/metadata-logo/${kind}/${encodeURIComponent(trimmedSlug)}`;
+	const extension = FORMAT_EXTENSIONS[options.format ?? 'webp'];
+	const path = `/metadata-logo/${kind}/${encodeURIComponent(trimmedSlug)}${extension}`;
 	const queryString = query.toString();
 
 	return queryString ? `${path}?${queryString}` : path;

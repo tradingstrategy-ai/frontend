@@ -4,7 +4,7 @@
 </script>
 
 <ServerYieldScatterPlot
-	endpoint="/vaults/yield-protocol/chart-data"
+	endpoint="/vaults/yield-protocol/chart-data.bin"
 	legendTitle="Protocol"
 	excludedLabel="protocol"
 	isolateLegend

@@ -50,7 +50,7 @@
 <MetaTags
 	titleParts={[`${exchange.human_readable_name} on ${exchange.chain_name}`, 'DEX trading pairs and volume']}
 	description={`${exchange.human_readable_name} decentralised exchange on ${exchange.chain_name}: ${formatAmount(exchange.pair_count)} trading pairs, ${formatDollar(exchange.buy_volume_30d + exchange.sell_volume_30d, 1, 1)} 30-day volume, live prices and historical OHLCV data.`}
-	image={`/social-card/blockchain/${exchange.chain_slug}`}
+	image={`/social-card/blockchain/${exchange.chain_slug}.png`}
 />
 
 <Breadcrumbs labels={breadcrumbs} />

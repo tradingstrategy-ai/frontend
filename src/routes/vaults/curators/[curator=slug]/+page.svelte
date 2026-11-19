@@ -117,7 +117,7 @@ with an "about" panel and a TVL/return mini chart.
 	{#snippet detailAside()}
 		<VaultGroupMiniChart
 			title="{curatorName}: TVL and returns across all vaults"
-			dataUrl="/vaults/curators/{curatorSlug}/chart-data"
+			dataUrl="/vaults/curators/{curatorSlug}/chart-data.bin"
 			compareLabel="Compare all curators"
 			compareHref="/vaults/curators"
 			emptyDataSubject="Curator data"
