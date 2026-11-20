@@ -8,6 +8,8 @@ Disallow: /api/
 Allow: /api/sitemap/
 Allow: /api/explorer/
 Disallow: /*.json$
+# SvelteKit client-side navigation data; pages are server-rendered with their data inline
+Disallow: /*__data.json
 Disallow: /*.ipynb$
 Disallow: /strategies/tvl
 # Chart data for vault pages: each request scans the vault price parquet
@@ -21,6 +23,7 @@ Disallow: /api/
 Allow: /api/sitemap/
 Allow: /api/explorer/
 Disallow: /*.json$
+Disallow: /*__data.json
 Disallow: /*.ipynb$
 Disallow: /strategies/tvl
 Disallow: /vaults/*/metrics
