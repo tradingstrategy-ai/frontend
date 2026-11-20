@@ -591,3 +591,34 @@ Search Console, 2026-11-20: indexing requested for `/vaults/stablecoins`. URL in
 Follow-up (same day): round 5's open 404 fixes that need no slug history. `/strategies/<s>/<status>-positions/<n>` redirects to the position's current status (about 35 % of the round 5 404 sample was `open-positions` of since-closed positions); `/vaults/0x<address>` redirects to the vault page; `Disallow: /*__data.json` in both robots.txt groups (10 % of Googlebot requests). Vault slug history is still open.
 
 Not done: hub links in the older stablecoin posts and the Hyperliquid vault-of-vaults post (Ghost content); Ghost's outbound link tagging.
+
+## Mobile LCP — 2026-11-20
+
+Search Console's open Core Web Vitals issue: mobile LCP 2.7 s on 132 URLs (home and vault pages). CrUX phone p75 for the origin: TTFB 1,044 ms, FCP 2,141 ms, LCP 2,421 ms, round trip 229 ms.
+
+### Findings
+
+- **TTFB is mostly network.** The server answers in 130–250 ms, about what a cached static file takes; the rest is connection set-up on mobile. Nothing to fix in code.
+- **JS preloads delayed first paint.** On a server-rendered page SvelteKit 2.53 puts every JS chunk of the route into the `Link` response header as `modulepreload` (`render.js`; in the HTML only when prerendering), and Cloudflare sends the header as a 103 Early Hint. A vault page asked for 109 JS files (254 KB Brotli) and 3 woff2 files (94 KB) before the HTML arrived, against 17 KB of render-blocking CSS. This is the contention round 5 measured; it was not the `modulepreload` count in the HTML, which is zero.
+- **A late font swap moved LCP.** With `font-display: swap`, the hub summary paragraph was painted again when the web font arrived (about 4.4 s in the lab). The fallback faces render bold as regular, so the swap grew the paragraph slightly (26,800 → 27,040 px²), and Chrome reports a larger repaint as a new LCP entry. This was the round 5 "Lighter hub LCP 5.1 s" puzzle. With fonts blocked there is a single LCP entry at first paint.
+
+Lab A/B against production (Playwright, 412 px phone, 4× CPU, 1.6 Mbit/s, 150 ms RTT, the document's `Link` header and `fonts6.css` rewritten in flight, 5 cold loads each, median LCP in ms):
+
+| Page            | Before | No JS preloads | + `optional` | + no woff2 preloads |
+| --------------- | -----: | -------------: | -----------: | ------------------: |
+| Home            |  3,012 |          1,592 |        1,624 |                 820 |
+| Vault (HLP)     |  2,220 |          1,080 |        1,028 |                 924 |
+| Morpho hub      |  3,708 |          4,404 |        1,116 |                 992 |
+| Lighter hub     |  2,072 |            920 |          896 |                 916 |
+| Stablecoins hub |  4,076 |          1,068 |        1,092 |                 888 |
+
+Hydration did not start later without the JS preloads: `app.js` carries Vite's dependency map, so each route node's chunks are still fetched in parallel. CDP throttling shares bandwidth evenly and ignores HTTP/2 priorities, so the field gain will be smaller than the lab gain.
+
+### What changed
+
+1. `handleResponseHeaders` passes `preload: ({ type }) => type === 'css'`: no JS in the `Link` header or the Early Hints.
+2. `fonts6.css` → `fonts7.css` with `font-display: optional`. On a slow first visit the page stays in the metric-matched fallback for that view; later pages use the cached web font. Checked with `CSS.getPlatformFontsForNode`: throttled loads render the fallback with a single LCP entry, fast loads often get the web font at first paint.
+3. The 500–900 fallback faces use the bold local face (overrides rescaled for Arial Bold), so headings and bold figures keep their weight in the fallback. Box sizes match the web font on the Morpho hub and a vault page.
+4. No woff2 preloads on the home page (the LCP hero arrived 0.8 s later with them); the other text-led templates keep them, which on fast connections gets the web font into the first render.
+
+To check after release: `pnpm run seo:cwv --history` in 4 weeks, and start "Validate fix" on the Search Console LCP issue once the release is live.

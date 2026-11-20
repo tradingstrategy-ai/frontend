@@ -8,7 +8,7 @@ describe('getStaticCacheControl', () => {
 	});
 
 	it('keeps the (renamed-on-change) font stylesheet short-lived', () => {
-		expect(getStaticCacheControl('/fonts/fonts6.css')).toBe('public, max-age=86400');
+		expect(getStaticCacheControl('/fonts/fonts7.css')).toBe('public, max-age=86400');
 	});
 
 	it('caches avatars for a day with stale-while-revalidate', () => {

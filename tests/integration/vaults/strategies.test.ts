@@ -11,7 +11,7 @@ test.describe('vault strategy pages', () => {
 		await expect(page.getByRole('columnheader', { name: 'Strategy' })).toBeVisible();
 		await expect(page.getByRole('columnheader', { name: 'Description' })).toBeVisible();
 		await expect(page.getByRole('columnheader', { name: 'Vaults' })).toBeVisible();
-		await expect(page.getByRole('columnheader', { name: 'Avg. APY (30d)' })).toBeVisible();
+		await expect(page.getByRole('columnheader', { name: '30D APY' })).toBeVisible();
 		await expect(page.locator('.vault-protocol-table.without-rankings td.index')).toHaveCount(5);
 		const indexCell = page.locator('.vault-protocol-table.without-rankings td.index').first();
 		expect(await indexCell.evaluate((cell) => getComputedStyle(cell, '::before').content)).toBe('""');

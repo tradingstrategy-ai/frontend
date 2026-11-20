@@ -7,8 +7,8 @@
  *
  * The stylesheet itself is preloaded on every HTML page. The three woff2 files
  * are preloaded on the templates whose largest above-the-fold element is text in
- * these faces (home and vault detail per the 2026-09 mobile audits; glossary term,
- * token, pair and blog post pages by the same reasoning). Their visible typography
+ * these faces (vault detail per the 2026-09 mobile audits; glossary term, token,
+ * pair and blog post pages by the same reasoning). Their visible typography
  * is dominated by
  * - Neue Haas Grotesk Display 600 for the main page title
  * - Neue Haas Grotesk Text 400 for body copy
@@ -17,8 +17,13 @@
  * Other faces (Source Serif Pro, Source Code Pro, Display 400/500/700, Text 700)
  * are lower priority or below the fold and are fetched on demand. Listing pages
  * are left out on purpose: three font preloads would compete with the LCP image
- * or the table data there. With the metric-matched fallbacks in fonts6.css the
- * swap no longer shifts layout, so preloading is only about LCP, not CLS.
+ * or the table data there. The home page is left out for the same reason: in the
+ * 2026-11 lab measurements its LCP (the hero) moved from 1.6 s to 0.8 s without them.
+ *
+ * The faces are `font-display: optional` (fonts7.css), so a preload only helps when
+ * the file arrives before the text is first rendered: on a fast connection the first
+ * page view is then set in the web font, on slow mobile it stays in the metric-matched
+ * fallback for that view and the preload fills the cache for the next page.
  *
  * Only HTML responses get the header — sitemaps, JSON and generated images
  * have no use for it.
@@ -26,7 +31,7 @@
  * @see https://developers.cloudflare.com/cache/advanced-configuration/early-hints/
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Link
  */
-const stylesheetPreloadLink = '</fonts/fonts6.css>; rel=preload; as=style';
+const stylesheetPreloadLink = '</fonts/fonts7.css>; rel=preload; as=style';
 
 const fontFilePreloadLinks = [
 	'</fonts/NeueHaasGroteskDisplay/65.woff2>; rel=preload; as=font; type=font/woff2; crossorigin',
@@ -36,7 +41,6 @@ const fontFilePreloadLinks = [
 
 /** Templates whose LCP element is text set in the preloaded faces. */
 const fontPreloadPathPatterns = [
-	/^\/$/,
 	/^\/vaults\/[^/]+$/,
 	/^\/glossary\/[^/]+$/,
 	/^\/blog\/[^/]+$/,

@@ -31,32 +31,44 @@ https://blog.cloudflare.com/early-hints/#testing-early-hints-with-web-page-test
 - https://search.google.com/test/mobile-friendly
   - Example https://search.google.com/test/mobile-friendly?url=https%3A%2F%2Ftradingstrategy.ai%2Ftrading-view%2Fbinance%2Fpancakeswap-v2%2Fbillntedsupsidedownbackwardsmatrixmetaverse5000xinu-bnb&url=https%3A%2F%2Ftradingstrategy.ai%2Ftrading-view%2Fbinance%2Fpancakeswap-v2%2Fbillntedsupsidedownbackwardsmatrixmetaverse5000xinu-bnb&hl=en
 
-# Web fonts and layout shift
+# Web fonts, preloads and Core Web Vitals
 
 The licensed Neue Haas Grotesk faces, Source Serif Pro and Source Code Pro are declared in
-`static/fonts/fonts6.css` (the file is renamed whenever its contents change: the woff2 files it
+`static/fonts/fonts7.css` (the file is renamed whenever its contents change: the woff2 files it
 references are served with a one-year `Cache-Control` by `scripts/server.js`, see
-`scripts/static-cache-control.js`). Three mechanisms keep them from hurting Core Web Vitals:
+`scripts/static-cache-control.js`). These mechanisms keep them, and the JS, from hurting Core Web Vitals:
 
 1. **Deferred stylesheet.** `src/app.html` loads the stylesheet with the `media="print"` →
    `onload="this.media='all'"` trick, so text paints immediately in the fallback face
-   instead of waiting for the font CSS. All faces are `font-display: swap`.
+   instead of waiting for the font CSS. All faces are `font-display: optional`: a face that
+   is not ready when the text is first rendered is not swapped in for that page view, and the
+   cached file is used from the next page on. They were `swap` until 2026-11; on a slow phone
+   the swap landed seconds after first paint, and because a repaint that grows the text box —
+   bold text especially — is reported as a new LCP entry, it moved LCP from first paint to the
+   swap (Morpho hub, lab: 1.1 s → 4.4 s).
 2. **Metric-matched fallbacks.** Every family has a `… Fallback` `@font-face` in
    `src/lib/components/css/font-fallbacks.css` — part of the render-blocking app CSS, so it
    applies from the first paint rather than only once the deferred font stylesheet lands: a
    system font (`Arial`/`Roboto` for the grotesks, `Georgia` for the serif,
    `Courier New` for the mono) with `size-adjust`, `ascent-override`, `descent-override` and
    `line-gap-override` tuned so it occupies the same space as the web font, within the
-   tolerance of the platform's actual fallback font (bold text is shown in the regular fallback
-   face until the web font lands). The swap therefore barely moves text — before this, the swap alone was a CLS of 0.17–0.25 on
-   text-heavy pages. The overrides were computed with `@capsizecss/core` from the metrics
+   tolerance of the platform's actual fallback font; the 500–900 weights use the bold local
+   face, rescaled for its wider glyphs. On a slow first visit this is what the visitor reads,
+   laid out as with the web font. (Before the fallbacks existed, the swap alone was a CLS of
+   0.17–0.25 on text-heavy pages.) The overrides were computed with `@capsizecss/core` from the metrics
    unpacked out of the woff2 files (Display and Text differ per weight, so their fallbacks
    are declared per weight range); recompute them if a font file changes. The font stacks in
    `src/lib/components/css/typography.css` and `typography-new.css` list the fallback right
    after the web font.
 3. **Preload headers.** `src/lib/server/font-preload.ts` adds `Link: rel=preload` headers
    (Cloudflare turns them into 103 Early Hints) for the stylesheet on every HTML page, and
-   for the three primary woff2 files on the templates whose LCP element is text.
+   for the three primary woff2 files on the templates whose LCP element is text (not the home
+   page, where they delay the hero). With `optional` they only matter when they arrive before
+   first render, i.e. on fast connections.
+4. **No JS preloads in the `Link` header.** `handleResponseHeaders` in `src/hooks.server.ts`
+   limits SvelteKit's own `Link` preloads to stylesheets. SvelteKit otherwise lists every JS
+   chunk of the route (~100 files, 200–250 KB) there, Cloudflare sends them as 103 Early Hints,
+   and on a phone they took the bandwidth the render-blocking CSS needed.
 
 `tests/integration/layout-shift.test.ts` delays the woff2 responses and asserts the token,
 pair and glossary pages stay under a CLS of 0.05 on a phone viewport.

@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { BLOG_POST_SLUG } from '../../mocks/ghost/posts.mock';
+import { waitForHydration } from '../helpers';
 
 const postPath = `/blog/${BLOG_POST_SLUG}`;
 const playerHosts = /youtube\.com|doubleclick\.net|googleapis\.com/;
@@ -25,6 +26,7 @@ test.describe('blog post embeds', () => {
 
 	test('swaps the facade for the player on click, keeping the box size', async ({ page }) => {
 		await page.goto(postPath);
+		await waitForHydration(page);
 		const facade = page.locator('a.youtube-facade');
 		const before = await facade.boundingBox();
 
@@ -43,6 +45,7 @@ test.describe('blog post embeds', () => {
 
 	test('activates from the keyboard', async ({ page }) => {
 		await page.goto(postPath);
+		await waitForHydration(page);
 		await page.locator('a.youtube-facade').focus();
 		await page.keyboard.press('Enter');
 		await expect(page.locator('iframe.youtube-facade')).toHaveCount(1);

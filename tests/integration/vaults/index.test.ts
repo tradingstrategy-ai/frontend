@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waitForHydration } from '../helpers';
 
 /** Check that a URL contains all expected search param key/value pairs */
 function urlParamsMatch(expected: Record<string, string>) {
@@ -261,6 +262,7 @@ async function expectCompareActionPlacement(page: import('@playwright/test').Pag
 test.describe('vault index page', () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/vaults');
+		await waitForHydration(page);
 	});
 
 	test('shows the default return columns', async ({ page }) => {
@@ -285,6 +287,7 @@ test.describe('vault index page', () => {
 		test(`selects vaults for comparison in the ${viewport.name} viewport`, async ({ page }) => {
 			await page.setViewportSize({ width: viewport.width, height: viewport.height });
 			await page.goto('/vaults');
+			await waitForHydration(page);
 
 			const checkbox = page.getByTestId('vault-comparison-checkbox').first();
 			const row = checkbox.locator('xpath=ancestor::tr');
@@ -738,6 +741,7 @@ test.describe('vault index page', () => {
 		});
 
 		await page.goto('/vaults/high-tvl');
+		await waitForHydration(page);
 		await page.getByTestId('show-blacklisted-vaults').click();
 
 		// The second page can load before the first 50 rows are asserted, so only the end state

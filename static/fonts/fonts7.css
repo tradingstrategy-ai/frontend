@@ -4,27 +4,30 @@
  * Neue Haas Grotesk is licensed and only present on the production server; run
  * `scripts/setup-fonts.sh` to sync the referenced files locally (it reads this file).
  *
- * This stylesheet is loaded deferred (see src/app.html). The metric-matched "… Fallback"
- * faces that keep the swap from shifting layout live in the render-blocking app CSS instead
+ * This stylesheet is loaded deferred (see src/app.html). Every face is `font-display: optional`:
+ * a face that is not ready when the text is first rendered is never swapped in for that page
+ * view, which keeps a late swap from repainting the LCP text (a slightly larger repaint counts
+ * as a new, later LCP; see docs/speed.md). The file is cached by then, so later pages use it.
+ * The metric-matched "… Fallback" faces live in the render-blocking app CSS instead
  * (src/lib/components/css/font-fallbacks.css), so they apply from the very first paint; their
  * overrides were computed from the metrics of the files declared here — regenerate them if a
  * font file changes.
  *
- * Rename this file (fonts6 → fonts7 …) whenever its contents change: it is served with a
+ * Rename this file (fonts7 → fonts8 …) whenever its contents change: it is served with a
  * long cache lifetime.
  */
 
 /* Neue Haas Grotesk - Display (weights 400–700 and 900; nothing on the site uses 100–300) */
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Neue Haas Grotesk Display";
 	font-weight: 400;
 	src: url("./NeueHaasGroteskDisplay/45.woff2") format("woff2");
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Neue Haas Grotesk Display";
 	font-style: italic;
 	font-weight: 400;
@@ -32,14 +35,14 @@
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Neue Haas Grotesk Display";
 	font-weight: 500;
 	src: url("./NeueHaasGroteskDisplay/55.woff2") format("woff2");
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Neue Haas Grotesk Display";
 	font-style: italic;
 	font-weight: 500;
@@ -47,14 +50,14 @@
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Neue Haas Grotesk Display";
 	font-weight: 600;
 	src: url("./NeueHaasGroteskDisplay/65.woff2") format("woff2");
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Neue Haas Grotesk Display";
 	font-style: italic;
 	font-weight: 600;
@@ -62,14 +65,14 @@
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Neue Haas Grotesk Display";
 	font-weight: 700;
 	src: url("./NeueHaasGroteskDisplay/75.woff2") format("woff2");
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Neue Haas Grotesk Display";
 	font-style: italic;
 	font-weight: 700;
@@ -77,14 +80,14 @@
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Neue Haas Grotesk Display";
 	font-weight: 900;
 	src: url("./NeueHaasGroteskDisplay/95.woff2") format("woff2");
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Neue Haas Grotesk Display";
 	font-style: italic;
 	font-weight: 900;
@@ -94,14 +97,14 @@
 /* Neue Haas Grotesk - Text */
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Neue Haas Grotesk Text";
 	font-weight: 400;
 	src: url("./NeueHaasGroteskText/55.woff2") format("woff2");
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Neue Haas Grotesk Text";
 	font-style: italic;
 	font-weight: 400;
@@ -109,14 +112,14 @@
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Neue Haas Grotesk Text";
 	font-weight: 500;
 	src: url("./NeueHaasGroteskText/65.woff2") format("woff2");
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Neue Haas Grotesk Text";
 	font-style: italic;
 	font-weight: 500;
@@ -124,14 +127,14 @@
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Neue Haas Grotesk Text";
 	font-weight: 700;
 	src: url("./NeueHaasGroteskText/75.woff2") format("woff2");
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Neue Haas Grotesk Text";
 	font-style: italic;
 	font-weight: 700;
@@ -141,14 +144,14 @@
 /* Source Serif Pro */
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Source Serif Pro";
 	font-weight: 400;
 	src: url("./SourceSerifPro/latin-400-normal.woff2") format("woff2");
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Source Serif Pro";
 	font-style: italic;
 	font-weight: 400;
@@ -156,14 +159,14 @@
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Source Serif Pro";
 	font-weight: 600;
 	src: url("./SourceSerifPro/latin-600-normal.woff2") format("woff2");
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Source Serif Pro";
 	font-style: italic;
 	font-weight: 600;
@@ -171,14 +174,14 @@
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Source Serif Pro";
 	font-weight: 700;
 	src: url("./SourceSerifPro/latin-700-normal.woff2") format("woff2");
 }
 
 @font-face {
-	font-display: swap;
+	font-display: optional;
 	font-family: "Source Serif Pro";
 	font-style: italic;
 	font-weight: 700;
@@ -188,14 +191,14 @@
 /* Source Code Pro */
 
 @font-face {
-  font-display: swap;
+  font-display: optional;
   font-family: 'Source Code Pro';
   font-weight: 200 900;
 	src: url("./SourceCodePro/latin-normal.woff2") format("woff2");
 }
 
 @font-face {
-  font-display: swap;
+  font-display: optional;
   font-family: 'Source Code Pro';
   font-style: italic;
   font-weight: 200 900;
