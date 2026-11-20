@@ -25,7 +25,14 @@ export async function load({ params, fetch }) {
 		return v.vault_slug === params.vault;
 	});
 
-	if (!vault) error(404, 'Vault not found');
+	if (!vault) {
+		// `/vaults/0x<address>` links: resolve the address the same way `/vaults/address/[address]` does
+		if (/^0x[0-9a-f]{40}$/.test(params.vault)) {
+			const byAddress = vaults.find((v) => v.address.toLowerCase() === params.vault);
+			if (byAddress) redirect(301, resolveVaultDetails(byAddress));
+		}
+		error(404, 'Vault not found');
+	}
 
 	const chain = getChain(vault.chain_id);
 	if (!chain) error(404, 'Chain not found');

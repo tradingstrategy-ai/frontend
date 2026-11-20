@@ -588,4 +588,6 @@ First round with [DataForSEO](dataforseo.md) keyword volumes and live US Google 
 
 Search Console, 2026-11-20: indexing requested for `/vaults/stablecoins`. URL inspection showed the last crawl on 2026-08-23 (before the round 4 titles) and "No referring sitemaps detected", although the URL is in `/vaults/sitemap.xml` and Google last read that sitemap on 2026-11-19 (4,739 pages); the inspection data is from the August crawl. `/vaults/sitemap.xml` resubmitted the same day.
 
+Follow-up (same day): round 5's open 404 fixes that need no slug history. `/strategies/<s>/<status>-positions/<n>` redirects to the position's current status (about 35 % of the round 5 404 sample was `open-positions` of since-closed positions); `/vaults/0x<address>` redirects to the vault page; `Disallow: /*__data.json` in both robots.txt groups (10 % of Googlebot requests). Vault slug history is still open.
+
 Not done: hub links in the older stablecoin posts and the Hyperliquid vault-of-vaults post (Ghost content); Ghost's outbound link tagging.
