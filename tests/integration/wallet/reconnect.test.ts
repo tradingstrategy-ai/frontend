@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForHydration } from '../helpers';
 import { installMockRabby, getMockRabbyAnswers, getMockRabbyRequests, releaseMockRabby } from './mock-rabby';
 import {
 	ADDRESS,
@@ -92,6 +93,7 @@ test.describe('wallet reconnect from persisted Rabby connection', () => {
 	}) => {
 		await installMockRabby(page, { address: ADDRESS, chainId: POLYGON, persistedConnection: true, hang: true });
 		await page.goto(STRATEGY);
+		await waitForHydration(page);
 
 		const myDeposits = page.locator('.my-deposits');
 		await expect(myDeposits).toHaveAttribute('data-wallet-status', 'disconnected', {
@@ -157,6 +159,7 @@ test.describe('wallet reconnect from persisted Rabby connection', () => {
 			secondWalletAddress: OTHER_ADDRESS
 		});
 		await page.goto(STRATEGY);
+		await waitForHydration(page);
 
 		const myDeposits = page.locator('.my-deposits');
 		await expect(myDeposits).toHaveAttribute('data-wallet-status', 'disconnected', {

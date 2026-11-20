@@ -3,14 +3,14 @@ import { getFontPreloadLinks } from './font-preload';
 
 describe('getFontPreloadLinks', () => {
 	it('preloads the stylesheet everywhere', () => {
-		expect(getFontPreloadLinks('/vaults')).toBe('</fonts/fonts6.css>; rel=preload; as=style');
+		expect(getFontPreloadLinks('/vaults')).toBe('</fonts/fonts7.css>; rel=preload; as=style');
+		expect(getFontPreloadLinks('/')).not.toContain('woff2');
 		expect(getFontPreloadLinks('/trading-view/ethereum')).not.toContain('woff2');
 		expect(getFontPreloadLinks('/trading-view/ethereum/uniswap-v3/export-data')).not.toContain('woff2');
 	});
 
 	it('preloads the primary faces on text-led templates', () => {
 		for (const path of [
-			'/',
 			'/vaults/return-leader-alpha',
 			'/glossary/leverage',
 			'/blog/episode-12-atoma',
@@ -18,7 +18,7 @@ describe('getFontPreloadLinks', () => {
 			'/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5'
 		]) {
 			const links = getFontPreloadLinks(path);
-			expect(links).toContain('fonts6.css');
+			expect(links).toContain('fonts7.css');
 			expect(links).toContain('NeueHaasGroteskDisplay/65.woff2');
 			expect(links).toContain('NeueHaasGroteskText/55.woff2');
 			expect(links).toContain('NeueHaasGroteskText/65.woff2');

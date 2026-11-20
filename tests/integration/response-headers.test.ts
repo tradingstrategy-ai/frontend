@@ -3,17 +3,24 @@ import { expect, test } from '@playwright/test';
 /**
  * Response-header contract set by `handleResponseHeaders` in `src/hooks.server.ts` and the
  * image endpoints: font `Link` preloads on HTML pages only (Cloudflare turns them into Early
- * Hints, pure waste on XML, JSON and images), `X-Robots-Tag: noindex` on generated images,
+ * Hints, pure waste on XML, JSON and images), stylesheet but no JS chunk preloads from
+ * SvelteKit, `X-Robots-Tag: noindex` on generated images,
  * and cache lifetimes on bundled logos and on the edge-cacheable URLs of `$lib/helpers/edge-cache`.
  */
-test.describe('font preload headers', () => {
+test.describe('preload headers', () => {
 	test('HTML pages preload the stylesheet, text-led templates the primary faces too', async ({ request }) => {
 		const listing = (await request.get('/vaults')).headers()['link'] ?? '';
-		expect(listing).toContain('/fonts/fonts6.css>; rel=preload; as=style');
+		expect(listing).toContain('/fonts/fonts7.css>; rel=preload; as=style');
 		expect(listing).not.toContain('woff2');
 
 		const glossary = (await request.get('/glossary/leverage')).headers()['link'] ?? '';
 		expect(glossary).toContain('NeueHaasGroteskText/55.woff2>; rel=preload; as=font');
+	});
+
+	test('HTML pages preload stylesheets but no JS chunks', async ({ request }) => {
+		const link = (await request.get('/vaults')).headers()['link'] ?? '';
+		expect(link).toMatch(/_app\/immutable\/assets\/[^>]+\.css>; rel="preload"; as="style"/);
+		expect(link).not.toContain('modulepreload');
 	});
 
 	test('non-HTML responses carry no font preloads', async ({ request }) => {

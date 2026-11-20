@@ -8,9 +8,10 @@ const LIQUID_TOKEN_PATH = '/trading-view/ethereum/tokens/0xc02aaa39b223fe8d0a0e5
  * The `layout-shift` observer must be installed before navigation so the shifts caused by
  * hydration are captured. The client-side `pairs` request on the token page is delayed so the
  * skeleton → data transition of the pair table is observable rather than racing hydration, and
- * the font stylesheet and files are delayed so the fallback → web font swap happens after first
- * paint (locally they would otherwise arrive before the page renders and the metric-matched
- * fallbacks in `src/lib/components/css/font-fallbacks.css` would never be exercised).
+ * the font stylesheet and files are delayed so the page renders in the metric-matched fallbacks
+ * of `src/lib/components/css/font-fallbacks.css`, as on a slow first visit (locally they would
+ * otherwise arrive before the page renders). The faces are `font-display: optional`, so no swap
+ * should follow; if one ever does, it shows up here.
  */
 
 declare global {
@@ -61,7 +62,7 @@ test.describe('layout shift', () => {
 		expect(await measureCls(page, '/trading-view/ethereum/uniswap-v2/eth-usdc')).toBeLessThan(CLS_BUDGET);
 	});
 
-	test('glossary term page stays within the CLS budget on a phone (font swap)', async ({ page }) => {
+	test('glossary term page stays within the CLS budget on a phone (fallback fonts)', async ({ page }) => {
 		expect(await measureCls(page, '/glossary/leverage')).toBeLessThan(CLS_BUDGET);
 	});
 });

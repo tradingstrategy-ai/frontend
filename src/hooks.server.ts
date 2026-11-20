@@ -89,6 +89,14 @@ const handleAdminRole: Handle = async ({ event, resolve }) => {
  *
  * - `Link` preloads for the web fonts on HTML responses (Cloudflare turns them into 103
  *   Early Hints); see `$lib/server/font-preload`. Sitemaps, JSON and images get none.
+ * - No `modulepreload` entries in SvelteKit's own `Link` header, only the stylesheets
+ *   (`preload` below; the default is JS and CSS). On a server-rendered page SvelteKit lists
+ *   every JS chunk of the route there — about 100 files and 200–250 KB on vault and hub
+ *   pages — and Cloudflare sends them as Early Hints, so they start before the HTML and
+ *   share the mobile bandwidth with the 15–20 KB of render-blocking CSS. In the 2026-11
+ *   lab measurements this moved first paint from 1.9–4.1 s to 0.9–1.2 s. The chunks are
+ *   still fetched in parallel once the start script runs: Vite's dynamic-import preload
+ *   lists each route node's dependencies.
  * - `X-Robots-Tag: noindex` on the generated image endpoints. `og:image` URLs
  *   (`/social-card/…`, including their `?fallback=` redirects) and resized protocol logos
  *   (`/metadata-logo/…`) get crawled like pages and were 45 % of a 1,000-URL sample of the
@@ -104,7 +112,7 @@ const handleAdminRole: Handle = async ({ event, resolve }) => {
 const NOINDEX_IMAGE_PATH_PATTERN = /^\/(social-card|metadata-logo)\//;
 
 const handleResponseHeaders: Handle = async ({ event, resolve }) => {
-	const response = await resolve(event);
+	const response = await resolve(event, { preload: ({ type }) => type === 'css' });
 	const { pathname } = event.url;
 
 	if (response.headers.get('content-type')?.startsWith('text/html')) {

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waitForHydration } from '../helpers';
 
 const BASE = '/strategies/trading-strategy-ichiv3-ls-2';
 
@@ -44,6 +45,7 @@ test.describe('YAML-configured strategy', () => {
 		await expect(page.getByRole('columnheader', { name: 'Month', exact: true })).toBeVisible();
 		await expect(page.getByRole('columnheader', { name: '3 months' })).toBeVisible();
 		const periodicMetrics = page.locator('.periodic-metrics');
+		await waitForHydration(page);
 		await periodicMetrics.getByRole('button', { name: 'View all' }).click();
 		const periodTable = periodicMetrics.locator('.period-table');
 		await expect(periodTable).toContainText('Period data availability');

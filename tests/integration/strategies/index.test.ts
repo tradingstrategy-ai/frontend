@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { waitForHydration } from '../helpers';
 
 test.describe('strategy index page', () => {
 	test('should only display live strategies to public user', async ({ page }) => {
@@ -19,6 +20,7 @@ test.describe('strategy index page', () => {
 
 	test('should only display live strategies to admin user when live filter applied', async ({ page }) => {
 		await page.goto('/strategies?pw=secret');
+		await waitForHydration(page);
 		await page.locator('label:has-text("live")').click();
 
 		const rows = page.locator(`[data-testid="strategy-tiles"] > *`);
@@ -30,6 +32,7 @@ test.describe('strategy index page', () => {
 
 	test('should only display non-live strategies to admin user when unpublished filter applied', async ({ page }) => {
 		await page.goto('/strategies?pw=secret');
+		await waitForHydration(page);
 		await page.getByText('unpublished', { exact: true }).click();
 
 		const rows = page.locator(`[data-testid="strategy-tiles"] > *`);

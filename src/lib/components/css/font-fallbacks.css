@@ -1,25 +1,28 @@
 /**
- * Metric-matched fallback faces for the web fonts declared in static/fonts/fonts6.css.
+ * Metric-matched fallback faces for the web fonts declared in static/fonts/fonts7.css.
  *
  * Each is a system font with `size-adjust` / `ascent-override` / `descent-override` /
  * `line-gap-override` tuned so it occupies the same space as the web font it stands in for
- * (within the tolerance of the platform's actual fallback font); the font stacks in typography.css list them right after the web font. That is what
- * stops `font-display: swap` from shifting the layout when the woff2 arrives (the swap was
- * the whole of the 0.25 CLS measured on text-heavy pages in the 2026-09 audit).
+ * (within the tolerance of the platform's actual fallback font); the font stacks in typography.css list them right after the web font.
+ *
+ * The web fonts are `font-display: optional`, so a face that is not ready at first render is
+ * never swapped in for that page view: on a slow first visit these faces are what the visitor
+ * reads, not a brief placeholder. Matching the boxes is still what keeps that page laid out as
+ * designed (and was what stopped the 0.25 CLS of the `swap` era in the 2026-09 audit).
  *
  * They live in the render-blocking app CSS, not in the deferred font stylesheet, so the very
  * first paint already uses the adjusted fallback — otherwise the page would first paint in
- * plain system-ui, shift when fonts6.css applies, and shift again on the swap.
+ * plain system-ui and shift when fonts7.css applies.
  *
  * The Liberation fonts are listed for Linux: they are metric-compatible with Arial, Times New Roman
  * and Courier New by design, so the same overrides apply (this is also what the CI runner has).
  *
- * Only the src changes per weight range: the fallbacks point at the *regular* local face for
- * every weight because the browser then uses the metrics the overrides were computed for.
- * Bold text is briefly shown in regular weight before the web font lands; that is a visual
- * trade-off, the box sizes are what matter here. The overrides were computed with
- * @capsizecss/core from the metrics unpacked out of the woff2 files (Display and Text differ
- * per weight, hence the weight ranges); regenerate them if a font file changes.
+ * The 500–900 grotesk ranges use the bold local face, so headings and `<strong>` keep their
+ * weight in the fallback. Their overrides were computed with @capsizecss/core from the metrics
+ * unpacked out of the woff2 files against regular Arial (Display and Text differ per weight,
+ * hence the weight ranges), then rescaled for Arial Bold: it has the same vertical metrics and
+ * an 8.2 % wider average glyph, so `size-adjust` × 0.9242 and the ascent/descent overrides ÷
+ * 0.9242. Regenerate them if a font file changes.
  */
 
 @font-face {
@@ -38,24 +41,24 @@
 	font-family: 'Neue Haas Grotesk Display Fallback';
 	font-weight: 500 600;
 	src:
-		local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Roboto'), local('Roboto-Regular'),
-		local('Helvetica Neue');
-	ascent-override: 96.194%;
-	descent-override: 27.203%;
+		local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('Roboto Bold'),
+		local('Roboto-Bold'), local('Helvetica Neue Bold'), local('HelveticaNeue-Bold');
+	ascent-override: 104.087%;
+	descent-override: 29.435%;
 	line-gap-override: 0%;
-	size-adjust: 96.68%;
+	size-adjust: 89.348%;
 }
 
 @font-face {
 	font-family: 'Neue Haas Grotesk Display Fallback';
 	font-weight: 700 900;
 	src:
-		local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Roboto'), local('Roboto-Regular'),
-		local('Helvetica Neue');
-	ascent-override: 93.668%;
-	descent-override: 26.347%;
+		local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('Roboto Bold'),
+		local('Roboto-Bold'), local('Helvetica Neue Bold'), local('HelveticaNeue-Bold');
+	ascent-override: 101.354%;
+	descent-override: 28.509%;
 	line-gap-override: 0%;
-	size-adjust: 99.82%;
+	size-adjust: 92.25%;
 }
 
 @font-face {
@@ -74,24 +77,24 @@
 	font-family: 'Neue Haas Grotesk Text Fallback';
 	font-weight: 500 600;
 	src:
-		local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Roboto'), local('Roboto-Regular'),
-		local('Helvetica Neue');
-	ascent-override: 92.338%;
-	descent-override: 23.832%;
+		local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('Roboto Bold'),
+		local('Roboto-Bold'), local('Helvetica Neue Bold'), local('HelveticaNeue-Bold');
+	ascent-override: 99.915%;
+	descent-override: 25.788%;
 	line-gap-override: 0%;
-	size-adjust: 106.999%;
+	size-adjust: 98.885%;
 }
 
 @font-face {
 	font-family: 'Neue Haas Grotesk Text Fallback';
 	font-weight: 700 900;
 	src:
-		local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Roboto'), local('Roboto-Regular'),
-		local('Helvetica Neue');
-	ascent-override: 91.266%;
-	descent-override: 24.075%;
+		local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('Roboto Bold'),
+		local('Roboto-Bold'), local('Helvetica Neue Bold'), local('HelveticaNeue-Bold');
+	ascent-override: 98.755%;
+	descent-override: 26.051%;
 	line-gap-override: 0%;
-	size-adjust: 109.242%;
+	size-adjust: 100.958%;
 }
 
 @font-face {
