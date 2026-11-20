@@ -565,3 +565,27 @@ Search Console UI (page indexing, crawl stats, Core Web Vitals), the `templates`
 Search Console, 2026-11-18: indexing requested for `/vaults/protocols/morpho`, `/vaults/stablecoins/usdc` and `/vaults/protocols/hyperliquid` (URL inspection showed "Temporary processing error" and "No referring sitemaps detected" as the sitemap status, from the August crawl); `web3-ethereum-defi.tradingstrategy.ai/sitemap-generated.xml` resubmitted.
 
 Not done: the 404 redirects (vault slug history, open → closed positions), the `__data.json` crawl and the LCP contention (candidates: fewer initial JS chunks, or lower-priority module preloads, measured over HTTP/2).
+
+## Round 6 — 2026-11-20
+
+First round with [DataForSEO](dataforseo.md) keyword volumes and live US Google results next to Search Console.
+
+### Findings
+
+- **Search demand is small and concentrated.** US monthly volume: "stablecoin yield(s)" 480, "morpho vault(s)" 320, "crypto vault(s)" 260, "hyperliquid vault(s)" 210, "yield-bearing stablecoins" 110, "crypto yield" 110; everything else 90 or less. 15 of the 28 round 4 category terms had no measurable US volume. Keyword difficulty is 0–27 for all of them. vaults.fyi ranks for only 24 US keywords in total.
+- **Live US top 20: 5 of 28 category terms.** "top defi vaults" 5, "aave vault" 6, "usdc vault" 7, "defi yield vaults" 9 (all blog posts or chain pages), "usde vault" 12 (Ethereum chain page). None of the intended hubs appears, and we are absent for all four highest-volume terms. The top results are listicles, Binance Square posts and protocol apps; 26 of 28 result pages show an AI Overview.
+- **The stablecoin hubs are not indexed.** `/vaults/stablecoins` and `/vaults/stablecoins/usdc` are "Crawled – currently not indexed", so the 13 stablecoin terms cannot rank whatever their content. Both are in the vault sitemap. `/vaults/protocols/morpho` and `/vaults/protocols/hyperliquid` are indexed again since the round 5 indexing request.
+- **The hubs are sound as pages**: search-wording titles and H1s, 850–2,900 server-rendered words, about 75 server-rendered vault links each.
+- **The blog barely links to the hubs.** The posts that rank for category terms ("hyperliquid vault" 400 impressions in 28 days via `/blog/hyperliquid-vault-of-vaults`, the monthly "best performing stablecoin vaults" posts) link to individual vaults and chain pages. Across 146 posts there is 1 link to a stablecoin hub and 1 to the Hyperliquid hub. The October 2026 stablecoin post is the exception with 28 hub links.
+- **Legacy Hyperliquid vault links 404.** 594 distinct blog links use `/trading-view/<chain>/vaults/<old slug>?a=<address>`. The redirect dropped the address and kept the old slug (`rektober-2`, now `rektober`), so 93 of them ended on a 404.
+- Ghost appends `?ref=trading-strategy.ghost.io` to every link to our own site, and most blog vault links still use `/trading-view/…` URLs, so each is one redirect away from its canonical.
+
+### What changed
+
+1. `/trading-view/<chain>/vaults/<slug>?a=0x…` redirects to `/vaults/address/<address>`, which resolves the current slug. With the fix 593 of the 594 links resolve (was 501).
+2. `scripts/seo-target-terms.json` rebuilt: terms with neither US volume nor Search Console impressions dropped (10), wordings with measured volume added (17), "gauntlet vaults" added as navigational. Round 4 and 5 counts ("13 of 28") refer to the old list.
+3. `pnpm run seo:dataforseo` (`volume`, `serp`, `ranked`, `ideas`).
+
+Search Console, 2026-11-20: indexing requested for `/vaults/stablecoins`. URL inspection showed the last crawl on 2026-08-23 (before the round 4 titles) and "No referring sitemaps detected", although the URL is in `/vaults/sitemap.xml` and Google last read that sitemap on 2026-11-19 (4,739 pages); the inspection data is from the August crawl. `/vaults/sitemap.xml` resubmitted the same day.
+
+Not done: hub links in the older stablecoin posts and the Hyperliquid vault-of-vaults post (Ghost content); Ghost's outbound link tagging.
