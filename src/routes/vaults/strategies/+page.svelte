@@ -70,7 +70,7 @@ Vault strategy category index.
 			groupLabel="Strategy"
 			includeDescription
 			hideRankings={options.sort === null || options.sort === 'name' || options.sort === 'full_name'}
-			averageApyLabel="Avg. APY (30d)"
+			averageApyLabel="30D APY"
 			averageApyTooltip="Source-reported average annual percentage yield over the last 30 days."
 			rows={categories}
 			{...options}
@@ -84,5 +84,12 @@ Vault strategy category index.
 	.category-index-page .header-stack {
 		display: grid;
 		gap: 1rem;
+	}
+
+	@media (--viewport-md-up) {
+		.category-index-page :global(.col-headers th.avg_apy) {
+			/* Leave room for the label and sort indicator at narrow table widths. */
+			width: 8.5rem;
+		}
 	}
 </style>
