@@ -1,8 +1,10 @@
 import { expect, test } from '@playwright/test';
+import { waitForHydration } from '../../integration/helpers';
 
 test.describe('pair index page', () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/trading-view/trading-pairs');
+		await waitForHydration(page);
 	});
 
 	test('should include table with 10 body rows', async ({ page }) => {
