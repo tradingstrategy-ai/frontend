@@ -1229,7 +1229,8 @@ name shows its curator instead of repeating the protocol name.
 			>
 		</div>
 
-		{#if showFilters}
+		<!-- BTC and ETH curator tables typically have few vaults, so filter controls are unlikely to be needed. -->
+		{#if showFilters && !cryptoFamily}
 			<button
 				class="mobile-filters-trigger"
 				data-testid="mobile-filters-trigger"
