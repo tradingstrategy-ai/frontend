@@ -722,6 +722,8 @@ export type VaultListingRow = Pick<VaultInfo, (typeof vaultListingRowKeys)[numbe
 	 * pages do not ship to the browser. Null when uncurated or the curator has no logo.
 	 */
 	curator_logo_url?: string | null;
+	/** External vault venue for listings whose rows have no native detail page. */
+	venue_url?: string;
 };
 
 /** Runtime schema for the public slim chart payload. */

@@ -29,6 +29,8 @@ export const vaultListingKeys = [
 	'protocol',
 	'stablecoin',
 	'curator',
+	'curator-btc',
+	'curator-eth',
 	'category',
 	'tokenised-funds',
 	'international',
@@ -52,6 +54,8 @@ const commonOptions: VaultListingOptions = {
 	tvlThreshold: 50_000,
 	includeBlacklistedInStats: false
 };
+
+const curatorDefaults = { tvl: 'any', sort: 'tvl', unknown: false };
 
 export const vaultListingDefinitions: Record<VaultListingKey, VaultListingDefinition> = {
 	top: { key: 'top', defaults: { tvl: DEFAULT_TVL_KEY }, options: commonOptions, requiresScope: false },
@@ -105,10 +109,12 @@ export const vaultListingDefinitions: Record<VaultListingKey, VaultListingDefini
 	},
 	curator: {
 		key: 'curator',
-		defaults: { tvl: 'any', sort: 'tvl', unknown: false },
+		defaults: curatorDefaults,
 		options: commonOptions,
 		requiresScope: true
 	},
+	'curator-btc': { key: 'curator-btc', defaults: curatorDefaults, options: commonOptions, requiresScope: true },
+	'curator-eth': { key: 'curator-eth', defaults: curatorDefaults, options: commonOptions, requiresScope: true },
 	category: {
 		key: 'category',
 		defaults: { tvl: '10k', unknown: false, amm: false },
@@ -149,6 +155,12 @@ export function getVaultListingDefinition(key: VaultListingKey): VaultListingDef
 	return vaultListingDefinitions[key];
 }
 
+export function getCuratorCryptoFamily(key: VaultListingKey) {
+	if (key === 'curator-btc') return 'btc';
+	if (key === 'curator-eth') return 'eth';
+	return null;
+}
+
 /** Resolve dynamic defaults which are part of an immutable route definition. */
 export function getVaultListingDefaults(key: VaultListingKey, scope?: string): VaultListingQueryDefaults {
 	if (key === 'chain' && scope === 'robinhood') return { ...vaultListingDefinitions[key].defaults, tvl: 'any' };
@@ -181,7 +193,10 @@ export function filterVaultListingScope(vaults: VaultInfo[], key: VaultListingKe
 		case 'stablecoin':
 			return scope ? vaults.filter((vault) => vault.denomination_slug === scope) : [];
 		case 'curator':
-			return scope ? vaults.filter((vault) => vault.curator_slug === scope) : [];
+			return scope ? vaults.filter((vault) => vault.curator_slug === scope && vault.stablecoinish) : [];
+		case 'curator-btc':
+		case 'curator-eth':
+			return [];
 		case 'category':
 			return scope ? vaults.filter((vault) => (vault.strategy_tags ?? []).includes(scope)) : [];
 		case 'tokenised-funds':

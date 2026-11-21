@@ -15,15 +15,17 @@ import {
 import { getRiskRatedVaults } from '$lib/top-vaults/risk-rating-statistics';
 import {
 	filterVaultListingScope,
+	getCuratorCryptoFamily,
 	getVaultListingDefinition,
 	getVaultListingDefaults,
 	type VaultListingKey
 } from '$lib/top-vaults/listing/definitions';
 import { queryVaultListing } from '$lib/top-vaults/listing/query';
 import type { VaultListingOptions, VaultListingQuery, VaultListingResult } from '$lib/top-vaults/listing/query';
-import { parseVaultListingQuery } from '$lib/top-vaults/listing/state';
+import { getListingSearchParams, parseVaultListingQuery } from '$lib/top-vaults/listing/state';
 import { INITIAL_VAULT_LISTING_LIMIT, type VaultListingSummary } from '$lib/top-vaults/listing/types';
-import type { TopVaults } from '$lib/top-vaults/schemas';
+import type { TopVaults, VaultInfo } from '$lib/top-vaults/schemas';
+import { getCachedCryptoVaults } from './crypto-vaults';
 
 async function resolveListingVaults(fetchFn: typeof fetch, topVaults: TopVaults, key: VaultListingKey, scope?: string) {
 	const { vaults } = topVaults;
@@ -78,6 +80,32 @@ export function createVaultListingSummary(listing: VaultListingResult): VaultLis
 	};
 }
 
+/** Project a row, linking crypto vaults to their venue when no native detail page is available. */
+export function projectVaultListingRow(vault: VaultInfo, curators: TopVaults['curators'], key: VaultListingKey) {
+	const row = toVaultListingRow(vault, curators);
+	if (getCuratorCryptoFamily(key) && vault.link?.startsWith('https://')) row.venue_url = vault.link;
+	return row;
+}
+
+async function resolveListingSource(fetchFn: typeof fetch, key: VaultListingKey, scope?: string) {
+	const topVaults = await getCachedTopVaults(fetchFn);
+	const family = getCuratorCryptoFamily(key);
+	if (family && scope && Object.hasOwn(topVaults.curators, scope)) {
+		const cryptoVaults = await getCachedCryptoVaults(fetchFn);
+		return {
+			topVaults,
+			scopedVaults: cryptoVaults?.curators.get(scope)?.[family] ?? [],
+			generatedAt: cryptoVaults?.generatedAt ?? topVaults.generated_at
+		};
+	}
+
+	return {
+		topVaults,
+		scopedVaults: await resolveListingVaults(fetchFn, topVaults, key, scope),
+		generatedAt: topVaults.generated_at
+	};
+}
+
 /**
  * Build an SSR-safe first listing page from the complete server-cached export.
  * The returned rows have already passed the definition scope, filters, and
@@ -90,21 +118,22 @@ export function createVaultListingSummary(listing: VaultListingResult): VaultLis
  */
 export async function loadVaultListing(fetchFn: typeof fetch, url: URL, key: VaultListingKey, scope?: string) {
 	const definition = getVaultListingDefinition(key);
-	const topVaults = await getCachedTopVaults(fetchFn);
-	const scopedVaults = await resolveListingVaults(fetchFn, topVaults, key, scope);
-	const query = parseVaultListingQuery(url.searchParams, getVaultListingDefaults(key, scope));
+	const { topVaults, scopedVaults, generatedAt } = await resolveListingSource(fetchFn, key, scope);
+	const family = getCuratorCryptoFamily(key);
+	const params = getListingSearchParams(url.searchParams, family ? `${family}-` : '');
+	const query = parseVaultListingQuery(params, getVaultListingDefaults(key, scope));
 	const listing = queryVaultListing(scopedVaults, query, await getListingOptions(definition.options, query));
 	const initialVaults = listing.vaults
 		.slice(0, INITIAL_VAULT_LISTING_LIMIT)
-		.map((vault) => toVaultListingRow(vault, topVaults.curators));
+		.map((vault) => projectVaultListingRow(vault, topVaults.curators, key));
 
 	return {
-		totalVaultCount: topVaults.vaults.length,
+		totalVaultCount: family ? scopedVaults.length : topVaults.vaults.length,
 		// Listing pages render the row data directly. The complete curator and
 		// CORE3 registries are needed by their own detail components, not by the
 		// table, and can be several megabytes of unrelated page data.
 		initialTopVaults: {
-			generated_at: topVaults.generated_at,
+			generated_at: generatedAt,
 			vaults: initialVaults,
 			core3_protocols: {},
 			curators: {},
@@ -144,11 +173,11 @@ export async function loadVaultListingContinuation(
 	scope?: string
 ) {
 	const definition = getVaultListingDefinition(key);
-	const topVaults = await getCachedTopVaults(fetchFn);
-	const scopedVaults = await resolveListingVaults(fetchFn, topVaults, key, scope);
+	const { topVaults, scopedVaults, generatedAt } = await resolveListingSource(fetchFn, key, scope);
 	const query = parseVaultListingQuery(url.searchParams, getVaultListingDefaults(key, scope));
 	return {
 		topVaults,
+		generatedAt,
 		listing: queryVaultListing(scopedVaults, query, await getListingOptions(definition.options, query))
 	};
 }

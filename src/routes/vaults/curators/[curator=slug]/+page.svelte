@@ -5,6 +5,8 @@ with an "about" panel and a TVL/return mini chart.
 <script lang="ts">
 	import { page } from '$app/state';
 	import TopVaultsPage from '$lib/top-vaults/TopVaultsPage.svelte';
+	import TopVaultsTable from '$lib/top-vaults/TopVaultsTable.svelte';
+	import { getCuratorCryptoFamily } from '$lib/top-vaults/listing/definitions';
 	import { JsonLd } from 'svelte-meta-tags';
 	import MetaTags from '$lib/social-card/SocialCardMetaTags.svelte';
 	import VaultGroupMiniChart from '../../VaultGroupMiniChart.svelte';
@@ -40,7 +42,7 @@ with an "about" panel and a TVL/return mini chart.
 		const { matchingCount: listedCount, totalTvl: listedTvl, avgTvlWeightedApy1M: listedApy } = data.listingSummary;
 		const stats =
 			listedCount > 0
-				? `${curatorName} has ${listedCount} listed ${listedCount === 1 ? 'vault' : 'vaults'} with ${formatDollar(listedTvl, 1)} TVL${
+				? `${curatorName} has ${listedCount} listed stablecoin ${listedCount === 1 ? 'vault' : 'vaults'} with ${formatDollar(listedTvl, 1)} TVL${
 						listedApy == null ? '' : ` and a ${formatPercent(listedApy, 1)} average APY over the last 30 days`
 					}. The curator may have more vaults outside supported blockchains and vault protocols.`
 				: `Vaults curated by ${curatorName}, with their APY and TVL.`;
@@ -116,11 +118,52 @@ with an "about" panel and a TVL/return mini chart.
 >
 	{#snippet detailAside()}
 		<VaultGroupMiniChart
-			title="{curatorName}: TVL and returns across all vaults"
+			title="{curatorName}: TVL and returns across stablecoin vaults"
 			dataUrl="/vaults/curators/{curatorSlug}/chart-data.bin"
 			compareLabel="Compare all curators"
 			compareHref="/vaults/curators"
 			emptyDataSubject="Curator data"
 		/>
 	{/snippet}
+	{#snippet beforeTable()}
+		{#if data.cryptoListings.length}
+			<h2>Stablecoin vaults</h2>
+		{/if}
+	{/snippet}
+	{#snippet afterTable()}
+		{#each data.cryptoListings as listing (listing.listingKey)}
+			{@const family = getCuratorCryptoFamily(listing.listingKey)}
+			<section class="crypto-vaults" aria-labelledby="{family}-vaults">
+				<h2 id="{family}-vaults">{family?.toUpperCase()}-denominated vaults</h2>
+				<TopVaultsTable
+					topVaults={listing.initialTopVaults}
+					totalVaultCount={listing.totalVaultCount}
+					initialHasMore={listing.initialHasMore}
+					listingKey={listing.listingKey}
+					listingScope={listing.listingScope}
+					listingSummary={listing.listingSummary}
+					showFilters
+					defaultTvlKey="any"
+					defaultHideUnknown={0}
+					defaultSort="tvl"
+					showStablecoinOnlyMeta={false}
+					allowVaultComparison={false}
+				/>
+			</section>
+		{/each}
+	{/snippet}
 </TopVaultsPage>
+
+<style>
+	h2 {
+		margin: 0;
+		font: var(--f-heading-md-medium);
+	}
+
+	.crypto-vaults {
+		display: grid;
+		min-width: 0;
+		gap: var(--space-md);
+		margin-top: var(--space-lg);
+	}
+</style>

@@ -46,6 +46,19 @@ If R2 credentials are unavailable, each dataset can be configured with a direct 
 
 The server parses, validates, normalises, and caches the response in memory for one hour via `src/lib/top-vaults/cache.ts`. When the cache expires, the next request waits for a fresh export; there is no stale-while-revalidate behaviour.
 
+#### Curator crypto vaults
+
+Curator BTC and ETH tables read `crypto-vault-metadata.json` server-side from the
+private `vaults-pro-data` R2 bucket using the existing credentials. Set
+`TS_PRIVATE_CRYPTO_VAULT_R2_BUCKET_NAME` to override the bucket, or set
+`TS_PRIVATE_CRYPTO_VAULT_METADATA_URL` to use a direct source URL. The server
+caches the export for one hour and retains the previous copy if a refresh fails.
+
+Tables use the export's denomination family and native returns. USD TVL uses
+the token's USD rate when available, with the latest canonical underlying USD
+rate in the export as a fallback. The browser receives projected curator rows
+and summary metrics through the same listing pipeline as the stablecoin table.
+
 #### Vault categories
 
 The top-vaults export includes a top-level `categories` record keyed by source strategy tags such as `directional_trading`. Each category provides a label, Markdown description, reported aggregate TVL, vault count, and 30-day average APY. Individual vault membership is stored in the optional `strategy_tags` array.

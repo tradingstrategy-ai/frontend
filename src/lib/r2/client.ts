@@ -56,12 +56,12 @@ export function isR2Configured(): boolean {
  * Fetch an R2 object as a readable stream with metadata.
  *
  * @param key Object key in the bucket (e.g. `top_vaults_by_chain.json`)
+ * @param bucket Override the default bucket for datasets stored separately.
  * @returns Object body stream and metadata, or `null` when R2 is not configured
  * @throws When R2 is configured but the request fails
  */
-export async function getR2Object(key: string) {
+export async function getR2Object(key: string, bucket = env.TS_PRIVATE_R2_BUCKET_NAME) {
 	const client = getClient();
-	const bucket = env.TS_PRIVATE_R2_BUCKET_NAME;
 
 	if (!client || !bucket) return null;
 

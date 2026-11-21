@@ -85,6 +85,8 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		detailDescription?: Snippet;
 		/** Optional content rendered above the vaults table (and its status line) */
 		beforeTable?: Snippet;
+		/** Optional listing sections below the main table. */
+		afterTable?: Snippet;
 		/** Whole-database vault count for the "out of {total}" listing meta on pre-filtered listings */
 		totalVaultCount?: number;
 		/** Include blacklisted vaults in the listing summary stats. */
@@ -136,6 +138,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 		heroAside,
 		detailDescription,
 		beforeTable,
+		afterTable,
 		totalVaultCount,
 		includeBlacklistedInStats,
 		maxSummaryTvlUsd,
@@ -337,6 +340,7 @@ Use `ratingProvider` to show a provider-specific risk rating column.
 					{vaultSubtitle}
 				/>
 			{/if}
+			{@render afterTable?.()}
 		</div>
 	</Section>
 

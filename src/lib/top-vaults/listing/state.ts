@@ -14,6 +14,16 @@ import {
 	volatilityFilterOptions
 } from '../helpers';
 
+/** Read one table's query parameters from a page with multiple listings. */
+export function getListingSearchParams(params: URLSearchParams, prefix: string) {
+	if (!prefix) return params;
+	const scoped = new URLSearchParams();
+	for (const [key, value] of params) {
+		if (key.startsWith(prefix)) scoped.append(key.slice(prefix.length), value);
+	}
+	return scoped;
+}
+
 const sortKeys = new Set([
 	...returnColumnDefinitions.map((definition) => definition.id),
 	...Object.keys(LEGACY_RETURN_SORT_ALIASES),
