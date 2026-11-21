@@ -9,11 +9,17 @@ export async function load({ params, fetch, url }) {
 	const curatorInfo = curators[curator];
 	if (!curatorInfo) error(404, 'Curator not found');
 
+	const [stablecoin, btc, eth] = await Promise.all([
+		loadVaultListing(fetch, url, 'curator', curator),
+		loadVaultListing(fetch, url, 'curator-btc', curator),
+		loadVaultListing(fetch, url, 'curator-eth', curator)
+	]);
+
 	return {
 		curatorSlug: curator,
 		curatorName: curatorInfo.name,
 		curator: curatorInfo,
-		// the page's description quotes this listing's summary, so its figures match the table
-		...(await loadVaultListing(fetch, url, 'curator', curator))
+		...stablecoin,
+		cryptoListings: [btc, eth].filter((listing) => listing.totalVaultCount > 0)
 	};
 }

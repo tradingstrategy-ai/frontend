@@ -1,7 +1,11 @@
 import { json, error } from '@sveltejs/kit';
 import { getVaultListingDefinition, isVaultListingKey } from '$lib/top-vaults/listing/definitions';
-import { createVaultListingSummary, loadVaultListingContinuation } from '$lib/server/top-vaults/listing';
-import { riskFilterOptions, toVaultListingRow } from '$lib/top-vaults/helpers';
+import {
+	createVaultListingSummary,
+	loadVaultListingContinuation,
+	projectVaultListingRow
+} from '$lib/server/top-vaults/listing';
+import { riskFilterOptions } from '$lib/top-vaults/helpers';
 import { matchesVaultRisk } from '$lib/top-vaults/listing/query';
 import { VAULT_LISTING_PAGE_SIZE } from '$lib/top-vaults/listing/types';
 
@@ -13,9 +17,13 @@ export async function GET({ fetch, url }) {
 	if (!isVaultListingKey(listingKey)) error(400, 'Unknown vault listing');
 	const scope = url.searchParams.get('scope') ?? undefined;
 	if (getVaultListingDefinition(listingKey).requiresScope && !scope) error(400, 'Vault listing scope is required');
-	const { topVaults, listing } = await loadVaultListingContinuation(fetch, url, listingKey, scope);
+	const {
+		topVaults,
+		listing,
+		generatedAt: sourceGeneratedAt
+	} = await loadVaultListingContinuation(fetch, url, listingKey, scope);
 	const expectedVersion = url.searchParams.get('version');
-	const generatedAt = new Date(topVaults.generated_at).toISOString();
+	const generatedAt = new Date(sourceGeneratedAt).toISOString();
 	if (expectedVersion && expectedVersion !== generatedAt) {
 		return json(
 			{ message: 'Vault listing data has changed' },
@@ -37,7 +45,7 @@ export async function GET({ fetch, url }) {
 	// project rows to the listing shape so continuation pages match the SSR batch
 	const vaults = matchingVaults
 		.slice(offset, offset + VAULT_LISTING_PAGE_SIZE)
-		.map((vault) => toVaultListingRow(vault, topVaults.curators));
+		.map((vault) => projectVaultListingRow(vault, topVaults.curators, listingKey));
 	return json(
 		{
 			vaults,

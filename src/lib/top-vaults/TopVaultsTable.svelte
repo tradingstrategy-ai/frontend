@@ -108,7 +108,8 @@ name shows its curator instead of repeating the protocol name.
 	} from './return-columns';
 	import { sortVaults } from './listing/query';
 	import { tableWidth } from '$lib/actions/table-width';
-	import { getVaultListingDefaults, type VaultListingKey } from './listing/definitions';
+	import { getCuratorCryptoFamily, getVaultListingDefaults, type VaultListingKey } from './listing/definitions';
+	import { getListingSearchParams } from './listing/state';
 	import { INITIAL_VAULT_LISTING_LIMIT, VAULT_LISTING_PAGE_SIZE, type VaultListingSummary } from './listing/types';
 	import { getCanonicalComparisonReturnMode } from './equity-comparison/net-returns';
 	import { MAX_SELECTED_VAULTS, writeEquityComparisonState } from './equity-comparison/state';
@@ -253,6 +254,9 @@ name shows its curator instead of repeating the protocol name.
 		allowVaultComparison = true,
 		vaultSubtitle = 'protocol'
 	}: Props = $props();
+	let cryptoFamily = $derived(getCuratorCryptoFamily(listingKey));
+	let searchParamPrefix = $derived(cryptoFamily ? `${cryptoFamily}-` : '');
+	let tableSearchParams = $derived(getListingSearchParams(page.url.searchParams, searchParamPrefix));
 	const defaultHideAmm = untrack(() => ((getVaultListingDefaults(listingKey, listingScope).amm ?? true) ? 1 : 0));
 	let listingAssetType = $derived(listingKey === 'protocol' && isPoolProtocol(listingScope) ? 'pool' : 'vault');
 	let listingAssetTypePlural = $derived(`${listingAssetType}s`);
@@ -445,7 +449,7 @@ name shows its curator instead of repeating the protocol name.
 			}) as const satisfies ParamSchema
 	);
 
-	let urlState = $derived(deserialiseSearchParams(page.url.searchParams, searchParamsSchema));
+	let urlState = $derived(deserialiseSearchParams(tableSearchParams, searchParamsSchema));
 
 	/**
 	 * Build the current listing URL with selected search-state overrides.
@@ -456,16 +460,28 @@ name shows its curator instead of repeating the protocol name.
 		// `page.url` only changes once a navigation has completed; while one is in flight, build on
 		// the URL it is heading to so a quick second change does not discard the first one
 		const baseUrl = pendingSearchUrl ?? page.url;
-		const current = deserialiseSearchParams(baseUrl.searchParams, searchParamsSchema);
+		const current = deserialiseSearchParams(
+			getListingSearchParams(baseUrl.searchParams, searchParamPrefix),
+			searchParamsSchema
+		);
 		const updated = {
 			...current,
 			...(revealedFromRisk == null ? {} : { risk: blacklistedRiskIndex }),
 			...overrides
 		};
 		const url = new SvelteURL(baseUrl);
-		const searchParams = new SvelteURLSearchParams(serialiseSearchParams(updated, searchParamsSchema));
-		for (const key of preserveSearchParams) {
-			for (const value of baseUrl.searchParams.getAll(key)) searchParams.append(key, value);
+		const searchParams = new SvelteURLSearchParams();
+		for (const [key, value] of new URLSearchParams(serialiseSearchParams(updated, searchParamsSchema))) {
+			searchParams.append(`${searchParamPrefix}${key}`, value);
+		}
+		for (const [key, value] of baseUrl.searchParams) {
+			if (
+				preserveSearchParams.includes(key) ||
+				(cryptoFamily && !key.startsWith(searchParamPrefix)) ||
+				(listingKey === 'curator' && (key.startsWith('btc-') || key.startsWith('eth-')))
+			) {
+				searchParams.append(key, value);
+			}
 		}
 		url.search = searchParams.toString();
 		return url;
@@ -576,7 +592,7 @@ name shows its curator instead of repeating the protocol name.
 	let hideAmm = $derived(showFilters && urlState.amm === 1);
 	let hidePrivate = $derived(urlState.private === 1);
 	let returnsDropdownOpen = $state(false);
-	let filtersOpen = $state(hasFilterSearchParams(page.url.searchParams));
+	let filtersOpen = $state(untrack(() => hasFilterSearchParams(tableSearchParams)));
 	let hasLoadedFilterPreference = false;
 	let selectedReturnColumnIds = $derived(sanitiseReturnColumnSelection(urlState.returns));
 	let selectedReturnColumns = $derived(
@@ -610,7 +626,7 @@ name shows its curator instead of repeating the protocol name.
 	// URLs open the disclosure on arrival without changing that saved preference.
 	onMount(() => {
 		filtersOpen =
-			hasFilterSearchParams(page.url.searchParams) || window.localStorage.getItem(filtersOpenStorageKey) === 'true';
+			hasFilterSearchParams(tableSearchParams) || window.localStorage.getItem(filtersOpenStorageKey) === 'true';
 		hasLoadedFilterPreference = true;
 	});
 
@@ -906,7 +922,7 @@ name shows its curator instead of repeating the protocol name.
 		offset: number,
 		previousRisk?: number
 	): Promise<ListingDataResponse | null> {
-		const params = new SvelteURLSearchParams(searchParams);
+		const params = new SvelteURLSearchParams(getListingSearchParams(searchParams, searchParamPrefix));
 		params.set('listing', listingKey);
 		if (listingScope) params.set('scope', listingScope);
 		params.set('offset', String(offset));
@@ -1160,7 +1176,9 @@ name shows its curator instead of repeating the protocol name.
 			<Tooltip>
 				<svelte:fragment slot="trigger"
 					>{matchingVaultCount}
-					{listingAssetTypePlural}{#if totalVaultCount > matchingVaultCount}
+					{matchingVaultCount === 1
+						? listingAssetType
+						: listingAssetTypePlural}{#if totalVaultCount > matchingVaultCount}
 						<span>&nbsp;out of {totalVaultCount}</span>{/if}</svelte:fragment
 				>
 				<svelte:fragment slot="popup"
@@ -1171,19 +1189,21 @@ name shows its curator instead of repeating the protocol name.
 						not meet the minimum TVL threshold:
 						{hiddenVaultNames.join(', ')}{#if hiddenByTvl > 2}, and {hiddenByTvl - 2} more{/if}.
 					{:else}
-						The number of {listingAssetTypePlural} listed on this page.
+						The number of {listingAssetTypePlural} in this table.
 					{/if}</svelte:fragment
 				>
 			</Tooltip>
 			<Tooltip>
 				<svelte:fragment slot="trigger">TVL {formatDollar(totalTvl, 0)}</svelte:fragment>
-				<svelte:fragment slot="popup">This is the sum of TVL in all listed vaults on this page.</svelte:fragment>
+				<svelte:fragment slot="popup">The combined TVL in US dollars for vaults in this table.</svelte:fragment>
 			</Tooltip>
 			<Tooltip>
 				<svelte:fragment slot="trigger">Avg. return {formatPercent(avgTvlWeightedApy1M, 2)}</svelte:fragment>
 				<svelte:fragment slot="popup"
-					>This is a TVL-weighted average annualised return for 30 days period for all vaults on this list. Net returns
-					is used when known for the vault protocol, otherwise we assume the reported returns are fee-inclusive.</svelte:fragment
+					>TVL-weighted average annualised return over the last 30 days{cryptoFamily
+						? ` in ${cryptoFamily.toUpperCase()}-denominated assets`
+						: ''}. Net returns are used when known for the vault protocol, otherwise we assume the reported returns are
+					fee-inclusive.</svelte:fragment
 				>
 			</Tooltip>
 			{#if !showFilters}
@@ -1198,10 +1218,7 @@ name shows its curator instead of repeating the protocol name.
 			{#if showStablecoinOnlyMeta}
 				<Tooltip>
 					<svelte:fragment slot="trigger">Stablecoin-only</svelte:fragment>
-					<svelte:fragment slot="popup"
-						>We list stablecoin-denominated vaults only. This excludes vaults with cryptocurrency denomination like ETH
-						or BTC.</svelte:fragment
-					>
+					<svelte:fragment slot="popup">This table lists stablecoin-denominated vaults.</svelte:fragment>
 				</Tooltip>
 			{/if}
 			<span
@@ -1238,12 +1255,17 @@ name shows its curator instead of repeating the protocol name.
 								class="filter-section filter-section-display"
 								data-testid="filter-group-display"
 								role="group"
-								aria-labelledby="filter-group-display-heading"
+								aria-labelledby="{searchParamPrefix}filter-group-display-heading"
 							>
-								<h3 class="filter-section-heading" id="filter-group-display-heading">Display</h3>
+								<h3 class="filter-section-heading" id="{searchParamPrefix}filter-group-display-heading">Display</h3>
 								<div class="filter-group">
-									<label class="filter-label" for="vault-sort">Sort</label>
-									<Select id="vault-sort" value={sortOptions.key} data-testid="sort-select" onchange={selectSort}>
+									<label class="filter-label" for="{searchParamPrefix}vault-sort">Sort</label>
+									<Select
+										id="{searchParamPrefix}vault-sort"
+										value={sortOptions.key}
+										data-testid="sort-select"
+										onchange={selectSort}
+									>
 										{#each sortDropdownOptions as option (option.key)}
 											<option value={option.key}>{option.label}</option>
 										{/each}
@@ -1284,9 +1306,9 @@ name shows its curator instead of repeating the protocol name.
 								class="filter-section filter-section-hide"
 								data-testid="filter-group-hide"
 								role="group"
-								aria-labelledby="filter-group-hide-heading"
+								aria-labelledby="{searchParamPrefix}filter-group-hide-heading"
 							>
-								<h3 class="filter-section-heading" id="filter-group-hide-heading">Hide vaults</h3>
+								<h3 class="filter-section-heading" id="{searchParamPrefix}filter-group-hide-heading">Hide vaults</h3>
 								<div class="filter-group">
 									<Tooltip>
 										<label class="checkbox-filter" slot="trigger">
@@ -1359,9 +1381,11 @@ name shows its curator instead of repeating the protocol name.
 								class="filter-section filter-section-performance"
 								data-testid="filter-group-performance"
 								role="group"
-								aria-labelledby="filter-group-performance-heading"
+								aria-labelledby="{searchParamPrefix}filter-group-performance-heading"
 							>
-								<h3 class="filter-section-heading" id="filter-group-performance-heading">Performance and risk</h3>
+								<h3 class="filter-section-heading" id="{searchParamPrefix}filter-group-performance-heading">
+									Performance and risk
+								</h3>
 								<div class="filter-group">
 									<Tooltip>
 										<span class="filter-label filter-label-hint" slot="trigger">Technical risk</span>
@@ -1543,7 +1567,7 @@ name shows its curator instead of repeating the protocol name.
 							</section>
 						</div>
 
-						{#if showAllVaultsFilterNote}
+						{#if showAllVaultsFilterNote && !cryptoFamily}
 							<p class="filters-note" data-testid="filters-note">
 								The vaults on the listing are limited to the current category. <a href={allVaultsPath}
 									>See all vaults.</a
@@ -1773,7 +1797,13 @@ name shows its curator instead of repeating the protocol name.
 						{/if}
 						<td class="sparkline">
 							<VaultSparkline {vault} />
-							<TargetableLink label="View {vault.name} details" href={resolveVaultDetails(vault)} class="row-link" />
+							{#if cryptoFamily}
+								{#if vault.venue_url}
+									<TargetableLink label="View {vault.name} at its venue" href={vault.venue_url} class="row-link" />
+								{/if}
+							{:else}
+								<TargetableLink label="View {vault.name} details" href={resolveVaultDetails(vault)} class="row-link" />
+							{/if}
 						</td>
 					</tr>
 					{#if hasComparisonSelection && vault.id === lastSelectedVaultId}

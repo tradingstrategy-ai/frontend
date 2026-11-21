@@ -53,7 +53,7 @@ the vault protocol description widget. Sourced from the top-vaults dataset
 		listingSummary ? listingSummary.avgTvlWeightedApy1M : calculateTvlWeightedApy(statsVaultsWithUsdTvl)
 	);
 	let vaultCount = $derived(listingSummary?.matchingCount ?? statsVaults.length);
-	let vaultCountLabel = $derived(`${vaultCount} ${vaultCount === 1 ? 'vault' : 'vaults'}`);
+	let vaultCountLabel = $derived(`${vaultCount} stablecoin ${vaultCount === 1 ? 'vault' : 'vaults'}`);
 	let totalTvlLabel = $derived(`${formatDollar(totalTvl, 1)} TVL`);
 	let averageApyLabel = $derived(averageApy == null ? null : `${formatPercent(averageApy, 1)} APY`);
 
@@ -82,7 +82,7 @@ the vault protocol description widget. Sourced from the top-vaults dataset
 							{:else}{curator.name} has
 							{/if} <strong>{vaultCountLabel}</strong> with
 							<strong>{totalTvlLabel}</strong>{#if averageApyLabel}
-								and a
+								{' '}and a
 								<strong>{averageApyLabel}</strong> over the last 30 days{/if}.
 						{/if}
 						{#if curator.short_description}

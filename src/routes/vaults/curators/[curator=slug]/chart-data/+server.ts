@@ -8,6 +8,7 @@ import {
 	VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS
 } from '$lib/echarts/vault-group-mini-chart-server';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
+import { filterVaultListingScope } from '$lib/top-vaults/listing/definitions';
 
 const CACHE_VERSION = 'curator-mini-chart-v2';
 const cache = new Map<string, { payload: ProtocolMiniChartPayload; expires: number; version: string }>();
@@ -18,9 +19,9 @@ async function getCachedChartData(curatorSlug: string, fetch: Fetch) {
 	const cached = cache.get(cacheKey);
 	if (cached && cached.version === CACHE_VERSION && now < cached.expires) return cached.payload;
 
-	const { vaults } = await getCachedTopVaults(fetch);
-	const curatorVaults = vaults.filter((vault) => vault.curator_slug === curatorSlug);
-	if (curatorVaults.length === 0) error(404, 'Curator not found');
+	const { vaults, curators } = await getCachedTopVaults(fetch);
+	if (!Object.hasOwn(curators, curatorSlug)) error(404, 'Curator not found');
+	const curatorVaults = filterVaultListingScope(vaults, 'curator', curatorSlug);
 
 	const eligibleVaults = curatorVaults.filter(isEligibleVaultGroupMiniChartVault);
 	const rows =
