@@ -218,7 +218,13 @@ for a day instead of rescanning the parquet for them. Not warmed: per-vault
 responses keyed by arbitrary query strings (`/vaults/compare/chart-data`).
 
 Each job's response, and the container log line prefixed `[cache-warmer]`, lists every
-task's status, duration, longest event-loop stall and RSS. The per-cache state (age, source
+task's status, duration, longest event-loop stall and RSS. Measured on 2026-11-22 against
+production data (local production build): a full `all` job took 22–28 s, mostly network
+(protocol metadata 12–18 s for ~100 protocols, top-vaults 4.3 s, crypto export 4.9 s); the
+longest event-loop stall in any task was 33 ms, so the parsing does not need a worker
+thread. RSS peaked at 1.4 GB while the crypto export was parsed and settled at about 0.8 GB;
+during an hourly refresh the old and new copy of an export are briefly both in memory.
+After the warm, `/` rendered in 9 ms and the Morpho hub in 40 ms at the origin. The per-cache state (age, source
 age, last load time, failures, last error) is on `/diagnostics` for admins (`?pw=`). Under
 `pnpm run dev` there is no scheduler; caches load on first use.
 

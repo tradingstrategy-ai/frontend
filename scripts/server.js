@@ -86,7 +86,12 @@ async function runCacheWarmJob(job) {
 	});
 	if (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);
 	const result = await response.json();
-	const summary = result.tasks.map((task) => `${task.name} ${task.status} ${task.durationMs}ms`).join(', ');
+	const summary = result.tasks
+		.map(
+			(task) =>
+				`${task.name} ${task.status} ${task.durationMs}ms (stall ${task.maxEventLoopDelayMs ?? 0}ms, ${task.rssMb} MB)`
+		)
+		.join(', ');
 	const log = result.failed ? console.warn : console.log;
 	log(`[cache-warmer] ${job} job done in ${Math.round(performance.now() - startedAt)}ms: ${summary}`);
 }
