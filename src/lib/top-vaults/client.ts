@@ -10,9 +10,9 @@ function getSafeErrorSummary(errorValue: unknown): string {
 	return 'Unknown error';
 }
 
-export async function fetchTopVaults(fetch: Fetch): Promise<TopVaults> {
+export async function fetchTopVaults(fetch: Fetch, signal?: AbortSignal): Promise<TopVaults> {
 	try {
-		const raw = await fetchTopVaultsRaw(fetch);
+		const raw = await fetchTopVaultsRaw(fetch, signal);
 		const data = topVaultsSchema.parse(raw);
 
 		return {

@@ -1,6 +1,7 @@
 import { error, json } from '@sveltejs/kit';
-import { buildProtocolMiniChartPayload, type ProtocolMiniChartPayload } from '$lib/echarts/protocol-mini-chart';
+import { buildProtocolMiniChartPayload } from '$lib/echarts/protocol-mini-chart';
 import {
+	createVaultGroupMiniChartCache,
 	getMockVaultGroupMiniChartRows,
 	getVaultGroupMiniChartLatestApyRows,
 	isEligibleVaultGroupMiniChartVault,
@@ -15,15 +16,7 @@ import {
 } from '$lib/stablecoin-metadata/helpers';
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 
-const CACHE_VERSION = 'stablecoin-mini-chart-v4';
-const cache = new Map<string, { payload: ProtocolMiniChartPayload; expires: number; version: string }>();
-
-async function getCachedChartData(denominationSlug: string, fetch: Fetch) {
-	const cacheKey = `${CACHE_VERSION}:${denominationSlug}`;
-	const now = Date.now();
-	const cached = cache.get(cacheKey);
-	if (cached && cached.version === CACHE_VERSION && now < cached.expires) return cached.payload;
-
+const chartCache = createVaultGroupMiniChartCache('stablecoin-mini-chart', async (denominationSlug, fetch) => {
 	const [{ vaults }, metadataIndex] = await Promise.all([
 		getCachedTopVaults(fetch),
 		fetchStablecoinMetadataIndex(fetch)
@@ -58,17 +51,11 @@ async function getCachedChartData(denominationSlug: string, fetch: Fetch) {
 		latestApyRows: getVaultGroupMiniChartLatestApyRows(eligibleVaults)
 	});
 
-	cache.set(cacheKey, {
-		payload,
-		expires: now + VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS * 1000,
-		version: CACHE_VERSION
-	});
-
 	return payload;
-}
+});
 
 export async function GET({ params, fetch }) {
-	const payload = await getCachedChartData(params.denomination, fetch);
+	const payload = await chartCache.get(fetch, params.denomination);
 
 	return json(payload, {
 		headers: {

@@ -3,7 +3,7 @@
  * protocol, stablecoin, chain, and strategy pages, plus static vault sub-pages.
  */
 import { SitemapStream } from 'sitemap';
-import { fetchTopVaults } from '$lib/top-vaults/client';
+import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import {
 	getCurrencyUsdRates,
 	isBlacklisted,
@@ -44,7 +44,7 @@ const staticSubPages = [
 
 export async function GET({ fetch, setHeaders, url }) {
 	const [{ vaults, curators, categories }, stablecoinIndex] = await Promise.all([
-		fetchTopVaults(fetch),
+		getCachedTopVaults(fetch),
 		fetchStablecoinMetadataIndex(fetch)
 	]);
 

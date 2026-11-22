@@ -1,4 +1,5 @@
 import { env } from '$env/dynamic/private';
+import { createWarmCache } from '$lib/server/warm-cache';
 import { getR2Object, isR2Configured } from '$lib/r2/client';
 import { isoDateTime } from '$lib/schemas/utility';
 import { normaliseVaultProtocol } from '$lib/top-vaults/helpers';
@@ -12,10 +13,7 @@ interface CryptoVaultExport {
 	curators: Map<string, Record<CryptoFamily, VaultInfo[]>>;
 }
 
-const CACHE_TTL_MS = 60 * 60 * 1000;
 const DEFAULT_CRYPTO_VAULT_BUCKET = 'vaults-pro-data';
-let cache: { result: CryptoVaultExport | null; expires: number } | undefined;
-let pending: Promise<CryptoVaultExport | null> | undefined;
 
 const exportSchema = z.object({ generated_at: isoDateTime, vaults: z.array(z.unknown()) });
 const cryptoFieldsSchema = z.object({
@@ -76,38 +74,49 @@ export function parseCryptoVaultExport(raw: unknown): CryptoVaultExport {
 	return { generatedAt: /(?:Z|[+-]\d{2}:\d{2})$/.test(generatedAt) ? generatedAt : `${generatedAt}Z`, curators };
 }
 
-async function fetchCryptoVaultExport(fetchFn: typeof fetch): Promise<CryptoVaultExport> {
+async function fetchCryptoVaultExport(fetchFn: Fetch, signal?: AbortSignal): Promise<CryptoVaultExport> {
 	const sourceUrl = env.TS_PRIVATE_CRYPTO_VAULT_METADATA_URL;
 	if (sourceUrl) {
-		const response = await fetchFn(sourceUrl, { signal: AbortSignal.timeout(10_000) });
+		const timeout = AbortSignal.timeout(10_000);
+		const response = await fetchFn(sourceUrl, { signal: signal ? AbortSignal.any([signal, timeout]) : timeout });
 		if (!response.ok) throw new Error(`Crypto vault export returned ${response.status}`);
 		return parseCryptoVaultExport(await response.json());
 	}
 
 	const bucket = env.TS_PRIVATE_CRYPTO_VAULT_R2_BUCKET_NAME || DEFAULT_CRYPTO_VAULT_BUCKET;
-	const result = await getR2Object('crypto-vault-metadata.json', bucket);
+	const result = await getR2Object('crypto-vault-metadata.json', bucket, signal);
 	if (!result?.body) throw new Error('Crypto vault export is unavailable');
 	return parseCryptoVaultExport(JSON.parse(await result.body.transformToString()));
 }
 
-/** Share the optional crypto export across curator loads and keep the last successful copy on refresh failure. */
+function isCryptoVaultExportConfigured() {
+	return Boolean(
+		env.TS_PRIVATE_CRYPTO_VAULT_METADATA_URL || env.TS_PRIVATE_CRYPTO_VAULT_R2_BUCKET_NAME || isR2Configured()
+	);
+}
+
+/** The optional crypto export, refreshed hourly by the background warmer; a failed refresh keeps the last good copy. */
+export const cryptoVaultsCache = createWarmCache<CryptoVaultExport | null>({
+	name: 'crypto-vaults',
+	load: (_key, fetch, signal) =>
+		isCryptoVaultExportConfigured() ? fetchCryptoVaultExport(fetch, signal) : Promise.resolve(null),
+	refreshIntervalMs: 60 * 60 * 1000,
+	maxSourceAgeMs: 6 * 60 * 60 * 1000,
+	sourceTime: (data) => data?.generatedAt
+});
+
+/**
+ * Share the optional crypto export across curator loads. Returns `null` when the export is
+ * not configured, or when it has never loaded and is unavailable now.
+ *
+ * @param fetchFn SvelteKit fetch
+ */
 export async function getCachedCryptoVaults(fetchFn: typeof fetch) {
-	if (!env.TS_PRIVATE_CRYPTO_VAULT_METADATA_URL && !env.TS_PRIVATE_CRYPTO_VAULT_R2_BUCKET_NAME && !isR2Configured()) {
+	if (!isCryptoVaultExportConfigured()) return null;
+	try {
+		return await cryptoVaultsCache.get(fetchFn);
+	} catch {
+		console.warn('Could not load the crypto vault export');
 		return null;
 	}
-	if (cache && cache.expires > Date.now()) return cache.result;
-
-	pending ??= fetchCryptoVaultExport(fetchFn)
-		.catch(() => {
-			console.warn('Could not refresh the crypto vault export');
-			return cache?.result ?? null;
-		})
-		.then((result) => {
-			cache = { result, expires: Date.now() + CACHE_TTL_MS };
-			return result;
-		})
-		.finally(() => {
-			pending = undefined;
-		});
-	return pending;
 }

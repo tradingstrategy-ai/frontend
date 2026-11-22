@@ -2,7 +2,9 @@ import { getCachedStrategies } from 'trade-executor/client/strategy-info';
 import { yamlStrategies } from '$lib/strategies/yaml/loader';
 import { compareStrategiesForFrontpage } from '$lib/strategies/sort';
 import { toListingStrategy } from '$lib/strategies/yaml/adapter';
-import { fetchTopVaults } from '$lib/top-vaults/client';
+import { getCachedTopVaults, topVaultsCache } from '$lib/top-vaults/cache';
+import { homePostsCache } from '$lib/blog/home-posts.server';
+import { optionalDataError } from '$lib/helpers/public-api';
 import { type SlimVaultInfo, type VaultAggregates } from '$lib/top-vaults/schemas';
 import { getFrontpageVaults } from '$lib/top-vaults/frontpage';
 import { getCachedSharePriceReturns } from '$lib/strategies/yaml/share-price';
@@ -23,13 +25,16 @@ function getAgeSeconds(dateValue: Date | string | null | undefined) {
 
 export async function load({ fetch }) {
 	return diagnose('Front page SSR load', async () => {
-		const [strategies, topVaultsResult, ratesResult] = await Promise.all([
+		// Every source here is a server-side cache kept warm in the background
+		// ($lib/server/cache-warmer), so a render waits only on a cold process.
+		const [strategies, topVaultsResult, ratesResult, posts] = await Promise.all([
 			getCachedStrategies(fetch),
-			fetchTopVaults(fetch).catch((e) => {
+			getCachedTopVaults(fetch).catch((e) => {
 				console.error('Failed to fetch top vaults:', e);
 				return undefined;
 			}),
-			Promise.all([fetchLatestFredValue('SNDR'), fetchLatestTreasuryRate()])
+			Promise.all([fetchLatestFredValue('SNDR'), fetchLatestTreasuryRate()]),
+			homePostsCache.get(fetch).catch(optionalDataError('blog posts'))
 		]);
 
 		const frontpageStrategies = strategies
@@ -97,7 +102,8 @@ export async function load({ fetch }) {
 				topVaultsFeed: topVaultsResult
 					? {
 							generatedAt: new Date(topVaultsResult.generated_at).toISOString(),
-							ageSeconds: getAgeSeconds(topVaultsResult.generated_at)
+							ageSeconds: getAgeSeconds(topVaultsResult.generated_at),
+							serverCacheAgeSeconds: topVaultsCache.status()[0]?.ageSeconds ?? null
 						}
 					: null,
 				yamlTileSharePriceCache: {
@@ -108,7 +114,8 @@ export async function load({ fetch }) {
 			strategies: frontpageStrategies,
 			savingsRate,
 			treasuryRate,
-			topVaults
+			topVaults,
+			posts
 		};
 	});
 }

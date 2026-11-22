@@ -8,7 +8,7 @@ const mocks = vi.hoisted(() => ({ getAllStrategies: vi.fn() }));
 
 vi.mock('trade-executor/client/strategy-info', () => ({ getAllStrategies: mocks.getAllStrategies }));
 vi.mock('$lib/strategies/yaml/loader', () => ({ yamlStrategies: new Map() }));
-vi.mock('$lib/top-vaults/client', () => ({ fetchTopVaults: vi.fn() }));
+vi.mock('$lib/top-vaults/cache', () => ({ getCachedTopVaults: vi.fn() }));
 vi.mock('$lib/helpers/public-api', () => ({ fetchPublicApi: async () => ({}) }));
 
 import {

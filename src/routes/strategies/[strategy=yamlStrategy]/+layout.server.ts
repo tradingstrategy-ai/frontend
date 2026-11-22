@@ -4,7 +4,7 @@
 import { error } from '@sveltejs/kit';
 import { backtestHtml } from '$lib/strategies/yaml/backtest-loader';
 import { yamlStrategies } from '$lib/strategies/yaml/loader';
-import { fetchTopVaults } from '$lib/top-vaults/client';
+import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { getChain } from '$lib/helpers/chain';
 
 function getAgeSeconds(dateValue: Date | string | null | undefined) {
@@ -23,7 +23,7 @@ export async function load({ params, parent, fetch }) {
 	const { admin } = await parent();
 	if (!(admin || strategy.tags.includes('live'))) error(401, 'Unauthorized');
 
-	const topVaults = await fetchTopVaults(fetch);
+	const topVaults = await getCachedTopVaults(fetch);
 	const vaultInfo = topVaults.vaults.find((v) => v.address === strategy.vault_address);
 
 	const chain = getChain(strategy.chain_id);

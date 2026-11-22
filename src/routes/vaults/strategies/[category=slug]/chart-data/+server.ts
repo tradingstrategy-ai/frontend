@@ -1,7 +1,8 @@
 import { CHART_DATA_EXTENSION } from '$lib/helpers/edge-cache';
 import { error, json, redirect } from '@sveltejs/kit';
-import { buildProtocolMiniChartPayload, type ProtocolMiniChartPayload } from '$lib/echarts/protocol-mini-chart';
+import { buildProtocolMiniChartPayload } from '$lib/echarts/protocol-mini-chart';
 import {
+	createVaultGroupMiniChartCache,
 	getMockVaultGroupMiniChartRows,
 	getVaultGroupMiniChartLatestApyRows,
 	getVaultGroupMiniChartRows,
@@ -11,16 +12,9 @@ import {
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { getVaultCategorySlug, getVaultCategoryTag, isVisibleVaultCategory } from '$lib/top-vaults/categories';
 
-const CACHE_VERSION = 'category-mini-chart-v1';
-const cache = new Map<string, { payload: ProtocolMiniChartPayload; expires: number }>();
-
-async function getCachedChartData(categorySlug: string, fetch: Fetch) {
+const chartCache = createVaultGroupMiniChartCache('category-mini-chart', async (categorySlug, fetch) => {
 	const categoryTag = getVaultCategoryTag(categorySlug);
 	if (!isVisibleVaultCategory(categoryTag)) error(404, 'Vault category not found');
-	const cacheKey = `${CACHE_VERSION}:${categoryTag}`;
-	const now = Date.now();
-	const cached = cache.get(cacheKey);
-	if (cached && now < cached.expires) return cached.payload;
 
 	const { vaults, categories } = await getCachedTopVaults(fetch);
 	if (!Object.hasOwn(categories, categoryTag)) error(404, 'Vault category not found');
@@ -36,9 +30,8 @@ async function getCachedChartData(categorySlug: string, fetch: Fetch) {
 		latestApyRows: getVaultGroupMiniChartLatestApyRows(eligibleVaults)
 	});
 
-	cache.set(cacheKey, { payload, expires: now + VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS * 1000 });
 	return payload;
-}
+});
 
 export async function GET({ params, fetch, url }) {
 	const categoryTag = getVaultCategoryTag(params.category);
@@ -51,7 +44,7 @@ export async function GET({ params, fetch, url }) {
 		);
 	}
 
-	return json(await getCachedChartData(canonicalSlug, fetch), {
+	return json(await chartCache.get(fetch, canonicalSlug), {
 		headers: {
 			'cache-control': `public, max-age=${VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS}`,
 			vary: 'Accept-Encoding'

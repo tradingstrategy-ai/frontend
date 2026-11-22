@@ -15,7 +15,7 @@ import { yamlStrategies } from '$lib/strategies/yaml/loader';
 import { compareStrategiesForFrontend } from '$lib/strategies/sort';
 import { toListingStrategy } from '$lib/strategies/yaml/adapter';
 import { fetchSharePriceReturns90d } from '$lib/strategies/yaml/share-price';
-import { fetchTopVaults } from '$lib/top-vaults/client';
+import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { getAllStrategies } from 'trade-executor/client/strategy-info';
 import { compactStrategyTileChartData, getStrategyChartDateRange } from 'trade-executor/helpers/chart';
 
@@ -174,7 +174,7 @@ async function getYamlStrategies(fetch: Fetch): Promise<StrategyInfo[]> {
 	const configs = [...yamlStrategies.values()];
 	if (!configs.length) return [];
 
-	const topVaults = await fetchTopVaults(fetch);
+	const topVaults = await getCachedTopVaults(fetch);
 	return Promise.all(
 		configs.map(async (config) => {
 			const vault = topVaults.vaults.find((candidate) => candidate.address === config.vault_address);

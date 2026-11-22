@@ -9,7 +9,7 @@ import { getCachedTopVaults } from '$lib/top-vaults/cache';
 
 import { createHistoricalTvlEndpoint } from '$lib/echarts/historical-tvl-endpoint';
 
-export const GET = createHistoricalTvlEndpoint(async (fetch) => {
+export const GET = createHistoricalTvlEndpoint('historical-tvl-protocol-chart', async (fetch) => {
 	const startedAt = performance.now();
 	const topVaults = await getCachedTopVaults(fetch);
 	const [weeklyRows, dailyRows] =

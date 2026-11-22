@@ -1,6 +1,7 @@
 import { error, json } from '@sveltejs/kit';
-import { buildProtocolMiniChartPayload, type ProtocolMiniChartPayload } from '$lib/echarts/protocol-mini-chart';
+import { buildProtocolMiniChartPayload } from '$lib/echarts/protocol-mini-chart';
 import {
+	createVaultGroupMiniChartCache,
 	getMockVaultGroupMiniChartRows,
 	getVaultGroupMiniChartLatestApyRows,
 	isEligibleVaultGroupMiniChartVault,
@@ -11,15 +12,7 @@ import {
 import { getCachedTopVaults } from '$lib/top-vaults/cache';
 import { isUnknownVaultProtocol, UNKNOWN_VAULT_PROTOCOL_SLUG } from '$lib/top-vaults/helpers';
 
-const CACHE_VERSION = 'protocol-mini-chart-v7';
-const cache = new Map<string, { payload: ProtocolMiniChartPayload; expires: number; version: string }>();
-
-async function getCachedChartData(protocolSlug: string, fetch: Fetch) {
-	const cacheKey = `${CACHE_VERSION}:${protocolSlug}`;
-	const now = Date.now();
-	const cached = cache.get(cacheKey);
-	if (cached && cached.version === CACHE_VERSION && now < cached.expires) return cached.payload;
-
+const chartCache = createVaultGroupMiniChartCache('protocol-mini-chart', async (protocolSlug, fetch) => {
 	const { vaults } = await getCachedTopVaults(fetch);
 	const protocolVaults = vaults.filter((vault) =>
 		protocolSlug === UNKNOWN_VAULT_PROTOCOL_SLUG ? isUnknownVaultProtocol(vault) : vault.protocol_slug === protocolSlug
@@ -36,17 +29,11 @@ async function getCachedChartData(protocolSlug: string, fetch: Fetch) {
 		lookbackDays: VAULT_GROUP_MINI_CHART_THREE_MONTH_LOOKBACK_DAYS
 	});
 
-	cache.set(cacheKey, {
-		payload,
-		expires: now + VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS * 1000,
-		version: CACHE_VERSION
-	});
-
 	return payload;
-}
+});
 
 export async function GET({ params, fetch }) {
-	const payload = await getCachedChartData(params.protocol, fetch);
+	const payload = await chartCache.get(fetch, params.protocol);
 
 	return json(payload, {
 		headers: {

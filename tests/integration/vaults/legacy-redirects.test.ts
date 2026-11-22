@@ -1,7 +1,19 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('legacy chain vault URLs', () => {
-	test('redirect by vault address when the link carries one', async ({ request }) => {
+	test('redirect straight to the current vault page when the address is known', async ({ request }) => {
+		const response = await request.get(
+			'/trading-view/arbitrum/vaults/old-slug?a=0x2000000000000000000000000000000000000001',
+			{ maxRedirects: 0 }
+		);
+
+		expect(response.status()).toBe(301);
+		// SvelteKit `resolve()` makes the Location relative to the request path
+		const target = new URL(response.headers().location, 'http://localhost/trading-view/arbitrum/vaults/old-slug');
+		expect(target.pathname).toBe('/vaults/gmx-usdc-pool');
+	});
+
+	test('redirect an unknown address to the address route', async ({ request }) => {
 		const response = await request.get(
 			'/trading-view/hyperliquid/vaults/rektober-2?a=0xE3C97B18216F58AF4B9C1347D0EE010C42E6A85D&ref=trading-strategy.ghost.io',
 			{ maxRedirects: 0 }
