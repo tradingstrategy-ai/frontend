@@ -7,6 +7,7 @@ import { countryCodeSchema } from '$lib/helpers/geo';
 import { diagnoseFetch } from '$lib/diagnostics/server';
 import { signozSentryOptions, installConsoleLogBridge } from '$lib/server/signoz-telemetry';
 import { EDGE_CACHE_DEFAULT_CONTROL, stripEdgeCacheExtension } from '$lib/helpers/edge-cache';
+import { inlineFontFacesStyle } from '$lib/server/font-faces';
 import { getFontPreloadLinks } from '$lib/server/font-preload';
 
 const defaultColorMode = 'dark';
@@ -57,7 +58,7 @@ const handleColorMode: Handle = async ({ event, resolve }) => {
 
 	return resolve(event, {
 		transformPageChunk({ html }) {
-			return html.replace(/%ts:color-mode%/, colorMode);
+			return html.replace(/%ts:color-mode%/, colorMode).replace('%ts:font-faces%', inlineFontFacesStyle);
 		}
 	});
 };
@@ -115,8 +116,9 @@ const handleResponseHeaders: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event, { preload: ({ type }) => type === 'css' });
 	const { pathname } = event.url;
 
-	if (response.headers.get('content-type')?.startsWith('text/html')) {
-		response.headers.append('Link', getFontPreloadLinks(pathname));
+	const fontPreloadLinks = getFontPreloadLinks(pathname);
+	if (fontPreloadLinks && response.headers.get('content-type')?.startsWith('text/html')) {
+		response.headers.append('Link', fontPreloadLinks);
 	}
 	if (NOINDEX_IMAGE_PATH_PATTERN.test(pathname)) {
 		response.headers.set('X-Robots-Tag', 'noindex');

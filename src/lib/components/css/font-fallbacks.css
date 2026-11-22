@@ -10,9 +10,8 @@
  * reads, not a brief placeholder. Matching the boxes is still what keeps that page laid out as
  * designed (and was what stopped the 0.25 CLS of the `swap` era in the 2026-09 audit).
  *
- * They live in the render-blocking app CSS, not in the deferred font stylesheet, so the very
- * first paint already uses the adjusted fallback — otherwise the page would first paint in
- * plain system-ui and shift when fonts7.css applies.
+ * They live in the app CSS, inlined in the page like the web fonts' own `@font-face` rules
+ * (src/lib/server/font-faces.ts), so the very first paint already uses the adjusted fallback.
  *
  * The Liberation fonts are listed for Linux: they are metric-compatible with Arial, Times New Roman
  * and Courier New by design, so the same overrides apply (this is also what the CI runner has).

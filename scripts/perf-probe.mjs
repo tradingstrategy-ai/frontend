@@ -15,10 +15,12 @@
  *   pnpm run perf:probe --cpu 1 --no-network-throttle    # unthrottled
  *   pnpm run perf:probe --channel chrome                 # installed Google Chrome
  *   pnpm run perf:probe --json out.json                  # raw runs for later comparison
+ *   pnpm run perf:probe --base https://127.0.0.1:3443 --ignore-https-errors   # via scripts/h2-proxy.mjs
  *
  * Load metrics per run: TTFB, FCP, LCP (and the LCP element), DOMContentLoaded, load, TBT
  * (long tasks from FCP to 8 s after navigation start, the window fixed so deferred work
- * cannot fall outside it), CLS, HTML transfer and decoded size, request count, and the
+ * cannot fall outside it), total long-task time in the same window (which also counts
+ * hydration that finishes before FCP, as it does on a fast local server), CLS, HTML transfer and decoded size, request count, and the
  * document's `cf-cache-status`.
  */
 
@@ -58,6 +60,7 @@ const { values: options } = parseArgs({
 		channel: { type: 'string' },
 		interactions: { type: 'boolean', default: false },
 		'cache-bust': { type: 'boolean', default: false },
+		'ignore-https-errors': { type: 'boolean', default: false },
 		json: { type: 'string' }
 	}
 });
@@ -133,6 +136,11 @@ function collectLoadMetrics(tbtWindowEnd) {
 		const from = Math.max(start, fcp ?? 0);
 		return end - from > 50 ? sum + (end - from - 50) : sum;
 	}, 0);
+	// all main-thread long-task time in the window, including hydration that finishes before FCP
+	const longTasks = probe.longTasks.reduce(
+		(sum, [start, duration]) => (start < tbtWindowEnd ? sum + Math.min(duration, tbtWindowEnd - start) : sum),
+		0
+	);
 	return {
 		ttfb: nav.responseStart,
 		fcp,
@@ -141,6 +149,7 @@ function collectLoadMetrics(tbtWindowEnd) {
 		dcl: nav.domContentLoadedEventEnd,
 		load: nav.loadEventEnd,
 		tbt,
+		longTasks,
 		cls: probe.cls,
 		htmlTransfer: nav.transferSize,
 		htmlDecoded: nav.decodedBodySize,
@@ -149,7 +158,10 @@ function collectLoadMetrics(tbtWindowEnd) {
 }
 
 async function newPage(browser) {
-	const context = await browser.newContext({ ...devices['Moto G4'] });
+	const context = await browser.newContext({
+		...devices['Moto G4'],
+		ignoreHTTPSErrors: options['ignore-https-errors']
+	});
 	const page = await context.newPage();
 	const cdp = await context.newCDPSession(page);
 	if (cpuRate > 1) await cdp.send('Emulation.setCPUThrottlingRate', { rate: cpuRate });
@@ -339,6 +351,12 @@ try {
 			'TBT ms': {
 				value: summarise(
 					results.map((r) => r.tbt),
+					ms
+				)
+			},
+			'long tasks ms': {
+				value: summarise(
+					results.map((r) => r.longTasks),
 					ms
 				)
 			},

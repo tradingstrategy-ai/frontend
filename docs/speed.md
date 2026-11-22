@@ -119,9 +119,14 @@ The licensed Neue Haas Grotesk faces, Source Serif Pro and Source Code Pro are d
 references are served with a one-year `Cache-Control` by `scripts/server.js`, see
 `scripts/static-cache-control.js`). These mechanisms keep them, and the JS, from hurting Core Web Vitals:
 
-1. **Deferred stylesheet.** `src/app.html` loads the stylesheet with the `media="print"` →
-   `onload="this.media='all'"` trick, so text paints immediately in the fallback face
-   instead of waiting for the font CSS. All faces are `font-display: optional`: a face that
+1. **Inlined `@font-face` rules.** `src/lib/server/font-faces.ts` inlines the rules of
+   `fonts7.css` into every page's `<head>` (the `%ts:font-faces%` placeholder in
+   `src/app.html`), so they cost no request and apply from the first paint. Until 2026-11-22
+   the stylesheet was loaded non-blocking (`media="print"` → `onload="this.media='all'"`):
+   when the page painted before it applied — increasingly often as first paint got faster —
+   the late rules made Chrome lay the text out again and that repaint was reported as a new
+   LCP (curator page, lab: 0.4 s → 3.8–4.1 s once CSS was inlined; see "Inlining CSS" below).
+   All faces are `font-display: optional`: a face that
    is not ready when the text is first rendered is not swapped in for that page view, and the
    cached file is used from the next page on. They were `swap` until 2026-11; on a slow phone
    the swap landed seconds after first paint, and because a repaint that grows the text box —
@@ -129,7 +134,7 @@ references are served with a one-year `Cache-Control` by `scripts/server.js`, se
    swap (Morpho hub, lab: 1.1 s → 4.4 s).
 2. **Metric-matched fallbacks.** Every family has a `… Fallback` `@font-face` in
    `src/lib/components/css/font-fallbacks.css` — part of the render-blocking app CSS, so it
-   applies from the first paint rather than only once the deferred font stylesheet lands: a
+   applies from the first paint: a
    system font (`Arial`/`Roboto` for the grotesks, `Georgia` for the serif,
    `Courier New` for the mono) with `size-adjust`, `ascent-override`, `descent-override` and
    `line-gap-override` tuned so it occupies the same space as the web font, within the
@@ -145,17 +150,49 @@ references are served with a one-year `Cache-Control` by `scripts/server.js`, se
    never holds text invisible (without it they defaulted to `auto`, a block period of up to
    3 s by the spec; Chromium already paints during a local lookup, other engines may not).
 3. **Preload headers.** `src/lib/server/font-preload.ts` adds `Link: rel=preload` headers
-   (Cloudflare turns them into 103 Early Hints) for the stylesheet on every HTML page, and
-   for the three primary woff2 files on the templates whose LCP element is text (not the home
+   (Cloudflare turns them into 103 Early Hints) for the three primary woff2 files on the templates whose LCP element is text (not the home
    page, where they delay the hero). With `optional` they only matter when they arrive before
    first render, i.e. on fast connections.
 4. **No JS preloads in the `Link` header.** `handleResponseHeaders` in `src/hooks.server.ts`
    limits SvelteKit's own `Link` preloads to stylesheets. SvelteKit otherwise lists every JS
    chunk of the route (~100 files, 200–250 KB) there, Cloudflare sends them as 103 Early Hints,
-   and on a phone they took the bandwidth the render-blocking CSS needed.
+   and on a phone they took the bandwidth the render-blocking CSS needed. Since 2026-11-22
+   stylesheets under 40 KB are inlined (below), so most pages send no stylesheet preloads at all.
 
 `tests/integration/layout-shift.test.ts` delays the woff2 responses and asserts the token,
 pair and glossary pages stay under a CLS of 0.05 on a phone viewport.
+
+## Inlining CSS (2026-11-22)
+
+`inlineStyleThreshold` in `svelte.config.js` is 40 KB (was 8 KB): every stylesheet under 40 KB
+is inlined into the HTML, so first paint no longer waits for five or six separate CSS
+requests. Measured on a local production build through `scripts/h2-proxy.mjs` (HTTP/2,
+Brotli), `perf:probe` defaults, median of 5:
+
+| Page                                    | FCP 8 KB → 40 KB | LCP 8 KB → 40 KB + inlined font faces | HTML (Brotli) |
+| --------------------------------------- | ---------------: | ------------------------------------: | ------------: |
+| `/`                                     |     572 → 312 ms |                          624 → 520 ms |    24 → 41 KB |
+| `/vaults/protocols/morpho`              |     588 → 328 ms |                          588 → 384 ms |    62 → 81 KB |
+| `/vaults/rektober`                      |     668 → 464 ms |                          668 → 464 ms |    32 → 49 KB |
+| `/glossary/morpho`                      |     620 → 404 ms |                          620 → 404 ms |    18 → 33 KB |
+| `/vaults/curators/steakhouse-financial` |     608 → 320 ms |                          608 → 384 ms |    63 → 83 KB |
+
+Inlining everything (`Infinity`) measured the same as 40 KB; 40 KB keeps any future large
+stylesheet external and cacheable. Notes for the next attempt at this kind of change:
+
+- **Compare with compression.** Without Brotli the inlined CSS added ~110 KB per page and the
+  same change measured 0.5 s _slower_ on the emulated network; that is why the proxy compresses.
+- **Inlining alone moved the curator page's LCP to 3.8–4.1 s.** Faster first paint now
+  happened before the then-deferred `fonts7.css` applied, and the late `@font-face` rules made
+  Chrome re-lay out the description paragraph (with bold text), which it reported as a new LCP.
+  Inlining the `@font-face` rules (above) removed it. A `data-sveltekit-preload-data="tap"`
+  attribute on `<body>` triggered the same effect earlier in the day and was dropped.
+- **Merging small JS chunks** with Rollup's `output.experimentalMinChunkSize` breaks the build:
+  the option also applies to the server bundle and SvelteKit's post-build analysis fails. The
+  ~130 small chunks per page stay; over HTTP/2 they cost little.
+- **Not attempted**: `bundleStrategy: 'single'` (inlines every dynamic import, so wallet and
+  chart code would run on first load) and a modular ECharts build (ECharts now loads after
+  hydration when idle, which took it off the critical path).
 
 ## First-paint delay in PageSpeed Insights (open, 2026-11-22)
 

@@ -64,7 +64,17 @@ page); omit it on the protocol page itself to render the name as plain text.
 </script>
 
 {#snippet ratingHeader()}
-	<img class="provider-icon" src={riskRatingProviders.core3.logoUrl} alt={riskRatingProviders.core3.logoAlt} />
+	<!-- third-party icon: never competes with the page's own critical requests -->
+	<img
+		class="provider-icon"
+		src={riskRatingProviders.core3.logoUrl}
+		alt={riskRatingProviders.core3.logoAlt}
+		width="40"
+		height="40"
+		loading="lazy"
+		decoding="async"
+		fetchpriority="low"
+	/>
 	<h2>CORE3 risk rating</h2>
 	{#if rating}
 		<div class="grade" data-tone={ratingTone}>{rating}</div>

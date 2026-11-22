@@ -35,6 +35,11 @@ to Xerberus for the full assessment rather than duplicating the report here.
 				class="provider-icon"
 				src={riskRatingProviders.xerberus.logoUrl}
 				alt={riskRatingProviders.xerberus.logoAlt}
+				width="40"
+				height="40"
+				loading="lazy"
+				decoding="async"
+				fetchpriority="low"
 			/>
 			<h2>Xerberus risk rating</h2>
 			<div class="score" role="img" aria-label="Xerberus score {formatNumber(score, 0, 0)} out of 100">
