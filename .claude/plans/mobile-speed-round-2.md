@@ -404,6 +404,16 @@ Cloudflare Cache Rule audit for `/` (dashboard), a real Android phone run, the
 production probe, "Validate fix" in Search Console and `pnpm run seo:cwv --history`
 four weeks later.
 
+## Outcome (2026-11-22, branch `mobile-speed-round-2`)
+
+| Milestone | Shipped                                                                                                                                                                                                                                   | Not shipped / changed from plan                                                                                                                                  |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M0        | `perf:probe` (load + interactions), production baseline in `docs/speed.md`                                                                                                                                                                | Linux/Android runs (need Docker or a phone)                                                                                                                      |
+| M1        | `createWarmCache`, hourly `all` + 20-min `frequent` jobs via `/_internal/cache/warm`, Ghost posts and protocol metadata warmed, one-hop legacy redirect, admin cache table; measured: full warm 22–28 s, max stall 33 ms, RSS peak 1.4 GB | No worker thread (stall far under 200 ms); mini charts warmed from first request, not top-20; home `stale-while-revalidate` blocked on the Cloudflare rule audit |
+| M2        | Fallback faces `font-display: swap`; PSI white screen investigated (preloads ruled out)                                                                                                                                                   | Cause of the PSI white screen still open (needs a Linux trace)                                                                                                   |
+| M3        | Cached `Intl.NumberFormat`, lazy tooltip listeners, ECharts deferred to visible + idle, slimmer listing rows with equivalence tests, panel footer on first open: busy time −5…−9 %, HTML −6…−7 %                                          | Initial rows 75 → 40 (open decision); tooltip delegation, `content-visibility`, logo `<symbol>` not done                                                         |
+| M4        | 40 KB CSS inlining, inlined `@font-face` rules (FCP −210…−280 ms, LCP −100…−220 ms), HTTP/2 + Brotli A/B proxy, low-priority provider icons                                                                                               | `tap` preloading and chunk merging tried and dropped; `bundleStrategy: 'single'` and modular ECharts not attempted                                               |
+
 ## Open decisions for the user
 
 1. Initial listing rows 75 → 40 (section 4): biggest single win for hub weight, but

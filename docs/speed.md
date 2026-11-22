@@ -126,6 +126,9 @@ references are served with a one-year `Cache-Control` by `scripts/server.js`, se
    when the page painted before it applied — increasingly often as first paint got faster —
    the late rules made Chrome lay the text out again and that repaint was reported as a new
    LCP (curator page, lab: 0.4 s → 3.8–4.1 s once CSS was inlined; see "Inlining CSS" below).
+   The trade-off: with the rules present from the start, `optional` allows its short block
+   period (≤ 100 ms in Chrome) for text whose woff2 is not yet loaded on a first visit. In the
+   lab, FCP was the same with and without the inlined rules (312 ms on `/`).
    All faces are `font-display: optional`: a face that
    is not ready when the text is first rendered is not swapped in for that page view, and the
    cached file is used from the next page on. They were `swap` until 2026-11; on a slow phone
