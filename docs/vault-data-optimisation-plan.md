@@ -16,4 +16,4 @@ The migration away from sending the complete top-vaults export to normal browser
 
 The authenticated vault-metadata dataset download and the allow-listed public sample are file-download products. They intentionally serve JSON files and are not application page-data paths.
 
-Individual listing and detail responses still use the full `VaultInfo` record shape. Reducing fields within those bounded responses is a separate optimisation and is not required to keep the complete export server-side.
+Listing responses use the `VaultListingRow` projection (`toVaultListingRow`): only the top-level fields the table reads, the 3M/6M/1Y/lifetime period metrics, and since 2026-11 only the rate values of `denomination_token_rate` (no provenance fields), the CORE3 rating fields and the Xerberus score and entity type. `src/lib/top-vaults/listing-row.test.ts` checks that the TVL, rate and rating helpers give the same answers for a projected row as for the full record (depegged, unknown-rate and non-USD vaults). Detail responses use the full `VaultInfo` record.

@@ -59,6 +59,35 @@ work — TBT 500–850 ms on the listing pages.
 Interaction durations (median ms), `/vaults` and Morpho hub: open menu 64 / 64, close menu
 32 / 40, sort column 24 / 32, compare checkbox 80 / 80, open filters 64 / 56.
 
+## Hub page weight (2026-11-22)
+
+Vault listing pages (hubs, curators, `/vaults`) were the heaviest pages: 640–750 KB of HTML,
+of which ~260 KB is the hydration data for the first 75 rows and ~270 KB their markup. A CPU
+profile of the Morpho hub (4× CPU) split its ~1.9 s of main-thread work into ~0.85 s of
+JavaScript (ECharts the largest at 0.26 s, then number formatting at 0.13 s) and ~1.0 s of
+parsing, style and layout. What changed:
+
+- Number formatting reuses one `Intl.NumberFormat` per locale and option set
+  (`formatWithLocale` in `src/lib/helpers/formatters.ts`); `toLocaleString` with options
+  built a new formatter on every call.
+- `Tooltip` attaches its window resize/scroll listeners only while open, instead of two
+  per instance (a table has a few hundred) on mount.
+- The hub mini chart loads and draws ECharts once the chart is near the viewport and the
+  browser is idle (`whenVisibleAndIdle`); the data request still starts at once.
+- Listing rows carry only the rate values, CORE3 rating and Xerberus score/entity type of
+  their nested objects (see `docs/vault-data-optimisation-plan.md`).
+- The mobile navigation panel renders its compact footer on first open.
+
+Result on a local production build (median of 3, 4× CPU): main-thread busy time Morpho hub
+1,883 → 1,711 ms, Steakhouse curator 2,007 → 1,825 ms, `/vaults` 1,400 → 1,330 ms;
+JavaScript time −13 to −18 %. HTML: Morpho 681 → 632 KB (hydration data 264 → 227 KB),
+Steakhouse 746 → 701 KB, `/vaults` 639 → 604 KB. The remaining weight is the 75 server-rendered
+rows; rendering fewer of them is the largest lever left.
+
+Measure local builds through `scripts/h2-proxy.mjs` (HTTP/2) or with a CPU profile:
+over plain HTTP/1.1 the ~130 JS chunks arrive a few at a time, hydration runs as many short
+tasks, and TBT reads 0 although the same work takes 1.9 s.
+
 ## Homepage payloads
 
 The homepage is server-rendered and its `load` result is serialised into the

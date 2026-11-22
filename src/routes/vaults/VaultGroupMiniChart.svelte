@@ -21,6 +21,7 @@ the tooltip states the included vault count.
 	import { formatRate, formatUsd } from '$lib/echarts/cumulative-tvl-apy';
 	import type { ProtocolMiniChartPayload } from '$lib/echarts/protocol-mini-chart';
 	import { type EChartsStatic, loadECharts } from '$lib/echarts/runtime';
+	import { whenVisibleAndIdle } from '$lib/helpers/when-visible-and-idle';
 	import { chartFontFamily } from '$lib/scatter-plot/helpers';
 	import { MIN_TVL_THRESHOLD } from '$lib/top-vaults/helpers';
 	import { onMount, tick } from 'svelte';
@@ -55,6 +56,7 @@ the tooltip states the included vault count.
 	}: Props = $props();
 
 	let chartContainer = $state<HTMLDivElement | null>(null);
+	let root: HTMLDivElement;
 	let chartInstance = $state<ReturnType<EChartsStatic['init']> | null>(null);
 	let echartsApi = $state<EChartsStatic | null>(null);
 	let resizeObserver = $state<ResizeObserver | null>(null);
@@ -336,10 +338,15 @@ the tooltip states the included vault count.
 
 	onMount(() => {
 		let disposed = false;
+		const abort = new AbortController();
 
 		(async () => {
 			try {
-				const [api] = await Promise.all([loadECharts(), fetchChartData(dataUrl)]);
+				// The data request starts at once; loading and drawing ECharts (the largest script
+				// cost on hub pages) waits until the chart is near the viewport and the browser is
+				// idle, so it does not compete with hydration. The spinner keeps the space reserved.
+				const runtime = whenVisibleAndIdle(root, { signal: abort.signal }).then(loadECharts);
+				const [api] = await Promise.all([runtime, fetchChartData(dataUrl)]);
 				if (disposed) return;
 
 				echartsApi = api;
@@ -357,6 +364,7 @@ the tooltip states the included vault count.
 
 		return () => {
 			disposed = true;
+			abort.abort();
 			destroyChart();
 		};
 	});
@@ -383,7 +391,7 @@ the tooltip states the included vault count.
 	});
 </script>
 
-<div class="protocol-mini-chart" data-testid="vault-group-mini-chart">
+<div class="protocol-mini-chart" data-testid="vault-group-mini-chart" bind:this={root}>
 	<header>
 		<div>
 			<p>{title}</p>

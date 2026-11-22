@@ -19,6 +19,27 @@ export function toFloatingPoint(n: MaybeNumberlike) {
 	return n ?? undefined;
 }
 
+const numberFormats = new Map<string, Intl.NumberFormat>();
+
+/**
+ * Format a number like `n.toLocaleString(locale, options)`, reusing one `Intl.NumberFormat`
+ * per locale and option set. `toLocaleString` with options builds a new formatter on every
+ * call, which made number formatting a visible part of hydrating the 75-row vault tables.
+ *
+ * @param n - number to format
+ * @param locale - BCP 47 locale
+ * @param options - `Intl.NumberFormat` options
+ */
+export function formatWithLocale(n: number, locale: string, options: Intl.NumberFormatOptions = {}): string {
+	const key = `${locale}|${JSON.stringify(options)}`;
+	let format = numberFormats.get(key);
+	if (!format) {
+		format = new Intl.NumberFormat(locale, options);
+		numberFormats.set(key, format);
+	}
+	return format.format(n);
+}
+
 // Type predicate to help TypeScript properly narrow type to number
 export function isNumber(n: MaybeNumber): n is number {
 	return Number.isFinite(n);
@@ -39,9 +60,9 @@ export function formatKilos(n: MaybeNumber): string {
 	if (!isNumber(n)) return notFilledMarker;
 
 	if (n <= 1000) {
-		return (n / 1000).toLocaleString('en', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+		return formatWithLocale(n / 1000, 'en', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
 	} else {
-		return (n / 1000).toLocaleString('en', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+		return formatWithLocale(n / 1000, 'en', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 	}
 }
 
@@ -150,7 +171,7 @@ export function formatNumber(
 	// See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#options
 	// In theory, we should be able to use `roundingPriority: 'morePrecision'` to achieve
 	// the same result, but this is inconsistent across JavaScript implementations.
-	const fracDigitsResult = n.toLocaleString('en-US', {
+	const fracDigitsResult = formatWithLocale(n, 'en-US', {
 		minimumFractionDigits: minDigits,
 		maximumFractionDigits: minDigits,
 		...options
@@ -158,7 +179,7 @@ export function formatNumber(
 
 	if (minDigits === 0 && maxPrecision === 0) return fracDigitsResult;
 
-	const sigDigitsResult = n.toLocaleString('en-US', {
+	const sigDigitsResult = formatWithLocale(n, 'en-US', {
 		minimumSignificantDigits: minDigits || 1,
 		maximumSignificantDigits: maxPrecision,
 		...options
@@ -193,7 +214,7 @@ export function formatAmount(n: MaybeNumberlike): string {
 	n = toFloatingPoint(n);
 	if (!isNumber(n)) return notFilledMarker;
 
-	return n.toLocaleString('en');
+	return formatWithLocale(n, 'en');
 }
 
 /**
@@ -202,7 +223,7 @@ export function formatAmount(n: MaybeNumberlike): string {
 export function formatMillion(n: MaybeNumber): string {
 	if (!isNumber(n)) return notFilledMarker;
 
-	return (n / 1_000_000).toLocaleString('en', {
+	return formatWithLocale(n / 1_000_000, 'en', {
 		minimumFractionDigits: 1,
 		maximumFractionDigits: 1
 	});
@@ -250,7 +271,7 @@ export function formatPercent(
 	n = toFloatingPoint(n);
 	if (!isNumber(n)) return notFilledMarker;
 
-	return n.toLocaleString('en-US', {
+	return formatWithLocale(n, 'en-US', {
 		minimumFractionDigits: minDigits,
 		maximumFractionDigits: maxDigits,
 		style: 'percent',
@@ -291,7 +312,7 @@ export function formatInterestRate(n: MaybeNumber, minDigits = 2, maxPrecision =
  */
 export function formatKeyMetricNumber(n: MaybeNumber): string {
 	if (!isNumber(n)) return notFilledMarker;
-	return n.toLocaleString('en', {
+	return formatWithLocale(n, 'en', {
 		minimumFractionDigits: 2,
 		maximumFractionDigits: 2
 	});
@@ -304,7 +325,7 @@ export function formatKeyMetricNumber(n: MaybeNumber): string {
  */
 export function formatSwapFee(n: MaybeNumber): string {
 	if (!isNumber(n)) return '';
-	return n.toLocaleString('en', {
+	return formatWithLocale(n, 'en', {
 		minimumSignificantDigits: 1,
 		maximumSignificantDigits: 2,
 		style: 'percent'

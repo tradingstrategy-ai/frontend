@@ -40,7 +40,27 @@ For more information see:
 	 */
 	let hasOpened = $state(false);
 
+	/**
+	 * Follow scrolling and resizing only while the popup is open. A listing table has a few
+	 * hundred tooltips; registering two window listeners for each on mount (one a capture-phase
+	 * scroll listener) was paid on every hydration and every scroll event.
+	 */
+	let listening = false;
+
+	function followViewport(on: boolean): void {
+		if (on === listening) return;
+		listening = on;
+		if (on) {
+			window.addEventListener('resize', repositionPopup);
+			window.addEventListener('scroll', repositionPopup, true);
+		} else {
+			window.removeEventListener('resize', repositionPopup);
+			window.removeEventListener('scroll', repositionPopup, true);
+		}
+	}
+
 	async function showPopup(): Promise<void> {
+		followViewport(true);
 		hasOpened = true;
 		isOpen = true;
 		isPositioned = false;
@@ -49,6 +69,7 @@ For more information see:
 	}
 
 	function hidePopup(): void {
+		followViewport(false);
 		isOpen = false;
 		isPositioned = false;
 	}
@@ -76,15 +97,7 @@ For more information see:
 		isPositioned = true;
 	}
 
-	onMount(() => {
-		window.addEventListener('resize', repositionPopup);
-		window.addEventListener('scroll', repositionPopup, true);
-
-		return () => {
-			window.removeEventListener('resize', repositionPopup);
-			window.removeEventListener('scroll', repositionPopup, true);
-		};
-	});
+	onMount(() => () => followViewport(false));
 </script>
 
 <dfn
