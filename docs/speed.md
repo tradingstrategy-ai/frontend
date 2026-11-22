@@ -7,6 +7,58 @@ Page speed utilities to see First Contentful Paint (FCP) and Largest Contentful 
 - https://www.webpagetest.org/
   - Example: https://www.webpagetest.org/result/211230_BiDc5M_0b72ec65b0eb6523fddb06496ab832d4/1/details/#waterfall_view_step1
 
+## Measuring with `perf:probe`
+
+Single PageSpeed Insights runs are too noisy to decide anything: on 2026-11-22 three runs
+of the same vault page gave a simulated LCP of 0.9, 2.4 and 4.2 s. Judge speed changes on
+the median of several runs of `scripts/perf-probe.mjs` instead:
+
+```shell
+pnpm run perf:probe                                # production, default URL set, 5 runs each
+pnpm run perf:probe --base http://127.0.0.1:5173   # dev server or a local build
+pnpm run perf:probe --url /vaults/protocols/morpho --runs 9
+pnpm run perf:probe --interactions                 # menu, sort, compare checkbox, filters
+pnpm run perf:probe --cache-bust                   # force Cloudflare/origin misses
+pnpm run perf:probe --json out.json                # keep the raw runs
+```
+
+It loads each page in a fresh Playwright context with Moto G4 emulation, 4× CPU slowdown
+and slow-4G network emulation (150 ms latency, 1.6 Mbit/s), and reports median and range of
+TTFB, FCP, LCP (with the element), DOMContentLoaded, load, TBT, CLS, HTML size, request
+count and `cf-cache-status`. TBT counts long tasks from FCP to a fixed 8 s after navigation
+start, so work that is merely deferred still counts. `--interactions` measures the Event
+Timing duration of opening and closing the mobile menu, sorting a column, ticking a
+comparison checkbox and opening the filters, after hydration.
+
+Limits: CDP network emulation does not add connection set-up to the origin, so TTFB reads
+far lower than real phones see (CrUX phone TTFB p75 was 1,070 ms in November 2026); use
+the field data for TTFB. A local build also lacks Cloudflare's cache, Early Hints and
+HTTP/2 prioritisation, so the final check of a change is the probe against production
+after release.
+
+### Baseline, 2026-11-22 (production, revision 5bfa11a1)
+
+Median of 5 runs (range for LCP):
+
+| Page                                    | FCP ms | LCP ms          | TBT ms | HTML KB (decoded / transfer) | Requests |
+| --------------------------------------- | -----: | --------------- | -----: | ---------------------------- | -------: |
+| `/`                                     |    644 | 728 (688–4,104) |     65 | 164 / 31                     |      129 |
+| `/vaults`                               |    708 | 708 (600–772)   |    503 | 642 / 76                     |      161 |
+| `/vaults/protocols/morpho`              |    664 | 664 (604–732)   |    757 | 685 / 74                     |      149 |
+| `/vaults/protocols/lighter`             |    628 | 628 (588–656)   |    356 | 227 / 35                     |      142 |
+| `/vaults/curators/steakhouse-financial` |    660 | 660 (616–768)   |    847 | 749 / 79                     |      142 |
+| `/vaults/stablecoins/usdc`              |    668 | 668 (592–700)   |    777 | 663 / 79                     |      149 |
+| `/vaults/rektober`                      |    616 | 616 (544–960)   |    125 | 175 / 34                     |      134 |
+| `/glossary/morpho`                      |    588 | 588 (508–684)   |      0 | 90 / 19                      |       88 |
+
+CLS was 0 everywhere. The 4.1 s home page run was a Cloudflare `EXPIRED` copy: the origin
+rebuilt the page while the visitor waited (the reason for the background cache warmer, see
+`docs/cache-invalidation.md`). In the lab, LCP on hub pages is fine; their problem is main-thread
+work — TBT 500–850 ms on the listing pages.
+
+Interaction durations (median ms), `/vaults` and Morpho hub: open menu 64 / 64, close menu
+32 / 40, sort column 24 / 32, compare checkbox 80 / 80, open filters 64 / 56.
+
 ## Homepage payloads
 
 The homepage is server-rendered and its `load` result is serialised into the

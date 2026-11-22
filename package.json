@@ -10,6 +10,7 @@
     "seo:cwv": "node --env-file=.env.local scripts/seo-core-web-vitals.mjs",
     "seo:search-console": "node --env-file=.env.local scripts/seo-search-console.mjs",
     "seo:dataforseo": "node --env-file=.env.local scripts/seo-dataforseo.mjs",
+    "perf:probe": "node scripts/perf-probe.mjs",
     "preview": "vite preview",
     "benchmark:historical-tvl-chain": "node scripts/benchmark-historical-tvl-chain.mjs",
     "prepare": "svelte-kit sync || echo ''",
