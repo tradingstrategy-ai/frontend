@@ -111,7 +111,10 @@ references are served with a one-year `Cache-Control` by `scripts/server.js`, se
    unpacked out of the woff2 files (Display and Text differ per weight, so their fallbacks
    are declared per weight range); recompute them if a font file changes. The font stacks in
    `src/lib/components/css/typography.css` and `typography-new.css` list the fallback right
-   after the web font.
+   after the web font, and end in a generic family (`system-ui, sans-serif`, `serif`,
+   `monospace`). The fallback faces are `font-display: swap`: a slow or missing local font
+   never holds text invisible (without it they defaulted to `auto`, a block period of up to
+   3 s by the spec; Chromium already paints during a local lookup, other engines may not).
 3. **Preload headers.** `src/lib/server/font-preload.ts` adds `Link: rel=preload` headers
    (Cloudflare turns them into 103 Early Hints) for the stylesheet on every HTML page, and
    for the three primary woff2 files on the templates whose LCP element is text (not the home
@@ -124,6 +127,38 @@ references are served with a one-year `Cache-Control` by `scripts/server.js`, se
 
 `tests/integration/layout-shift.test.ts` delays the woff2 responses and asserts the token,
 pair and glossary pages stay under a CLS of 0.05 on a phone viewport.
+
+## First-paint delay in PageSpeed Insights (open, 2026-11-22)
+
+PageSpeed Insights' unthrottled ("observed") run of a vault page shows a white screen until
+about 2.4 s in every run, although the HTML, CSS, fonts and even the chart data have all
+loaded by 1.2 s, the `load` event fired at 0.4 s, and the main thread is idle in between. The
+filmstrip is blank (not even the dark page background), so nothing is painted at all, not
+just text. Real Chrome on macOS paints the same page at 0.4 s (0.6–0.8 s throttled), and real
+users' phone FCP p75 is 2.1 s with a 1.1 s TTFB, so this is not what visitors see.
+
+What has been ruled out, from PSI runs on 2026-11-22:
+
+| Page                        | woff2 preloads | Observed DCL | Observed first paint |
+| --------------------------- | -------------: | -----------: | -------------------: |
+| `/glossary/morpho`          |              3 |       204 ms |               207 ms |
+| `/glossary`                 |              0 |       287 ms |               288 ms |
+| `/vaults/protocols/lighter` |              0 |       490 ms |               489 ms |
+| `/vaults/protocols/morpho`  |              0 |       807 ms |             1,448 ms |
+| `/blog`                     |              0 |       361 ms |             1,322 ms |
+| `/vaults/rektober`          |              3 |   332–600 ms |       2,327–2,416 ms |
+
+- **Font preloads**: the glossary term page has the same three woff2 preloads and paints
+  immediately; `/blog` has none and is delayed.
+- **The `local()` fallback faces**: Chromium paints a fallback while a local lookup is
+  pending (`local_font_face_source.cc`); `swap` was added anyway (above).
+
+The delay appears on pages that do client-side work after load (the vault price chart, the
+Morpho hub chart and table, the blog index), so the next step is a Chrome performance trace
+from Linux Chrome — PSI's environment — e.g. `pnpm run perf:probe` inside the
+`mcr.microsoft.com/playwright` Docker image with `--cpu 1 --no-network-throttle`, and a real
+Android phone over USB remote debugging. Until a trace names the blocker, treat PSI's
+vault-page LCP as a lab artefact and judge changes with `perf:probe` and CrUX.
 
 # Analysing the client bundle
 
