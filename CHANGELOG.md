@@ -1,5 +1,6 @@
 # Weblog of stuff
 
+- Show K-ratio in the vault returns and period details table with a glossary link (2026-11-22).
 - Show BTC- and ETH-denominated vaults in separate curator tables with USD TVL (2026-11-21).
 - Show the full 30D APY column heading on the vault strategies page (2026-11-20).
 - Add strategy categories to sitewide search with category links, TVL and one-month APY (2026-11-16).

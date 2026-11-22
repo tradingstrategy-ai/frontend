@@ -132,6 +132,12 @@ Performance metrics table for a vault across multiple lookback periods.
 			formatter: (v) => formatKeyMetricNumber(v as number | null)
 		},
 		{
+			label: 'K-ratio',
+			href: `${base}/glossary/k-ratio`,
+			field: 'k_ratio',
+			formatter: (v) => formatKeyMetricNumber(v as number | null)
+		},
+		{
 			label: 'Max drawdown',
 			href: `${base}/glossary/maximum-drawdown`,
 			field: 'max_drawdown',
