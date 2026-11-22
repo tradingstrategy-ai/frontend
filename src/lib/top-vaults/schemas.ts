@@ -91,6 +91,8 @@ export const periodMetricsSchema = z.object({
 	volatility: nullableNumber,
 	/** Sharpe ratio */
 	sharpe: nullableNumber,
+	/** Kestner's 2013 K-ratio, absent from older exports */
+	k_ratio: nullableNumber.optional(),
 	/** Period maximum drawdown */
 	max_drawdown: nullableNumber,
 	/** TVL at the start of the period */
