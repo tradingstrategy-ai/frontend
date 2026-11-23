@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { curatorInfoSchema, topVaultsSchema, vaultWhitelistSchema } from './schemas';
+import { getMorphoFlags } from './helpers';
+import { curatorInfoSchema, topVaultsSchema, vaultInfoSchema, vaultWhitelistSchema } from './schemas';
 import { createTestVault } from './test-utils';
 
 const validCurator = {
@@ -124,6 +125,49 @@ describe('topVaultsSchema resilience', () => {
 		expect(
 			topVaultsSchema.parse({ ...basePayload, vaults: [createTestVault('Untagged vault')] }).vaults[0].strategy_tags
 		).toBeNull();
+	});
+});
+
+describe('Vault warnings', () => {
+	it('uses Morpho display severities even on a blacklisted vault', () => {
+		const vault = vaultInfoSchema.parse({
+			...createTestVault('Morpho vault', { risk: 'Blacklisted' }),
+			other_data: {
+				vault_display_flags: [
+					{ source: 'morpho', severity: 'red', type: 'short_timelock' },
+					{ source: 'morpho', severity: 'yellow', type: 'low_liquidity' },
+					{ source: 'stablecoin', severity: 'red', type: 'depegged_denomination_token' }
+				]
+			}
+		});
+
+		expect(getMorphoFlags(vault)).toEqual({ red: ['short_timelock'], yellow: ['low_liquidity'] });
+	});
+
+	it('supports severity arrays and older exports with unclassified warnings', () => {
+		const vault = createTestVault('Legacy Morpho vault', { risk: 'Blacklisted' });
+		const legacyFlags = { morpho_vault_flags: ['low_liquidity'], morpho_market_flags: ['low_liquidity'] };
+
+		expect(getMorphoFlags(vaultInfoSchema.parse({ ...vault, other_data: legacyFlags }))).toEqual({
+			red: ['low_liquidity'],
+			yellow: []
+		});
+		expect(
+			getMorphoFlags(
+				vaultInfoSchema.parse({ ...vault, other_data: { ...legacyFlags, morpho_yellow_flags: ['low_liquidity'] } })
+			)
+		).toEqual({ red: [], yellow: ['low_liquidity'] });
+	});
+
+	it('preserves a withdrawal capacity warning when Morpho reports no flags', () => {
+		const vault = vaultInfoSchema.parse({
+			...createTestVault('Feather frxUSD'),
+			other_data: { vault_display_flags: [] },
+			withdrawal_capacity_limit: { capacity_warning: true, current_capacity: '0' }
+		});
+
+		expect(vault.withdrawal_capacity_limit?.capacity_warning).toBe(true);
+		expect(getMorphoFlags(vault)).toEqual({ red: [], yellow: [] });
 	});
 });
 

@@ -414,12 +414,30 @@ export function getVaultAssetType(vault: Pick<VaultInfo, 'flags' | 'features'>):
 }
 
 /**
- * Get combined Morpho warning flags from vault other_data
+ * Get Morpho warning types by source severity, with a fallback for older exports.
+ * @param vault vault warning metadata and risk classification
  */
-export function getMorphoFlags(vault: Pick<VaultInfo, 'other_data'>): string[] {
+export function getMorphoFlags(vault: Pick<VaultInfo, 'other_data' | 'risk' | 'risk_numeric'>) {
 	const data = vault.other_data;
-	if (!data) return [];
-	return [...new Set([...data.morpho_vault_flags, ...data.morpho_market_flags])];
+	if (!data) return { red: [], yellow: [] };
+
+	const displayFlags = data.vault_display_flags?.filter((flag) => flag.source === 'morpho');
+	if (displayFlags?.length) {
+		return {
+			red: [...new Set(displayFlags.filter((flag) => flag.severity === 'red').map((flag) => flag.type))],
+			yellow: [...new Set(displayFlags.filter((flag) => flag.severity === 'yellow').map((flag) => flag.type))]
+		};
+	}
+
+	if (data.morpho_red_flags?.length || data.morpho_yellow_flags?.length) {
+		return {
+			red: [...new Set(data.morpho_red_flags)],
+			yellow: [...new Set(data.morpho_yellow_flags)]
+		};
+	}
+
+	const legacyFlags = [...new Set([...data.morpho_vault_flags, ...data.morpho_market_flags])];
+	return isBlacklisted(vault) ? { red: legacyFlags, yellow: [] } : { red: [], yellow: legacyFlags };
 }
 
 /**
