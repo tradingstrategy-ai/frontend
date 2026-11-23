@@ -96,8 +96,8 @@ test.describe('vault detail page', () => {
 		const alerts = page.locator('.alert-list');
 		await expect(alerts).toHaveCount(1);
 		await expect(alerts.first()).toHaveClass(/error/);
-		await expect(alerts.first()).toContainText('Morpho has flagged this vault');
-		await expect(alerts.first()).toContainText('bad_debt_unrealized');
+		await expect(alerts.first()).toContainText('Morpho red flags for this vault');
+		await expect(alerts.first()).toContainText('Bad debt unrealized');
 		await expect(page.locator('.notes')).toHaveCount(0);
 	});
 
