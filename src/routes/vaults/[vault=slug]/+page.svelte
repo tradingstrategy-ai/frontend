@@ -4,6 +4,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { discordUrl } from '$lib/config';
+	import { capitalize } from '$lib/helpers/formatters';
 	import VaultListingsSelector from '$lib/top-vaults/VaultListingsSelector.svelte';
 	import Alert from '$lib/components/Alert.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -46,10 +47,9 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 		$derived(data);
 	let morphoFlags = $derived(getMorphoFlags(vault));
 	let notesDuplicateMorphoFlags = $derived(
-		morphoFlags.length > 0 && vault.notes?.startsWith('Morpho has flagged this vault with the following issues:')
+		morphoFlags.red.length > 0 && vault.notes?.startsWith('Morpho has flagged this vault with the following issues:')
 	);
 	let blacklisted = $derived(isBlacklisted(vault));
-	let morphoAlertStatus = $derived(blacklisted ? ('error' as const) : ('warning' as const));
 	let showBlacklistedAlert = $derived(blacklisted && !notesDuplicateMorphoFlags);
 	let showNotes = $derived(vault.notes != null && !notesDuplicateMorphoFlags);
 	let isTokenisedFund = $derived(vault.flags.includes('tokenised_fund'));
@@ -59,6 +59,7 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	let showTvlWarning = $derived(shouldShowVaultTvlDownMoreThan95PercentWarning(vault));
 	let showLongDurationWarning = $derived(vault.flags.includes('long_duration'));
 	let showFortyAcresWithdrawalWarning = $derived(vault.flags.includes('forty_acres_withdrawal_risk'));
+	let showWithdrawalCapacityWarning = $derived(vault.withdrawal_capacity_limit?.capacity_warning === true);
 	let hasUnknownProtocol = $derived(isUnknownVaultProtocol(vault));
 	let depositMayBeDisabled = $derived(vault.deposit_closed_reason != null);
 	let redemptionMayBeDisabled = $derived(vault.redemption_closed_reason != null);
@@ -78,10 +79,12 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 	let hasNotifications = $derived(
 		operationWarning != null ||
 			isPrivate ||
-			morphoFlags.length > 0 ||
+			morphoFlags.red.length > 0 ||
+			morphoFlags.yellow.length > 0 ||
 			showTvlWarning ||
 			showLongDurationWarning ||
 			showFortyAcresWithdrawalWarning ||
+			showWithdrawalCapacityWarning ||
 			showBlacklistedAlert ||
 			hasUnknownProtocol
 	);
@@ -117,6 +120,12 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 					<Alert size="md" status="warning">{operationWarning}</Alert>
 				{/if}
 
+				{#if showWithdrawalCapacityWarning}
+					<Alert size="md" status="warning">
+						Immediate withdrawals from this {assetType} may be limited by available liquidity.
+					</Alert>
+				{/if}
+
 				{#if isPrivate && !isTokenisedFund}
 					<Alert size="md" status="warning"
 						>This is a permissioned {assetType} and is not accepting deposits from outsiders</Alert
@@ -146,9 +155,15 @@ Vault detail page with performance, protocol, private-deposit, and third-party r
 					</Alert>
 				{/if}
 
-				{#if morphoFlags.length > 0}
-					<Alert size="md" status={morphoAlertStatus} title={`Morpho has flagged this ${assetType}`}>
-						{morphoFlags.join(', ')}
+				{#if morphoFlags.red.length > 0}
+					<Alert size="md" status="error" title={`Morpho red flags for this ${assetType}`}>
+						{morphoFlags.red.map((flag) => capitalize(flag.replaceAll('_', ' '))).join(', ')}
+					</Alert>
+				{/if}
+
+				{#if morphoFlags.yellow.length > 0}
+					<Alert size="md" status="warning" title={`Morpho yellow flags for this ${assetType}`}>
+						{morphoFlags.yellow.map((flag) => capitalize(flag.replaceAll('_', ' '))).join(', ')}
 					</Alert>
 				{/if}
 

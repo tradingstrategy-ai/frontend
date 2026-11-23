@@ -421,6 +421,8 @@ export const vaultInfoSchema = z.object({
 	redemption_next_open: isoDateTime.nullable(),
 	/** Whether public deposits are permitted for this vault */
 	whitelist: vaultWhitelistSchema.nullable().optional().default(null),
+	/** Backend check for limited immediate withdrawal capacity. */
+	withdrawal_capacity_limit: z.object({ capacity_warning: z.boolean().nullish() }).nullish().catch(undefined),
 
 	// --- Links ---
 	/** @deprecated Use deposit_ui_link and vault_page_link instead */
@@ -458,6 +460,14 @@ export const vaultInfoSchema = z.object({
 	/** Protocol-specific metadata (e.g. Morpho flags) */
 	other_data: z
 		.object({
+			/** Source-classified warnings for display on the vault page. */
+			vault_display_flags: z
+				.object({ source: z.string(), severity: z.enum(['red', 'yellow']), type: z.string() })
+				.array()
+				.optional()
+				.catch(undefined),
+			morpho_red_flags: z.string().array().optional().catch(undefined),
+			morpho_yellow_flags: z.string().array().optional().catch(undefined),
 			/** Morpho vault-level warning flags (e.g. "not_whitelisted", "short_timelock") */
 			morpho_vault_flags: z.string().array().default([]),
 			/** Morpho market-level warning flags */
