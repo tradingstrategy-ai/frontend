@@ -177,7 +177,7 @@ R2 downloads stream the object body via the AWS SDK (`getR2Object`) and pipe it 
 
 `withDuckDbConnection()` in `src/lib/server/data-limits.ts` runs every DuckDB query against the parquet (vault metrics, hub mini charts, historical TVL, vault comparison). At most 4 queries run at once, and each has a 90-second deadline that includes waiting for a slot. A query that misses it is interrupted, and the endpoint answers 503.
 
-DuckDB's Node bindings run on the libuv thread pool (`UV_THREADPOOL_SIZE=8`), which file-system calls, DNS lookups and static file serving share. On 2026-11-19 work that never finished held all eight threads: every chart endpoint and every static file that missed the Cloudflare cache returned 504, and the glossary 404'd because its server-side `fetch` could not resolve DNS. SSR pages without file-system work still rendered.
+DuckDB's Node bindings run on the libuv thread pool, which file-system calls, DNS lookups, static file serving and sharp image work share (see `docs/server-threadpool.md`). On 2026-11-19, when the pool had eight threads, work that never finished held all of them: every chart endpoint and every static file that missed the Cloudflare cache returned 504, and the glossary 404'd because its server-side `fetch` could not resolve DNS. SSR pages without file-system work still rendered.
 
 `/vaults/<id>/metrics` is cached in memory for 1 hour (the 100 most recently loaded vaults, concurrent requests share one query), is sent with `Cache-Control: public, max-age=3600`, and is disallowed in `robots.txt`.
 
