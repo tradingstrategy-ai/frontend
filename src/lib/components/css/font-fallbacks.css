@@ -10,12 +10,19 @@
  * reads, not a brief placeholder. Matching the boxes is still what keeps that page laid out as
  * designed (and was what stopped the 0.25 CLS of the `swap` era in the 2026-09 audit).
  *
- * They live in the render-blocking app CSS, not in the deferred font stylesheet, so the very
- * first paint already uses the adjusted fallback — otherwise the page would first paint in
- * plain system-ui and shift when fonts7.css applies.
+ * They live in the app CSS, inlined in the page like the web fonts' own `@font-face` rules
+ * (src/lib/server/font-faces.ts), so the very first paint already uses the adjusted fallback.
  *
  * The Liberation fonts are listed for Linux: they are metric-compatible with Arial, Times New Roman
  * and Courier New by design, so the same overrides apply (this is also what the CI runner has).
+ *
+ * Every face is `font-display: swap`, so text is never held invisible while the browser looks up
+ * the local font: it paints at once in the next family of the stack (`system-ui`, `serif`,
+ * `monospace`) if the lookup is slow or the font is missing. Without a `font-display` the faces
+ * defaulted to `auto`, which the spec lets a browser treat as a block period of up to 3 s.
+ * Chromium already paints a fallback during a local lookup, so this mainly makes the guarantee
+ * hold in every engine; it was not the cause of the 2.4 s first paint PageSpeed Insights shows
+ * on vault pages (see docs/speed.md).
  *
  * The 500–900 grotesk ranges use the bold local face, so headings and `<strong>` keep their
  * weight in the fallback. Their overrides were computed with @capsizecss/core from the metrics
@@ -26,6 +33,7 @@
  */
 
 @font-face {
+	font-display: swap;
 	font-family: 'Neue Haas Grotesk Display Fallback';
 	font-weight: 400;
 	src:
@@ -38,6 +46,7 @@
 }
 
 @font-face {
+	font-display: swap;
 	font-family: 'Neue Haas Grotesk Display Fallback';
 	font-weight: 500 600;
 	src:
@@ -50,6 +59,7 @@
 }
 
 @font-face {
+	font-display: swap;
 	font-family: 'Neue Haas Grotesk Display Fallback';
 	font-weight: 700 900;
 	src:
@@ -62,6 +72,7 @@
 }
 
 @font-face {
+	font-display: swap;
 	font-family: 'Neue Haas Grotesk Text Fallback';
 	font-weight: 400;
 	src:
@@ -74,6 +85,7 @@
 }
 
 @font-face {
+	font-display: swap;
 	font-family: 'Neue Haas Grotesk Text Fallback';
 	font-weight: 500 600;
 	src:
@@ -86,6 +98,7 @@
 }
 
 @font-face {
+	font-display: swap;
 	font-family: 'Neue Haas Grotesk Text Fallback';
 	font-weight: 700 900;
 	src:
@@ -98,6 +111,7 @@
 }
 
 @font-face {
+	font-display: swap;
 	font-family: 'Source Serif Pro Fallback';
 	font-weight: 400 700;
 	src: local('Georgia');
@@ -113,6 +127,7 @@
  * without Georgia skips the family above and lands here.
  */
 @font-face {
+	font-display: swap;
 	font-family: 'Source Serif Pro Fallback Times';
 	font-weight: 400 700;
 	src: local('Times New Roman'), local('TimesNewRomanPSMT'), local('Liberation Serif');
@@ -123,6 +138,7 @@
 }
 
 @font-face {
+	font-display: swap;
 	font-family: 'Source Code Pro Fallback';
 	font-weight: 200 900;
 	src: local('Courier New'), local('CourierNewPSMT'), local('Liberation Mono'), local('Menlo'), local('Consolas');

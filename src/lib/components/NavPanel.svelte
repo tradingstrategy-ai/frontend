@@ -20,6 +20,14 @@ Responsive navigation drawer with optional search entry, primary links and site 
 
 	let { open = $bindable(false), children, panelSearch, onClose }: Props = $props();
 
+	// The panel's compact footer repeats the page footer's links. It is rendered on first
+	// open rather than server-rendered on every page (13 KB of HTML plus its hydration);
+	// the menu itself stays server-rendered so the CSS toggle works before hydration.
+	let hasOpened = $state(false);
+	$effect(() => {
+		if (open) hasOpened = true;
+	});
+
 	function close() {
 		open = false;
 		onClose?.();
@@ -58,7 +66,9 @@ Responsive navigation drawer with optional search entry, primary links and site 
 		<ColorModePicker showLabel />
 	</div>
 	-->
-	<Footer small />
+	{#if hasOpened}
+		<Footer small />
+	{/if}
 </nav>
 
 <style>

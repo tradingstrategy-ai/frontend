@@ -4,15 +4,10 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<!--
-			Load the font stylesheet non-render-blocking. fonts7.css is purely @font-face
-			declarations, so deferring it lets text paint immediately in the fallback faces
-			instead of blocking first paint on the font CSS download.
-			The media="print" → onload="all" trick is the standard non-blocking pattern;
-			the <noscript> fallback keeps fonts working without JS.
+			The web fonts' @font-face rules, inlined by hooks.server.ts (src/lib/server/font-faces.ts)
+			so they apply from the first paint without a request.
 		-->
-		<link rel="stylesheet" href="/fonts/fonts7.css" media="print" onload="this.media = 'all'" />
-		<noscript><link rel="stylesheet" href="/fonts/fonts7.css" /></noscript>
-		%sveltekit.head%
+		%ts:font-faces% %sveltekit.head%
 	</head>
 	<body>
 		<!-- Preserve a user tap on a search field while client hydration attaches handlers. -->

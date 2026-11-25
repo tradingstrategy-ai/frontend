@@ -8,9 +8,18 @@ import type {
 	FeeMode,
 	SlimVaultInfo,
 	VaultInfo,
-	VaultListingRow
+	VaultListingRow,
+	VaultListingTokenRateKey
 } from './schemas';
-import { slimVaultKeys, vaultListingPeriodMetricKeys, vaultListingPeriods, vaultListingRowKeys } from './schemas';
+import {
+	slimVaultKeys,
+	vaultListingCore3Keys,
+	vaultListingPeriodMetricKeys,
+	vaultListingPeriods,
+	vaultListingRowKeys,
+	vaultListingTokenRateKeys,
+	vaultListingXerberusKeys
+} from './schemas';
 import { resolve } from '$app/paths';
 import { vaultSparklinesUrl } from '$lib/config';
 import { capitalize, isNumber } from '$lib/helpers/formatters';
@@ -49,8 +58,12 @@ export function getCuratorLogoUrl(curator: Pick<CuratorInfo, 'logos'> | undefine
  * @param curators curator registry keyed by slug, from the same export
  */
 export function toVaultListingRow(vault: VaultInfo, curators: Record<string, CuratorInfo> = {}): VaultListingRow {
+	const rate = vault.denomination_token_rate;
 	return {
 		...pick(vault, vaultListingRowKeys),
+		denomination_token_rate: rate ? pick(rate, vaultListingTokenRateKeys) : null,
+		core3: vault.core3 ? pick(vault.core3, vaultListingCore3Keys) : vault.core3,
+		xerberus: vault.xerberus ? pick(vault.xerberus, vaultListingXerberusKeys) : vault.xerberus,
 		curator_logo_url: vault.curator_slug ? getCuratorLogoUrl(curators[vault.curator_slug]) : null,
 		period_results: vault.period_results
 			.filter((metrics) => listingPeriods.has(metrics.period.toLowerCase()))
@@ -477,13 +490,16 @@ export function meetsDefaultTvl(vault: Pick<VaultInfo, 'current_nav' | 'chain_id
 	return (vault.current_nav ?? 0) >= threshold;
 }
 
-type VaultDenominationFields = Pick<
-	VaultInfo,
-	'denomination' | 'normalised_denomination' | 'denomination_slug' | 'denomination_token_rate'
->;
-type VaultWithRate = Pick<VaultInfo, 'denomination_token_rate'> & Partial<VaultDenominationFields>;
-type VaultWithNavAndRate = Pick<VaultInfo, 'current_nav' | 'denomination_token_rate'>;
-type VaultWithPeakNavAndRate = Pick<VaultInfo, 'peak_nav' | 'denomination_token_rate'>;
+/**
+ * The rate fields the TVL and denomination helpers read. Listing rows carry only these
+ * (`vaultListingTokenRateKeys`); full vault records satisfy the type too.
+ */
+type RateFields = { denomination_token_rate: Pick<DenominationTokenRate, VaultListingTokenRateKey> | null };
+type VaultDenominationFields = Pick<VaultInfo, 'denomination' | 'normalised_denomination' | 'denomination_slug'> &
+	RateFields;
+type VaultWithRate = RateFields & Partial<VaultDenominationFields>;
+type VaultWithNavAndRate = Pick<VaultInfo, 'current_nav'> & RateFields;
+type VaultWithPeakNavAndRate = Pick<VaultInfo, 'peak_nav'> & RateFields;
 
 export interface CurrencyUsdRate {
 	rate: number;

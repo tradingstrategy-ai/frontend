@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { getFontPreloadLinks } from './font-preload';
 
 describe('getFontPreloadLinks', () => {
-	it('preloads the stylesheet everywhere', () => {
-		expect(getFontPreloadLinks('/vaults')).toBe('</fonts/fonts7.css>; rel=preload; as=style');
-		expect(getFontPreloadLinks('/')).not.toContain('woff2');
+	it('preloads nothing on other pages (the @font-face rules are inlined)', () => {
+		expect(getFontPreloadLinks('/vaults')).toBe('');
+		expect(getFontPreloadLinks('/')).toBe('');
 		expect(getFontPreloadLinks('/trading-view/ethereum')).not.toContain('woff2');
 		expect(getFontPreloadLinks('/trading-view/ethereum/uniswap-v3/export-data')).not.toContain('woff2');
 	});
@@ -18,7 +18,7 @@ describe('getFontPreloadLinks', () => {
 			'/trading-view/ethereum/uniswap-v3/eth-usdc-fee-5'
 		]) {
 			const links = getFontPreloadLinks(path);
-			expect(links).toContain('fonts7.css');
+			expect(links).not.toContain('fonts7.css');
 			expect(links).toContain('NeueHaasGroteskDisplay/65.woff2');
 			expect(links).toContain('NeueHaasGroteskText/55.woff2');
 			expect(links).toContain('NeueHaasGroteskText/65.woff2');

@@ -172,10 +172,66 @@ first reload is allowed (it resolves transient failures), and a repeat module-lo
 the same URL within a minute aborts hydration instead, leaving the server-rendered HTML readable
 with plain links. Nothing else, including `/_app/version.json`, is fetched during hydration.
 
+## Background cache warmer
+
+Server-side data caches are refreshed by a background job, so a visitor's request never
+waits for an upstream download or a chart rebuild once the process has loaded the data.
+Before 2026-11 the caches expired and the first visitor after expiry paid for the reload:
+the home page took 1–2 s to render on a Cloudflare miss because it downloaded and validated
+the whole top-vaults export on every render.
+
+How it works:
+
+- `scripts/server.js` generates a per-process bearer token and runs the scheduler in
+  `scripts/cache-scheduler.js`: a tick every 20 minutes, starting at start-up. Every third
+  tick (start-up, then hourly) runs the `all` job; the others run `frequent`. Only one job
+  runs at a time, and a skipped hourly tick runs on the next tick.
+- Each tick is a loopback `POST /_internal/cache/warm?job=…` with the token
+  (`src/routes/_internal/cache/warm/+server.ts`). Without the token it answers 401; while a
+  job runs, 409. It is not a public cache-control API.
+- The tasks and their order are in `src/lib/server/warm-tasks.ts`; they run one after
+  another (`src/lib/server/cache-warmer.ts`). A task past its deadline is aborted and the job
+  moves on, but the task is not started again until it has really stopped.
+- The caches are `createWarmCache()` instances (`src/lib/server/warm-cache.ts`): they serve
+  the current value, reload single-flight, keep the previous value when a reload fails, back
+  off from a failing source (15 s doubling to 30 min), and fall back to a background reload
+  from a request only when a value is twice its interval old (the warmer is not running).
+  Loaders throw on failure; they must not return an empty result.
+
+| Task (`all` job, in order) | Cache                                                       | Interval |
+| -------------------------- | ----------------------------------------------------------- | -------- |
+| `reference-rates`          | FRED savings and Treasury rates (`swrCache`, 2 days)        | 2 days   |
+| `top-vaults`               | `top-vaults` export                                         | 1 h      |
+| `crypto-vaults`            | `crypto-vaults` export (curator BTC/ETH tables)             | 1 h      |
+| `stablecoin-metadata`      | `stablecoin-metadata` index                                 | 2 h      |
+| `vault-protocol-metadata`  | metadata of every protocol in the export                    | 1 h      |
+| `search-index`             | vault search index (rebuilt when its inputs change)         | —        |
+| `chart-caches`             | every route chart cache requested since start-up (see note) | 1–24 h   |
+| `home-blog-posts`          | home page blog roll (also in `frequent`)                    | 20 min   |
+| `strategies-page`          | `/strategies` snapshot (also in `frequent`)                 | 20 min   |
+
+Chart caches (`/top-vaults/chart-data`, hub mini charts, historical TVL, CORE3, heatmap)
+are created inside their route modules, which SvelteKit loads on the first request, so
+they are warmed from their first request on. Keyed chart caches drop groups nobody has read
+for a day instead of rescanning the parquet for them. Not warmed: per-vault
+`/vaults/<id>/metrics` (thousands of vaults; an in-memory LRU plus the 1 h edge cache) and
+responses keyed by arbitrary query strings (`/vaults/compare/chart-data`).
+
+Each job's response, and the container log line prefixed `[cache-warmer]`, lists every
+task's status, duration, longest event-loop stall and RSS. Measured on 2026-11-22 against
+production data (local production build): a full `all` job took 22–28 s, mostly network
+(protocol metadata 12–18 s for ~100 protocols, top-vaults 4.3 s, crypto export 4.9 s); the
+longest event-loop stall in any task was 33 ms, so the parsing does not need a worker
+thread. RSS peaked at 1.4 GB while the crypto export was parsed and settled at about 0.8 GB;
+during an hourly refresh the old and new copy of an export are briefly both in memory.
+After the warm, `/` rendered in 9 ms and the Morpho hub in 40 ms at the origin. The per-cache state (age, source
+age, last load time, failures, last error) is on `/diagnostics` for admins (`?pw=`). Under
+`pnpm run dev` there is no scheduler; caches load on first use.
+
 ## Data freshness
 
-- **Vault data**: The backend API updates vault metrics roughly hourly. The landing page caches for 30 minutes, so vault data is at most ~1.5 hours stale in the worst case.
-- **Blog posts**: Ghost CMS webhook could trigger a purge (not currently implemented). Posts appear within 5 minutes of the blog cache TTL.
-- **Strategies**: Fetched server-side on each origin request. Cached at the edge for the page TTL.
+- **Vault data**: The backend API updates vault metrics roughly hourly, and the warmer reloads the export hourly. Worst case on the landing page: ~1 h upstream + 1 h in the process + 30 min at the edge. A source older than 6 h shows as `degraded` on `/diagnostics`.
+- **Blog posts**: The home page blog roll is reloaded every 20 minutes, so a new post appears there within ~50 minutes (20 min in the process + 30 min edge). Blog pages themselves use the 5-minute blog cache TTL. A Ghost webhook purge is not implemented.
+- **Strategies**: `/strategies` uses its own snapshot, refreshed every 20 minutes; API strategy metadata elsewhere is a 60-second `swrCache`.
 
 For page-source diagnostics that expose cache ages and upstream refresh timestamps, see [docs/cache-freshness-diagnostics.md](/Users/moo/code/frontend/docs/cache-freshness-diagnostics.md).

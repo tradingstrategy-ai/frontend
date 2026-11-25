@@ -1,5 +1,10 @@
 import { withDuckDbConnection } from '$lib/server/data-limits';
-import type { ProtocolMiniChartDailyRow, ProtocolMiniChartLatestApyRow } from './protocol-mini-chart';
+import { createWarmCache } from '$lib/server/warm-cache';
+import type {
+	ProtocolMiniChartDailyRow,
+	ProtocolMiniChartLatestApyRow,
+	ProtocolMiniChartPayload
+} from './protocol-mini-chart';
 import type { VaultInfo } from '$lib/top-vaults/schemas';
 import { ensureVaultPricesParquet } from '$lib/top-vaults/vault-prices-parquet';
 
@@ -7,6 +12,29 @@ export { isEligibleVaultGroupMiniChartVault } from '$lib/top-vaults/helpers';
 
 export const VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS = 60 * 60;
 export const VAULT_GROUP_MINI_CHART_THREE_MONTH_LOOKBACK_DAYS = 90;
+
+/** At most this many groups per chart kind stay cached; more than the number of protocols, chains or curators. */
+const MAX_CACHED_VAULT_GROUPS = 300;
+
+/**
+ * Cache for one kind of hub mini chart (protocol, chain, stablecoin, curator, category),
+ * keyed by the group slug and refreshed hourly by the background warmer. Building a chart
+ * scans the vault price parquet, so visitors are served the previous chart meanwhile.
+ *
+ * @param name cache name shown on `/diagnostics`
+ * @param build build the payload for one group slug; throw a 404 for unknown slugs
+ */
+export function createVaultGroupMiniChartCache(
+	name: string,
+	build: (slug: string, fetch: Fetch) => Promise<ProtocolMiniChartPayload>
+) {
+	return createWarmCache<ProtocolMiniChartPayload>({
+		name,
+		load: (slug, fetch) => build(slug, fetch),
+		refreshIntervalMs: VAULT_GROUP_MINI_CHART_CACHE_TTL_SECONDS * 1000,
+		maxEntries: MAX_CACHED_VAULT_GROUPS
+	});
+}
 
 type VaultGroupMiniChartReturnWindow = 'one-month' | 'three-months';
 

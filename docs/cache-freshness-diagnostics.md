@@ -60,10 +60,12 @@ down -v` intentionally removes it.
   for scheduled-refresh verification.
 
 For operational diagnostics, inspect the container log entries prefixed
-`[strategies-cache]`. The scheduler generates a per-process bearer token and
-uses it only for its loopback `POST /_internal/cache/strategies/refresh`
-request; do not treat that bearer-protected endpoint as a public cache-control
-API.
+`[strategies-cache]` and `[cache-warmer]`. The snapshot is refreshed by the
+background cache warmer's `frequent` job (every 20 minutes) and at the end of
+its hourly `all` job, through the loopback `POST /_internal/cache/warm` request
+protected by a per-process bearer token; do not treat that endpoint as a public
+cache-control API. See "Background cache warmer" in
+[docs/cache-invalidation.md](cache-invalidation.md).
 
 ## Hidden diagnostics in page source
 

@@ -4,17 +4,18 @@
  * Neue Haas Grotesk is licensed and only present on the production server; run
  * `scripts/setup-fonts.sh` to sync the referenced files locally (it reads this file).
  *
- * This stylesheet is loaded deferred (see src/app.html). Every face is `font-display: optional`:
- * a face that is not ready when the text is first rendered is never swapped in for that page
- * view, which keeps a late swap from repainting the LCP text (a slightly larger repaint counts
- * as a new, later LCP; see docs/speed.md). The file is cached by then, so later pages use it.
- * The metric-matched "… Fallback" faces live in the render-blocking app CSS instead
- * (src/lib/components/css/font-fallbacks.css), so they apply from the very first paint; their
- * overrides were computed from the metrics of the files declared here — regenerate them if a
- * font file changes.
+ * These rules are inlined into every page's <head> at render time
+ * (src/lib/server/font-faces.ts), so they apply from the first paint without a request; the
+ * file is the source for that and for scripts/setup-fonts.sh. Every face is
+ * `font-display: optional`: a face that is not ready when the text is first rendered is never
+ * swapped in for that page view, which keeps a late swap from repainting the LCP text (a
+ * slightly larger repaint counts as a new, later LCP; see docs/speed.md). The woff2 file is
+ * cached by then, so later pages use it. The metric-matched "… Fallback" faces live in the app
+ * CSS (src/lib/components/css/font-fallbacks.css); their overrides were computed from the
+ * metrics of the files declared here — regenerate them if a font file changes.
  *
- * Rename this file (fonts7 → fonts8 …) whenever its contents change: it is served with a
- * long cache lifetime.
+ * The file is still served (with a long cache lifetime), so rename it (fonts7 → fonts8 …) when
+ * its contents change and update the import in font-faces.ts.
  */
 
 /* Neue Haas Grotesk - Display (weights 400–700 and 900; nothing on the site uses 100–300) */

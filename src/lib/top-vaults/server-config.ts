@@ -26,13 +26,14 @@ function logTopVaultsAccessIssue(message: string) {
  * Tries R2 first; falls back to `TS_PRIVATE_TOP_VAULTS_URL` if R2 is not configured.
  *
  * @param fetch SvelteKit's fetch function (used for URL fallback)
+ * @param signal aborts the download (background refresh deadline)
  * @returns Parsed JSON object
  * @throws When neither R2 nor fallback URL is configured, or when the fetch fails
  */
-export async function fetchTopVaultsRaw(fetch: Fetch): Promise<unknown> {
+export async function fetchTopVaultsRaw(fetch: Fetch, signal?: AbortSignal): Promise<unknown> {
 	if (isR2Configured()) {
 		try {
-			const result = await getR2Object(TOP_VAULTS_KEY);
+			const result = await getR2Object(TOP_VAULTS_KEY, undefined, signal);
 			if (result?.body) {
 				const text = await result.body.transformToString();
 				return JSON.parse(text);
@@ -46,7 +47,7 @@ export async function fetchTopVaultsRaw(fetch: Fetch): Promise<unknown> {
 		throw new Error('Neither R2 nor TS_PRIVATE_TOP_VAULTS_URL is configured');
 	}
 
-	const resp = await fetch(topVaultsPrivateUrl);
+	const resp = await fetch(topVaultsPrivateUrl, { signal });
 	if (!resp.ok) {
 		throw new Error(`Fetching top vaults from the configured private source failed with status ${resp.status}`);
 	}

@@ -726,8 +726,36 @@ export const vaultListingRowKeys = [
 	'xerberus'
 ] as const satisfies readonly (keyof VaultInfo)[];
 
+/**
+ * Sub-fields of the nested per-vault objects that listing rows keep. The rest is provenance
+ * (`*_fetched_at`, `*_source`, CoinGecko id), report links and CORE3 market data that only the
+ * vault detail page shows, which loads the complete record. Dropping them cuts about a fifth of
+ * a listing row's serialised size. A missing USD rate must never be dropped: `usd_rate: null`
+ * is how a depeg or unknown rate reaches the TVL helpers.
+ */
+export const vaultListingTokenRateKeys = [
+	'source_currency',
+	'usd_rate',
+	'native_rate',
+	'native_rate_currency',
+	'source_currency_usd_rate'
+] as const satisfies readonly (keyof DenominationTokenRate)[];
+export type VaultListingTokenRateKey = (typeof vaultListingTokenRateKeys)[number];
+export const vaultListingCore3Keys = [
+	'risk_score',
+	'risk_rating_label',
+	'confidence'
+] as const satisfies readonly (keyof Core3Vault)[];
+export const vaultListingXerberusKeys = ['score', 'entity_type'] as const satisfies readonly (keyof XerberusVault)[];
+
 /** A vault as rendered by the listing table: the `vaultListingRowKeys` subset of `VaultInfo` plus slimmed period metrics. */
-export type VaultListingRow = Pick<VaultInfo, (typeof vaultListingRowKeys)[number]> & {
+export type VaultListingRow = Omit<
+	Pick<VaultInfo, (typeof vaultListingRowKeys)[number]>,
+	'denomination_token_rate' | 'core3' | 'xerberus'
+> & {
+	denomination_token_rate: Pick<DenominationTokenRate, (typeof vaultListingTokenRateKeys)[number]> | null;
+	core3?: Pick<Core3Vault, (typeof vaultListingCore3Keys)[number]> | null;
+	xerberus?: Pick<XerberusVault, (typeof vaultListingXerberusKeys)[number]> | null;
 	period_results: VaultListingPeriodMetrics[];
 	/**
 	 * Curator logo resolved server-side from the `curators` registry, which listing

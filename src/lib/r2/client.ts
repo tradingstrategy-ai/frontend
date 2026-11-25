@@ -60,13 +60,13 @@ export function isR2Configured(): boolean {
  * @returns Object body stream and metadata, or `null` when R2 is not configured
  * @throws When R2 is configured but the request fails
  */
-export async function getR2Object(key: string, bucket = env.TS_PRIVATE_R2_BUCKET_NAME) {
+export async function getR2Object(key: string, bucket = env.TS_PRIVATE_R2_BUCKET_NAME, signal?: AbortSignal) {
 	const client = getClient();
 
 	if (!client || !bucket) return null;
 
 	const command = new GetObjectCommand({ Bucket: bucket, Key: key });
-	const response = await diagnose(`R2 GET ${key}`, () => client.send(command));
+	const response = await diagnose(`R2 GET ${key}`, () => client.send(command, { abortSignal: signal }));
 
 	return {
 		body: response.Body,

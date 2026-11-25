@@ -25,11 +25,14 @@ const config = {
 		outDir: isTestMode ? '.svelte-kit-test' : '.svelte-kit',
 
 		/**
-		 * Inline component CSS under 8 KB (uncompressed, measured at build time) so the
-		 * long tail of small stylesheets is not a separate render-blocking request each;
-		 * the large shared chunks stay external and cacheable. See docs/google-webmasters.md.
+		 * Inline every stylesheet under 40 KB (uncompressed, measured at build time) into the
+		 * HTML, so first paint does not wait for separate render-blocking CSS requests. Measured
+		 * on 2026-11-22 over HTTP/2 with Brotli (docs/speed.md): FCP −210 to −280 ms on every page
+		 * tested against the previous 8 KB, for ~15–20 KB more compressed HTML. Inlining all CSS
+		 * gained nothing more. The round 5 attempt was rejected on PageSpeed Insights numbers
+		 * later found to be unreliable for this site.
 		 */
-		inlineStyleThreshold: 8192,
+		inlineStyleThreshold: 40960,
 
 		alias: {
 			'design-system-fonts': 'deps/fonts',

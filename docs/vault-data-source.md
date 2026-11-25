@@ -44,7 +44,7 @@ If R2 credentials are unavailable, each dataset can be configured with a direct 
 2. If R2 fails or is not configured → fall back to `TS_PRIVATE_TOP_VAULTS_URL`
 3. If neither is available → throws error
 
-The server parses, validates, normalises, and caches the response in memory for one hour via `src/lib/top-vaults/cache.ts`. When the cache expires, the next request waits for a fresh export; there is no stale-while-revalidate behaviour.
+The server parses, validates, normalises, and caches the response in memory via `src/lib/top-vaults/cache.ts`, a warm cache (`src/lib/server/warm-cache.ts`). The background cache warmer reloads it hourly; visitors are served the current copy meanwhile and only wait on a cold process. A failed reload keeps the previous copy. See "Background cache warmer" in `docs/cache-invalidation.md`.
 
 #### Curator crypto vaults
 

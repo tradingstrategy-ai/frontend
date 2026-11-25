@@ -30,16 +30,20 @@ import { getVaultProtocolLogoUrl } from '$lib/vault-protocol/helpers';
 import type { StablecoinMetadata } from '$lib/stablecoin-metadata/schemas';
 import type { SearchEntityType, SearchResponse, SearchResult } from './entities';
 
-const INDEX_TTL_MS = 2 * 60 * 1000;
 const MAX_RESULTS = 100;
 
 type IndexedSearchRecord = SearchResult & {
 	searchTerms: string[];
 };
 
+/**
+ * The index is rebuilt only when one of its inputs is replaced: both come from warm caches
+ * that return the same object until the background warmer refreshes them, so comparing
+ * the objects is the version check.
+ */
 type SearchIndex = {
-	version: string;
-	expires: number;
+	topVaults: TopVaults;
+	stablecoins: StablecoinMetadata[];
 	records: IndexedSearchRecord[];
 };
 
@@ -302,16 +306,20 @@ function buildIndex(topVaults: TopVaults, stablecoins: StablecoinMetadata[]): In
 
 async function getIndex(fetch: Fetch): Promise<SearchIndex> {
 	const [topVaults, stablecoins] = await Promise.all([getCachedTopVaults(fetch), fetchStablecoinMetadataIndex(fetch)]);
-	const generatedAt = new Date(topVaults.generated_at).toISOString();
-	const now = Date.now();
-	if (cachedIndex?.version.startsWith(generatedAt) && cachedIndex.expires > now) return cachedIndex;
+	if (cachedIndex?.topVaults === topVaults && cachedIndex.stablecoins === stablecoins) return cachedIndex;
 
-	cachedIndex = {
-		version: `${generatedAt}:${now}`,
-		expires: now + INDEX_TTL_MS,
-		records: buildIndex(topVaults, stablecoins)
-	};
+	cachedIndex = { topVaults, stablecoins, records: buildIndex(topVaults, stablecoins) };
 	return cachedIndex;
+}
+
+/**
+ * Rebuild the search index now if its inputs changed, so the first search after a data
+ * refresh does not pay for it. Called by the background cache warmer.
+ *
+ * @param fetch SvelteKit fetch
+ */
+export async function warmVaultSearchIndex(fetch: Fetch): Promise<void> {
+	await getIndex(fetch);
 }
 
 function getMatchScore(record: IndexedSearchRecord, query: string, tokens: string[]): number | null {

@@ -8,7 +8,7 @@ A test endpoint for the page to show debug data.
 	import { isGeoBlocked } from '$lib/helpers/geo';
 
 	export let data;
-	const { admin, ipCountry, requestHeaders } = data;
+	const { admin, ipCountry, requestHeaders, warmCaches } = data;
 
 	const geoBlocked: Record<string, 'blocked' | 'allowed'> = {};
 	for (const feature in config.geoBlock) {
@@ -52,6 +52,41 @@ A test endpoint for the page to show debug data.
 		<h2>Geo-blocked features</h2>
 		<pre class="terminal-viewport">{JSON.stringify({ ipCountry, ...geoBlocked }, null, 4)}</pre>
 	</div>
+
+	{#if warmCaches}
+		<div>
+			<h2>Server caches</h2>
+			<p>Kept warm by the background cache warmer (hourly, see docs/cache-invalidation.md).</p>
+			<table class="warm-caches">
+				<thead>
+					<tr>
+						<th>Cache</th>
+						<th>Key</th>
+						<th>State</th>
+						<th>Age (s)</th>
+						<th>Source age (s)</th>
+						<th>Last load (ms)</th>
+						<th>Failures</th>
+						<th>Last error</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each warmCaches as entry (`${entry.cache}:${entry.key}`)}
+						<tr>
+							<td>{entry.cache}</td>
+							<td>{entry.key}</td>
+							<td>{entry.state}</td>
+							<td>{entry.ageSeconds ?? '—'}</td>
+							<td>{entry.sourceAgeSeconds ?? '—'}</td>
+							<td>{entry.lastDurationMs ?? '—'}</td>
+							<td>{entry.failures}</td>
+							<td>{entry.lastError ?? ''}</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		</div>
+	{/if}
 
 	<div>
 		<h2>Request headers</h2>
