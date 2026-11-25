@@ -2,8 +2,8 @@
  * Deadlines and a concurrency cap for server-side data work: DuckDB scans of the vault
  * price parquet and the R2 requests that keep it fresh.
  *
- * DuckDB's Node bindings run queries on the libuv thread pool (`UV_THREADPOOL_SIZE=8` in
- * the Dockerfile), which file-system calls, DNS lookups and static file serving share. On
+ * DuckDB's Node bindings run queries on the libuv thread pool (`UV_THREADPOOL_SIZE` in the
+ * Dockerfile, see `docs/server-threadpool.md`), which file-system calls, DNS lookups and static file serving share. On
  * 2026-11-19 work that never finished held every thread: static files, `/vaults/<id>/metrics`,
  * the vault hub mini charts and the glossary (its `fetch` needs a DNS lookup) all hung until
  * Cloudflare answered 504, while SSR pages without file-system work still rendered. So at
@@ -16,7 +16,10 @@ import { DuckDBConnection } from '@duckdb/node-api';
 /** Default deadline for a data request: DuckDB query, R2 request or first parquet download. */
 export const DATA_TIMEOUT_MS = 90_000;
 
-/** Half of the libuv thread pool; the rest stays free for file-system and DNS work. */
+/**
+ * Together with the image job cap in `$lib/server/image-pipeline` this stays well below the
+ * libuv thread pool size, so threads remain free for file-system and DNS work.
+ */
 export const MAX_CONCURRENT_DUCKDB_QUERIES = 4;
 
 /** Throw the 503 that endpoints and loaders return when data work misses its deadline. */
